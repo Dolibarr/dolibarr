@@ -22,7 +22,6 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id: boxes.php,v 1.59 2011/08/17 22:20:29 eldy Exp $
  */
 
 

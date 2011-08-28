@@ -14,7 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_notify_def.sql,v 1.5 2011/08/03 01:25:28 eldy Exp $
 -- ===================================================================
 
 create table llx_notify_def

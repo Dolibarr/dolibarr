@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/webservices/server_thirdparty.php
  *       \brief      File that is entry point to call Dolibarr WebServices
- *       \version    $Id: server_thirdparty.php,v 1.14 2011/08/18 22:26:10 eldy Exp $
  */
 
 // This is to make Dolibarr working with Plesk

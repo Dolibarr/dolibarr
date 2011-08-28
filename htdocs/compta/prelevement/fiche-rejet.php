@@ -21,7 +21,6 @@
 /**
  * 		\file       htdocs/compta/prelevement/fiche-rejet.php
  *		\brief      Prelevement
- * 		\version	$Id: fiche-rejet.php,v 1.24 2011/07/31 22:23:29 eldy Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -175,5 +174,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

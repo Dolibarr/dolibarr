@@ -22,7 +22,6 @@
  *       \file       htdocs/categories/viewcat.php
  *       \ingroup    category
  *       \brief      Page to show a category card
- *       \version    $Id: viewcat.php,v 1.54 2011/08/20 09:02:58 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -361,5 +360,5 @@ if ($object->type == 3)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 09:02:58 $ - $Revision: 1.54 $');
+llxFooter();
 ?>

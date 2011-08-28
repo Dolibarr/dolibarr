@@ -344,5 +344,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.72 $');
+llxFooter();
 ?>

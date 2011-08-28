@@ -20,7 +20,6 @@
 /**
  *  \file       htdocs/admin/system/index.php
  *  \brief      Home page of system information
- *  \version    $Id: index.php,v 1.50 2011/08/13 00:48:00 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -126,5 +125,5 @@ print '<br>';
 print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
 
-llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.50 $');
+llxFooter();
 ?>

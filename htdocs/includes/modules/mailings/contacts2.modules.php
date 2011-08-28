@@ -20,7 +20,6 @@
  *    	\file       htdocs/includes/modules/mailings/contacts2.modules.php
  *    	\ingroup    mailing
  *    	\brief      Provides a list of recipients for mailing module
- *    	\version    $Revision: 1.8 $
  */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';

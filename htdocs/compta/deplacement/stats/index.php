@@ -20,7 +20,6 @@
  *  \file       htdocs/compta/deplacement/stats/index.php
  *  \ingroup    deplacement
  *  \brief      Page des stats deplacement et notes de frais
- *  \version    $Id: index.php,v 1.8 2011/08/03 00:46:28 eldy Exp $
  */
 
 require("../../../main.inc.php");
@@ -210,5 +209,5 @@ print '</td></tr></table>';
 
 print '</td></tr></table>';
 
-llxFooter('$Date: 2011/08/03 00:46:28 $ - $Revision: 1.8 $');
+llxFooter();
 ?>

@@ -23,7 +23,6 @@
  *		\ingroup    facture
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/fiche.php
- *		\version    $Id: fiche.php,v 1.77 2011/08/05 21:06:55 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -358,5 +357,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/05 21:06:55 $ - $Revision: 1.77 $');
+llxFooter();
 ?>

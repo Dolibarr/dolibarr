@@ -20,7 +20,6 @@
  *  \file       htdocs/ecm/docmine.php
  *	\ingroup    ecm
  *	\brief     	Card of a directory for ECM module
- *	\version    $Id: docmine.php,v 1.47 2011/07/31 23:50:56 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -378,5 +377,5 @@ if ($user->rights->ecm->read)
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:56 $ - $Revision: 1.47 $');
+llxFooter();
 ?>

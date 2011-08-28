@@ -23,7 +23,6 @@
 -- Libelle est un texte decrivant le type de contact.
 -- active precise si cette valeur est 'active' ou 'archive'.
 --
--- $Id: llx_c_type_contact.sql,v 1.5 2011/08/03 01:25:41 eldy Exp $
 -- ========================================================================
 
 

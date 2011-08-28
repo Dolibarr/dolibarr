@@ -20,7 +20,6 @@
 /**
  *      \file       htdocs/compta/stats/comp.php
  *      \ingroup    commercial
- *  	\version	$Id: comp.php,v 1.45 2011/07/31 22:23:14 eldy Exp $
  * 		TODO	Remove or add page in menus
  */
 
@@ -350,5 +349,5 @@ if ($details == 1)
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.45 $');
+llxFooter();
 ?>

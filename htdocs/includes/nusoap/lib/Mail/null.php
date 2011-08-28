@@ -16,14 +16,12 @@
 // | Author: Phil Kernick <philk@rotfl.com.au>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: null.php,v 1.1 2010/12/01 21:56:37 eldy Exp $
 //
 
 /**
  * Null implementation of the PEAR Mail:: interface.
  * @access public
  * @package Mail
- * @version $Revision: 1.1 $
  */
 class Mail_null extends Mail {
 

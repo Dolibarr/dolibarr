@@ -16,11 +16,10 @@
  */
 
 /**
-		\file 		htdocs/mantis/mantistop.php
-        \ingroup    mantis
-		\brief      Top frame to show mantis application
-		\version    $Id: mantistop.php,v 1.5 2011/07/31 23:24:38 eldy Exp $
-*/
+ * \file 		htdocs/mantis/mantistop.php
+ * \ingroup    mantis
+ * \brief      Top frame to show mantis application
+ */
 
 require ("../main.inc.php");
 

@@ -24,7 +24,6 @@
  *	\file      htdocs/fourn/commande/dispatch.php
  *	\ingroup   commande
  *	\brief     Fiche de ventilation des commandes fournisseurs
- *	\version   $Id$
  */
 
 require("../../main.inc.php");
@@ -409,5 +408,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date$	- $Revision$');
+llxFooter();
 ?>

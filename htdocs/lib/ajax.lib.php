@@ -20,7 +20,6 @@
 /**
  *  \file		htdocs/lib/ajax.lib.php
  *  \brief		Page called by Ajax request for produts
- *  \version	$Id: ajax.lib.php,v 1.60 2011/07/31 23:25:18 eldy Exp $
  */
 
 

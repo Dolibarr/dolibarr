@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/lib/doleditor.class.php
  *       \brief      Class to manage a WYSIWYG editor
- *       \version    $Id: doleditor.class.php,v 1.46 2011/08/14 23:55:35 eldy Exp $
  */
 
 /**

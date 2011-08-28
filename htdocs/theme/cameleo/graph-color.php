@@ -21,7 +21,6 @@
  *		\file       htdocs/theme/cameleo/graph-color.php
  *		\brief      File to declare colors to use to build graphics with theme cameleo
  *      \ingroup    core
- *		\version    $Id: graph-color.php,v 1.2 2011/07/31 23:22:05 eldy Exp $
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

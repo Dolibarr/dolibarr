@@ -6,7 +6,6 @@
  *  \file       htdocs/ecm/docother.php
  *  \ingroup    ecm
  *  \brief      Main ecm page
- *  \version    $Id$
  *  \author		Laurent Destailleur
  */
 
@@ -175,5 +174,5 @@ print $langs->trans("FeatureNotYetAvailable");
 // End of page
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter();
 ?>

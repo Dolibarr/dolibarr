@@ -25,7 +25,6 @@
  *  \file       htdocs/includes/modules/expedition/modules_expedition.php
  *  \ingroup    expedition
  *  \brief      File of class to manage expedition numbering
- *  \version    $Id: modules_expedition.php,v 1.3 2011/07/31 23:28:14 eldy Exp $
  */
 
 class ModelNumRefExpedition

@@ -22,7 +22,6 @@
  *	\file       htdocs/product/stock/fiche.php
  *	\ingroup    stock
  *	\brief      Page fiche entrepot
- *	\version    $Id: fiche.php,v 1.100 2011/07/31 23:24:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -519,5 +518,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.100 $');
+llxFooter();
 ?>

@@ -23,7 +23,6 @@
  *  \file       htdocs/comm/action/index.php
  *  \ingroup    agenda
  *  \brief      Home page of calendar events
- *  \version    $Id: index.php,v 1.184 2011/07/31 22:23:20 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -785,7 +784,7 @@ $("#actionagenda_vcal_link").attr("href","/public/agenda/agendaexport.php?format
 ';
 */
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.184 $');
+llxFooter();
 
 
 /**

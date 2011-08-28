@@ -20,8 +20,7 @@
  *		\ingroup    export
  *		\brief      File of class to build export files with format TSV
  *		\author	    Laurent Destailleur
- *		\version    $Id: export_tsv.modules.php,v 1.14 2011/08/03 01:38:52 eldy Exp $
-*/
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
 
@@ -59,8 +58,7 @@ class ExportTsv extends ModeleExports
         $this->desc='<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by separator [tab].';
         $this->extension='tsv';         // Extension for generated file by this driver
         $this->picto='mime/other';		// Picto
-        $ver=explode(' ','$Revision: 1.14 $');
-        $this->version=$ver[2];         // Driver version
+        $this->version='1.15';         // Driver version
 
         // If driver use an external library, put its name here
         $this->label_lib='Dolibarr';

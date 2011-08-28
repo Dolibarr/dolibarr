@@ -16,23 +16,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   mantis     Module mantis
-        \brief      Module to include Mantis into Dolibarr
-*/
+/**
+ * \defgroup   mantis     Module mantis
+ * \brief      Module to include Mantis into Dolibarr
+ */
 
 /**
-        \file       htdocs/includes/modules/modMantis.class.php
-        \ingroup    mantis
-        \brief      Description and activation file for module Mantis
-		\version	$Id: modMantis.class.php,v 1.16 2011/07/31 23:28:10 eldy Exp $
-*/
+ * \file       htdocs/includes/modules/modMantis.class.php
+ * \ingroup    mantis
+ * \brief      Description and activation file for module Mantis
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modMantis
-        \brief      Description and activation class for module Mantis
-*/
+/**
+ * \class      modMantis
+ * \brief      Description and activation class for module Mantis
+ */
 
 class modMantis extends DolibarrModules
 {

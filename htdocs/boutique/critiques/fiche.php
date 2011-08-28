@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: fiche.php,v 1.5 2011/08/03 00:45:46 eldy Exp $
  */
 
 /**
-	    \file       htdocs/boutique/critiques/fiche.php
-		\ingroup    boutique
-		\brief      Page fiche critique OS Commerce
-		\version    $Revision: 1.5 $
-*/
+ * 	    \file       htdocs/boutique/critiques/fiche.php
+ * 		\ingroup    boutique
+ * 		\brief      Page fiche critique OS Commerce
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
@@ -80,6 +78,6 @@ print '</table><br>';
 
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.5 $');
+llxFooter();
 
 ?>

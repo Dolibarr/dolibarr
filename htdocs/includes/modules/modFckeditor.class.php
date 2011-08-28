@@ -20,7 +20,6 @@
 /**
  *  \defgroup   fckeditor     Module fckeditor
  *  \brief      Module pour mettre en page les zones de saisie de texte
- *  \version	$Id: modFckeditor.class.php,v 1.21 2011/07/31 23:28:12 eldy Exp $
  */
 
 /**

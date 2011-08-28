@@ -25,7 +25,6 @@
  *	\file       htdocs/expedition/fiche.php
  *	\ingroup    expedition
  *	\brief      Fiche descriptive d'une expedition
- *	\version    $Id: fiche.php,v 1.212 2011/08/21 12:41:29 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1378,5 +1377,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 12:41:29 $ - $Revision: 1.212 $');
+llxFooter();
 ?>

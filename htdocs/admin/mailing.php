@@ -20,7 +20,6 @@
  *	    \file       htdocs/admin/mailing.php
  *		\ingroup    mailing
  *		\brief      Page to setup emailing module
- *		\version    $Id: mailing.php,v 1.14 2011/07/31 22:23:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -95,6 +94,6 @@ print '</table></form>';
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.14 $');
+llxFooter();
 
 ?>

@@ -1,6 +1,4 @@
 --
--- $Id: 2.9.0-3.0.0.sql,v 1.68 2011/05/30 08:21:40 eldy Exp $
---
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 2.8.0 or higher. 

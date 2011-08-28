@@ -19,7 +19,6 @@
  *	\file       htdocs/product/stock/info.php
  *	\ingroup    stock
  *	\brief      Page des informations d'un entrepot
- *	\version    $Id: info.php,v 1.16 2011/07/31 23:24:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -53,5 +52,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.16 $');
+llxFooter();
 ?>

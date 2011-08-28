@@ -20,7 +20,6 @@
 /**
  *   \file       htdocs/admin/boxes.php
  *   \brief      Page to setup boxes
- *   \version    $Id: boxes.php,v 1.73 2011/08/01 13:26:22 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -470,5 +469,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 13:26:22 $ - $Revision: 1.73 $');
+llxFooter();
 ?>

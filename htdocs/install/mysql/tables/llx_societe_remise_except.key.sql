@@ -1,6 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2007	Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_societe_remise_except.key.sql,v 1.2 2011/08/03 01:25:24 eldy Exp $
 --
 -- Remises exceptionnelles
 --

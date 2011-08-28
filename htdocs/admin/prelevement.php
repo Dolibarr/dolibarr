@@ -22,7 +22,6 @@
  *	\file       htdocs/admin/prelevement.php
  *	\ingroup    prelevement
  *	\brief      Page configuration des prelevements
- *	\version    $Id: prelevement.php,v 1.18 2011/07/31 22:23:25 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -245,5 +244,5 @@ print '</form>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.18 $');
+llxFooter();
 ?>

@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/webservices/demo_wsclient_other.php
  *       \brief      Demo page to make a client call to Dolibarr WebServices "server_other"
- *       \version    $Id: demo_wsclient_other.php,v 1.8 2011/07/31 23:21:08 eldy Exp $
  */
 
 // This is to make Dolibarr working with Plesk

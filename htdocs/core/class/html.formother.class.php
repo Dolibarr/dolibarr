@@ -28,7 +28,6 @@
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
  *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
- *	\version	$Id: html.formother.class.php,v 1.19 2011/08/17 16:07:41 eldy Exp $
  */
 
 

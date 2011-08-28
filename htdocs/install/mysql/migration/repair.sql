@@ -1,6 +1,4 @@
 --
--- $Id: repair.sql,v 1.4 2011/05/25 18:16:58 eldy Exp $
---
 -- Script to repair some fatal errors due to database corruption
 -- when current version is 2.6.0 or higher. 
 --

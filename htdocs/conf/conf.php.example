@@ -5,7 +5,6 @@
 # This file is used by Dolibarr setup process to create true Dolibarr
 # config file called "conf.php".
 #
-# $Id: conf.php.example,v 1.53 2011/08/21 15:26:15 eldy Exp $
 
 
 ###################

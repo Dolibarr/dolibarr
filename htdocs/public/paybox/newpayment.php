@@ -22,7 +22,6 @@
  *		\ingroup    paybox
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.61 2011/07/31 23:23:21 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -728,5 +727,5 @@ html_print_paybox_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPayBox('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.61 $');
+llxFooterPayBox();
 ?>

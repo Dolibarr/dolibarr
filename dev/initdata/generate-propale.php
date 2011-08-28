@@ -22,7 +22,6 @@
 /**
  *	    \file       htdocs/dev/generate-propale.php
  *		\brief      Script de generation de donnees aleatoires pour les propales
- *		\version    $Id: generate-propale.php,v 1.16 2011/07/31 22:21:57 eldy Exp $
  */
 
 // Test si mode batch

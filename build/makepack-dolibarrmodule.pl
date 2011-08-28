@@ -2,7 +2,6 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrmodule.pl
 # \brief        Package builder (tgz, zip, rpm, deb, exe)
-# \version      $Revision$
 # \author       (c)2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -19,7 +18,7 @@ use Cwd;
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision$'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='1.20';
 $VERSION="1.0 (build $REVISION)";
 
 

@@ -21,7 +21,6 @@
 /**
  *   	\file       htdocs/admin/delais.php
  *		\brief      Page to setup late delays
- *		\version    $Id: delais.php,v 1.32 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -371,5 +370,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.32 $');
+llxFooter();
 ?>

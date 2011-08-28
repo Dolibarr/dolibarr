@@ -20,7 +20,6 @@
  *  \file       htdocs/includes/modules/expedition/mod_expedition_safor.php
  *  \ingroup    expedition
  *  \brief      File of class to manage shipments numbering rules Safor
- *  \version    $Id: mod_expedition_safor.php,v 1.3 2011/07/31 23:28:14 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/expedition/modules_expedition.php");
 

@@ -18,14 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: mantis.php,v 1.3 2011/07/31 23:24:38 eldy Exp $
  */
 
 /**
  *   \file       htdocs/mantis/admin/mantis.php
  *   \ingroup    mantis
  *   \brief      Page de configuration du module mantis
- *   \version    $Revision: 1.3 $
  */
 
 require("../../main.inc.php");
@@ -204,5 +202,5 @@ print "<br>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:38 $ - $Revision: 1.3 $');
+llxFooter();
 ?>

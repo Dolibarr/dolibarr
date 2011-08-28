@@ -22,7 +22,6 @@
  *	\file       htdocs/product/traduction.php
  *	\ingroup    product
  *	\brief      Page de traduction des produits
- *	\version    $Id: traduction.php,v 1.45 2011/07/31 23:19:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -265,5 +264,5 @@ if ($_GET["action"] == 'add' && ($user->rights->produit->creer || $user->rights-
 
 	print '<br>';
 }
-llxFooter('$Date: 2011/07/31 23:19:26 $ - $Revision: 1.45 $');
+llxFooter();
 ?>

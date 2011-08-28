@@ -23,7 +23,6 @@
  *	\file       htdocs/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
- *	\version    $Id: company.lib.php,v 1.126 2011/08/24 18:05:58 eldy Exp $
  */
 
 /**

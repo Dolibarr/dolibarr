@@ -21,7 +21,6 @@
  *	\file 		htdocs/adherents/cartes/carte.php
  *	\ingroup    member
  *	\brief      Page to output members business cards
- *	\version    $Id: carte.php,v 1.42 2011/08/03 00:45:46 eldy Exp $
  */
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
@@ -87,7 +86,7 @@ if ((empty($foruserid) && empty($foruserlogin) && empty($mode)) || $mesg)
     print '</form>';
     print '<br>';
 
-    llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.42 $');
+    llxFooter();
 }
 else
 {
@@ -210,7 +209,7 @@ else
     {
     	dol_print_error($db);
 
-    	llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.42 $');
+    	llxFooter();
     }
 }
 

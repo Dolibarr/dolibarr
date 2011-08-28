@@ -23,7 +23,6 @@
  *	\file       htdocs/includes/modules/member/labels/modules_labels.php
  *	\ingroup    member
  *	\brief      File of parent class of document generator for members labels sheets.
- *	\version    $Id: modules_labels.php,v 1.4 2011/08/11 12:14:01 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');

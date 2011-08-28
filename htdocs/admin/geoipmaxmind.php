@@ -19,7 +19,6 @@
  *	\file       htdocs/admin/geoipmaxmind.php
  *	\ingroup    geoipmaxmind
  *	\brief      Setup page for geoipmaxmind module
- *	\version    $Id: geoipmaxmind.php,v 1.3 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -127,5 +126,5 @@ if ($geoip)
 	$geoip->close();
 }
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.3 $');
+llxFooter();
 ?>

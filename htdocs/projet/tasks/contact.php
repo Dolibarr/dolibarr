@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/tasks/contact.php
  *	\ingroup    project
  *	\brief      Actors of a task
- *	\version    $Id: contact.php,v 1.24 2011/08/14 03:13:51 eldy Exp $
  */
 
 require ("../../main.inc.php");
@@ -379,5 +378,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 03:13:51 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

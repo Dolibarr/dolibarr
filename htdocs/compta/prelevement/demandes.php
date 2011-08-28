@@ -21,7 +21,6 @@
 /**
  *  \file       htdocs/compta/prelevement/demandes.php
  *  \brief      Page to list withdraw requests
- *  \version    $Id: demandes.php,v 1.40 2011/07/31 22:23:29 eldy Exp $
  */
 require("../bank/pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
@@ -155,5 +154,5 @@ else
 }
 
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.40 $');
+llxFooter();
 ?>

@@ -10,7 +10,6 @@
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: class.soap_server.php,v 1.7 2010/12/12 17:19:03 tiaris Exp $
 * @access   public
 */
 class nusoap_server extends nusoap_base {

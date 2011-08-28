@@ -21,7 +21,6 @@
 /**
  *	\file       	htdocs/lib/databases/mssql.lib.php
  *	\brief			Fichier de la classe permettant de gerer une base mssql
- *	\version		$Id: mssql.lib.php,v 1.87 2011/08/04 13:58:14 eldy Exp $
  */
 
 // Pour compatibilite lors de l'upgrade

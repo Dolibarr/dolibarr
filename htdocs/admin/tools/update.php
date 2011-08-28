@@ -19,7 +19,6 @@
 /**
  *		\file 		htdocs/admin/tools/update.php
  *		\brief      Page to make a Dolibarr online upgrade
- *		\version    $Id: update.php,v 1.17 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -143,5 +142,5 @@ print $langs->trans("SetupIsReadyForUse").'<br>';
 
 print '</form>';
 
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.17 $');
+llxFooter();
 ?>

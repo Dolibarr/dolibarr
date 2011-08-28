@@ -22,7 +22,6 @@
  *		\file       htdocs/categories/fiche.php
  *		\ingroup    category
  *		\brief      Page to create a new category
- *		\version	$Id: fiche.php,v 1.86 2011/08/24 11:16:43 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -234,5 +233,5 @@ if ($user->rights->categorie->creer)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/24 11:16:43 $ - $Revision: 1.86 $');
+llxFooter();
 ?>

@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/ganttview.php
  *	\ingroup    projet
  *	\brief      Gantt diagramm of a project
- *	\version    $Id: ganttview.php,v 1.14 2011/07/31 23:23:38 eldy Exp $
  */
 
 require ("../main.inc.php");
@@ -253,5 +252,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:38 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

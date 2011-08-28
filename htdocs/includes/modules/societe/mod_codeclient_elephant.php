@@ -22,7 +22,6 @@
  *       \file       htdocs/includes/modules/societe/mod_codeclient_elephant.php
  *       \ingroup    societe
  *       \brief      File of class to manage third party code with elephant rule
- *       \version    $Id: mod_codeclient_elephant.php,v 1.15 2011/07/31 23:28:14 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
@@ -34,25 +33,23 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
  */
 class mod_codeclient_elephant extends ModeleThirdPartyCode
 {
-	var $nom;							// Nom du modele
+	var $nom='Elephant';				// Nom du modele
 	var $code_modifiable;				// Code modifiable
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
 	var $code_null;						// Code facultatif
-	var $version;		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; // Numerotation automatique
+	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
+	var $code_auto;                     // Numerotation automatique
 
 	var $searchcode; // String de recherche
 	var $numbitcounter; // Nombre de chiffres du compteur
 	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
-	/**		\brief      Constructeur classe
+	/**		Constructor
 	 */
 	function mod_codeclient_elephant()
 	{
-		$this->nom = "Elephant";
-		$this->version = "dolibarr";
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -62,12 +59,14 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
-	/**		\brief      Renvoi la description du module
-	 *      	\return     string      Texte descripif
+	/**		Return description of module
+	 *
+	 * 		@param 		$langs		Object langs
+	 * 		@return     string      Description of module
 	 */
 	function info($langs)
 	{
-		global $conf,$langs;
+		global $conf;
 
 		$langs->load("companies");
 
@@ -107,9 +106,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
-	/**	   \brief      Return an example of number value
-	 *     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
-	 *     \return     string      Texte descripif
+	/**		Return an example of result returned by getNextValue
+	 *
+	 *      @param		$langs		Object langs
+	 *      @param		$objsoc		Object thirdparty
+	 *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
@@ -135,10 +136,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		return $examplecust.'<br>'.$examplesup;
 	}
 
-	/**		\brief      Return next value
-	 *     	\param      objsoc      Object third party
-	 *	    \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
-	 *     	\return     string      Value if OK, '' if module not configured, <0 if KO
+	/**		Return next value
+	 *
+	 *     	@param      objsoc      Object third party
+	 *	    @param      $type       Client ou fournisseur (1:client, 2:fournisseur)
+	 *     	@return     string      Value if OK, '' if module not configured, <0 if KO
 	 */
 	function getNextValue($objsoc=0,$type=-1)
 	{
@@ -169,7 +171,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		}
 		else return -1;
 
-		$now=gmmktime();
+		$now=dol_now();
 
 		$numFinal=get_next_value($db,$mask,'societe',$field,$where,'',$now);
 
@@ -178,8 +180,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 
 	/**
-	 *   \brief  Verifie si le mask utilise le prefix
+	 *   Check if mask/numbering use prefix
 	 *
+	 *   @param		int		0=no, 1=yes
 	 */
 	function verif_prefixIsUsed()
 	{
@@ -196,12 +199,13 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 
 	/**
-	 * 		\brief		Check validity of code according to its rules
-	 *		\param		$db			Database handler
-	 *		\param		$code		Code to check/correct
-	 *		\param		$soc		Object third party
-	 *   	\param    	$type   	0 = customer/prospect , 1 = supplier
-	 *    	\return     int		0 if OK
+	 * 		Check validity of code according to its rules
+	 *
+	 *		@param		$db		Database handler
+	 *		@param		$code	Code to check/correct
+	 *		@param		$soc	Object third party
+	 *   	@param    	$type   0 = customer/prospect , 1 = supplier
+	 *    	@return     int		0 if OK
 	 * 							-1 ErrorBadCustomerCodeSyntax
 	 * 							-2 ErrorCustomerCodeRequired
 	 * 							-3 ErrorCustomerCodeAlreadyUsed
@@ -245,11 +249,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 
 	/**
-	 *		\brief		Renvoi si un code est pris ou non (par autre tiers)
-	 *		\param		$db			Handler acces base
-	 *		\param		$code		Code a verifier
-	 *		\param		$soc		Objet societe
-	 *		\return		int			0 si dispo, <0 si erreur
+	 *		Renvoi si un code est pris ou non (par autre tiers)
+	 *
+	 *		@param		$db			Handler acces base
+	 *		@param		$code		Code a verifier
+	 *		@param		$soc		Objet societe
+	 *		@return		int			0 si dispo, <0 si erreur
 	 */
 	function verif_dispo($db, $code, $soc)
 	{

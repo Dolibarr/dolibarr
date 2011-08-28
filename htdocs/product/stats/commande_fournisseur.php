@@ -21,7 +21,6 @@
  *	\file       htdocs/product/stats/commande_fournisseur.php
  *	\ingroup    product service commande
  *	\brief      Page des stats des commandes fournisseurs pour un produit
- *	\version    $Id: commande_fournisseur.php,v 1.34 2011/08/08 16:07:47 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -184,5 +183,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.34 $');
+llxFooter();
 ?>

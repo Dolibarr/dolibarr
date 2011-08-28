@@ -22,7 +22,6 @@
 /**
  *	\file       htdocs/expedition/shipment.php
  *	\ingroup    expedition
- *	\version    $Id: shipment.php,v 1.31 2011/08/23 18:40:48 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -667,5 +666,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:48 $ - $Revision: 1.31 $');
+llxFooter();
 ?>

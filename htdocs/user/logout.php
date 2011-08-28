@@ -21,7 +21,6 @@
 /**
  *      \file       htdocs/user/logout.php
  *      \brief      Page called to disconnect a user
- * 		\version	$Id: logout.php,v 1.49 2011/07/31 23:19:42 eldy Exp $
  */
 
 //if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Uncomment creates pb to relogon after a disconnect

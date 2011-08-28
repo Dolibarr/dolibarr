@@ -21,7 +21,6 @@
  *	\file       htdocs/commande/index.php
  *	\ingroup    commande
  *	\brief      Home page of customer order module
- *	\version    $Id: index.php,v 1.84 2011/07/31 22:23:16 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -425,6 +424,6 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.84 $');
+llxFooter();
 
 ?>

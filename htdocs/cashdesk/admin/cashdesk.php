@@ -20,7 +20,6 @@
  *	\file       htdocs/cashdesk/admin/cashdesk.php
  *	\ingroup    cashdesk
  *	\brief      Setup page for cashdesk module
- *	\version    $Id: cashdesk.php,v 1.10 2011/08/26 23:56:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -157,5 +156,5 @@ dol_htmloutput_mesg($mesg);
 
 $db->close();
 
-llxFooter('$Date: 2011/08/26 23:56:14 $ - $Revision: 1.10 $');
+llxFooter();
 ?>

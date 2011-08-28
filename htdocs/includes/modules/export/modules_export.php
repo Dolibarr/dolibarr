@@ -20,17 +20,16 @@
  *	\file       htdocs/includes/modules/export/modules_export.php
  *	\ingroup    export
  *	\brief      File of parent class for export modules
- *	\version    $Id: modules_export.php,v 1.25 2011/08/03 01:38:52 eldy Exp $
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
  *	\class      ModeleExports
  *	\brief      Parent class for export modules
  */
-class ModeleExports
+class ModeleExports extends CommondocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
 {
 	var $error='';
 
@@ -40,13 +39,6 @@ class ModeleExports
 	var $liblabel=array();
 	var $libversion=array();
 
-
-	/**
-	 *      \brief      Constructeur
-	 */
-	function ModeleExports()
-	{
-	}
 
 	/**
 	 *      \brief      Charge en memoire et renvoie la liste des modeles actifs

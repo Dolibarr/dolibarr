@@ -18,11 +18,10 @@
  */
 
 /**
-       	\file       htdocs/includes/modules/mailings/fraise.modules.php
-		\ingroup    mailing
-		\brief      File of class to generate target according to rule Fraise
-		\version    $Id: fraise.modules.php,v 1.27 2011/07/31 23:28:15 eldy Exp $
-*/
+ * \file       htdocs/includes/modules/mailings/fraise.modules.php
+ * \ingroup    mailing
+ * \brief      File of class to generate target according to rule Fraise
+ */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';

@@ -22,7 +22,6 @@
  *	    \file       htdocs/societe/rib.php
  *      \ingroup    societe
  *		\brief      BAN tab for companies
- *		\version    $Id: rib.php,v 1.38 2011/08/13 00:48:00 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -272,5 +271,5 @@ dol_fiche_end();
 $db->close();
 
 
-llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.38 $');
+llxFooter();
 ?>

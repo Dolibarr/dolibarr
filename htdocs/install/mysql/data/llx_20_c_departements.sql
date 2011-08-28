@@ -20,7 +20,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_20_c_departements.sql,v 1.16 2011/08/03 01:25:45 eldy Exp $
 --
 
 --

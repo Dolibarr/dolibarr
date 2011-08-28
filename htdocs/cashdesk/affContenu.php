@@ -21,7 +21,6 @@
  *	\file       htdocs/cashdesk/affContenu.php
  *	\ingroup    cashdesk
  *	\brief      Include to show main page for cashdesk module
- *	\version    $Id: affContenu.php,v 1.13 2011/07/31 22:23:26 eldy Exp $
  */
 require ('class/Facturation.class.php');
 

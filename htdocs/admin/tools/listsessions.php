@@ -20,7 +20,6 @@
  *		\file       htdocs/admin/tools/listsessions.php
  *      \ingroup    core
  *      \brief      List of PHP sessions
- *      \version    $Id: listsessions.php,v 1.12 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -210,5 +209,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.12 $');
+llxFooter();
 ?>

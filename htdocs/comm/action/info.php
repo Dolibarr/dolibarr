@@ -20,7 +20,6 @@
  *      \file       htdocs/comm/action/info.php
  *      \ingroup    agenda
  *		\brief      Page des informations d'une action
- *		\version    $Id: info.php,v 1.20 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -64,5 +63,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.20 $');
+llxFooter();
 ?>

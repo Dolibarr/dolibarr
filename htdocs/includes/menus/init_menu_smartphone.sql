@@ -1,7 +1,4 @@
 --
--- $Id: init_menu_smartphone.sql,v 1.11 2011/08/21 13:19:26 eldy Exp $
--- $Revision: 1.11 $
---
 -- Menu base entries
 -- This file is loaded when a menu handler base is activated (auguria, etc..)
 --

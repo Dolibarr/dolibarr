@@ -19,9 +19,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   banque     Module bank
- *		\brief      Module pour gerer la tenue d'un compte bancaire et rapprochements
- *		\version	$Id: modBanque.class.php,v 1.65 2011/07/31 23:28:12 eldy Exp $
+/**
+ * \defgroup   banque     Module bank
+ * \brief      Module pour gerer la tenue d'un compte bancaire et rapprochements
  */
 
 /**

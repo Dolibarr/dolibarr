@@ -144,3 +144,22 @@ SocialContributionsPayments=Социальные отчисления плате
 OptionVatInfoModuleComptabilite=Примечание: Для материальных ценностей, она должна использовать даты доставки будет более справедливым.
 ThirdPartyMustBeEditAsCustomer=Третий участник должен быть определен в качестве клиента
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:53).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+RemainingAmountPayment=Сумма оплаты Осталось:
+AmountToBeCharged=Общая сумма для оплаты:
+ProposalStats=Статистика по предложениям
+OrderStats=Статистика по заказам
+InvoiceStats=Статистика по векселям
+SellsJournal=Продажи журнала
+PurchasesJournal=Покупки Журнал
+DescSellsJournal=Продажи журнала
+DescPurchasesJournal=Покупки Журнал
+InvoiceRef=Счет реф.
+CodeNotDef=Не определено
+AddRemind=Отправка доступная сумма
+RemainToDivide=Оставайтесь на рассылки:
+WarningDepositsNotIncluded=Депозиты счетов не включены в эту версию с этим бухгалтерский учет модуля.
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:57).

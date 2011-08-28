@@ -16,7 +16,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_propaldet.sql,v 1.10 2011/08/08 01:53:25 eldy Exp $
 -- ===================================================================
 
 create table llx_propaldet

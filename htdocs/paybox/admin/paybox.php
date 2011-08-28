@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**	    \file       htdocs/paybox/admin/paybox.php
- *		\ingroup    paybox
- *		\brief      Page to setup paybox module
- *		\version    $Id: paybox.php,v 1.14 2011/07/31 23:20:29 eldy Exp $
+/**
+ * \file       htdocs/paybox/admin/paybox.php
+ * \ingroup    paybox
+ * \brief      Page to setup paybox module
  */
 
 require("../../main.inc.php");
@@ -211,5 +211,5 @@ print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:20:29 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

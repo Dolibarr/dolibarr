@@ -20,7 +20,6 @@
  *       \file       htdocs/product/class/service.class.php
  *       \ingroup    service
  *       \brief      Fichier de la classe des services predefinis
- *       \version    $Id: service.class.php,v 1.4 2011/07/31 23:24:02 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 

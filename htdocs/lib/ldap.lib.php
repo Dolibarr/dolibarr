@@ -17,13 +17,10 @@
  */
 
 /**
-	    \file       htdocs/lib/ldap.lib.php
-		\brief      Ensemble de fonctions de base pour le module LDAP
-        \ingroup    ldap
-        \version    $Id: ldap.lib.php,v 1.49 2011/07/31 23:25:35 eldy Exp $
-
-		Ensemble de fonctions de base de dolibarr sous forme d'include
-*/
+ * \file       htdocs/lib/ldap.lib.php
+ * \brief      Ensemble de fonctions de base pour le module LDAP
+ * \ingroup    ldap
+ */
 
 function ldap_prepare_head()
 {

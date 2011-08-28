@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/paiement/class/paiement.class.php
  *	\ingroup    facture
  *	\brief      File of class to manage payments of customers invoices
- *	\version    $Id: paiement.class.php,v 1.24 2011/08/08 01:01:45 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 

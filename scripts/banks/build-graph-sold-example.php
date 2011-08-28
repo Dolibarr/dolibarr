@@ -23,7 +23,6 @@
  *		\ingroup    	banque
  *		\brief      	Script to build graph of sold for each bank account
  *		\deprecated		Ce script n'est plus utilise car les graphiques sont generes dynamiquement maintenant.
- *		\version		$Id: build-graph-sold-example.php,v 1.11 2011/07/31 22:22:12 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();

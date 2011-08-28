@@ -15,11 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_facturedet.key.sql,v 1.5 2011/08/03 01:25:25 eldy Exp $
 -- ===================================================================
 
 
--- Supprimme orhpelins pour permettre montee de la cle
+-- Delete orphans
 -- V4 DELETE llx_facturedet FROM llx_facturedet LEFT JOIN llx_facture ON llx_facturedet.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_facture (fk_facture);

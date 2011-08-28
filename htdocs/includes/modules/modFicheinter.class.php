@@ -23,7 +23,6 @@
 /**
  *	\defgroup   ficheinter     Module intervention cards
  *	\brief      Module to manage intervention cards
- *	\version	$Id: modFicheinter.class.php,v 1.48 2011/05/05 07:25:32 eldy Exp $
  */
 
 /**

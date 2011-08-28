@@ -1,8 +1,6 @@
 #!/usr/bin/perl
 #--------------------------------------------------------------------
 # Lance la generation de la doc dev doxygen
-#
-# \version	$Id$
 #--------------------------------------------------------------------
 
 # Detecte repertoire du script

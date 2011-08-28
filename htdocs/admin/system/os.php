@@ -19,7 +19,6 @@
 /**
  *      \file       htdocs/admin/system/os.php
  *		\brief      Page des infos systeme de l'OS
- *		\version    $Id: os.php,v 1.14 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -51,5 +50,5 @@ print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$osve
 print '</table>';
 
 
-llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

@@ -21,7 +21,6 @@
  *		\file       htdocs/fourn/facture/impayees.php
  *		\ingroup    facture
  *		\brief      Page to list all unpaid invoices
- *		\version    $Id: impayees.php,v 1.25 2011/07/31 23:57:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -264,5 +263,5 @@ if ($user->rights->fournisseur->facture->lire)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:01 $ - $Revision: 1.25 $');
+llxFooter();
 ?>

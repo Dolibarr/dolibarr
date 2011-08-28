@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/boxes/box_factures_imp.php
  *	\ingroup    factures
  *	\brief      Module de generation de l'affichage de la box factures impayees
- *	\version	$Id: box_factures_imp.php,v 1.54 2011/07/31 23:29:10 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

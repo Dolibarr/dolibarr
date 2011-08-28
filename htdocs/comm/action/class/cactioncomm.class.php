@@ -20,8 +20,7 @@
  *       \file       htdocs/comm/action/class/cactioncomm.class.php
  *       \ingroup    commercial
  *       \brief      File of class to manage type of agenda events
- *       \version    $Id: cactioncomm.class.php,v 1.6 2011/08/03 00:46:21 eldy Exp $
-*/
+ */
 
 
 /**

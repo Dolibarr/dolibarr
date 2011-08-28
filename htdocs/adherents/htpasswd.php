@@ -22,7 +22,6 @@
  *      \ingroup    member
  *      \brief      Page d'export htpasswd du fichier des adherents
  *      \author     Rodolphe Quiedeville
- *      \version    $Id: htpasswd.php,v 1.15 2011/07/31 22:23:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -81,5 +80,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.15 $');
+llxFooter();
 ?>

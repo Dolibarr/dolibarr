@@ -27,7 +27,6 @@
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
  *	\brief      File of class to manage invoices
- *	\version    $Id: facture.class.php,v 1.129 2011/08/14 00:00:06 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

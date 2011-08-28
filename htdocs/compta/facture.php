@@ -25,7 +25,6 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.857 2011/08/23 18:40:47 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -1689,7 +1688,7 @@ if ($action == 'create')
         select_projects($soc->id, $projectid, 'projectid');
         print '</td></tr>';
     }
-    
+
     // Insert hooks
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1698,8 +1697,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td>';
     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
-    $model=new ModelePDFFactures();
-    $liste=$model->liste_modeles($db);
+    $liste=ModelePDFFactures::liste_modeles($db);
     print $html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
     print "</td></tr>";
 
@@ -2543,7 +2541,7 @@ else
                 print '</td>';
                 print '</tr>';
             }
-            
+
             // Insert hooks
             $parameters=array('colspan'=>' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -3192,5 +3190,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:47 $ - $Revision: 1.857 $');
+llxFooter();
 ?>

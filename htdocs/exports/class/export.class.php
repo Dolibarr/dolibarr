@@ -20,7 +20,6 @@
  *	\file       htdocs/exports/class/export.class.php
  *	\ingroup    export
  *	\brief      File of class to manage exports
- *	\version    $Id: export.class.php,v 1.14 2011/08/12 07:11:08 hregis Exp $
  */
 
 

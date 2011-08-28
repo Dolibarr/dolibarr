@@ -21,7 +21,6 @@
  *       \file       htdocs/adherents/card_subscriptions.php
  *       \ingroup    member
  *       \brief      Onglet d'ajout, edition, suppression des adhesions d'un adherent
- *       \version    $Id: card_subscriptions.php,v 1.79 2011/07/31 22:23:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -213,7 +212,15 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     if (! $datecotisation)
     {
         $error++;
-        $errmsg=$langs->trans("BadDateFormat");
+        $langs->load("errors");
+        $errmsg=$langs->trans("ErrorBadDateFormat",$langs->transnoentitiesnoconv("DateSubscription"));
+        $action='addsubscription';
+    }
+    if (GETPOST('end') && ! $datesubend)
+    {
+        $error++;
+        $langs->load("errors");
+        $errmsg=$langs->trans("ErrorBadDateFormat",$langs->transnoentitiesnoconv("DateEndSubscription"));
         $action='addsubscription';
     }
     if (! $datesubend)
@@ -995,5 +1002,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.79 $');
+llxFooter();
 ?>

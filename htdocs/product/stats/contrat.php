@@ -21,7 +21,6 @@
  *       \file       htdocs/product/stats/contrat.php
  *       \ingroup    product service contrat
  *       \brief      Page des stats des contrats pour un produit
- *       \version    $Id: contrat.php,v 1.47 2011/08/08 16:07:48 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -202,5 +201,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:07:48 $ - $Revision: 1.47 $');
+llxFooter();
 ?>

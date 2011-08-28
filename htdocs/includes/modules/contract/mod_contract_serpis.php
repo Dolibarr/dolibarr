@@ -20,7 +20,6 @@
  *  \file       htdocs/includes/modules/contract/mod_contract_serpis.php
  *  \ingroup    contract
  *  \brief      File of class to manage contract numbering rules Serpis
- *  \version    $Id: mod_contract_serpis.php,v 1.2 2011/07/31 23:28:17 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/contract/modules_contract.php");
 

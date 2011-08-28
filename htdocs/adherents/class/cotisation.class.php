@@ -20,7 +20,6 @@
  *		\file 		htdocs/adherents/class/cotisation.class.php
  *      \ingroup    member
  *		\brief      File of class to manage subscriptions of foundation members
- *		\version    $Id: cotisation.class.php,v 1.9 2011/08/03 00:45:44 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

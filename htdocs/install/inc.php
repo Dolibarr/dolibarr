@@ -21,7 +21,6 @@
 /**	    \file       htdocs/install/inc.php
  * 		\ingroup	core
  *		\brief      File that define environment for install pages
- *		\version    $Id: inc.php,v 1.140 2011/08/11 20:54:08 eldy Exp $
  */
 
 define('DOL_VERSION','3.2.0-alpha');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)

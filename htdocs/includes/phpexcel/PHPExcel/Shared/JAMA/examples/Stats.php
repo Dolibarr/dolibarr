@@ -16,7 +16,6 @@
 // | Authors: Jesus M. Castagnetto <jmcastagnetto@php.net>                |
 // +----------------------------------------------------------------------+
 //
-// $Id: Stats.php,v 1.1 2011/03/23 18:15:15 hregis Exp $
 //
 
 include_once 'PEAR.php';

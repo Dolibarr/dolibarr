@@ -21,7 +21,6 @@
  *  \file       htdocs/includes/modules/commande/mod_commande_marbre.php
  *  \ingroup    commande
  *  \brief      File of class to manage customer order numbering rules Marbre
- *  \version    $Id: mod_commande_marbre.php,v 1.23 2011/07/31 23:28:13 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 

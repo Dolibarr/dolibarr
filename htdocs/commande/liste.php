@@ -22,7 +22,6 @@
  *	\file       htdocs/commande/liste.php
  *	\ingroup    commande
  *	\brief      Page to list orders
- *	\version    $Id: liste.php,v 1.78 2011/07/31 22:23:15 eldy Exp $
  */
 
 
@@ -277,5 +276,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.78 $');
+llxFooter();
 ?>

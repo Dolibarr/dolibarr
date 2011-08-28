@@ -18,10 +18,9 @@
  */
 
 /**
-	    \file       htdocs/lib/contract.lib.php
-		\brief      Ensemble de fonctions de base pour le module contrat
-		\version    $Id: contract.lib.php,v 1.9 2011/07/31 23:25:21 eldy Exp $
-*/
+ * \file       htdocs/lib/contract.lib.php
+ * \brief      Ensemble de fonctions de base pour le module contrat
+ */
 
 function contract_prepare_head($object)
 {

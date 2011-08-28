@@ -14,11 +14,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_paiement_facture.key.sql,v 1.2 2011/08/03 01:25:37 eldy Exp $
 -- ===========================================================================
 
 
--- Supprimme orhpelins pour permettre mont�e de la cl�
+-- Delete orphans
 -- V4 DELETE llx_paiement_facture FROM llx_paiement_facture LEFT JOIN llx_facture ON llx_paiement_facture.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 -- V4 DELETE llx_paiement_facture FROM llx_paiement_facture LEFT JOIN llx_paiement ON llx_paiement_facture.fk_facture = llx_paiement.rowid WHERE llx_paiement.rowid IS NULL;
 

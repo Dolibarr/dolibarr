@@ -18,8 +18,7 @@
 /**
  *      \defgroup   webservices     Module webservices
  *      \brief      Module to enable the Dolibarr server of web services
- *		\brief		$Id: modWebServices.class.php,v 1.7 2011/07/31 23:28:10 eldy Exp $
-*/
+ */
 
 /**
  *       \file       htdocs/includes/modules/modWebServices.class.php

@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/core/ajaxsecurity.php
  *       \brief      File for return security data
- *       \version    $Id: ajaxsecurity.php,v 1.2 2011/07/31 23:45:15 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal

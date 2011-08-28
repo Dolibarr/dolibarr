@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/modules/import/modules_import.php
  *	\ingroup    export
  *	\brief      File of parent class for import file readers
- *	\version    $Id: modules_import.php,v 1.9 2011/07/31 23:28:17 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 

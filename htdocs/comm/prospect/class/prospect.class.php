@@ -21,7 +21,6 @@
  *   	\file       htdocs/comm/prospect/class/prospect.class.php
  *		\ingroup    societe
  *		\brief      Fichier de la classe des prospects
- *		\version    $Id: prospect.class.php,v 1.4 2011/08/03 00:46:21 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 

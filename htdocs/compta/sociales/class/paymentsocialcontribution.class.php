@@ -20,7 +20,6 @@
  *      \file       htdocs/compta/sociales/class/paymentsocialcontribution.class.php
  *		\ingroup    facture
  *		\brief      File of class to manage payment of social contributions
- *		\version    $Id: paymentsocialcontribution.class.php,v 1.6 2011/08/03 00:46:38 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

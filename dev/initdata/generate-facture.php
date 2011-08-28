@@ -21,7 +21,6 @@
 /**
  *	    \file       htdocs/dev/generate-facture.php
  *		\brief      Script de generation de donnees aleatoires pour les factures
- *		\version    $Id: generate-facture.php,v 1.15 2011/07/31 22:21:57 eldy Exp $
  */
 
 // Test si mode batch

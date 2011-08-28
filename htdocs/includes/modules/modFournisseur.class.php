@@ -20,7 +20,6 @@
 /**
  * 		\defgroup   fournisseur     Module suppliers
  *		\brief      Module pour gerer des societes et contacts de type fournisseurs
- *		\version	$Id: modFournisseur.class.php,v 1.95 2011/07/31 23:28:11 eldy Exp $
  */
 
 /**

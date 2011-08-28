@@ -17,16 +17,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   externalsite     Module externalsite
-        \brief      Module to include an external web site/tools into Dolibarr menu and into a frame page.
-		\version	$Id: modExternalSite.class.php,v 1.3 2011/07/31 23:28:10 eldy Exp $
-*/
+/**
+ * \defgroup   externalsite     Module externalsite
+ * \brief      Module to include an external web site/tools into Dolibarr menu and into a frame page.
+ */
 
 /**
-        \file       htdocs/includes/modules/modExternalSite.class.php
-        \ingroup    externalsite
-        \brief      Description and activation file for module ExternalSite
-*/
+ * \file       htdocs/includes/modules/modExternalSite.class.php
+ * \ingroup    externalsite
+ * \brief      Description and activation file for module ExternalSite
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

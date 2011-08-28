@@ -20,7 +20,6 @@
  *	    \file       htdocs/public/donations/therm.php
  *      \ingroup    donation
  *		\brief      Screen with thermometer
- *		\version    $Id: therm.php,v 1.8 2011/07/31 23:23:21 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.

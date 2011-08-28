@@ -5,7 +5,6 @@
 //
 // \file       htdocs/lib/lib_photoresize.js
 // \brief      File that include javascript functions for croping feature
-// \version    $Id: lib_photosresize.js,v 1.2 2010/09/06 10:18:31 eldy Exp $
 //
 
 jQuery(function() {

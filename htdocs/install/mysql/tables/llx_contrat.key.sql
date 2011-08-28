@@ -16,11 +16,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_contrat.key.sql,v 1.2 2011/08/03 01:25:42 eldy Exp $
 -- ============================================================================
 
 
--- Supprimme orhpelins pour permettre mont�e de la cl�
+-- Delete orphans
 -- V4 DELETE llx_contratdet FROM llx_contratdet, llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.rowid WHERE llx_contratdet.fk_contrat = llx_contrat.rowid AND llx_societe.rowid IS NULL; 
 -- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
 -- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_user ON llx_contrat.fk_user_author = llx_user.rowid WHERE llx_user.rowid IS NULL;

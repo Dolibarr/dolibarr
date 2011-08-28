@@ -20,7 +20,6 @@
  *      \file       htdocs/includes/triggers/interface_modNotification_Notification.class.php
  *      \ingroup    notification
  *      \brief      File of class of triggers for notification module
- *		\version	$Id: interface_modNotification_Notification.class.php,v 1.26 2011/07/31 23:29:45 eldy Exp $
  */
 
 

@@ -16,7 +16,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_export_model.sql,v 1.4 2011/08/08 23:24:31 eldy Exp $
 --
 -- Liste des modeles de document disponibles
 -- ===================================================================

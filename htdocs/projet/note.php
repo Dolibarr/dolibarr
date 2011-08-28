@@ -19,7 +19,6 @@
  *	\file       htdocs/projet/note.php
  *	\ingroup    project
  *	\brief      Fiche d'information sur un projet
- *	\version    $Id: note.php,v 1.13 2011/07/31 23:23:38 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -208,5 +207,5 @@ if ($id > 0 || ! empty($ref))
 }
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:38 $ - $Revision: 1.15 ');
+llxFooter();
 ?>

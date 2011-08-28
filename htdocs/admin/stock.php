@@ -21,7 +21,6 @@
  *	\file       htdocs/admin/stock.php
  *	\ingroup    stock
  *	\brief      Page d'administration/configuration du module gestion de stock
- *	\version    $Id: stock.php,v 1.24 2011/07/31 22:23:22 eldy Exp $
  */
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -238,5 +237,5 @@ if ($conf->fournisseur->enabled)
 print '</table>';
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

@@ -25,7 +25,6 @@
  *	\file       htdocs/admin/expedition.php
  *	\ingroup    expedition
  *	\brief      Page d'administration/configuration du module Expedition
- *	\version    $Id: expedition.php,v 1.70 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");

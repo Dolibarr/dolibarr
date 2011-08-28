@@ -21,7 +21,6 @@
  *      \file       htdocs/compta/prelevement/class/bon-prelevement.class.php
  *      \ingroup    prelevement
  *      \brief      Fichier de la classe des bons de prelevements
- *      \version    $Id: bon-prelevement.class.php,v 1.31 2011/07/31 22:23:31 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

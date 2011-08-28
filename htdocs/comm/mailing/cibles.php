@@ -21,7 +21,6 @@
  *       \file       htdocs/comm/mailing/cibles.php
  *       \ingroup    mailing
  *       \brief      Page to define emailing targets
- *       \version    $Id: cibles.php,v 1.76 2011/08/03 00:46:33 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -514,5 +513,5 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:33 $ - $Revision: 1.76 $');
+llxFooter();
 ?>

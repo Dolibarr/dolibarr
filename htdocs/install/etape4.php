@@ -22,7 +22,6 @@
  *	\file       htdocs/install/etape4.php
  *	\ingroup	install
  *	\brief      Ask login and password of Dolibarr admin user
- *	\version    $Id: etape4.php,v 1.38 2011/07/31 23:26:26 eldy Exp $
  */
 
 

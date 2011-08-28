@@ -20,7 +20,6 @@
  *	\file			htdocs/lib/functions_ch.lib.php
  *	\brief			A set of swiss functions for Dolibarr
  *					This file contains rare functions.
- *	\version		$Id: functions_ch.lib.php,v 1.4 2011/07/31 23:25:34 eldy Exp $
  */
 
 

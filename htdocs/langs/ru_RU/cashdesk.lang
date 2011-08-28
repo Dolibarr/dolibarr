@@ -1,0 +1,48 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-08-27 16:56:14
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+CHARSET=UTF-8
+CashDeskMenu=Точка продажи
+CashDesk=Точка продажи
+CashDesks=Точка продаж
+CashDeskBank=Банковский счет
+CashDeskBankCash=Банковский счет (наличными)
+CashDeskBankCB=Банковского счета (карты)
+CashDeskBankCheque=Банковский счет (чек)
+CashDeskWarehouse=Склад
+CashdeskShowServices=Продажа услуг
+CashDeskProducts=Продукты
+CashDeskStock=Акции
+CashDeskOn=на
+CashDeskThirdParty=Третье лицо
+ShoppingCart=Корзина
+NewSell=Новые продать
+BackOffice=Бэк-офис
+AddThisArticle=Добавить эту статью
+RestartSelling=Вернитесь на продажу
+SellFinished=Продажа готового
+PrintTicket=Печать билетов
+NoResults=Нет результатов
+NoProductFound=Ни одна статья найдены
+ProductFound=продукт найден
+ProductsFound=продуктов, полученных
+NoArticle=Ни одна статья
+Identification=Идентификация
+Article=Статья
+Difference=Разница
+TotalTicket=Всего билет
+NoVAT=Нет НДС за эту продажу
+Change=Превышение получил
+CalTip=Нажмите, чтобы посмотреть календарь
+CashDeskSetupStock=Вы спрашиваете, для уменьшения акций на счет создания, но склад для этого не была определена <br> Изменить настройку фондовый модуль, или выбрать склад
+BankToPay=Пополнять счета
+ShowCompany=Показать компании
+ShowStock=Показать склад
+DeleteArticle=Нажмите, чтобы удалить эту статью
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:25).

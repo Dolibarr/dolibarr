@@ -22,7 +22,6 @@
  *	\file       htdocs/product/photos.php
  *	\ingroup    product
  *	\brief      Onglet photos de la fiche produit
- *	\version    $Id: photos.php,v 1.91 2011/07/31 23:19:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -204,5 +203,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:25 $ - $Revision: 1.91 $');
+llxFooter();
 ?>

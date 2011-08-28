@@ -20,10 +20,9 @@
  */
 
 /**
-	    \file       htdocs/dev/generate-commande.php
-		\brief      Script de generation de donnees aleatoires pour les commandes
-		\version    $Id: generate-commande.php,v 1.18 2011/07/31 22:21:57 eldy Exp $
-*/
+ * 	    \file       htdocs/dev/generate-commande.php
+ * 		\brief      Script de generation de donnees aleatoires pour les commandes
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();

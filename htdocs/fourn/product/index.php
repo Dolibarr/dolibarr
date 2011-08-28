@@ -17,11 +17,10 @@
  */
 
 /**
-  \file       htdocs/product/index.php
-  \ingroup    product
-  \brief      Page accueil des produits et services
-  \version    $Id: index.php,v 1.15 2011/07/31 23:57:03 eldy Exp $
-*/
+ *   \file       htdocs/product/index.php
+ *   \ingroup    product
+ *   \brief      Page accueil des produits et services
+ */
 
 require("../../main.inc.php");
 
@@ -147,5 +146,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/07/31 23:57:03 $ r&eacute;vision $Revision: 1.15 $</em>");
+llxFooter();
 ?>

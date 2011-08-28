@@ -21,7 +21,6 @@
  *       \file       htdocs/product/barcode.php
  *       \ingroup    product
  *       \brief      Page with bar code informations of product
- *       \version    $Id: barcode.php,v 1.52 2011/07/31 23:19:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -164,5 +163,5 @@ print "</div>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:26 $ - $Revision: 1.52 $');
+llxFooter();
 ?>

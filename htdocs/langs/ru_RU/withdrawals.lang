@@ -85,3 +85,28 @@ NotifyEmision=Снятие выбросов
 NotifyCredit=Снятие кредитную
 NumeroNationalEmetter=Национальный передатчик Количество
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:19).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+NbOfInvoiceToWithdrawWithInfo=Кол-во фактуру с отозвать запрос для клиентов, определив информацию о банковском счете
+StatusTrans=Передающиеся
+PleaseSelectCustomerBankBANToWithdraw=Выберите информацию о счете клиента банк, чтобы снять
+WithBankUsingRIB=Для банковских счетов с использованием RIB
+WithBankUsingBANBIC=Для банковских счетов с использованием IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Банковский счет для получения отзывает
+CreditDate=Кредит на
+WithdrawalFileNotCapable=Невозможно создать файл вывода квитанцию ​​для вашей страны
+ShowWithdraw=Показать Вывод
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Однако, если счет-фактура имеет по крайней мере один вывод оплаты еще не обработан, то он не будет установлен, как оплачиваются, чтобы управлять снятие ранее.
+DoStandingOrdersBeforePayments=Это вкладок позволяет запросить за постоянного платежного поручения. Как только она будет закончена, вы можете ввести оплату, чтобы закрыть счета.
+InfoCreditSubject=Оплата постоянных %s порядке банк
+InfoCreditMessage=Постоянное поручение %s была выплачена банком <br> Данные оплаты: %s
+InfoTransSubject=Передача стоять %s чтобы банк
+InfoTransMessage=Постоянное поручение %s был Передано в банк %s %s. <br><br>
+InfoTransData=Сумма: %s <br> Metode: %s <br> Дата: %s
+InfoFoot=Это автоматизированное сообщение, отправленное Dolibarr
+InfoRejectSubject=Постоянное платежное поручение отказался
+InfoRejectMessage=Добрый день, <br><br> standig порядок счета %s, связанные с компанией %s, с количеством %s было отказано в банке. <br><br> - <br> % $
+ModeWarning=Вариант для реального режима не был установлен, мы останавливаемся после этого моделирования
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:53).

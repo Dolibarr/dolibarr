@@ -20,7 +20,6 @@
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id: index.php,v 1.104 2011/08/15 17:43:41 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -891,5 +890,5 @@ else
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/08/15 17:43:41 $ - $Revision: 1.104 $');
+llxFooter();
 ?>

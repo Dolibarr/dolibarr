@@ -22,7 +22,6 @@
  *		\file       htdocs/fourn/class/paiementfourn.class.php
  *		\ingroup    fournisseur, facture
  *		\brief      File of class to manage payments of suppliers invoices
- *		\version    $Id: paiementfourn.class.php,v 1.7 2011/07/31 23:57:02 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');

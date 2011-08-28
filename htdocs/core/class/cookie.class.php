@@ -18,7 +18,6 @@
 /**
  *	\file       htdocs/core/class/cookie.class.php
  *	\ingroup    core
- *	\version	$Id: cookie.class.php,v 1.7 2011/07/31 23:45:13 eldy Exp $
  *	\brief      File of class to manage cookies
  */
 

@@ -22,7 +22,6 @@
 /**
  *       \file       htdocs/user/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.60 2011/08/23 22:25:38 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -406,5 +405,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 22:25:38 $ - $Revision: 1.60 $');
+llxFooter();
 ?>

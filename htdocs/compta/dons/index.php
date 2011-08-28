@@ -20,7 +20,6 @@
  *	    \file       htdocs/compta/dons/index.php
  *		\ingroup    don
  *		\brief      Home page of donation module
- *		\version    $Id: index.php,v 1.29 2011/08/03 00:46:37 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -201,5 +200,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:37 $ - $Revision: 1.29 $');
+llxFooter();
 ?>

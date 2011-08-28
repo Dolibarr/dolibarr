@@ -21,7 +21,6 @@
  *	    \file       htdocs/contrat/index.php
  *      \ingroup    contrat
  *		\brief      Home page of contract area
- *		\version    $Revision: 1.85 $
  */
 
 require ("../main.inc.php");
@@ -605,5 +604,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 14:25:44 $ - $Revision: 1.85 $');
+llxFooter();
 ?>

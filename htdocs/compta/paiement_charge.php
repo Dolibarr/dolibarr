@@ -19,7 +19,6 @@
  *	    \file       htdocs/compta/paiement_charge.php
  *		\ingroup    tax
  *		\brief      Page to add payment of a tax
- *		\version    $Id: paiement_charge.php,v 1.53 2011/08/03 00:46:22 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -333,5 +332,5 @@ if ($_GET["action"] == 'create')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:22 $ - $Revision: 1.53 $');
+llxFooter();
 ?>

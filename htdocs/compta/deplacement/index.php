@@ -21,7 +21,6 @@
 /**
  *  \file       htdocs/compta/deplacement/index.php
  *  \brief      Page list of expenses
- *  \version	$Id: index.php,v 1.45 2011/08/03 00:46:35 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -193,5 +192,5 @@ else dol_print_error($db);
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:35 $ - $Revision: 1.45 $');
+llxFooter();
 ?>

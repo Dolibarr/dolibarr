@@ -134,3 +134,14 @@ Inherited=Унаследованный
 YourRole=Ваша роль
 YourQuotaOfUsersIsReached=Квота активных пользователей будет достигнута!
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:37).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+AdministratorDesc=Администратора лица
+UserWillBeInternalUser=Созданный пользователь будет внутреннего пользователя (потому что не связаны с определенным третьим лицам)
+UserWillBeExternalUser=Созданный пользователь будет внешний пользователь (из-за связанных с определенной третьей стороны)
+UserLogoff=Пользователь %s выхода
+NbOfUsers=Кол-во пользователей
+DontDowngradeSuperAdmin=Только суперамин может понизить суперамин
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:38).

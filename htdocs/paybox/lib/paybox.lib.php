@@ -20,7 +20,6 @@
  *	\file			htdocs/paybox/lib/paybox.lib.php
  *	\ingroup		paybox
  *  \brief			Library for common paybox functions
- *  \version		$Id: paybox.lib.php,v 1.10 2011/08/03 01:34:59 eldy Exp $
  */
 function llxHeaderPaybox($title, $head = "")
 {

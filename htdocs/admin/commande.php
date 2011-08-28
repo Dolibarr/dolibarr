@@ -25,7 +25,6 @@
  *	\file       htdocs/admin/commande.php
  *	\ingroup    commande
  *	\brief      Setup page of module Order
- *	\version    $Id: commande.php,v 1.75 2011/07/31 22:23:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -521,5 +520,5 @@ print '</table>';
 
 print '<br>';
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.75 $');
+llxFooter();
 ?>

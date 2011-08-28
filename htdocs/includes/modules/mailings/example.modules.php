@@ -9,11 +9,10 @@
  */
 
 /**
-       	\file       htdocs/includes/modules/mailings/example.modules.php
-		\ingroup    mailing
-		\brief      Example file to provide a list of recipients for mailing module
-		\version    $Revision: 1.4 $
-*/
+ *    	\file       htdocs/includes/modules/mailings/example.modules.php
+ *		\ingroup    mailing
+ *		\brief      Example file to provide a list of recipients for mailing module
+ */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 

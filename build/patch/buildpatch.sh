@@ -2,7 +2,6 @@
 #----------------------------------------------------------------------------
 # \file         build/patch/buildpatch.sh
 # \brief        Create patch files
-# \version      $Revision$
 # \author       (c)2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 # This script can be used to build a patch after a developer has made

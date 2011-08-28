@@ -21,7 +21,6 @@
  *	    \file       htdocs/adherents/stats/index.php
  *      \ingroup    member
  *		\brief      Page of subscription members statistics
- *		\version    $Id: index.php,v 1.10 2011/08/03 00:45:45 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -227,5 +226,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:45 $ - $Revision: 1.10 $');
+llxFooter();
 ?>

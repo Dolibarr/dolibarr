@@ -20,7 +20,6 @@
  *	\file       htdocs/fichinter/note.php
  *	\ingroup    fichinter
  *	\brief      Fiche d'information sur une fiche d'intervention
- *	\version    $Id: note.php,v 1.19 2011/07/31 23:50:54 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -167,5 +166,5 @@ if ($fichinterid)
 	}
 }
 $db->close();
-llxFooter('$Date: 2011/07/31 23:50:54 $ - $Revision: 1.15 ');
+llxFooter();
 ?>

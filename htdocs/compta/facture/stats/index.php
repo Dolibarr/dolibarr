@@ -20,7 +20,6 @@
  *  \file       htdocs/compta/facture/stats/index.php
  *  \ingroup    facture
  *  \brief      Page des stats factures
- *  \version    $Id: index.php,v 1.41 2011/07/31 22:23:31 eldy Exp $
  */
 
 require("../../../main.inc.php");
@@ -220,5 +219,5 @@ print '</td></tr></table>';
 
 print '</td></tr></table>';
 
-llxFooter('$Date: 2011/07/31 22:23:31 $ - $Revision: 1.41 $');
+llxFooter();
 ?>

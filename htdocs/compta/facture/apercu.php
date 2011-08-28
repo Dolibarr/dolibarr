@@ -17,14 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: apercu.php,v 1.73 2011/07/31 22:23:13 eldy Exp $
  */
 
 /**
  * 	    \file       htdocs/compta/facture/apercu.php
  * 		\ingroup    facture
  * 		\brief      Page de l'onglet apercu d'une facture
- * 		\version    $Revision: 1.73 $
  */
 
 require("../../main.inc.php");
@@ -409,5 +407,5 @@ elseif (file_exists($fileimagebis))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.73 $');
+llxFooter();
 ?>

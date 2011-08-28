@@ -4,7 +4,6 @@
 // This file must be present into htdocs/install directory
 // during install process to be used.
 //
-// $Id: install.forced.php.install,v 1.13 2011/08/21 16:20:41 eldy Exp $
 //
 
 $force_install_packager='deb';

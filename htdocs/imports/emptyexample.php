@@ -19,7 +19,6 @@
  *      \file       htdocs/imports/emptyexample.php
  *      \ingroup    import
  *      \brief      Show example of import file
- *      \version    $Id: emptyexample.php,v 1.8 2011/07/31 23:46:39 eldy Exp $
  */
 
 // This is to make Dolibarr working with Plesk
@@ -46,7 +45,7 @@ if (empty($datatoimport))
 
 	llxHeader();
 	print '<div class="error">Bad value for datatoimport.</div>';
-	llxFooter('$Date: 2011/07/31 23:46:39 $ - $Revision: 1.8 $');
+	llxFooter();
 	exit;
 }
 

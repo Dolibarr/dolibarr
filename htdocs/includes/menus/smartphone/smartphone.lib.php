@@ -20,7 +20,6 @@
 /**
  *  \file		htdocs/includes/menus/smartphone/smartphone.lib.php
  *  \brief		Library for file smartphone menus
- *  \version	$Id: smartphone.lib.php,v 1.7 2011/07/31 23:46:08 eldy Exp $
  */
 
 

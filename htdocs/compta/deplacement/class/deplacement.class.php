@@ -21,7 +21,6 @@
  *      \file       htdocs/compta/deplacement/class/deplacement.class.php
  *      \ingroup    deplacement
  *      \brief      File of class to manage trips
- *      \version    $Id: deplacement.class.php,v 1.10 2011/07/31 22:23:20 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

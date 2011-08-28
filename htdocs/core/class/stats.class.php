@@ -20,7 +20,6 @@
  *       \file       htdocs/core/class/stats.class.php
  *       \ingroup    core
  *       \brief      Common class to manage statistics reports
- *       \version    $Id: stats.class.php,v 1.6 2011/07/31 23:45:14 eldy Exp $
  */
 
 /**

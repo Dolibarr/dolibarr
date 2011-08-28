@@ -19,7 +19,6 @@
  *   	\file       htdocs/admin/proxy.php
  *      \ingroup    core
  *		\brief      Page  setup proxy to use for external web access
- *		\version    $Id: proxy.php,v 1.7 2011/07/31 22:23:24 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -205,5 +204,5 @@ dol_htmloutput_mesg($mesg);
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:24 $ - $Revision: 1.7 $');
+llxFooter();
 ?>

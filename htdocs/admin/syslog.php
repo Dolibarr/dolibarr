@@ -21,7 +21,6 @@
  *	\file       htdocs/admin/syslog.php
  *	\ingroup    syslog
  *	\brief      Setup page for syslog module
- *	\version    $Id: syslog.php,v 1.32 2011/07/31 22:23:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -164,5 +163,5 @@ print '</td></tr>';
 print '</table>';
 print "</form>\n";
 
-llxFooter('$Date: 2011/07/31 22:23:26 $ - $Revision: 1.32 $');
+llxFooter();
 ?>

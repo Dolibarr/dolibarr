@@ -7,10 +7,6 @@ class PhpZipProxyException extends Exception
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
  * Encoding : ISO-8859-1
- * Last commit by $Author: eldy $
- * Date - $Date: 2010/03/10 19:44:02 $
- * SVN Revision - $Rev: 28 $
- * Id : $Id: PhpZipProxy.php,v 1.2 2010/03/10 19:44:02 eldy Exp $
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License

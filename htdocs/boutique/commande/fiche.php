@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: fiche.php,v 1.25 2011/08/20 15:11:33 eldy Exp $
  */
 
 /**
- \file       htdocs/boutique/commande/fiche.php
- \ingroup    boutique
- \brief      Page fiche commande OSCommerce
- \version    $Revision: 1.25 $
+ *  \file       htdocs/boutique/commande/fiche.php
+ *  \ingroup    boutique
+ *  \brief      Page fiche commande OSCommerce
  */
 
 require("../../main.inc.php");
@@ -154,5 +152,5 @@ print '</table><br>';
 
 $dbosc->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/08/20 15:11:33 $ r&eacute;vision $Revision: 1.25 $</em>");
+llxFooter();
 ?>

@@ -18,9 +18,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   accounting 			Module accounting
- *		\brief      Module to include accounting features
- *		\version	$Id: modAccounting.class.php,v 1.11 2011/08/03 01:16:09 eldy Exp $
+/**
+ * \defgroup   accounting 			Module accounting
+ * \brief      Module to include accounting features
  */
 
 /**

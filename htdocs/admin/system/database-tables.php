@@ -21,7 +21,6 @@
 /**
  *	\file       htdocs/admin/system/database-tables.php
  *	\brief      Page d'infos des tables de la base
- *	\version    $Id: database-tables.php,v 1.17 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -169,5 +168,5 @@ else
 	}
 }
 
-llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.17 $');
+llxFooter();
 ?>

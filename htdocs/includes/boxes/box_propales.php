@@ -18,11 +18,10 @@
  */
 
 /**
-		\file       htdocs/includes/boxes/box_propales.php
-		\ingroup    propales
-		\brief      Module de generation de l'affichage de la box propales
-		\version	$Id: box_propales.php,v 1.47 2011/07/31 23:29:10 eldy Exp $
-*/
+ * \file       htdocs/includes/boxes/box_propales.php
+ * \ingroup    propales
+ * \brief      Module de generation de l'affichage de la box propales
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 

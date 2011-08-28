@@ -22,7 +22,6 @@
  *      \file       scripts/user/sync_groups_dolibarr2ldap.php
  *      \ingroup    ldap core
  *      \brief      Script de mise a jour des groupes dans LDAP depuis base Dolibarr
- * 		\version	$Id: sync_groups_dolibarr2ldap.php,v 1.9 2011/07/31 22:22:12 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -42,7 +41,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision: 1.9 $';
+$version='1.10';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");

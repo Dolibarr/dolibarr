@@ -21,7 +21,6 @@
  *	    \file       htdocs/compta/tva/reglement.php
  *      \ingroup    tax
  *		\brief      List of VAT payments
- *		\version    $Id: reglement.php,v 1.33 2011/08/03 00:46:25 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -99,5 +98,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:25 $ - $Revision: 1.33 $');
+llxFooter();
 ?>

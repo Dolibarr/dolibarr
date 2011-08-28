@@ -60,7 +60,6 @@
  *	\author	    Laurent Passebecq
  *	\author	    Rodolphe Quiedville
  *	\author	    Jean Louis Bergamo.
- *	\version    $Id: pdf_standardlabel.class.php,v 1.15 2011/08/11 12:14:01 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');

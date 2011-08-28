@@ -17,11 +17,10 @@
  */
 
 /**
-        \file       htdocs/compta/tva/class/tva.class.php
-		\ingroup    tax
-		\version    $Id: tva.class.php,v 1.8 2011/08/03 00:46:39 eldy Exp $
-		\author		Laurent Destailleur
-*/
+ *      \file       htdocs/compta/tva/class/tva.class.php
+ *      \ingroup    tax
+ *      \author		Laurent Destailleur
+ */
 
 // Put here all includes required by your class file
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

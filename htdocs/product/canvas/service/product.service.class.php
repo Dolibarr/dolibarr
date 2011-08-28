@@ -19,7 +19,6 @@
  *	\file       htdocs/product/canvas/service/product.service.class.php
  *	\ingroup    service
  *	\brief      Fichier de la classe des services par defaut
- *	\version    $Id: product.service.class.php,v 1.15 2011/07/31 23:24:03 eldy Exp $
  */
 
 /**

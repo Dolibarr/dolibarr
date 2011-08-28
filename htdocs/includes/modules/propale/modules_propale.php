@@ -23,10 +23,9 @@
  *  \ingroup    propale
  *  \brief      Fichier contenant la classe mere de generation des propales en PDF
  *  			et la classe mere de numerotation des propales
- *	\version    $Id: modules_propale.php,v 1.66 2011/08/11 12:14:03 eldy Exp $
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
 
 
@@ -34,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Req
  *	\class      ModelePDFPropales
  *	\brief      Classe mere des modeles de propale
  */
-class ModelePDFPropales
+abstract class ModelePDFPropales extends CommonDocGenerator
 {
 	var $error='';
 
@@ -169,9 +168,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	// Si model pas encore bon
 	if (! $modelisok)
 	{
-		$liste=array();
-		$model=new ModelePDFPropales();
-		$liste=$model->liste_modeles($db);
+		$liste=ModelePDFPropales::liste_modeles($db);
 		$modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
 		$file = "pdf_propale_".$modele.".modules.php";
 		$file = dol_buildpath($dir.$file);

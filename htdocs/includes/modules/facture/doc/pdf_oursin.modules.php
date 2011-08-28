@@ -25,7 +25,6 @@
  * 		\ingroup    facture
  * 		\brief      Fichier de la classe permettant de generer les factures au modele oursin
  * 		\author	    Sylvain SCATTOLINI base sur un modele de Laurent Destailleur
- * 		\version    $Id: pdf_oursin.modules.php,v 1.13 2011/08/11 12:14:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");

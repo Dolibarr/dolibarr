@@ -22,7 +22,6 @@
  *      \file       scripts/company/sync_contacts_dolibarr2ldap.php
  *      \ingroup    ldap company
  *      \brief      Script to update all contacts from Dolibarr into a LDAP database
- *		\version	$Id: sync_contacts_dolibarr2ldap.php,v 1.24 2011/07/31 22:22:12 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -42,7 +41,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision: 1.24 $';
+$version='1.25';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");

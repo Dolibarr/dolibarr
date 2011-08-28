@@ -21,7 +21,6 @@
  * 	\file       htdocs/societe/class/address.class.php
  * 	\ingroup    societe
  *  \brief      Fichier de la classe des adresses des tiers
- *  \version    $Id: address.class.php,v 1.5 2011/07/31 23:22:58 eldy Exp $
  */
 
 

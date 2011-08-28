@@ -24,7 +24,6 @@
  *      \file       htdocs/admin/external_rss.php
  *      \ingroup    external_rss
  *      \brief      Page to setupe module ExternalRss
- *      \version    $Id: external_rss.php,v 1.50 2011/08/26 19:09:03 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -323,5 +322,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/26 19:09:03 $ - $Revision: 1.50 $');
+llxFooter();
 ?>

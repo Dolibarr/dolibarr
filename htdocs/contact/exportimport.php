@@ -20,7 +20,6 @@
  *	\file       htdocs/contact/exportimport.php
  *	\ingroup    societe
  *	\brief      Onglet exports-imports d'un contact
- *	\version    $Id: exportimport.php,v 1.29 2011/07/31 23:54:12 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -106,5 +105,5 @@ print '</a>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:54:12 $ - $Revision: 1.29 $');
+llxFooter();
 ?>

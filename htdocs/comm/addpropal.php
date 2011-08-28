@@ -23,7 +23,6 @@
  *	\file       htdocs/comm/addpropal.php
  *	\ingroup    propal
  *	\brief      Page to add a new commercial proposal
- *	\version    $Id: addpropal.php,v 1.133 2011/08/23 15:23:19 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -215,8 +214,7 @@ if ($_GET["action"] == 'create')
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
-	$model=new ModelePDFPropales();
-	$liste=$model->liste_modeles($db);
+	$liste=ModelePDFPropales::liste_modeles($db);
 	print $html->selectarray('model',$liste,$conf->global->PROPALE_ADDON_PDF);
 	print "</td></tr>";
 
@@ -237,7 +235,7 @@ if ($_GET["action"] == 'create')
 		print '</td>';
 		print '</tr>';
 	}
-	
+
 	// Insert hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -344,5 +342,5 @@ if ($_GET["action"] == 'create')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.133 $');
+llxFooter();
 ?>

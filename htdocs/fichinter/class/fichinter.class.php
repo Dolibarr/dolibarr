@@ -18,10 +18,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**	    \file       htdocs/fichinter/class/fichinter.class.php
- *		\ingroup    ficheinter
- *		\brief      Fichier de la classe des gestion des fiches interventions
- *		\version    $Id: fichinter.class.php,v 1.22 2011/07/31 23:50:56 eldy Exp $
+/**
+ * 	\file       htdocs/fichinter/class/fichinter.class.php
+ * 	\ingroup    ficheinter
+ * 	\brief      Fichier de la classe des gestion des fiches interventions
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

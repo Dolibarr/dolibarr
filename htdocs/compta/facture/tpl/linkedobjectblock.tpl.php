@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: linkedobjectblock.tpl.php,v 1.12 2011/08/22 22:04:27 eldy Exp $
  */
 ?>
 

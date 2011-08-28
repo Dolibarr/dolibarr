@@ -20,7 +20,6 @@
  *	    \file       htdocs/includes/boxes/box_factures_fourn_imp.php
  *      \ingroup    fournisseur
  *		\brief      Fichier de gestion d'une box des factures fournisseurs impayees
- *		\version    $Id: box_factures_fourn_imp.php,v 1.37 2011/07/31 23:29:10 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 

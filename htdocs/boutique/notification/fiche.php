@@ -17,11 +17,10 @@
  */
 
 /**
-	    \file       htdocs/boutique/notification/fiche.php
-		\ingroup    boutique
-		\brief      Page fiche notification OS Commerce
-		\version    $Id: fiche.php,v 1.17 2011/08/03 00:45:42 eldy Exp $
-*/
+ *	    \file       htdocs/boutique/notification/fiche.php
+ *		\ingroup    boutique
+ *		\brief      Page fiche notification OS Commerce
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
@@ -149,5 +148,5 @@ print '</div>';
 
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 00:45:42 $ - $Revision: 1.17 $');
+llxFooter();
 ?>

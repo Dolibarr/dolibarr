@@ -20,7 +20,6 @@
  *       \file       htdocs/bookmarks/fiche.php
  *       \brief      Page display/creation of bookmarks
  *       \ingroup    bookmark
- *       \version    $Id: fiche.php,v 1.27 2011/08/03 00:45:45 eldy Exp $
  */
 
 
@@ -284,5 +283,5 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 $db->close();
 
 
-llxFooter('$Date: 2011/08/03 00:45:45 $ - $Revision: 1.27 $');
+llxFooter();
 ?>

@@ -29,7 +29,6 @@
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
  * 				This script reads the conf file, init $lang, $db and and empty $user
- *  \version    $Id: master.inc.php,v 1.359 2011/08/21 15:26:16 eldy Exp $
  */
 
 

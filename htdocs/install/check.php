@@ -22,7 +22,6 @@
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id: check.php,v 1.89 2011/08/15 12:14:25 eldy Exp $
  */
 include_once("./inc.php");
 

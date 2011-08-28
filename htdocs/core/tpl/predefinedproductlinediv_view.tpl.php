@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: predefinedproductlinediv_view.tpl.php,v 1.2 2011/07/31 23:45:11 eldy Exp $
  */
 ?>
 

@@ -22,7 +22,6 @@
  *      \file       htdocs/adherents/type.php
  *      \ingroup    member
  *		\brief      Page de configuration des types d'adherents
- *		\version    $Id: type.php,v 1.70 2011/07/31 22:23:27 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -636,5 +635,5 @@ if ($rowid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:27 $ - $Revision: 1.70 $');
+llxFooter();
 ?>

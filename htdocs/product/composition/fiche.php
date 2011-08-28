@@ -24,7 +24,6 @@
  *  \file       htdocs/product/composition/fiche.php
  *  \ingroup    product
  *  \brief      Page de la fiche produit
- *  \version    $Id: fiche.php,v 1.13 2011/08/18 16:32:08 simnandez Exp $
  */
 
 require("../../main.inc.php");
@@ -497,5 +496,5 @@ print "\n</div>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/18 16:32:08 $ - $Revision: 1.13 $');
+llxFooter();
 ?>

@@ -21,7 +21,6 @@
 /**
  *	\defgroup   	prelevement     Module prelevement
  *	\brief      	Module de gestion des prelevements bancaires
- *	\version		$Id: modPrelevement.class.php,v 1.42 2011/07/31 23:28:10 eldy Exp $
  */
 
 /**

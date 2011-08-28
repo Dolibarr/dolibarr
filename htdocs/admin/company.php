@@ -22,7 +22,6 @@
  *	\file       htdocs/admin/company.php
  *	\ingroup    company
  *	\brief      Setup page to configure company/foundation
- *	\version    $Id: company.php,v 1.96 2011/08/17 16:07:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -983,6 +982,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 16:07:41 $ - $Revision: 1.96 $');
+llxFooter();
 
 ?>

@@ -24,7 +24,6 @@
  * 	\file 		htdocs/core/class/extrafields.class.php
  *	\ingroup    core
  *	\brief      File of class to manage extra fields
- *	\version    $Id: extrafields.class.php,v 1.8 2011/08/08 12:31:14 hregis Exp $
  */
 
 /**

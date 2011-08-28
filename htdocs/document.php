@@ -24,7 +24,6 @@
 /**
  *	\file       htdocs/document.php
  *  \brief      Wrapper to download data files
- *  \version    $Id: document.php,v 1.123 2011/07/31 23:19:04 eldy Exp $
  *  \remarks    Call of this wrapper is made with URL:
  * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
  */

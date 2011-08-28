@@ -19,11 +19,10 @@
  */
 
 /**
-        \file       htdocs/compta/prelevement/bons.php
-        \ingroup    prelevement
-        \brief      Page liste des bons de prelevements
-        \version    $Id: bons.php,v 1.26 2011/07/31 22:23:29 eldy Exp $
-*/
+ * 	\file       htdocs/compta/prelevement/bons.php
+ * 	\ingroup    prelevement
+ * 	\brief      Page liste des bons de prelevements
+ */
 
 require("../bank/pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
@@ -122,6 +121,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.26 $');
+llxFooter();
 
 ?>

@@ -25,7 +25,6 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.537 2011/08/23 18:40:45 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1277,7 +1276,7 @@ if ($action == 'create' && $user->rights->commande->creer)
         }
         print '</td></tr>';
     }
-    
+
     // Insert hooks
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1286,8 +1285,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<td colspan="2">';
     // pdf
     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
-    $model=new ModelePDFCommandes();
-    $liste=$model->liste_modeles($db);
+    $liste=ModelePDFCommandes::liste_modeles($db);
     print $html->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
     print "</td></tr>";
 
@@ -1771,7 +1769,7 @@ else
                 }
                 print '</td></tr>';
             }
-            
+
             // Insert hooks
             $parameters=array('colspan'=>' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2077,5 +2075,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:45 $ - $Revision: 1.537 $');
+llxFooter();
 ?>

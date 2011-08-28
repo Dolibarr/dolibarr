@@ -21,7 +21,6 @@
  *      \file       htdocs/adherents/liste.php
  *      \ingroup    member
  *		\brief      Page to list all members of foundation
- *		\version    $Id: liste.php,v 1.84 2011/07/31 22:23:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -346,5 +345,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.84 $');
+llxFooter();
 ?>

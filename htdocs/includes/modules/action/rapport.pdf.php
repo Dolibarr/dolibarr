@@ -22,7 +22,6 @@
  *	\file       htdocs/includes/modules/action/rapport.pdf.php
  *	\ingroup    commercial
  *	\brief      File to build PDF with events
- *	\version    $Id: rapport.pdf.php,v 1.37 2011/08/11 12:14:04 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');

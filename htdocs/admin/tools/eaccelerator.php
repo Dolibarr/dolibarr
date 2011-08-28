@@ -18,7 +18,6 @@
 /**
  *     \file       htdocs/admin/tools/eaccelerator.php
  *     \brief      Page administration de eaccelerator
- *     \version    $Id: eaccelerator.php,v 1.18 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -39,7 +38,7 @@ llxHeader();
 if (!function_exists('eaccelerator_info'))
 {
 	print 'eAccelerator is not installed.';
-	llxfooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.18 $');
+	llxFooter();
 	exit;
 }
 
@@ -338,5 +337,5 @@ print '<strong>Eaccelerator is created by the eAccelerator team, <a href="http:/
 print "</td></tr></table>";
 
 
-llxfooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.18 $');
+llxFooter();
 ?>

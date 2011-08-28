@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/core/ajaxfileupload.php
  *       \brief      File to return Ajax response on file upload
- *       \version    $Id: ajaxfileupload.php,v 1.11 2011/07/31 23:45:15 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');

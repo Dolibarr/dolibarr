@@ -3,7 +3,6 @@
 # Script to get version of a source file
 # Does not work with cygwin cvs command on Windows.
 #
-# \version $Id$
 #--------------------------------------------------------------------
 
 # Usage: dolibarr-doxygen-getversion.pl pathtofilefromdolibarrroot

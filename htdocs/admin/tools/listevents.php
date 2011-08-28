@@ -20,7 +20,6 @@
  *		\file       htdocs/admin/tools/listevents.php
  *      \ingroup    core
  *      \brief      List of security events
- *      \version    $Id: listevents.php,v 1.32 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -255,5 +254,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.32 $');
+llxFooter();
 ?>

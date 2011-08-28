@@ -19,7 +19,6 @@
 /**
  *	\file       htdocs/disabled.php
  *  \brief      Page to use to replace index.php to disable all software
- *  \version    $Id: disabled.php,v 1.4 2011/08/08 15:51:13 eldy Exp $
  */
 ?>
 <html>

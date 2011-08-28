@@ -21,7 +21,6 @@
  *		\file       htdocs/projet/class/project.class.php
  *		\ingroup    projet
  *		\brief      Fichier de la classe de gestion des projets
- *		\version    $Id: project.class.php,v 1.24 2011/07/31 23:23:39 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 

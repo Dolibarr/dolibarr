@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: functions_ldap.php,v 1.18 2011/07/31 23:29:11 eldy Exp $
  */
 
 /**

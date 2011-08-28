@@ -19,7 +19,6 @@
 /**
  *	\defgroup   notification	Module email notification
  *	\brief      Module pour gerer les notifications (par mail ou autre)
- *	\version	$Id: modNotification.class.php,v 1.15 2011/07/31 23:28:12 eldy Exp $
  */
 
 /**

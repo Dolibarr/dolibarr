@@ -19,7 +19,6 @@
  *	\file       htdocs/core/class/html.formorder.class.php
  *  \ingroup    core
  *	\brief      File of predefined functions for HTML forms for order module
- *	\version	$Id: html.formorder.class.php,v 1.11 2011/07/31 23:45:14 eldy Exp $
  */
 
 

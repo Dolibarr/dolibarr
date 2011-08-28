@@ -19,7 +19,6 @@
 /**
  *	\file			htdocs/lib/accountancy.lib.php
  *  \brief			Library of accountancy functions
- * 	\version		$Id: accountancy.lib.php,v 1.3 2011/07/31 23:25:31 eldy Exp $
  */
 
 /**

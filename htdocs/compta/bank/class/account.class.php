@@ -23,7 +23,6 @@
  *	\file       htdocs/compta/bank/class/account.class.php
  *	\ingroup    banque
  *	\brief      File of class to manage bank accounts
- *	\version    $Id: account.class.php,v 1.35 2011/08/13 00:48:00 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

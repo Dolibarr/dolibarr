@@ -22,7 +22,6 @@
  *	\file       htdocs/lib/format_cards.lib.php
  *	\brief      Set of functions used for cards generation
  *	\ingroup    core
- *	\version    $Id: format_cards.lib.php,v 1.2 2011/07/31 23:25:32 eldy Exp $
  */
 
 

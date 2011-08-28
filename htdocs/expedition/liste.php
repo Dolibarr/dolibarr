@@ -21,7 +21,6 @@
  *      \file       htdocs/expedition/liste.php
  *      \ingroup    expedition
  *      \brief      Page to list all shipments
- *		\version	$Id: liste.php,v 1.60 2011/07/31 23:50:53 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -157,5 +156,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:53 $ - $Revision: 1.60 $');
+llxFooter();
 ?>

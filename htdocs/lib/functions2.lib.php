@@ -21,7 +21,6 @@
  *	\file			htdocs/lib/functions2.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all rare functions.
- *	\version		$Id: functions2.lib.php,v 1.77 2011/08/11 01:34:55 eldy Exp $
  */
 
 

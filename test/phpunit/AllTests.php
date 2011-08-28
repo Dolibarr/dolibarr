@@ -20,7 +20,6 @@
  *      \file       test/phpunit/AllTest.php
  *		\ingroup    test
  *      \brief      This file is a test suite to run all unit tests
- *      \version    $Id: AllTests.php,v 1.3 2011/07/08 11:18:00 eldy Exp $
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 print "PHP Version: ".phpversion()."\n";

@@ -21,7 +21,6 @@
  *  \file       htdocs/societe/commerciaux.php
  *  \ingroup    societe
  *  \brief      Page of links to sales representatives
- *  \version    $Id: commerciaux.php,v 1.29 2011/07/31 23:22:56 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -250,5 +249,5 @@ if ($_GET["socid"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:22:56 $ - $Revision: 1.29 $');
+llxFooter();
 ?>

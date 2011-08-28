@@ -22,7 +22,6 @@
  *	\ingroup    member
  *	\brief      File of class to manage members types
  *	\author     Rodolphe Quiedeville
- *	\version    $Id: adherent_type.class.php,v 1.12 2011/08/03 00:45:44 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

@@ -21,7 +21,6 @@
  *       \file       htdocs/comm/mailing/index.php
  *       \ingroup    mailing
  *       \brief      Page accueil de la zone mailing
- *       \version    $Id: index.php,v 1.37 2011/08/03 00:46:33 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -215,6 +214,6 @@ if ($langs->file_exists("html/spam.html",0)) {
  }
 
 
-llxFooter('$Date: 2011/08/03 00:46:33 $ - $Revision: 1.37 $');
+llxFooter();
 
 ?>

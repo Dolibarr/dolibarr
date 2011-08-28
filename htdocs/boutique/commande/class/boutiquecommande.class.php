@@ -20,7 +20,6 @@
  *	\file       htdocs/boutique/commande/class/boutiquecommande.class.php
  *	\ingroup    osc
  *	\brief      Fichier de la classe des commandes de la boutique online
- *	\version    $Id: boutiquecommande.class.php,v 1.7 2011/08/03 00:45:46 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/societe/class/address.class.php");

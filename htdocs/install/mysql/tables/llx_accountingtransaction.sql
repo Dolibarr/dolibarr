@@ -14,7 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_accountingtransaction.sql,v 1.4 2011/08/03 01:25:25 eldy Exp $
 -- Table of "transactions" for accountancy expert module (1 transaction = 2+ records)
 -- ============================================================================
 

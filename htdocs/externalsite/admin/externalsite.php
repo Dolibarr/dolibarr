@@ -23,7 +23,6 @@
  *    \file       htdocs/externalsite/admin/externalsite.php
  *    \ingroup    externalsite
  *    \brief      Page de configuration du module externalsite
- *    \version    $Id: externalsite.php,v 1.4 2011/07/31 23:50:53 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -115,5 +114,5 @@ if ($mesg) print "<br>$mesg<br>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:53 $ - $Revision: 1.4 $');
+llxFooter();
 ?>

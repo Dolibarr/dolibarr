@@ -21,7 +21,6 @@
  *     \file       htdocs/expedition/stats/index.php
  *     \ingroup    expedition
  *     \brief      Page des stats expeditions
- *     \version    $Id: index.php,v 1.13 2011/07/31 23:50:55 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -67,5 +66,5 @@ print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.13 $');
+llxFooter();
 ?>

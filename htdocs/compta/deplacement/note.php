@@ -20,7 +20,6 @@
  *      \file       htdocs/compta/deplacement/note.php
  *      \ingroup    trip
  *      \brief      Notes on a trip card
- *		\version    $Id: note.php,v 1.7 2011/08/03 00:46:35 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -206,5 +205,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:35 $ - $Revision: 1.7 $');
+llxFooter();
 ?>

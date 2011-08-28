@@ -307,3 +307,17 @@ CurrencySingXOF=Франк КФА ЦБЗАГ
 CurrencyXPF=CFP франков
 CurrencySingXPF=Франк КФП
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:10).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+CurrencyUAH=Гривна
+CurrencySingUAH=Гривна
+DemandReasonTypeSRC_INTE=Интернет
+DemandReasonTypeSRC_CAMP_MAIL=Почтовый кампании
+DemandReasonTypeSRC_CAMP_EMAIL=Отправка кампании
+DemandReasonTypeSRC_CAMP_PHO=Телефон кампании
+DemandReasonTypeSRC_CAMP_FAX=Факс кампании
+DemandReasonTypeSRC_COMM=Коммерческие контакты
+DemandReasonTypeSRC_SHOP=Магазин контакт
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:03).

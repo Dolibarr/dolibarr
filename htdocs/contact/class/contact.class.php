@@ -24,7 +24,6 @@
  *	\file       htdocs/contact/class/contact.class.php
  *	\ingroup    societe
  *	\brief      File of contacts class
- *	\version    $Id: contact.class.php,v 1.32 2011/07/31 23:54:12 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 

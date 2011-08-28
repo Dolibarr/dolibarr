@@ -15,16 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: fiche.php,v 1.14 2011/07/31 22:23:31 eldy Exp $
  */
 
 
 /**
-        \file       htdocs/compta/param/comptes/fiche.php
-        \ingroup    compta
-        \brief      Page de la fiche des comptes comptables
-        \version    $Revision: 1.14 $
-*/
+ *		\file       htdocs/compta/param/comptes/fiche.php
+ *		\ingroup    compta
+ *		\brief      Page de la fiche des comptes comptables
+ */
 
 require("../../../main.inc.php");
 
@@ -65,7 +63,7 @@ if ($_POST["action"] == 'add' && $user->rights->compta->ventilation->parametrer)
 llxHeader("","Nouveau compte");
 
 /*
- * Cr�ation d'un compte
+ * Creation d'un compte
  *
  */
 if ($_GET["action"] == 'create' && $user->rights->compta->ventilation->parametrer)
@@ -85,7 +83,7 @@ if ($_GET["action"] == 'create' && $user->rights->compta->ventilation->parametre
     print '<td>'.$langs->trans("AccountNumber").'</td><td><input name="numero" size="20" value="'.$compte->numero.'">';
     if ($_error == 1)
     {
-        print "Ce num�ro de compte existe d�j�";
+        print "Ce numéro de compte existe déjà";
     }
     if ($_error == 2)
     {
@@ -101,5 +99,5 @@ if ($_GET["action"] == 'create' && $user->rights->compta->ventilation->parametre
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:31 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

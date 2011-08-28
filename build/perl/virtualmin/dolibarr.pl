@@ -1,7 +1,6 @@
 #----------------------------------------------------------------------------
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
-# \version      $Revision: 1.20 $
 # \author       (c)2009-2011 Regis Houssin  <regis@dolibarr.fr>
 #----------------------------------------------------------------------------
 

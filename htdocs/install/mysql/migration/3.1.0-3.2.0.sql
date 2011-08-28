@@ -1,6 +1,4 @@
 --
--- $Id: 3.1.0-3.2.0.sql,v 1.2 2011/08/17 15:22:39 simnandez Exp $
---
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 2.8.0 or higher. 

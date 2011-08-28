@@ -24,19 +24,18 @@
  *	\ingroup    facture
  *	\brief      Fichier contenant la classe mere de generation des factures en PDF
  * 				et la classe mere de numerotation des factures
- *	\version    $Id: modules_facture.php,v 1.96 2011/08/11 12:14:04 eldy Exp $
  */
 
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
  *	\class      ModelePDFFactures
  *	\brief      Classe mere des modeles de facture
  */
-class ModelePDFFactures extends CommonDocGenerator
+abstract class ModelePDFFactures extends CommonDocGenerator
 {
 	var $error='';
 

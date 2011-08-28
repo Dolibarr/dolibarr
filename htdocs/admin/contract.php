@@ -19,7 +19,6 @@
  *	\file       htdocs/admin/contract.php
  *	\ingroup    contract
  *	\brief      Setup page of module Contracts
- *	\version    $Id: contract.php,v 1.5 2011/07/31 22:23:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -173,5 +172,5 @@ if (is_resource($handle))
 print '</table><br>';
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.5 $');
+llxFooter();
 ?>

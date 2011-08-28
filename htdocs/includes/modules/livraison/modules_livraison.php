@@ -24,17 +24,16 @@
  *	\ingroup    expedition
  *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
  *				et la classe mere de numerotation des bons de livraisons
- *	\version    $Id: modules_livraison.php,v 1.20 2011/08/11 12:14:02 eldy Exp $
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
  *	\class      ModelePDFDeliveryOrder
  *	\brief      Classe mere des modeles de bon de livraison
  */
-class ModelePDFDeliveryOrder
+abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
 	var $error='';
 

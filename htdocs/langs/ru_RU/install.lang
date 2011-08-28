@@ -469,3 +469,15 @@ MigrationProjectTaskTime=Обновление времени в секундах
 // Reference language: en_US -> ru_RU
 MigrationNotFinished=Версия базы данных не совсем в курсе, так что вам придется запустить процесс обновления еще раз.
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:38).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+ConfFileReload=Перезагрузить всю информацию из файла конфигурации.
+WarningPHPVersionTooLow=PHP версии слишком стар. Версия %s или более не ожидается. Эта версия должна позволить установить, но не поддерживается.
+KeepDefaultValuesProxmox=Вы можете использовать мастер установки из Dolibarr прибор Proxmox виртуальные, поэтому значения предлагаемых здесь уже оптимизированы. Изменение их, только если вы знаете, что вы делаете.
+MigrateIsDoneStepByStep=Целевых версия (%s) имеет разрыв в несколько версий, поэтому мастер установки вернется предложить следующий миграции раз этот будет завершен.
+MigrationFinished=Миграция готового
+LastStepDesc=<strong>Последний шаг:</strong> Определить здесь Логин и пароль, которые вы планируете использовать для подключения к программному обеспечению. Как не потерять эту, как это внимание, чтобы управлять всеми другими.
+MigrationActioncommElement=Обновление данных о действиях
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:19).

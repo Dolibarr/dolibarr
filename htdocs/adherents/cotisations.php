@@ -21,7 +21,6 @@
  *      \file       htdocs/adherents/cotisations.php
  *      \ingroup    member
  *		\brief      Page de consultation et insertion d'une cotisation
- *		\version    $Id: cotisations.php,v 1.58 2011/07/31 22:23:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -228,5 +227,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.58 $');
+llxFooter();
 ?>

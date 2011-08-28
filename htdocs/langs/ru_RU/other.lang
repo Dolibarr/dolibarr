@@ -354,3 +354,29 @@ SizeUnitinch=дюйм
 SizeUnitfoot=фут
 ImageEditor=Редактор изображений
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:12).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+ToolsDesc=Эта область посвящена группе разные инструменты не доступны в другие пункты меню. <br><br> Эти инструменты могут быть достигнуты из меню на стороне.
+Notify_WITHDRAW_TRANSMIT=Передача вывода
+Notify_WITHDRAW_CREDIT=Кредитный выход
+Notify_WITHDRAW_EMIT=Isue вывода
+PredefinedMailContentSendSupplierInvoice=Только здесь вы найдете счета __FACREF__ \ п \ nSincerely \ п \ п
+PredefinedMailContentSendShipping=Здесь вы найдете доставку __SHIPPINGREF__ \ п \ nSincerely \ п \ п
+PredefinedMailContentSendFichInter=Вы найдете здесь вмешательство __FICHINTERREF__ \ п \ nSincerely \ п \ п
+Top=Топ
+Bottom=Дно
+Left=Левый
+Right=Право
+ThisIsListOfModules=Это список модулей, предварительно на эту демонстрацию, профиль (только наиболее распространенных модулей видны в этой демо). Редактировать этот иметь более персонализированное демо и нажмите на кнопку &quot;Пуск&quot;.
+ClickHere=Нажмите здесь
+UseAdvancedPerms=Используйте дополнительные разрешения некоторых модулей
+FileFormat=Формат файлов
+SelectAColor=Выберите цвет
+AddFiles=Добавить файлы
+StartUpload=Начать загрузку
+CancelUpload=Отмена загрузки
+FileIsTooBig=Файлы слишком велик
+Export=Экспорт
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:19).

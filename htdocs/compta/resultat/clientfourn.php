@@ -20,7 +20,6 @@
 /**
  *  \file        htdocs/compta/resultat/clientfourn.php
  *	\brief       Page reporting
- *  \version     $Id: clientfourn.php,v 1.64 2011/08/06 18:44:59 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -688,5 +687,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/06 18:44:59 $ - $Revision: 1.64 $');
+llxFooter();
 ?>

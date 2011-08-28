@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: index.php,v 1.3 2011/07/31 22:23:30 eldy Exp $
  */
 
 /**
-        \file       htdocs/compta/ventilation/fournisseur/index.php
-        \ingroup    compta
-		\brief      Page accueil ventilation
-		\version    $Revision: 1.3 $
-*/
+ *    \file       htdocs/compta/ventilation/fournisseur/index.php
+ *    \ingroup    compta
+ *    \brief      Page accueil ventilation
+ */
 
 require('../../../main.inc.php');
 $langs->load("suppliers");
@@ -125,6 +123,6 @@ print "</table>\n";
 
 print '</td></tr></table>';
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/07/31 22:23:30 $ r&eacute;vision $Revision: 1.3 $</em>");
+llxFooter();
 
 ?>

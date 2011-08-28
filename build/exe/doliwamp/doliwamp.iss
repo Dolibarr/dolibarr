@@ -10,7 +10,6 @@
 ; only the root user with no password, stop server and catch
 ; files user.MY* to put them in the Dolibarr build/exe/doliwamp/mysql directory.
 ;
-; Version: $Id: doliwamp.iss,v 1.85 2011/08/07 16:37:45 eldy Exp $
 ;----------------------------------------------------------------------------------------
 
 

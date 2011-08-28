@@ -20,7 +20,6 @@
  *      \file       htdocs/compta/sociales/charges.php
  *		\ingroup    tax
  *		\brief      Social contribution car page
- *		\version    $Id: charges.php,v 1.66 2011/08/05 21:11:50 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -457,5 +456,5 @@ if ($chid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/05 21:11:50 $ - $Revision: 1.66 $');
+llxFooter();
 ?>

@@ -22,7 +22,6 @@
  *	\file       htdocs/admin/workflow.php
  *	\ingroup    company
  *	\brief      Workflows setup page
- *	\version    $Id: workflow.php,v 1.7 2011/08/12 05:41:01 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -135,5 +134,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/12 05:41:01 $ - $Revision: 1.7 $');
+llxFooter();
 ?>

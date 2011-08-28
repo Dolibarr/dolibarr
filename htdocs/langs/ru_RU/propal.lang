@@ -108,3 +108,17 @@ TypeContact_propal_internal_SALESREPFOLL=Представитель следую
 TypeContact_propal_external_BILLING=свяжитесь со счета
 TypeContact_propal_external_CUSTOMER=Абонентский отдел следующие меры предложение
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:29).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+ProposalCard=Предложение карты
+AvailabilityPeriod=Наличие задержки
+SetAvailability=Задержка устанавливается доступность
+AfterOrder=после заказа
+AvailabilityTypeAV_NOW=Немедленный
+AvailabilityTypeAV_1W=1 неделя
+AvailabilityTypeAV_2W=2-х недель
+AvailabilityTypeAV_3W=3 недели
+AvailabilityTypeAV_1M=1 месяц
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:52).

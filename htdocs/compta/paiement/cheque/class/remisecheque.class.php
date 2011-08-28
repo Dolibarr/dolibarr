@@ -22,7 +22,6 @@
  *	\file       htdocs/compta/paiement/cheque/class/remisecheque.class.php
  *	\ingroup    compta
  *	\brief      Fichier de la classe des bordereau de remise de cheque
- *	\version    $Id: remisecheque.class.php,v 1.14 2011/08/03 00:46:38 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 

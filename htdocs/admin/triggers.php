@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/admin/triggers.php
  *       \brief      Page de configuration et activation des triggers
- *       \version    $Id: triggers.php,v 1.27 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -55,5 +54,5 @@ $triggers = $interfaces->getTriggersList(0);
 
 include($template_dir.'triggers.tpl.php');
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.27 $');
+llxFooter();
 ?>

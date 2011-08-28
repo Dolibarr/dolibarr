@@ -13,5 +13,3 @@ where:
 > -NORUN is optionnal and disable completely a trigger file if set. To use 
             a trigger with such a name, rename file to remove the -NORUN part.
 
-
-$Id: README,v 1.4 2010/04/22 06:29:34 hregis Exp $

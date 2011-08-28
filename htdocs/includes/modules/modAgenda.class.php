@@ -23,7 +23,6 @@
 /**
  *		\defgroup   agenda     Module agenda
  *      \brief      Module pour gerer l'agenda et actions
- *		\brief		$Id: modAgenda.class.php,v 1.39 2011/07/31 23:28:10 eldy Exp $
  */
 
 /**

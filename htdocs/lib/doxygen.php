@@ -20,7 +20,6 @@
 /**
  *	    \file       htdocs/lib/doxygen.php
  *      \ingroup    core
- *		\version    $Id: doxygen.php,v 1.8 2011/08/08 16:14:48 eldy Exp $
  *		\mainpage	Dolibarr project
  *
  *	    This is source documentation for Dolibarr ERP/CRM.<br>

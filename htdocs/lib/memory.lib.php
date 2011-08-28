@@ -19,7 +19,6 @@
 /**
  *  \file		htdocs/lib/memory.lib.php
  *  \brief		Set of function for memory/cache management
- *  \version	$Id: memory.lib.php,v 1.12 2011/08/17 21:39:08 eldy Exp $
  */
 
 global $shmkeys,$shmoffset;

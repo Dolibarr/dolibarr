@@ -20,7 +20,6 @@
  *	    \file       htdocs/compta/dons/fiche.php
  *		\ingroup    don
  *		\brief      Page of donation card
- *		\version    $Id: fiche.php,v 1.77 2011/08/03 00:46:37 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -566,5 +565,5 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:37 $ - $Revision: 1.77 $');
+llxFooter();
 ?>

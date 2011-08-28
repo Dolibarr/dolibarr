@@ -22,7 +22,6 @@
  *	\file       htdocs/compta/bank/ligne.php
  *	\ingroup    compta
  *	\brief      Page to edit a bank transaction record
- *	\version    $Id: ligne.php,v 1.91 2011/07/31 22:23:20 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -600,5 +599,5 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.91 $');
+llxFooter();
 ?>

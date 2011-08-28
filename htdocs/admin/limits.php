@@ -20,7 +20,6 @@
 /**
  *       \file       htdocs/admin/limits.php
  *       \brief      Page de configuration des limites
- *       \version    $Id: limits.php,v 1.22 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -209,5 +208,5 @@ print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparr
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.22 $');
+llxFooter();
 ?>

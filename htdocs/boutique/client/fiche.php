@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: fiche.php,v 1.22 2011/08/03 00:45:42 eldy Exp $
  */
 
 /**
  *	\file       htdocs/boutique/client/fiche.php
  *	\ingroup    boutique
  *	\brief      Page fiche client OSCommerce
- *	\version    $Revision: 1.22 $
  */
 
 require("../../main.inc.php");
@@ -128,5 +126,5 @@ else
 
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 00:45:42 $ - $Revision: 1.22 $');
+llxFooter();
 ?>

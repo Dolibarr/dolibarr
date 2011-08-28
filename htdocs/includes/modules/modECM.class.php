@@ -18,8 +18,7 @@
 
 /**     \defgroup   ecm		Module ecm
  *      \brief      Module for ECM (Electronic Content Management)
- *		\version	$Id: modECM.class.php,v 1.36 2011/07/31 23:28:12 eldy Exp $
-*/
+ */
 
 /**
  *       \file       htdocs/includes/modules/modECM.class.php

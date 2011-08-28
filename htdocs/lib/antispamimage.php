@@ -19,7 +19,6 @@
 /**
  *		\file       htdocs/lib/antispamimage.php
  *		\brief      Return antispam image
- *		\version    $Id: antispamimage.php,v 1.16 2011/07/31 23:25:15 eldy Exp $
  */
 
 define('NOLOGIN',1);

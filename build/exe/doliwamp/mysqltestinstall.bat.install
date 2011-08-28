@@ -1,7 +1,6 @@
 @echo off
 REM ------------------------------------------------------------
 REM Launch a test to connect to mysql
-REM $Id$
 REM ------------------------------------------------------------
 REM To change password, run following SQL command: 
 REM GRANT ALL ON *.* TO login@localhost IDENTIFIED BY "newpassword"

@@ -28,7 +28,6 @@
  *		\file       htdocs/includes/modules/modAdherent.class.php
  *      \ingroup    member
  *      \brief      File descriptor or module Member
- *		\version	$Id: modAdherent.class.php,v 1.89 2011/08/10 00:50:18 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

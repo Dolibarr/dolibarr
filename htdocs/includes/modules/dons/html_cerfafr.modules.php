@@ -17,11 +17,10 @@
  */
 
 /**
-			\file       htdocs/includes/modules/dons/html_cerfafr.modules.php
-			\ingroup    don
-			\brief      Formulaire de don
-			\version    $Id: html_cerfafr.modules.php,v 1.30 2011/07/31 23:28:14 eldy Exp $
-*/
+ * \file       htdocs/includes/modules/dons/html_cerfafr.modules.php
+ * \ingroup    don
+ * \brief      Formulaire de don
+ */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/dons/modules_don.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");

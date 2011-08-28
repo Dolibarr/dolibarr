@@ -7,7 +7,6 @@
 //
 // \file       htdocs/lib/lib_head.js
 // \brief      File that include javascript functions (included if option use_javascript activated)
-// \version    $Id: lib_head.js,v 1.82 2011/06/08 15:26:54 eldy Exp $
 //
 
 

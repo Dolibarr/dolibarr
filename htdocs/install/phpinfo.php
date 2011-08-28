@@ -16,11 +16,10 @@
  */
 
 /**
-        \file       htdocs/install/phpinfo.php
-        \ingroup    install
-        \brief      Affichage page phpinfo
-        \version    $Id: phpinfo.php,v 1.4 2011/07/31 23:26:18 eldy Exp $
-*/
+ *     \file       htdocs/install/phpinfo.php
+ *     \ingroup    install
+ *     \brief      Affichage page phpinfo
+ */
 
 phpinfo();
 

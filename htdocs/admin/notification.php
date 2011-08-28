@@ -20,7 +20,6 @@
  *	    \file       htdocs/admin/notification.php
  *		\ingroup    notification
  *		\brief      Page to setup notification module
- *		\version    $Id: notification.php,v 1.13 2011/07/31 22:23:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -121,6 +120,6 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.13 $');
+llxFooter();
 
 ?>

@@ -21,7 +21,6 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.190 2011/08/21 13:28:05 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -1707,8 +1706,7 @@ function migrate_modeles($db,$langs,$conf)
 	if (! empty($conf->facture->enabled))
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
-		$model=new ModelePDFFactures();
-		$modellist=$model->liste_modeles($db);
+		$modellist=ModelePDFFactures::liste_modeles($db);
 		if (sizeof($modellist)==0)
 		{
 			// Aucun model par defaut.
@@ -1721,8 +1719,7 @@ function migrate_modeles($db,$langs,$conf)
 	if (! empty($conf->commande->enabled))
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
-		$model=new ModelePDFCommandes();
-		$modellist=$model->liste_modeles($db);
+		$modellist=ModelePDFCommandes::liste_modeles($db);
 		if (sizeof($modellist)==0)
 		{
 			// Aucun model par defaut.
@@ -1735,8 +1732,7 @@ function migrate_modeles($db,$langs,$conf)
 	if (! empty($conf->expedition->enabled))
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
-		$model=new ModelePDFExpedition();
-		$modellist=$model->liste_modeles($db);
+		$modellist=ModelePDFExpedition::liste_modeles($db);
 		if (sizeof($modellist)==0)
 		{
 			// Aucun model par defaut.

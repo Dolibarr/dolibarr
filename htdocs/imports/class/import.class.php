@@ -19,7 +19,6 @@
  *	\file       htdocs/imports/class/import.class.php
  *	\ingroup    import
  *	\brief      File of class to manage imports
- *	\version    $Id: import.class.php,v 1.8 2011/07/31 23:46:39 eldy Exp $
  */
 
 /**

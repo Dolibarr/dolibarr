@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: index.php,v 1.10 2011/08/03 00:45:46 eldy Exp $
  */
 
 /**
-	    \file       htdocs/boutique/critiques/index.php
-		\ingroup    boutique
-		\brief      Page gestion critiques OSCommerce
-		\version    $Revision: 1.10 $
-*/
+ * 	    \file       htdocs/boutique/critiques/index.php
+ * 		\ingroup    boutique
+ * 		\brief      Page gestion critiques OSCommerce
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
@@ -91,5 +89,5 @@ print "</TABLE>";
 
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.10 $');
+llxFooter();
 ?>

@@ -21,7 +21,6 @@
  *       \file       htdocs/comm/action/class/ical.class.php
  *       \ingroup    commercial
  *       \brief      File of class to parse ical calendars
- *       \version    $Id: ical.class.php,v 1.7 2011/08/08 15:47:16 eldy Exp $
  */
 class ical
 {

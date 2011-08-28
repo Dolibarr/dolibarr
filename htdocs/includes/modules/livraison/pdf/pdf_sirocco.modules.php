@@ -23,7 +23,6 @@
  *	\file       htdocs/includes/modules/livraison/pdf/pdf_sirocco.modules.php
  *	\ingroup    livraison
  *	\brief      File of class to manage receving receipts with template Sirocco
- *	\version    $Id: pdf_sirocco.modules.php,v 1.79 2011/08/11 12:14:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");

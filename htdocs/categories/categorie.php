@@ -24,7 +24,6 @@
  *  \file       htdocs/categories/categorie.php
  *  \ingroup    category
  *  \brief      Page to show category tab
- *  \version    $Id: categorie.php,v 1.69 2011/08/24 12:31:12 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -535,5 +534,5 @@ function formCategory($db,$object,$typeid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/24 12:31:12 $ - $Revision: 1.69 $');
+llxFooter();
 ?>

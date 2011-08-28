@@ -19,7 +19,6 @@
 /**
  *	\file       htdocs/user/home.php
  *	\brief      Home page of users and groups management
- *	\version    $Id: home.php,v 1.52 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -259,5 +258,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.52 $');
+llxFooter();
 ?>
