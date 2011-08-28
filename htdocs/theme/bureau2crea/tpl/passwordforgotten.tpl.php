@@ -50,7 +50,7 @@ function donnefocus() {
   <img alt="Logo" title="" src="<?php echo $urllogo; ?>" />
 </div>
 
-<div id="parameterBox" summary="Login area">
+<div id="parameterBox">
 	<div id="logBox"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong><input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat" size="15" maxlength="25" value="<?php echo $login; ?>" tabindex="1" /></div>
 
 	<?php if ($select_entity) { ?>
@@ -58,17 +58,17 @@ function donnefocus() {
         <?php echo $select_entity; ?>
         </div>
     <?php } ?>
-    
+
     <?php if ($captcha) { ?>
         <div class="captchaBox">
             <strong><label><?php echo $langs->trans('SecurityCode'); ?></label></strong>
-            <input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>
+            <input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3">
         </div>
         <div class="captchaImg">
-            <img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" id="captcha"></td>
+            <img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" id="captcha">
             <a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a>
         </div>
-    
+
     <?php } ?>
 
 
