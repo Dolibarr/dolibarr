@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="phpcomment" deleted="false" description="Comment for getter methods" enabled="true" id="org.eclipse.php.ui.editor.templates.php.codetemplates.gettercomment" name="gettercomment">/**
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE codetemplates SYSTEM "codetemplates.dtd">
+<templates><template autoinsert="true" context="phpcomment" deleted="false" description="Comment for getter methods" enabled="true" id="org.eclipse.php.ui.editor.templates.php.codetemplates.gettercomment" name="gettercomment">/**
  * @return the ${bare_field_name}
  */</template><template autoinsert="true" context="phpcomment" deleted="false" description="Comment for setter methods" enabled="true" id="org.eclipse.php.ui.editor.templates.php.codetemplates.settercomment" name="settercomment">/**
  * @param ${param} the ${bare_field_name} to set
