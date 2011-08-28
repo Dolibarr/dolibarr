@@ -31,7 +31,7 @@
 
 
 /**
- *      \class      Skeleton_Class
+ *      \class      Skeleton_class
  *      \brief      Put here description of your class
  *		\remarks	Put here some comments
  */
