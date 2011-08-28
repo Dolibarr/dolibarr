@@ -40,8 +40,9 @@ abstract class CommonObject
 
 
 	/**
-	 *      \brief      Check if ref is used.
-	 * 		\return		int			<0 if KO, 0 if not found, >0 if found
+	 *      Check if ref is used.
+	 *
+	 * 		@return		int			<0 if KO, 0 if not found, >0 if found
 	 */
 	function verifyNumRef()
 	{
@@ -68,6 +69,7 @@ abstract class CommonObject
 
 	/**
 	 *      Add a link between element $this->element and a contact
+	 *
 	 *      @param      fk_socpeople        Id of contact to link
 	 *   	@param 		type_contact 		Type of contact (code or id)
 	 *      @param      source              external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
@@ -159,6 +161,7 @@ abstract class CommonObject
 
 	/**
 	 *      Update a link to contact line
+	 *
 	 *      @param      rowid               Id of line contact-element
 	 * 		@param		statut	            New status of link
 	 *      @param      type_contact_id     Id of contact type (not modified if 0)
@@ -185,6 +188,7 @@ abstract class CommonObject
 
 	/**
 	 *    Delete a link to contact line
+	 *
 	 *    @param      	rowid			Id of contact link line to delete
 	 *    @param		notrigger		Disable all triggers
 	 *    @return     	int				>0 if OK, <0 if KO
@@ -221,6 +225,7 @@ abstract class CommonObject
 
 	/**
 	 *    Delete all links between an object $this and all its contacts
+	 *
 	 *    @return     int	>0 if OK, <0 if KO
 	 */
 	function delete_linked_contact()
@@ -253,6 +258,7 @@ abstract class CommonObject
 
 	/**
 	 *    Get array of all contacts for an object
+	 *
 	 *    @param		statut		int          Status of lines to get (-1=all)
 	 *    @param		source		string       Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
 	 *    @param		int         list         0:Return array contains all properties, 1:Return array contains just id
@@ -358,6 +364,7 @@ abstract class CommonObject
 
 	/**
 	 *      Return array with list of possible values for type of contacts
+	 *
 	 *      @param      source      internal, external or all if not defined
 	 *      @param		order		Sort order by : code or rowid
 	 *      @param      option      0=Return array id->label, 1=Return array code->label
@@ -405,6 +412,7 @@ abstract class CommonObject
 	 *      Example: contact client de facturation ('external', 'BILLING')
 	 *      Example: contact client de livraison ('external', 'SHIPPING')
 	 *      Example: contact interne suivi paiement ('internal', 'SALESREPFOLL')
+	 *
 	 *		@param		source		'external' or 'internal'
 	 *		@param		code		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
 	 *		@param		status		limited to a certain status
@@ -453,9 +461,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 *		\brief      Charge le contact d'id $id dans this->contact
-	 *		\param      contactid          Id du contact
-	 *		\return		int			<0 if KO, >0 if OK
+	 *		Charge le contact d'id $id dans this->contact
+	 *
+	 *		@param      contactid          Id du contact
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
 	function fetch_contact($contactid)
 	{
@@ -468,6 +477,7 @@ abstract class CommonObject
 
 	/**
 	 *    	Load the third party of object from id $this->socid into this->thirdpary
+	 *
 	 *		@return		int			<0 if KO, >0 if OK
 	 */
 	function fetch_thirdparty()
@@ -492,8 +502,9 @@ abstract class CommonObject
 	}
 
 	/**
-	 *		\brief      Charge le projet d'id $this->fk_project dans this->projet
-	 *		\return		int			<0 if KO, >=0 if OK
+	 *		Charge le projet d'id $this->fk_project dans this->projet
+	 *
+	 *		@return		int			<0 if KO, >=0 if OK
 	 */
 	function fetch_projet()
 	{
@@ -506,9 +517,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 *		\brief      Charge le user d'id userid dans this->user
-	 *		\param      userid 		Id du contact
-	 *		\return		int			<0 if KO, >0 if OK
+	 *		Charge le user d'id userid dans this->user
+	 *
+	 *		@param      userid 		Id du contact
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
 	function fetch_user($userid)
 	{
@@ -520,6 +532,7 @@ abstract class CommonObject
 
 	/**
 	 *		Load delivery adresse id into $this->fk_address
+	 *
 	 *		@param      fk_address 		Id of address
 	 *		@return		int				<0 if KO, >0 if OK
 	 */
@@ -551,6 +564,7 @@ abstract class CommonObject
 
 	/**
 	 *    	Load object from specific field
+	 *
 	 *    	@param		table		Table element or element line
 	 *    	@param		field		Field selected
 	 *    	@param		key			Import key
@@ -577,6 +591,7 @@ abstract class CommonObject
 
 	/**
 	 *    	Update a specific field from an object
+	 *
 	 *    	@param		table		Table element or element line
 	 *    	@param		id			Object id
 	 *    	@param		field		Field to update
@@ -605,10 +620,11 @@ abstract class CommonObject
 	}
 
 	/**
-	 *      \brief      Load properties id_previous and id_next
-	 *      \param      filter		Optional filter
-	 *	 	\param      fieldid   	Name of field to use for the select MAX and MIN
-	 *      \return     int         <0 if KO, >0 if OK
+	 *      Load properties id_previous and id_next
+	 *
+	 *      @param      filter		Optional filter
+	 *	 	@param      fieldid   	Name of field to use for the select MAX and MIN
+	 *      @return     int         <0 if KO, >0 if OK
 	 */
 	function load_previous_next_ref($filter='',$fieldid)
 	{
@@ -672,9 +688,10 @@ abstract class CommonObject
 
 
 	/**
-	 *      \brief      Return list of id of contacts of project
-	 *      \param      source      Source of contact: external (llx_socpeople) or internal (llx_user) or thirdparty (llx_societe)
-	 *      \return     array		Array of id of contacts (if source=external or internal)
+	 *      Return list of id of contacts of project
+	 *
+	 *      @param      source      Source of contact: external (llx_socpeople) or internal (llx_user) or thirdparty (llx_societe)
+	 *      @return     array		Array of id of contacts (if source=external or internal)
 	 * 								Array of id of third parties with at least one contact on project (if source=thirdparty)
 	 */
 	function getListContactId($source='external')
@@ -694,9 +711,10 @@ abstract class CommonObject
 
 
 	/**
-	 *	\brief     	Link element with a project
-	 *	\param     	projid		Project id to link element to
-	 *	\return		int			<0 if KO, >0 if OK
+	 *	Link element with a project
+	 *
+	 *	@param     	projid		Project id to link element to
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	function setProject($projectid)
 	{
@@ -726,10 +744,11 @@ abstract class CommonObject
 
 
 	/**
-	 *		\brief		Set last model used by doc generator
-	 *		\param		user		User object that make change
-	 *		\param		modelpdf	Modele name
-	 *		\return		int			<0 if KO, >0 if OK
+	 *		Set last model used by doc generator
+	 *
+	 *		@param		user		User object that make change
+	 *		@param		modelpdf	Modele name
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
 	function setDocModel($user, $modelpdf)
 	{
@@ -764,6 +783,7 @@ abstract class CommonObject
 
 	/**
 	 *      Stocke un numero de rang pour toutes les lignes de detail d'un element qui n'en ont pas.
+	 *
 	 * 		@param		renum		true to renum all already ordered lines, false to renum only not already ordered lines.
 	 */
 	function line_order($renum=false, $rowidorder='ASC')
@@ -811,6 +831,7 @@ abstract class CommonObject
 
 	/**
 	 * Update a line to have a lower rank
+	 *
 	 * @param $rowid
 	 */
 	function line_up($rowid)
@@ -826,6 +847,7 @@ abstract class CommonObject
 
 	/**
      * Update a line to have a higher rank
+     *
 	 * @param $rowid
 	 */
 	function line_down($rowid)
@@ -843,7 +865,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   Update position of line (rang)
+	 * 	Update position of line (rang)
+	 *
+	 * 	@param		rowid
+	 * 	@param		rang
 	 */
 	function updateRangOfLine($rowid,$rang)
 	{
@@ -857,6 +882,8 @@ abstract class CommonObject
 
 	/**
 	 * 	   Update position of line with ajax (rang)
+	 *
+	 * 		@param		roworder
 	 */
 	function line_ajaxorder($roworder)
 	{
@@ -870,7 +897,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   Update position of line up (rang)
+	 * 	   	Update position of line up (rang)
+	 *
+	 * 		@param		rowid
+	 * 		@param		rang
 	 */
 	function updateLineUp($rowid,$rang)
 	{
@@ -896,7 +926,11 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   Update position of line down (rang)
+	 * 	   	Update position of line down (rang)
+	 *
+	 * 		@param	rowid
+	 * 		@param	rang
+	 * 		@param	max
 	 */
 	function updateLineDown($rowid,$rang,$max)
 	{
@@ -923,7 +957,9 @@ abstract class CommonObject
 
 	/**
 	 * 	   Get position of line (rang)
-	 *     @return     int     Value of rang in table of lines
+	 *
+	 * 	   @param		rowid	Id of line
+	 *     @return     	int     Value of rang in table of lines
 	 */
 	function getRangOfLine($rowid)
 	{
@@ -939,6 +975,7 @@ abstract class CommonObject
 
 	/**
 	 * 	   Get rowid of the line relative to its position
+	 *
 	 *     @return     int     Rowid of the line
 	 */
 	function getIdOfLine($rang)
@@ -956,7 +993,9 @@ abstract class CommonObject
 
 	/**
 	 * 	   Get max value used for position of line (rang)
-	 *     @result     int     Max value of rang in table of lines
+	 *
+	 * 	   @param		fk_parent_line
+	 *     @return      int     			Max value of rang in table of lines
 	 */
 	function line_max($fk_parent_line=0)
 	{
@@ -992,9 +1031,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 *    \brief      Update private note of element
-	 *    \param      note			New value for note
-	 *    \return     int         	<0 if KO, >0 if OK
+	 *    Update private note of element
+	 *
+	 *    @param      note			New value for note
+	 *    @return     int         	<0 if KO, >0 if OK
 	 */
 	function update_note($note)
 	{
@@ -1031,9 +1071,9 @@ abstract class CommonObject
 	}
 
 	/**
-	 *    \brief      Update public note of element
-	 *    \param      note_public	New value for note
-	 *    \return     int         	<0 if KO, >0 if OK
+	 *    Update public note of element
+	 *    @param      note_public	New value for note
+	 *    @return     int         	<0 if KO, >0 if OK
 	 */
 	function update_note_public($note_public)
 	{
@@ -1062,6 +1102,7 @@ abstract class CommonObject
 
 	/**
 	 *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
+	 *
 	 *	@param	   exclspec          Exclude special product (product_type=9)
 	 *  @param     roundingadjust    -1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND or 0), 0=Use total of rounding, 1=Use rounding of total
 	 *	@return	   int               <0 if KO, >0 if OK
@@ -1174,6 +1215,7 @@ abstract class CommonObject
 
 	/**
 	 * 	   Add objects linked in llx_element_element.
+	 *
 	 *     @return         int         <=0 if KO, >0 if OK
 	 */
 	function add_object_linked()
@@ -1208,6 +1250,7 @@ abstract class CommonObject
 
 	/**
 	 * 	   Fetch array of objects linked to current object. Links are loaded into this->linked_object array.
+	 *
 	 *     @param  sourceid
 	 *     @param  sourcetype
 	 *     @param  targetid
@@ -1322,6 +1365,7 @@ abstract class CommonObject
 
 	/**
 	 *      Set statut of an object
+	 *
 	 *      @param		statut			Statut to set
 	 *      @param		elementId		Id of element to force (use this->id by default)
 	 *      @param		elementType		Type of element to force (use ->this->element by default)
@@ -1442,6 +1486,7 @@ abstract class CommonObject
 
 	/**
 	 * 	Get special code of line
+	 *
 	 * 	@param		lineid		Id of line
 	 */
 	function getSpecialCode($lineid)
@@ -1459,6 +1504,7 @@ abstract class CommonObject
 
     /**
      *  Function to get extra fields of a member into $this->array_options
+     *
      *  @param      rowid
      *  @param      optionsArray    Array resulting of call of extrafields->fetch_name_optionals_label()
      */
@@ -1509,6 +1555,52 @@ abstract class CommonObject
         }
     }
 
+
+    /**
+     *  Function to check if an object is used by others
+     *
+     *  @param		id				Id of object
+     *  @return		int				<0 if KO, 0 if not used, >0 if already used
+     */
+    function isObjectUsed($id)
+    {
+        // Check parameters
+        if (! isset($this->childtables) || ! is_array($this->childtables) || count($this->childtables) == 0)
+        {
+            dol_print_error('Called isObjectUsed on a class with property this->childtables not defined');
+            return -1;
+        }
+
+        // Test if child exists
+        $haschild=0;
+        foreach($this->childtables as $table)
+        {
+            // Check if third party can be deleted
+            $nb=0;
+            $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
+            $sql.= " WHERE ".$this->fk_element." = ".$id;
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $obj=$this->db->fetch_object($resql);
+                $haschild+=$obj->nb;
+                //print 'Found into table '.$table;
+                if ($haschild) break;    // We found at least on, we stop here
+            }
+            else
+            {
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::delete error -1 ".$this->error, LOG_ERR);
+                return -1;
+            }
+        }
+        if ($haschild > 0)
+        {
+            $this->error="ErrorRecordHasChildren";
+            return $haschild;
+        }
+        else return 0;
+    }
 
 
     // --------------------

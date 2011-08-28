@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       dev/samples/manage_order.php
+ *      \file       dev/examples/manage_order.php
  *      \brief      This file is an example for a command line script
  *		\author		Put author name here
  *		\remarks	Put here some comments

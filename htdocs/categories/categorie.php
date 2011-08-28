@@ -322,12 +322,12 @@ else if ($_GET["id"] || $_GET["ref"])
 		print '</tr>';
 
 		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
 		print $product->getLibStatut(2,0);
 		print '</td></tr>';
 
 		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
 		print $product->getLibStatut(2,1);
 		print '</td></tr>';
 
@@ -425,7 +425,12 @@ else if ($_GET["id"] || $_GET["ref"])
 
 
 /**
- * Fonction Barre d'actions
+ * 	Function to output a HTML select for a category
+ *
+ * 	@param		DoliDb		$db			Database handler
+ * 	@param		Object		$object		Object we want to see categories it can be classified into
+ * 	@param		int			$typeid		Type of category (0, 1, 2, 3)
+ *  @return		int			0
  */
 function formCategory($db,$object,$typeid)
 {
@@ -468,7 +473,7 @@ function formCategory($db,$object,$typeid)
 	$c = new Categorie($db);
 	$cats = $c->containing($object->id,$typeid);
 
-	if (sizeof($cats) > 0)
+	if (count($cats) > 0)
 	{
 		if ($typeid == 0) $title=$langs->trans("ProductIsInCategories");
 		if ($typeid == 1) $title=$langs->trans("CompanyIsInSuppliersCategories");
@@ -517,7 +522,7 @@ function formCategory($db,$object,$typeid)
 		}
 		print "</table>\n";
 	}
-	else if($cats < 0)
+	else if ($cats < 0)
 	{
 		print $langs->trans("ErrorUnknown");
 	}
@@ -530,6 +535,7 @@ function formCategory($db,$object,$typeid)
 		print $title;
 		print "<br/>";
 	}
+	return 0;
 }
 
 $db->close();

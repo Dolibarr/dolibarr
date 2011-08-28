@@ -346,19 +346,20 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
 }
 
 /**
- *	\brief      Write log message in a file or to syslog process
- *				Pour fichier:   	fichier defined by SYSLOG_FILE
- *				Pour syslog:    	facility defined by SYSLOG_FACILITY
- * 				Warning, les fonctions syslog sont buggues sous Windows et generent des
- *				fautes de protection memoire. Pour resoudre, utiliser le loggage fichier,
- *				au lieu du loggage syslog (configuration du module).
- *				Si SYSLOG_FILE_NO_ERROR defini, on ne gere pas erreur ecriture log
- * 	\param      message		    	Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *	\param      level           	Log level
- *	\remarks	This function works only if syslog module is enabled.
- * 	\remarks	This must must not use any call to other function calling dol_syslog (avoid infinite loop).
- *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
- *				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *	Write log message in a file or to syslog process
+ *	Pour fichier:   	fichier defined by SYSLOG_FILE
+ *	Pour syslog:    	facility defined by SYSLOG_FACILITY
+ * 	Warning, les fonctions syslog sont buggues sous Windows et generent des
+ *	fautes de protection memoire. Pour resoudre, utiliser le loggage fichier,
+ *	au lieu du loggage syslog (configuration du module).
+ *	Si SYSLOG_FILE_NO_ERROR defini, on ne gere pas erreur ecriture log
+ *	This function works only if syslog module is enabled.
+ * 	This must must not use any call to other function calling dol_syslog (avoid infinite loop).
+ *	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
+ *	On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *
+ * 	@param      string		message		 Line to log. Ne doit pas etre traduit si level = LOG_ERR
+ *	@param      int			level        Log level
  */
 function dol_syslog($message, $level=LOG_INFO)
 {

@@ -58,7 +58,7 @@ function getLoginMethod()
 						$passwordtotest=$_POST["password"];
 						$entitytotest=$_POST["entity"];
 						$function='check_user_password_'.$mode;
-						$login=$function($usertotest,$passwordtotest,$entitytotest);
+						$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
 						if ($login)
 						{
 							$conf->authmode=$mode;	// This properties is defined only when logged
@@ -206,7 +206,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
-		
+
 	}
 
 	// Entity field

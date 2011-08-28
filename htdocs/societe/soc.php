@@ -424,9 +424,9 @@ if (empty($reshook))
         $object->fetch($socid);
         $result = $object->delete($socid);
 
-        if ($result >= 0)
+        if ($result > 0)
         {
-            Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$object->nom."");
+            Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".urlencode($object->name));
             exit;
         }
         else
@@ -498,6 +498,7 @@ $formcompany = new FormCompany($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
+
 // TODO Mutualize this part of code (same than product/fiche.php and contact/fiche.php)
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
@@ -538,6 +539,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 }
 else
 {
+
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------

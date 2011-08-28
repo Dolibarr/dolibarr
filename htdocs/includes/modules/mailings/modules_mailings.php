@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
  *	    \class      MailingTargets
  *		\brief      Parent class of emailing target selectors modules
  */
-class MailingTargets
+abstract class MailingTargets
 {
     var $db='';
     var $error='';

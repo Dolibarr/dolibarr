@@ -68,14 +68,17 @@ if ($action == 'setcodecompta')
 
 if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 {
-	if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_COMPANY_USE_SEARCH_TO_SELECT"],'chaine',0,'',$conf->entity))
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
+	$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_COMPANY_USE_SEARCH_TO_SELECT"],'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+    {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
 	}
 }
 
@@ -83,16 +86,29 @@ if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 if ($action == 'setModuleOptions')
 {
 	$post_size=count($_POST);
+	
+	$db->begin();
+	
 	for($i=0;$i < $post_size;$i++)
     {
     	if (array_key_exists('param'.$i,$_POST))
     	{
     		$param=$_POST["param".$i];
     		$value=$_POST["value".$i];
-    		if ($param) dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+    		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+	    	if (! $res > 0) $error++;
     	}
     }
-    $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	if (! $error)
+    {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
 }
 
 // Activate a document generator module

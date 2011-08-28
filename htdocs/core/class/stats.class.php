@@ -26,7 +26,7 @@
  * 		\class		Stats
  * 		\brief		Parent class of statistics class
  */
-class Stats
+abstract class Stats
 {
 	var $db ;
 

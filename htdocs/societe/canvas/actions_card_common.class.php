@@ -26,7 +26,7 @@
  *	\class      ActionsCardCommon
  *	\brief      Classe permettant la gestion des tiers par defaut
  */
-class ActionsCardCommon
+abstract class ActionsCardCommon
 {
     var $db;
     var $targetmodule;

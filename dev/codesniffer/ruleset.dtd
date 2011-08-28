@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT ruleset (description,rule+)>
+<!ATTLIST ruleset name CDATA "">
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT rule (properties*,severity*)>
+<!ATTLIST rule ref CDATA "">
+<!ELEMENT properties (property+)>
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property name CDATA "">
+<!ATTLIST property value CDATA "">
+<!ELEMENT severity (#PCDATA)>

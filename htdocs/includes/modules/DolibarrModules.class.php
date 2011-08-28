@@ -30,7 +30,7 @@
  *  \class      DolibarrModules
  *  \brief      Classe mere des classes de description et activation des modules Dolibarr
  */
-class DolibarrModules
+abstract class DolibarrModules
 {
     //! Database handler
     var $db;

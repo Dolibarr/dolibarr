@@ -27,7 +27,7 @@ class ical
     var $file_text; // Text in file
     var $cal; // Array to save iCalendar parse data
     var $event_count; // Number of Events
-    var $todo_count; // Number of TODOs
+    var $todo_count; // Number of Todos
     var $last_key; //Help variable save last key (multiline string)
 
 

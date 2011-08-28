@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
  *  \class      ModeleGenPassword
  *  \brief      Parent class for password rules/management modules
  */
-class ModeleGenPassword
+abstract class ModeleGenPassword
 {
 	var $error='';
 

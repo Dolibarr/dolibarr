@@ -36,10 +36,12 @@ class Product extends CommonObject
 {
 	var $db;
 	var $error;
-	//! Error number
 	var $errno = 0;
+
 	var $element='product';
 	var $table_element='product';
+	var $fk_element='fk_product';
+	var $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur');
 	var $isnolinkedbythird = 1;     // No field fk_soc
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -92,9 +94,6 @@ class Product extends CommonObject
 	var $customcode;       // Custom code
     var $country_id;       // Country origin id
 	var $country_code;     // Country origin code (US, FR, ...)
-
-	// Hidden into combo boxes
-	var $hidden;
 
 	//! Unites de mesure
 	var $weight;
@@ -219,7 +218,6 @@ class Product extends CommonObject
 		if (empty($this->status))    	$this->status = 0;
 		if (empty($this->status_buy))   $this->status_buy = 0;
 		if (empty($this->finished))  	$this->finished = 0;
-		if (empty($this->hidden))    	$this->hidden = 0;
 
 		$price_ht=0;
 		$price_ttc=0;
@@ -291,7 +289,6 @@ class Product extends CommonObject
 				$sql.= ", tosell";
 				$sql.= ", canvas";
 				$sql.= ", finished";
-				$sql.= ", hidden";
 				$sql.= ") VALUES (";
 				$sql.= $this->db->idate(mktime());
 				$sql.= ", ".$conf->entity;
@@ -308,7 +305,6 @@ class Product extends CommonObject
 				$sql.= ", ".$this->status_buy;
 				$sql.= ", '".$this->canvas."'";
 				$sql.= ", ".$this->finished;
-				$sql.= ", ".$this->hidden;
 				$sql.= ")";
 
 				dol_syslog("Product::Create sql=".$sql);
@@ -428,7 +424,6 @@ class Product extends CommonObject
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
 
 		if (empty($this->finished))  			$this->finished = 0;
-		if (empty($this->hidden))   			$this->hidden = 0;
         if (empty($this->country_id))           $this->country_id = 0;
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -446,7 +441,6 @@ class Product extends CommonObject
 		$sql.= ",tosell = " . $this->status;
 		$sql.= ",tobuy = " . $this->status_buy;
 		$sql.= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
-		$sql.= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
 		$sql.= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 		$sql.= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 		$sql.= ",length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
@@ -506,49 +500,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Verification de l'utilisation du produit en base
-	 *
-	 *  @param      id          id du produit
-	 */
-	function verif_prod_use($id)
-	{
-		$sqr = 0;
-
-		$elements = array('propaldet','commandedet','facturedet','contratdet','product_fournisseur');
-
-		foreach($elements as $table)
-		{
-			$sql = "SELECT rowid";
-			$sql.= " FROM ".MAIN_DB_PREFIX.$table;
-			$sql.= " WHERE fk_product = ".$id;
-
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
-				if ($num != 0)
-				{
-					$sqr++;
-				}
-			}
-		}
-
-		if ($sqr == 0)
-		{
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
-	}
-
-
-	/**
 	 *  Delete a product from database (if not used)
 	 *
 	 *	@param      id          Product id
-	 * 	@return		int			< 0 if KO, >= 0 if OK
+	 * 	@return		int			< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
 	function delete($id)
 	{
@@ -558,55 +513,133 @@ class Product extends CommonObject
 
 		if ($user->rights->produit->supprimer)
 		{
-			$prod_use = $this->verif_prod_use($id);
-			if ($prod_use == 0)
+			$objectisused = $this->isObjectUsed($id);
+			if (empty($objectisused))
 			{
-				// TODO possibility to add external module constraint
-				$elements = array('product_price','product_lang','categorie_product');
+			    $this->db->begin();
 
-				foreach($elements as $table)
-				{
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-					$sql.= " WHERE fk_product = ".$id;
-					$result = $this->db->query($sql);
-				}
+			    // Delete supplier prices log
+                if (! $error)
+                {
+    			    $sql = 'DELETE pfpl';
+    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price_log as pfpl, '.MAIN_DB_PREFIX.'product_fournisseur as pf';
+    				$sql.= ' WHERE pfpl.fk_product_fournisseur = pf.rowid';
+    				$sql.= ' AND pf.fk_product = '.$id;
+                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+    				$result = $this->db->query($sql);
+    				if (! $result)
+    				{
+    				    $error++;
+    					$this->error = $this->db->lasterror();
+    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+    				}
+                }
 
-				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
-				$sqlz.= " WHERE rowid = ".$id;
-				$resultz = $this->db->query($sqlz);
+			    // Delete supplier prices
+                if (! $error)
+                {
+    			    $sql = 'DELETE pfp';
+    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'product_fournisseur as pf';
+    				$sql.= ' WHERE pfp.fk_product_fournisseur = pf.rowid';
+    				$sql.= ' AND pf.fk_product = '.$id;
+                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+    				$result = $this->db->query($sql);
+    				if (! $result)
+    				{
+    				    $error++;
+    					$this->error = $this->db->lasterror();
+    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+    				}
+                }
 
-				if ( ! $resultz )
-				{
-					dol_syslog('Product::delete error sqlz='.$sqlz, LOG_ERR);
-					$error++;
-				}
+                // Other child tables
+                if (! $error)
+                {
+                    $elements = array('product_price','product_lang','categorie_product');
+    				foreach($elements as $table)
+    				{
+    					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+    					$sql.= " WHERE fk_product = ".$id;
+        				dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+    					$result = $this->db->query($sql);
+        				if (! $result)
+        				{
+        				    $error++;
+        					$this->error = $this->db->lasterror();
+        				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+        				}
+    				}
+                }
 
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                if (! $error)
+                {
+                	// Actions on extra fields (by external module or standard code)
+                    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                    $hookmanager=new HookManager($this->db);
+                    $hookmanager->callHooks(array('product_extrafields'));
+                    $parameters=array(); $action='delete';
+                    $reshook=$hookmanager->executeHooks('deleteExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                    if (! empty($hookmanager->error))
+                    {
+                        $error++;
+                        $this->error=$hookmanager->error;
+                    }
+                    else if (empty($reshook))
+                    {
+                        // TODO
+                    	//$result=$this->deleteExtraFields($this);
+                        //if ($result < 0) $error++;
+                    }
+                }
+
+                // Delete product
+                if (! $error)
+                {
+    				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
+    				$sqlz.= " WHERE rowid = ".$id;
+                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+    				$resultz = $this->db->query($sqlz);
+       				if ( ! $resultz )
+    				{
+    					$error++;
+    					$this->error = $this->db->lasterror();
+    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+    				}
+                }
+
+                if (! $error)
+                {
+                    // Appel des triggers
+    				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+    				$interface=new Interfaces($this->db);
+    				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
+    				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+    				// Fin appel triggers
+                }
 
 				if ($error)
 				{
+				    $this->db->rollback();
 					return -$error;
 				}
 				else
 				{
-					return 0;
+				    $this->db->commit();
+					return 1;
 				}
 			}
 			else
 			{
-				$this->error .= "FailedToDeleteProduct. Already used.\n";
-				return -1;
+				$this->error = "ErrorRecordHasChildren";
+				return 0;
 			}
 		}
 	}
 
 	/**
 	 *	Update ou cree les traductions des infos produits
+	 *
+	 *	@param		int		<0 if KO, >0 if OK
 	 */
 	function setMultiLangs()
 	{
@@ -672,6 +705,8 @@ class Product extends CommonObject
 
 	/**
 	 *	Load array this->multilangs
+	 *
+	 *	@param		int		<0 if KO, >0 if OK
 	 */
 	function getMultiLangs()
 	{
@@ -700,6 +735,7 @@ class Product extends CommonObject
 				$this->multilangs["$obj->lang"]["description"]	= $obj->description;
 				$this->multilangs["$obj->lang"]["note"]			= $obj->note;
 			}
+			return 1;
 		}
 		else
 		{
@@ -714,7 +750,7 @@ class Product extends CommonObject
 	 *  Ajoute un changement de prix en base dans l'historique des prix
 	 *
 	 *	@param  	user        Objet utilisateur qui modifie le prix
-	 *	@return		int			<0 si KO, >0 si OK
+	 *	@param		int			<0 if KO, >0 if OK
 	 */
 	function _log_price($user,$level=0)
 	{
@@ -992,7 +1028,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
-		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
+		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -1032,7 +1068,6 @@ class Product extends CommonObject
 				$this->status				= $object->tosell;
 				$this->status_buy			= $object->tobuy;
 				$this->finished				= $object->finished;
-				$this->hidden				= $object->hidden;
 				$this->duration				= $object->duration;
 				$this->duration_value		= substr($object->duration,0,dol_strlen($object->duration)-1);
 				$this->duration_unit		= substr($object->duration,-1);
@@ -2870,16 +2905,6 @@ class Product extends CommonObject
 		// Note
 		$this->tpl['note'] = nl2br($this->note);
 
-		// Hidden
-		if ($this->user->rights->produit->hidden)
-		{
-			$this->tpl['hidden'] = yn($this->hidden);
-		}
-		else
-		{
-			$this->tpl['hidden'] = yn("No");
-		}
-
 		if ($action == 'create')
 		{
 			// Price
@@ -2900,12 +2925,6 @@ class Product extends CommonObject
 			//To Buy
 			$statutarray=array('1' => $langs->trans("Yes"), '0' => $langs->trans("No"));
 			$this->tpl['tobuy'] = $html->selectarray('tobuy',$statutarray,$this->status_buy);
-
-			// Hidden
-			if ($this->user->rights->produit->hidden)
-			{
-				$this->tpl['hidden'] = $html->selectyesno('hidden',$this->hidden);
-			}
 
             $this->tpl['description'] = $this->description;
             $this->tpl['note'] = $this->note;

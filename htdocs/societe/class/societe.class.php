@@ -39,8 +39,11 @@ class Societe extends CommonObject
     var $db;
     var $error;
     var $errors=array();
+
     var $element='societe';
     var $table_element = 'societe';
+	var $fk_element='fk_soc';
+    var $childtables=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");
     var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
@@ -368,6 +371,7 @@ class Societe extends CommonObject
      *      @param      call_trigger    			0=non, 1=oui
      *		@param		allowmodcodeclient			Inclut modif code client et code compta
      *		@param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
+     *		@param		action						'create' or 'update'
      *      @return     int             			<0 if KO, >=0 if OK
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update')
@@ -852,52 +856,24 @@ class Societe extends CommonObject
     /**
      *    Delete a third party from database and all its dependencies (contacts, rib...)
      *
-     *    @param      id      id of third party to delete
+     *    @param    	id      id of third party to delete
+     *    @return		int		<0 if KO, 0 if nothing done, >0 if OK
      */
     function delete($id)
     {
         global $user,$langs,$conf;
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-        dol_syslog("Societe::Delete", LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
         // Test if child exists
-        $listtable=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");
-        $haschild=0;
-        foreach($listtable as $table)
-        {
-            // Check if third party can be deleted
-            $nb=0;
-            $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
-            $sql.= " WHERE fk_soc = " . $id;
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $obj=$this->db->fetch_object($resql);
-                if ($obj->nb > 0)
-                {
-                    $haschild+=$obj->nb;
-                }
-            }
-            else
-            {
-                $this->error .= $this->db->lasterror();
-                dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
-                return -1;
-            }
-        }
-        if ($haschild > 0)
-        {
-            $this->error="ErrorRecordHasChildren";
-            return -1;
-        }
+        $objectisused = $this->isObjectUsed($id);
+		if (empty($objectisused))
+		{
+            $this->db->begin();
 
-
-        if ($this->db->begin())
-        {
             require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
-
             $static_cat = new Categorie($this->db);
             $toute_categs = array();
 
@@ -925,12 +901,12 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
                     $this->error .= $this->db->lasterror();
-                    dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -939,12 +915,12 @@ class Societe extends CommonObject
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
                     $this->error .= $this->db->lasterror();
-                    dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -953,26 +929,12 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::Delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
                     $this->error = $this->db->lasterror();
-                    dol_syslog("Societe::Delete erreur -2 ".$this->error, LOG_ERR);
-                }
-            }
-
-            // Remove third party
-            if (! $error)
-            {
-                $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
-                $sql.= " WHERE rowid = " . $id;
-                dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
-                if (! $this->db->query($sql))
-                {
-                    $error++;
-                    $this->error = $this->db->lasterror();
-                    dol_syslog("Societe::Delete erreur -3 ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::Delete erreur -2 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -982,7 +944,7 @@ class Societe extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                 $hookmanager=new HookManager($this->db);
                 $hookmanager->callHooks(array('thirdparty_extrafields'));
-                $parameters=array();
+                $parameters=array(); $action='delete';
                 $reshook=$hookmanager->executeHooks('deleteExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if (! empty($hookmanager->error))
                 {
@@ -994,6 +956,20 @@ class Societe extends CommonObject
                     // TODO
                 	//$result=$this->deleteExtraFields($this);
                     //if ($result < 0) $error++;
+                }
+            }
+
+            // Remove third party
+            if (! $error)
+            {
+                $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
+                $sql.= " WHERE rowid = " . $id;
+                dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                    dol_syslog(get_class($this)."::delete erreur -3 ".$this->error, LOG_ERR);
                 }
             }
 

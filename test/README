@@ -47,7 +47,7 @@ PHP-CODESNIFFER
 * Install phpcs
 
 * Launch PHP-Codesniffer:
-> cd test
+> cd dev
 > /usr/bin/php5 -c ./codesniffer/php.ini /usr/bin/phpcs --report=xml --standard=./codesniffer ../htdocs/test.php
 
 

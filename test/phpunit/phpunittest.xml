@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE log4j:configuration SYSTEM "phpunit.dtd" >
+<!DOCTYPE phpunit SYSTEM "phpunit.dtd" >
 <phpunit>
 <filter>
   <blacklist>
-    <directory suffix=".php">../CVS/</directory>
+    <directorye suffix=".php">../CVS/</directorye>
     <directory suffix=".php">../../build/</directory>
     <directory suffix=".php">../../dev/</directory>
     <directory suffix=".php">../../doc/</directory>

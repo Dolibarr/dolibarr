@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       dev/samples/create_product.php
+ *      \file       dev/examples/create_product.php
  *      \brief      This file is an example for a command line script
  *		\author		Put author name here
  *		\remarks	Put here some comments
