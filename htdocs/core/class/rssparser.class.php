@@ -149,7 +149,7 @@ class RssParser
             $status = xml_parse( $xmlparser, $str );
             xml_parser_free( $xmlparser );
             $rss=$this;
-            //var_dump($this);exit;
+            //var_dump($rss->_format);exit;
         }
 
 		// If $rss loaded
@@ -196,14 +196,15 @@ class RssParser
     			}
     			else
     			{
-        			if (!empty($rss->channel['rss_language']))      $this->_language = (string) $rss->channel['rss_language'];
-        			if (!empty($rss->channel['rss_generator']))     $this->_generator = (string) $rss->channel['rss_generator'];
-        			if (!empty($rss->channel['rss_copyright']))     $this->_copyright = (string) $rss->channel['rss_copyright'];
-        			if (!empty($rss->channel['rss_lastbuilddate'])) $this->_lastbuilddate = (string) $rss->channel['rss_lastbuilddate'];
-        			if (!empty($rss->image['rss_url']))             $this->_imageurl = (string) $rss->image['rss_url'];
-        			if (!empty($rss->channel['rss_link']))		    $this->_link = (string) $rss->channel['rss_link'];
-        			if (!empty($rss->channel['rss_title']))         $this->_title = (string) $rss->channel['rss_title'];
-        			if (!empty($rss->channel['rss_description']))   $this->_description = (string) $rss->channel['rss_description'];
+    			    //var_dump($rss->channel);
+        			if (!empty($rss->channel['language']))      $this->_language = (string) $rss->channel['language'];
+        			if (!empty($rss->channel['generator']))     $this->_generator = (string) $rss->channel['generator'];
+        			if (!empty($rss->channel['copyright']))     $this->_copyright = (string) $rss->channel['copyright'];
+        			if (!empty($rss->channel['lastbuilddate'])) $this->_lastbuilddate = (string) $rss->channel['lastbuilddate'];
+        			if (!empty($rss->image['url']))             $this->_imageurl = (string) $rss->image['url'];
+        			if (!empty($rss->channel['link']))		    $this->_link = (string) $rss->channel['link'];
+        			if (!empty($rss->channel['title']))         $this->_title = (string) $rss->channel['title'];
+        			if (!empty($rss->channel['description']))   $this->_description = (string) $rss->channel['description'];
     			}
 
     			if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) $items=$rss->channel->item;    // With simplexml
@@ -255,12 +256,12 @@ class RssParser
     			    }
     			    else
     			    {
-        			    $itemLink = (string) $item['rss_link'];
-        			    $itemTitle = (string) $item['rss_title'];
-        				$itemDescription = (string) $item['rss_description'];
-        			    $itemPubDate = (string) $item['rss_pubdate'];
-                        $itemId = (string) $item['rss_guid'];
-                        $itemAuthor = (string) $item['rss_author'];
+        			    $itemLink = (string) $item['link'];
+        			    $itemTitle = (string) $item['title'];
+        				$itemDescription = (string) $item['description'];
+        			    $itemPubDate = (string) $item['pubdate'];
+                        $itemId = (string) $item['guid'];
+                        $itemAuthor = (string) $item['author'];
     			    }
 
     				// Loop on each category
@@ -305,6 +306,7 @@ class RssParser
 					'category'=>$itemCategory,
 				    'id'=>$itemId,
 				    'author'=>$itemAuthor);
+                //var_dump($this->_rssarray);
 
 				$i++;
 
