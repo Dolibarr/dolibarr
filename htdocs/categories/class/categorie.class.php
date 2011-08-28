@@ -568,7 +568,7 @@ class Categorie
 	/**
 	 * Return category description
 	 *
-	 * @param	$cate
+	 * @param	$cate	Category id
 	 * @return	string	Description
 	 */
 	function get_desc ($cate)
@@ -584,6 +584,8 @@ class Categorie
 
 	/**
 	 * La categorie $fille est-elle une fille de cette categorie ?
+	 *
+	 * @param	fille		Object category
 	 */
 	function is_fille ($fille)
 	{
