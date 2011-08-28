@@ -151,7 +151,7 @@ $targetcontent=$sourcecontent;
 $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
 $targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
 $targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/Skeleton_class/', $classname, $targetcontent);
+$targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
 
 // Substitute comments
 $targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);
@@ -206,7 +206,7 @@ foreach($property as $key => $prop)
 	if ($addfield)
 	{
 		$varprop.="\t\t\$sql.= \"".$prop['field'];
-		if ($i < sizeof($property)) $varprop.=",";
+		if ($i < count($property)) $varprop.=",";
 		$varprop.="\";";
 		$varprop.="\n";
 	}
@@ -233,7 +233,7 @@ foreach($property as $key => $prop)
 			$varprop.='".(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':$this->db->idate(';
 			$varprop.="\$this->".$prop['field']."";
 			$varprop.='))."';
-			if ($i < sizeof($property)) $varprop.=",";
+			if ($i < count($property)) $varprop.=",";
 			$varprop.="\";";
 		}
 		elseif ($prop['ischar'])
@@ -241,7 +241,7 @@ foreach($property as $key => $prop)
 			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
 			$varprop.='$this->db->escape($this->'.$prop['field'].')';
 			$varprop.='."\'")."';
-			if ($i < sizeof($property)) $varprop.=",";
+			if ($i < count($property)) $varprop.=",";
 			$varprop.='";';
 		}
 		else
@@ -249,7 +249,7 @@ foreach($property as $key => $prop)
 			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
 			$varprop.="\$this->".$prop['field']."";
 			$varprop.='."\'")."';
-			if ($i < sizeof($property)) $varprop.=",";
+			if ($i < count($property)) $varprop.=",";
 			$varprop.='";';
 		}
 		$varprop.="\n";
@@ -287,7 +287,7 @@ foreach($property as $key => $prop)
 			$varprop.=".\"";
 		}
 
-		if ($i < sizeof($property)) $varprop.=',';
+		if ($i < count($property)) $varprop.=',';
 		$varprop.='";';
 		$varprop.="\n";
 	}
@@ -306,7 +306,7 @@ foreach($property as $key => $prop)
 	{
 		$varprop.="\t\t\$sql.= \" ";
 		$varprop.="t.".$prop['field'];
-		if ($i < sizeof($property)) $varprop.=",";
+		if ($i < count($property)) $varprop.=",";
 		$varprop.="\";";
 		$varprop.="\n";
 	}
@@ -385,7 +385,7 @@ $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.ph
 $targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
 $targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
 $targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/Skeleton_class/', $classname, $targetcontent);
+$targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
 
 // Substitute comments
 $targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);
