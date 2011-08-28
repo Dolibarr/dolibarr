@@ -33,6 +33,7 @@ $langs->load("categories");
 
 /**
  * Replace the default llxHeader function
+ *
  * @param $head
  * @param $title
  * @param $help_url
