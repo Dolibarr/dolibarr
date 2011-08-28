@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="php" deleted="false" description="if statement" enabled="true" id="org.eclipse.php.ui.editor.templates.php.if" name="if">if (${condition}) 
+{
+	${cursor};
+}
+</template></templates>
