@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!DOCTYPE ruleset SYSTEM "ruleset.dtd">
 <ruleset name="Dolibarr">
 	<description>Dolibarr coding standard.</description>
 
