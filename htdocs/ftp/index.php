@@ -481,7 +481,7 @@ else
 			//var_dump($contents);
 			//var_dump($buff);
 
-			$nboflines=sizeof($contents);
+			$nboflines=count($contents);
 			$var=true;
 			$rawlisthasfailed=false;
 			$i=0;
@@ -629,11 +629,11 @@ llxFooter();
 /**
  * Connect to FTP server
  *
- * @param 	$ftp_server
- * @param 	$ftp_port
- * @param 	$ftp_user
- * @param 	$ftp_password
- * @param 	$section
+ * @param 	string	$ftp_server		Server name
+ * @param 	string	$ftp_port		Server port
+ * @param 	string	$ftp_user		FTP user
+ * @param 	string	$ftp_password	FTP password
+ * @param 	string	$section		Directory
  * @return	int 	<0 if OK, >0 if KO
  */
 function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section)
@@ -686,9 +686,9 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 /**
  * Tell if an entry is a FTP directory
  *
- * @param 		$connect_id
- * @param 		$dir
- * @return
+ * @param 		resource	$connect_id		Connection handler
+ * @param 		string		$dir			Directory
+ * @return		int			1=directory, 0=not a directory
  */
 function ftp_isdir($connect_id,$dir)
 {
