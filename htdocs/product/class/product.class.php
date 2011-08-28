@@ -95,9 +95,6 @@ class Product extends CommonObject
     var $country_id;       // Country origin id
 	var $country_code;     // Country origin code (US, FR, ...)
 
-	// Hidden into combo boxes
-	var $hidden;
-
 	//! Unites de mesure
 	var $weight;
 	var $weight_units;
@@ -221,7 +218,6 @@ class Product extends CommonObject
 		if (empty($this->status))    	$this->status = 0;
 		if (empty($this->status_buy))   $this->status_buy = 0;
 		if (empty($this->finished))  	$this->finished = 0;
-		if (empty($this->hidden))    	$this->hidden = 0;
 
 		$price_ht=0;
 		$price_ttc=0;
@@ -293,7 +289,6 @@ class Product extends CommonObject
 				$sql.= ", tosell";
 				$sql.= ", canvas";
 				$sql.= ", finished";
-				$sql.= ", hidden";
 				$sql.= ") VALUES (";
 				$sql.= $this->db->idate(mktime());
 				$sql.= ", ".$conf->entity;
@@ -310,7 +305,6 @@ class Product extends CommonObject
 				$sql.= ", ".$this->status_buy;
 				$sql.= ", '".$this->canvas."'";
 				$sql.= ", ".$this->finished;
-				$sql.= ", ".$this->hidden;
 				$sql.= ")";
 
 				dol_syslog("Product::Create sql=".$sql);
@@ -430,7 +424,6 @@ class Product extends CommonObject
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
 
 		if (empty($this->finished))  			$this->finished = 0;
-		if (empty($this->hidden))   			$this->hidden = 0;
         if (empty($this->country_id))           $this->country_id = 0;
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -448,7 +441,6 @@ class Product extends CommonObject
 		$sql.= ",tosell = " . $this->status;
 		$sql.= ",tobuy = " . $this->status_buy;
 		$sql.= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
-		$sql.= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
 		$sql.= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 		$sql.= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 		$sql.= ",length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
@@ -1035,7 +1027,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
-		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
+		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -1075,7 +1067,6 @@ class Product extends CommonObject
 				$this->status				= $object->tosell;
 				$this->status_buy			= $object->tobuy;
 				$this->finished				= $object->finished;
-				$this->hidden				= $object->hidden;
 				$this->duration				= $object->duration;
 				$this->duration_value		= substr($object->duration,0,dol_strlen($object->duration)-1);
 				$this->duration_unit		= substr($object->duration,-1);
@@ -2913,16 +2904,6 @@ class Product extends CommonObject
 		// Note
 		$this->tpl['note'] = nl2br($this->note);
 
-		// Hidden
-		if ($this->user->rights->produit->hidden)
-		{
-			$this->tpl['hidden'] = yn($this->hidden);
-		}
-		else
-		{
-			$this->tpl['hidden'] = yn("No");
-		}
-
 		if ($action == 'create')
 		{
 			// Price
@@ -2943,12 +2924,6 @@ class Product extends CommonObject
 			//To Buy
 			$statutarray=array('1' => $langs->trans("Yes"), '0' => $langs->trans("No"));
 			$this->tpl['tobuy'] = $html->selectarray('tobuy',$statutarray,$this->status_buy);
-
-			// Hidden
-			if ($this->user->rights->produit->hidden)
-			{
-				$this->tpl['hidden'] = $html->selectyesno('hidden',$this->hidden);
-			}
 
             $this->tpl['description'] = $this->description;
             $this->tpl['note'] = $this->note;
