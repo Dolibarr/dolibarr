@@ -215,7 +215,7 @@ if ($user->rights->categorie->creer)
 		print '</td></tr>';
 
 		// Parent category
-		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
+		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print $html->select_all_categories($type,$catorigin);
 		print '</td></tr>';
 

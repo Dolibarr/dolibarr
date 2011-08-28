@@ -52,7 +52,7 @@ $result = restrictedArea($user, 'categorie', $id);
 // Action mise a jour d'une categorie
 if ($action == 'update' && $user->rights->categorie->creer)
 {
-	$categorie = new Categorie ($db);
+	$categorie = new Categorie($db);
 	$result=$categorie->fetch($id);
 
 	$categorie->label          = $_POST["nom"];
@@ -112,7 +112,7 @@ if ($mesg)
 	print '</div>';
 }
 
-$categorie = new Categorie ($db, $id);
+$categorie = new Categorie($db, $id);
 $html = new Form($db);
 
 print '<table class="notopnoleft" border="0" width="100%">';
@@ -144,7 +144,7 @@ $doleditor->Create();
 print '</td></tr>';
 
 // Parent category
-print '<tr><td>'.$langs->trans ("In").'</td><td>';
+print '<tr><td>'.$langs->trans("In").'</td><td>';
 print $html->select_all_categories($type,$categorie->id_mere,'catMere',64,$categorie->id);
 print '</td></tr>';
 

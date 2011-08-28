@@ -28,47 +28,47 @@ require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 if (!$user->rights->categorie->lire) accessforbidden();
 
 
-llxHeader ("","",$langs->trans("Categories"));
+llxHeader("","",$langs->trans("Categories"));
 
-print_fiche_titre ($langs->trans ("CatList"));
+print_fiche_titre($langs->trans("CatList"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
-$c = new Categorie ($db);
-$cats = $c->get_all_categories ();
+$c = new Categorie($db);
+$cats = $c->get_all_categories();
 
 
 if ($cats != -1)
 {
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td>'.$langs->trans("Ref").'</td>';
-  print '<td>'.$langs->trans("Description").'</td>';
-  print '<td align="right">'.$langs->trans("Type").'</td>';
-  print '</tr>';
-  
-  $var=true;
-  foreach ($cats as $cat)
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Ref").'</td>';
+    print '<td>'.$langs->trans("Description").'</td>';
+    print '<td align="right">'.$langs->trans("Type").'</td>';
+    print '</tr>';
+
+    $var=true;
+    foreach ($cats as $cat)
     {
-      $var = ! $var;
-      print "\t<tr ".$bc[$var].">\n";
-      print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
-      print "\t\t<td>".dol_trunc($cat->description,36)."</td>\n";
-      print '<td align="right">';
-	  if ($cat->type == 0) print $langs->trans("Product");
-	  elseif ($cat->type == 1) print $langs->trans("Supplier");
-	  elseif ($cat->type == 2) print $langs->trans("Customer");
-	  else print $cat->type;
-	  print "</td>\n";
-      print "\t</tr>\n";
+        $var = ! $var;
+        print "\t<tr ".$bc[$var].">\n";
+        print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
+        print "\t\t<td>".dol_trunc($cat->description,36)."</td>\n";
+        print '<td align="right">';
+        if ($cat->type == 0) print $langs->trans("Product");
+        elseif ($cat->type == 1) print $langs->trans("Supplier");
+        elseif ($cat->type == 2) print $langs->trans("Customer");
+        else print $cat->type;
+        print "</td>\n";
+        print "\t</tr>\n";
     }
-  print "</table>";
+    print "</table>";
 }
 else
 {
-  dol_print_error();
+    dol_print_error();
 }
 
 print '</td></tr></table>';

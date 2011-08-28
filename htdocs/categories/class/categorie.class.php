@@ -38,7 +38,7 @@ class Categorie
 {
 	var $error;
 	var $db;
-	
+
 	var $element='category';
 	var $table_element='category';
 
@@ -131,7 +131,7 @@ class Categorie
 
 		// Clean parameters
 		if (empty($this->visible)) $this->visible=0;
-		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;		 
+		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;
 
 		if ($this->already_exists())
 		{
@@ -217,8 +217,8 @@ class Categorie
 			$this->error=$langs->trans("ImpossibleUpdateCat");
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
 			return -1;
-		}	
-			
+		}
+
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'categorie_association';
@@ -500,10 +500,11 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief	Return list of contents of a category
-	 * 	\param	field	Field name for select in table. Full field name will be fk_field.
-	 * 	\param	class	PHP Class of object to store entity
-	 * 	\param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
+	 * 	Return list of contents of a category
+	 *
+	 * 	@param	field	Field name for select in table. Full field name will be fk_field.
+	 * 	@param	class	PHP Class of object to store entity
+	 * 	@param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
 	 */
 	function get_type($field,$classname,$table='')
 	{
@@ -565,15 +566,18 @@ class Categorie
 
 
 	/**
-	 * retourne la description d'une categorie
+	 * Return category description
+	 *
+	 * @param	$cate
+	 * @return	string	Description
 	 */
 	function get_desc ($cate)
 	{
 		$sql  = "SELECT description FROM ".MAIN_DB_PREFIX."categorie ";
 		$sql .= "WHERE rowid = '".$cate."'";
 
-		$res  = $this->db->query ($sql);
-		$n    = $this->db->fetch_array ($res);
+		$res  = $this->db->query($sql);
+		$n    = $this->db->fetch_array($res);
 
 		return ($n[0]);
 	}
@@ -610,7 +614,7 @@ class Categorie
 	function get_full_arbo($type,$markafterid=0)
 	{
 		global $conf;
-		
+
 		$this->cats = array();
 
 		// Charge tableau des meres
@@ -839,7 +843,7 @@ class Categorie
 			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
 			$sql.= " ON c.rowid=ca.fk_categorie_fille";
 			$sql.= " WHERE ca.fk_categorie_mere=".$this->id_mere;
-			$sql.= " AND c.label='".$this->db->escape($this->label)."'";	
+			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
 		}
 		else 										// mother_id undefined (so it's root)
 		{
@@ -852,14 +856,14 @@ class Categorie
 			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
 			$sql.= " ON c.rowid!=ca.fk_categorie_fille";
 			$sql.= " WHERE c.type=".$this->type;
-			$sql.= " AND c.label='".$this->db->escape($this->label)."'";		
+			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
 		}
 		dol_syslog("Categorie::already_exists sql=".$sql);
 		$res  = $this->db->query($sql);
 		if ($res)
-		{			
+		{
 			if($this->db->num_rows($resql) > 0)						// Checking for empty resql
-			{				
+			{
 				$obj = $this->db->fetch_array($res);
 				/* If object called create, obj cannot have is id.
 				 * If object called update, he mustn't have the same label as an other category for this mother.
@@ -867,7 +871,7 @@ class Categorie
 				 * update may be for label.
 				 */
 				if($obj[0] > 0 && $obj[0] != $this->id) return 1;
-			}				
+			}
 			return 0;
 		}
 		else
@@ -961,7 +965,7 @@ class Categorie
 	/**
 	 * print_primary_way() affiche le chemin le plus court pour se rendre a un produit
 	 */
-	function print_primary_way($id, $sep= " &gt;&gt; ", $url, $type="")
+	function print_primary_way($id, $sep= " &gt;&gt; ", $url="", $type="")
 	{
 		$primary_way = Array();
 		$way = $this->get_primary_way($id,$type);
@@ -1073,8 +1077,14 @@ class Categorie
 
 
 	/**
-	 * 	\brief	Retourne les categories dont l'id ou le nom correspond
-	 * 			ajoute des wildcards au nom sauf si $exact = true
+	 * 	Retourne les categories dont l'id ou le nom correspond
+	 * 	ajoute des wildcards au nom sauf si $exact = true
+	 *
+	 * 	@param		id
+	 * 	@param		nom
+	 * 	@param		type
+	 * 	@param		exact
+	 * 	@return		int or array
 	 */
 	function rechercher($id, $nom, $type, $exact = false)
 	{
@@ -1115,11 +1125,12 @@ class Categorie
 	}
 
 	/**
-	 *	\brief      Return name and link of category (with picto)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\param		option			Sur quoi pointe le lien ('', 'xyz')
-	 * 	\param		maxlength		Max length of text
-	 *	\return		string			Chaine avec URL
+	 *	Return name and link of category (with picto)
+	 *
+	 *	@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		option			Sur quoi pointe le lien ('', 'xyz')
+	 * 	@param		maxlength		Max length of text
+	 *	@return		string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
@@ -1142,11 +1153,12 @@ class Categorie
 
 
 	/**
-	 *    \brief      Deplace fichier uploade sous le nom $files dans le repertoire sdir
-	 *    \param      sdir        Repertoire destination finale
-	 *    \param      $file       Nom du fichier uploade
-	 *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par defaut)
-	 *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *    Deplace fichier uploade sous le nom $files dans le repertoire sdir
+	 *
+	 *    @param      sdir        Repertoire destination finale
+	 *    @param      $file       Nom du fichier uploade
+	 *    @param      maxWidth    Largeur maximum que dois faire la miniature (160 par defaut)
+	 *    @param      maxHeight   Hauteur maximum que dois faire la miniature (120 par defaut)
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
@@ -1194,10 +1206,11 @@ class Categorie
 
 
 	/**
-	 *    \brief      Retourne tableau de toutes les photos de la categorie
-	 *    \param      dir         Repertoire a scanner
-	 *    \param      nbmax       Nombre maximum de photos (0=pas de max)
-	 *    \return     array       Tableau de photos
+	 *    Return tableau de toutes les photos de la categorie
+	 *
+	 *    @param      dir         Repertoire a scanner
+	 *    @param      nbmax       Nombre maximum de photos (0=pas de max)
+	 *    @return     array       Tableau de photos
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
