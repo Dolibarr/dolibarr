@@ -573,20 +573,6 @@ class Product extends CommonObject
 
                 if (! $error)
                 {
-    				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
-    				$sqlz.= " WHERE rowid = ".$id;
-                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
-    				$resultz = $this->db->query($sqlz);
-       				if ( ! $resultz )
-    				{
-    					$error++;
-    					$this->error = $this->db->lasterror();
-    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
-    				}
-                }
-
-                if (! $error)
-                {
                 	// Actions on extra fields (by external module or standard code)
                     include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                     $hookmanager=new HookManager($this->db);
@@ -604,6 +590,21 @@ class Product extends CommonObject
                     	//$result=$this->deleteExtraFields($this);
                         //if ($result < 0) $error++;
                     }
+                }
+
+                // Delete product
+                if (! $error)
+                {
+    				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
+    				$sqlz.= " WHERE rowid = ".$id;
+                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+    				$resultz = $this->db->query($sqlz);
+       				if ( ! $resultz )
+    				{
+    					$error++;
+    					$this->error = $this->db->lasterror();
+    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+    				}
                 }
 
                 if (! $error)

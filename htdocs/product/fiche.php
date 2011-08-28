@@ -85,551 +85,547 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-if ($action == 'setproductaccountancycodebuy')
+if (empty($reshook))
 {
-	$product = new Product($db);
-	$result=$product->fetch($id);
-	$product->accountancy_code_buy=$_POST["productaccountancycodebuy"];
-	$result=$product->update($product->id,$user,1,0,1);
-	if ($result < 0)
-	{
-		$mesg=join(',',$product->errors);
-	}
-	$action="";
-	$id=$_POST["id"];
-	$_GET["id"]=$_POST["id"];
-}
-
-if ($action == 'setproductaccountancycodesell')
-{
-	$product = new Product($db);
-	$result=$product->fetch($id);
-	$product->accountancy_code_sell=$_POST["productaccountancycodesell"];
-	$result=$product->update($product->id,$user,1,0,1);
-	if ($result < 0)
-	{
-		$mesg=join(',',$product->errors);
-	}
-	$action="";
-}
-
-if ($action == 'fastappro')
-{
-	$product = new Product($db);
-	$product->fetch($id);
-	$result = $product->fastappro($user);
-	Header("Location: fiche.php?id=".$id);
-	exit;
-}
-
-
-// Add a product or service
-if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
-{
-	$error=0;
-
-	if (empty($_POST["libelle"]))
-	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')).'</div>';
-		$action = "create";
-		$_GET["canvas"] = $_POST["canvas"];
-		$_GET["type"] 	= $_POST["type"];
-		$error++;
-	}
-	if (empty($ref))
-	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
-		$action = "create";
-		$_GET["canvas"] = $_POST["canvas"];
-		$_GET["type"] 	= $_POST["type"];
-		$error++;
-	}
-
-	$product=new Product($db);
-
-	if (! empty($canvas))	// Overwrite product here
-	{
-		$objcanvas = new Canvas($db,$user);
-		$product = $objcanvas->load_canvas('product',$canvas);
-	}
-
-	if (! $error)
-	{
-		$product->ref                = $ref;
-		$product->libelle            = $_POST["libelle"];
-		$product->price_base_type    = $_POST["price_base_type"];
-		if ($product->price_base_type == 'TTC') $product->price_ttc = $_POST["price"];
-		else $product->price = $_POST["price"];
-		if ($product->price_base_type == 'TTC') $product->price_min_ttc = $_POST["price_min"];
-		else $product->price_min = $_POST["price_min"];
-		$product->tva_tx             = $_POST["tva_tx"];
-
-		// local taxes.
-		$product->localtax1_tx 			= get_localtax($product->tva_tx,1);
-		$product->localtax2_tx 			= get_localtax($product->tva_tx,2);
-
-		$product->type               	= $_POST["type"];
-		$product->status             	= $_POST["statut"];
-		$product->status_buy           	= $_POST["statut_buy"];
-		$product->description        	= dol_htmlcleanlastbr($_POST["desc"]);
-		$product->note               	= dol_htmlcleanlastbr($_POST["note"]);
-        $product->customcode            = $_POST["customcode"];
-        $product->country_id            = $_POST["country_id"];
-		$product->duration_value     	= $_POST["duration_value"];
-		$product->duration_unit      	= $_POST["duration_unit"];
-		$product->seuil_stock_alerte 	= $_POST["seuil_stock_alerte"]?$_POST["seuil_stock_alerte"]:0;
-		$product->canvas             	= $_POST["canvas"];
-		$product->weight             	= $_POST["weight"];
-		$product->weight_units       	= $_POST["weight_units"];
-		$product->length             	= $_POST["size"];
-		$product->length_units       	= $_POST["size_units"];
-		$product->surface            	= $_POST["surface"];
-		$product->surface_units      	= $_POST["surface_units"];
-		$product->volume             	= $_POST["volume"];
-		$product->volume_units       	= $_POST["volume_units"];
-		$product->finished           	= $_POST["finished"];
-		$product->hidden             	= $_POST["hidden"]=='yes'?1:0;
-
-		// MultiPrix
-		if($conf->global->PRODUIT_MULTIPRICES)
-		{
-			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-			{
-				if($_POST["price_".$i])
-				{
-					$product->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
-					$product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
-				}
-				else
-				{
-					$product->multiprices["$i"] = "";
-				}
-			}
-		}
-
-		$id = $product->create($user);
-
-		if ($id > 0)
-		{
-			Header("Location: fiche.php?id=".$id);
-			exit;
-		}
-		else
-		{
-			$mesg='<div class="error">'.$langs->trans($product->error).'</div>';
-			$action = "create";
-			$_GET["canvas"] = $product->canvas;
-			$_GET["type"] = $_POST["type"];
-		}
-	}
-}
-
-// Update a product or service
-if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
-{
-	if (! empty($_POST["cancel"]))
-	{
-		$action = '';
-	}
-	else
-	{
-		$product=new Product($db);
-
-		if (! empty($canvas))	// Overwrite product here
-		{
-			$objcanvas = new Canvas($db,$user);
-			$product = $objcanvas->load_canvas('product',$_POST["canvas"]);
-		}
-
-		if ($product->fetch($id))
-		{
-			$product->ref                = $ref;
-			$product->libelle            = $_POST["libelle"];
-			$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
-			$product->note               = dol_htmlcleanlastbr($_POST["note"]);
-            $product->customcode         = $_POST["customcode"];
-            $product->country_id         = $_POST["country_id"];
-			$product->status             = $_POST["statut"];
-			$product->status_buy         = $_POST["statut_buy"];
-			$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-			$product->duration_value     = $_POST["duration_value"];
-			$product->duration_unit      = $_POST["duration_unit"];
-			$product->canvas             = $_POST["canvas"];
-			$product->weight             = $_POST["weight"];
-			$product->weight_units       = $_POST["weight_units"];
-			$product->length             = $_POST["size"];
-			$product->length_units       = $_POST["size_units"];
-			$product->surface            = $_POST["surface"];
-			$product->surface_units      = $_POST["surface_units"];
-			$product->volume             = $_POST["volume"];
-			$product->volume_units       = $_POST["volume_units"];
-			$product->finished           = $_POST["finished"];
-			$product->hidden             = $_POST["hidden"]=='yes'?1:0;
-
-			if ($product->check())
-			{
-				if ($product->update($product->id, $user) > 0)
-				{
-					$action = '';
-				}
-				else
-				{
-					$action = 'edit';
-					$mesg = $product->error;
-				}
-			}
-			else
-			{
-				$action = 'edit';
-				$mesg = $langs->trans("ErrorProductBadRefOrLabel");
-			}
-		}
-	}
-}
-
-// Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
-{
-	if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
-	{
-		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
-	}
-	else
-	{
-		$db->begin();
-
-		$product = new Product($db);
-		$originalId = $id;
-		if ($product->fetch($id) > 0)
-		{
-			$product->ref = GETPOST('clone_ref');
-			$product->status = 0;
-			$product->status_buy = 0;
-			$product->finished = 1;
-			$product->id = null;
-
-			if ($product->check())
-			{
-				$id = $product->create($user);
-				if ($id > 0)
-				{
-					// $product->clone_fournisseurs($originalId, $id);
-
-					$db->commit();
-					$db->close();
-
-					Header("Location: fiche.php?id=$id");
-					exit;
-				}
-				else
-				{
-					if ($product->error == 'ErrorProductAlreadyExists')
-					{
-						$db->rollback();
-
-						$_error = 1;
-						$action = "";
-
-						$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref);
-						$mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
-						$mesg.='</div>';
-						//dol_print_error($product->db);
-					}
-					else
-					{
-						$db->rollback();
-						dol_print_error($product->db);
-					}
-				}
-			}
-		}
-		else
-		{
-			$db->rollback();
-			dol_print_error($product->db);
-		}
-	}
-}
-
-/*
- * Suppression d'un produit/service pas encore affect
- */
-if ($action == 'confirm_delete' && $confirm == 'yes')
-{
-	$product = new Product($db);
-	$product->fetch($id);
-
-	if ( ($product->type == 0 && $user->rights->produit->supprimer)	|| ($product->type == 1 && $user->rights->service->supprimer) )
-	{
-		$result = $product->delete($id);
-	}
-
-	if ($result > 0)
-	{
-		Header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($product->ref));
-		exit;
-	}
-	else
-	{
-		$reload = 0;
-		$action='';
-	}
-}
-
-
-/*
- * Ajout du produit dans une propal
- */
-if ($action == 'addinpropal')
-{
-	$propal = new Propal($db);
-	$result=$propal->fetch($_POST["propalid"]);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$propal->error);
-		exit;
-	}
-
-	$soc = new Societe($db);
-	$result=$soc->fetch($propal->socid);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$soc->error);
-		exit;
-	}
-
-	$prod = new Product($db);
-	$result=$prod->fetch($id);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$prod->error);
-		exit;
-	}
-
-	$desc = $prod->description;
-
-	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
-	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
-	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
-
-    $pu_ht = $prod->price;
-    $pu_ttc = $prod->price_ttc;
-    $price_base_type = $prod->price_base_type;
-
-	// If multiprice
-	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-	{
-		$pu_ht = $prod->multiprices[$soc->price_level];
-		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-		$price_base_type = $prod->multiprices_base_type[$soc->price_level];
-	}
-
-	// On reevalue prix selon taux tva car taux tva transaction peut etre different
-	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-	if ($tva_tx != $prod->tva_tx)
-	{
-		if ($price_base_type != 'HT')
-		{
-			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-		}
-		else
-		{
-			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
-		}
-	}
-
-	$result = $propal->addline($propal->id,
-	$desc,
-	$pu_ht,
-	$_POST["qty"],
-	$tva_tx,
-	$localtax1_tx, // localtax1
-	$localtax2_tx, // localtax2
-	$prod->id,
-	$_POST["remise_percent"],
-	$price_base_type,
-	$pu_ttc
-	);
-	if ($result > 0)
-	{
-		Header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
-		return;
-	}
-
-	$mesg = $langs->trans("ErrorUnknown").": $result";
-}
-
-/*
- * Ajout du produit dans une commande
- */
-if ($action == 'addincommande')
-{
-	$commande = new Commande($db);
-	$result=$commande->fetch($_POST["commandeid"]);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$commande->error);
-		exit;
-	}
-
-	$soc = new Societe($db);
-	$result=$soc->fetch($commande->socid);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$soc->error);
-		exit;
-	}
-
-	$prod = new Product($db);
-	$result=$prod->fetch($id);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$prod->error);
-		exit;
-	}
-
-	$desc = $prod->description;
-
-	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
-	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
-	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
-
-
-    $pu_ht = $prod->price;
-    $pu_ttc = $prod->price_ttc;
-    $price_base_type = $prod->price_base_type;
-
-    // If multiprice
-    if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+    if ($action == 'setproductaccountancycodebuy')
     {
-        $pu_ht = $prod->multiprices[$soc->price_level];
-        $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-        $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+    	$product = new Product($db);
+    	$result=$product->fetch($id);
+    	$product->accountancy_code_buy=$_POST["productaccountancycodebuy"];
+    	$result=$product->update($product->id,$user,1,0,1);
+    	if ($result < 0)
+    	{
+    		$mesg=join(',',$product->errors);
+    	}
+    	$action="";
+    	$id=$_POST["id"];
+    	$_GET["id"]=$_POST["id"];
     }
 
-	// On reevalue prix selon taux tva car taux tva transaction peut etre different
-	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-	if ($tva_tx != $prod->tva_tx)
-	{
-		if ($price_base_type != 'HT')
-		{
-			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-		}
-		else
-		{
-			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
-		}
-	}
-
-	$result =  $commande->addline($commande->id,
-	$desc,
-	$pu_ht,
-	$_POST["qty"],
-	$tva_tx,
-	$localtax1_tx, // localtax1
-	$localtax2_tx, // localtax2
-	$prod->id,
-	$_POST["remise_percent"],
-				'',
-				'', //Todo: voir si fk_remise_except est encore valable car n'apparait plus dans les propales
-	$price_base_type,
-	$pu_ttc
-	);
-
-	if ($result > 0)
-	{
-		Header("Location: ".DOL_URL_ROOT."/commande/fiche.php?id=".$commande->id);
-		exit;
-	}
-}
-
-/*
- * Ajout du produit dans une facture
- */
-if ($action == 'addinfacture' && $user->rights->facture->creer)
-{
-	$facture = New Facture($db);
-	$result=$facture->fetch($_POST["factureid"]);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$facture->error);
-		exit;
-	}
-
-	$soc = new Societe($db);
-	$soc->fetch($facture->socid);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$soc->error);
-		exit;
-	}
-
-	$prod = new Product($db);
-	$result = $prod->fetch($id);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$prod->error);
-		exit;
-	}
-
-	$desc = $prod->description;
-
-	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
-	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
-	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
-
-    $pu_ht = $prod->price;
-    $pu_ttc = $prod->price_ttc;
-    $price_base_type = $prod->price_base_type;
-
-    // If multiprice
-    if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+    if ($action == 'setproductaccountancycodesell')
     {
-        $pu_ht = $prod->multiprices[$soc->price_level];
-        $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-        $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+    	$product = new Product($db);
+    	$result=$product->fetch($id);
+    	$product->accountancy_code_sell=$_POST["productaccountancycodesell"];
+    	$result=$product->update($product->id,$user,1,0,1);
+    	if ($result < 0)
+    	{
+    		$mesg=join(',',$product->errors);
+    	}
+    	$action="";
     }
 
-	// On reevalue prix selon taux tva car taux tva transaction peut etre different
-	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-	if ($tva_tx != $prod->tva_tx)
-	{
-		if ($price_base_type != 'HT')
-		{
-			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-		}
-		else
-		{
-			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
-		}
-	}
+    if ($action == 'fastappro')
+    {
+    	$product = new Product($db);
+    	$product->fetch($id);
+    	$result = $product->fastappro($user);
+    	Header("Location: fiche.php?id=".$id);
+    	exit;
+    }
 
-	$result = $facture->addline($facture->id,
-	$desc,
-	$pu_ht,
-	$_POST["qty"],
-	$tva_tx,
-	$localtax1_tx,
-	$localtax2_tx,
-	$prod->id,
-	$_POST["remise_percent"],
-		    '',
-		    '',
-		    '',
-		    '',
-		    '',
-	$price_base_type,
-	$pu_ttc
-	);
 
-	if ($result > 0)
-	{
-		Header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
-		exit;
-	}
+    // Add a product or service
+    if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
+    {
+    	$error=0;
+
+    	if (empty($_POST["libelle"]))
+    	{
+    		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')).'</div>';
+    		$action = "create";
+    		$_GET["canvas"] = $_POST["canvas"];
+    		$_GET["type"] 	= $_POST["type"];
+    		$error++;
+    	}
+    	if (empty($ref))
+    	{
+    		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
+    		$action = "create";
+    		$_GET["canvas"] = $_POST["canvas"];
+    		$_GET["type"] 	= $_POST["type"];
+    		$error++;
+    	}
+
+    	$product=new Product($db);
+
+    	if (! empty($canvas))	// Overwrite product here
+    	{
+    		$objcanvas = new Canvas($db,$user);
+    		$product = $objcanvas->load_canvas('product',$canvas);
+    	}
+
+    	if (! $error)
+    	{
+    		$product->ref                = $ref;
+    		$product->libelle            = $_POST["libelle"];
+    		$product->price_base_type    = $_POST["price_base_type"];
+    		if ($product->price_base_type == 'TTC') $product->price_ttc = $_POST["price"];
+    		else $product->price = $_POST["price"];
+    		if ($product->price_base_type == 'TTC') $product->price_min_ttc = $_POST["price_min"];
+    		else $product->price_min = $_POST["price_min"];
+    		$product->tva_tx             = $_POST["tva_tx"];
+
+    		// local taxes.
+    		$product->localtax1_tx 			= get_localtax($product->tva_tx,1);
+    		$product->localtax2_tx 			= get_localtax($product->tva_tx,2);
+
+    		$product->type               	= $_POST["type"];
+    		$product->status             	= $_POST["statut"];
+    		$product->status_buy           	= $_POST["statut_buy"];
+    		$product->description        	= dol_htmlcleanlastbr($_POST["desc"]);
+    		$product->note               	= dol_htmlcleanlastbr($_POST["note"]);
+            $product->customcode            = $_POST["customcode"];
+            $product->country_id            = $_POST["country_id"];
+    		$product->duration_value     	= $_POST["duration_value"];
+    		$product->duration_unit      	= $_POST["duration_unit"];
+    		$product->seuil_stock_alerte 	= $_POST["seuil_stock_alerte"]?$_POST["seuil_stock_alerte"]:0;
+    		$product->canvas             	= $_POST["canvas"];
+    		$product->weight             	= $_POST["weight"];
+    		$product->weight_units       	= $_POST["weight_units"];
+    		$product->length             	= $_POST["size"];
+    		$product->length_units       	= $_POST["size_units"];
+    		$product->surface            	= $_POST["surface"];
+    		$product->surface_units      	= $_POST["surface_units"];
+    		$product->volume             	= $_POST["volume"];
+    		$product->volume_units       	= $_POST["volume_units"];
+    		$product->finished           	= $_POST["finished"];
+    		$product->hidden             	= $_POST["hidden"]=='yes'?1:0;
+
+    		// MultiPrix
+    		if($conf->global->PRODUIT_MULTIPRICES)
+    		{
+    			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+    			{
+    				if($_POST["price_".$i])
+    				{
+    					$product->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
+    					$product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+    				}
+    				else
+    				{
+    					$product->multiprices["$i"] = "";
+    				}
+    			}
+    		}
+
+    		$id = $product->create($user);
+
+    		if ($id > 0)
+    		{
+    			Header("Location: fiche.php?id=".$id);
+    			exit;
+    		}
+    		else
+    		{
+    			$mesg='<div class="error">'.$langs->trans($product->error).'</div>';
+    			$action = "create";
+    			$_GET["canvas"] = $product->canvas;
+    			$_GET["type"] = $_POST["type"];
+    		}
+    	}
+    }
+
+    // Update a product or service
+    if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
+    {
+    	if (! empty($_POST["cancel"]))
+    	{
+    		$action = '';
+    	}
+    	else
+    	{
+    		$product=new Product($db);
+
+    		if (! empty($canvas))	// Overwrite product here
+    		{
+    			$objcanvas = new Canvas($db,$user);
+    			$product = $objcanvas->load_canvas('product',$_POST["canvas"]);
+    		}
+
+    		if ($product->fetch($id))
+    		{
+    			$product->ref                = $ref;
+    			$product->libelle            = $_POST["libelle"];
+    			$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
+    			$product->note               = dol_htmlcleanlastbr($_POST["note"]);
+                $product->customcode         = $_POST["customcode"];
+                $product->country_id         = $_POST["country_id"];
+    			$product->status             = $_POST["statut"];
+    			$product->status_buy         = $_POST["statut_buy"];
+    			$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+    			$product->duration_value     = $_POST["duration_value"];
+    			$product->duration_unit      = $_POST["duration_unit"];
+    			$product->canvas             = $_POST["canvas"];
+    			$product->weight             = $_POST["weight"];
+    			$product->weight_units       = $_POST["weight_units"];
+    			$product->length             = $_POST["size"];
+    			$product->length_units       = $_POST["size_units"];
+    			$product->surface            = $_POST["surface"];
+    			$product->surface_units      = $_POST["surface_units"];
+    			$product->volume             = $_POST["volume"];
+    			$product->volume_units       = $_POST["volume_units"];
+    			$product->finished           = $_POST["finished"];
+    			$product->hidden             = $_POST["hidden"]=='yes'?1:0;
+
+    			if ($product->check())
+    			{
+    				if ($product->update($product->id, $user) > 0)
+    				{
+    					$action = '';
+    				}
+    				else
+    				{
+    					$action = 'edit';
+    					$mesg = $product->error;
+    				}
+    			}
+    			else
+    			{
+    				$action = 'edit';
+    				$mesg = $langs->trans("ErrorProductBadRefOrLabel");
+    			}
+    		}
+    	}
+    }
+
+    // Action clone object
+    if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
+    {
+    	if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
+    	{
+    		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+    	}
+    	else
+    	{
+    		$db->begin();
+
+    		$product = new Product($db);
+    		$originalId = $id;
+    		if ($product->fetch($id) > 0)
+    		{
+    			$product->ref = GETPOST('clone_ref');
+    			$product->status = 0;
+    			$product->status_buy = 0;
+    			$product->finished = 1;
+    			$product->id = null;
+
+    			if ($product->check())
+    			{
+    				$id = $product->create($user);
+    				if ($id > 0)
+    				{
+    					// $product->clone_fournisseurs($originalId, $id);
+
+    					$db->commit();
+    					$db->close();
+
+    					Header("Location: fiche.php?id=$id");
+    					exit;
+    				}
+    				else
+    				{
+    					if ($product->error == 'ErrorProductAlreadyExists')
+    					{
+    						$db->rollback();
+
+    						$_error = 1;
+    						$action = "";
+
+    						$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref);
+    						$mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
+    						$mesg.='</div>';
+    						//dol_print_error($product->db);
+    					}
+    					else
+    					{
+    						$db->rollback();
+    						dol_print_error($product->db);
+    					}
+    				}
+    			}
+    		}
+    		else
+    		{
+    			$db->rollback();
+    			dol_print_error($product->db);
+    		}
+    	}
+    }
+
+    // Delete a product
+    if ($action == 'confirm_delete' && $confirm == 'yes')
+    {
+    	$object = new Product($db);
+    	$object->fetch($id);
+
+    	if ( ($object->type == 0 && $user->rights->produit->supprimer)	|| ($object->type == 1 && $user->rights->service->supprimer) )
+    	{
+    		$result = $object->delete($id);
+    	}
+
+    	if ($result > 0)
+    	{
+    		Header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
+    		exit;
+    	}
+    	else
+    	{
+    	    $mesg=$object->error;
+    		$reload = 0;
+    		$action='';
+    	}
+    }
+
+
+    // Add product into proposal
+    if ($action == 'addinpropal')
+    {
+    	$propal = new Propal($db);
+    	$result=$propal->fetch($_POST["propalid"]);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$propal->error);
+    		exit;
+    	}
+
+    	$soc = new Societe($db);
+    	$result=$soc->fetch($propal->socid);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$soc->error);
+    		exit;
+    	}
+
+    	$prod = new Product($db);
+    	$result=$prod->fetch($id);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$prod->error);
+    		exit;
+    	}
+
+    	$desc = $prod->description;
+
+    	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+    	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
+    	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
+
+        $pu_ht = $prod->price;
+        $pu_ttc = $prod->price_ttc;
+        $price_base_type = $prod->price_base_type;
+
+    	// If multiprice
+    	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+    	{
+    		$pu_ht = $prod->multiprices[$soc->price_level];
+    		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+    		$price_base_type = $prod->multiprices_base_type[$soc->price_level];
+    	}
+
+    	// On reevalue prix selon taux tva car taux tva transaction peut etre different
+    	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+    	if ($tva_tx != $prod->tva_tx)
+    	{
+    		if ($price_base_type != 'HT')
+    		{
+    			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+    		}
+    		else
+    		{
+    			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+    		}
+    	}
+
+    	$result = $propal->addline($propal->id,
+    	$desc,
+    	$pu_ht,
+    	$_POST["qty"],
+    	$tva_tx,
+    	$localtax1_tx, // localtax1
+    	$localtax2_tx, // localtax2
+    	$prod->id,
+    	$_POST["remise_percent"],
+    	$price_base_type,
+    	$pu_ttc
+    	);
+    	if ($result > 0)
+    	{
+    		Header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
+    		return;
+    	}
+
+    	$mesg = $langs->trans("ErrorUnknown").": $result";
+    }
+
+    // Add product into order
+    if ($action == 'addincommande')
+    {
+    	$commande = new Commande($db);
+    	$result=$commande->fetch($_POST["commandeid"]);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$commande->error);
+    		exit;
+    	}
+
+    	$soc = new Societe($db);
+    	$result=$soc->fetch($commande->socid);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$soc->error);
+    		exit;
+    	}
+
+    	$prod = new Product($db);
+    	$result=$prod->fetch($id);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$prod->error);
+    		exit;
+    	}
+
+    	$desc = $prod->description;
+
+    	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+    	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
+    	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
+
+
+        $pu_ht = $prod->price;
+        $pu_ttc = $prod->price_ttc;
+        $price_base_type = $prod->price_base_type;
+
+        // If multiprice
+        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+        {
+            $pu_ht = $prod->multiprices[$soc->price_level];
+            $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+            $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+        }
+
+    	// On reevalue prix selon taux tva car taux tva transaction peut etre different
+    	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+    	if ($tva_tx != $prod->tva_tx)
+    	{
+    		if ($price_base_type != 'HT')
+    		{
+    			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+    		}
+    		else
+    		{
+    			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+    		}
+    	}
+
+    	$result =  $commande->addline($commande->id,
+    	$desc,
+    	$pu_ht,
+    	$_POST["qty"],
+    	$tva_tx,
+    	$localtax1_tx, // localtax1
+    	$localtax2_tx, // localtax2
+    	$prod->id,
+    	$_POST["remise_percent"],
+    				'',
+    				'', //Todo: voir si fk_remise_except est encore valable car n'apparait plus dans les propales
+    	$price_base_type,
+    	$pu_ttc
+    	);
+
+    	if ($result > 0)
+    	{
+    		Header("Location: ".DOL_URL_ROOT."/commande/fiche.php?id=".$commande->id);
+    		exit;
+    	}
+    }
+
+    // Add product into invoice
+    if ($action == 'addinfacture' && $user->rights->facture->creer)
+    {
+    	$facture = New Facture($db);
+    	$result=$facture->fetch($_POST["factureid"]);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$facture->error);
+    		exit;
+    	}
+
+    	$soc = new Societe($db);
+    	$soc->fetch($facture->socid);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$soc->error);
+    		exit;
+    	}
+
+    	$prod = new Product($db);
+    	$result = $prod->fetch($id);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$prod->error);
+    		exit;
+    	}
+
+    	$desc = $prod->description;
+
+    	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+    	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
+    	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
+
+        $pu_ht = $prod->price;
+        $pu_ttc = $prod->price_ttc;
+        $price_base_type = $prod->price_base_type;
+
+        // If multiprice
+        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+        {
+            $pu_ht = $prod->multiprices[$soc->price_level];
+            $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+            $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+        }
+
+    	// On reevalue prix selon taux tva car taux tva transaction peut etre different
+    	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+    	if ($tva_tx != $prod->tva_tx)
+    	{
+    		if ($price_base_type != 'HT')
+    		{
+    			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+    		}
+    		else
+    		{
+    			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+    		}
+    	}
+
+    	$result = $facture->addline($facture->id,
+    	$desc,
+    	$pu_ht,
+    	$_POST["qty"],
+    	$tva_tx,
+    	$localtax1_tx,
+    	$localtax2_tx,
+    	$prod->id,
+    	$_POST["remise_percent"],
+    		    '',
+    		    '',
+    		    '',
+    		    '',
+    		    '',
+    	$price_base_type,
+    	$pu_ttc
+    	);
+
+    	if ($result > 0)
+    	{
+    		Header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
+    		exit;
+    	}
+    }
 }
 
-if ($_POST["cancel"] == $langs->trans("Cancel"))
+if (GETPOST("cancel") == $langs->trans("Cancel"))
 {
 	$action = '';
 	Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST["id"]);

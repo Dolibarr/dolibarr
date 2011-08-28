@@ -938,20 +938,6 @@ class Societe extends CommonObject
                 }
             }
 
-            // Remove third party
-            if (! $error)
-            {
-                $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
-                $sql.= " WHERE rowid = " . $id;
-                dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
-                if (! $this->db->query($sql))
-                {
-                    $error++;
-                    $this->error = $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete erreur -3 ".$this->error, LOG_ERR);
-                }
-            }
-
             if (! $error)
             {
             	// Actions on extra fields (by external module or standard code)
@@ -970,6 +956,20 @@ class Societe extends CommonObject
                     // TODO
                 	//$result=$this->deleteExtraFields($this);
                     //if ($result < 0) $error++;
+                }
+            }
+
+            // Remove third party
+            if (! $error)
+            {
+                $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
+                $sql.= " WHERE rowid = " . $id;
+                dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                    dol_syslog(get_class($this)."::delete erreur -3 ".$this->error, LOG_ERR);
                 }
             }
 
