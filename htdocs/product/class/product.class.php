@@ -36,10 +36,12 @@ class Product extends CommonObject
 {
 	var $db;
 	var $error;
-	//! Error number
 	var $errno = 0;
+
 	var $element='product';
 	var $table_element='product';
+	var $fk_element='fk_product';
+	var $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur');
 	var $isnolinkedbythird = 1;     // No field fk_soc
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -506,45 +508,6 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Verification de l'utilisation du produit en base
-	 *
-	 *  @param      id          id du produit
-	 */
-	function verif_prod_use($id)
-	{
-		$sqr = 0;
-
-		$elements = array('propaldet','commandedet','facturedet','contratdet','product_fournisseur');
-
-		foreach($elements as $table)
-		{
-			$sql = "SELECT rowid";
-			$sql.= " FROM ".MAIN_DB_PREFIX.$table;
-			$sql.= " WHERE fk_product = ".$id;
-
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
-				if ($num != 0)
-				{
-					$sqr++;
-				}
-			}
-		}
-
-		if ($sqr == 0)
-		{
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
-	}
-
-
-	/**
 	 *  Delete a product from database (if not used)
 	 *
 	 *	@param      id          Product id
@@ -558,8 +521,8 @@ class Product extends CommonObject
 
 		if ($user->rights->produit->supprimer)
 		{
-			$prod_use = $this->verif_prod_use($id);
-			if (empty($prod_use))
+			$objectisused = $this->isObjectUsed($id);
+			if (empty($objectisused))
 			{
 			    $this->db->begin();
 
@@ -570,6 +533,7 @@ class Product extends CommonObject
     				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price_log as pfpl, '.MAIN_DB_PREFIX.'product_fournisseur as pf';
     				$sql.= ' WHERE pfpl.fk_product_fournisseur = pf.rowid';
     				$sql.= ' AND pf.fk_product = '.$id;
+                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
     				$result = $this->db->query($sql);
     				if (! $result)
     				{
@@ -586,6 +550,7 @@ class Product extends CommonObject
     				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'product_fournisseur as pf';
     				$sql.= ' WHERE pfp.fk_product_fournisseur = pf.rowid';
     				$sql.= ' AND pf.fk_product = '.$id;
+                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
     				$result = $this->db->query($sql);
     				if (! $result)
     				{
@@ -603,7 +568,7 @@ class Product extends CommonObject
     				{
     					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
     					$sql.= " WHERE fk_product = ".$id;
-        				dol_syslog(get_class($this).'::delete sql='.$this->error, LOG_ERR);
+        				dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
     					$result = $this->db->query($sql);
         				if (! $result)
         				{
@@ -666,7 +631,7 @@ class Product extends CommonObject
 				}
 				else
 				{
-				    $this->db->commit;
+				    $this->db->commit();
 					return 1;
 				}
 			}

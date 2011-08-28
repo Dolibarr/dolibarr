@@ -39,8 +39,11 @@ class Societe extends CommonObject
     var $db;
     var $error;
     var $errors=array();
+
     var $element='societe';
     var $table_element = 'societe';
+	var $fk_element='fk_soc';
+    var $childtables=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");
     var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
@@ -853,7 +856,8 @@ class Societe extends CommonObject
     /**
      *    Delete a third party from database and all its dependencies (contacts, rib...)
      *
-     *    @param      id      id of third party to delete
+     *    @param    	id      id of third party to delete
+     *    @return		int		<0 if KO, 0 if nothing done, >0 if OK
      */
     function delete($id)
     {
@@ -864,41 +868,12 @@ class Societe extends CommonObject
         $error = 0;
 
         // Test if child exists
-        $listtable=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");
-        $haschild=0;
-        foreach($listtable as $table)
-        {
-            // Check if third party can be deleted
-            $nb=0;
-            $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
-            $sql.= " WHERE fk_soc = " . $id;
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $obj=$this->db->fetch_object($resql);
-                if ($obj->nb > 0)
-                {
-                    $haschild+=$obj->nb;
-                }
-            }
-            else
-            {
-                $this->error .= $this->db->lasterror();
-                dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
-                return -1;
-            }
-        }
-        if ($haschild > 0)
-        {
-            $this->error="ErrorRecordHasChildren";
-            return -1;
-        }
+        $objectisused = $this->isObjectUsed($id);
+		if (empty($objectisused))
+		{
+            $this->db->begin();
 
-
-        if ($this->db->begin())
-        {
             require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
-
             $static_cat = new Categorie($this->db);
             $toute_categs = array();
 

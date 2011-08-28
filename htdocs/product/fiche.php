@@ -1217,7 +1217,7 @@ if ($action == '')
 		}
 	}
 
-	$product_is_used = $product->verif_prod_use($product->id);
+	$product_is_used = $product->isObjectUsed($product->id);
 	if (($product->type == 0 && $user->rights->produit->supprimer)
 	 || ($product->type == 1 && $user->rights->service->supprimer))
 	{
