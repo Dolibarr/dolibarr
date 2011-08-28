@@ -357,7 +357,7 @@ class FormFile
                 $class='Modele'.ucfirst($modulepart);
                 if (class_exists($class))
                 {
-                    $modellist=$class::liste_modeles($this->db);
+                    $modellist=call_user_func($class.'::liste_modeles',$this->db);
                 }
                 else
                 {
