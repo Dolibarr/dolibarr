@@ -941,7 +941,10 @@ class Categorie
 
 
 	/**
-	 * get_primary_way() affiche le chemin le plus court pour se rendre a un produit
+	 * affiche le chemin le plus court pour se rendre a un produit
+	 *
+	 * @param	id
+	 * @param	type
 	 */
 	function get_primary_way($id, $type="")
 	{
@@ -1188,11 +1191,12 @@ class Categorie
 	}
 
 	/**
-	 *    \brief      Build thumb
-	 *    \param      sdir           Repertoire destination finale
-	 *    \param      file           Chemin du fichier d'origine
-	 *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *    Build thumb
+	 *
+	 *    @param      sdir           Repertoire destination finale
+	 *    @param      file           Chemin du fichier d'origine
+	 *    @param      maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
+	 *    @param      maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
 	 */
 	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
 	{
