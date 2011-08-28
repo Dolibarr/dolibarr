@@ -811,15 +811,17 @@ function top_httphead()
     if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 }
 
-
 /**
- *  Show HTML header
- *  @param      head    	Optionnal head lines
- *  @param      title   	Web page title
- *	@param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	@param		disablehead	Do not output head section
- *	@param		arrayofjs	Array of js files to add in header
- *	@param		arrayofcss	Array of css files to add in header
+ * Replace the default llxHeader function
+ *
+ * @param 	string 	$head			Optionnal head lines
+ * @param 	string 	$title			HTML title
+ * @param 	string 	$help_url		Link to online url help to show on left menu
+ * @param 	int    	$disablejs		More content into html header
+ * @param 	int    	$disablehead	More content into html header
+ * @param 	array  	$arrayofjs		Array of complementary js files
+ * @param 	array  	$arrayofcss		Array of complementary css files
+ * @return	none
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
@@ -1038,14 +1040,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 /**
  *  Show an HTML header + a BODY + The top menu bar
- *  @param      head    		Lines in the HEAD
- *  @param      title   		Title of web page
- *  @param      target  		Target to use in menu links
- *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	@param		disablehead		Do not output head section
- *	@param		arrayofjs		Array of js files to add in header
- *	@param		arrayofcss		Array of css files to add in header
- *  @param		morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ *
+ *  @param      string	head    		Lines in the HEAD
+ *  @param      string	title   		Title of web page
+ *  @param      string	target  		Target to use in menu links
+ *	@param		int		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		int		disablehead		Do not output head section
+ *	@param		array	arrayofjs		Array of js files to add in header
+ *	@param		array	arrayofcss		Array of css files to add in header
+ *  @param		string	morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  */
 function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 {

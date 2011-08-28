@@ -34,14 +34,11 @@
  * @author Regis Houssin
  *
  * @license GNU General Public Licence
- *
- *
  */
-
 
 /**
  *	\file       htdocs/core/class/smtps.class.php
- *	\brief      Class to manage SMTPS email sending
+ *	\brief      File of class to manage SMTPS email sending
  */
 
 
@@ -84,14 +81,10 @@ define('SMTPs_INVALID_PARAMETERS', 50, false);
 
 
 /**
- * Class SMTPs
- *
- * Class to construct and send SMTP compliant email, even
- * to a secure SMTP server, regardless of platform.
- *
- * @package SMTPs
- *
- **/
+ * 	\class	SMTPs
+ * 	\brief	Class to construct and send SMTP compliant email, even
+ * 			to a secure SMTP server, regardless of platform.
+ */
 class SMTPs
 {
     // =============================================================
@@ -2524,6 +2517,9 @@ class SMTPs
 
 /**
  * $Log: smtps.php,v $
+ * Revision 1.4  2011/08/28 14:24:23  eldy
+ * Doxygen
+ *
  * Revision 1.3  2011/08/27 19:15:41  hregis
  * Fix: remove obsolete tags
  *
