@@ -27,7 +27,7 @@
  *	    \class      ModeleBoxes
  *		\brief      Classe mere des boites
  */
-class ModeleBoxes
+class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" boxes
 {
 	var $db;
 	var $error='';
@@ -101,7 +101,7 @@ class ModeleBoxes
 		$bcx[1] = 'class="box_impair"';
 		$var = false;
 
-		dol_syslog("ModeleBoxes::showBox ".get_Class($this));
+		dol_syslog(get_Class($this));
 
 		// Define nbcol and nblines of the box to show
 		$nbcol=0;

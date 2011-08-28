@@ -25,7 +25,7 @@
  *	\class      ActionsContactCardCommon
  *	\brief      Classe permettant la gestion des contacts par defaut
  */
-class ActionsContactCardCommon
+abstract class ActionsContactCardCommon
 {
     var $db;
     var $targetmodule;
