@@ -85,7 +85,6 @@ if ($argv[2] != 'all')
 	}
 }
 
-// Examples for manipulating class skeleton_class
 require_once(DOL_DOCUMENT_ROOT."/../dev/translation/langAutoParser.class.php");
 
 $langParser = new langAutoParser($argv[2],$argv[1],$dir,$file);

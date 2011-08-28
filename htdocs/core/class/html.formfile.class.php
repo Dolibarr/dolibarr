@@ -526,6 +526,7 @@ class FormFile
 
     /**
      *      Show list of documents in a directory
+     *
      *      @param      filearray           Array of files loaded by dol_dir_list('files') function before calling this
      * 		@param		object				Object on which document is linked to
      * 		@param		modulepart			Value for modulepart used by download or viewimage wrapper
@@ -606,7 +607,7 @@ class FormFile
         }
         if ($nboffiles == 0)
         {
-            print '<tr '.$bc[$var].'><td colspan="4">';
+            print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
             if (empty($textifempty)) print $langs->trans("NoFileFound");
             else print $textifempty;
             print '</td></tr>';

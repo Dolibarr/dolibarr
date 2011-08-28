@@ -71,7 +71,7 @@ $db->begin();
 
 // Examples for manipulating class skeleton_class
 require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-$myobject=new Skeleton_class($db);
+$myobject=new Skeleton_Class($db);
 
 // Example for inserting creating object in database
 /*

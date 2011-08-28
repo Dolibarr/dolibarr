@@ -24,8 +24,8 @@
 /**
  * Add area with bookmarks in menu
  *
- * @param 	$aDb
- * @param 	$aLangs
+ * @param 	DoliDb		$aDb		Database handler
+ * @param 	Translate	$aLangs		Object lang
  * @return	string
  */
 function printBookmarksList ($aDb, $aLangs)

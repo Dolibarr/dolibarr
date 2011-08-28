@@ -70,7 +70,7 @@ if ($user->societe_id > 0)
 
 if ($_GET["action"] == 'add' || $_POST["action"] == 'add')
 {
-	$myobject=new Skeleton_class($db);
+	$myobject=new Skeleton_Class($db);
 	$myobject->prop1=$_POST["field1"];
 	$myobject->prop2=$_POST["field2"];
 	$result=$myobject->create($user);
