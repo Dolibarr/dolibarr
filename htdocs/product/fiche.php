@@ -364,9 +364,9 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 		$result = $product->delete($id);
 	}
 
-	if ($result == 0)
+	if ($result > 0)
 	{
-		Header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.$product->ref);
+		Header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($product->ref));
 		exit;
 	}
 	else

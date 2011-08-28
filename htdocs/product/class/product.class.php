@@ -548,7 +548,7 @@ class Product extends CommonObject
 	 *  Delete a product from database (if not used)
 	 *
 	 *	@param      id          Product id
-	 * 	@return		int			< 0 if KO, >= 0 if OK
+	 * 	@return		int			< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
 	function delete($id)
 	{
@@ -559,54 +559,129 @@ class Product extends CommonObject
 		if ($user->rights->produit->supprimer)
 		{
 			$prod_use = $this->verif_prod_use($id);
-			if ($prod_use == 0)
+			if (empty($prod_use))
 			{
-				// TODO possibility to add external module constraint
-				$elements = array('product_price','product_lang','categorie_product');
+			    $this->db->begin();
 
-				foreach($elements as $table)
-				{
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-					$sql.= " WHERE fk_product = ".$id;
-					$result = $this->db->query($sql);
-				}
+			    // Delete supplier prices log
+                if (! $error)
+                {
+    			    $sql = 'DELETE pfpl';
+    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price_log as pfpl, '.MAIN_DB_PREFIX.'product_fournisseur as pf';
+    				$sql.= ' WHERE pfpl.fk_product_fournisseur = pf.rowid';
+    				$sql.= ' AND pf.fk_product = '.$id;
+    				$result = $this->db->query($sql);
+    				if (! $result)
+    				{
+    				    $error++;
+    					$this->error = $this->db->lasterror();
+    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+    				}
+                }
 
-				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
-				$sqlz.= " WHERE rowid = ".$id;
-				$resultz = $this->db->query($sqlz);
+			    // Delete supplier prices
+                if (! $error)
+                {
+    			    $sql = 'DELETE pfp';
+    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'product_fournisseur as pf';
+    				$sql.= ' WHERE pfp.fk_product_fournisseur = pf.rowid';
+    				$sql.= ' AND pf.fk_product = '.$id;
+    				$result = $this->db->query($sql);
+    				if (! $result)
+    				{
+    				    $error++;
+    					$this->error = $this->db->lasterror();
+    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+    				}
+                }
 
-				if ( ! $resultz )
-				{
-					dol_syslog('Product::delete error sqlz='.$sqlz, LOG_ERR);
-					$error++;
-				}
+                // Other child tables
+                if (! $error)
+                {
+                    $elements = array('product_price','product_lang','categorie_product');
+    				foreach($elements as $table)
+    				{
+    					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+    					$sql.= " WHERE fk_product = ".$id;
+        				dol_syslog(get_class($this).'::delete sql='.$this->error, LOG_ERR);
+    					$result = $this->db->query($sql);
+        				if (! $result)
+        				{
+        				    $error++;
+        					$this->error = $this->db->lasterror();
+        				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+        				}
+    				}
+                }
 
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                if (! $error)
+                {
+    				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
+    				$sqlz.= " WHERE rowid = ".$id;
+                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
+    				$resultz = $this->db->query($sqlz);
+       				if ( ! $resultz )
+    				{
+    					$error++;
+    					$this->error = $this->db->lasterror();
+    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+    				}
+                }
+
+                if (! $error)
+                {
+                	// Actions on extra fields (by external module or standard code)
+                    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                    $hookmanager=new HookManager($this->db);
+                    $hookmanager->callHooks(array('product_extrafields'));
+                    $parameters=array(); $action='delete';
+                    $reshook=$hookmanager->executeHooks('deleteExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                    if (! empty($hookmanager->error))
+                    {
+                        $error++;
+                        $this->error=$hookmanager->error;
+                    }
+                    else if (empty($reshook))
+                    {
+                        // TODO
+                    	//$result=$this->deleteExtraFields($this);
+                        //if ($result < 0) $error++;
+                    }
+                }
+
+                if (! $error)
+                {
+                    // Appel des triggers
+    				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+    				$interface=new Interfaces($this->db);
+    				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
+    				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+    				// Fin appel triggers
+                }
 
 				if ($error)
 				{
+				    $this->db->rollback();
 					return -$error;
 				}
 				else
 				{
-					return 0;
+				    $this->db->commit;
+					return 1;
 				}
 			}
 			else
 			{
-				$this->error .= "FailedToDeleteProduct. Already used.\n";
-				return -1;
+				$this->error = "ErrorRecordHasChildren";
+				return 0;
 			}
 		}
 	}
 
 	/**
 	 *	Update ou cree les traductions des infos produits
+	 *
+	 *	@param		int		<0 if KO, >0 if OK
 	 */
 	function setMultiLangs()
 	{
@@ -672,6 +747,8 @@ class Product extends CommonObject
 
 	/**
 	 *	Load array this->multilangs
+	 *
+	 *	@param		int		<0 if KO, >0 if OK
 	 */
 	function getMultiLangs()
 	{
@@ -700,6 +777,7 @@ class Product extends CommonObject
 				$this->multilangs["$obj->lang"]["description"]	= $obj->description;
 				$this->multilangs["$obj->lang"]["note"]			= $obj->note;
 			}
+			return 1;
 		}
 		else
 		{
@@ -714,7 +792,7 @@ class Product extends CommonObject
 	 *  Ajoute un changement de prix en base dans l'historique des prix
 	 *
 	 *	@param  	user        Objet utilisateur qui modifie le prix
-	 *	@return		int			<0 si KO, >0 si OK
+	 *	@param		int			<0 if KO, >0 if OK
 	 */
 	function _log_price($user,$level=0)
 	{
