@@ -172,6 +172,10 @@
 
 	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
 
+	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
+        <severity>0</severity>
+	</rule>
+
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
 
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
