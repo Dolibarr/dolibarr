@@ -477,7 +477,7 @@ class Societe extends CommonObject
             $sql.= ",ville = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
 
             $sql .= ",fk_departement = '" . ($this->state_id?$this->state_id:'0') ."'";
-            $sql .= ",fk_pays = '" . ($this->country_id?$this->country_id:'0') ."'";
+            $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
 
             $sql .= ",tel = ".($this->tel?"'".$this->db->escape($this->tel)."'":"null");
             $sql .= ",fax = ".($this->fax?"'".$this->db->escape($this->fax)."'":"null");
