@@ -3898,19 +3898,18 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 }
 
 /**
- * 	Advanced sort array by second index function, which produces
- *	ascending (default) or descending output and uses optionally
- *	natural case insensitive sorting (which can be optionally case
- *	sensitive as well).
+ * 	Advanced sort array by second index function, which produces ascending (default)
+ *  or descending output and uses optionally natural case insensitive sorting (which
+ *  can be optionally case sensitive as well).
  *
- *  @param      array           	Array to sort
- *  @param      index
- *  @param      order
- *  @param      natsort
- *  @param      case_sensitive		Sort is case sensitive
- *  @return     Sorted array
+ *  @param      array		$array      		Array to sort
+ *  @param      string		$index				Key in array to use for sorting criteria
+ *  @param      int			$order				Sort order
+ *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard sort (asort)
+ *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
+ *  @return     array							Sorted array
  */
-function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive)
+function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensitive=0)
 {
     // Clean parameters
     $order=strtolower($order);
