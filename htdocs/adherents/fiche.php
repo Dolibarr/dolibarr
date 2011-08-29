@@ -1341,16 +1341,19 @@ if ($rowid && $action != 'edit')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans("LinkedToDolibarrUser");
 	print '</td>';
-	if ($_GET['action'] != 'editlogin' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$adh->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a></td>';
+	if ($_GET['action'] != 'editlogin' && $user->rights->adherent->creer)
+	{
+	    print '<td align="right">';
+	    if ($user->rights->user->user->creer)
+	    {
+	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$adh->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a>';
+	    }
+	    print '</td>';
+	}
 	print '</tr></table>';
 	print '</td><td class="valeur">';
 	if ($_GET['action'] == 'editlogin')
 	{
-		/*$include=array();
-		if (empty($user->rights->user->user->creer))	// If can edit only itself user, we can link to itself only
-		{
-			$include=array($adh->user_id,$user->id);
-		}*/
 		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid','');
 	}
 	else
