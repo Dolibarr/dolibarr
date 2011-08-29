@@ -94,7 +94,7 @@ jQuery(document).bind("mobileinit", function(){
 </div><!-- /page -->
 
 <?php if ($dol_loginmesg) { ?>
-	<script type="text/javascript" language="javascript">
+	<script type="text/javascript">
 		alert('<?php echo $dol_loginmesg; ?>');
 	</script>
 <?php } ?>
