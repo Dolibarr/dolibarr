@@ -195,7 +195,7 @@ class Categorie
 		}
 		else
 		{
-			dol_print_error($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -553,21 +553,21 @@ class Categorie
 		$sql  = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association ";
 		$sql .= "WHERE fk_categorie_mere = ".$this->id;
 
-		$res  = $this->db->query($sql);
+		$res  = $this->db->query ($sql);
 
 		if ($res)
 		{
 			$cats = array ();
-			while ($rec = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array ($res))
 			{
-				$cat = new Categorie($this->db, $rec['fk_categorie_fille']);
+				$cat = new Categorie ($this->db, $rec['fk_categorie_fille']);
 				$cats[] = $cat;
 			}
 			return $cats;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -600,7 +600,7 @@ class Categorie
 		$sql  = "SELECT count(fk_categorie_fille) FROM ".MAIN_DB_PREFIX."categorie_association ";
 		$sql .= "WHERE fk_categorie_mere = ".$this->id." AND fk_categorie_fille = ".$fille->id;
 
-		$res  = $this->db->query($sql);
+		$res  = $this->db->query ($sql);
 
 		$n    = $this->db->fetch_array($res);
 
@@ -801,20 +801,20 @@ class Categorie
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 
-		$res = $this->db->query($sql);
+		$res = $this->db->query ($sql);
 		if ($res)
 		{
 			$cats = array ();
-			while ($record = $this->db->fetch_array($res))
+			while ($record = $this->db->fetch_array ($res))
 			{
-				$cat = new Categorie($this->db, $record['rowid']);
+				$cat = new Categorie ($this->db, $record['rowid']);
 				$cats[$record['rowid']] = $cat;
 			}
 			return $cats;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -828,7 +828,7 @@ class Categorie
 	{
 		$sql = "SELECT count(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$res = $this->db->query($sql);
+		$res = $this->db->query ($sql);
 		if ($res)
 		{
 			$res = $this->db->fetch_array($res);
@@ -836,7 +836,7 @@ class Categorie
 		}
 		else
 		{
-			dol_print_error($this->db);
+			dol_print_error ($this->db);
 			return -1;
 		}
 	}
@@ -914,7 +914,7 @@ class Categorie
 
 		foreach ($allcats as $cat)
 		{
-			if (! in_array($cat->id, $filles))
+			if (!in_array ($cat->id, $filles))
 			{
 				$maincats[] = $cat;
 			}
@@ -948,7 +948,7 @@ class Categorie
 					$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
 				}
 			}
-			$ways[] = implode($sep, $w);
+			$ways[] = implode ($sep, $w);
 		}
 
 		return $ways;
@@ -969,9 +969,9 @@ class Categorie
 		{
 			foreach ($mere->get_all_ways() as $way)
 			{
-				if(count($way) < $primary_way["taille"] || $primary_way["taille"] < 0)
+				if(sizeof($way)<$primary_way["taille"] || $primary_way["taille"]<0)
 				{
-					$primary_way["taille"] = count($way);
+					$primary_way["taille"] = sizeOf($way);
 					$primary_way["chemin"] = $way;
 				}
 			}
