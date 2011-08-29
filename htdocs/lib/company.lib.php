@@ -246,10 +246,10 @@ function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
                 if ($entconv) $label=($obj->code && ($outputlangs->trans("Country".$obj->code)!="Country".$obj->code))?$outputlangs->trans("Country".$obj->code):$label;
                 else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code))?$outputlangs->transnoentitiesnoconv("Country".$obj->code):$label;
             }
-            if ($withcode == '1') return $label?"$obj->code - $label":"$obj->code";
-            else if ($withcode == '2') return $obj->code;
-            else if ($withcode == '3') return $obj->rowid;
-            else if ($withcode == 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
+            if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
+            else if ($withcode == 2) return $obj->code;
+            else if ($withcode == 3) return $obj->rowid;
+            else if ($withcode === 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
             else return $label;
         }
         else
