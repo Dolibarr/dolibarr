@@ -3194,6 +3194,7 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
 
 /**
  *	Function that return localtax of a product line (according to seller, buyer and product vat rate)
+ *
  *	@param      	societe_vendeuse    	Objet societe vendeuse
  *	@param      	societe_acheteuse   	Objet societe acheteuse
  *  @param			local					Localtax to process (1 or 2)
@@ -3205,7 +3206,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
     if (!is_object($societe_vendeuse)) return -1;
     if (!is_object($societe_acheteuse)) return -1;
 
-    if($societe_vendeuse->pays_id=='ES')
+    if ($societe_vendeuse->pays_id=='ES' || $societe_vendeuse->pays_code=='ES')
     {
         if ($local==1) //RE
         {
