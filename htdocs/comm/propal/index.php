@@ -183,7 +183,7 @@ if ($conf->propal->enabled)
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 				print '<td nowrap="nowrap">';
-				print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref."</a></td>";
+				print "<a href=".DOL_URL_ROOT."/comm/propal.php?id=".$obj->rowid.">".img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref."</a></td>";
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
 				$i++;
 			}
