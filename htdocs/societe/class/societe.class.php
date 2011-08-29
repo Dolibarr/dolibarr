@@ -47,15 +47,18 @@ class Societe extends CommonObject
     var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
+    var $name;     // TODO obsolete
     var $nom;
     var $nom_particulier;
     var $prenom;
     var $particulier;
     var $address;
-    var $adresse; // TODO obsolete
-    var $cp;
-    var $ville;
-    var $status; // 0=activity ceased, 1= in activity
+    var $adresse;  // TODO obsolete
+    var $cp;       // TODO obsolete
+    var $zip;
+    var $ville;    // TODO obsolete
+    var $town;
+    var $status;   // 0=activity ceased, 1= in activity
 
     var $state_id;
     var $state_code;
@@ -64,9 +67,9 @@ class Societe extends CommonObject
     var $departement_code;
     var $departement;
 
-    var $pays_id;
-    var $pays_code;
-    var $pays;	// TODO obsolete
+    var $pays_id;   // TODO obsolete
+    var $pays_code; // TODO obsolete
+    var $pays;	    // TODO obsolete
     var $country_id;
     var $country_code;
     var $country;
@@ -143,7 +146,8 @@ class Societe extends CommonObject
     var $logo_mini;
 
     /**
-     *    Constructor for class
+     *    Constructor
+     *
      *    @param  DB     handler acces base de donnees
      *    @param  id     id societe (0 par defaut)
      */
@@ -171,6 +175,7 @@ class Societe extends CommonObject
 
     /**
      *    Create third party in database
+     *
      *    @param      user        Object of user that ask creation
      *    @return     int         >= 0 if OK, < 0 if KO
      */
@@ -291,6 +296,7 @@ class Societe extends CommonObject
 
     /**
      *    Check properties of third party are ok (like name, third party codes, ...)
+     *
      *    @return     int		0 if OK, <0 if KO
      */
     function verify()
@@ -366,6 +372,7 @@ class Societe extends CommonObject
 
     /**
      *      Update parameters of third party
+     *
      *      @param      id              			id societe
      *      @param      user            			Utilisateur qui demande la mise a jour
      *      @param      call_trigger    			0=non, 1=oui
@@ -404,6 +411,7 @@ class Societe extends CommonObject
         $this->ville=$this->town;       // TODO obsolete
         $this->state_id=trim($this->state_id);
         $this->pays_id=trim($this->pays_id);
+        $this->country_id=trim($this->country_id);
         $this->tel=trim($this->tel);
         $this->fax=trim($this->fax);
         $this->tel = preg_replace("/\s/","",$this->tel);
@@ -469,7 +477,7 @@ class Societe extends CommonObject
             $sql.= ",ville = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
 
             $sql .= ",fk_departement = '" . ($this->state_id?$this->state_id:'0') ."'";
-            $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
+            $sql .= ",fk_pays = '" . ($this->country_id?$this->country_id:'0') ."'";
 
             $sql .= ",tel = ".($this->tel?"'".$this->db->escape($this->tel)."'":"null");
             $sql .= ",fax = ".($this->fax?"'".$this->db->escape($this->fax)."'":"null");
