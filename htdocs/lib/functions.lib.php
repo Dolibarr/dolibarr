@@ -3194,7 +3194,6 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
 
 /**
  *	Function that return localtax of a product line (according to seller, buyer and product vat rate)
- *
  *	@param      	societe_vendeuse    	Objet societe vendeuse
  *	@param      	societe_acheteuse   	Objet societe acheteuse
  *  @param			local					Localtax to process (1 or 2)
@@ -3206,7 +3205,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
     if (!is_object($societe_vendeuse)) return -1;
     if (!is_object($societe_acheteuse)) return -1;
 
-    if ($societe_vendeuse->pays_id=='ES' || $societe_vendeuse->pays_code=='ES')
+    if($societe_vendeuse->pays_id=='ES')
     {
         if ($local==1) //RE
         {
@@ -3899,18 +3898,19 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 }
 
 /**
- * 	Advanced sort array by second index function, which produces ascending (default)
- *  or descending output and uses optionally natural case insensitive sorting (which
- *  can be optionally case sensitive as well).
+ * 	Advanced sort array by second index function, which produces
+ *	ascending (default) or descending output and uses optionally
+ *	natural case insensitive sorting (which can be optionally case
+ *	sensitive as well).
  *
- *  @param      array		$array      		Array to sort
- *  @param      string		$index				Key in array to use for sorting criteria
- *  @param      int			$order				Sort order
- *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard sort (asort)
- *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
- *  @return     array							Sorted array
+ *  @param      array           	Array to sort
+ *  @param      index
+ *  @param      order
+ *  @param      natsort
+ *  @param      case_sensitive		Sort is case sensitive
+ *  @return     Sorted array
  */
-function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensitive=0)
+function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive)
 {
     // Clean parameters
     $order=strtolower($order);
