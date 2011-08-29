@@ -49,9 +49,9 @@ class Adherent extends CommonObject
     var $ref;
     var $civilite_id;
     var $firstname;
-    var $prenom;                // deprecated
+    var $prenom;                // TODO deprecated
     var $lastname;
-    var $nom;                   // deprecated
+    var $nom;                   // TODO deprecated
     var $login;
     var $pass;
     var $societe;
@@ -62,16 +62,19 @@ class Adherent extends CommonObject
     var $ville;
     var $town;
 
-    var $state_id;
-    var $state_code;
-    var $state;
-    var $fk_departement;		// Id of department
-    var $departement_code;		// Code of department
-    var $departement;			// Label of department
+    var $state_id;              // Id of department
+    var $state_code;            // Code of department
+    var $state;                 // Label of department
+    var $fk_departement;		// TODO deprecated
+    var $departement_code;		// TODO deprecated
+    var $departement;			// TODO deprecated
 
-    var $pays_id;
-    var $pays_code;
-    var $pays;
+    var $country_id;
+    var $country_code;
+    var $country;
+    var $pays_id;              // TODO deprecated
+    var $pays_code;            // TODO deprecated
+    var $pays;                 // TODO deprecated
 
     var $email;
     var $phone;
@@ -243,6 +246,7 @@ class Adherent extends CommonObject
 
     /**
      *	Create a member into database
+     *
      *	@param      user        	Objet user qui demande la creation
      *	@param      notrigger		1 ne declenche pas les triggers, 0 sinon
      *	@return		int				<0 if KO, >0 if OK
@@ -363,13 +367,15 @@ class Adherent extends CommonObject
 
     /**
      *	Update a member in database (standard information and password)
-     *	@param		user			User making update
-     *	@param		notrigger		1=disable trigger UPDATE (when called by create)
-     *	@param		nosyncuser		0=Synchronize linked user (standard info), 1=Do not synchronize linked user
-     *	@param		nosyncuserpass	0=Synchronize linked user (password), 1=Do not synchronize linked user
-     * 	@return		int				<0 si KO, >0 si OK
+     *
+     *	@param		user				User making update
+     *	@param		notrigger			1=disable trigger UPDATE (when called by create)
+     *	@param		nosyncuser			0=Synchronize linked user (standard info), 1=Do not synchronize linked user
+     *	@param		nosyncuserpass		0=Synchronize linked user (password), 1=Do not synchronize linked user
+     *	@param		nosyncthirdparty	0=Synchronize linked thirdparty (standard info), 1=Do not synchronize linked thirdparty
+     * 	@return		int					<0 if KO, >0 if OK
      */
-    function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0)
+    function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0)
     {
         global $conf, $langs;
 
@@ -454,7 +460,7 @@ class Adherent extends CommonObject
                 }
             }
 
-            // Remove link to user
+            // Remove links to user and replace with new one
             if (! $error)
             {
                 dol_syslog(get_class($this)."::update update link to user");
@@ -474,14 +480,13 @@ class Adherent extends CommonObject
 
             if (! $error && $nbrowsaffected)	// If something has change in main data
             {
+                // Update information on linked user if it is an update
                 if ($this->user_id > 0 && ! $nosyncuser)
                 {
                     require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
                     dol_syslog(get_class($this)."::update update linked user");
 
-                    // This member is linked with a user, so we also update users informations
-                    // if this is an update.
                     $luser=new User($this->db);
                     $result=$luser->fetch($this->user_id);
 
@@ -513,6 +518,45 @@ class Adherent extends CommonObject
                     else
                     {
                         $this->error=$luser->error;
+                        $error++;
+                    }
+                }
+
+                // Update information on linked thirdparty if it is an update
+                if ($this->fk_soc > 0 && ! $nosyncthirdparty)
+                {
+                    require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+
+                    dol_syslog(get_class($this)."::update update linked thirdparty");
+
+                    // This member is linked with a thirdparty, so we also update thirdparty informations
+                    // if this is an update.
+                    $lthirdparty=new Societe($this->db);
+                    $result=$lthirdparty->fetch($this->fk_soc);
+
+                    if ($result >= 0)
+                    {
+                        $lthirdparty->address=$this->address;
+                        $lthirdparty->zip=$this->zip;
+                        $lthirdparty->town=$this->town;
+                        $lthirdparty->email=$this->email;
+                        $lthirdparty->tel=$this->phone;
+                        $lthirdparty->state_id=$this->state_id;
+                        $lthirdparty->country_id=$this->country_id;
+                        $lthirdparty->pays_id=$this->pays_id;
+                        //$lthirdparty->phone_mobile=$this->phone_mobile;
+
+                        $result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
+                        if ($result < 0)
+                        {
+                            $this->error=$lthirdparty->error;
+                            dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+                            $error++;
+                        }
+                    }
+                    else
+                    {
+                        $this->error=$lthirdparty->error;
                         $error++;
                     }
                 }
