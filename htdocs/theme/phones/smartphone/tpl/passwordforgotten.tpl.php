@@ -72,7 +72,7 @@ include('header.tpl.php');
 </div><!-- /page -->
 
 <?php if ($message) { ?>
-	<script type="text/javascript" language="javascript">
+	<script type="text/javascript">
 		alert('<?php echo $message; ?>');
 	</script>
 <?php } ?>
