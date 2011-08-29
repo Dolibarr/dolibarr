@@ -3915,7 +3915,8 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive
     // Clean parameters
     $order=strtolower($order);
 
-    if (is_array($array) && count($array)>0)
+    $sizearray=count($array);
+    if (is_array($array) && $sizearray>0)
     {
         foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
         if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
