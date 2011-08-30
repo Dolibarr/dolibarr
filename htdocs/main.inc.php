@@ -872,6 +872,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
             	print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.css" type="text/css" />'."\n";
             }
+        	if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))     // jQuery datatables
+            {
+            	// TODO move to theme directory
+            	print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/css/jquery.dataTables.css" type="text/css" />'."\n";
+            }
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -948,6 +953,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.iframe-transport.js"></script>'."\n";
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload.js"></script>'."\n";
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.js"></script>'."\n";
+            }
+			// DataTables
+            if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))
+            {
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/js/jquery.dataTables.min'.$ext.'"></script>'."\n";
             }
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
