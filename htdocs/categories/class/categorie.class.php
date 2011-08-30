@@ -918,9 +918,6 @@ class Categorie
 			{
 				$maincats[] = $cat;
 			}
-			else
-			{
-			}
 		}
 
 		return $maincats;
