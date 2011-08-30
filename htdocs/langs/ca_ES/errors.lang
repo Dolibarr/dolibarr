@@ -87,3 +87,4 @@ ErrorProductWithRefNotExist=La referència de producte '<i>%s</i>' no existeix
 ErrorDeleteNotPossibleLineIsConsolidated=Eliminació impossible ja que el registre està enllaçat a una transacció bancària conciliada
 ErrorProdIdAlreadyExist=%s es troba assignat a altre tercer
 ErrorFailedToSendPassword=Error en l'enviament de la contrasenya
+ErrorFailedToLoadRSSFile=Error en la recuperació del flux RSS. Afegiu la constant MAIN_SIMPLEXMLLOAD_DEBUG si el missatge d'error no és molt explícit.
