@@ -49,7 +49,7 @@
 	if (is_object($hookmanager))
 	{
 	    $parameters=array();
-	    $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+	    echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
 
 	// Editor wysiwyg
