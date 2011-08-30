@@ -978,7 +978,12 @@ class Categorie
 	}
 
 	/**
-	 * print_primary_way() affiche le chemin le plus court pour se rendre a un produit
+	 * Affiche le chemin le plus court pour se rendre a un produit
+	 *
+	 * @param	int		$id
+	 * @param	string	$sep
+	 * @param	string	$url
+	 * @param	string	$type
 	 */
 	function print_primary_way($id, $sep= " &gt;&gt; ", $url="", $type="")
 	{
@@ -1003,9 +1008,9 @@ class Categorie
 	/**
 	 * Retourne un tableau contenant la liste des categories meres
 	 */
-	function get_meres ()
+	function get_meres()
 	{
-		$meres = array ();
+		$meres = array();
 
 		$sql  = "SELECT fk_categorie_mere FROM ".MAIN_DB_PREFIX."categorie_association ";
 		$sql .= "WHERE fk_categorie_fille = ".$this->id;
