@@ -1,11 +1,11 @@
 /*
  * File:        ColReorder.js
  * Version:     1.0.2
- * CVS:         $Id$
+ * CVS:         $Id: ColReorder.js,v 1.1 2011/08/30 18:30:39 hregis Exp $
  * Description: Controls for column visiblity in DataTables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
  * Created:     Wed Sep 15 18:23:29 BST 2010
- * Modified:    $Date$ by $Author$
+ * Modified:    $Date: 2011/08/30 18:30:39 $ by $Author: hregis $
  * Language:    Javascript
  * License:     GPL v2 or BSD 3 point style
  * Project:     DataTables
