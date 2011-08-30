@@ -2534,7 +2534,6 @@ function dol_print_error_email()
     print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date(mktime(),'%Y%m%d')).'</div>';
 }
 
-
 /**
  *	Show title line of an array
  *	@param	    name        Label of field
@@ -2548,57 +2547,85 @@ function dol_print_error_email()
  */
 function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="")
 {
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder);
+}
+
+/**
+ *	Get title line of an array
+ *	@param	    name        Label of field
+ *	@param		thead		For thead format
+ *	@param	    file        Url used when we click on sort picto
+ *	@param	    field       Field to use for new sorting
+ *	@param	    begin       ("" by defaut)
+ *	@param	    moreparam   Add more parameters on sort url links ("" by default)
+ *	@param      td          Options of attribute td ("" by defaut)
+ *	@param      sortfield   Current field used to sort
+ *	@param      sortorder   Current sort order
+ */
+function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="")
+{
     global $conf;
     //print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";
-
-    // Le champ de tri est mis en evidence.
-    // Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
-    if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field)))
+    
+    $out='';
+    
+    if ($thead)
     {
-        print '<td class="liste_titre_sel" '. $td.'>';
+    	$out.= '<th>'.$name.'</th>';
     }
     else
     {
-        print '<td class="liste_titre" '. $td.'>';
+    	// Le champ de tri est mis en evidence.
+	    // Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
+	    if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field)))
+	    {
+	        $out.= '<td class="liste_titre_sel" '. $td.'>';
+	    }
+	    else
+	    {
+	        $out.= '<td class="liste_titre" '. $td.'>';
+	    }
+	    $out.= $name;
+	
+	    // If this is a sort field
+	    if ($field)
+	    {
+	        $options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
+	        $options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
+	        $options=preg_replace('/&+/i','&',$options);
+	        if (! preg_match('/^&/',$options)) $options='&'.$options;
+	
+	        //print "&nbsp;";
+	        $out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
+	        if (! $sortorder)
+	        {
+	            $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+	            $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+	        }
+	        else
+	        {
+	            if ($field != $sortfield)
+	            {
+	                $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+	                $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+	            }
+	            else {
+	                $sortorder=strtoupper($sortorder);
+	                if ($sortorder == 'DESC' ) {
+	                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+	                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+	                }
+	                if ($sortorder == 'ASC' ) {
+	                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+	                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+	                }
+	            }
+	        }
+	    }
+	    $out.= "</td>";
     }
-    print $name;
-
-    // If this is a sort field
-    if ($field)
-    {
-        $options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
-        $options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
-        $options=preg_replace('/&+/i','&',$options);
-        if (! preg_match('/^&/',$options)) $options='&'.$options;
-
-        //print "&nbsp;";
-        print '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-        if (! $sortorder)
-        {
-            print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-            print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-        }
-        else
-        {
-            if ($field != $sortfield)
-            {
-                print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-                print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-            }
-            else {
-                $sortorder=strtoupper($sortorder);
-                if ($sortorder == 'DESC' ) {
-                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-                }
-                if ($sortorder == 'ASC' ) {
-                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-                }
-            }
-        }
-    }
-    print "</td>";
+    
+    return $out;
 }
 
 /**
