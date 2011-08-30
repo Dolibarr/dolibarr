@@ -897,6 +897,8 @@ class Form
     function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0)
     {
         global $langs,$conf;
+        
+        $price_level = (! empty($price_level) ? $price_level : 0);
 
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
@@ -911,12 +913,13 @@ class Form
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
             if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
             print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
-            print '<br>';
         }
         else
         {
             $this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
         }
+        
+        print '<br />';
     }
 
     /**

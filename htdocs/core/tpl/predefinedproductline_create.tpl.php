@@ -50,18 +50,13 @@
 <tr <?php echo $bcnd[$var]; ?>>
 	<td colspan="3">
 	<?php
-	// multiprix
-	if($conf->global->PRODUIT_MULTIPRICES)
-	$html->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
-	else
-	$html->select_produits('','idprod','',$conf->product->limit_size);
 
-	if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) echo '<br>';
+	$html->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
 
 	if (is_object($hookmanager))
 	{
         $parameters=array('fk_parent_line'=>$_POST["fk_parent_line"]);
-	    $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+	    echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
 
 	// Editor wysiwyg
