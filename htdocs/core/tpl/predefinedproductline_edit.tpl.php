@@ -51,7 +51,7 @@
 		{
 		    $fk_parent_line = ($_POST["fk_parent_line"] ? $_POST["fk_parent_line"] : $line->fk_parent_line);
 			$parameters=array('fk_parent_line'=>$fk_parent_line);
-		    $hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
+		    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 		}
 		
 		// editeur wysiwyg
