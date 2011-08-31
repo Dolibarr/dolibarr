@@ -86,7 +86,7 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td align="center">'.$langs->trans("Status").'</td>';
-print '  <td align="center" width="60">'.$langs->trans("Infos").'</td>';
+//print '  <td align="center" width="80">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -107,20 +107,20 @@ if (sizeof($workflowcodes) > 0)
     	if (! empty($conf->global->$code))
     	{
             print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=del'.$code.'">';
-            print img_picto($langs->trans("Activated"),'on');
+            print img_picto($langs->trans("Activated"),'switch_on');
             print '</a></td>';
     	}
     	else
     	{
     		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=set'.$code.'">';
-    		print img_picto($langs->trans("Disabled"),'off');
+    		print img_picto($langs->trans("Disabled"),'switch_off');
     		print '</a></td>';
     	}
 
-    	print '<td align="center">';
+    	//print '<td align="center">';
     	//$s=$modCodeTiers->getToolTip($langs,$soc,-1);
     	//print $form->textwithpicto('',$s,1);
-    	print '</td>';
+    	//print '</td>';
 
     	print '</tr>';
     }
