@@ -49,9 +49,9 @@ if ($action == 'updateMask')
 {
 	$maskconstorder=GETPOST("maskconstorder");
 	$maskorder=GETPOST("maskorder");
-	
+
 	if ($maskconstorder) $res = dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -103,7 +103,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$type='order';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -120,13 +120,13 @@ if ($action == 'del')
 {
 	$type='order';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$value."'";
+	$sql.= " WHERE nom = '".$db->escape($value)."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 
 	if ($db->query($sql))
 	{
-
+        if ($conf->global->COMMANDE_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_ADDON_PDF',$conf->entity);
 	}
 }
 
@@ -134,7 +134,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$db->begin();
 
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -178,7 +178,7 @@ if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("COMMANDE_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -195,7 +195,7 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
 {
 	$freetext = GETPOST("COMMANDE_FREE_TEXT");
 	$res = dolibarr_set_const($db, "COMMANDE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -207,22 +207,7 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
-/*
-if ($action == 'setvalidorder')
-{
-	dolibarr_set_const($db, "COMMANDE_VALID_AFTER_CLOSE_PROPAL",$_POST["validorder"],'chaine',0,'',$conf->entity);
-}
 
-if ($action == 'deliverycostline')
-{
-	dolibarr_set_const($db, "COMMANDE_ADD_DELIVERY_COST_LINE",$_POST["addline"],'chaine',0,'',$conf->entity);
-}
-
-if ($action == 'set_use_customer_contact_as_recipient')
-{
-	dolibarr_set_const($db, "COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["use_customer_contact_as_recipient"],'chaine',0,'',$conf->entity);
-}
-*/
 
 /*
  * View
@@ -417,16 +402,16 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		print "<td align=\"center\">\n";
 		    		if (in_array($name, $def))
 		    		{
-		    			if ($conf->global->COMMANDE_ADDON_PDF != "$name")
-		    			{
+		    			//if ($conf->global->COMMANDE_ADDON_PDF != "$name")
+		    			//{
 		    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 		    				print img_picto($langs->trans("Activated"),'switch_on');
 		    				print '</a>';
-		    			}
-		    			else
-		    			{
-		    				print img_picto($langs->trans("Activated"),'switch_on');
-		    			}
+		    			//}
+		    			//else
+		    			//{
+		    			//	print img_picto($langs->trans("Activated"),'switch_on');
+		    			//}
 		    		}
 		    		else
 		    		{
@@ -440,12 +425,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		print "<td align=\"center\">";
 		    		if ($conf->global->COMMANDE_ADDON_PDF == "$name")
 		    		{
-		    			print img_picto($langs->trans("Yes"),'switch_on');
+		    			print img_picto($langs->trans("Yes"),'on');
 		    		}
 		    		else
 		    		{
 		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-		    			print img_picto($langs->trans("No"),'switch_off');
+		    			print img_picto($langs->trans("No"),'off');
 		    			print '</a>';
 		    		}
 		    		print '</td>';

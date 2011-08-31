@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php');
 $langs->load("admin");
 $langs->load("errors");
 /*$langs->load("other");
-$langs->load("interventions");*/	
+$langs->load("interventions");*/
 
 if (!$user->admin)
 accessforbidden();
@@ -50,7 +50,7 @@ if ($action == 'updateMask')
 	$maskconst=GETPOST("maskconst");
 	$maskvalue=getpost("maskvalue");
 	if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -67,7 +67,7 @@ if ($action == 'set_FICHINTER_FREE_TEXT')
 {
 	$freetext= GETPOST("FICHINTER_FREE_TEXT");
 	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -83,9 +83,9 @@ if ($action == 'set_FICHINTER_FREE_TEXT')
 if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 {
 	$draft= GETPOST("FICHINTER_DRAFT_WATERMARK");
-	
+
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -137,7 +137,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$type='ficheinter';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -154,13 +154,13 @@ if ($action == 'del')
 {
 	$type='ficheinter';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$value."'";
+	$sql.= " WHERE nom = '".$db->escape($value)."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 
 	if ($db->query($sql))
 	{
-
+        if ($conf->global->FICHEINTER_ADDON_PDF == "$value") dolibarr_del_const($db, 'FICHEINTER_ADDON_PDF',$conf->entity);
 	}
 }
 
@@ -168,7 +168,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$db->begin();
 
 	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -212,16 +212,9 @@ if ($action == 'setmod')
 	dolibarr_set_const($db, "FICHEINTER_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-/*
-// defini les constantes du modele arctic
-if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FICHEINTER_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "FICHEINTER_NUM_PREFIX",$_POST["prefix"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "FICHEINTER_NUM_DELTA",$_POST["offset"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FICHEINTER_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
-*/
 
 /*
- * Affichage page
+ * View
  */
 
 llxHeader();
@@ -242,7 +235,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -359,7 +352,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -395,16 +388,16 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		if (in_array($name, $def))
 		    		{
 		    			print "<td align=\"center\">\n";
-		    			if ($conf->global->FICHEINTER_ADDON_PDF != "$name")
-		    			{
+		    			//if ($conf->global->FICHEINTER_ADDON_PDF != "$name")
+		    			//{
 		    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 		    				print img_picto($langs->trans("Enabled"),'switch_on');
 		    				print '</a>';
-		    			}
-		    			else
-		    			{
-		    				print img_picto($langs->trans("Enabled"),'switch_on');
-		    			}
+		    			//}
+		    			//else
+		    			//{
+		    			//	print img_picto($langs->trans("Enabled"),'switch_on');
+		    			//}
 		    			print "</td>";
 		    		}
 		    		else
@@ -418,11 +411,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		print "<td align=\"center\">";
 		    		if ($conf->global->FICHEINTER_ADDON_PDF == "$name")
 		    		{
-		    			print img_picto($langs->trans("Default"),'switch_on');
+		    			print img_picto($langs->trans("Default"),'on');
 		    		}
 		    		else
 		    		{
-		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 		    		}
 		    		print '</td>';
 
@@ -437,10 +430,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
 		    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 		    		print '<td align="center">';
-		    		print $html->textwithpicto('',$htmltooltip,1,0);
-		    		print '</td>';
-		    		print '<td align="center">';
-		    		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'intervention').'</a>';
+		    		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'intervention').'</a>';
+		    		print $html->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
 		    		print '</td>';
 
 		    		print '</tr>';

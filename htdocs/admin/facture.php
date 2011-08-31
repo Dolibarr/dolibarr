@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne                  <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
@@ -37,6 +37,9 @@ $langs->load("errors");
 
 if (!$user->admin)
 accessforbidden();
+
+$action = GETPOST("action");
+$value = GETPOST("value");
 
 $typeconst=array('yesno','texte','chaine');
 
@@ -123,13 +126,13 @@ if ($_GET["action"] == 'del')
 {
     $type='invoice';
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql.= " WHERE nom = '".$_GET["value"]."'";
+    $sql.= " WHERE nom = '".$db->escape($value)."'";
     $sql.= " AND type = '".$type."'";
     $sql.= " AND entity = ".$conf->entity;
 
     if ($db->query($sql))
     {
-
+        if ($conf->global->FACTURE_ADDON_PDF == "$value") dolibarr_del_const($db, 'FACTURE_ADDON_PDF',$conf->entity);
     }
 }
 
@@ -314,11 +317,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
                             //print "> ".$conf->global->FACTURE_ADDON." - ".$file;
                             if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file)
                             {
-                                print img_picto($langs->trans("Activated"),'on');
+                                print img_picto($langs->trans("Activated"),'switch_on');
                             }
                             else
                             {
-                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.preg_replace('/\.php$/','',$file).'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.preg_replace('/\.php$/','',$file).'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                             }
                             print '</td>';
 
@@ -473,22 +476,22 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                            if (in_array($name, $def))
 	                            {
 	                                print "<td align=\"center\">\n";
-	                                if ($conf->global->FACTURE_ADDON_PDF != "$name")
-	                                {
+	                                //if ($conf->global->FACTURE_ADDON_PDF != "$name")
+	                                //{
 	                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-	                                    print img_picto($langs->trans("Enabled"),'on');
+	                                    print img_picto($langs->trans("Enabled"),'switch_on');
 	                                    print '</a>';
-	                                }
-	                                else
-	                                {
-	                                    print img_picto($langs->trans("Enabled"),'on');
-	                                }
+	                                //}
+	                                //else
+	                                //{
+	                                //    print img_picto($langs->trans("Enabled"),'on');
+	                                //}
 	                                print "</td>";
 	                            }
 	                            else
 	                            {
 	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 

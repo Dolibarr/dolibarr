@@ -1207,7 +1207,6 @@ FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_d
 DescWeather=Следующие фотографии будут показаны на приборной панели, когда число конце действия достигают следующих значений:
 KeyForWebServicesAccess=Ключ к использованию веб-служб (параметр &quot;dolibarrkey&quot; в веб-сервисы)
 TestSubmitForm=Форма входного теста
-ThisForceAlsoTheme=С помощью этого меню менеджера будет также использовать свои собственные темы все, что выбор пользователя. Из этого меню также менеджер специализированного для смартфонов не работает на всех смартфонов. Используйте другое меню менеджера, если вы epxerience проблемы от вас.
 ThemeDir=Скины каталог
 ConnectionTimeout=Connexion тайм-аут
 ResponseTimeout=Время ожидания ответа

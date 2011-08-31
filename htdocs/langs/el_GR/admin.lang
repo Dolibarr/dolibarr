@@ -1238,7 +1238,6 @@ MAIN_DISABLE_ALL_SMS=Απενεργοποίηση όλων σας αποστολ
 MAIN_SMS_SENDMODE=Μέθοδος να χρησιμοποιήσετε για την αποστολή SMS
 MAIN_MAIL_SMS_FROM=Προεπιλογή αριθμού τηλεφώνου αποστολέα για την αποστολή SMS
 TestSubmitForm=Είσοδος μορφή δοκιμή
-ThisForceAlsoTheme=Χρησιμοποιώντας αυτό το μενού διαχειριστής θα χρησιμοποιήσει επίσης το δικό της θέμα ό, τι είναι επιλογή του χρήστη. Επίσης, αυτό το διαχειριστή μενού εξειδικευμένων για τα smartphones, δεν λειτουργεί σε όλα τα smartphone. Χρησιμοποιήσετε κάποιον άλλο διαχειριστή μενού αν τα προβλήματα epxerience στο δικό σας.
 ThemeDir=Δέρματα κατάλογο
 ConnectionTimeout=Timeout Connexion
 ResponseTimeout=Timeout Response
