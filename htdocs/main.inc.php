@@ -640,8 +640,10 @@ if (! defined('NOLOGIN'))
 		$conf->theme=$user->conf->MAIN_THEME;
 		$conf->css  = "/theme/".$conf->theme."/style.css.php";
 	}
-	// If theme support flip-hide left menu and we use a smartphone, we force it
-	if ($conf->browser->phone && $conf->theme == 'eldy') $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
+	
+	// If theme support optim like flip-hide left menu and we use a smartphone, we force it
+	if (! empty($conf->global->MAIN_SMARTPHONE_OPTIM) && $conf->browser->phone && $conf->theme == 'eldy') $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
+	
 	// Set javascript option
     if (! GETPOST('nojs'))   // If javascript was not disabled on URL
     {
