@@ -217,8 +217,8 @@ td.showDragHandle {
 /* ============================================================================== */
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (empty($conf->browser->phone) || empty($conf->global->MAIN_SMARTPHONE_OPTIM))?'10':'24'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'8':'6'; ?>px;
+	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'24'; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'8':''; ?>px;
 }
 
 div.fichecenter {
@@ -822,7 +822,7 @@ td.photo {
 	border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler-closed {
-	height: <?php echo (empty($conf->browser->phone)?'54':'2'); ?>px !important;
+	height: <?php echo (empty($conf->browser->phone)?'54':'1'); ?>px !important;
 	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
     -moz-border-radius:0px 10px 10px 0px;
 	-webkit-border-radius:0px 10px 10px 0px;
