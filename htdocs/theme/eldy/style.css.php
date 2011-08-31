@@ -54,7 +54,7 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->browser->phone)?'12':'15';
+$fontsize=empty($conf->browser->phone)?'12':'14';
 $fontsizesmaller=empty($conf->browser->phone)?'11':'14';
 
 $path='';    // This value may be used in future for external module to overwrite theme
