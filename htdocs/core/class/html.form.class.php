@@ -827,7 +827,7 @@ class Form
             {
             	$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
             	if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
-                
+
             	$userstatic=new User($this->db);
 
                 while ($i < $num)
@@ -2047,8 +2047,8 @@ class Form
 	                    $more.='<tr>';
 	                    $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
 	                    $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
-	                    if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="true"';
-	                    if (is_bool($input['value']) && $input['value']) $more.=' checked="true"';
+	                    if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="checked"';
+	                    if (is_bool($input['value']) && $input['value']) $more.=' checked="checked"';
 	                    if ($input['disabled']) $more.=' disabled="true"';
 	                    $more.=' /></td>';
 	                    $more.='<td valign="top" align="left">&nbsp;</td>';
@@ -3566,7 +3566,7 @@ class Form
             {
             	$out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
             	if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
-            	
+
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);

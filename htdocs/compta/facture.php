@@ -1578,7 +1578,7 @@ if ($action == 'create')
 
     // Standard invoice
     print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked="true"':'').'>';
+    print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked="checked"':'').'>';
     print '</td><td valign="middle">';
     $desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
     print $desc;
@@ -1586,7 +1586,7 @@ if ($action == 'create')
 
     // Deposit
     print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="true"':'').'>';
+    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
     print '</td><td valign="middle">';
     $desc=$html->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
     print $desc;
@@ -1596,7 +1596,7 @@ if ($action == 'create')
     if ($conf->global->FACTURE_USE_PROFORMAT)
     {
         print '<tr height="18"><td width="16px" valign="middle">';
-        print '<input type="radio" name="type" value="4"'.(GETPOST('type')==4?' checked="true"':'').'>';
+        print '<input type="radio" name="type" value="4"'.(GETPOST('type')==4?' checked="checked"':'').'>';
         print '</td><td valign="middle">';
         $desc=$html->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
         print $desc;
@@ -1605,7 +1605,7 @@ if ($action == 'create')
 
     // Replacement
     print '<tr height="18"><td valign="middle">';
-    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked=true':'');
+    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked="checked"':'');
     if (! $options) print ' disabled="true"';
     print '>';
     print '</td><td valign="middle">';

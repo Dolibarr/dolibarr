@@ -412,7 +412,7 @@ if ($action == 'new')
 			print '<td>'.$value["banque"]."</td>\n";
 			print '<td align="right">'.price($value["amount"]).'</td>';
 			print '<td align="center">';
-			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked="true" type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked="checked" type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 			print '</td>' ;
 			print '</tr>';
 

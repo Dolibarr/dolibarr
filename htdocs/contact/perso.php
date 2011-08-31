@@ -138,7 +138,7 @@ if ($_GET["action"] == 'edit')
     print '<td colspan="2">'.$langs->trans("Alert").': ';
     if ($contact->birthday_alert)
     {
-        print '<input type="checkbox" name="birthday_alert" checked="true"></td>';
+        print '<input type="checkbox" name="birthday_alert" checked="checked"></td>';
     }
     else
     {
