@@ -185,8 +185,9 @@ if ($_GET["action"] == 'edit')
 
     print '</table><br>';
 
+
     // Theme
-    show_theme($fuser,(($user->admin || empty($dolibarr_main_demo))?1:0),true);
+    show_theme($fuser,empty($dolibarr_main_demo)?1:0,true);
 
     print '</div>';
 
