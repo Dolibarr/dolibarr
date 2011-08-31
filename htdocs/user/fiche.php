@@ -821,9 +821,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print "<tr>".'<td valign="top">'.$langs->trans("PassPenix").'</td>';
         print '<td><input size="30" type="text" name="phenix_pass" value="'.$_POST["phenix_pass"].'"></td></tr>';
     }
-
-    print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
-    print "</table>\n";
+ 	print "</table>\n";
+ 
+    print '<center><br><input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit"></center>';
+    
     print "</form>";
 }
 else
