@@ -205,12 +205,14 @@ class pdf_paiement
 	}
 
 	/**
-	 *	\brief  Generate Header
-	 *	\param  pdf pdf object
-	 *	\param  page current page number
-	 *	\param  pages number of pages
+	 *   	Show header of page
+	 *
+	 *   	@param      $pdf     		Object PDF
+	 *   	@param      $object     	Object
+	 *      @param      $showaddress    0=no, 1=yes
+	 *      @param      $outputlangs	Object lang for output
 	 */
-	function _pagehead(&$pdf, $page, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $page, $showaddress=1, $outputlangs)
 	{
 		global $langs;
 

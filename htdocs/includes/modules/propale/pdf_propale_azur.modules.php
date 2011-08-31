@@ -962,10 +962,10 @@ class pdf_propale_azur extends ModelePDFPropales
 		 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
 
 			// Show sender
-			$posx=$this->marge_gauche;
 			$posy=42;
+		 	$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 			$hautcadre=40;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
 
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
@@ -1014,26 +1014,26 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			// Show recipient
 			$posy=42;
-			$posx=100;
+			$posx=$this->page_largeur-$this->marge_droite-100;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":", 0, 'L');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("BillTo").":", 0, 'L');
 			$pdf->rect($posx, $posy, 100, $hautcadre);
 			$pdf->SetTextColor(0,0,0);
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
+			$pdf->MultiCell(100,4, $carac_client_name, 0, 'L');
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy+8);
-			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
+			$pdf->MultiCell(100,4, $carac_client, 0, 'L');
 		}
 	}
 

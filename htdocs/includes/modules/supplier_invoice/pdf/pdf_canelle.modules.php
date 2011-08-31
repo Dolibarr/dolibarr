@@ -695,13 +695,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 	/**
-	 *   	\brief      Show header of page
-	 *    	\param      pdf     		Object PDF
-	 *      \param      object          Object invoice
-	 *      \param      showadress      0=no, 1=yes
-	 *      \param      outputlangs		Object lang for output
+	 *   	Show header of page
+	 *
+	 *   	@param      $pdf     		Object PDF
+	 *   	@param      $object     	Object order
+	 *      @param      $showaddress    0=no, 1=yes
+	 *      @param      $outputlangs	Object lang for output
 	 */
-	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -765,7 +766,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell(100, 4, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
 		}
 
-		if ($showadress)
+		if ($showaddress)
 		{
 			// Receive email
 			$posy=42;

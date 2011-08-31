@@ -314,12 +314,14 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 	/**
-	 *   	\brief      Affiche en-tete bon livraison
-	 *   	\param      pdf     	objet PDF
-	 *   	\param      delivery    object delivery
-	 *      \param      showadress  0=non, 1=oui
+	 *   	Show header of page
+	 *
+	 *   	@param      $pdf     		Object PDF
+	 *   	@param      $object     	Object project
+	 *      @param      $showaddress    0=no, 1=yes
+	 *      @param      $outputlangs	Object lang for output
 	 */
-	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 

@@ -39,12 +39,29 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
  */
 class pdf_einstein extends ModelePDFCommandes
 {
-	var $emetteur;	// Objet societe qui emet
+    var $db;
+    var $name;
+    var $description;
+    var $type;
+
+    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
+    var $version = 'dolibarr';
+
+    var $page_largeur;
+    var $page_hauteur;
+    var $format;
+	var $marge_gauche;
+	var	$marge_droite;
+	var	$marge_haute;
+	var	$marge_basse;
+
+    var $emetteur;	// Objet societe qui emet
 
 
 	/**
 	 *		Constructor
-	 *		@param		db		Database access handler
+     *
+	 *		@param		DoliDb	$db		Database access handler
 	 */
 	function pdf_einstein($db)
 	{
@@ -102,6 +119,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 	/**
      *  Function to build pdf onto disk
+
      *  @param      object          Id of object to generate
      *  @param      outputlangs     Lang output object
      *  @param      srctemplatepath Full path of source filename for generator using a template file
@@ -149,14 +167,14 @@ class pdf_einstein extends ModelePDFCommandes
 			{
 				if (create_exdir($dir) < 0)
 				{
-					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
 
 			if (file_exists($dir))
 			{
-				$nblignes = sizeof($object->lines);
+				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
 
@@ -399,12 +417,13 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *   \brief      Affiche tableau des versement
-	 *   \param      pdf     	Objet PDF
-	 *   \param      object		Objet commande
-	 *	\param		posy			Position y in PDF
-	 *	\param		outputlangs		Object langs for output
-	 *	\return 	int				<0 if KO, >0 if OK
+	 *   Affiche tableau des versement
+     *
+	 *   @param     pdf     		Object PDF
+	 *   @param     object			Object order
+	 *	 @param		posy			Position y in PDF
+	 *	 @param		outputlangs		Object langs for output
+	 *	 @return 	int				<0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -413,12 +432,13 @@ class pdf_einstein extends ModelePDFCommandes
 
 
 	/**
-	 *	\brief      Affiche infos divers
-	 *	\param      pdf             Objet PDF
-	 *	\param      object          Objet commande
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y               Position pour suite
+	 *	Affiche infos divers
+     *
+	 *	@param      pdf             Object PDF
+	 *	@param      object          Object order
+	 *	@param		posy			Position depart
+	 *	@param		outputlangs		Objet langs
+	 *	@return     y               Position pour suite
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -546,13 +566,14 @@ class pdf_einstein extends ModelePDFCommandes
 
 
 	/**
-	 *	\brief      Affiche le total a payer
-	 *	\param      pdf             Objet PDF
-	 *	\param      object          Objet commande
-	 *	\param      deja_regle      Montant deja regle
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y				Position pour suite
+	 *	Affiche le total a payer
+     *
+	 *	@param      pdf             Objet PDF
+	 *	@param      object          Objet commande
+	 *	@param      deja_regle      Montant deja regle
+	 *	@param		posy			Position depart
+	 *	@param		outputlangs		Objet langs
+	 *	@return     y				Position pour suite
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -802,10 +823,10 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *   	Show header of page
 	 *
-	 *   	@param      pdf     		Objet PDF
-	 *   	@param      object     		Objet commande
-	 *      @param      showaddress      0=no, 1=yes
-	 *      @param      outputlangs		Object lang for output
+	 *   	@param      $pdf     		Object PDF
+	 *   	@param      $object     	Object order
+	 *      @param      $showaddress    0=no, 1=yes
+	 *      @param      $outputlangs	Object lang for output
 	 */
 	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
@@ -885,8 +906,8 @@ class pdf_einstein extends ModelePDFCommandes
 			// Show sender
 			$posy=42;
 			$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 			$hautcadre=40;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
 
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
@@ -936,7 +957,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 			// Show recipient
 			$posy=42;
-			$posx=100;
+			$posx=$this->page_largeur-$this->marge_droite-100;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
@@ -959,11 +980,12 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlangs		Object lang for output
-	 * 		\remarks	Need this->emetteur object
+	 *   	Show footer of page
+	 * 		Need this->emetteur object
+     *
+	 *   	@param      pdf     		PDF factory
+	 * 		@param		object			Object invoice
+	 *      @param      outputlangs		Object lang for output
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{

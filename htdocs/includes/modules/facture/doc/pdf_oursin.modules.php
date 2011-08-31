@@ -39,11 +39,12 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
  */
 class pdf_oursin extends ModelePDFFactures
 {
-	var $emetteur;	// Objet societe qui emet
 	var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
 
     var $phpmin = array(4,3,0); // Minimum version of PHP required by module
 	var $version = 'dolibarr';
+
+	var $emetteur;	// Objet societe qui emet
 
 
 	/**
@@ -761,11 +762,12 @@ class pdf_oursin extends ModelePDFFactures
 	}
 
 	/*
-	 *   \brief      Affiche en-tete facture
-	 *   \param      pdf     objet PDF
-	 *   \param      fac     objet facture
+	 *   Affiche en-tete facture
+	 *
+	 *   @param      pdf     objet PDF
+	 *   @param      fac     objet facture
 	 */
-	function _pagehead(&$pdf, $object, $showadress=0, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=0, $outputlangs)
 	{
 		global $langs,$conf;
 		$langs->load("main");
@@ -811,80 +813,90 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
-
-		/*
-		 * Emetteur
-		 */
-		$posy=$this->marges['h']+24;
-		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','', $default_font_size - 2);
-		$pdf->SetXY($this->marges['g'],$posy-5);
-
-
-		$pdf->SetXY($this->marges['g'],$posy);
-		$pdf->SetFillColor(255,255,255);
-		$pdf->MultiCell(82, 34, "", 0, 'R', 1);
-
-
-		$pdf->SetXY($this->marges['g'],$posy+4);
-
-		// Sender name
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B', $default_font_size);
-		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-
-		// Sender properties
-		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
-
-		$pdf->SetFont('','', $default_font_size - 1);
-		$pdf->SetXY($this->marge_gauche,$posy+9);
-		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-
-
-		// Client destinataire
-		$posy=45;
-		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','', $default_font_size - 2);
-		$pdf->SetXY($this->marges['g']+100,$posy-5);
-		$pdf->SetFont('','B',$default_font_size);
-
-		// If BILLING contact defined on invoice, we use it
-		$usecontact=false;
-		$arrayidcontact=$object->getIdContact('external','BILLING');
-		if (sizeof($arrayidcontact) > 0)
+		if ($showaddress)
 		{
-			$usecontact=true;
-			$result=$object->fetch_contact($arrayidcontact[0]);
+			// Sender properties
+			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+
+			// Show sender
+			$posy=30;
+			$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
+			$hautcadre=40;
+
+			// Show sender frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posx,$posy-5);
+			//$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFillColor(255,255,255);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->SetTextColor(0,0,60);
+
+			// Show sender name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+
+			// Show sender information
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+
+
+			// If BILLING contact defined on invoice, we use it
+			$usecontact=false;
+			$arrayidcontact=$object->getIdContact('external','BILLING');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
+
+			// Recipient name
+			if (! empty($usecontact))
+			{
+				// On peut utiliser le nom de la societe du contact
+				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				else $socname = $object->client->nom;
+				$carac_client_name=$outputlangs->convToOutputCharset($socname);
+			}
+			else
+			{
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+			}
+
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+
+			// Show recipient
+			$posy=30;
+			$posx=$this->page_largeur-$this->marge_droite-100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+
+			// Show recipient frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posx+2,$posy-5);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":",0,'L');
+			$pdf->rect($posx, $posy, 100, $hautcadre);
+
+			// Show recipient name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
+
+			// Show recipient information
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 
-		// Recipient name
-		if (! empty($usecontact))
-		{
-			// On peut utiliser le nom de la societe du contact
-			if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
-			else $socname = $object->client->nom;
-			$carac_client_name=$outputlangs->convToOutputCharset($socname);
-		}
-		else
-		{
-			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-		}
-
-		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
-
-		// Show customer/recipient
-		$pdf->SetFont('','B', $default_font_size);
-		$pdf->SetXY($this->marges['g']+100,$posy+4);
-		$pdf->MultiCell(86,4, $carac_client_name, 0, 'L');
-
-		$pdf->SetFont('','B', $default_font_size - 1);
-		$pdf->SetXY($this->marges['g']+100,$posy+8);
-		$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 
 		/*
 		 * ref facture
 		 */
-		$posy=70;
+		$posy=78;
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($this->marges['g'],$posy-5);
 		$pdf->SetTextColor(0,0,0);
@@ -984,7 +996,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','', $default_font_size);
+		$pdf->SetFont('','', $default_font_size-1);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
         $pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), 90);
         $pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);

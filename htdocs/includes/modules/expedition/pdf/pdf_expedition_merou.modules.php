@@ -170,7 +170,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $this->expe, $outputlangs);
+				$this->_pagehead($pdf, $this->expe, 1, $outputlangs);
 				$pdf->SetFont('','', $default_font_size - 3);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -230,7 +230,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $this->expe, $outputlangs);
+						$this->_pagehead($pdf, $this->expe, 0, $outputlangs);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('','', $default_font_size - 3);
@@ -320,10 +320,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 *
 	 *      @param      pdf             Object PDF
 	 *      @param      object          Object invoice
-	 *      @param      showadress      0=no, 1=yes
+	 *      @param      showaddress     0=no, 1=yes
 	 *      @param      outputlang		Object lang for output
 	 */
-	function _pagehead(&$pdf, $object, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $conf, $langs;
 
