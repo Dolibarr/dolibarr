@@ -50,7 +50,7 @@ if ($action == 'updateMask')
 	$maskconstpropal=GETPOST("maskconstpropal");
 	$maskpropal=GETPOST("maskpropal");
 	if ($maskconstpropal) $res = dolibarr_set_const($db,$maskconstpropal,$maskpropal,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -102,7 +102,7 @@ if ($action == 'specimen')
 if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("PROPALE_DRAFT_WATERMARK");
-	
+
 	$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 
@@ -119,9 +119,9 @@ if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 if ($action == 'set_PROPALE_FREE_TEXT')
 {
 	$freetext = GETPOST("PROPALE_FREE_TEXT");
-	
+
 	$res = dolibarr_set_const($db, "PROPALE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -137,7 +137,7 @@ if ($action == 'set_PROPALE_FREE_TEXT')
 if ($action == 'setdefaultduration')
 {
 	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$value,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -177,7 +177,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$type='propal';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -206,7 +206,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$db->begin();
 
 	if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -461,12 +461,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					print '<td align="center">';
 					if ($conf->global->PROPALE_ADDON_PDF == "$name")
 					{
-						print img_picto($langs->trans("Yes"),'switch_on');
+						print img_picto($langs->trans("Yes"),'on');
 					}
 					else
 					{
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-						print img_picto($langs->trans("No"),'switch_off');
+						print img_picto($langs->trans("No"),'off');
 						print '</a>';
 					}
 					print '</td>';

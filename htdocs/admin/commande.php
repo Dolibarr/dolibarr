@@ -49,9 +49,9 @@ if ($action == 'updateMask')
 {
 	$maskconstorder=GETPOST("maskconstorder");
 	$maskorder=GETPOST("maskorder");
-	
+
 	if ($maskconstorder) $res = dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -103,7 +103,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$type='order';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -134,7 +134,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$db->begin();
 
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -178,7 +178,7 @@ if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("COMMANDE_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -195,7 +195,7 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
 {
 	$freetext = GETPOST("COMMANDE_FREE_TEXT");
 	$res = dolibarr_set_const($db, "COMMANDE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -440,12 +440,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		print "<td align=\"center\">";
 		    		if ($conf->global->COMMANDE_ADDON_PDF == "$name")
 		    		{
-		    			print img_picto($langs->trans("Yes"),'switch_on');
+		    			print img_picto($langs->trans("Yes"),'on');
 		    		}
 		    		else
 		    		{
 		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-		    			print img_picto($langs->trans("No"),'switch_off');
+		    			print img_picto($langs->trans("No"),'off');
 		    			print '</a>';
 		    		}
 		    		print '</td>';
