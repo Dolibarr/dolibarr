@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -185,8 +185,9 @@ if ($_GET["action"] == 'edit')
 
     print '</table><br>';
 
+
     // Theme
-    show_theme($fuser,(($user->admin || empty($dolibarr_main_demo))?1:0),true);
+    show_theme($fuser,empty($dolibarr_main_demo)?1:0,true);
 
     print '</div>';
 
@@ -234,7 +235,7 @@ else
     print '</div>';
 
     print '<div class="tabsAction">';
-    if (empty($user->admin) && ! empty($dolibarr_main_demo))
+    if (! empty($dolibarr_main_demo))
     {
         print "<a class=\"butActionRefused\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
     }
