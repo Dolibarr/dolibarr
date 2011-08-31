@@ -14,6 +14,7 @@ For users:
 - New: task #10606 : more comprehensive message error
 - New: task #11278 : Option into point of sale module to add services in list
 - New: task #11261 : Add an entry into menu called "New shipment".
+- New: Make option MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT available by default
 
 For developers:
 - Qual: Removed no more used external libraries.

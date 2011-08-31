@@ -40,6 +40,9 @@ $langs->load("members");
 if (!$user->admin)
   accessforbidden();
 
+/*
+ * Actions
+ */
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
@@ -49,8 +52,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-
-	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT",    $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'',$conf->entity);
 
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -135,6 +137,21 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 
 	print '</table>';
 
+    print '<br>';
+
+    // Other
+    print_fiche_titre($langs->trans("Other"),'','').'<br>';
+	$var=true;
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    // Hide any PDF informations
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
+	print $html->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
+    print '</td></tr>';
+
+	print '</table>';
 
     print '<br><center>';
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -156,7 +173,20 @@ else	// Show
     // Show pdf format
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionnaryPaperFormat").'</td><td>';
-    print $conf->global->MAIN_PDF_FORMAT;
+    $pdfformatlabel=$conf->global->MAIN_PDF_FORMAT;
+    if (! empty($conf->global->MAIN_PDF_FORMAT))
+    {
+    	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
+        $sql.=" WHERE code LIKE '%".$conf->global->MAIN_PDF_FORMAT."%'";
+
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $obj=$db->fetch_object($resql);
+            $pdfformatlabel=$obj->label.' - '.round($obj->width).'x'.round($obj->height).' '.$obj->unit;
+        }
+    }
+    print $pdfformatlabel;
     print '</td></tr>';
 
 	print '</table>';
@@ -192,6 +222,22 @@ else	// Show
     print '</td></tr>';
 
     print '</table>'."\n";
+
+    print '<br>';
+
+    // Other
+    print_fiche_titre($langs->trans("Other"),'','').'<br>';
+	$var=true;
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    // Hide any PDF informations
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
+    print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
+    print '</td></tr>';
+
+	print '</table>';
 
 
     print '<div class="tabsAction">';
