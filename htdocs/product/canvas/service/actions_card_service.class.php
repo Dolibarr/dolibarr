@@ -23,13 +23,16 @@
 
 /**
  *	\class      ProductService
- *	\brief      Classe permettant la gestion services par defaut, cette classe surcharge la classe produit
+ *	\brief      Class with controller methods for product canvas
  */
-class ProductService extends Product
+class ActionsCardService
 {
-	//! Numero d'erreur Plage 1280-1535
-	var $errno = 0;
+	var $db;
+    var $targetmodule;
+    var $canvas;
+    var $card;
 
+    //! Template container
 	var $tpl = array();
 
 	/**
@@ -37,7 +40,7 @@ class ProductService extends Product
 	 *    \param      DB          Handler acces base de donnees
 	 *    \param      id          Id service (0 par defaut)
 	 */
-	function ProductService($DB=0, $id=0, $user=0)
+	function ActionsCardService($DB=0, $id=0, $user=0)
 	{
 		$this->db 				= $DB;
 		$this->id 				= $id ;
@@ -73,59 +76,84 @@ class ProductService extends Product
 	 */
 	function assign_values($action='')
 	{
-		global $conf,$langs;
+		global $conf,$langs,$user;
+		global $html, $formproduct;
 
-		parent::assign_values($action);
+		$this->tpl['finished'] = $this->object->finished;
+		$this->tpl['ref'] = $this->object->ref;
+		$this->tpl['label'] = $this->object->label;
+		$this->tpl['id'] = $this->object->id;
+		$this->tpl['type'] = $this->object->type;
+		$this->tpl['note'] = $this->object->note;
+		$this->tpl['seuil_stock_alerte'] = $this->object->seuil_stock_alerte;
 
 		// Duration
-		$this->tpl['duration_value'] = $this->duration_value;
+		$this->tpl['duration_value'] = $this->object->duration_value;
 
 		if ($action == 'create')
 		{
 			// Title
-			$this->tpl['title'] = load_fiche_titre($langs->trans("NewService"));
+			$this->tpl['title'] = $langs->trans("NewService");
 		}
 
 		if ($action == 'edit')
 		{
-			$this->tpl['title'] = load_fiche_titre($langs->trans('Modify').' '.$langs->trans('Service').' : '.$this->ref, "");
+			$this->tpl['title'] = $langs->trans('Modify').' '.$langs->trans('Service').' : '.$this->object->ref;
 		}
 
 		if ($action == 'create' || $action == 'edit')
 		{
-			// Duration unit
+    		// Status
+    		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+    		$this->tpl['status'] = $html->selectarray('statut',$statutarray,$_POST["statut"]);
+
+    		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
+    		$this->tpl['status_buy'] = $html->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
+
+		    // Duration unit
 			// TODO creer fonction
-			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
+			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->object->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
 			$duration_unit.= '&nbsp; ';
-			$duration_unit.= '<input name="duration_unit" type="radio" value="d"'.($this->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
+			$duration_unit.= '<input name="duration_unit" type="radio" value="d"'.($this->object->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
 			$duration_unit.= '&nbsp; ';
-			$duration_unit.= '<input name="duration_unit" type="radio" value="w"'.($this->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
+			$duration_unit.= '<input name="duration_unit" type="radio" value="w"'.($this->object->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
 			$duration_unit.= '&nbsp; ';
-			$duration_unit.= '<input name="duration_unit" type="radio" value="m"'.($this->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
+			$duration_unit.= '<input name="duration_unit" type="radio" value="m"'.($this->object->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
 			$duration_unit.= '&nbsp; ';
-			$duration_unit.= '<input name="duration_unit" type="radio" value="y"'.($this->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
+			$duration_unit.= '<input name="duration_unit" type="radio" value="y"'.($this->object->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
 			$this->tpl['duration_unit'] = $duration_unit;
 		}
 
 		if ($action == 'view')
 		{
-			// Photo
+    		$head=product_prepare_head($this->object, $user);
+    		$titre=$langs->trans("CardProduct".$this->object->type);
+    		$picto=($this->object->type==1?'service':'product');
+    		$this->tpl['fiche_head']=dol_get_fiche_head($head, 'card', $titre, 0, $picto);
+
+    		// Status
+    		$this->tpl['status'] = $this->object->getLibStatut(2,0);
+    		$this->tpl['status_buy'] = $this->object->getLibStatut(2,1);
+
+		    // Photo
 			$this->tpl['nblignes'] = 4;
-			if ($this->is_photo_available($conf->service->dir_output))
+			if ($this->object->is_photo_available($conf->service->dir_output))
 			{
-				$this->tpl['photos'] = $this->show_photos($conf->service->dir_output,1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos($conf->service->dir_output,1,1,0,0,0,80);
 			}
 
 			// Duration
-			if ($this->duration_value > 1)
+			if ($this->object->duration_value > 1)
 			{
 				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 			}
-			else if ($this->duration_value > 0)
+			else if ($this->object->duration_value > 0)
 			{
 				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 			}
-			$this->tpl['duration_unit'] = $langs->trans($dur[$this->duration_unit]);
+			$this->tpl['duration_unit'] = $langs->trans($dur[$this->object->duration_unit]);
+
+			$this->tpl['fiche_end']=dol_get_fiche_end();
 		}
 	}
 

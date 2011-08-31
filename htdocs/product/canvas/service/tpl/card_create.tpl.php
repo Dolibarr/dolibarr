@@ -19,17 +19,15 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php echo $this->object->tpl['title']; ?>
+<?php print_fiche_titre($this->control->tpl['title']); ?>
 
-<?php if ($mesg) { ?>
-<br><div class="error"><?php echo $mesg; ?></div><br>
-<?php } ?>
+<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="type" value="1">
-<input type="hidden" name="canvas" value="<?php echo $_GET['canvas']; ?>">
+<input type="hidden" name="canvas" value="<?php echo $canvas; ?>">
 
 <table class="border" width="100%">
 
@@ -45,16 +43,17 @@
 </tr>
 
 <tr>
-<td class="fieldrequired"><?php echo $langs->trans("Status"); ?></td>
-<td><?php echo $this->object->tpl['status']; ?></td>
+<td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
+<td><?php echo $this->control->tpl['status']; ?></td>
+</tr>
+
+<tr>
+<td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
+<td><?php echo $this->control->tpl['status_buy']; ?></td>
 </tr>
 
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-<?php if (! $this->object->tpl['textarea_description']) { 
-$this->object->tpl['doleditor_description']->Create();
-}else{
-echo $this->object->tpl['textarea_description'];
-}?>
+<?php echo $this->object->tpl['textarea_description']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>
@@ -66,11 +65,7 @@ echo $this->object->tpl['textarea_description'];
 <td><?php echo $this->object->tpl['hidden']; ?></td></tr>
 
 <tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
-<?php if (! $this->object->tpl['textarea_note']) { 
-$this->object->tpl['doleditor_note']->Create();
-}else{
-echo $this->object->tpl['textarea_note'];
-}?>
+<?php echo $this->object->tpl['textarea_note']; ?>
 </td></tr>
 </table>
 

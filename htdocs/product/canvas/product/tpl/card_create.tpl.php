@@ -19,85 +19,80 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php echo $this->object->tpl['title']; ?>
+<?php print_fiche_titre($this->control->tpl['title']); ?>
 
-<?php if ($mesg) { ?>
-<br><div class="error"><?php echo $mesg; ?></div><br>
-<?php } ?>
+<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="type" value="0">
-<input type="hidden" name="canvas" value="<?php echo $_GET['canvas']; ?>">
+<input type="hidden" name="canvas" value="<?php echo $canvas; ?>">
 
 <table class="border" width="100%">
 
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
-<td><input name="ref" size="40" maxlength="32" value="<?php echo $this->object->tpl['ref']; ?>">
+<td><input name="ref" size="40" maxlength="32" value="<?php echo $this->control->tpl['ref']; ?>">
 <?php if ($_error == 1) echo $langs->trans("RefAlreadyExists"); ?>
 </td></tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td>
-<td><input name="libelle" size="40" value="<?php echo $this->object->tpl['label']; ?>"></td>
+<td><input name="libelle" size="40" value="<?php echo $this->control->tpl['label']; ?>"></td>
 </tr>
 
 <tr>
-<td class="fieldrequired"><?php echo $langs->trans("Status"); ?></td>
-<td><?php echo $this->object->tpl['status']; ?></td>
+<td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
+<td><?php echo $this->control->tpl['status']; ?></td>
+</tr>
+
+<tr>
+<td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
+<td><?php echo $this->control->tpl['status_buy']; ?></td>
 </tr>
 
 <?php if ($conf->stock->enabled) { ?>
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
-<input name="seuil_stock_alerte" size="4" value="<?php echo $this->object->tpl['seuil_stock_alerte']; ?>">
+<input name="seuil_stock_alerte" size="4" value="<?php echo $this->control->tpl['seuil_stock_alerte']; ?>">
 </td></tr>
 <?php } else { ?>
 <input name="seuil_stock_alerte" type="hidden" value="0">
 <?php } ?>
 
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-<?php if (! $this->object->tpl['textarea_description']) {
-$this->object->tpl['doleditor_description']->Create();
-}else{
-echo $this->object->tpl['textarea_description'];
-}?>
+<?php echo $this->control->tpl['textarea_description']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Nature"); ?></td><td>
-<?php echo $this->object->tpl['finished']; ?>
+<?php echo $this->control->tpl['finished']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Weight"); ?></td><td>
-<input name="weight" size="4" value="<?php echo $this->object->tpl['weight']; ?>">
-<?php echo $this->object->tpl['weight_units']; ?>
+<input name="weight" size="4" value="<?php echo $this->control->tpl['weight']; ?>">
+<?php echo $this->control->tpl['weight_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Length"); ?></td><td>
-<input name="size" size="4" value="<?php echo $this->object->tpl['length']; ?>">
-<?php echo $this->object->tpl['length_units']; ?>
+<input name="size" size="4" value="<?php echo $this->control->tpl['length']; ?>">
+<?php echo $this->control->tpl['length_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Surface"); ?></td><td>
-<input name="surface" size="4" value="<?php echo $this->object->tpl['surface']; ?>">
-<?php echo $this->object->tpl['surface_units']; ?>
+<input name="surface" size="4" value="<?php echo $this->control->tpl['surface']; ?>">
+<?php echo $this->control->tpl['surface_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Volume"); ?></td><td>
-<input name="volume" size="4" value="<?php echo $this->object->tpl['volume']; ?>">
-<?php echo $this->object->tpl['volume_units']; ?>
+<input name="volume" size="4" value="<?php echo $this->control->tpl['volume']; ?>">
+<?php echo $this->control->tpl['volume_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Hidden"); ?></td>
-<td><?php echo $this->object->tpl['hidden']; ?></td></tr>
+<td><?php echo $this->control->tpl['hidden']; ?></td></tr>
 
 <tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
-<?php if (! $this->object->tpl['textarea_note']) {
-$this->object->tpl['doleditor_note']->Create();
-}else{
-echo $this->object->tpl['textarea_note'];
-}?>
+<?php echo $this->control->tpl['textarea_note']; ?>
 </td></tr>
 </table>
 
@@ -108,16 +103,16 @@ echo $this->object->tpl['textarea_note'];
 <table class="border" width="100%">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
-<td><input name="price" size="10" value="<?php echo $this->object->tpl['price']; ?>">
-<?php echo $this->object->tpl['price_base_type']; ?>
+<td><input name="price" size="10" value="<?php echo $this->control->tpl['price']; ?>">
+<?php echo $this->control->tpl['price_base_type']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("MinPrice"); ?></td>
-<td><input name="price_min" size="10" value="<?php echo $this->object->tpl['price_min']; ?>">
+<td><input name="price_min" size="10" value="<?php echo $this->control->tpl['price_min']; ?>">
 </td></tr>
 
 <tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
-<?php echo $this->object->tpl['tva_tx']; ?>
+<?php echo $this->control->tpl['tva_tx']; ?>
 </td></tr>
 
 </table>
