@@ -1258,7 +1258,6 @@ FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_d
 DescWeather=Le immagini seguenti verrà visualizzato sul cruscotto quando il numero di azioni in ritardo raggiungere i seguenti valori:
 KeyForWebServicesAccess=Chiave da utilizzare Web Services (parametro &quot;dolibarrkey&quot; in webservices)
 TestSubmitForm=Ingresso di test forma
-ThisForceAlsoTheme=Usando questo menu manager utilizzerà anche un suo tema tutto ciò che è la scelta dell&#39;utente. Anche questo menu manager specializzato per smartphone non funziona su tutti i smartphone. Utilizzare un altro gestore di menu se si epxerience problemi sul vostro.
 ThemeDir=Skin directory
 ConnectionTimeout=Connexion timeout
 ResponseTimeout=Timeout risposta
