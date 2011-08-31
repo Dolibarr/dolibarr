@@ -102,7 +102,7 @@ print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
-// hide unauthorized menu
+// Hide unauthorized menu
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
@@ -118,7 +118,7 @@ if($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED == 1)
 print "</td>";
 print '</tr>';
 
-// hide unauthorized menu
+// Use a flip-hide menu
 if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 {
 	$var=!$var;
