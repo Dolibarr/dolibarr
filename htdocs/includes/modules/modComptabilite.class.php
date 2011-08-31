@@ -21,9 +21,6 @@
 /**
  * \defgroup   comptabilite     Module comptabilite
  * \brief      Module pour inclure des fonctions de comptabilite (gestion de comptes comptables et rapports)
- */
-
-/**
  * \file       htdocs/includes/modules/modComptabilite.class.php
  * \ingroup    comptabilite
  * \brief      Fichier de description et activation du module Comptabilite

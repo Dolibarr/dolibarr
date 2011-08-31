@@ -20,14 +20,11 @@
  */
 
 /**
- * \defgroup   banque     Module bank
- * \brief      Module pour gerer la tenue d'un compte bancaire et rapprochements
- */
-
-/**
- *		\file       htdocs/includes/modules/modBanque.class.php
- *		\ingroup    banque
- *		\brief      Fichier de description et activation du module Banque
+ * 	\defgroup   banque     Module bank
+ * 	\brief      Module pour gerer la tenue d'un compte bancaire et rapprochements
+ *	\file       htdocs/includes/modules/modBanque.class.php
+ *	\ingroup    banque
+ *	\brief      Fichier de description et activation du module Banque
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

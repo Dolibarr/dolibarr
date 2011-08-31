@@ -20,9 +20,6 @@
 /**
  *	\defgroup   	stock     Module stocks
  *	\brief      	Module pour gerer la tenue de stocks produits
- */
-
-/**
  *	\file       htdocs/includes/modules/modStock.class.php
  *	\ingroup    stock
  *	\brief      Fichier de description et activation du module Stock

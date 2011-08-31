@@ -21,12 +21,9 @@
 /**
  *	\defgroup   	prelevement     Module prelevement
  *	\brief      	Module de gestion des prelevements bancaires
- */
-
-/**
- *	\file       htdocs/includes/modules/modPrelevement.class.php
- *	\ingroup    prelevement
- *	\brief      Fichier de description et activation du module Prelevement
+ *	\file       	htdocs/includes/modules/modPrelevement.class.php
+ *	\ingroup    	prelevement
+ *	\brief      	Fichier de description et activation du module Prelevement
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -106,7 +103,7 @@ class modPrelevement extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'bons';
 		$this->rights[$r][5] = 'send';
-		
+
 		$r++;
 		$this->rights[$r][0] = 154;
 		$this->rights[$r][1] = 'credit/refuse withdrawals';
@@ -114,7 +111,7 @@ class modPrelevement extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'bons';
 		$this->rights[$r][5] = 'credit';
-		
+
 /*        $this->rights[2][0] = 154;
         $this->rights[2][1] = 'Setup withdraw account';
         $this->rights[2][2] = 'w';

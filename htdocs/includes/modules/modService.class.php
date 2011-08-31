@@ -23,9 +23,6 @@
 /**
  *	\defgroup   service     Module services
  *	\brief      Module pour gerer le suivi de services predefinis
- */
-
-/**
  *	\file       htdocs/includes/modules/modService.class.php
  *	\ingroup    service
  *	\brief      Fichier de description et activation du module Service

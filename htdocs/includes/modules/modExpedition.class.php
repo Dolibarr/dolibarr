@@ -21,9 +21,6 @@
 /**
  *	\defgroup   expedition     Module shipping
  *	\brief      Module pour gerer les expeditions de produits
- */
-
-/**
  *	\file       htdocs/includes/modules/modExpedition.class.php
  *	\ingroup    expedition
  *	\brief      Fichier de description et activation du module Expedition

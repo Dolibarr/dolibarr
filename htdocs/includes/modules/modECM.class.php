@@ -18,12 +18,9 @@
 
 /**     \defgroup   ecm		Module ecm
  *      \brief      Module for ECM (Electronic Content Management)
- */
-
-/**
- *       \file       htdocs/includes/modules/modECM.class.php
- *       \ingroup    ecm
- *       \brief      Description and activation file for module ECM
+ *      \file       htdocs/includes/modules/modECM.class.php
+ *      \ingroup    ecm
+ *      \brief      Description and activation file for module ECM
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

@@ -17,14 +17,11 @@
  */
 
 /**
- * \defgroup   ftp		Module FTP
- * \brief      Module for FTP client module
- */
-
-/**
- *       \file       htdocs/includes/modules/modFTP.class.php
- *       \ingroup    ftp
- *       \brief      Description and activation file for module FTP
+ * 		\defgroup   ftp		Module FTP
+ * 		\brief      Module for FTP client module
+ *      \file       htdocs/includes/modules/modFTP.class.php
+ *      \ingroup    ftp
+ *      \brief      Description and activation file for module FTP
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

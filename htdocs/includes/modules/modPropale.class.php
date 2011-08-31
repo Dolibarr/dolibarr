@@ -22,9 +22,6 @@
 /**
  *	\defgroup   propale     Module commercial proposals
  *	\brief      Module pour gerer la tenue de propositions commerciales
- */
-
-/**
  *	\file       htdocs/includes/modules/modPropale.class.php
  *	\ingroup    propale
  *	\brief      Fichier de description et activation du module Propale

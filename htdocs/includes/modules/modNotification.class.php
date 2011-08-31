@@ -19,9 +19,6 @@
 /**
  *	\defgroup   notification	Module email notification
  *	\brief      Module pour gerer les notifications (par mail ou autre)
- */
-
-/**
  *	\file       htdocs/includes/modules/modNotification.class.php
  *	\ingroup    notification
  *	\brief      Fichier de description et activation du module Notification

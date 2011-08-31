@@ -20,9 +20,6 @@
 /**
  * \defgroup   externalsite     Module externalsite
  * \brief      Module to include an external web site/tools into Dolibarr menu and into a frame page.
- */
-
-/**
  * \file       htdocs/includes/modules/modExternalSite.class.php
  * \ingroup    externalsite
  * \brief      Description and activation file for module ExternalSite

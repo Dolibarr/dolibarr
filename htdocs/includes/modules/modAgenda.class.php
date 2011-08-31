@@ -23,9 +23,6 @@
 /**
  *		\defgroup   agenda     Module agenda
  *      \brief      Module pour gerer l'agenda et actions
- */
-
-/**
  *      \file       htdocs/includes/modules/modAgenda.class.php
  *      \ingroup    agenda
  *      \brief      Fichier de description et activation du module agenda

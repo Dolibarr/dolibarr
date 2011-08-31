@@ -20,9 +20,6 @@
 /**
  *	\defgroup   mailing  Module emailing
  *	\brief      Module to manage EMailings
- */
-
-/**
  *	\file       htdocs/includes/modules/modMailing.class.php
  *	\ingroup    mailing
  *	\brief      Fichier de description et activation du module Mailing

@@ -20,9 +20,6 @@
 /**
  *	\defgroup   don     Module donation
  *	\brief      Module pour gerer le suivi des dons
- */
-
-/**
  *	\file       htdocs/includes/modules/modDon.class.php
  *	\ingroup    don
  *	\brief      Fichier de description et activation du module Don

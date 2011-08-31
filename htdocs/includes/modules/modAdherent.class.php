@@ -20,11 +20,8 @@
  */
 
 /**
- *       \defgroup   member     Module foundation
- *       \brief      Module to manage members of a foundation
- */
-
-/**
+ *      \defgroup   member     Module foundation
+ *      \brief      Module to manage members of a foundation
  *		\file       htdocs/includes/modules/modAdherent.class.php
  *      \ingroup    member
  *      \brief      File descriptor or module Member

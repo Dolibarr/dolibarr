@@ -20,11 +20,8 @@
 /**
  * 		\defgroup   mymodule     Module MyModule
  *      \brief      Example of a module descriptor.
- *					Such a file must be copied into htdocs/includes/module directory.
- */
-
-/**
- *      \file       htdocs/includes/modules/modMyModule.class.php
+ *					Such a file must be copied into htdocs/mymodule/includes/modules directory.
+ *      \file       htdocs/mymodule/includes/modules/modMyModule.class.php
  *      \ingroup    mymodule
  *      \brief      Description and activation file for module MyModule
  */

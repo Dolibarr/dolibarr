@@ -18,9 +18,6 @@
 /**
  *      \defgroup   pos       Module points of sale
  *      \brief      Module to manage points of sale
- */
-
-/**
  *      \file       htdocs/includes/modules/modCashDesk.class.php
  *      \ingroup    pos
  *      \brief      File to enable/disable module Point Of Sales

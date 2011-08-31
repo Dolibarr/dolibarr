@@ -20,9 +20,6 @@
 /**
  * 		\defgroup   fournisseur     Module suppliers
  *		\brief      Module pour gerer des societes et contacts de type fournisseurs
- */
-
-/**
  *		\file       htdocs/includes/modules/modFournisseur.class.php
  *		\ingroup    fournisseur
  *		\brief      Fichier de description et activation du module Fournisseur

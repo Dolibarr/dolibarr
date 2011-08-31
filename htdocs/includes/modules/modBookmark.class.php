@@ -19,9 +19,6 @@
 /**
  *	\defgroup   bookmark    Module bookmarks
  *	\brief      Module to manage Bookmarks
- */
-
-/**
  *	\file       htdocs/includes/modules/modBookmark.class.php
  *	\ingroup    bookmark
  *	\brief      Fichier de description et activation du module Bookmarks

@@ -18,14 +18,11 @@
  */
 
 /**
- * \defgroup   paypal     Module paypal
- * \brief      Add integration with Paypal online payment system.
- */
-
-/**
- *      \file       htdocs/includes/modules/modPaypal.class.php
- *      \ingroup    paypal
- *      \brief      Description and activation file for module Paypal
+ * 	\defgroup   paypal     Module paypal
+ * 	\brief      Add integration with Paypal online payment system.
+ *  \file       htdocs/includes/modules/modPaypal.class.php
+ *  \ingroup    paypal
+ *  \brief      Description and activation file for module Paypal
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
@@ -107,7 +104,7 @@ class modPaypal extends DolibarrModules
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
-		
+
 
 		// Main menu entries
 		$this->menus = array();			// List of menus to add

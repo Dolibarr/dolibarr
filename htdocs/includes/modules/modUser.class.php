@@ -20,9 +20,6 @@
 /**
  *	\defgroup   user  Module user management
  *	\brief      Module pour gerer les utilisateurs
- */
-
-/**
  *	\file       htdocs/includes/modules/modUser.class.php
  *	\ingroup    user
  *	\brief      Fichier de description et activation du module Utilisateur

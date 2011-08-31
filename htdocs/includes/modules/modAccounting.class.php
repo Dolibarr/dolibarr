@@ -19,14 +19,11 @@
  */
 
 /**
- * \defgroup   accounting 			Module accounting
- * \brief      Module to include accounting features
- */
-
-/**
- *		\file       htdocs/includes/modules/modAccounting.class.php
- *		\ingroup    accounting
- * 		\brief      Fichier de description et activation du module Comptabilite Expert
+ * 	\defgroup   accounting 			Module accounting
+ * 	\brief      Module to include accounting features
+ *	\file       htdocs/includes/modules/modAccounting.class.php
+ *	\ingroup    accounting
+ * 	\brief      Fichier de description et activation du module Comptabilite Expert
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
