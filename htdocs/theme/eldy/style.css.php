@@ -54,7 +54,7 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->browser->phone)?'12':'14';
+$fontsize=empty($conf->browser->phone)?'12':'15';
 $fontsizesmaller=empty($conf->browser->phone)?'11':'14';
 
 $path='';    // This value may be used in future for external module to overwrite theme
@@ -217,8 +217,8 @@ td.showDragHandle {
 /* ============================================================================== */
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'24'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'8':''; ?>px;
+	margin-<?php print $left; ?>: <?php print (empty($conf->browser->phone) || empty($conf->global->MAIN_SMARTPHONE_OPTIM))?'10':'24'; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'8':'6'; ?>px;
 }
 
 div.fichecenter {
@@ -822,7 +822,7 @@ td.photo {
 	border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler-closed {
-	height: <?php echo (empty($conf->browser->phone)?'54':'1'); ?>px !important;
+	height: <?php echo (empty($conf->browser->phone)?'54':'2'); ?>px !important;
 	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
     -moz-border-radius:0px 10px 10px 0px;
 	-webkit-border-radius:0px 10px 10px 0px;
