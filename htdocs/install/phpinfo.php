@@ -18,8 +18,10 @@
 /**
  *     \file       htdocs/install/phpinfo.php
  *     \ingroup    install
- *     \brief      Affichage page phpinfo
+ *     \brief      Show page phpinfo
  */
+
+include_once("./inc.php");
 
 phpinfo();
 
