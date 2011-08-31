@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,45 +33,64 @@ $langs->load('compta');
 if (!$user->admin)
 accessforbidden();
 
-
-llxHeader();
-
+$action = GETPOST("action");
 
 $compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
 
-if ($_POST['action'] == 'setcomptamode')
+if ($action == 'setcomptamode')
 {
-	$compta_mode = $_POST['compta_mode'];
-	if (! dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity)) { print $db->error(); }
-	// Note: This setup differs from TAX_MODE.
-	// TAX_MODE is used for VAT exigibility only.
+	$compta_mode = GETPOST("compta_mode");
+	
+	$res = dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+
+}
+
+if ($action == 'update' || $action == 'add')
+{
+	$constname = GETPOST("constname");
+	$constvalue = GETPOST("constvalue");
+	$consttype = GETPOST("consttype");
+	$constnote = GETPOST("constnote");
+	
+	$res = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote ,$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
 
-$form = new Form($db);
-$typeconst=array('yesno','texte','chaine');
-
-
-if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
-{
-	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $_POST['consttype'], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
-	{
-		print $db->error();
-	}
-}
-
-
-if ($_GET['action'] == 'delete')
+/*if ($action == 'delete')
 {
 	if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
 	{
 		print $db->error();
 	}
-}
+}*/
 
 /*
  * Affichage page
  */
+
+llxHeader();
 
 $html=new Form($db);
 
@@ -181,9 +201,9 @@ if ($num)
 	print "</table>\n";
 }
 
+dol_htmloutput_mesg($mesg);
 
 $db->close();
-
 
 llxFooter();
 ?>
