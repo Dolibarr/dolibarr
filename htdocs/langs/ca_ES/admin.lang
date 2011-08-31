@@ -312,6 +312,7 @@ NoSmsEngine=No hi ha cap gestor d'enviament de SMS. Els gestors d'enviament de S
 PDF=PDF
 PDFDesc=Podeu definir aquí les opcions globals per a la generació dels PDF
 PDFAddressForging=Regles de visualització d'adreces
+HideAnyVATInformationOnPDF=Amagar tota la informació relacionada amb l'IVA en la generació dels PDF
 # Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
