@@ -98,7 +98,7 @@ jQuery(document).ready(function () {
 <table class="login" summary="<?php echo $title; ?>" cellpadding="0" cellspacing="0" border="0" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
-<br />
+<br>
 
 <table class="login" summary="Login area" cellpadding="2" align="center">
 

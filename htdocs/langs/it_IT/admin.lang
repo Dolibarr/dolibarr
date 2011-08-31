@@ -580,7 +580,7 @@ Audit									   =Audit
 ListEvents								   =Audit eventi
 ListOfSecurityEvents							   =Elenco degli eventi di sicurezza Dolibarr
 LogEventDesc								   =è possibile attivare il registro di eventi di sicurezza Dolibarr qui. Gli amministratori possono quindi vedere il suo contenuto attraverso <b> dal menu Strumenti di sistema - Audit </b>. Attenzione, questa funzione può consumare una grande quantità di dati nel database.
-AreaForAdminOnly							   =Tali funzioni possono essere utilizzate solo da utenti di tipo <b> amministratore </b>.<br />
+AreaForAdminOnly							   =Tali funzioni possono essere utilizzate solo da utenti di tipo <b> amministratore </b>.<br>
 SystemInfoDesc								   =Le informazioni di sistema sono varie informazioni tecniche visibili in modalità di sola lettura e solo agli amministratori.
 SystemAreaForAdminOnly							   =Questa sezione è disponibile solo agli utenti di tipo amministratore. Nessuna delle autorizzazioni Dolibarr può ridurre questo limite.
 CompanyFundationDesc							   =Modifica in questa pagina tutte le informazioni note della società o della fondazione che intendi gestire
@@ -957,7 +957,7 @@ OptionVatDebitOptionDesc						   =L'IVA è dovuta:<br> - sulla consegna/pagament
 AgendaSetup								   =Impostazioni modulo agenda e azioni
 PasswordTogetVCalExport							   =Password per autorizzare l'esportazione di un link
 ##### ClickToDial #####							   
-ClickToDialDesc								   =Questo modulo consente di aggiungere un'icona accanto ai numeri telefonici dei contatti in Dolibarr.<br /> Cliccando sull'icona viene richiamata un'URL (da indicare qui in basso) di collegamento al server che effettuarà le chiamate telefoniche.
+ClickToDialDesc								   =Questo modulo consente di aggiungere un'icona accanto ai numeri telefonici dei contatti in Dolibarr.<br> Cliccando sull'icona viene richiamata un'URL (da indicare qui in basso) di collegamento al server che effettuarà le chiamate telefoniche.
 ##### Suppliers ######
 SuppliersSetup								   =Impostazioni modulo fornitori
 ##### Projects #####                                                                                                            
