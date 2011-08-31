@@ -310,8 +310,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ToAndDate") , 0, 'C');
 		$pdf->SetXY(120,-23);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("NameAndSignature") , 0, 'C');
-		$pdf->SetXY(-10,-10);
-		$pdf->MultiCell(10, 3, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R');
+
+		// Show page nb only on iso languages (so default Helvetica font)
+        //if (pdf_getPDFFont($outputlangs) == 'Helvetica')
+        //{
+    	//    $pdf->SetXY(-10,-10);
+        //    $pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+        //}
 	}
 
 
