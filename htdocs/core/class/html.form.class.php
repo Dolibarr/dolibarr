@@ -194,9 +194,10 @@ class Form
 
     /**
      *	Show a text with a picto and a tooltip on picto
+     *
      *	@param     	text				Text to show
      *	@param   	htmltooltip     	Content of tooltip
-     *	@param		direction			1=Icon is after text, -1=Icon is before text
+     *	@param		direction			1=Icon is after text, -1=Icon is before text, 0=no icon
      * 	@param		type				Type of picto (info, help, warning, superadmin...)
      *  @param  	extracss            Add a CSS style to td tags
      *  @param      noencodehtmltext    Do not encode into html entity the htmltext
