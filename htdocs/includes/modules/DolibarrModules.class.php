@@ -265,7 +265,8 @@ abstract class DolibarrModules
 
     /**
      *  Retourne la description traduite du module si la traduction existe dans admin.lang,
-     *  sinon la description definie par defaut dans le module.
+     *  sinon la description definie par defaut dans le module
+     *
      *  @return     string      Nom du module traduit
      */
     function getDesc()
@@ -291,6 +292,7 @@ abstract class DolibarrModules
      *  Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
      *  Pour les modules 'dolibarr', retourne la version de Dolibarr
      *  Pour les autres modules, retourne la version du module
+     *
      *  @return     string      Version du module
      */
     function getVersion()
@@ -308,6 +310,7 @@ abstract class DolibarrModules
 
     /**
      *  Return list of lang files related to module
+     *
      *  @return     array       Array of lang files
      */
     function getLangFilesArray()
@@ -317,6 +320,7 @@ abstract class DolibarrModules
 
     /**
      *  Return translated label of a export dataset
+     *
      *  @return     string      Label of databaset
      */
     function getExportDatasetLabel($r)
@@ -339,6 +343,7 @@ abstract class DolibarrModules
 
     /**
      *  Return translated label of an import dataset
+     *
      *  @return     string      Label of databaset
      */
     function getImportDatasetLabel($r)
@@ -361,7 +366,8 @@ abstract class DolibarrModules
 
     /**
      *  Insert line in dolibarr_modules table.
-     *  Storage is made for information only, table is not required for Dolibarr usage.
+     *  Storage is made for information only, table is not required for Dolibarr usage
+     *
      *  @return     int     Nb of errors (0 if OK)
      */
     function _dbactive()
@@ -401,7 +407,8 @@ abstract class DolibarrModules
 
     /**
      *  Remove line in dolibarr_modules table
-     *  Storage is made for information only, table is not required for Dolibarr usage.
+     *  Storage is made for information only, table is not required for Dolibarr usage
+     *
      *  @return     int     Nb of errors (0 if OK)
      */
     function _dbunactive()
@@ -423,6 +430,7 @@ abstract class DolibarrModules
 
     /**
      *      Insert constant to activate module
+     *
      *      @return     int     Nb of errors (0 if OK)
      */
     function _active()
@@ -458,6 +466,7 @@ abstract class DolibarrModules
 
     /**
      *      Remove activation line
+     *
      *      @return     int     Nb of errors (0 if OK)
      **/
     function _unactive()
@@ -577,6 +586,7 @@ abstract class DolibarrModules
 
     /**
      *  Insert boxes into llx_boxes_def
+     *
      *  @return     int     Nb of errors (0 if OK)
      */
     function insert_boxes()
@@ -633,6 +643,7 @@ abstract class DolibarrModules
 
     /**
      *  Delete boxes
+     *
      *  @return     int     Nb of errors (0 if OK)
      */
     function delete_boxes()
@@ -738,7 +749,7 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Active la feuille de style associee au module par insertion ligne dans llx_const
+     *  Activate stylesheet provided by module by adding a line into llx_const
      *
      *  @return     int     Nb of errors (0 if OK)
      */
@@ -1084,6 +1095,7 @@ abstract class DolibarrModules
 
     /**
      *  Insert menus entries found into $this->menu into llx_menu*
+     *
      *  @return     int     Nb of errors (0 if OK)
      */
     function insert_menus()
