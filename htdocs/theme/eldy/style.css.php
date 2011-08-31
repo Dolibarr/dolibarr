@@ -54,8 +54,8 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->browser->phone)?'12':'14';
-$fontsizesmaller=empty($conf->browser->phone)?'11':'14';
+$fontsize=empty($conf->browser->phone)?'12':'12';
+$fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 
 $path='';    // This value may be used in future for external module to overwrite theme
 
@@ -217,7 +217,7 @@ td.showDragHandle {
 /* ============================================================================== */
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'24'; ?>px;
+	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'2'; ?>px;
 	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'8':''; ?>px;
 }
 
@@ -226,25 +226,23 @@ div.fichecenter {
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 35%;\n"; } ?>
-	<?php if (! empty($conf->browser->phone)) { print "padding-bottom: 4px;\n"; } ?> 
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 35%;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 65%;\n"; } ?>
-	<?php if (! empty($conf->browser->phone)) { print "padding-bottom: 4px\n"; } ?> 
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 65%;\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 50%;\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 50%;\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->browser->phone))   { print "padding-left: 10px;\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "padding-left: 10px;\n"; } ?>
 }
 
 
@@ -708,7 +706,7 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.jpg',1) ?>) !important;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.png',1) ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
@@ -759,7 +757,7 @@ td.photo {
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-	width: <?php echo (empty($conf->browser->phone)?'8':'24'); ?>px !important;
+	width: 8px !important;
 }
 .ui-layout-resizer-hover    {   /* affects both open and closed states */
 }
@@ -768,7 +766,7 @@ td.photo {
 /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
 .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
     background: #DDD;
-    width: <?php echo (empty($conf->browser->phone)?'8':'24'); ?>px;
+    width: 8px;
 }
 .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
     border-left:  1px solid #BBB;
@@ -784,13 +782,13 @@ td.photo {
 .ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
     opacity: .10; /* show only a slight shadow */
     filter:  alpha(opacity=10);
-}
-.ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
-    opacity: 1.00; /* on-hover, show the resizer-bar normally */
-    filter:  alpha(opacity=100);
-}
-/* sliding resizer - add 'outside-border' to resizer on-hover */
-/* this sample illustrates how to target specific panes and states */
+    }
+    .ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
+        opacity: 1.00; /* on-hover, show the resizer-bar normally */
+        filter:  alpha(opacity=100);
+    }
+/* sliding resizer - add 'outside-border' to resizer on-hover
+ * this sample illustrates how to target specific panes and states */
 .ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
 .ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
 .ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
@@ -808,14 +806,14 @@ td.photo {
     }
 .ui-layout-toggler-open {
 	height: 48px !important;
-	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
+	width: 5px !important;
     -moz-border-radius:0px 10px 10px 0px;
 	-webkit-border-radius:0px 10px 10px 0px;
 	border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler-closed {
 	height: 48px !important;
-	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
+	width: 5px !important;
     -moz-border-radius:0px 10px 10px 0px;
 	-webkit-border-radius:0px 10px 10px 0px;
 	border-radius:0px 10px 10px 0px;
