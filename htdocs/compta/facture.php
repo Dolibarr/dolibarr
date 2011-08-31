@@ -917,7 +917,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
             }
 
             $desc = $prod->description;
-            $desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
+            $desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br>\n":"\n") : "";
             $desc.= $_POST['np_desc'];
             if (! empty($prod->customcode) || ! empty($prod->country_code))
             {
@@ -926,7 +926,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
                 if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
                 if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
                 $tmptxt.=')';
-                $desc.= (dol_textishtml($desc)?"<br />\n":"\n").$tmptxt;
+                $desc.= (dol_textishtml($desc)?"<br>\n":"\n").$tmptxt;
             }
             $type = $prod->type;
         }
@@ -1577,7 +1577,7 @@ if ($action == 'create')
 
     // Standard invoice
     print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked="true"':'').'>';
+    print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked="checked"':'').'>';
     print '</td><td valign="middle">';
     $desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
     print $desc;
@@ -1585,7 +1585,7 @@ if ($action == 'create')
 
     // Deposit
     print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="true"':'').'>';
+    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
     print '</td><td valign="middle">';
     $desc=$html->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
     print $desc;
@@ -1595,7 +1595,7 @@ if ($action == 'create')
     if ($conf->global->FACTURE_USE_PROFORMAT)
     {
         print '<tr height="18"><td width="16px" valign="middle">';
-        print '<input type="radio" name="type" value="4"'.(GETPOST('type')==4?' checked="true"':'').'>';
+        print '<input type="radio" name="type" value="4"'.(GETPOST('type')==4?' checked="checked"':'').'>';
         print '</td><td valign="middle">';
         $desc=$html->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
         print $desc;
@@ -1604,13 +1604,13 @@ if ($action == 'create')
 
     // Replacement
     print '<tr height="18"><td valign="middle">';
-    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked=true':'');
-    if (! $options) print ' disabled="true"';
+    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked="checked"':'');
+    if (! $options) print ' disabled="disabled"';
     print '>';
     print '</td><td valign="middle">';
     $text=$langs->trans("InvoiceReplacementAsk").' ';
     $text.='<select class="flat" name="fac_replacement" id="fac_replacement"';
-    if (! $options) $text.=' disabled="true"';
+    if (! $options) $text.=' disabled="disabled"';
     $text.='>';
     if ($options)
     {
@@ -1629,13 +1629,13 @@ if ($action == 'create')
     // Credit note
     print '<tr height="18"><td valign="middle">';
     print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
-    if (! $optionsav) print ' disabled="true"';
+    if (! $optionsav) print ' disabled="disabled"';
     print '>';
     print '</td><td valign="middle">';
     $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
     //	$text.='<input type="text" value="">';
     $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
-    if (! $optionsav) $text.=' disabled="true"';
+    if (! $optionsav) $text.=' disabled="disabled"';
     $text.='>';
     if ($optionsav)
     {

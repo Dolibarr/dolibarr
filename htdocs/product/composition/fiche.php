@@ -201,7 +201,7 @@ if ($id || $ref)
 
 			// Number of subproducts
 			$prodsfather = $product->getFather(); //Parent Products
-			$product->get_sousproduits_arbo (); 
+			$product->get_sousproduits_arbo ();
 			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
 
 			dol_fiche_end();
@@ -232,10 +232,10 @@ if ($id || $ref)
 				print '</table>';
 				print '</td></tr>';
 			}
-			
+
 			// Number of parent products
 			print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.sizeof($prodsfather).'</td>';
-			
+
 			if(sizeof($prodsfather) > 0)
 			{
 				print '<tr><td colspan="2">';
@@ -317,10 +317,10 @@ if ($id || $ref)
 			print '</table>';
 			print '</td></tr>';
 		}
-		
+
 		// Number of parent products
 		print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.sizeof($prodsfather).'</td>';
-		
+
 		if(sizeof($prodsfather) > 0)
 		{
 			print '<tr><td colspan="2">';
@@ -435,7 +435,7 @@ if ($id || $ref)
 						print '<td>'.$labeltoshow.'</td>';
 						if($product->is_sousproduit($id, $objp->rowid))
 						{
-							$addchecked = ' checked="true"';
+							$addchecked = ' checked="checked"';
 							$qty=$product->is_sousproduit_qty;
 						}
 						else

@@ -25,7 +25,8 @@
 
 
 /**
- *  Return default paper format code
+ *  Try to guess default paper format according to language into $langs
+ *
  *	@return		string		Defautl paper format code
  */
 function dol_getDefaultFormat()
@@ -40,6 +41,7 @@ function dol_getDefaultFormat()
 
 /**
  *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
+ *
  *  @param      langs           Object language to use for output
  *  @param      filename        Relative filename to output
  *  @param      searchalt       1=Search also in alternative languages
@@ -88,8 +90,9 @@ function dol_print_file($langs,$filename,$searchalt=0)
 }
 
 /**
- *	\brief  Show informations on an object
- *	\param	object			Objet to show
+ *	Show informations on an object
+ *
+ *	@param	object			Objet to show
  */
 function dol_print_object_info($object)
 {
@@ -212,9 +215,10 @@ function dol_print_object_info($object)
 
 
 /**
- *	\brief      Return true if email has a domain name that can't be resolved
- *	\param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	\return     boolean     true if domain email is OK, false if KO
+ *	Return true if email has a domain name that can't be resolved
+ *
+ *	@param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@return     boolean     true if domain email is OK, false if KO
  */
 function isValidMailDomain($mail)
 {
@@ -231,16 +235,17 @@ function isValidMailDomain($mail)
 
 
 /**
- *	\brief   	Url string validation
- *  \remarks  	<http[s]> :// [user[:pass]@] hostname [port] [/path] [?getquery] [anchor]
- *	\param   	url			Url
- *  \param   	http		1: verify http, 0: not verify http
- *  \param   	pass		1: verify user and pass, 0: not verify user and pass
- *  \param   	port		1: verify port, 0: not verify port
- *  \param   	path		1: verify path, 0: not verify path
- *  \param   	query		1: verify query, 0: not verify query
- *  \param   	anchor		1: verify anchor, 0: not verify anchor
- *	\return  	int			1=Check is OK, 0=Check is KO
+ *	Url string validation
+ *  <http[s]> :// [user[:pass]@] hostname [port] [/path] [?getquery] [anchor]
+ *
+ *	@param   	url			Url
+ *  @param   	http		1: verify http, 0: not verify http
+ *  @param   	pass		1: verify user and pass, 0: not verify user and pass
+ *  @param   	port		1: verify port, 0: not verify port
+ *  @param   	path		1: verify path, 0: not verify path
+ *  @param   	query		1: verify query, 0: not verify query
+ *  @param   	anchor		1: verify anchor, 0: not verify anchor
+ *	@return  	int			1=Check is OK, 0=Check is KO
  */
 function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 {
@@ -280,10 +285,11 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 
 
 /**
- *	\brief   	Clean an url string
- *	\param   	url			Url
- *	\param   	http		1: keep http://, 0: remove also http://
- *	\return  	string	    Cleaned url
+ *	Clean an url string
+ *
+ *	@param   	url			Url
+ *	@param   	http		1: keep http://, 0: remove also http://
+ *	@return  	string	    Cleaned url
  */
 function clean_url($url,$http=1)
 {
@@ -319,8 +325,8 @@ function clean_url($url,$http=1)
 
 
 /**
- * 	\brief		Return lines of an html table from an array
- * 	\remarks	Used by array2table function only
+ * 	Return lines of an html table from an array
+ * 	Used by array2table function only
  */
 function array2tr($data,$troptions='',$tdoptions=''){
     $text = '<tr '.$troptions.'>' ;
@@ -332,7 +338,7 @@ function array2tr($data,$troptions='',$tdoptions=''){
 }
 
 /**
- * 	\brief	Return an html table from an array
+ * 	Return an html table from an array
  */
 function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdoptions=''){
     $text='' ;
@@ -643,6 +649,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
 /**
  * Check value
+ *
  * @param 	$mask		Mask to use
  * @param 	$value		Value
  * @return	int         <0 if KO, 0 if OK
@@ -733,6 +740,7 @@ function check_value($mask,$value)
 
 /**
  *	Convert a binary data to string that represent hexadecimal value
+ *
  *	@param   bin		Value to convert
  *	@param   pad      	Add 0
  *	@param   upper		Convert to tupper
@@ -751,6 +759,7 @@ function binhex($bin, $pad=false, $upper=false)
 
 /**
  *	Convert an hexadecimal string into a binary string
+ *
  *	@param   hexa		Hexadecimal string to convert (example: 'FF')
  *	@return  string	    bin
  */
@@ -767,6 +776,7 @@ function hexbin($hexa)
 
 /**
  *	Retourne le numero de la semaine par rapport a une date
+ *
  *	@param   time   	Date au format 'timestamp'
  *	@return  int		Numero de semaine
  */
@@ -848,6 +858,7 @@ function numero_semaine($time)
 
 /**
  *	Convertit une masse d'une unite vers une autre unite
+ *
  *	@param   weight    float	Masse a convertir
  *	@param   from_unit int     Unite originale en puissance de 10
  *	@param   to_unit   int     Nouvelle unite  en puissance de 10
@@ -882,6 +893,7 @@ function weight_convert($weight,&$from_unit,$to_unit)
 
 /**
  *	Save personnal parameter
+ *
  *	@param	    db          Handler database
  *	@param	    conf		Object conf
  *	@param	    user        Object user
@@ -947,6 +959,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 
 /**
  *	Returns formated reduction
+ *
  *	@param		reduction		Reduction percentage
  *	@param		langs			Output language
  *	@return		string			Formated reduction
@@ -968,8 +981,9 @@ function dol_print_reduction($reduction=0,$langs)
 
 
 /**
- * 	\brief		Return OS version
- * 	\return		string			OS version
+ * 	Return OS version
+ *
+ * 	@return		string			OS version
  */
 function version_os()
 {
@@ -984,8 +998,9 @@ function version_os()
 }
 
 /**
- * 	\brief		Return PHP version
- * 	\return		string			PHP version
+ * 	Return PHP version
+ *
+ * 	@return		string			PHP version
  */
 function version_php()
 {
@@ -993,8 +1008,9 @@ function version_php()
 }
 
 /**
- * 	\brief		Return Dolibarr version
- * 	\return		string			Dolibarr version
+ * 	Return Dolibarr version
+ *
+ * 	@return		string			Dolibarr version
  */
 function version_dolibarr()
 {
@@ -1002,8 +1018,9 @@ function version_dolibarr()
 }
 
 /**
- * 	\brief		Return web server version
- * 	\return		string			Web server version
+ * 	Return web server version
+ *
+ * 	@return		string			Web server version
  */
 function version_webserver()
 {
@@ -1012,7 +1029,8 @@ function version_webserver()
 
 
 /**
- * 	Return list of activated modules usable for document generation.
+ * 	Return list of activated modules usable for document generation
+ *
  * 	@param		$db				    Database handler
  * 	@param		$type			    Type of models (company, invoice, ...)
  *  @param      $maxfilenamelength  Max length of value to show
@@ -1098,6 +1116,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
 /**
  * This function evaluates a string that should be a valid IPv4
+ *
  * @return	It returns 0 if $ip is not a valid IPv4
  * 			It returns 1 if $ip is a valid IPv4 and is a public IP
  * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP
@@ -1116,6 +1135,7 @@ function is_ip($ip)
 
 /**
  *  Build a login from lastname, firstname
+ *
  *  @param      lastname		Lastname
  *  @param      firstname		Firstname
  *	@return		string
@@ -1133,6 +1153,7 @@ function dol_buildlogin($lastname,$firstname)
 
 /**
  *  Return array to use for SoapClient constructor
+ *
  *  @return     param
  */
 function getSoapParams()

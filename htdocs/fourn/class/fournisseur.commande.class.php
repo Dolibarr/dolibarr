@@ -1670,6 +1670,8 @@ class CommandeFournisseur extends Commande
 
 		dol_syslog("CommandeFournisseur::initAsSpecimen");
 
+		$now=dol_now();
+
 		// Charge tableau des produits prodids
 		$prodids = array();
 
@@ -1695,8 +1697,8 @@ class CommandeFournisseur extends Commande
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;
-		$this->date = time();
-		$this->date_commande = time();
+		$this->date = $now;
+		$this->date_commande = $now;
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
@@ -1715,27 +1717,37 @@ class CommandeFournisseur extends Commande
 			$line->tva_tx=19.6;
 			$line->localtax1_tx=0;
 			$line->localtax2_tx=0;
-			$line->remise_percent=10;
-			$line->total_ht=90;
-			$line->total_ttc=107.64;    // 90 * 1.196
-			$line->total_tva=17.64;
+			if ($xnbp == 2)
+			{
+			    $line->total_ht=50;
+			    $line->total_ttc=59.8;
+			    $line->total_tva=9.8;
+    			$line->remise_percent=50;
+			}
+			else
+			{
+			    $line->total_ht=100;
+			    $line->total_ttc=119.6;
+			    $line->total_tva=19.6;
+    			$line->remise_percent=00;
+			}
 			$line->ref_fourn='SUPPLIER_REF_'.$xnbp;
 			$prodid = rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];
 
 			$this->lines[$xnbp]=$line;
 
+    		$this->total_ht       += $line->total_ht;
+    		$this->total_tva      += $line->total_tva;
+    		$this->total_ttc      += $line->total_ttc;
+
 			$xnbp++;
 		}
-
-		$this->amount_ht      = $xnbp*100;
-		$this->total_ht       = $xnbp*100;
-		$this->total_tva      = $xnbp*19.6;
-		$this->total_ttc      = $xnbp*119.6;
 	}
 
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
 	 *      @param          user    Objet user
 	 *      @return         int     <0 if KO, >0 if OK
 	 */

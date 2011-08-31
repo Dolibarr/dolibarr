@@ -18,81 +18,76 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->
+<?php echo $this->control->tpl['fiche_head']; ?>
+
+<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
 
 <table class="border" width="100%">
 
 <tr>
 <td width="15%"><?php echo $langs->trans("Ref"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['ref']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['ref']; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Label") ?></td>
-<td><?php echo $this->object->tpl['label']; ?></td>
+<td><?php echo $this->control->tpl['label']; ?></td>
 
-<?php if ($this->object->tpl['photos']) { ?>
-<td valign="middle" align="center" width="30%" rowspan="<?php echo $this->object->tpl['nblignes']; ?>">
-<?php echo $this->object->tpl['photos']; ?>
+<?php if ($this->control->tpl['photos']) { ?>
+<td valign="middle" align="center" width="30%" rowspan="<?php echo $this->control->tpl['nblignes']; ?>">
+<?php echo $this->control->tpl['photos']; ?>
 </td>
 <?php } ?>
 
 </tr>
 
 <tr>
-<td><?php echo $this->object->tpl['accountancyBuyCodeKey']; ?></td>
-<td><?php echo $this->object->tpl['accountancyBuyCodeVal']; ?></td>
+<td><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
+<td><?php echo $this->control->tpl['status']; ?></td>
 </tr>
 
 <tr>
-<td><?php echo $this->object->tpl['accountancySellCodeKey']; ?></td>
-<td><?php echo $this->object->tpl['accountancySellCodeVal']; ?></td>
-</tr>
-
-<tr>
-<td><?php echo $langs->trans("Status"); ?></td>
-<td><?php echo $this->object->tpl['status']; ?></td>
+<td><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
+<td><?php echo $this->control->tpl['status_buy']; ?></td>
 </tr>
 
 <tr>
 <td valign="top"><?php echo $langs->trans("Description"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['description']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['description']; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Nature"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['finished']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['finished']; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Weight"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['weight']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['weight']; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Length"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['length']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['length']; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Surface"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['surface']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['surface']; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Volume"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['volume']; ?></td>
-</tr>
-
-<tr>
-<td><?php echo $langs->trans("Hidden"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['hidden']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['volume']; ?></td>
 </tr>
 
 <tr>
 <td valign="top"><?php echo $langs->trans("Note"); ?></td>
-<td colspan="2"><?php echo $this->object->tpl['note']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['note']; ?></td>
 </tr>
 
 </table>
+
+<?php echo $this->control->tpl['fiche_end']; ?>
 
 <!-- END PHP TEMPLATE -->

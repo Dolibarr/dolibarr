@@ -135,7 +135,7 @@ if (sizeof($export->array_export_code))
 	}
 	/*
    	print '<center><form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
-   	print ($user->rights->export->creer?'':' disabled="true"');
+   	print ($user->rights->export->creer?'':' disabled="disabled"');
    	print '></form></center>';
 	*/
 }

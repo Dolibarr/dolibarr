@@ -968,7 +968,7 @@ if ($_GET['action'] == 'create')
 
 	// Standard invoice
 	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="true"':'').'>';
+	print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="checked"':'').'>';
 	print '</td><td valign="middle">';
 	$desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
@@ -977,7 +977,7 @@ if ($_GET['action'] == 'create')
 	/*
 	// Deposit
 	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="true"':'').'>';
+	print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="checked"':'').'>';
 	print '</td><td valign="middle">';
 	$desc=$html->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 	print $desc;
@@ -987,7 +987,7 @@ if ($_GET['action'] == 'create')
 	if ($conf->global->FACTURE_USE_PROFORMAT)
 	{
 		print '<tr height="18"><td width="16px" valign="middle">';
-		print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="true"':'').'>';
+		print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="checked"':'').'>';
 		print '</td><td valign="middle">';
 		$desc=$html->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
 		print $desc;
@@ -996,13 +996,13 @@ if ($_GET['action'] == 'create')
 
 	// Replacement
 	print '<tr height="18"><td valign="middle">';
-	print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked=true':'');
-	if (! $options) print ' disabled="true"';
+	print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked="checked"':'');
+	if (! $options) print ' disabled="disabled"';
 	print '>';
 	print '</td><td valign="middle">';
 	$text=$langs->trans("InvoiceReplacementAsk").' ';
 	$text.='<select class="flat" name="fac_replacement"';
-	if (! $options) $text.=' disabled="true"';
+	if (! $options) $text.=' disabled="disabled"';
 	$text.='>';
 	if ($options)
 	{
@@ -1021,13 +1021,13 @@ if ($_GET['action'] == 'create')
 		// Credit note
 	print '<tr height="18"><td valign="middle">';
 	print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'');
-	if (! $optionsav) print ' disabled="true"';
+	if (! $optionsav) print ' disabled="disabled"';
 	print '>';
 	print '</td><td valign="middle">';
 	$text=$langs->transnoentities("InvoiceAvoirAsk").' ';
 	//	$text.='<input type="text" value="">';
 	$text.='<select class="flat" name="fac_avoir"';
-	if (! $optionsav) $text.=' disabled="true"';
+	if (! $optionsav) $text.=' disabled="disabled"';
 	$text.='>';
 	if ($optionsav)
 	{

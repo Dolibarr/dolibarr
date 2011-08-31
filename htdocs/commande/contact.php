@@ -251,7 +251,7 @@ if ($id > 0 || ! empty($ref))
 			$formcompany->selectTypeContact($commande, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
-			if (! $nbofcontacts) print ' disabled="true"';
+			if (! $nbofcontacts) print ' disabled="disabled"';
 			print '></td>';
 			print '</tr>';
 

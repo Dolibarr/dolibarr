@@ -25,7 +25,7 @@ include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 
 /**
  *	\class      ActionsCardDefault
- *	\brief      Classe permettant la gestion des tiers par defaut
+ *	\brief      Class with controller methods for thirdparty canvas
  */
 class ActionsCardDefault extends ActionsCardCommon
 {
@@ -86,7 +86,8 @@ class ActionsCardDefault extends ActionsCardCommon
 	}
 
 	/**
-	 *    Assign custom values for canvas
+	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
+	 *
 	 *    @param      action     Type of action
 	 */
 	function assign_values($action='')

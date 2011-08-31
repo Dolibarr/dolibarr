@@ -453,7 +453,7 @@ class Commande extends CommonObject
 	function cloture($user)
 	{
 		global $conf, $langs;
-		
+
 		$error=0;
 
 		if ($user->rights->commande->valider)
@@ -2585,7 +2585,7 @@ class Commande extends CommonObject
 	{
 		global $user,$langs,$conf;
 
-		dol_syslog("Commande::initAsSpecimen");
+		dol_syslog(get_class($this)."::initAsSpecimen");
 
 		// Charge tableau des produits prodids
 		$prodids = array();
@@ -2630,28 +2630,38 @@ class Commande extends CommonObject
 			$line->subprice=100;
 			$line->price=100;
 			$line->tva_tx=19.6;
-			$line->total_ht=100;
-			$line->total_ttc=119.6;
-			$line->total_tva=19.6;
-			$line->remise_percent=0;
+			if ($xnbp == 2)
+			{
+			    $line->total_ht=50;
+			    $line->total_ttc=59.8;
+			    $line->total_tva=9.8;
+    			$line->remise_percent=50;
+			}
+			else
+			{
+			    $line->total_ht=100;
+			    $line->total_ttc=119.6;
+			    $line->total_tva=19.6;
+    			$line->remise_percent=00;
+			}
 			$prodid = rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];
 
 			$this->lines[$xnbp]=$line;
 
-			$xnbp++;
-		}
+    		$this->total_ht       += $line->total_ht;
+    		$this->total_tva      += $line->total_tva;
+    		$this->total_ttc      += $line->total_ttc;
 
-		$this->amount_ht      = $xnbp*100;
-		$this->total_ht       = $xnbp*100;
-		$this->total_tva      = $xnbp*19.6;
-		$this->total_ttc      = $xnbp*119.6;
+		    $xnbp++;
+		}
 	}
 
 
 	/**
-	 *      \brief      Charge indicateurs this->nb de tableau de bord
-	 *      \return     int         <0 si ko, >0 si ok
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 si ko, >0 si ok
 	 */
 	function load_state_board()
 	{
@@ -2811,8 +2821,9 @@ class OrderLine
 
 
 	/**
-	 *      \brief     Constructeur d'objets ligne de commande
-	 *      \param     DB      handler d'acces base de donnee
+	 *      Constructor
+	 *
+	 *      @param     DB      handler d'acces base de donnee
 	 */
 	function OrderLine($DB)
 	{
@@ -2820,8 +2831,9 @@ class OrderLine
 	}
 
 	/**
-	 *  \brief     Load line order
-	 *  \param     rowid           id line order
+	 *  Load line order
+	 *
+	 *  @param     rowid           id line order
 	 */
 	function fetch($rowid)
 	{
@@ -2882,6 +2894,7 @@ class OrderLine
 
 	/**
 	 * 	Delete line in database
+	 *
 	 *	@return	 int  <0 si ko, >0 si ok
 	 */
 	function delete()
@@ -2912,9 +2925,10 @@ class OrderLine
 	}
 
 	/**
-	 *   	\brief     	Insert line into database
-	 *   	\param      notrigger		1 = disable triggers
-	 *		\return		int				<0 if KO, >0 if OK
+	 *   	Insert line into database
+	 *
+	 *   	@param      notrigger		1 = disable triggers
+	 *		@return		int				<0 if KO, >0 if OK
 	 */
 	function insert($notrigger=0)
 	{
@@ -3010,6 +3024,7 @@ class OrderLine
 
 	/**
 	 *      Mise a jour de l'objet ligne de commande en base
+	 *
 	 *		@return		int		<0 si ko, >0 si ok
 	 */
 	function update($notrigger=0)
@@ -3090,8 +3105,9 @@ class OrderLine
 	}
 
 	/**
-	 *      \brief     	Mise a jour de l'objet ligne de commande en base
-	 *		\return		int		<0 si ko, >0 si ok
+	 *      Mise a jour de l'objet ligne de commande en base
+	 *
+	 *		@return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()
 	{

@@ -56,8 +56,9 @@ class CommActionRapport
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=5;
 		$this->marge_droite=5;
@@ -223,10 +224,11 @@ class CommActionRapport
 	}
 
 	/**
-	 *      \brief      Affiche en-tete facture
-	 *      \param      pdf             Objet PDF
-	 *      \param      outputlang		Objet lang cible
-	 * 		\param		pagenb			Page nb
+	 *      Show page head
+	 *
+	 *      @param      pdf             Objet PDF
+	 *      @param      outputlang		Objet lang cible
+	 * 		@param		pagenb			Page nb
 	 */
 	function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{
@@ -242,8 +244,12 @@ class CommActionRapport
 		$pdf->SetFont('','B',10);
 		$pdf->SetXY($this->marge_gauche, $this->marge_haute);
 		$pdf->MultiCell(120, 1, $outputlangs->convToOutputCharset($this->title), 0, 'L', 0);
-		$pdf->SetXY($this->page_largeur-$this->marge_droite-40, $this->marge_haute);
-		$pdf->MultiCell(40, 1, $pagenb.'/{nb}', 0, 'R', 0);
+        // Show page nb only on iso languages (so default Helvetica font)
+        if (pdf_getPDFFont($outputlangs) == 'Helvetica')
+        {
+		    $pdf->SetXY($this->page_largeur-$this->marge_droite-40, $this->marge_haute);
+            $pdf->MultiCell(40, 1, $pagenb.'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+        }
 
 		$y=$pdf->GetY()+2;
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +122,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			{
 				$examplecust = $langs->trans('NotConfigured');
 			}
+			if($examplecust=="ErrorBadMask")
+			{
+				$langs->load("errors");
+				$examplecust=$langs->trans($examplecust);
+			}
 		}
 		if ($type == 1 || $type == -1)
 		{
@@ -128,6 +134,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			if (! $examplesup)
 			{
 				$examplesup = $langs->trans('NotConfigured');
+			}
+			if($examplesup=="ErrorBadMask")
+			{
+				$langs->load("errors");
+				$examplesup=$langs->trans($examplesup);
 			}
 		}
 

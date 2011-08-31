@@ -250,7 +250,7 @@ foreach ($demoprofiles as $profilarray)
 		print '<tr>';
 		print '<td width="50"><a href="'.$urlwithmod.'" id="a1'.$profilarray['key'].'" class="modulelineshow"><img src="'.$profilarray['icon'].'" width="48" border="0" alt="Demo '.$profilarray['label'].'"></a></td>';
 		//print '<td><input type="radio" name="demochoice"';
-		//if ($profilarray['default']) print ' checked="true"';
+		//if ($profilarray['default']) print ' checked="checked"';
 		//print ' value="'.$profilarray['key'].'"></td>';
 		print '<td><a href="'.$urlwithmod.'" id="a2'.$profilarray['key'].'" class="modulelineshow">'.$langs->trans($profilarray['label']).'</a></td></tr>'."\n";
 
@@ -273,8 +273,8 @@ foreach ($demoprofiles as $profilarray)
             $modulo=($j % $nbcolsmod);
 		    if ($modulo == 0) print '<tr>';
             print '<td><input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
-            if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled="true"';
-            if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked="true"';
+            if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled="disabled"';
+            if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked="checked"';
             print '>'.$val->getName().' &nbsp;';
             print '<!-- id='.$val->numero.' -->';
             print '</td>';

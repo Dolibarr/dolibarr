@@ -1231,6 +1231,7 @@ class FactureFournisseur extends Facture
         // Initialise parametres
         $this->id=0;
         $this->ref = 'SPECIMEN';
+        $this->ref_supplier = 'SUPPLIER_REF_SPECIMEN';
         $this->specimen=1;
         $this->socid = 1;
         $this->date = $now;
@@ -1252,15 +1253,31 @@ class FactureFournisseur extends Facture
             $line->tva_tx=19.6;
             $line->localtax1_tx=0;
             $line->localtax2_tx=0;
-            $line->remise_percent=10;
-            $line->total_ht=90;
-            $line->total_ttc=107.64;    // 90 * 1.196
-            $line->total_tva=17.64;
-            $prodid = rand(1, $num_prods);
+			if ($xnbp == 2)
+			{
+			    $line->total_ht=50;
+			    $line->total_ttc=59.8;
+			    $line->total_tva=9.8;
+    			$line->remise_percent=50;
+			}
+			else
+			{
+			    $line->total_ht=100;
+			    $line->total_ttc=119.6;
+			    $line->total_tva=19.6;
+    			$line->remise_percent=00;
+			}
+
+			$prodid = rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
             $line->product_type=0;
 
             $this->lines[$xnbp]=$line;
+
+    		$this->total_ht       += $line->total_ht;
+    		$this->total_tva      += $line->total_tva;
+    		$this->total_ttc      += $line->total_ttc;
+
             $xnbp++;
         }
 

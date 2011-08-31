@@ -19,19 +19,17 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php
-print_fiche_titre($this->control->tpl['title']);
+<?php print_fiche_titre($this->control->tpl['title']); ?>
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
-?>
+<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
 
 <?php if ($conf->use_javascript_ajax) { ?>
 <?php echo $this->control->tpl['ajax_selecttype']; ?>
 <br>
 <?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
-<input type="radio" id="radiocompany" class="flat" name="private" value="0"'<?php echo (! $_REQUEST["private"]?' checked="true"':''); ?>>
+<input type="radio" id="radiocompany" class="flat" name="private" value="0"'<?php echo (! $_REQUEST["private"]?' checked="checked"':''); ?>>
 <?php echo $langs->trans("Company/Fundation"); ?> &nbsp; &nbsp;
-<input type="radio" id="radioprivate" class="flat" name="private" value="1"'<?php echo (! $_REQUEST["private"]?'':' checked="true"'); ?>> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
+<input type="radio" id="radioprivate" class="flat" name="private" value="1"'<?php echo (! $_REQUEST["private"]?'':' checked="checked"'); ?>> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
 <br>
 <br>
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>

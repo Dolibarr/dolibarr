@@ -3053,6 +3053,8 @@ class Facture extends CommonObject
     {
         global $user,$langs,$conf;
 
+        $now=dol_now();
+
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -3075,7 +3077,7 @@ class Facture extends CommonObject
         $this->ref = 'SPECIMEN';
         $this->specimen=1;
         $this->socid = 1;
-        $this->date = time();
+        $this->date = $now;
         $this->date_lim_reglement=$this->date+3600*24*30;
         $this->cond_reglement_id   = 1;
         $this->cond_reglement_code = 'RECEP';
@@ -3096,17 +3098,32 @@ class Facture extends CommonObject
             $line->tva_tx=19.6;
             $line->localtax1_tx=0;
             $line->localtax2_tx=0;
-            $line->remise_percent=10;
-            $line->total_ht=90;
-            $line->total_ttc=107.64;    // 90 * 1.196
-            $line->total_tva=17.64;
+			if ($xnbp == 2)
+			{
+			    $line->total_ht=50;
+			    $line->total_ttc=59.8;
+			    $line->total_tva=9.8;
+    			$line->remise_percent=50;
+			}
+			else
+			{
+			    $line->total_ht=100;
+			    $line->total_ttc=119.6;
+			    $line->total_tva=19.6;
+    			$line->remise_percent=00;
+			}
             $prodid = rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
 
             $this->lines[$xnbp]=$line;
 
+    		$this->total_ht       += $line->total_ht;
+    		$this->total_tva      += $line->total_tva;
+    		$this->total_ttc      += $line->total_ttc;
+
             $xnbp++;
         }
+
         // Add a line "offered"
         $line=new FactureLigne($this->db);
         $line->desc=$langs->trans("Description")." ".$xnbp;
@@ -3125,17 +3142,14 @@ class Facture extends CommonObject
 
         $this->lines[$xnbp]=$line;
 
-        $xnbp++;
-
-        $this->amount_ht      = $xnbp*90;
-        $this->total_ht       = $xnbp*90;
-        $this->total_tva      = $xnbp*90*0.196;
-        $this->total_ttc      = $xnbp*90*1.196;
+		$xnbp++;
     }
 
     /**
-     *      \brief      Charge indicateurs this->nb de tableau de bord
-     *      \return     int         <0 si ko, >0 si ok
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
+	 *      @param          user    Objet user
+	 *      @return         int     <0 if KO, >0 if OK
      */
     function load_state_board()
     {

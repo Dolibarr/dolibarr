@@ -398,7 +398,7 @@ class Livraison extends CommonObject
 								}
 							}
 						}
-						
+
 						// Set new ref and current status
 						if (! $error)
 						{
@@ -717,6 +717,8 @@ class Livraison extends CommonObject
 	{
 		global $user,$langs,$conf;
 
+		$now=dol_now();
+
 		// Charge tableau des produits prodids
 		$prodids = array();
 		$sql = "SELECT rowid";
@@ -738,10 +740,10 @@ class Livraison extends CommonObject
 
 		// Initialise parametres
 		$this->id=0;
-		$this->ref = 'SPECIMEN';
+		$this->ref = 'SPECIMEN_RECEIPT';
 		$this->specimen=1;
 		$this->socid = 1;
-		$this->date_delivery = time();
+		$this->date_delivery = $now;
 		$this->note_public='SPECIMEN';
 
 		$i=0;

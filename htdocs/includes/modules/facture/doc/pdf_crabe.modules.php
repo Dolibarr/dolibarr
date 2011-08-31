@@ -40,10 +40,23 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 class pdf_crabe extends ModelePDFFactures
 {
-	var $emetteur;	// Objet societe qui emet
+    var $db;
+    var $name;
+    var $description;
+    var $type;
 
     var $phpmin = array(4,3,0); // Minimum version of PHP required by module
     var $version = 'dolibarr';
+
+    var $page_largeur;
+    var $page_hauteur;
+    var $format;
+	var $marge_gauche;
+	var	$marge_droite;
+	var	$marge_haute;
+	var	$marge_basse;
+
+	var $emetteur;	// Objet societe qui emet
 
 
 	/**
@@ -63,8 +76,9 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=10;
@@ -411,6 +425,7 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 *  Show payments table
+	 *
      *  @param      pdf             Object PDF
      *  @param      object          Object invoice
      *  @param      posy            Position y in PDF
@@ -533,12 +548,13 @@ class pdf_crabe extends ModelePDFFactures
 
 
 	/**
-	 *	\brief      Affiche infos divers
-	 *	\param      pdf             Objet PDF
-	 *	\param      object          Objet facture
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y               Position pour suite
+	 *	Show other information
+	 *
+	 *	@param      pdf             Objet PDF
+	 *	@param      object          Objet facture
+	 *	@param		posy			Position depart
+	 *	@param		outputlangs		Objet langs
+	 *	@return     y               Position pour suite
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -669,13 +685,14 @@ class pdf_crabe extends ModelePDFFactures
 
 
 	/**
-	 *	\brief      Affiche le total a payer
-	 *	\param      pdf             Objet PDF
-	 *	\param      object          Objet facture
-	 *	\param      deja_regle      Montant deja regle
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y               Position pour suite
+	 *	Show total to pay
+	 *
+	 *	@param      pdf             Objet PDF
+	 *	@param      object          Objet facture
+	 *	@param      deja_regle      Montant deja regle
+	 *	@param		posy			Position depart
+	 *	@param		outputlangs		Objet langs
+	 *	@return     y               Position pour suite
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -889,6 +906,7 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 *   Affiche la grille des lignes de factures
+	 *
 	 *   @param      pdf     objet PDF
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
@@ -948,11 +966,12 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	/**
-	 *   	\brief      Show header of page
-	 *      \param      pdf             Object PDF
-	 *      \param      object          Object invoice
-	 *      \param      showaddress     0=no, 1=yes
-	 *      \param      outputlangs		Object lang for output
+	 *   	Show header of page
+	 *
+	 *      @param      pdf             Object PDF
+	 *      @param      object          Object invoice
+	 *      @param      showaddress     0=no, 1=yes
+	 *      @param      outputlangs		Object lang for output
 	 */
 	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
@@ -976,6 +995,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetFont('','B', $default_font_size + 3);
 
 		$posy=$this->marge_haute;
+        $posx=$this->page_largeur-$this->marge_droite-100;
 
 		$pdf->SetXY($this->marge_gauche,$posy);
 
@@ -1002,7 +1022,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		$pdf->SetFont('','B', $default_font_size + 3);
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("Invoice");
 		if ($object->type == 1) $title=$outputlangs->transnoentities("InvoiceReplacement");
@@ -1014,7 +1034,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetFont('','B', $default_font_size + 2);
 
 		$posy+=6;
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
@@ -1028,7 +1048,7 @@ class pdf_crabe extends ModelePDFFactures
 			$objectreplacing->fetch($objectidnext);
 
 			$posy+=4;
-			$pdf->SetXY(100,$posy);
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementByInvoice").' : '.$outputlangs->convToOutputCharset($objectreplacing->ref), '', 'R');
 		}
@@ -1038,7 +1058,7 @@ class pdf_crabe extends ModelePDFFactures
 			$objectreplaced->fetch($object->fk_facture_source);
 
 			$posy+=4;
-			$pdf->SetXY(100,$posy);
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
@@ -1048,20 +1068,20 @@ class pdf_crabe extends ModelePDFFactures
 			$objectreplaced->fetch($object->fk_facture_source);
 
 			$posy+=4;
-			$pdf->SetXY(100,$posy);
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
 
 		$posy+=4;
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outputlangs), '', 'R');
 
 		if ($object->type != 2)
 		{
 			$posy+=4;
-			$pdf->SetXY(100,$posy);
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'R');
 		}
@@ -1069,7 +1089,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($object->client->code_client)
 		{
 			$posy+=4;
-			$pdf->SetXY(100,$posy);
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
@@ -1087,7 +1107,7 @@ class pdf_crabe extends ModelePDFFactures
 	    		for ($i=0;$i<$num;$i++)
 	    		{
 	    			$posy+=4;
-	    			$pdf->SetXY(100,$posy);
+	    			$pdf->SetXY($posx,$posy);
 	    			$pdf->SetFont('','', $default_font_size - 1);
 	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref), '', 'R');
 	    		}
@@ -1099,7 +1119,7 @@ class pdf_crabe extends ModelePDFFactures
 	    		for ($i=0;$i<$num;$i++)
 	    		{
 	    			$posy+=4;
-	    			$pdf->SetXY(100,$posy);
+	    			$pdf->SetXY($posx,$posy);
 	    			$pdf->SetFont('','', $default_font_size - 1);
 	    			$text=$objects[$i]->ref;
 	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
@@ -1116,8 +1136,8 @@ class pdf_crabe extends ModelePDFFactures
 			// Show sender
 			$posy=42;
 			$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 			$hautcadre=40;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
 
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
@@ -1167,7 +1187,7 @@ class pdf_crabe extends ModelePDFFactures
 
 			// Show recipient
 			$posy=42;
-			$posx=100;
+			$posx=$this->page_largeur-$this->marge_droite-100;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame

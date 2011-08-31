@@ -24,7 +24,7 @@
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
-echo '<br />';
+echo '<br>';
 print_titre($langs->trans('RelatedCommercialProposals'));
 ?>
 <table class="noborder" width="100%">

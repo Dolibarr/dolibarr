@@ -103,7 +103,7 @@ if ($action == 'specimenfacture')   // For invoices
 
 	$facture = new FactureFournisseur($db);
 	$facture->initAsSpecimen();
-    $facture->thirdparty=$specimenthirdparty;
+    $facture->thirdparty=$specimenthirdparty;    // Define who should has build the invoice (so the supplier)
 
 	// Charge le modele
 	$dir = "/includes/modules/supplier_invoice/pdf/";

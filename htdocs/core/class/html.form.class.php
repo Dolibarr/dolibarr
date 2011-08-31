@@ -640,7 +640,7 @@ class Form
                     if ($maxvalue && $obj->amount_ttc > $maxvalue)
                     {
                         $qualifiedlines--;
-                        $disabled=' disabled="true"';
+                        $disabled=' disabled="disabled"';
                     }
 
                     print '<option value="'.$obj->rowid.'"'.$selectstring.$disabled.'>'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
@@ -713,7 +713,7 @@ class Form
                         if ($selected && $selected == $obj->rowid)
                         {
                             print '<option value="'.$obj->rowid.'"';
-                            if ($disabled) print ' disabled="true"';
+                            if ($disabled) print ' disabled="disabled"';
                             print ' selected="selected">';
                             print $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) print ' ('.$obj->poste.')';
@@ -722,7 +722,7 @@ class Form
                         else
                         {
                             print '<option value="'.$obj->rowid.'"';
-                            if ($disabled) print ' disabled="true"';
+                            if ($disabled) print ' disabled="disabled"';
                             print '>';
                             print $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) print ' ('.$obj->poste.')';
@@ -825,9 +825,9 @@ class Form
             $i = 0;
             if ($num)
             {
-            	$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
+            	$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
             	if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
-                
+
             	$userstatic=new User($this->db);
 
                 while ($i < $num)
@@ -844,13 +844,13 @@ class Form
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
                         $out.= '<option value="'.$obj->rowid.'"';
-                        if ($disableline) $out.= ' disabled="true"';
+                        if ($disableline) $out.= ' disabled="disabled"';
                         $out.= ' selected="selected">';
                     }
                     else
                     {
                         $out.= '<option value="'.$obj->rowid.'"';
-                        if ($disableline) $out.= ' disabled="true"';
+                        if ($disableline) $out.= ' disabled="disabled"';
                         $out.= '>';
                     }
                     $out.= $userstatic->getFullName($langs);
@@ -897,7 +897,7 @@ class Form
     function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0)
     {
         global $langs,$conf;
-        
+
         $price_level = (! empty($price_level) ? $price_level : 0);
 
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
@@ -918,8 +918,8 @@ class Form
         {
             $this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
         }
-        
-        print '<br />';
+
+        print '<br>';
     }
 
     /**
@@ -1957,7 +1957,7 @@ class Form
         $output = '<select class="flat" name="'.$select_name.'">';
         if (is_array($cate_arbo))
         {
-            if (! sizeof($cate_arbo)) $output.= '<option value="-1" disabled="true">'.$langs->trans("NoCategoriesDefined").'</option>';
+            if (! sizeof($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
             else
             {
                 $output.= '<option value="-1">&nbsp;</option>';
@@ -2047,9 +2047,9 @@ class Form
 	                    $more.='<tr>';
 	                    $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
 	                    $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
-	                    if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="true"';
-	                    if (is_bool($input['value']) && $input['value']) $more.=' checked="true"';
-	                    if ($input['disabled']) $more.=' disabled="true"';
+	                    if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="checked"';
+	                    if (is_bool($input['value']) && $input['value']) $more.=' checked="checked"';
+	                    if ($input['disabled']) $more.=' disabled="disabled"';
 	                    $more.=' /></td>';
 	                    $more.='<td valign="top" align="left">&nbsp;</td>';
 	                    $more.='</tr>'."\n";
@@ -2063,7 +2063,7 @@ class Form
 	                        if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
 	                        else $more.='<td>&nbsp;</td>';
 	                        $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
-	                        if ($input['disabled']) $more.=' disabled="true"';
+	                        if ($input['disabled']) $more.=' disabled="disabled"';
 	                        $more.=' /></td>';
 	                        $more.='<td valign="top" align="left">';
 	                        $more.=$selval;
@@ -2986,7 +2986,7 @@ class Form
                 {
                     // Zone de saisie manuelle de la date
                     $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
-                    $retstring.=($disabled?' disabled="true"':'');
+                    $retstring.=($disabled?' disabled="disabled"':'');
                     $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\'); "';  // FormatDateShort for dol_print_date/FormatDateShortJava that is same for javascript
                     $retstring.='>';
 
@@ -3012,7 +3012,7 @@ class Form
             if (empty($conf->use_javascript_ajax) || $conf->global->MAIN_POPUP_CALENDAR == "none")
             {
                 // Day
-                $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'day">';
+                $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'day">';
 
                 if ($empty || $set_time == -1)
                 {
@@ -3034,7 +3034,7 @@ class Form
 
                 $retstring.="</select>";
 
-                $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'month">';
+                $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'month">';
                 if ($empty || $set_time == -1)
                 {
                     $retstring.='<option value="0" selected="selected">&nbsp;</option>';
@@ -3052,11 +3052,11 @@ class Form
                 // Year
                 if ($empty || $set_time == -1)
                 {
-                    $retstring.='<input'.($disabled?' disabled="true"':'').' class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+                    $retstring.='<input'.($disabled?' disabled="disabled"':'').' class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
                 }
                 else
                 {
-                    $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'year">';
+                    $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'year">';
 
                     for ($year = $syear - 5; $year < $syear + 10 ; $year++)
                     {
@@ -3080,7 +3080,7 @@ class Form
         if ($h)
         {
             // Show hour
-        	$retstring.='<select'.($disabled?' disabled="true"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
+        	$retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
@@ -3104,7 +3104,7 @@ class Form
         if ($m)
         {
             // Show minutes
-            $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat '.($fullday?$fullday.'min':'').'" name="'.$prefix.'min">';
+            $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat '.($fullday?$fullday.'min':'').'" name="'.$prefix.'min">';
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
             {
@@ -3189,7 +3189,7 @@ class Form
             $minSelected = ConvertSecondToTime($iSecond,'min');
         }
 
-        print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="true"':'').'>';
+        print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
         for ($hour = 0; $hour < 24; $hour++)
         {
             print '<option value="'.$hour.'"';
@@ -3201,7 +3201,7 @@ class Form
         }
         print "</select>";
         print "H &nbsp;";
-        print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="true"':'').'>';
+        print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
         for ($min = 0; $min <= 55; $min=$min+5)
         {
             print '<option value="'.$min.'"';
@@ -3232,7 +3232,7 @@ class Form
     {
         global $langs;
 
-        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="true" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
+        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
 
         if ($show_empty)
         {
@@ -3564,9 +3564,9 @@ class Form
             $i = 0;
             if ($num)
             {
-            	$out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
+            	$out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
             	if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
-            	
+
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
@@ -3574,7 +3574,7 @@ class Form
                     if (is_array($enableonly) && sizeof($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
 
                     $out.= '<option value="'.$obj->rowid.'"';
-                    if ($disableline) $out.= ' disabled="true"';
+                    if ($disableline) $out.= ' disabled="disabled"';
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
                         $out.= ' selected="selected"';

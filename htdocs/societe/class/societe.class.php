@@ -2492,9 +2492,13 @@ class Societe extends CommonObject
         $this->nom = $this->name;   // For backward compatibility
         $this->specimen=1;
         $this->cp='99999';
+        $this->zip='99999';
         $this->ville='MyTown';
+        $this->town='MyTown';
         $this->pays_id=1;
+        $this->country_id=1;
         $this->pays_code='FR';
+        $this->country_code='FR';
 
         $this->code_client='CC-'.dol_print_date($now,'dayhourlog');
         $this->code_fournisseur='SC-'.dol_print_date($now,'dayhourlog');

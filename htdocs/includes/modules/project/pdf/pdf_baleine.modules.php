@@ -57,8 +57,9 @@ class pdf_baleine extends ModelePDFProjects
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=10;
@@ -313,12 +314,14 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 	/**
-	 *   	\brief      Affiche en-tete bon livraison
-	 *   	\param      pdf     	objet PDF
-	 *   	\param      delivery    object delivery
-	 *      \param      showadress  0=non, 1=oui
+	 *   	Show header of page
+	 *
+	 *   	@param      $pdf     		Object PDF
+	 *   	@param      $object     	Object project
+	 *      @param      $showaddress    0=no, 1=yes
+	 *      @param      $outputlangs	Object lang for output
 	 */
-	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -329,6 +332,7 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
 
+        $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche,$posy);
@@ -352,17 +356,17 @@ class pdf_baleine extends ModelePDFProjects
 		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
 
 		$pdf->SetFont('','B', $default_font_size + 3);
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Project")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 		$pdf->SetFont('','', $default_font_size + 2);
 
 		$posy+=6;
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->date_start,'day',false,$outputlangs,true), '', 'R');
 		$posy+=6;
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end,'day',false,$outputlangs,true), '', 'R');
 
 		$pdf->SetTextColor(0,0,60);
@@ -381,7 +385,7 @@ class pdf_baleine extends ModelePDFProjects
 	    		for ($i=0;$i<$num;$i++)
 	    		{
 	    			$posy+=4;
-	    			$pdf->SetXY(100,$posy);
+	    			$pdf->SetXY($posx,$posy);
 	    			$pdf->SetFont('','', $default_font_size - 1);
 	    			$text=$objects[$i]->ref;
 	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
@@ -394,11 +398,12 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 	/**
-	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlangs		Object lang for output
-	 * 		\remarks	Need this->emetteur object
+	 *   	Show footer of page
+	 * 		Need this->emetteur object
+	 *
+	 *   	@param      pdf     		PDF factory
+	 * 		@param		object			Object invoice
+	 *      @param      outputlangs		Object lang for output
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{

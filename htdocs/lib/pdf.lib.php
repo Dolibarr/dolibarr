@@ -38,12 +38,12 @@ function pdf_getFormat()
     // Default value if setup was not done and/or entry into c_paper_format not defined
     $width=210; $height=297; $unit='mm';
 
-    $pdfformat=$conf->global->MAIN_PDF_FORMAT;
-    if (empty($pdfformat))
+    if (empty($conf->global->MAIN_PDF_FORMAT))
     {
         include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
         $pdfformat=dol_getDefaultFormat();
     }
+    else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
 
 	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
     $sql.=" WHERE code = '".$pdfformat."'";
@@ -53,8 +53,8 @@ function pdf_getFormat()
         $obj=$db->fetch_object($resql);
         if ($obj)
         {
-            $width=$obj->width;
-            $height=$obj->height;
+            $width=(int) $obj->width;
+            $height=(int) $obj->height;
             $unit=$obj->unit;
         }
     }
@@ -78,9 +78,9 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
     // We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
     if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once(FPDFI_PATH.'fpdi.php');
 
-    $arrayformat=pdf_getFormat();
-    $format=array($arrayformat['width'],$arrayformat['height']);
-    $metric=$arrayformat['unit'];
+    //$arrayformat=pdf_getFormat();
+    //$format=array($arrayformat['width'],$arrayformat['height']);
+    //$metric=$arrayformat['unit'];
 
     // Protection et encryption du pdf
     if ($conf->global->PDF_SECURITY_ENCRYPTION)
@@ -763,7 +763,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
     // Description long of product line
     if ($desc && ($desc != $label))
     {
-        if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="<br />";
+        if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="<br>";
 
         if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
         {

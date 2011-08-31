@@ -25,7 +25,7 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("contracts");
-echo '<br />';
+echo '<br>';
 print_titre($langs->trans('RelatedContracts'));
 ?>
 <table class="noborder" width="100%">

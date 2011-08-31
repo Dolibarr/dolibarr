@@ -60,8 +60,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=10;
@@ -463,12 +464,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *   	\brief      Affiche en-tete bon livraison
-	 *   	\param      pdf     	objet PDF
-	 *   	\param      delivery    object delivery
-	 *      \param      showadress  0=non, 1=oui
+	 *   	Show header of page
+	 *
+	 *   	@param      $pdf     		Object PDF
+	 *   	@param      $object     	Object order
+	 *      @param      $showaddress    0=no, 1=yes
+	 *      @param      $outputlangs	Object lang for output
 	 */
-	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -478,6 +481,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
 
+        $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche,$posy);
@@ -501,14 +505,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		else $pdf->MultiCell(100, 4, $this->emetteur->name, 0, 'L');
 
 		$pdf->SetFont('','B', $default_font_size + 2);
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 
 		$pdf->SetFont('','',$default_font_size + 2);
 
 		$posy+=5;
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		if ($object->date_valid)
 		{
@@ -524,7 +528,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		if ($object->client->code_client)
 		{
 			$posy+=5;
-			$pdf->SetXY(100,$posy);
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
@@ -553,7 +557,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						if ($result >= 0)
 						{
 							$posy+=5;
-							$pdf->SetXY(100,$posy);
+							$pdf->SetXY($posx,$posy);
 							$pdf->SetFont('','', $default_font_size - 1);
 							$text=$order->ref;
 							if ($order->ref_client) $text.=' ('.$order->ref_client.')';
@@ -564,7 +568,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			}
 		}
 
-		if ($showadress)
+		if ($showaddress)
 		{
 			// Emetteur
 			$posy=42;
@@ -641,11 +645,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlangs		Object lang for output
-	 * 		\remarks	Need this->emetteur object
+	 *   	Show footer of page
+	 * 		Need this->emetteur object
+	 *
+	 *   	@param      pdf     		PDF factory
+	 * 		@param		object			Object invoice
+	 *      @param      outputlangs		Object lang for output
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{

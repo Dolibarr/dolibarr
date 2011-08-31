@@ -39,8 +39,9 @@ class pdf_edison extends ModelePDFCommandes
 	var $emetteur;	// Objet societe qui emet
 
 	/**
-	 * 	\brief      Constructeur
-	 *	\param	    db	    handler acces base de donnees
+	 * 		Constructeur
+     *
+	 *		@param		DoliDb	$db		Database access handler
 	 */
 	function pdf_edison($db=0)
 	{
@@ -55,8 +56,9 @@ class pdf_edison extends ModelePDFCommandes
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=10;
@@ -68,7 +70,7 @@ class pdf_edison extends ModelePDFCommandes
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -86,6 +88,7 @@ class pdf_edison extends ModelePDFCommandes
 
 	/**
      *  Function to build pdf onto disk
+
      *  @param      object          Id of object to generate
      *  @param      outputlangs     Lang output object
      *  @param      srctemplatepath Full path of source filename for generator using a template file
@@ -97,6 +100,7 @@ class pdf_edison extends ModelePDFCommandes
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$conf,$langs,$mysoc;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -108,8 +112,6 @@ class pdf_edison extends ModelePDFCommandes
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
         $outputlangs->load("orders");
-
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if ($conf->commande->dir_output)
 		{
@@ -137,7 +139,9 @@ class pdf_edison extends ModelePDFCommandes
 
 			if (file_exists($dir))
 			{
-                $pdf=pdf_getInstance($this->format);
+				$nblignes = count($object->lines);
+
+				$pdf=pdf_getInstance($this->format);
 
                 if (class_exists('TCPDF'))
                 {
@@ -190,9 +194,8 @@ class pdf_edison extends ModelePDFCommandes
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
-					// Description de la ligne produit
+					// Description of product line
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1,$hidedesc,0,$hookmanager);
-					//$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
@@ -482,13 +485,21 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->line(10, $tab_top + 8, 200, $tab_top + 8);
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','', $default_font_size);
+		$pdf->SetFont('','', $default_font_size-1);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 	}
 
 
+	/**
+	 *   	Show header of page
+	 *
+	 *   	@param      pdf     		Objet PDF
+	 *   	@param      object     		Objet commande
+	 *      @param      showaddress     0=no, 1=yes
+	 *      @param      outputlangs		Object lang for output
+	 */
 	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
@@ -529,62 +540,80 @@ class pdf_edison extends ModelePDFCommandes
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
-		$posy = 40;
-
-		$pdf->SetXY($this->marge_gauche,$posy+3);
-
-		// Sender name
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B', $default_font_size);
-		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-
-		// Sender properties
-		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
-
-		$pdf->SetFont('','', $default_font_size - 1);
-		$pdf->SetXY($this->marge_gauche,$posy+7);
-		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-
-		// Client destinataire
-		$client = new Societe($this->db);
-		$client->fetch($object->socid);
-		$object->client = $client;
-
-		// If CUSTOMER contact defined on invoice, we use it
-		$usecontact=false;
-		$arrayidcontact=$object->getIdContact('external','CUSTOMER');
-		if (sizeof($arrayidcontact) > 0)
+		if ($showaddress)
 		{
-			$usecontact=true;
-			$result=$object->fetch_contact($arrayidcontact[0]);
+    		$posy = 40;
+			$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
+			$hautcadre=40;
+
+    		$pdf->SetXY($posx,$posy+3);
+
+    		// Sender name
+    		$pdf->SetTextColor(0,0,60);
+    		$pdf->SetFont('','B', $default_font_size);
+    		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+
+    		// Sender properties
+    		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+
+    		$pdf->SetFont('','', $default_font_size - 1);
+    		$pdf->SetXY($posx,$posy+7);
+    		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+
+    		// Client destinataire
+    		$client = new Societe($this->db);
+    		$client->fetch($object->socid);
+    		$object->client = $client;
+
+    		// If CUSTOMER contact defined on invoice, we use it
+    		$usecontact=false;
+    		$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+    		if (sizeof($arrayidcontact) > 0)
+    		{
+    			$usecontact=true;
+    			$result=$object->fetch_contact($arrayidcontact[0]);
+    		}
+
+    		// Recipient name
+    		if (! empty($usecontact))
+    		{
+    			// On peut utiliser le nom de la societe du contact
+    			if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+    			else $socname = $object->client->nom;
+    			$carac_client_name=$outputlangs->convToOutputCharset($socname);
+    		}
+    		else
+    		{
+    			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+    		}
+
+    		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+
+    		// Show recipient
+    		$posy=42;
+    		$posx=$this->page_largeur-$this->marge_droite-100;
+    		if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+
+    		// Show recipient frame
+    		$pdf->SetTextColor(0,0,0);
+    		$pdf->SetFont('','', $default_font_size - 2);
+    		$pdf->SetXY($posx+2,$posy-5);
+    		$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":",0,'L');
+    		$pdf->rect($posx, $posy, 100, $hautcadre);
+
+    		// Show recipient name
+    		$pdf->SetXY($posx+2,$posy+3);
+    		$pdf->SetFont('','B', $default_font_size);
+    		$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
+
+    		// Show recipient information
+    		$pdf->SetFont('','', $default_font_size - 1);
+    		$pdf->SetXY($posx+2,$posy+8);
+    		$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 
-		// Recipient name
-		if (! empty($usecontact))
-		{
-			// On peut utiliser le nom de la societe du contact
-			if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
-			else $socname = $object->client->nom;
-			$carac_client_name=$outputlangs->convToOutputCharset($socname);
-		}
-		else
-		{
-			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-		}
-
-		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
-
-		// Show customer/recipient
-		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','B', $default_font_size);
-		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96, 4, $carac_client_name, 0, 'L');
-		$pdf->SetFont('','', $default_font_size - 1);
-		$pdf->SetXY(102,$pdf->GetY());
-		$pdf->MultiCell(96, 4, $carac_client, 0, 'L');
-
-		$pdf->rect(100, 40, 100, 40);
-
+		// Date - order
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('','B', $default_font_size + 2);
 		$pdf->SetXY(11, 88);
@@ -594,11 +623,12 @@ class pdf_edison extends ModelePDFCommandes
 	}
 
 	/**
-	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlangs		Object lang for output
-	 * 		\remarks	Need this->emetteur object
+	 *   	Show footer of page
+	 * 		Need this->emetteur object
+     *
+	 *   	@param      pdf     		PDF factory
+	 * 		@param		object			Object invoice
+	 *      @param      outputlangs		Object lang for output
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
     {

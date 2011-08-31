@@ -39,13 +39,15 @@ class Canvas
     var $canvas;            // Name of canvas
     var $card;              // Tab (sub-canvas)
 
-    var $object;            // Initialized by getCanvas with dao class
-    var $control;           // Initialized by getCanvas with controller class
     var $template_dir;		// Initialized by getCanvas with templates directory
+    var $control_file;		// Initialized by getCanvas with controller file name
+    var $control;           // Initialized by getCanvas with controller instance
+    var $object;            // Initialized by getCanvas with dao instance, filled by getObject
 
 
    /**
-	*   Constructor.
+	*   Constructor
+	*
 	*   @param     DB          Database handler
 	*   @param     action      Action ('create', 'view', 'edit')
 	*/
@@ -60,6 +62,7 @@ class Canvas
 
     /**
      *    Set action type
+	 *
      *    @deprecated       Kept for backward compatibility
      */
     function setAction($action='view')
@@ -72,6 +75,7 @@ class Canvas
 	/**
 	 * 	Initialize properties: ->targetmodule, ->canvas, ->card
 	 *  and MVC properties:    ->control (Controller), ->control->object (Model), ->template_dir (View)
+	 *
 	 * 	@param		module		Name of target module (thirdparty, contact, ...)
 	 * 	@param		card	 	Type of card (ex: card, info, contactcard, ...)
 	 * 	@param		canvas		Name of canvas (ex: mycanvas, default, or mycanvas@myexternalmodule)
@@ -100,6 +104,7 @@ class Canvas
 		if (file_exists($controlclassfile))
 		{
             // Include actions class (controller)
+            $this->control_file=$controlclassfile;
             require_once($controlclassfile);
 
             // Instantiate actions class (controller)
@@ -126,13 +131,16 @@ class Canvas
             $this->template_dir='';
         }
 
-        //print 'dimodule='.$dirmodule.' canvas='.$this->canvas.' template_dir='.$this->template_dir.'<br>';
+        //print 'dimodule='.$dirmodule.' canvas='.$this->canvas.'<br>';
+        //print ' => template_dir='.$this->template_dir.'<br>';
+        //print ' => control_file='.$this->control_file.' is_object(this->control)='.is_object($this->control).'<br>';
 
 		return 1;
 	}
 
     /**
      *  Execute actions
+	 *
      *  @param          id      Id of object (may be empty for creation)
      *  @deprecated     Use actions with hooks instead
      */
@@ -154,6 +162,7 @@ class Canvas
 
     /**
      *  get object
+	 *
      *  @param      param1          Param1
      *  @param      param2          Param2
      *  @param      param3          Param3
@@ -175,6 +184,7 @@ class Canvas
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission.
 	 * 	If $_REQUEST['action'] defined, we also check write permission.
+	 *
 	 * 	@param      user      	  	User to check
 	 * 	@param      features	    Features to check (in most cases, it's module name)
 	 * 	@param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
@@ -194,6 +204,7 @@ class Canvas
 
     /**
      *    Assign values into POST into object
+	 *
      *    // TODO This should be useless. POST is already visible from everywhere.
      */
     function assign_post()
@@ -211,7 +222,8 @@ class Canvas
 	}
 
     /**
-     *     Return the template to display canvas (if it exists).
+     *     Return the template to display canvas (if it exists)
+	 *
      *     @param       mode        'create', ''='view', 'edit'
      *     @return      string      Path to display canvas file if it exists, '' otherwise.
      */
@@ -226,7 +238,10 @@ class Canvas
     }
 
 	/**
-	 * 	   Display canvas
+	 * 	   Display a canvas page. This will include the template for output.
+	 *     Variables used by templates may have been defined, loaded before
+	 *     into the assign_values function.
+	 *
 	 *     @param      mode        'create', 'view', 'edit'
 	 *     @param      id          Id of object to show
 	 */

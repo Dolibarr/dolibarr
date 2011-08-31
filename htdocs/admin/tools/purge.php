@@ -132,16 +132,16 @@ print '<tr class="border"><td style="padding: 4px">';
 if ($conf->syslog->enabled)
 {
 	print '<input type="radio" name="choice" value="logfile"';
-	print ($_REQUEST["choice"] && $_REQUEST["choice"]=='logfile') ? ' checked="true"' : '';
+	print ($_REQUEST["choice"] && $_REQUEST["choice"]=='logfile') ? ' checked="checked"' : '';
 	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br><br>';
 }
 
 print '<input type="radio" name="choice" value="tempfiles"';
-print (! $_REQUEST["choice"] || $_REQUEST["choice"]=='tempfiles' || $_REQUEST["choice"]=='allfiles') ? ' checked="true"' : '';
+print (! $_REQUEST["choice"] || $_REQUEST["choice"]=='tempfiles' || $_REQUEST["choice"]=='allfiles') ? ' checked="checked"' : '';
 print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
 
 print '<input type="radio" name="choice" value="confirm_allfiles"';
-print ($_REQUEST["choice"] && $_REQUEST["choice"]=='confirm_allfiles') ? ' checked="true"' : '';
+print ($_REQUEST["choice"] && $_REQUEST["choice"]=='confirm_allfiles') ? ' checked="checked"' : '';
 print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
 
 print '</td></tr></table>';

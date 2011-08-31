@@ -3445,9 +3445,6 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
     if (dol_textishtml($stringtoencode))
     {
         $newstring=$stringtoencode;
-        //$newstring=preg_replace('/([^<li\s*>]+)(\r\n|\r|\n)+/i',($forxml?'$1<br />':'$1<br>'),$stringtoencode); // Don't replace if in list
-        //$newstring=preg_replace('/<li\s*>(\r\n|\r|\n)+/','__li__',$newstring); // Don't replace if \n is just after a li
-        //$newstring=preg_replace('/(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$newstring); // If already HTML, CR should be <br> so we don't change \n
         $newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
         $newstring=preg_replace('/<br>$/i','',$newstring);	// Remove last <br>
         $newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));

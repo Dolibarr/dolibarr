@@ -16,21 +16,24 @@
  */
 
 /**
- *	\file       htdocs/product/canvas/default/product.default.class.php
+ *	\file       htdocs/product/canvas/product/actions_card_product.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits par defaut
  */
 include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
 /**
- *	\class      ProductDefault
- *	\brief      Classe permettant la gestion produits par defaut, cette classe surcharge la classe produit
+ *	\class      ActionsCardProduct
+ *	\brief      Class with controller methods for product canvas
  */
-class ProductDefault extends Product
+class ActionsCardProduct
 {
-	//! Numero d'erreur Plage 1280-1535
-	var $errno = 0;
-	//! Template container
+	var $db;
+    var $targetmodule;
+    var $canvas;
+    var $card;
+
+    //! Template container
 	var $tpl = array();
 
 	/**
@@ -38,7 +41,7 @@ class ProductDefault extends Product
 	 *    \param      DB          Handler acces base de donnees
 	 *    \param      id          Id produit (0 par defaut)
 	 */
-	function ProductDefault($DB=0, $id=0, $user=0)
+	function ActionsCardProduct($DB=0, $id=0, $user=0)
 	{
 		$this->db 				= $DB;
 		$this->id 				= $id ;
@@ -71,89 +74,110 @@ class ProductDefault extends Product
 	}
 
 	/**
-	 *    \brief      Assigne les valeurs pour les templates
-	 *    \param      object     object
+	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
+	 *
+	 *    @param      action	Type of action
 	 */
 	function assign_values($action='')
 	{
-		global $conf,$langs;
-		global $html;
-		global $formproduct;
+		global $conf,$langs,$user;
+		global $html, $formproduct;
 
-		parent::assign_values($action);
-
-		// Stock alert
-		$this->tpl['seuil_stock_alerte'] = $this->seuil_stock_alerte;
+		$this->tpl['finished'] = $this->object->finished;
+		$this->tpl['ref'] = $this->object->ref;
+		$this->tpl['label'] = $this->object->label;
+		$this->tpl['id'] = $this->object->id;
+		$this->tpl['type'] = $this->object->type;
+		$this->tpl['note'] = $this->object->note;
+		$this->tpl['seuil_stock_alerte'] = $this->object->seuil_stock_alerte;
 
 		if ($action == 'create')
 		{
 			// Title
-			$this->tpl['title'] = load_fiche_titre($langs->trans("NewProduct"));
+			$this->tpl['title'] = $langs->trans("NewProduct");
 		}
 
 		if ($action == 'edit')
 		{
-			$this->tpl['title'] = load_fiche_titre($langs->trans('Modify').' '.$langs->trans('Product').' : '.$this->ref, "");
+			$this->tpl['title'] = $langs->trans('Modify').' '.$langs->trans('Product').' : '.$this->object->ref;
 		}
 
 		if ($action == 'create' || $action == 'edit')
 		{
-			// Finished
+    		// Status
+    		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+    		$this->tpl['status'] = $html->selectarray('statut',$statutarray,$_POST["statut"]);
+
+    		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
+    		$this->tpl['status_buy'] = $html->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
+
+		    // Finished
 			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-			$this->tpl['finished'] = $html->selectarray('finished',$statutarray,$this->finished);
+			$this->tpl['finished'] = $html->selectarray('finished',$statutarray,$this->object->finished);
 
 			// Weight
-			$this->tpl['weight'] = $this->weight;
-			$this->tpl['weight_units'] = $formproduct->load_measuring_units("weight_units","weight",$this->weight_units);
+			$this->tpl['weight'] = $this->object->weight;
+			$this->tpl['weight_units'] = $formproduct->load_measuring_units("weight_units","weight",$this->object->weight_units);
 
 			// Length
-			$this->tpl['length'] = $this->length;
-			$this->tpl['length_units'] = $formproduct->load_measuring_units("length_units","size",$this->length_units);
+			$this->tpl['length'] = $this->object->length;
+			$this->tpl['length_units'] = $formproduct->load_measuring_units("length_units","size",$this->object->length_units);
 
 			// Surface
-			$this->tpl['surface'] = $this->surface;
-			$this->tpl['surface_units'] = $formproduct->load_measuring_units("surface_units","surface",$this->surface_units);
+			$this->tpl['surface'] = $this->object->surface;
+			$this->tpl['surface_units'] = $formproduct->load_measuring_units("surface_units","surface",$this->object->surface_units);
 
 			// Volume
-			$this->tpl['volume'] = $this->volume;
-			$this->tpl['volume_units'] = $formproduct->load_measuring_units("volume_units","volume",$this->volume_units);
+			$this->tpl['volume'] = $this->object->volume;
+			$this->tpl['volume_units'] = $formproduct->load_measuring_units("volume_units","volume",$this->object->volume_units);
 		}
 
 		if ($action == 'view')
 		{
-			// Photo
+    		$head=product_prepare_head($this->object, $user);
+    		$titre=$langs->trans("CardProduct".$this->object->type);
+    		$picto=($this->object->type==1?'service':'product');
+    		$this->tpl['fiche_head']=dol_get_fiche_head($head, 'card', $titre, 0, $picto);
+
+    		// Status
+    		$this->tpl['status'] = $this->object->getLibStatut(2,0);
+    		$this->tpl['status_buy'] = $this->object->getLibStatut(2,1);
+
+    		// Photo
 			$this->tpl['nblignes'] = 4;
-			if ($this->is_photo_available($conf->product->dir_output))
+			if ($this->object->is_photo_available($conf->product->dir_output))
 			{
-				$this->tpl['photos'] = $this->show_photos($conf->product->dir_output,1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos($conf->product->dir_output,1,1,0,0,0,80);
 			}
 
 			// Nature
-			$this->tpl['finished'] = $this->getLibFinished();
+			$this->tpl['finished'] = $this->object->getLibFinished();
 
 			// Weight
-			if ($this->weight != '')
+			if ($this->object->weight != '')
 			{
-				$this->tpl['weight'] = $this->weight." ".measuring_units_string($this->weight_units,"weight");
+				$this->tpl['weight'] = $this->object->weight." ".measuring_units_string($this->object->weight_units,"weight");
 			}
 
 			// Length
-			if ($this->length != '')
+			if ($this->object->length != '')
 			{
-				$this->tpl['length'] = $this->length." ".measuring_units_string($this->length_units,"size");
+				$this->tpl['length'] = $this->object->length." ".measuring_units_string($this->object->length_units,"size");
 			}
 
 			// Surface
-			if ($this->surface != '')
+			if ($this->object->surface != '')
 			{
-				$this->tpl['surface'] = $this->surface." ".measuring_units_string($this->surface_units,"surface");
+				$this->tpl['surface'] = $this->object->surface." ".measuring_units_string($this->object->surface_units,"surface");
 			}
 
 			// Volume
-			if ($this->volume != '')
+			if ($this->object->volume != '')
 			{
-				$this->tpl['volume'] = $this->volume." ".measuring_units_string($this->volume_units,"volume");
+				$this->tpl['volume'] = $this->object->volume." ".measuring_units_string($this->object->volume_units,"volume");
 			}
+
+    		$this->tpl['fiche_end']=dol_get_fiche_end();
 		}
 	}
 

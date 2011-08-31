@@ -49,55 +49,21 @@
 <td><?php echo $this->object->tpl['status']; ?></td>
 </tr>
 
-<?php if ($conf->stock->enabled) { ?>
-<tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
-<input name="seuil_stock_alerte" size="4" value="<?php echo $this->object->tpl['seuil_stock_alerte']; ?>">
-</td></tr>
-<?php } else { ?>
-<input name="seuil_stock_alerte" type="hidden" value="0">
-<?php } ?>
-
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-<?php if (! $this->object->tpl['textarea_description']) { 
+<?php if (! $this->object->tpl['textarea_description']) {
 $this->object->tpl['doleditor_description']->Create();
 }else{
 echo $this->object->tpl['textarea_description'];
 }?>
 </td></tr>
 
-<tr><td><?php echo $langs->trans("Nature"); ?></td><td>
-<?php echo $this->object->tpl['finished']; ?>
+<tr><td><?php echo $langs->trans("Duration"); ?></td>
+<td><input name="duration_value" size="6" maxlength="5" value="<?php echo $this->object->tpl['duration_value']; ?>"> &nbsp;
+<?php echo $this->object->tpl['duration_unit']; ?>
 </td></tr>
-
-<tr><td><?php echo $langs->trans("Weight"); ?></td><td>
-<input name="weight" size="4" value="<?php echo $this->object->tpl['weight']; ?>">
-<?php echo $this->object->tpl['weight_units']; ?>
-</td></tr>
-
-<tr><td><?php echo $langs->trans("Length"); ?></td><td>
-<input name="size" size="4" value="<?php echo $this->object->tpl['length']; ?>">
-<?php echo $this->object->tpl['length_units']; ?>
-</td></tr>
-
-<tr><td><?php echo $langs->trans("Surface"); ?></td><td>
-<input name="surface" size="4" value="<?php echo $this->object->tpl['surface']; ?>">
-<?php echo $this->object->tpl['surface_units']; ?>
-</td></tr>
-
-<tr><td><?php echo $langs->trans("Volume"); ?></td><td>
-<input name="volume" size="4" value="<?php echo $this->object->tpl['volume']; ?>">
-<?php echo $this->object->tpl['volume_units']; ?>
-</td></tr>
-
-<tr><td><?php echo $langs->trans("Hidden"); ?></td>
-<td><?php echo $this->object->tpl['hidden']; ?></td></tr>
 
 <tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
-<?php if (! $this->object->tpl['textarea_note']) { 
-$this->object->tpl['doleditor_note']->Create();
-}else{
-echo $this->object->tpl['textarea_note'];
-}?>
+<?php echo $this->object->tpl['textarea_note']; ?>
 </td></tr>
 </table>
 

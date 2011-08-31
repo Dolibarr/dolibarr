@@ -88,13 +88,13 @@ if ($action == 'specimen')
 		}
 		else
 		{
-			$mesg='<font class=\"error\">'.$module->error.'</font>';
+			$mesg='<font class="error">'.$module->error.'</font>';
 			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<font class=\"error\">'.$langs->trans("ErrorModuleNotFound").'</font>';
+		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -474,8 +474,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					// Info
 					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-					$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+                    if ($module->type == 'pdf')
+                    {
+                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                    }
+    				$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 					$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
 					$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);

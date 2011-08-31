@@ -1182,7 +1182,7 @@ if ($step == 5 && $datatoimport)
 	print $langs->trans("Option");
 	print '</td><td>';
 	print '<input type="checkbox" name="excludefirstline" value="1"';
-	print ($excludefirstline?' checked="true"':'');
+	print ($excludefirstline?' checked="checked"':'');
 	print ' onClick="javascript: window.location=\''.$_SERVER["PHP_SELF"].'?leftmenu=import&excludefirstline='.($excludefirstline?'0':'1').'&step=5'.$param2.'\';">';
 	print ' '.$langs->trans("DoNotImportFirstLine");
 	print '</td></tr>';
@@ -1531,8 +1531,8 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td>';
 	print $langs->trans("Option");
 	print '</td><td>';
-	print '<input type="checkbox" name="excludefirstline" value="1" disabled="true"';
-	print ($excludefirstline?' checked="true"':'');
+	print '<input type="checkbox" name="excludefirstline" value="1" disabled="disabled"';
+	print ($excludefirstline?' checked="checked"':'');
 	print '>';
 	print ' '.$langs->trans("DoNotImportFirstLine");
 	print '</td></tr>';

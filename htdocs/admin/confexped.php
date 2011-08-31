@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2011 	   Juanjo Menent			    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,27 +34,27 @@ $langs->load("deliveries");
 if (!$user->admin)
   accessforbidden();
 
+$action=GETPOST("action");
 
-
-if ($_GET["action"] == 'activate_sending')
+if ($action == 'activate_sending')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
     Header("Location: confexped.php");
     exit;
 }
-else if ($_GET["action"] == 'disable_sending')
+else if ($action == 'disable_sending')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION",$conf->entity);
     Header("Location: confexped.php");
     exit;
 }
-else if ($_GET["action"] == 'activate_delivery')
+else if ($action == 'activate_delivery')
 {
 			dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
 			Header("Location: confexped.php");
 			exit;
 }
-else if ($_GET["action"] == 'disable_delivery')
+else if ($action == 'disable_delivery')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON",$conf->entity);
     Header("Location: confexped.php");
@@ -119,11 +120,11 @@ print '<td align="center" width="100">';
 
 if($conf->global->MAIN_SUBMODULE_EXPEDITION == 0)
 {
-	print '<a href="confexped.php?action=activate_sending">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	print '<a href="confexped.php?action=activate_sending">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 else if($conf->global->MAIN_SUBMODULE_EXPEDITION == 1)
 {
-	print '<a href="confexped.php?action=disable_sending">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	print '<a href="confexped.php?action=disable_sending">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
 
 print "</td>";
@@ -139,11 +140,11 @@ print '<td align="center" width="100">';
 
 if($conf->global->MAIN_SUBMODULE_LIVRAISON == 0)
 {
-	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 else if($conf->global->MAIN_SUBMODULE_LIVRAISON == 1)
 {
-	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
 
 print "</td>";

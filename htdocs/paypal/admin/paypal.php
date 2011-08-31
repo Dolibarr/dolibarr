@@ -77,7 +77,7 @@ llxHeader('',$langs->trans("PaypalSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre(' - '.$langs->trans("ModuleSetup"),$linkback,'paypal_logo@paypal');
-print '<br />';
+print '<br>';
 
 $head=paypaladmin_prepare_head();
 
@@ -94,7 +94,7 @@ if ($conf->use_javascript_ajax)
                 $("#apidoca").hide();
                 $("#apidoc").show();
             });
-            
+
             $("#generate_token").click(function() {
             	$.get( "'.DOL_URL_ROOT.'/core/ajaxsecurity.php", {
             		action: \'getrandompassword\',

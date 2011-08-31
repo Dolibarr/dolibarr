@@ -42,8 +42,9 @@ class pdf_propale_azur extends ModelePDFPropales
 
 
 	/**
-	 *	\brief      Constructeur
-	 *	\param	    db		Handler acces base de donnee
+	 *	Constructor
+     *
+	 *	@param	    db		Database access handler
 	 */
 	function pdf_propale_azur($db)
 	{
@@ -58,8 +59,9 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=10;
@@ -79,7 +81,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-		// Recupere emmetteur
+		// Recupere emetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 
@@ -100,6 +102,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 	/**
      *  Function to build pdf onto disk
+     *
      *  @param      object          Id of object to generate
      *  @param      outputlangs     Lang output object
      *  @param      srctemplatepath Full path of source filename for generator using a template file
@@ -155,7 +158,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			if (file_exists($dir))
 			{
-				$nblignes = sizeof($object->lines);
+				$nblignes = count($object->lines);
 
 				// Create pdf instance
                 $pdf=pdf_getInstance($this->format);
@@ -409,9 +412,10 @@ class pdf_propale_azur extends ModelePDFPropales
 	}
 
 	/*
-	 *   \brief      Affiche tableau des versement
-	 *   \param      pdf     	Objet PDF
-	 *   \param      object		Objet propale
+	 *   Affiche tableau des versement
+	 *
+	 *   @param      pdf     	Objet PDF
+	 *   @param      object		Objet propale
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -420,12 +424,13 @@ class pdf_propale_azur extends ModelePDFPropales
 
 
 	/**
-	 *	\brief      Affiche infos divers
-	 *	\param      pdf             Objet PDF
-	 *	\param      object          Objet facture
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y               Position pour suite
+	 *	Affiche infos divers
+	 *
+	 *	@param      pdf             Objet PDF
+	 *	@param      object          Objet facture
+	 *	@param		posy			Position depart
+	 *	@param		outputlangs		Objet langs
+	 *	@return     y               Position pour suite
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -570,14 +575,15 @@ class pdf_propale_azur extends ModelePDFPropales
 	}
 
 
-	/*
-	 *	\brief      Affiche le total a payer
-	 *	\param      pdf         	Objet PDF
-	 *	\param      object       	Objet propale
-	 *	\param      deja_regle  	Montant deja regle
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y              Position pour suite
+	/**
+	 *	Show total to pay
+	 *
+	 *	@param      pdf         	Objet PDF
+	 *	@param      object       	Objet propale
+	 *	@param      deja_regle  	Montant deja regle
+	 *	@param		posy			Position depart
+	 *	@param		outputlangs		Objet langs
+	 *	@return     y              Position pour suite
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -783,8 +789,9 @@ class pdf_propale_azur extends ModelePDFPropales
 	}
 
 	/**
-	 *   \brief      Affiche la grille des lignes de propales
-	 *   \param      pdf     objet PDF
+	 *   Affiche la grille des lignes de propales
+	 *
+	 *   @param      pdf     objet PDF
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -843,6 +850,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 	/**
 	 *   	Show header of document
+	 *
 	 *   	@param      pdf     		Object PDF
 	 *   	@param      object			Object commercial proposal
 	 *      @param      showaddress     0=no, 1=yes
@@ -870,6 +878,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
 
+        $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche,$posy);
@@ -897,15 +906,15 @@ class pdf_propale_azur extends ModelePDFPropales
 		}
 
 		$pdf->SetFont('','B',$default_font_size + 3);
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("CommercialProposal");
 		$pdf->MultiCell(100, 4, $title, '' , 'R');
 
 		$pdf->SetFont('','B',$default_font_size + 2);
 
-		$posy+=6;
-		$pdf->SetXY(100,$posy);
+		$posy+=5;
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
@@ -915,25 +924,25 @@ class pdf_propale_azur extends ModelePDFPropales
 		if ($object->ref_client)
 		{
 			$posy+=5;
-			$pdf->SetXY(100,$posy);
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
 		}
 
-		$posy+=5;
-		$pdf->SetXY(100,$posy);
+		$posy+=4;
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,"day",false,$outputlangs,true), '', 'R');
 
-		$posy+=5;
-		$pdf->SetXY(100,$posy);
+		$posy+=4;
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dol_print_date($object->fin_validite,"day",false,$outputlangs,true), '', 'R');
 
 		if ($object->client->code_client)
 		{
-			$posy+=5;
-			$pdf->SetXY(100,$posy);
+			$posy+=4;
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
@@ -953,10 +962,10 @@ class pdf_propale_azur extends ModelePDFPropales
 		 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
 
 			// Show sender
-			$posx=$this->marge_gauche;
 			$posy=42;
+		 	$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 			$hautcadre=40;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
 
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
@@ -1005,26 +1014,26 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			// Show recipient
 			$posy=42;
-			$posx=100;
+			$posx=$this->page_largeur-$this->marge_droite-100;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":", 0, 'L');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("BillTo").":", 0, 'L');
 			$pdf->rect($posx, $posy, 100, $hautcadre);
 			$pdf->SetTextColor(0,0,0);
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
+			$pdf->MultiCell(100,4, $carac_client_name, 0, 'L');
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy+8);
-			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
+			$pdf->MultiCell(100,4, $carac_client, 0, 'L');
 		}
 	}
 

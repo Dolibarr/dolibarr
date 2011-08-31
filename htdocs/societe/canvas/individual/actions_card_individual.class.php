@@ -24,7 +24,7 @@ include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 
 /**
  *	\class      ActionsCardIndividual
- *	\brief      Classe permettant la gestion des particuliers
+ *	\brief      Class with controller methods for individual canvas
  */
 class ActionsCardIndividual extends ActionsCardCommon
 {
@@ -86,7 +86,8 @@ class ActionsCardIndividual extends ActionsCardCommon
 	}
 
 	/**
-	 *    Assign custom values for canvas
+	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
+	 *
 	 *    @param      action     Type of action
 	 */
 	function assign_values($action='')
@@ -98,7 +99,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 		if ($action == 'create' || $action == 'edit')
 		{
-			$this->tpl['select_civility'] = $formcompany->select_civility($contact->civilite_id);
+			$this->tpl['select_civility'] = $formcompany->select_civility(GETPOST('civilite_id'));
 		}
 		else
 		{

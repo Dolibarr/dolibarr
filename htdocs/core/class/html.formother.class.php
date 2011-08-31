@@ -211,7 +211,7 @@ class FormOther
 	 */
 	function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100)
 	{
-		$return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled="true"':'').'>';
+		$return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled="disabled"':'').'>';
 
 		for ($i = $start ; $i <= $end ; $i += $increment)
 		{
@@ -674,7 +674,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selecte
 			{
 				if ($lines[$i]->fk_project != $lastprojectid)
 				{
-					if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="true">----------</option>';
+					if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="disabled">----------</option>';
 					print '<option value="'.$lines[$i]->fk_project.'_0"';
 					if ($selectedproject == $lines[$i]->fk_project) print ' selected="selected"';
 					print '>';	// Project -> Task

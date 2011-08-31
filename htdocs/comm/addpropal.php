@@ -293,7 +293,7 @@ if ($_GET["action"] == 'create')
 
 		if ($conf->global->PRODUCT_SHOW_WHEN_CREATE) print '<tr><td colspan="3">&nbsp;</td></tr>';
 
-		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="true"></td>';
+		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="checked"></td>';
 		print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
 	}
 

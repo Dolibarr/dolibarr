@@ -356,7 +356,7 @@ class FormMail
                     $out.= ' &lt;'.$this->tomail.'&gt;';
                     if ($this->withtofree)
                     {
-                        $out.= '<br />'.$langs->trans("or").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+                        $out.= '<br>'.$langs->trans("or").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
                     }
                 }
                 else
@@ -523,7 +523,7 @@ class FormMail
                         $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
                         //$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
                     }
-                    $out.= '<br /></div>';
+                    $out.= '<br></div>';
                 }
             }
             else

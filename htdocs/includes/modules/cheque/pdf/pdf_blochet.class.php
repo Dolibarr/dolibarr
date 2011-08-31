@@ -55,8 +55,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=20;
@@ -377,8 +378,12 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
 		}
 
-		$pdf->SetXY(-20,-$posy);
-		$pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+        // Show page nb only on iso languages (so default Helvetica font)
+        if (pdf_getPDFFont($outputlangs) == 'Helvetica')
+        {
+    		$pdf->SetXY(-20,-$posy);
+            $pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+        }
 	}
 
 }

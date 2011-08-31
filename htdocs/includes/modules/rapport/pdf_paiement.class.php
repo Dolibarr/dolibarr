@@ -47,8 +47,9 @@ class pdf_paiement
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=10;
@@ -204,12 +205,14 @@ class pdf_paiement
 	}
 
 	/**
-	 *	\brief  Generate Header
-	 *	\param  pdf pdf object
-	 *	\param  page current page number
-	 *	\param  pages number of pages
+	 *   	Show header of page
+	 *
+	 *   	@param      $pdf     		Object PDF
+	 *   	@param      $object     	Object
+	 *      @param      $showaddress    0=no, 1=yes
+	 *      @param      $outputlangs	Object lang for output
 	 */
-	function _pagehead(&$pdf, $page, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $page, $showaddress=1, $outputlangs)
 	{
 		global $langs;
 
