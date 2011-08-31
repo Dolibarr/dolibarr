@@ -88,13 +88,13 @@ if ($action == 'specimen')
 		}
 		else
 		{
-			$mesg='<font class=\"error\">'.$module->error.'</font>';
+			$mesg='<font class="error">'.$module->error.'</font>';
 			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<font class=\"error\">'.$langs->trans("ErrorModuleNotFound").'</font>';
+		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }

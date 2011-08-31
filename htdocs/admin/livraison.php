@@ -5,7 +5,8 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- *
+ * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -30,29 +31,40 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/class/livraison.class.php");
 
 $langs->load("admin");
-$langs->load("bills");
-$langs->load("other");
 $langs->load("sendings");
 $langs->load("deliveries");
 
 if (!$user->admin) accessforbidden();
 
+$action = GETPOST("action");
+$value = GETPOST("value");
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'updateMask')
+if ($action == 'updateMask')
 {
-	$maskconstdelivery=$_POST['maskconstdelivery'];
-	$maskdelivery=$_POST['maskdelivery'];
-	if ($maskconstdelivery)  dolibarr_set_const($db,$maskconstdelivery,$maskdelivery,'chaine',0,'',$conf->entity);
+	$maskconstdelivery=GETPOST("maskconstdelivery");
+	$maskdelivery=GETPOST("maskdelivery");
+	if ($maskconstdelivery)  $res = dolibarr_set_const($db,$maskconstdelivery,$maskdelivery,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
-if ($_GET["action"] == 'specimen')
+if ($action == 'specimen')
 {
-	$modele=$_GET["module"];
-
+	$modele=GETPOST("module");
+	
 	$sending = new Livraison($db);
 	$sending->initAsSpecimen();
 	//$sending->fetch_commande();
@@ -74,24 +86,27 @@ if ($_GET["action"] == 'specimen')
 		}
 		else
 		{
-			$mesg='<div class="error">'.$obj->error.'</div>';
+			$mesg='<font class="error">'.$obj->error.'</font>';
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 
-if ($_GET["action"] == 'set')
+if ($action == 'set')
 {
+	$label = GETPOST("label");
+	$scandir = GETPOST("scandir");
+	
 	$type='delivery';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
+    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
     if ($db->query($sql))
     {
@@ -99,11 +114,11 @@ if ($_GET["action"] == 'set')
     }
 }
 
-if ($_GET["action"] == 'del')
+if ($action == 'del')
 {
     $type='delivery';
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql.= " WHERE nom = '".$_GET["value"]."'";
+    $sql.= " WHERE nom = '".$value."'";
     $sql.= " AND type = '".$type."'";
     $sql.= " AND entity = ".$conf->entity;
 
@@ -113,27 +128,29 @@ if ($_GET["action"] == 'del')
     }
 }
 
-if ($_GET["action"] == 'setdoc')
+if ($action == 'setdoc')
 {
+	$label = GETPOST("label");
+	$scandir = GETPOST("scandir");
 	$db->begin();
 
-    if (dolibarr_set_const($db, "LIVRAISON_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+    if (dolibarr_set_const($db, "LIVRAISON_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
     {
-        $conf->global->LIVRAISON_ADDON_PDF = $_GET["value"];
+        $conf->global->LIVRAISON_ADDON_PDF = $value;
     }
 
     // On active le modele
     $type='delivery';
     $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
+    $sql_del.= " WHERE nom = '".$db->escape($value)."'";
     $sql_del.= " AND type = '".$type."'";
     $sql_del.= " AND entity = ".$conf->entity;
     $result1=$db->query($sql_del);
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
     $result2=$db->query($sql);
     if ($result1 && $result2)
@@ -146,17 +163,29 @@ if ($_GET["action"] == 'setdoc')
     }
 }
 
-if ($_POST["action"] == 'set_DELIVERY_FREE_TEXT')
+if ($action == 'set_DELIVERY_FREE_TEXT')
 {
-    dolibarr_set_const($db, "DELIVERY_FREE_TEXT",$_POST["DELIVERY_FREE_TEXT"],'chaine',0,'',$conf->entity);
+	$free=GETPOST("DELIVERY_FREE_TEXT");
+    $res=dolibarr_set_const($db, "DELIVERY_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
+	
+    if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
-if ($_GET["action"] == 'setmod')
+if ($action == 'setmod')
 {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
-	dolibarr_set_const($db, "LIVRAISON_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "LIVRAISON_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
 
@@ -244,18 +273,22 @@ foreach ($conf->file->dol_document_root as $dirroot)
                         // Show example of numbering module
                         print '<td nowrap="nowrap">';
                         $tmp=$module->getExample();
-                        if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                        if (preg_match('/^Error/',$tmp)) 
+                        {
+                        	$langs->load("errors");
+                        	print $langs->trans($tmp);
+                        }
                         else print $tmp;
                         print '</td>'."\n";
 
 						print '<td align="center">';
 						if ($conf->global->LIVRAISON_ADDON == "$file")
 						{
-							print img_picto($langs->trans("Activated"),'on');
+							print img_picto($langs->trans("Activated"),'switch_on');
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 						}
 						print '</td>';
 
@@ -372,19 +405,19 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    				if ($conf->global->LIVRAISON_ADDON_PDF != "$name")
 	    				{
 	    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-	    					print img_picto($langs->trans("Enabled"),'on');
+	    					print img_picto($langs->trans("Enabled"),'switch_on');
 	    					print '</a>';
 	    				}
 	    				else
 	    				{
-	    					print img_picto($langs->trans("Enabled"),'on');
+	    					print img_picto($langs->trans("Enabled"),'switch_on');
 	    				}
 	    				print "</td>";
 	    			}
 	    			else
 	    			{
 	    				print "<td align=\"center\">\n";
-	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	    				print "</td>";
 	    			}
 
@@ -392,11 +425,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			print "<td align=\"center\">";
 	    			if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
 	    			{
-	    				print img_picto($langs->trans("Default"),'on');
+	    				print img_picto($langs->trans("Default"),'switch_on');
 	    			}
 	    			else
 	    			{
-	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	    			}
 	    			print '</td>';
 
@@ -450,6 +483,8 @@ print "</td></tr>\n";
 print '</form>';
 
 print '</table>';
+
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 
