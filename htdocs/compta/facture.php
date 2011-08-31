@@ -1630,13 +1630,13 @@ if ($action == 'create')
     // Credit note
     print '<tr height="18"><td valign="middle">';
     print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
-    if (! $optionsav) print ' disabled="disabled"';
+    if (! $optionsav) print ' disabled="true"';
     print '>';
     print '</td><td valign="middle">';
     $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
     //	$text.='<input type="text" value="">';
     $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
-    if (! $optionsav) $text.=' disabled="disabled"';
+    if (! $optionsav) $text.=' disabled="true"';
     $text.='>';
     if ($optionsav)
     {
