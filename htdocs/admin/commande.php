@@ -120,13 +120,13 @@ if ($action == 'del')
 {
 	$type='order';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$db->escape($value)."'";
+	$sql.= " WHERE nom = '".$value."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 
 	if ($db->query($sql))
 	{
-        if ($conf->global->COMMANDE_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_ADDON_PDF',$conf->entity);
+
 	}
 }
 
@@ -207,7 +207,22 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
+/*
+if ($action == 'setvalidorder')
+{
+	dolibarr_set_const($db, "COMMANDE_VALID_AFTER_CLOSE_PROPAL",$_POST["validorder"],'chaine',0,'',$conf->entity);
+}
 
+if ($action == 'deliverycostline')
+{
+	dolibarr_set_const($db, "COMMANDE_ADD_DELIVERY_COST_LINE",$_POST["addline"],'chaine',0,'',$conf->entity);
+}
+
+if ($action == 'set_use_customer_contact_as_recipient')
+{
+	dolibarr_set_const($db, "COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["use_customer_contact_as_recipient"],'chaine',0,'',$conf->entity);
+}
+*/
 
 /*
  * View
@@ -402,16 +417,16 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		print "<td align=\"center\">\n";
 		    		if (in_array($name, $def))
 		    		{
-		    			//if ($conf->global->COMMANDE_ADDON_PDF != "$name")
-		    			//{
+		    			if ($conf->global->COMMANDE_ADDON_PDF != "$name")
+		    			{
 		    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 		    				print img_picto($langs->trans("Activated"),'switch_on');
 		    				print '</a>';
-		    			//}
-		    			//else
-		    			//{
-		    			//	print img_picto($langs->trans("Activated"),'switch_on');
-		    			//}
+		    			}
+		    			else
+		    			{
+		    				print img_picto($langs->trans("Activated"),'switch_on');
+		    			}
 		    		}
 		    		else
 		    		{
