@@ -1529,6 +1529,11 @@ border-radius: 6px;
     height: 28px !important;
 }
 
+.ui-datepicker-trigger {
+	vertical-align: middle;
+	cursor: pointer;
+}
+
 .bodyline {
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 8px;
