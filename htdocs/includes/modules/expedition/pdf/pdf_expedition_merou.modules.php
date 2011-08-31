@@ -311,7 +311,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY(120,-23);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("NameAndSignature") , 0, 'C');
 		$pdf->SetXY(-10,-10);
-		$pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
+		$pdf->MultiCell(10, 3, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R');
 	}
 
 
@@ -325,7 +325,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	function _pagehead(&$pdf, $object, $outputlangs)
 	{
 		global $conf, $langs;
-		
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
@@ -384,9 +384,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//$this->Code39($Xoff+43, $Yoff+1, $object->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 
 		// Add list of linked elements
-		// TODO possibility to use with other elements (business module,...) 
+		// TODO possibility to use with other elements (business module,...)
 	    //$object->load_object_linked();
-	    
+
 		$origin 	= $object->origin;
 		$origin_id 	= $object->origin_id;
 
@@ -394,7 +394,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		if ($conf->$origin->enabled)
 		{
 			$outputlangs->load('orders');
-			
+
 			$classname = ucfirst($origin);
 			$linkedobject = new $classname($this->db);
 			$result=$linkedobject->fetch($origin_id);
@@ -451,7 +451,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX-80,$blSocY+23);
 		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetTextColor(0,0,0);
-		
+
 		if (! empty($object->tracking_number))
 		{
 			$object->GetUrlTrackingStatus($object->tracking_number);
