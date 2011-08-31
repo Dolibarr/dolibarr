@@ -78,9 +78,9 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
     // We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
     if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once(FPDFI_PATH.'fpdi.php');
 
-    $arrayformat=pdf_getFormat();
-    $format=array($arrayformat['width'],$arrayformat['height']);
-    $metric=$arrayformat['unit'];
+    //$arrayformat=pdf_getFormat();
+    //$format=array($arrayformat['width'],$arrayformat['height']);
+    //$metric=$arrayformat['unit'];
 
     // Protection et encryption du pdf
     if ($conf->global->PDF_SECURITY_ENCRYPTION)

@@ -509,7 +509,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 	                            if ($module->type == 'pdf')
 	                            {
-	                                $htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+	                                $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 	                            }
 	                            $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 	                            $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);

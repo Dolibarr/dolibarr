@@ -48,8 +48,9 @@ class pdf_oursin extends ModelePDFFactures
 
 
 	/**
-	 *	\brief  Constructeur
-	 *	\param	db		Database handler
+	 *	Constructor
+	 *
+	 *	@param	    DoliDB	$db		Handler access data base
 	 */
 	function pdf_oursin($db)
 	{

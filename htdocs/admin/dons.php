@@ -248,7 +248,10 @@ if (is_resource($handle))
     			// Info
     	    	$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
     	    	$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-    	    	$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+                if ($module->type == 'pdf')
+                {
+                    $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                }
     	    	$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
     	    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
     	    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);

@@ -242,7 +242,7 @@ class Expedition extends CommonObject
 					$result=$interface->run_triggers('SHIPPING_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
-					
+
 					$this->db->commit();
 					return $this->id;
 				}
@@ -377,7 +377,7 @@ class Expedition extends CommonObject
 
 				$file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
 				$this->pdf_filename = $file;
-				
+
 				// Tracking url
 				$this->GetUrlTrackingStatus($obj->tracking_number);
 
@@ -415,7 +415,7 @@ class Expedition extends CommonObject
 	function valid($user)
 	{
 		global $conf, $langs;
-		
+
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 		dol_syslog("Expedition::valid");
@@ -478,7 +478,7 @@ class Expedition extends CommonObject
 		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 		{
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
-            
+
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
@@ -760,7 +760,7 @@ class Expedition extends CommonObject
 	function delete()
 	{
 		global $conf, $langs, $user;
-		
+
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 		$this->db->begin();
 
@@ -805,14 +805,14 @@ class Expedition extends CommonObject
 							}
 						}
 					}
-					
+
 					// Call triggers
 		            include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
 		            $interface=new Interfaces($this->db);
 		            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
 		            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		            // End call triggers
-	            
+
 					// TODO il faut incrementer le stock si on supprime une expedition validee
 					return 1;
 				}
@@ -908,9 +908,9 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$result='';
-		
+
 		$url = DOL_URL_ROOT.'/expedition/fiche.php?id='.$this->id;
-		
+
 		if ($short) return $url;
 
 		$linkstart = '<a href="'.$url.'">';
@@ -979,6 +979,8 @@ class Expedition extends CommonObject
 	{
 		global $user,$langs,$conf;
 
+		$now=dol_now();
+
 		dol_syslog("Expedition::initAsSpecimen");
 
 		// Charge tableau des produits prodids
@@ -1004,14 +1006,16 @@ class Expedition extends CommonObject
 
 		// Initialise parametres
 		$this->id=0;
-		$this->ref = 'SPECIMEN';
+		$this->ref = 'SPECIMEN_SHIP';
 		$this->specimen=1;
 		$this->statut               = 1;
-		if ($conf->livraison_bon->enabled)
-		{
-			$this->livraison_id     = 0;
-		}
-		$this->date                 = time();
+		$this->livraison_id         = 0;
+		$this->date                 = $now;
+		$this->date_creation        = $now;
+		$this->date_valid           = $now;
+		$this->date_delivery        = $now;
+		$this->date_expedition      = $now + 24*3600;
+
 		$this->entrepot_id          = 0;
 		$this->fk_delivery_address  = 0;
 		$this->socid                = 1;

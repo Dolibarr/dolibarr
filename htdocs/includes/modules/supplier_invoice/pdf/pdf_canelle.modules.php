@@ -36,10 +36,29 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
  */
 class pdf_canelle extends ModelePDFSuppliersInvoices
 {
+    var $db;
+    var $name;
+    var $description;
+    var $type;
+
+    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
+    var $version = 'dolibarr';
+
+    var $page_largeur;
+    var $page_hauteur;
+    var $format;
+	var $marge_gauche;
+	var	$marge_droite;
+	var	$marge_haute;
+	var	$marge_basse;
+
+	var $emetteur;	// Objet societe qui emet
+
 
 	/**
-	 *	\brief      Constructor
-	 *	\param	    db		Handler access data base
+	 *	Constructor
+	 *
+	 *	@param	    DoliDB	$db		Handler access data base
 	 */
 	function pdf_canelle($db,$object)
 	{
@@ -768,49 +787,45 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		if ($showaddress)
 		{
-			// Receive email
-			$posy=42;
-			$hautcadre=40;
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillTo").":",0,"L");
-
-
-			$pdf->SetXY($this->marge_gauche,$posy);
-			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
-
-
-			// Nom emetteur
-			$carac_emetteur_name=$outputlangs->convToOutputCharset($mysoc->name);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('','B', $default_font_size);
-			$pdf->SetXY($this->marge_gauche+2,$posy+3);
-			$pdf->MultiCell(80, 4, $carac_emetteur_name, 0, 'L');
-
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$mysoc);
+			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-
-			// Client destinataire
+			// Show sender
 			$posy=42;
+			$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
+			$hautcadre=40;
+
+			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Supplier").":");
-			//
-			$client = new Societe($this->db);
-			$client->fetch($object->socid);
-			$object->client = $client;
-			//
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFillColor(230,230,230);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->SetTextColor(0,0,60);
 
-			// Cadre client destinataire
-			$pdf->rect(100, $posy, 100, $hautcadre);
+			// Show sender name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+
+			// Show sender information
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+
+
+
+			// If BILLING contact defined on invoice, we use it
+			$usecontact=false;
+			$arrayidcontact=$object->getIdContact('external','BILLING');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
 
 			// Recipient name
 			if (! empty($usecontact))
@@ -827,14 +842,27 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
-			// Show customer/recipient
-			$pdf->SetXY(102,$posy+3);
+			// Show recipient
+			$posy=42;
+			$posx=$this->page_largeur-$this->marge_droite-100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+
+			// Show recipient frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posx+2,$posy-5);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":",0,'L');
+			$pdf->rect($posx, $posy, 100, $hautcadre);
+
+			// Show recipient name
+			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
+			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY(102,$posy+8);
-			$pdf->MultiCell(96,4, $carac_client, 0, 'L');
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 	}
 

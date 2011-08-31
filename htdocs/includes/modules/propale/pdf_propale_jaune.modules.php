@@ -43,8 +43,8 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 	/**
 	 *	Constructor
-     *
-	 *	@param	    db		Database access handler
+	 *
+	 *	@param	    DoliDB	$db		Handler access data base
 	 */
 	function pdf_propale_jaune($db)
 	{

@@ -2162,26 +2162,40 @@ class Propal extends CommonObject
 			$line->subprice=100;
 			$line->price=100;
 			$line->tva_tx=19.6;
-			$line->total_ht=100;
-			$line->total_ttc=119.6;
-			$line->total_tva=19.6;
+            $line->localtax1_tx=0;
+            $line->localtax2_tx=0;
+			if ($xnbp == 2)
+			{
+			    $line->total_ht=50;
+			    $line->total_ttc=59.8;
+			    $line->total_tva=9.8;
+    			$line->remise_percent=50;
+			}
+			else
+			{
+			    $line->total_ht=100;
+			    $line->total_ttc=119.6;
+			    $line->total_tva=19.6;
+    			$line->remise_percent=00;
+			}
+
 			$prodid = rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];
 
 			$this->lines[$xnbp]=$line;
 
+    		$this->total_ht       += $line->total_ht;
+    		$this->total_tva      += $line->total_tva;
+    		$this->total_ttc      += $line->total_ttc;
+
 			$xnbp++;
 		}
-
-		$this->amount_ht      = $xnbp*100;
-		$this->total_ht       = $xnbp*100;
-		$this->total_tva      = $xnbp*19.6;
-		$this->total_ttc      = $xnbp*119.6;
 	}
 
 	/**
-	 *      \brief      Charge indicateurs this->nb de tableau de bord
-	 *      \return     int         <0 si ko, >0 si ok
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 si ko, >0 si ok
 	 */
 	function load_state_board()
 	{

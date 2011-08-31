@@ -378,8 +378,12 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
 		}
 
-		$pdf->SetXY(-20,-$posy);
-		$pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+        // Show page nb only on iso languages (so default Helvetica font)
+        if (pdf_getPDFFont($outputlangs) == 'Helvetica')
+        {
+    		$pdf->SetXY(-20,-$posy);
+            $pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+        }
 	}
 
 }

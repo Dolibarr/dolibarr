@@ -292,6 +292,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 	/**
 	 *   	Show header of document
+	 *
 	 *   	@param      pdf     		Object PDF
 	 *   	@param      object			Object commercial proposal
 	 *      @param      showaddress     0=no, 1=yes
@@ -371,36 +372,36 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$posx=100;
 		$posy=$this->marge_haute;
 
-		$pdf->SetFont('','B', $default_font_size + 3);
+		$pdf->SetFont('','B', $default_font_size + 2);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("SendingSheet");
 		$pdf->MultiCell(100, 4, $title, '' , 'R');
         $posy+=1;
 
-		$pdf->SetFont('','', $default_font_size + 2);
+		$pdf->SetFont('','', $default_font_size + 1);
 
-		$posy+=5;
+		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
 
 		//Date Expedition
-		$posy+=5;
+		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_delivery,"%d %b %Y",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_creation,"daytext",false,$outputlangs,true), '', 'R');
 
 		if (! empty($object->client->code_client))
 		{
-			$posy+=5;
+			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
 
-		$pdf->SetFont('','', $default_font_size + 4);
+		$pdf->SetFont('','', $default_font_size + 3);
 	    $Yoff=25;
 
 	    // Add list of linked orders
@@ -428,7 +429,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
 				$Yoff = $Yoff+4;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
-				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"%d %b %Y",false,$outputlangs,true), 0, 'R');
+				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"daytext",false,$outputlangs,true), 0, 'R');
 			}
 		}
 

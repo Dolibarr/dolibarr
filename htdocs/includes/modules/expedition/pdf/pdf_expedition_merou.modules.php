@@ -54,9 +54,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
-		$this->page_largeur = round($formatarray['height']/2);
-		$this->page_hauteur = $formatarray['width'];
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = round($formatarray['height']/2);
 		$this->format = array($this->page_largeur,$this->page_hauteur);
+		$this->marge_gauche=10;
+		$this->marge_droite=10;
+		$this->marge_haute=10;
+		$this->marge_basse=10;
 
 		$this->option_logo = 1;                    // Affiche logo
 
@@ -162,7 +166,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Sending"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
-				$pdf->SetMargins(10, 10, 10);
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
 
 				$pdf->SetFont('','', $default_font_size - 3);
@@ -177,11 +181,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 				//Initialisation des coordonnees
 				$tab_top = 53;
-				$tab_height = 70;
+				$tab_height = $this->page_hauteur - 78;
 				$pdf->SetFillColor(240,240,240);
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('','',  $default_font_size - 3);
-				$pdf->SetXY (10, $tab_top + 5 );
+				$pdf->SetXY(10, $tab_top + 5);
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
@@ -295,10 +299,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	}
 
 	/**
-	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlangs		Object lang for output
+	 *   	Show footer of page
+	 *
+	 *   	@param      pdf     		PDF factory
+	 * 		@param		object			Object invoice
+	 *      @param      outputlangs		Object lang for output
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
@@ -310,8 +315,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ToAndDate") , 0, 'C');
 		$pdf->SetXY(120,-23);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("NameAndSignature") , 0, 'C');
-		$pdf->SetXY(-10,-10);
-		$pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
+
+		// Show page nb only on iso languages (so default Helvetica font)
+        //if (pdf_getPDFFont($outputlangs) == 'Helvetica')
+        //{
+    	//    $pdf->SetXY(-10,-10);
+        //    $pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+        //}
 	}
 
 
