@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-/**
+/*
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *

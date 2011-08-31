@@ -22,10 +22,6 @@
 /**
  * 		\defgroup   facture     Module invoices
  *      \brief      Module pour gerer les factures clients et/ou fournisseurs
- */
-
-
-/**
  *      \file       htdocs/includes/modules/modFacture.class.php
  *		\ingroup    facture
  *		\brief      Fichier de la classe de description et activation du module Facture

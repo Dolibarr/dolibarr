@@ -19,9 +19,6 @@
 /**
  * \defgroup   mantis     Module mantis
  * \brief      Module to include Mantis into Dolibarr
- */
-
-/**
  * \file       htdocs/includes/modules/modMantis.class.php
  * \ingroup    mantis
  * \brief      Description and activation file for module Mantis

@@ -312,6 +312,7 @@ NoSmsEngine=Aucun gestionnaire d'envoi de SMS n'est disponible. Les gestionnaire
 PDF=PDF
 PDFDesc=Vous pouvez définir ici des options globales sur la génération des PDF
 PDFAddressForging=Règle de fabrication des zones adresses
+HideAnyVATInformationOnPDF=Cacher toutes les informations en rapport avec la TVA sur les PDF générés
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes

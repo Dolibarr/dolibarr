@@ -19,12 +19,9 @@
 /**
  *      \defgroup   category       Module categories
  *      \brief      Module to manage categories
- */
-
-/**
- *       \file       htdocs/includes/modules/modCategorie.class.php
- *       \ingroup    category
- *       \brief      Fichier de description et activation du module Categorie
+ *      \file       htdocs/includes/modules/modCategorie.class.php
+ *      \ingroup    category
+ *      \brief      Fichier de description et activation du module Categorie
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

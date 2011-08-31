@@ -17,14 +17,11 @@
  */
 
 /**
- * \defgroup   paybox     Module paybox
- * \brief      Add integration with Paybox online payment system.
- */
-
-/**
- *      \file       htdocs/includes/modules/modPaybox.class.php
- *      \ingroup    paybox
- *      \brief      Description and activation file for module Paybox
+ * 	\defgroup   paybox     Module paybox
+ * 	\brief      Add integration with Paybox online payment system.
+ *  \file       htdocs/includes/modules/modPaybox.class.php
+ *  \ingroup    paybox
+ *  \brief      Description and activation file for module Paybox
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

@@ -22,9 +22,6 @@
 /**
  *	\defgroup   produit     Module products
  *	\brief      Module pour gerer le suivi de produits predefinis
- */
-
-/**
  *	\file       htdocs/includes/modules/modProduct.class.php
  *	\ingroup    produit
  *	\brief      Fichier de description et activation du module Produit

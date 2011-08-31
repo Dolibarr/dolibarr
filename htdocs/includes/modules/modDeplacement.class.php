@@ -19,9 +19,6 @@
 /**
  *	\defgroup   deplacement     Module trips
  *	\brief      Module pour gerer les deplacements et notes de frais
- */
-
-/**
  *	\file       htdocs/includes/modules/modDeplacement.class.php
  *	\ingroup    deplacement
  *	\brief      Fichier de description et activation du module Deplacement et notes de frais

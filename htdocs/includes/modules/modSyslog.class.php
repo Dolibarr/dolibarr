@@ -19,9 +19,6 @@
 /**
  *	\defgroup   syslog  Module syslog
  *	\brief      Module pour gerer les messages d'erreur dans syslog
- */
-
-/**
  *	\file       htdocs/includes/modules/modSyslog.class.php
  *	\ingroup    syslog
  *	\brief      Fichier de description et activation du module de syslog

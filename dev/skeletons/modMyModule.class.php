@@ -20,11 +20,8 @@
 /**
  * 		\defgroup   mymodule     Module MyModule
  *      \brief      Example of a module descriptor.
- *					Such a file must be copied into htdocs/includes/module directory.
- */
-
-/**
- *      \file       htdocs/includes/modules/modMyModule.class.php
+ *					Such a file must be copied into htdocs/mymodule/includes/modules directory.
+ *      \file       htdocs/mymodule/includes/modules/modMyModule.class.php
  *      \ingroup    mymodule
  *      \brief      Description and activation file for module MyModule
  */
@@ -235,9 +232,10 @@ class modMyModule extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-	 *      @return     int             1 if OK, 0 if KO
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init()
+	function init($options='')
 	{
 		$sql = array();
 
@@ -251,9 +249,10 @@ class modMyModule extends DolibarrModules
 	 *      Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted
 	 *
-	 *      @return     int             1 if OK, 0 if KO
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function remove()
+	function remove($options='')
 	{
 		$sql = array();
 

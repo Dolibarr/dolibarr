@@ -23,9 +23,6 @@
 /**
  *		\defgroup   commande     Module orders
  *		\brief      Module pour gerer le suivi des commandes
- */
-
-/**
  *		\file       htdocs/includes/modules/modCommande.class.php
  *		\ingroup    commande
  *		\brief      Fichier de description et activation du module Commande

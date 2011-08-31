@@ -16,11 +16,8 @@
  */
 
 /**
- * \defgroup   geoip      Module GeoIP
- * \brief      Module to make geoip conversions
- */
-
-/**
+ *  \defgroup   geoip      Module GeoIP
+ *  \brief      Module to make geoip conversions
  *	\file       htdocs/includes/modules/modGeoIPMaxmind.class.php
  *	\ingroup    geoip
  *	\brief      File of geoipmaxmind module descriptor

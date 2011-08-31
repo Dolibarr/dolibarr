@@ -22,9 +22,6 @@
 /**
  *	\defgroup   societe     Module societe
  *	\brief      Module to manage third parties (customers, prospects)
- */
-
-/**
  *	\file       htdocs/includes/modules/modSociete.class.php
  *	\ingroup    societe
  *	\brief      Fichier de description et activation du module Societe

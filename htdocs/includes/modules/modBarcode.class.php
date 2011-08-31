@@ -20,9 +20,6 @@
 /**
  *	\defgroup   barcode         Module barcode
  *	\brief      Module pour gerer les codes barres
- */
-
-/**
  *	\file       htdocs/includes/modules/modBarcode.class.php
  *	\ingroup    barcode,produit
  *	\brief      Fichier de description et activation du module Barcode

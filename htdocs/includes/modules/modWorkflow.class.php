@@ -18,10 +18,7 @@
 
 /**
  *      \defgroup   workflow     Module workflow
- *      \brief      Workflow management
- */
-
-/**
+ *      \brief		Workflow management
  *      \file       htdocs/includes/modules/modWorkflow.class.php
  *      \ingroup    workflow
  *      \brief      File to describe and activate module Workflow

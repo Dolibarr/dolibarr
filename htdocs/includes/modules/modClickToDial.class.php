@@ -19,9 +19,6 @@
 /**
  *	\defgroup   clicktodial      Module clicktodial
  *	\brief      Module pour gerer l'appel automatique
- */
-
-/**
  *	\file       htdocs/includes/modules/modClickToDial.class.php
  *	\ingroup    clicktodial
  *	\brief      Fichier de description et activation du module de click to Dial

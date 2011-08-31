@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2011 	   Juanjo Menent			    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,28 +33,39 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 
 $langs->load("admin");
-$langs->load("bills");
-$langs->load("propal");
-$langs->load("other");
+$langs->load("errors");
 
 if (!$user->admin)
 accessforbidden();
 
+$action =GETPOST("action");
+$value = GETPOST("value");
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'updateMask')
+if ($action == 'updateMask')
 {
-	$maskconstpropal=$_POST['maskconstpropal'];
-	$maskpropal=$_POST['maskpropal'];
-	if ($maskconstpropal)  dolibarr_set_const($db,$maskconstpropal,$maskpropal,'chaine',0,'',$conf->entity);
+	$maskconstpropal=GETPOST("maskconstpropal");
+	$maskpropal=GETPOST("maskpropal");
+	if ($maskconstpropal) $res = dolibarr_set_const($db,$maskconstpropal,$maskpropal,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
-if ($_GET["action"] == 'specimen')
+if ($action == 'specimen')
 {
-	$modele=$_GET["module"];
+	$modele=GETPOST("module");
 
 	$propal = new Propal($db);
 	$propal->initAsSpecimen();
@@ -76,63 +88,112 @@ if ($_GET["action"] == 'specimen')
 		}
 		else
 		{
-			$mesg='<div class="error">'.$module->error.'</div>';
+			$mesg='<font class=\"error\">'.$module->error.'</font>';
 			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+		$mesg='<font class=\"error\">'.$langs->trans("ErrorModuleNotFound").'</font>';
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 
-if ($_POST["action"] == 'set_PROPALE_DRAFT_WATERMARK')
+if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 {
-	dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($_POST["PROPALE_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
+	$draft = GETPOST("PROPALE_DRAFT_WATERMARK");
+	
+	$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
-if ($_POST["action"] == 'set_PROPALE_FREE_TEXT')
+if ($action == 'set_PROPALE_FREE_TEXT')
 {
-	dolibarr_set_const($db, "PROPALE_FREE_TEXT",$_POST["PROPALE_FREE_TEXT"],'chaine',0,'',$conf->entity);
+	$freetext = GETPOST("PROPALE_FREE_TEXT");
+	
+	$res = dolibarr_set_const($db, "PROPALE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
-if ($_POST["action"] == 'setdefaultduration')
+if ($action == 'setdefaultduration')
 {
-	dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"],'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$value,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
-if ($_POST["action"] == 'setclassifiedinvoiced')
+if ($action == 'setclassifiedinvoiced')
 {
-	dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"],'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$value,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
-if ($_POST["action"] == 'setusecustomercontactasrecipient')
+/*if ($action == 'setusecustomercontactasrecipient')
 {
 	dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"],'chaine',0,'',$conf->entity);
-}
+}*/
 
 
 
 
-if ($_GET["action"] == 'set')
+if ($action == 'set')
 {
+	$label = GETPOST("label");
+	$scandir = GETPOST("scandir");
+	
 	$type='propal';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
+    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
 	if ($db->query($sql))
 	{
 
 	}
 }
-if ($_GET["action"] == 'del')
+if ($action == 'del')
 {
 	$type='propal';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$_GET["value"]."'";
+	$sql.= " WHERE nom = '".$value."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 	if ($db->query($sql))
@@ -141,27 +202,30 @@ if ($_GET["action"] == 'del')
 	}
 }
 
-if ($_GET["action"] == 'setdoc')
+if ($action == 'setdoc')
 {
+	$label = GETPOST("label");
+	$scandir = GETPOST("scandir");
+	
 	$db->begin();
 
-	if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
-		$conf->global->PROPALE_ADDON_PDF = $_GET["value"];
+		$conf->global->PROPALE_ADDON_PDF = $value;
 	}
 
 	// On active le modele
 	$type='propal';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
+	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($value?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($value)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
@@ -174,12 +238,12 @@ if ($_GET["action"] == 'setdoc')
 	}
 }
 
-if ($_GET["action"] == 'setmod')
+if ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "PROPALE_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROPALE_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
 
@@ -191,7 +255,7 @@ llxHeader('',$langs->trans("PropalSetup"));
 
 $html=new Form($db);
 
-if ($mesg) print $mesg;
+//if ($mesg) print $mesg;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
@@ -255,12 +319,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						print '<td align="center">';
 						if ($conf->global->PROPALE_ADDON == "$file")
 						{
-							print img_picto($langs->trans("Activated"),'on');
+							print img_picto($langs->trans("Activated"),'switch_on');
 						}
 						else
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
-							print img_picto($langs->trans("Disabled"),'off');
+							print img_picto($langs->trans("Disabled"),'switch_off');
 							print '</a>';
 						}
 						print '</td>';
@@ -377,18 +441,18 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						if ($conf->global->PROPALE_ADDON_PDF != "$name")
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-							print img_picto($langs->trans("Activated"),'on');
+							print img_picto($langs->trans("Activated"),'switch_on');
 							print '</a>';
 						}
 						else
 						{
-							print img_picto($langs->trans("Activated"),'on');
+							print img_picto($langs->trans("Activated"),'switch_on');
 						}
 					}
 					else
 					{
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-						print img_picto($langs->trans("Disabled"),'off');
+						print img_picto($langs->trans("Disabled"),'switch_off');
 						print '</a>';
 					}
 					print "</td>";
@@ -397,12 +461,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					print '<td align="center">';
 					if ($conf->global->PROPALE_ADDON_PDF == "$name")
 					{
-						print img_picto($langs->trans("Yes"),'on');
+						print img_picto($langs->trans("Yes"),'switch_on');
 					}
 					else
 					{
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-						print img_picto($langs->trans("No"),'off');
+						print img_picto($langs->trans("No"),'switch_off');
 						print '</a>';
 					}
 					print '</td>';
@@ -538,7 +602,7 @@ print "</tr>\n";
 print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->propale->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
-
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 

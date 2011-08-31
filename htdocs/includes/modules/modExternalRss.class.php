@@ -19,9 +19,6 @@
 /**
  *  \defgroup   externalrss     Module externalrss
  *	\brief      Module pour inclure des informations externes RSS
- */
-
-/**
  *	\file       htdocs/includes/modules/modExternalRss.class.php
  *	\ingroup    externalrss
  *	\brief      Fichier de description et activation du module externalrss

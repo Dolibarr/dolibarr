@@ -17,14 +17,11 @@
  */
 
 /**
- * \defgroup   gravatar     Module gravatar
- * \brief      Module to use Gravatar to show photo of users
- */
-
-/**
- *      \file       htdocs/includes/modules/modGravatar.class.php
- *      \ingroup    gravatar
- *      \brief      Description and activation file for module Gravatar
+ * 	\defgroup   gravatar     Module gravatar
+ * 	\brief      Module to use Gravatar to show photo of users
+ *  \file       htdocs/includes/modules/modGravatar.class.php
+ *  \ingroup    gravatar
+ *  \brief      Description and activation file for module Gravatar
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

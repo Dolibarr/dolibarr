@@ -311,6 +311,7 @@ NoSmsEngine=No SMS sender manager available. SMS sender manager are not installe
 PDF=PDF
 PDFDesc=You can set each global options related to the PDF generation
 PDFAddressForging=Rules to forge address boxes
+HideAnyVATInformationOnPDF=Hide all information related to VAT on generated PDF
 
 # Modules
 Module0Name=Users & groups

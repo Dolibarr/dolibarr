@@ -20,12 +20,9 @@
 /**
  *	\defgroup   	document     Module mass mailings
  *	\brief      	Module pour gerer des generations de documents
- */
-
-/**
- *	\file       htdocs/includes/modules/modDocument.class.php
- *	\ingroup    document
- *	\brief      Fichier de description et activation du module Generation document
+ *	\file       	htdocs/includes/modules/modDocument.class.php
+ *	\ingroup    	document
+ *	\brief      	Fichier de description et activation du module Generation document
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

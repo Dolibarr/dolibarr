@@ -23,9 +23,6 @@
 /**
  *	\defgroup   ficheinter     Module intervention cards
  *	\brief      Module to manage intervention cards
- */
-
-/**
  *	\file       htdocs/includes/modules/modFicheinter.class.php
  *	\ingroup    ficheinter
  *	\brief      Fichier de description et activation du module Ficheinter

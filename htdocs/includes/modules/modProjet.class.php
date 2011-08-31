@@ -22,9 +22,6 @@
 /**
  *  \defgroup   projet     Module project
  *	\brief      Module to create projects/tasks/gantt diagram. Projects can them be affected to tasks.
- */
-
-/**
  *  \file       htdocs/includes/modules/modProjet.class.php
  *	\ingroup    projet
  *	\brief      Fichier de description et activation du module Projet

@@ -18,15 +18,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**    
+/**
  * 	\defgroup   oscommerce     Module oscommerce
  *	\brief      Module pour gerer une boutique et interface avec OSCommerce
- */
-
-/**
- * \file       htdocs/includes/modules/modBoutique.class.php
- * \ingroup    oscommerce
- * \brief      Fichier de description et activation du module OSCommerce
+ *  \file       htdocs/includes/modules/modBoutique.class.php
+ *  \ingroup    oscommerce
+ *  \brief      Fichier de description et activation du module OSCommerce
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -73,7 +70,7 @@ class modBoutique extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r=0;
-		
+
 		$this->const[$r][0] = "OSC_DB_HOST";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "localhost";

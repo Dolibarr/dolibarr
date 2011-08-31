@@ -35,6 +35,7 @@ if (!$user->admin)
 accessforbidden();
 
 $action=GETPOST("action");
+$value = GETPOST("value");
 
 
 /*
@@ -42,7 +43,7 @@ $action=GETPOST("action");
  */
 if ($action == 'setcodeclient')
 {
-	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
+	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -55,7 +56,7 @@ if ($action == 'setcodeclient')
 
 if ($action == 'setcodecompta')
 {
-	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
+	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -68,7 +69,8 @@ if ($action == 'setcodecompta')
 
 if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 {
-	$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_COMPANY_USE_SEARCH_TO_SELECT"],'chaine',0,'',$conf->entity);
+	$companysearch = GETPOST("activate_COMPANY_USE_SEARCH_TO_SELECT");
+	$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	if (! $error)
     {
@@ -114,11 +116,14 @@ if ($action == 'setModuleOptions')
 // Activate a document generator module
 if ($action == 'set')
 {
+	$label = GETPOST("label");
+	$scandir = GETPOST("scandir");
+	
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
-	$sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-	$sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+	$sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
+	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
 	$sql.= ")";
 	if ($db->query($sql))
 	{
@@ -132,7 +137,7 @@ if ($action== 'del')
 {
 	$type='company';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom='".$db->escape($_GET["value"])."' AND type='".$type."' AND entity=".$conf->entity;
+	$sql.= " WHERE nom='".$db->escape($value)."' AND type='".$type."' AND entity=".$conf->entity;
 	if ($db->query($sql))
 	{
 
@@ -143,11 +148,14 @@ if ($action== 'del')
 // Define default generator
 if ($action == 'setdoc')
 {
+	$label = GETPOST("label");
+	$scandir = GETPOST("scandir");
+	
 	$db->begin();
 
-	if (dolibarr_set_const($db, "COMPANY_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "COMPANY_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
-		$conf->global->COMPANY_ADDON_PDF = $_GET["value"];
+		$conf->global->COMPANY_ADDON_PDF = $value;
 	}
 
 	// On active le modele
@@ -160,9 +168,9 @@ if ($action == 'setdoc')
 	$result1=$db->query($sql_del);
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
-	$sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-	$sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+	$sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
+	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
 	$sql.= ")";
     dol_syslog("societe.php ".$sql);
 	$result2=$db->query($sql);
@@ -180,8 +188,10 @@ if ($action == 'setdoc')
 //Activate ProfId
 if ($action == 'setprofid')
 {
-	$idprof="SOCIETE_IDPROF".$_GET["value"]."_UNIQUE";
-	if (dolibarr_set_const($db, $idprof,$_GET["status"],'chaine',0,'',$conf->entity) > 0)
+	$status = GETPOST("status");
+	
+	$idprof="SOCIETE_IDPROF".$value."_UNIQUE";
+	if (dolibarr_set_const($db, $idprof,$status,'chaine',0,'',$conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;

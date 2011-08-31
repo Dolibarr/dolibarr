@@ -17,11 +17,8 @@
  */
 
 /**
- * \defgroup   export      Module export
- * \brief      Module generique pour realiser des exports de donnees en base
- */
-
-/**
+ *  \defgroup   export      Module export
+ *  \brief      Module generique pour realiser des exports de donnees en base
  *	\file       htdocs/includes/modules/modExport.class.php
  *	\ingroup    export
  *	\brief      Fichier de description et activation du module export
