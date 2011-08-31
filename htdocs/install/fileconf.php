@@ -125,7 +125,7 @@ if (! empty($force_install_message))
 		<td class="label" valign="top">
 		<?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_document_root.'" name="main_dir">';
-		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_dir'.(empty($force_install_noedit)?'':'_bis').'">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_dir'.(empty($force_install_noedit)?'':'_bis').'">';
 		?>
 		</td>
 		<td class="comment"><?php
@@ -161,7 +161,7 @@ if (! empty($force_install_message))
 		<td class="label" valign="top">
 		<?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_data_root.'" name="main_data_dir">';
-		print '<input type="text" size="60" value="'.$dolibarr_main_data_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_data_dir'.(empty($force_install_noedit)?'':'_bis').'">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_data_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_data_dir'.(empty($force_install_noedit)?'':'_bis').'">';
 		?>
 		</td>
 		<td class="comment"><?php
@@ -210,7 +210,7 @@ if (empty($dolibarr_main_url_root))
 		<td valign="top" class="label">
 		<?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_url_root.'" name="main_url">';
-		print '<input type="text" size="60" value="'.$dolibarr_main_url_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_url'.(empty($force_install_noedit)?'':'_bis').'">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_url_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_url'.(empty($force_install_noedit)?'':'_bis').'">';
 		?>
 		</td>
 		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
@@ -308,7 +308,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
         }
 
         if ($force_install_noedit && $force_install_type) print '<input id="db_type" type="hidden" value="'.$force_install_type.'" name="db_type">';
-        print '<select id="db_type" name="db_type'.(empty($force_install_noedit) || empty($force_install_type)?'':'_bis').'"'.($force_install_noedit && $force_install_type?' disabled="true"':'').'>';
+        print '<select id="db_type" name="db_type'.(empty($force_install_noedit) || empty($force_install_type)?'':'_bis').'"'.($force_install_noedit && $force_install_type?' disabled="disabled"':'').'>';
 		print $option;
 		print '</select>';
 

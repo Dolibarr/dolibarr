@@ -243,7 +243,7 @@ class FormCompany
 							// Affiche la rupture si on est en mode liste multipays
 							if (! $pays_code && $obj->code_pays)
 							{
-								$out.= '<option value="-1" disabled="true">----- '.$obj->libelle_pays." -----</option>\n";
+								$out.= '<option value="-1" disabled="disabled">----- '.$obj->libelle_pays." -----</option>\n";
 								$pays=$obj->libelle_pays;
 							}
 						}
@@ -575,14 +575,14 @@ class FormCompany
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
 							print '<option value="'.$obj->rowid.'"';
-							if ($disabled) print ' disabled="true"';
+							if ($disabled) print ' disabled="disabled"';
 							print ' selected="selected">'.dol_trunc($obj->nom,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
 							print '<option value="'.$obj->rowid.'"';
-							if ($disabled) print ' disabled="true"';
+							if ($disabled) print ' disabled="disabled"';
 							print '>'.dol_trunc($obj->nom,24).'</option>';
 						}
 						$i ++;

@@ -90,11 +90,11 @@ class FormFile
             print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
         }
         print '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
-        print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="true"':'');
+        print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
         print '>';
         print ' &nbsp; ';
         print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
-        print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="true"':'');
+        print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
         print '>';
 
         if ($addcancel)
@@ -424,7 +424,7 @@ class FormFile
             $out.= '<td align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton">';
             $out.= '<input class="button" id="'.$forname.'_generatebutton"';
             $out.= ' type="submit" value="'.$buttonlabel.'"';
-            if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $out.= ' disabled="true"';
+            if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $out.= ' disabled="disabled"';
             $out.= '>';
             if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && $modulepart != 'unpaid')
             {

@@ -80,20 +80,20 @@ class FormActions
             print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
             print '}'."\n";
             print '</script>'."\n";
-            print '<select '.($canedit?'':'disabled="true" ').'name="status" id="select'.$htmlname.'" class="flat">';
+            print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
             foreach($listofstatus as $key => $val)
             {
                 print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
-            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="true"').'>';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
             print '<span class="hideifna">%</span>';
             print ' <input type="hidden" name="percentage" value="'.$selected.'">';
         }
         else
         {
-            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled="true"').'>%';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled="disabled"').'>%';
         }
     }
 

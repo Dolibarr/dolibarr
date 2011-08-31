@@ -214,7 +214,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 						}
-						if ($disabled==1) print ' disabled="true"';
+						if ($disabled==1) print ' disabled="disabled"';
 						else $labeltoshow.=' - '.dol_trunc($obj->title,12);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
@@ -327,7 +327,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
 			print $form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
 			print '&nbsp;&nbsp;&nbsp;';
 			print $form->select_duration($lines[$i]->id,'',$disabledtask);
-			print '&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
+			print '&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
             if ($disabledtask) print '('.$langs->trans("TaskIsNotAffectedToYou").')';
 			if ((! $lines[$i]->public) && $disabledproject) print '('.$langs->trans("YouAreNotContactOfProject").')';
 			print '</td>';
@@ -373,9 +373,9 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 	$projectsArrayId=explode(',',$projectsListId);
 
 	$numlines=sizeof($lines);
-	
+
 	$total=0;
-	
+
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -502,7 +502,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 		print '<td></td>';
 		print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td></tr>';
 	}
-	
+
 	return $inc;
 }
 

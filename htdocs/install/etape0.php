@@ -282,7 +282,7 @@ if (! $error && $db->connected)
 					$selected="";
 				}
 				if (! $linedisabled) $nbofchoice++;
-				print '<option value="'.$characterSet['charset'].'" '.$selected.($linedisabled?' disabled="true"':'').'>'.$characterSet['charset'].' ('.$characterSet['description'].')</option>';
+				print '<option value="'.$characterSet['charset'].'" '.$selected.($linedisabled?' disabled="disabled"':'').'>'.$characterSet['charset'].' ('.$characterSet['description'].')</option>';
 			}
 			print '</select>';
 			if ($disabled=="disabled")
@@ -332,7 +332,7 @@ if (! $error && $db->connected)
 					$selected="";
 				}
                 if (! $linedisabled) $nbofchoice++;
-				print '<option value="'.$collation['collation'].'" '.$selected.($linedisabled?' disabled="true"':'').'>'.$collation['collation'].'</option>';
+				print '<option value="'.$collation['collation'].'" '.$selected.($linedisabled?' disabled="disabled"':'').'>'.$collation['collation'].'</option>';
 			}
 			print '</select>';
 			if ($disabled=="disabled"){

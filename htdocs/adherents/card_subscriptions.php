@@ -887,7 +887,7 @@ if ($rowid)
                 if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled)
                 {
                     print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.($bankviainvoice?' checked="checked"':'');
-                    if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="true"';
+                    if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
                     if ($adh->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
                     else
@@ -902,7 +902,7 @@ if ($rowid)
                 if ($conf->societe->enabled && $conf->facture->enabled)
                 {
                     print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.($invoiceonly?' checked="checked"':'');
-                    if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="true"';
+                    if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
                     if ($adh->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
                     else
