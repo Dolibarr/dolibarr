@@ -164,7 +164,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldFullname").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_MEMBER_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFullnameExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_FULLNAME)?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_FULLNAME)?' checked="checked"':'')."></td>";
 print '</tr>';
 
 // Name
@@ -172,7 +172,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_MEMBER_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_NAME"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_NAME)?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_NAME"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_NAME)?' checked="checked"':'')."></td>";
 print '</tr>';
 
 // Firstname
@@ -188,7 +188,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
 print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_MEMBER_FIELD_LOGIN.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_LOGIN"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_LOGIN)?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_LOGIN"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_LOGIN)?' checked="checked"':'')."></td>";
 print '</tr>';
 
 // Login samba
@@ -196,7 +196,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
 print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_MEMBER_FIELD_LOGIN_SAMBA.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_LOGIN_SAMBA"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_LOGIN_SAMBA)?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_LOGIN_SAMBA"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_LOGIN_SAMBA)?' checked="checked"':'')."></td>";
 print '</tr>';
 
 // Password not crypted
@@ -220,7 +220,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
 print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_MEMBER_FIELD_MAIL.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_MAIL"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_MAIL)?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_MAIL"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_MEMBER_FIELD_MAIL)?' checked="checked"':'')."></td>";
 print '</tr>';
 
 // Phone pro

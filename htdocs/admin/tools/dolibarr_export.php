@@ -297,12 +297,12 @@ foreach($compression as $key => $val)
 {
 	if (! $val['function'] || function_exists($val['function']))	// Enabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked="true">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked="checked">';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 	}
 	else	// Disabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="true">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="disabled">';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 		print ' ('.$langs->trans("NotAvailable").')';
 	}

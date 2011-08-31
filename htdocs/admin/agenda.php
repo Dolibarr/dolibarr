@@ -53,7 +53,7 @@ if ($resql)
 		$triggers[$i]['code'] 		= $obj->code;
 		$triggers[$i]['element'] 	= $obj->elementtype;
 		$triggers[$i]['label']		= ($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-		
+
 		$i++;
 	}
 	$db->free($resql);
@@ -133,7 +133,7 @@ if (! empty($triggers))
 			print '<td align="right" width="40">';
 			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 			$value=$conf->global->$key;
-			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($_GET["action"]=='selectall'||$value) && $_GET["action"]!="selectnone")?' checked="true"':'').'>';
+			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($_GET["action"]=='selectall'||$value) && $_GET["action"]!="selectnone")?' checked="checked"':'').'>';
 			print '</td></tr>'."\n";
 		}
 	}
