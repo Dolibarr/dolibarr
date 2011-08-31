@@ -38,12 +38,12 @@ function pdf_getFormat()
     // Default value if setup was not done and/or entry into c_paper_format not defined
     $width=210; $height=297; $unit='mm';
 
-    $pdfformat=$conf->global->MAIN_PDF_FORMAT;
-    if (empty($pdfformat))
+    if (empty($conf->global->MAIN_PDF_FORMAT))
     {
         include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
         $pdfformat=dol_getDefaultFormat();
     }
+    else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
 
 	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
     $sql.=" WHERE code = '".$pdfformat."'";
@@ -53,8 +53,8 @@ function pdf_getFormat()
         $obj=$db->fetch_object($resql);
         if ($obj)
         {
-            $width=$obj->width;
-            $height=$obj->height;
+            $width=(int) $obj->width;
+            $height=(int) $obj->height;
             $unit=$obj->unit;
         }
     }

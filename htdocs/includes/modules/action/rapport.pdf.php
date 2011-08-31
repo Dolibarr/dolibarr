@@ -56,8 +56,9 @@ class CommActionRapport
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=5;
 		$this->marge_droite=5;

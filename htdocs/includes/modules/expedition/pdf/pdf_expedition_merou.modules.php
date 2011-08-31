@@ -53,8 +53,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$this->description = $langs->trans("DocumentModelMerou");
 
 		$this->type = 'pdf';
-		$this->page_largeur = 148.5;
-		$this->page_hauteur = 210;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = round($formatarray['height']/2);
+		$this->page_hauteur = $formatarray['width'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 
 		$this->option_logo = 1;                    // Affiche logo
@@ -315,11 +316,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 
 	/**
-	 *   	\brief      Show header of page
-	 *      \param      pdf             Object PDF
-	 *      \param      object          Object invoice
-	 *      \param      showadress      0=no, 1=yes
-	 *      \param      outputlang		Object lang for output
+	 *   	Show header of page
+	 *
+	 *      @param      pdf             Object PDF
+	 *      @param      object          Object invoice
+	 *      @param      showadress      0=no, 1=yes
+	 *      @param      outputlang		Object lang for output
 	 */
 	function _pagehead(&$pdf, $object, $outputlangs)
 	{
@@ -334,6 +336,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		{
             pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->SENDING_DRAFT_WATERMARK);
 		}
+
+        $posy=$this->marge_haute;
+        $posx=$this->page_largeur-$this->marge_droite-100;
 
 		$Xoff = 90;
 		$Yoff = 0;

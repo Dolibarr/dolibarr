@@ -54,8 +54,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=10;
@@ -717,6 +718,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
 
+        $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche,$posy);
@@ -745,13 +747,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		//}
 
 		$pdf->SetFont('','B', $default_font_size + 3);
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SupplierInvoice")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 		$pdf->SetFont('','', $default_font_size + 2);
 
 		$posy+=6;
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		if ($object->date)
 		{
 			$pdf->SetTextColor(0,0,60);
@@ -798,8 +800,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY(100,$posy-5);
-			$pdf->MultiCell(96, 4, $outputlangs->transnoentities("Supplier").":");
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Supplier").":");
 			//
 			$client = new Societe($this->db);
 			$client->fetch($object->socid);

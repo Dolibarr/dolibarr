@@ -51,8 +51,9 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$this->description = $langs->trans("DocumentModelSimple");
 
 		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$formatarray=pdf_getFormat();
+		$this->page_largeur = $formatarray['width'];
+		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=10;
 		$this->marge_droite=10;
@@ -314,6 +315,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
 
+        $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche,$posy);
@@ -370,7 +372,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$posy=$this->marge_haute;
 
 		$pdf->SetFont('','B', $default_font_size + 3);
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("SendingSheet");
 		$pdf->MultiCell(100, 4, $title, '' , 'R');
@@ -379,20 +381,20 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->SetFont('','', $default_font_size + 2);
 
 		$posy+=5;
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
 
 		//Date Expedition
 		$posy+=5;
-		$pdf->SetXY(100,$posy);
+		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_delivery,"%d %b %Y",false,$outputlangs,true), '', 'R');
 
 		if (! empty($object->client->code_client))
 		{
 			$posy+=5;
-			$pdf->SetXY(100,$posy);
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
