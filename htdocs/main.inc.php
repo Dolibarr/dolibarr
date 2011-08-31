@@ -168,9 +168,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	// Other
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 	//$conf->browser->phone='android';
-
-    // Force usage of left menu when smartphone is used
-	if ($conf->browser->phone && ! empty($conf->global->MAIN_MENU_FORCE_USE_JQUERY_LAYOUT)) $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
 }
 
 
@@ -643,6 +640,8 @@ if (! defined('NOLOGIN'))
 		$conf->theme=$user->conf->MAIN_THEME;
 		$conf->css  = "/theme/".$conf->theme."/style.css.php";
 	}
+	// If theme support flip-hide left menu and we use a smartphone, we force it
+	if ($conf->browser->phone && $conf->theme == 'eldy') $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
 	// Set javascript option
     if (! GETPOST('nojs'))   // If javascript was not disabled on URL
     {
@@ -1113,7 +1112,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						//togglerLength_open: 0,
 						//	effect defaults - overridden on some panes
 						//slideTrigger_open:	"mouseover",
-						//initClosed:	true,
+						initClosed:	'.(empty($conf->browser->phone)?'false':'true').',
 						fxName:	"drop",
 						fxSpeed: "fast",
 						fxSettings: { easing: "" }
