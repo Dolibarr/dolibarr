@@ -90,7 +90,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$type='shipping';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -107,13 +107,13 @@ if ($action == 'del')
 {
 	$type='shipping';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$value."'";
+	$sql.= " WHERE nom = '".$db->escape($value)."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 
 	if ($db->query($sql))
 	{
-
+        if ($conf->global->EXPEDITION_ADDON_PDF == "$value") dolibarr_del_const($db, 'EXPEDITION_ADDON_PDF',$conf->entity);
 	}
 }
 
@@ -122,7 +122,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$db->begin();
 
 	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -157,7 +157,7 @@ if ($action == 'setdoc')
 // TODO A quoi servent les methode d'expedition ?
 if ($action == 'setmethod' || $action== 'setmod')
 {
-	$module=GETPOST("module"); 
+	$module=GETPOST("module");
 	$moduleid=GETPOST("moduleid");
 	$statut=GETPOST("statut");
 
@@ -229,11 +229,11 @@ if ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
-	
-	$module=GETPOST("module"); 
-	
+
+	$module=GETPOST("module");
+
     dolibarr_set_const($db, "EXPEDITION_ADDON",$module,'chaine',0,'',$conf->entity);
-	
+
 }
 
 if ($action == 'updateMask')
@@ -241,7 +241,7 @@ if ($action == 'updateMask')
 	$maskconst=GETPOST("maskconstexpedition");
 	$maskvalue=GETPOST("maskexpedition");
 	if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -263,7 +263,7 @@ if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
 {
 	$draft=GETPOST("SHIPPING_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -343,7 +343,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -479,7 +479,7 @@ print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80" nowrap="nowrap">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -516,16 +516,16 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			if (in_array($name, $def))
 	    			{
 	    				print "<td align=\"center\">\n";
-	    				if ($conf->global->EXPEDITION_ADDON_PDF != $name)
-	    				{
+	    				//if ($conf->global->EXPEDITION_ADDON_PDF != $name)
+	    				//{
 	    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
 	    					print img_picto($langs->trans("Activated"),'switch_on');
 	    					print '</a>';
-	    				}
-	    				else
-	    				{
-	    					print img_picto($langs->trans("Activated"),'switch_on');
-	    				}
+	    				//}
+	    				//else
+	    				//{
+	    				//	print img_picto($langs->trans("Activated"),'switch_on');
+	    				//}
 	    				print "</td>";
 	    			}
 	    			else
@@ -539,11 +539,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			print "<td align=\"center\">";
 	    			if ($conf->global->EXPEDITION_ADDON_PDF == $name)
 	    			{
-	    				print img_picto($langs->trans("Default"),'switch_on');
+	    				print img_picto($langs->trans("Default"),'on');
 	    			}
 	    			else
 	    			{
-	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	    			}
 	    			print '</td>';
 
@@ -554,10 +554,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 	    			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 	    			print '<td align="center">';
-	    			print $html->textwithpicto('',$htmltooltip,1,0);
-	    			print '</td>';
-	    			print '<td align="center">';
-	    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"),'sending').'</a>';
+	    			$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"),'sending').'</a>';
+	    			print $html->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
 	    			print '</td>';
 
 	    			print '</tr>';

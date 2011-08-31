@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -48,7 +48,7 @@ if ($action == 'updateMask')
 	$maskconstdelivery=GETPOST("maskconstdelivery");
 	$maskdelivery=GETPOST("maskdelivery");
 	if ($maskconstdelivery)  $res = dolibarr_set_const($db,$maskconstdelivery,$maskdelivery,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -64,7 +64,7 @@ if ($action == 'updateMask')
 if ($action == 'specimen')
 {
 	$modele=GETPOST("module");
-	
+
 	$sending = new Livraison($db);
 	$sending->initAsSpecimen();
 	//$sending->fetch_commande();
@@ -101,7 +101,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$type='delivery';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -110,7 +110,6 @@ if ($action == 'set')
     $sql.= ")";
     if ($db->query($sql))
     {
-
     }
 }
 
@@ -118,13 +117,13 @@ if ($action == 'del')
 {
     $type='delivery';
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql.= " WHERE nom = '".$value."'";
+    $sql.= " WHERE nom = '".$db->escape($value)."'";
     $sql.= " AND type = '".$type."'";
     $sql.= " AND entity = ".$conf->entity;
 
     if ($db->query($sql))
     {
-
+        if ($conf->global->LIVRAISON_ADDON_PDF == "$value") dolibarr_del_const($db, 'LIVRAISON_ADDON_PDF',$conf->entity);
     }
 }
 
@@ -167,7 +166,7 @@ if ($action == 'set_DELIVERY_FREE_TEXT')
 {
 	$free=GETPOST("DELIVERY_FREE_TEXT");
     $res=dolibarr_set_const($db, "DELIVERY_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
-	
+
     if (! $res > 0) $error++;
 
  	if (! $error)
@@ -273,7 +272,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
                         // Show example of numbering module
                         print '<td nowrap="nowrap">';
                         $tmp=$module->getExample();
-                        if (preg_match('/^Error/',$tmp)) 
+                        if (preg_match('/^Error/',$tmp))
                         {
                         	$langs->load("errors");
                         	print $langs->trans($tmp);
@@ -402,16 +401,16 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			if (in_array($name, $def))
 	    			{
 	    				print "<td align=\"center\">\n";
-	    				if ($conf->global->LIVRAISON_ADDON_PDF != "$name")
-	    				{
+	    				//if ($conf->global->LIVRAISON_ADDON_PDF != "$name")
+	    				//{
 	    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 	    					print img_picto($langs->trans("Enabled"),'switch_on');
 	    					print '</a>';
-	    				}
-	    				else
-	    				{
-	    					print img_picto($langs->trans("Enabled"),'switch_on');
-	    				}
+	    				//}
+	    				//else
+	    				//{
+	    				//	print img_picto($langs->trans("Enabled"),'switch_on');
+	    				//}
 	    				print "</td>";
 	    			}
 	    			else
@@ -425,11 +424,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			print "<td align=\"center\">";
 	    			if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
 	    			{
-	    				print img_picto($langs->trans("Default"),'switch_on');
+	    				print img_picto($langs->trans("Default"),'on');
 	    			}
 	    			else
 	    			{
-	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	    			}
 	    			print '</td>';
 

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 /**
  *  \file       htdocs/admin/project.php
  *  \ingroup    project
- *  \brief      Page d'administration-configuration du module Projet
+ *  \brief      Page to setup project module
  */
 
 require("../main.inc.php");
@@ -32,6 +33,9 @@ $langs->load("projects");
 
 if (!$user->admin)
 accessforbidden();
+
+$value=GETPOST('value');
+$action=GETPOST('action');
 
 
 /*
@@ -98,12 +102,12 @@ if ($_GET["action"] == 'del')
 {
 	$type='project';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$_GET["value"]."'";
+	$sql.= " WHERE nom = '".$db->escape($value)."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 	if ($db->query($sql))
 	{
-
+        if ($conf->global->PROJECT_ADDON_PDF == "$value") dolibarr_del_const($db, 'PROJECT_ADDON_PDF',$conf->entity);
 	}
 }
 
@@ -174,7 +178,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -215,11 +219,11 @@ if (is_resource($handle))
 				print '<td align="center">';
 				if ($conf->global->PROJECT_ADDON == "$file")
 				{
-					print img_picto($langs->trans("Activated"),'on');
+					print img_picto($langs->trans("Activated"),'switch_on');
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 				}
 				print '</td>';
 
@@ -297,7 +301,7 @@ print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -326,22 +330,22 @@ if (is_resource($handle))
     		if (in_array($name, $def))
     		{
     			print "<td align=\"center\">\n";
-    			if ($conf->global->PROJECT_ADDON_PDF != "$name")
-    			{
+    			//if ($conf->global->PROJECT_ADDON_PDF != "$name")
+    			//{
     				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-    				print img_picto($langs->trans("Enabled"),'on');
+    				print img_picto($langs->trans("Enabled"),'switch_on');
     				print '</a>';
-    			}
-    			else
-    			{
-    				print img_picto($langs->trans("Enabled"),'on');
-    			}
+    			//}
+    			//else
+    			//{
+    			//	print img_picto($langs->trans("Enabled"),'on');
+    			//}
     			print "</td>";
     		}
     		else
     		{
     			print "<td align=\"center\">\n";
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
     			print "</td>";
     		}
 
@@ -364,10 +368,8 @@ if (is_resource($handle))
     		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
     		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
     		print '<td align="center">';
-    		print $html->textwithpicto('',$htmltooltip,1,0);
-    		print '</td>';
-    		print '<td align="center">';
-    		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+    		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+    		print $html->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
     		print '</td>';
 
     		print "</tr>\n";
