@@ -26,12 +26,13 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php');
 
 $langs->load("admin");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("contracts");
+$langs->load("errors");
 
 if (!$user->admin)
 accessforbidden();
+
+$action = GETPOST("action");
+$value = GETPOST("value");
 
 if (empty($conf->global->CONTRACT_ADDON))
 {
@@ -43,24 +44,36 @@ if (empty($conf->global->CONTRACT_ADDON))
  * Actions
  */
 
-if ($_POST["action"] == 'updateMask')
+if ($action == 'updateMask')
 {
 	$maskconst=$_POST['maskconstcontract'];
 	$maskvalue=$_POST['maskcontract'];
-	if ($maskconst) dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
+	if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
-if ($_GET["action"] == 'setmod')
+if ($action == 'setmod')
 {
-	dolibarr_set_const($db, "CONTRACT_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
+/*
 // constants of magre model
-if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "CONTRACT_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "CONTRACT_NUM_PREFIX",$_POST["prefix"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "CONTRACT_NUM_DELTA",$_POST["offset"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "CONTRACT_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
-
+if ($action == 'updateMatrice') dolibarr_set_const($db, "CONTRACT_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
+if ($action == 'updatePrefix') dolibarr_set_const($db, "CONTRACT_NUM_PREFIX",$_POST["prefix"],'chaine',0,'',$conf->entity);
+if ($action == 'setOffset') dolibarr_set_const($db, "CONTRACT_NUM_DELTA",$_POST["offset"],'chaine',0,'',$conf->entity);
+if ($action == 'setNumRestart') dolibarr_set_const($db, "CONTRACT_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
+*/
 
 /*
  * View
@@ -127,12 +140,12 @@ if (is_resource($handle))
 				print '<td align="center">';
 				if ($conf->global->CONTRACT_ADDON == "$file")
 				{
-					print img_picto($langs->trans("Activated"),'on');
+					print img_picto($langs->trans("Activated"),'switch_on');
 				}
 				else
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-					print img_picto($langs->trans("Disabled"),'off');
+					print img_picto($langs->trans("Disabled"),'switch_off');
 					print '</a>';
 				}
 				print '</td>';
@@ -170,6 +183,9 @@ if (is_resource($handle))
 }
 
 print '</table><br>';
+
+dol_htmloutput_mesg($mesg);
+
 $db->close();
 
 llxFooter();

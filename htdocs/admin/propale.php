@@ -33,9 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 
 $langs->load("admin");
-$langs->load("bills");
-$langs->load("propal");
-$langs->load("other");
+$langs->load("errors");
 
 if (!$user->admin)
 accessforbidden();

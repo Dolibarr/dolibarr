@@ -33,9 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 
 $langs->load("admin");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("orders");
+$langs->load("errors");
 
 if (!$user->admin)
 accessforbidden();
@@ -49,8 +47,9 @@ $value = GETPOST("value");
 
 if ($action == 'updateMask')
 {
-	$maskconstorder=$_POST['maskconstorder'];
-	$maskorder=$_POST['maskorder'];
+	$maskconstorder=GETPOST("maskconstorder");
+	$maskorder=GETPOST("maskorder");
+	
 	if ($maskconstorder) $res = dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
 	
 	if (! $res > 0) $error++;
@@ -67,7 +66,7 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')
 {
-	$modele=$_GET["module"];
+	$modele=GETPOST("module");
 
 	$commande = new Commande($db);
 	$commande->initAsSpecimen();
