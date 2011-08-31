@@ -25,7 +25,7 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("orders");
-echo '<br />';
+echo '<br>';
 print_titre($langs->trans('RelatedOrders'));
 
 ?>

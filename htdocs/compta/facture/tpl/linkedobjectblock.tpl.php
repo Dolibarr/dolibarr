@@ -25,7 +25,7 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
-echo '<br />';
+echo '<br>';
 if ($num > 1) print_titre($langs->trans("RelatedBills"));
 else print_titre($langs->trans("RelatedBill"));
 ?>

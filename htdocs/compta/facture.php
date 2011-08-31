@@ -918,7 +918,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
             }
 
             $desc = $prod->description;
-            $desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
+            $desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br>\n":"\n") : "";
             $desc.= $_POST['np_desc'];
             if (! empty($prod->customcode) || ! empty($prod->country_code))
             {
@@ -927,7 +927,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
                 if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
                 if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
                 $tmptxt.=')';
-                $desc.= (dol_textishtml($desc)?"<br />\n":"\n").$tmptxt;
+                $desc.= (dol_textishtml($desc)?"<br>\n":"\n").$tmptxt;
             }
             $type = $prod->type;
         }
@@ -1630,13 +1630,13 @@ if ($action == 'create')
     // Credit note
     print '<tr height="18"><td valign="middle">';
     print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
-    if (! $optionsav) print ' disabled="true"';
+    if (! $optionsav) print ' disabled="disabled"';
     print '>';
     print '</td><td valign="middle">';
     $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
     //	$text.='<input type="text" value="">';
     $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
-    if (! $optionsav) $text.=' disabled="true"';
+    if (! $optionsav) $text.=' disabled="disabled"';
     $text.='>';
     if ($optionsav)
     {

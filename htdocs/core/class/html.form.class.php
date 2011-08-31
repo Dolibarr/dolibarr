@@ -919,7 +919,7 @@ class Form
             $this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
         }
 
-        print '<br />';
+        print '<br>';
     }
 
     /**

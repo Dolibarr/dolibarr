@@ -700,7 +700,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			}
 
 			$desc = $prod->description;
-			$desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
+			$desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br>\n":"\n") : "";
 			$desc.= $_POST['np_desc'];
 			$type = $prod->type;
 		}
@@ -1398,7 +1398,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</tr>';
 	}
-	
+
 	// Insert hooks
 	$parameters=array('colspan'=>' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

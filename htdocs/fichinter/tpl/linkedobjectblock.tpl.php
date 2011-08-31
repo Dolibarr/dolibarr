@@ -25,7 +25,7 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("interventions");
-echo '<br />';
+echo '<br>';
 print_titre($langs->trans('RelatedInterventions'));
 
 ?>

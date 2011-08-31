@@ -25,11 +25,8 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <!-- <!DOCTYPE html> -->
 <!-- Ce DTD est KO car inhibe document.body.scrollTop -->
 <!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
-
 <!-- BEGIN PHP TEMPLATE -->
-
 <html>
-<!-- <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr"> -->
 <head>
 <meta name="robots" content="noindex,nofollow" />
 <title><?php echo $langs->trans('Login'); ?></title>
@@ -143,7 +140,7 @@ jQuery(document).ready(function () {
 
 <tr><td colspan="3">&nbsp;</td></tr>
 
-<tr><td colspan="3" style="text-align:center;"><br />
+<tr><td colspan="3" style="text-align:center;"><br>
 <input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 </td></tr>
 
@@ -186,7 +183,7 @@ jQuery(document).ready(function () {
 		<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750">
 		<tr><td align="center">
 		<?php echo $main_home; ?>
-		</td></tr></table></center><br />
+		</td></tr></table></center><br>
 	<?php } ?>
 
 	<?php
