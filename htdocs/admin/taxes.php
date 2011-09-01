@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,22 +28,17 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load('admin');
-$langs->load('compta');
-$langs->load('taxes');
 
 if (!$user->admin)
   accessforbidden();
 
+$action = GETPOST("action");
 
 /*
- * View
+ * Actions
  */
 
-llxHeader();
-
-
 // 0=normal, 1=option vat for services is on debit
-$tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 
 // TAX_MODE=0 (most cases):
 //              Buy                     Sell
@@ -54,29 +50,44 @@ $tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 // Product      On delivery             On delivery
 // Service      On invoice              On invoice
 
+$tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 
-if ($_POST['action'] == 'settaxmode')
+if ($action == 'settaxmode')
 {
-  $tax_mode = $_POST['tax_mode'];
-  if (! dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity)) { print $db->error(); }
-
-  if ($tax_mode == 0)
-  {
-      if (! dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
-      if (! dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
-      if (! dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', 'payment','chaine',0,'',$conf->entity)) { print $db->error(); }
-      if (! dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', 'payment','chaine',0,'',$conf->entity)) { print $db->error(); }
-  }
-  if ($tax_mode == 1)
-  {
-      if (! dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
-      if (! dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
-      if (! dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
-      if (! dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
-  }
+	$tax_mode = GETPOST("tax_mode");
+  
+	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;	
+	
+	switch ($tax_mode) 
+	{
+    	case 0:
+        	$value = 'payment';
+        	break;
+    	case 1:
+        	$value = 'invoice';
+        	break;
+	}
+	
+	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $value,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	
+	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+	
 
 }
 
+/*
 if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 {
 	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
@@ -92,12 +103,14 @@ if ($_GET['action'] == 'delete')
 	  	print $db->error();
 	}
 }
+*/
 
 
 /*
- * Affichage page
+ * View
  */
 
+llxHeader();
 $html=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -177,6 +190,8 @@ else
 
 	print '</table>';
 }
+
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 
