@@ -44,7 +44,7 @@ if ($action == 'update')
     $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$_POST["MEMBER_ENABLE_PUBLIC"],'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$_POST["MEMBER_NEWFORM_AMOUNT"],'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$_POST["MEMBER_NEWFORM_EDITAMOUNT"],'chaine',0,'',$conf->entity);
-    $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$_POST["MEMBER_NEWFORM_PAYONLINE"],'chaine',0,'',$conf->entity);
+    $$res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$_POST["MEMBER_NEWFORM_PAYONLINE"],'chaine',0,'',$conf->entity);
     
     if (! $res > 0) $error++;
 
