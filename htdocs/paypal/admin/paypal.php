@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ if ($conf->use_javascript_ajax)
                 $("#apidoca").hide();
                 $("#apidoc").show();
             });
-            
+
             $("#generate_token").click(function() {
             	$.get( "'.DOL_URL_ROOT.'/core/ajaxsecurity.php", {
             		action: \'getrandompassword\',
@@ -212,6 +212,8 @@ print '</td></tr>';
 
 print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
+
+dol_fiche_end();
 
 print '<br><br>';
 
