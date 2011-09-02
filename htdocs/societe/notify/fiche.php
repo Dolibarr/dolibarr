@@ -33,12 +33,8 @@ $langs->load("mails");
 $langs->load("admin");
 $langs->load("other");
 
-$socid = GETPOST("socid",'int');
-$action = GETPOST('action');
-$contactid=GETPOST('contactid');    // May be an int or 'thirdparty'
-$actionid=GETPOST('actionid');
-
 // Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
@@ -54,11 +50,11 @@ if (! $sortfield) $sortfield="c.name";
 
 
 /*
- * Actions
+ * Action
  */
 
 // Add a notification
-if ($action == 'add')
+if ($_POST["action"] == 'add')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 	$sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$_POST["contactid"]." AND fk_action=".$_POST["actionid"];
@@ -83,7 +79,7 @@ if ($action == 'add')
 }
 
 // Remove a notification
-if ($action == 'delete')
+if ($_GET["action"] == 'delete')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
 	$db->query($sql);
@@ -100,9 +96,9 @@ $form = new Form($db);
 llxHeader();
 
 $soc = new Societe($db);
-$result=$soc->fetch($socid);
+$soc->id = $socid;
 
-if ($result > 0)
+if ( $soc->fetch($soc->id) )
 {
 	$html = new Form($db);
 	$langs->load("other");
@@ -165,12 +161,11 @@ if ($result > 0)
 	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'"width="45%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),"fiche.php","",'',$param,'"width="10%"',$sortfield,$sortorder);
-	print_liste_field_titre('');
+	print '<td>&nbsp;</td>';
 	print '</tr>';
 
 	$var=false;
-	$listofemails=$soc->thirdparty_and_contact_email_array();
-	if (count($listofemails) > 0)
+	if (count($soc->thirdparty_and_contact_email_array()) > 0)
 	{
 	    $actions=array();
 
@@ -185,7 +180,7 @@ if ($result > 0)
         }
 		print '<input type="hidden" name="action" value="add">';
 		print '<tr '.$bc[$var].'><td>';
-		print $html->selectarray("contactid",$listofemails);
+		print $html->selectarray("contactid",$soc->thirdparty_and_contact_email_array());
 		print '</td>';
 		print '<td>';
 		print $html->selectarray("actionid",$actions,'',1);
@@ -350,7 +345,6 @@ if ($result > 0)
 
 	print '</table>';
 }
-else dol_print_error('','RecordNotFound');
 
 $db->close();
 
