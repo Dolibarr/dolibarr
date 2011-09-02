@@ -1545,14 +1545,16 @@ class Societe extends CommonObject
 
     /**
      *    Return list of contacts emails existing for third party
-     *    @return     array       Array of contacts emails
+     *
+     *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email
+     *    @return     array       					Array of contacts emails
      */
-    function thirdparty_and_contact_email_array()
+    function thirdparty_and_contact_email_array($addthirdparty=0)
     {
         global $langs;
 
         $contact_emails = $this->contact_property_array('email');
-        if ($this->email)
+        if ($this->email && $addthirdparty)
         {
             if (empty($this->name)) $this->name=$this->nom;
             // TODO: Tester si email non deja present dans tableau contact
@@ -1563,6 +1565,7 @@ class Societe extends CommonObject
 
     /**
      *    Return list of contacts mobile phone existing for third party
+     *
      *    @return     array       Array of contacts emails
      */
     function thirdparty_and_contact_phone_array()
@@ -1581,6 +1584,7 @@ class Societe extends CommonObject
 
     /**
      *    Return list of contacts emails or mobile existing for third party
+     *
      *    @param        mode        'email' or 'mobile'
      *    @return       array       Array of contacts emails or mobile
      */
@@ -1591,6 +1595,7 @@ class Societe extends CommonObject
         $sql = "SELECT rowid, email, phone_mobile, name, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE fk_soc = '".$this->id."'";
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1617,8 +1622,9 @@ class Societe extends CommonObject
 
 
     /**
-     *    \brief      Renvoie la liste des contacts de cette societe
-     *    \return     array      tableau des contacts
+     *    Renvoie la liste des contacts de cette societe
+     *
+     *    @return     array      tableau des contacts
      */
     function contact_array()
     {
@@ -1649,6 +1655,7 @@ class Societe extends CommonObject
 
     /**
      *    Return property of contact from its id
+     *
      *    @param      rowid       id of contact
      *    @param      mode        'email' or 'mobile'
      *    @return     string      email of contact
@@ -1684,7 +1691,9 @@ class Societe extends CommonObject
 
 
     /**
-     *    \brief      Affiche le rib
+     *    Return bank number property of thirdparty
+     *
+     *    @return	string		Bank number
      */
     function display_rib()
     {
