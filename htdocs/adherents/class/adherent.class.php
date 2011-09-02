@@ -116,9 +116,8 @@ class Adherent extends CommonObject
 
 
     /**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$DB		Database handler
+     *	Adherent
+     *	@param DB		base de donnees
      */
     function Adherent($DB)
     {

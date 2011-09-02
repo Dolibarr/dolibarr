@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/compta/prelevement/class/ligne-prelevement.class.php
+ *  \file       htdocs/compta/prelevement/ligne-prelevement.class.php
  *  \ingroup    prelevement
  *  \brief      Fichier de la classe des lignes de prelevements
  */
@@ -46,12 +46,12 @@ class LignePrelevement
 	function LignePrelevement($DB, $user)
 	{
 		global $conf,$langs;
-
+		
 		$this->db = $DB ;
 		$this->user = $user;
 
 		// List of language codes for status
-
+		
 		$langs->load("withdrawals");
 		$this->statuts[0]=$langs->trans("StatusWaiting");
 		$this->statuts[2]=$langs->trans("StatusCredited");
@@ -107,7 +107,7 @@ class LignePrelevement
 
 		return $result;
 	}
-
+	
 /**
 	 *    Return status label of object
 	 *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
@@ -132,7 +132,7 @@ class LignePrelevement
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-
+		
 		if ($mode == 1)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
@@ -145,7 +145,7 @@ class LignePrelevement
 			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
 			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut8');
 		}
-
+		
 		if ($mode == 3)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
