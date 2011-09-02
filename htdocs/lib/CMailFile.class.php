@@ -234,7 +234,7 @@ class CMailFile
 			// Use SMTPS library
 			// ------------------------------------------
 
-			require_once(DOL_DOCUMENT_ROOT."/core/class/smtps.class.php");
+			require_once(DOL_DOCUMENT_ROOT."/core/class/smtps.php");
 			$smtps = new SMTPs();
 			$smtps->setCharSet($conf->file->character_set_client);
 

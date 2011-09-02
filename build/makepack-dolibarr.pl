@@ -464,24 +464,24 @@ if ($nboftargetok) {
     		$cmd="cp -pr '$BUILDROOT/$PROJECT' '$BUILDROOT/$FILENAMETGZ2'";
             $ret=`$cmd`;
 			
-#			print "Fix filefunc.inc.php, install/inc.php, support/inc.php\n";
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/filefunc.inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/filefunc.inc.php\"";
-#			$ret=`$cmd`;
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/install/inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/install/inc.php\"";
-#			$ret=`$cmd`;
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/support/inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/support/inc.php\"";
-#			$ret=`$cmd`;
-				
- 			#print "Remove other files\n";
+			print "Fix filefunc.inc.php, install/inc.php, support/inc.php\n";
+			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/filefunc.inc.php\" | 
+					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
+					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
+					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/filefunc.inc.php\"";
+			$ret=`$cmd`;
+			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/install/inc.php\" | 
+					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
+					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
+					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/install/inc.php\"";
+			$ret=`$cmd`;
+			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/support/inc.php\" | 
+					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
+					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
+					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/support/inc.php\"";
+			$ret=`$cmd`;
+	
+ 			print "Remove other files\n";
             #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/ChangeLog`;
             #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/COPYING`;
             #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/INSTALL`;
@@ -503,13 +503,13 @@ if ($nboftargetok) {
             #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/zip`;
             #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/perl`;
             # We remove embedded libraries or fonts
-            #if ($target !~ /GENE/i) 
-            #{            
-			#	$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/artichow/font`,
-			#	$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/fonts`,
-            #}
+            if ($target !~ /GENE/i) 
+            {            
+				$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/artichow/font`,
+				$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/fonts`,
+            }
             #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip/gnu-lgpl.txt`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip/gnu-lgpl.txt`;
 
 			# Conf files
     		#print "Copy config files into $BUILDROOT/$FILENAMETGZ2/etc/$PROJECT\n";
@@ -570,9 +570,6 @@ if ($nboftargetok) {
             close SPECFROM;
             close SPECTO;
     
-    		print "Copy patch file to $RPMDIR/SOURCES\n";
-    		$ret=`cp "$SOURCE/build/rpm/dolibarr-forrpm.patch" "$RPMDIR/SOURCES"`;
-
     		print "Launch RPM build (rpmbuild --clean -ba $BUILDROOT/${BUILDFIC})\n";
     		#$ret=`rpmbuild -vvvv --clean -ba $BUILDROOT/${BUILDFIC}`;
     		$ret=`rpmbuild --clean -ba $BUILDROOT/${BUILDFIC}`;
