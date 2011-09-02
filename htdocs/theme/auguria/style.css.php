@@ -1248,7 +1248,6 @@ th.liste_titre, td.liste_titre
     font-weight: normal;
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
-    text-align: <?php echo $left; ?>;
 }
 th.liste_titre_sel, td.liste_titre_sel
 {
@@ -1261,7 +1260,6 @@ th.liste_titre_sel, td.liste_titre_sel
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
-    text-align: <?php echo $left; ?>;
 }
 input.liste_titre {
 background: transparent;

@@ -1355,7 +1355,6 @@ th.liste_titre, td.liste_titre
 	padding-left: 6px;
     padding-right: 6px;
     /*vertical-align: text-top;*/
-    text-align: <?php echo $left; ?>;
 }
 th.liste_titre_sel, td.liste_titre_sel
 {
@@ -1363,7 +1362,6 @@ th.liste_titre_sel, td.liste_titre_sel
     color: #A51B00;
     font-weight: bold;
     white-space: nowrap;
-    text-align: <?php echo $left; ?>;
 }
 
 input.liste_titre {
