@@ -58,10 +58,10 @@ function dol_shutdown()
 /**
  *  Return value of a param into GET or POST supervariable
  *
- *  @param          string	$paramname   Name of parameter to found
- *  @param			string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
- *  @param			int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return         string      		 Value found or '' if check fails
+ *  @param          paramname   Name of parameter to found
+ *  @param			check		Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
+ *  @param			method		Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ *  @return         string      Value found or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -88,7 +88,7 @@ function GETPOST($paramname,$check='',$method=0)
  *  This prefix is unique for instance and avoid conflict between multi-instances,
  *  even when having two instances with one root dir or two instances in virtual servers
  *
- *  @return         string      		A calculated prefix
+ *  @return         string      A calculated prefix
  */
 function dol_getprefix()
 {
@@ -102,8 +102,8 @@ function dol_getprefix()
  *  To link to a module file from a module file, use include('./mymodulefile');
  *  To link to a module file from a core file, then this function can be used
  *
- * 	@param			string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
- *  @return         int					false if include fails.
+ * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ *  @return         int			false if include fails.
  */
 function dol_include_once($relpath)
 {
@@ -115,9 +115,9 @@ function dol_include_once($relpath)
 /**
  *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails
  *
- * 	@param			string	$path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
- *  @param			int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
- *  @return         string				Full filsystem path (if mode=0), Full url path (if mode=1)
+ * 	@param			path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
+ *  @param			type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
+ *  @return         string		Full filsystem path (if mode=0), Full url path (if mode=1)
  */
 function dol_buildpath($path,$type=0)
 {
@@ -168,8 +168,8 @@ function dol_buildpath($path,$type=0)
  *	Create a clone of instance of object (new instance with same properties)
  * 	This function works for both PHP4 and PHP5
  *
- * 	@param			object	$object		Object to clone
- *	@return         object				Object clone
+ * 	@param			object		Object to clone
+ *	@return         date		Timestamp
  */
 function dol_clone($object)
 {
@@ -187,11 +187,11 @@ function dol_clone($object)
 /**
  *	Optimize a size for some browsers (phone, smarphone, ...)
  *
- * 	@param			int		$size		Size we want
- * 	@param			string	$type		Type of optimizing:
- * 										'' = function used to define a size for truncation
- * 										'width' = function is used to define a width
- *	@return         int					New size after optimizing
+ * 	@param			size		Size we want
+ * 	@param			type		Type of optimizing:
+ * 								'' = function used to define a size for truncation
+ * 								'width' = function is used to define a width
+ *	@return         int			New size after optimizing
  */
 function dol_size($size,$type='')
 {
@@ -318,8 +318,8 @@ function dol_string_nospecial($str,$newstr='_',$badchars='')
 /**
  *  Returns text escaped for inclusion into javascript code
  *
- *  @param       string		$stringtoescape		String to escape
- *  @return      string     		 			Escaped string
+ *  @param       $stringtoescape	String to escape
+ *  @return      string      		Escaped string
  */
 function dol_escape_js($stringtoescape)
 {
@@ -332,9 +332,9 @@ function dol_escape_js($stringtoescape)
 /**
  *  Returns text escaped for inclusion in HTML alt or title tags
  *
- *  @param      string		$stringtoescape		String to escape
- *  @param		int			$keepb				Do not clean b tags
- *  @return     string     				 		Escaped string
+ *  @param      $stringtoescape		String to escape
+ *  @param		$keepb				Do not clean b tags
+ *  @return     string      		Escaped string
  */
 function dol_escape_htmltag($stringtoescape,$keepb=0)
 {
@@ -358,8 +358,8 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *	On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  *
- * 	@param      string		$message	  Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *	@param      int			$level        Log level
+ * 	@param      string		message		 Line to log. Ne doit pas etre traduit si level = LOG_ERR
+ *	@param      int			level        Log level
  */
 function dol_syslog($message, $level=LOG_INFO)
 {
@@ -469,7 +469,6 @@ function dol_syslog($message, $level=LOG_INFO)
 
 /**
  *	Show tab header of a card
- *
  *	@param	    links		Array of tabs
  *	@param	    active      Active tab name
  *	@param      title       Title
@@ -483,7 +482,6 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
 
 /**
  *  Show tab header of a card
- *
  *  @param      links       Array of tabs
  *  @param      active      Active tab name
  *  @param      title       Title
@@ -550,8 +548,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 /**
  *  Show tab footer of a card
- *
- *  @param      int		$notab       0=Add tab footer, 1=no tab footer
+ *  @param      notab       0=Add tab footer, 1=no tab footer
  */
 function dol_fiche_end($notab=0)
 {
@@ -560,8 +557,7 @@ function dol_fiche_end($notab=0)
 
 /**
  *	Return tab footer of a card
- *
- *	@param      int		$notab		0=Add tab footer, 1=no tab footer
+ *	@param      notab		0=Add tab footer, 1=no tab footer
  */
 function dol_get_fiche_end($notab=0)
 {
@@ -578,8 +574,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
 
 /**
  *	Output date in a string format according to outputlangs (or langs if not defined).
- * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset
- *
+ * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset.
  *	@param	    time        	GM Timestamps date (or deprecated strings 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
  *	@param	    format      	Output date format
  *								"%d %b %Y",
@@ -726,7 +721,6 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 
 /**
  *	Convert a string date into a GM Timestamps date
- *
  *	@param		string			Date in a string
  *				                YYYYMMDD
  *	                 			YYYYMMDDHHMMSS
@@ -777,8 +771,7 @@ function dol_stringtotime($string, $gm=1)
 
 /**
  *	Return an array with date info
- *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *
+ *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows.
  *	@param		timestamp		Timestamp
  *	@param		fast			Fast mode
  *	@return		array			Array of informations
@@ -832,7 +825,6 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	Return a timestamp date built from detailed informations (by default a local PHP server timestamp)
  * 	Replace function mktime not available under Windows if year < 1970
  *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *
  * 	@param		hour			Hour	(can be -1 for undefined)
  *	@param		minute			Minute	(can be -1 for undefined)
  *	@param		second			Second	(can be -1 for undefined)
@@ -898,7 +890,6 @@ function dolibarr_date($fmt, $timestamp, $gm=false)
 
 /**
  *	Returns formated date
- *
  *	@param		fmt				Format (Exemple: 'Y-m-d H:i:s')
  *	@param		timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
  *	@param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
@@ -926,7 +917,6 @@ function dol_date($fmt, $timestamp, $gm=false)
 
 /**
  * Return string with formated size
- *
  * @param		size		Size to print
  * @param		shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
  * @param		shortunit	Use short value of size unit
@@ -959,7 +949,6 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
 
 /**
  * Show Url link
- *
  * @param		url			Url to show
  * @param		target		Target for link
  * @param		max			Max number of characters to show
@@ -981,7 +970,6 @@ function dol_print_url($url,$target='_blank',$max=32)
 
 /**
  * Show EMail link
- *
  * @param		email		EMail to show (only email, without 'Name of recipient' before)
  * @param 		cid 		Id of contact if known
  * @param 		socid 		Id of third party if known
@@ -1038,7 +1026,6 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$s
 
 /**
  * 	Format phone numbers according to country
- *
  * 	@param 		phone 		Phone number to format
  * 	@param 		country 	Country to use for formatting
  * 	@param 		cid 		Id of contact if known
@@ -1117,7 +1104,6 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 
 /**
  * 	Return an IP formated to be shown on screen
- *
  * 	@param 		ip			IP
  * 	@param		mode		1=return only country/flag,2=return only IP
  * 	@return 	string 		Formated IP, with country if GeoIP module is enabled
@@ -1157,7 +1143,6 @@ function dol_print_ip($ip,$mode=0)
 /**
  *  Return country code for current user.
  *  If software is used inside a local network, detection may fails (we need a public ip)
- *
  *  @return     string      country code (fr, es, it, us, ...)
  */
 function dol_user_country()
@@ -1182,7 +1167,6 @@ function dol_user_country()
 
 /**
  *  Format address string
- *
  *  @param      address     Address
  *  @param      htmlid      Html ID
  *  @param      mode        thirdparty|contact|member|other
@@ -1228,10 +1212,9 @@ function dol_print_address($address, $htmlid='gmap', $mode, $id)
 
 
 /**
- *	Return true if email syntax is ok
- *
- *	@param	    string		$address    email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	@return     boolean     			true if email syntax is OK, false if KO or empty string
+ *	Return true if email syntax is ok.
+ *	@param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@return     boolean     true if email syntax is OK, false if KO or empty string
  */
 function isValidEmail($address)
 {
@@ -1251,10 +1234,9 @@ function isValidEmail($address)
 }
 
 /**
- *  Return true if phone number syntax is ok
- *
- *  @param      string		$address    phone (Ex: "0601010101")
- *  @return     boolean     			true if phone syntax is OK, false if KO or empty string
+ *  Return true if phone number syntax is ok.
+ *  @param      address     phone (Ex: "0601010101")
+ *  @return     boolean     true if phone syntax is OK, false if KO or empty string
  */
 function isValidPhone($address)
 {
@@ -1263,11 +1245,10 @@ function isValidPhone($address)
 
 
 /**
- * Make a strlen call. Works even if mbstring module not enabled
- *
- * @param   string		$string				String to calculate length
- * @param   string		$stringencoding		Encoding of string
- * @return  int								Length of string
+ * Make a strlen call. Works even if mbstring module not enabled.
+ * @param   $string
+ * @param   $stringencoding
+ * @return  int
  */
 function dol_strlen($string,$stringencoding='UTF-8')
 {
@@ -1279,7 +1260,6 @@ function dol_strlen($string,$stringencoding='UTF-8')
 
 /**
  * Make a substring. Works even in mbstring module not enabled
- *
  * @param   $string
  * @param   $start
  * @param   $length
@@ -2586,9 +2566,9 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 {
     global $conf;
     //print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";
-
+    
     $out='';
-
+    
     if ($thead)
     {
     	$out.= '<th>'.$name.'</th>';
@@ -2606,7 +2586,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	        $out.= '<td class="liste_titre" '. $td.'>';
 	    }
 	    $out.= $name;
-
+	
 	    // If this is a sort field
 	    if ($field)
 	    {
@@ -2614,7 +2594,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	        $options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
 	        $options=preg_replace('/&+/i','&',$options);
 	        if (! preg_match('/^&/',$options)) $options='&'.$options;
-
+	
 	        //print "&nbsp;";
 	        $out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
 	        if (! $sortorder)
@@ -2644,7 +2624,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	    }
 	    $out.= "</td>";
     }
-
+    
     return $out;
 }
 
