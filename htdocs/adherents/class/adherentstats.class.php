@@ -45,12 +45,12 @@ class AdherentStats extends Stats
 
 
 	/**
-	 *	Constructor
+	 * Constructor
 	 *
-	 *	@param 		DoliDB		$DB		Database handler
-	 * 	@param 		int			$socid	   Id third party
-     * 	@param   	int			$userid    Id user for filter
-	 * 	@return 	AdherentStats
+	 * @param 	$DB		   Database handler
+	 * @param 	$socid	   Id third party
+     * @param   $userid    Id user for filter
+	 * @return 	AdherentStats
 	 */
 	function AdherentStats($DB, $socid=0, $userid=0)
 	{

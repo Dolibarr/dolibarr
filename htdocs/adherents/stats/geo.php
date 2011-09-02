@@ -168,7 +168,7 @@ dol_fiche_head($head, $tab, $langs->trans("Statistics"), 0, 'user');
 
 
 // Print title
-if ($mode && ! count($data))
+if ($mode && ! sizeof($data))
 {
     print $langs->trans("NoValidatedMemberYet").'<br>';
     print '<br>';
@@ -202,7 +202,7 @@ if ($mode == 'memberbycountry')
     print "function drawMap() {\n\tvar data = new google.visualization.DataTable();\n";
 
     // Get the total number of rows
-    print "\tdata.addRows(".count($data).");\n";
+    print "\tdata.addRows(".sizeof($data).");\n";
     print "\tdata.addColumn('string', 'Country');\n";
     print "\tdata.addColumn('number', 'Number');\n";
 
