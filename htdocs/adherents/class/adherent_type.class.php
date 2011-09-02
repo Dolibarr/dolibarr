@@ -49,9 +49,8 @@ class AdherentType extends CommonObject
 
 
     /**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$DB		Database handler
+     *  \brief AdherentType
+     *  \param DB				handler acces base de donnees
      */
     function AdherentType($DB)
     {
@@ -195,7 +194,6 @@ class AdherentType extends CommonObject
 
     /**
      *  Return list of members' type
-     *
      *  @return 	array	List of types of members
      */
     function liste_array()
@@ -235,12 +233,11 @@ class AdherentType extends CommonObject
 
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
-     *
-     *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		maxlen			length max libelle
-     *		@param		option			Page lien
-     *		@return		string			Chaine avec URL
+     *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+     *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		\param		maxlen			length max libelle
+     *		\param		option			Page lien
+     *		\return		string			Chaine avec URL
      */
     function getNomUrl($withpicto=0,$maxlen=0)
     {
@@ -263,7 +260,6 @@ class AdherentType extends CommonObject
 
     /**
      *     getMailOnValid
-     *
      *     @return     Return mail model
      */
     function getMailOnValid()
@@ -282,7 +278,6 @@ class AdherentType extends CommonObject
 
     /**
      *     getMailOnSubscription
-     *
      *     @return     Return mail model
      */
     function getMailOnSubscription()
@@ -301,7 +296,6 @@ class AdherentType extends CommonObject
 
     /**
      *     getMailOnResiliate
-     *
      *     @return     Return mail model
      */
     function getMailOnResiliate()

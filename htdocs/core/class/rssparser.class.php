@@ -448,10 +448,10 @@ class RssParser
 	 * 	Triggered when CDATA is found
 	 *
 	 * 	@param		$p
-	 *  @param		$text	Tag
+	 *  @param		$element	Tag
+	 *  @param		$attrs		Attributes of tags
 	 */
-    function feed_cdata($p, $text)
-    {
+    function feed_cdata ($p, $text) {
         if ($this->_format == 'atom' and $this->incontent)
         {
             $this->append_content( $text );
@@ -466,10 +466,9 @@ class RssParser
 	 * 	Triggered when closed tag is found
 	 *
 	 * 	@param		$p
-	 *  @param		$el		Tag
+	 *  @param		$element	Tag
 	 */
-    function feed_end_element($p, $el)
-    {
+    function feed_end_element ($p, $el) {
         $el = strtolower($el);
 
         if ( $el == 'item' or $el == 'entry' )
@@ -521,8 +520,7 @@ class RssParser
 	 * 	@param		$str1
 	 *  @param		$str2
 	 */
-    function concat(&$str1, $str2="")
-    {
+    function concat (&$str1, $str2="") {
         if (!isset($str1) ) {
             $str1="";
         }
@@ -531,8 +529,7 @@ class RssParser
 
 	/**
 	 */
-    function append_content($text)
-    {
+    function append_content($text) {
         if ( $this->initem ) {
             $this->concat( $this->current_item[ $this->incontent ], $text );
         }
@@ -544,8 +541,7 @@ class RssParser
 	/**
 	 * 	smart append - field and namespace aware
 	 */
-    function append($el, $text)
-    {
+    function append($el, $text) {
         if (!$el) {
             return;
         }
