@@ -52,7 +52,8 @@ $langs->load("companies");
 $langs->load("other");
 
 // Get parameters
-$myparam = isset($_GET["myparam"])?$_GET["myparam"]:'';
+$action = GETPOST('action');
+$myparam = GETPOST('myparam');
 
 // Protection if external user
 if ($user->societe_id > 0)
@@ -68,7 +69,7 @@ if ($user->societe_id > 0)
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 
-if ($_GET["action"] == 'add' || $_POST["action"] == 'add')
+if ($action == 'add')
 {
 	$myobject=new Skeleton_Class($db);
 	$myobject->prop1=$_POST["field1"];
@@ -89,7 +90,7 @@ if ($_GET["action"] == 'add' || $_POST["action"] == 'add')
 
 
 /***************************************************
-* PAGE
+* VIEW
 *
 * Put here all code to build page
 ****************************************************/
@@ -100,15 +101,28 @@ $form=new Form($db);
 
 
 // Put here content of your page
-// ...
+
+// Example 1 : Adding jquery code
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	function init_myfunc()
+	{
+		jQuery("#myid").removeAttr(\'disabled\');
+		jQuery("#myid").attr(\'disabled\',\'disabled\');
+		}
+	}
+	init_myfunc();
+	jQuery("#mybutton").click(function() {
+		init_needroot();
+	});
+});
+</script>';
 
 
-/***************************************************
-* LINKED OBJECT BLOCK
-*
-* Put here code to view linked object
-****************************************************/
+
+// Example 2 : Adding jquery code
 $somethingshown=$myobject->showLinkedObjectBlock();
+
 
 // End of page
 $db->close();
