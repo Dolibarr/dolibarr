@@ -2485,7 +2485,7 @@ class Product extends CommonObject
 		if (file_exists($dir_osencoded))
 		{
 			// Cree fichier en taille vignette
-			// TODO A faire
+			// \todo A faire
 
 			// Cree fichier en taille origine
 			$content = @file_get_contents($file);
