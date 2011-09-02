@@ -34,8 +34,12 @@ $langs->load("mails");
 $langs->load("admin");
 $langs->load("other");
 
+$socid = GETPOST("socid",'int');
+$action = GETPOST('action');
+$contactid=GETPOST('contactid');    // May be an int or 'thirdparty'
+$actionid=GETPOST('actionid');
+
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
@@ -49,38 +53,69 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="c.name";
 
+$now=dol_now();
+
 
 /*
  * Action
  */
 
 // Add a notification
-if ($_POST["action"] == 'add')
+// Add a notification
+if ($action == 'add')
 {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-	$sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$_POST["contactid"]." AND fk_action=".$_POST["actionid"];
-	if ($db->query($sql))
-	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
-		$sql .= " VALUES (".$db->idate(mktime()).",".$socid.",".$_POST["contactid"].",".$_POST["actionid"].")";
+    $error=0;
 
-		if ($db->query($sql))
-		{
+    if (empty($contactid))
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")).'</div>';
+        $error++;
+    }
+    if ($actionid <= 0)
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")).'</div>';
+        $error++;
+    }
 
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    if (! $error)
+    {
+        $db->begin();
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+        $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
+        if ($db->query($sql))
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
+            $sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
+
+            if ($db->query($sql))
+            {
+
+            }
+            else
+            {
+                $error++;
+                dol_print_error($db);
+            }
+        }
+        else
+        {
+            dol_print_error($db);
+        }
+
+        if (! $error)
+        {
+            $db->commit();
+        }
+        else
+        {
+            $db->rollback();
+        }
+    }
 }
 
 // Remove a notification
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
 	$db->query($sql);
@@ -97,9 +132,9 @@ $form = new Form($db);
 llxHeader();
 
 $soc = new Societe($db);
-$soc->id = $socid;
+$result=$soc->fetch($socid);
 
-if ( $soc->fetch($soc->id) )
+if ($result > 0)
 {
 	$html = new Form($db);
 	$langs->load("other");
@@ -115,6 +150,30 @@ if ( $soc->fetch($soc->id) )
 	print '<tr><td width="20%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
 	print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
+
+    // Prefix
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    {
+        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+    }
+
+    if ($object->client)
+    {
+        print '<tr><td>';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $object->code_client;
+        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print '</td></tr>';
+    }
+
+    if ($object->fournisseur)
+    {
+        print '<tr><td>';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print '</td></tr>';
+    }
 
 	print '<tr><td width="30%">'.$langs->trans("NbOfActiveNotifications").'</td>';
 	print '<td colspan="3">';
@@ -154,7 +213,8 @@ if ( $soc->fetch($soc->id) )
 
 	print '<form action="fiche.php?socid='.$socid.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
+    print '<input type="hidden" name="action" value="add">';
+	
 	// Line with titles
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
@@ -162,8 +222,8 @@ if ( $soc->fetch($soc->id) )
 	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'"width="45%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),"fiche.php","",'',$param,'"width="10%"',$sortfield,$sortorder);
-	print '<td>&nbsp;</td>';
-	print '</tr>';
+    print_liste_field_titre('');
+    print '</tr>';
 
 	$var=false;
 	if (count($soc->thirdparty_and_contact_email_array()) > 0)
@@ -205,7 +265,8 @@ if ( $soc->fetch($soc->id) )
 	print '</form>';
 	print '<br>';
 
-
+    dol_htmloutput_mesg($mesg);
+	
 	// List of active notifications
 	print_fiche_titre($langs->trans("ListOfActiveNotifications"),'','');
 	$var=true;
@@ -346,6 +407,7 @@ if ( $soc->fetch($soc->id) )
 
 	print '</table>';
 }
+else dol_print_error('','RecordNotFound');
 
 $db->close();
 
