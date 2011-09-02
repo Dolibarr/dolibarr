@@ -194,7 +194,7 @@ else
 	else
 	{
 		# If failed, we try to create an empty file
-		dolibarr_install_syslog("failed to copy file ".$conffile.".example into ".$conffile.". We try to create it.");
+		dolibarr_install_syslog("failed to copy file ".$conffile.".example into ".$conffile.". We try to create it.", LOG_WARNING);
 
 		$fp = @fopen($conffile, "w");
 		if ($fp)
@@ -204,6 +204,7 @@ else
 			@fputs($fp,"?>");
 			fclose($fp);
 		}
+		else dolibarr_install_syslog("failed to create a new file ".$conffile." into current dir ".getcwd().". Check permission.", LOG_ERR);
 	}
 
 	// First install, on ne peut pas upgrader

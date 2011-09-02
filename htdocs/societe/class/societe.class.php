@@ -1527,14 +1527,16 @@ class Societe extends CommonObject
 
     /**
      *    Return list of contacts emails existing for third party
-     *    @return     array       Array of contacts emails
+     *
+     *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email
+     *    @return     array     					Array of contacts emails
      */
-    function thirdparty_and_contact_email_array()
+    function thirdparty_and_contact_email_array($addthirdparty=0)
     {
         global $langs;
 
         $contact_emails = $this->contact_property_array('email');
-        if ($this->email)
+        if ($this->email && $addthirdparty)
         {
             if (empty($this->name)) $this->name=$this->nom;
             // TODO: Tester si email non deja present dans tableau contact
