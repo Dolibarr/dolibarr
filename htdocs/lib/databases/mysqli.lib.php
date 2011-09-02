@@ -73,16 +73,14 @@ class DoliDb
 
 
     /**
-	 *	Constructor.
-	 *	This create an opened connexion to a database server and eventually to a database
-	 *
-	 *	@param      string	$type		Type of database (mysql, pgsql...)
-	 *	@param	    string	$host		Address of database server
-	 *	@param	    string	$user		Nom de l'utilisateur autorise
-	 *	@param	    string	$pass		Mot de passe
-	 *	@param	    string	$name		Nom de la database
-	 *	@param	    int		$port		Port of database server
-	 *	@return	    int					1 if OK, 0 if not
+     *	Ouverture d'une connexion vers le serveur et eventuellement une database.
+     *	@param     type		Type de base de donnees (mysql ou pgsql)
+     *	@param	   host		Addresse de la base de donnees
+     *	@param	   user		Nom de l'utilisateur autorise
+     *	@param	   pass		Mot de passe
+     *	@param	   name		Nom de la database
+     *	@param	   port		Port of database server
+     *	@return    int		1 en cas de succes, 0 sinon
      */
     function DoliDb($type='mysqli', $host, $user, $pass, $name='', $port=0)
     {
@@ -185,23 +183,21 @@ class DoliDb
 
 
     /**
-     *  Convert a SQL request in Mysql syntax to native syntax
-     *
-     *  @param     string	$line   SQL request line to convert
-     *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-     *  @return    string   		SQL request line converted
+     *  Convert a SQL request in Mysql syntax to PostgreSQL syntax
+     *  @param     line     SQL request line to convert
+     *  @param     type     Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+     *  @return    string   SQL request line converted
      */
     function convertSQLFromMysql($line,$type='ddl')
     {
         return $line;
     }
 
-	/**
-	 *	Select a database
-	 *
-	 *	@param	    string	$database	Name of database
-	 *	@return	    boolean  		    true if OK, false if KO
-	 */
+    /**
+     *	\brief      Selectionne une database.
+     *	\param	    database		Nom de la database
+     *	\return	    boolean         true si ok, false si ko
+     */
     function select_db($database)
     {
         dol_syslog("DoliDB::select_db database=".$database, LOG_DEBUG);
@@ -210,15 +206,14 @@ class DoliDb
 
 
     /**
-	 *	Connexion to server
-	 *
-	 *	@param	    string	$host		database server host
-	 *	@param	    string	$login		login
-	 *	@param	    string	$passwd		password
-	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		string	$port		Port of database server
-	 *	@return		resource			Database access handler
-	 *	@see		close
+     *	\brief      Connexion to server
+     *	\param	    host		database server host
+     *	\param	    login		login
+     *	\param	    passwd		password
+     *	\param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
+     *	\param		port		Port of database server
+     *	\return		resource	Database access handler
+     *	\seealso	close
      */
     function connect($host, $login, $passwd, $name, $port=0)
     {
@@ -237,9 +232,8 @@ class DoliDb
     }
 
     /**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
+     * \brief          	Return label of manager
+     * \return			string      Label
      */
     function getLabel()
     {
@@ -247,9 +241,8 @@ class DoliDb
     }
 
     /**
-	 *	Return version of database server
-	 *
-	 *	@return	        string      Version string
+     *	\brief          Renvoie la version du serveur
+     *	\return	        string      Chaine version
      */
     function getVersion()
     {
@@ -259,11 +252,27 @@ class DoliDb
         return mysqli_get_server_info($this->db);
     }
 
-	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
+    /**
+     *	\brief          Renvoie la version du serveur sous forme de nombre
+     *	\return	        string      Chaine version
+     */
+    function getIntVersion()
+    {
+        $version=	$this->getVersion();
+        $vlist=preg_split('/[.-]/',$version);
+        if (dol_strlen($vlist[1])==1){
+            $vlist[1]="0".$vlist[1];
+        }
+        if (dol_strlen($vlist[2])==1){
+            $vlist[2]="0".$vlist[2];
+        }
+        return $vlist[0].$vlist[1].$vlist[2];
+    }
+
+    /**
+     *	\brief          Renvoie la version du serveur dans un tableau
+     *	\return	        array  		Tableau de chaque niveau de version
+     */
     function getVersionArray()
     {
         return explode('.',$this->getVersion());
@@ -271,10 +280,9 @@ class DoliDb
 
 
     /**
-     *  Close database connexion
-     *
-     *  @return     boolean     True if disconnect successfull, false otherwise
-     *  @see        connect
+     *	Close database connexion
+     *	@return	    boolean     True if disconnect successfull, false otherwise
+     *	@see    	connect
      */
     function close()
     {
@@ -289,9 +297,8 @@ class DoliDb
 
 
     /**
-	 * Start transaction
-	 *
-	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
+     *	\brief      Debut d'une transaction.
+     *	\return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
      */
     function begin()
     {
@@ -314,8 +321,7 @@ class DoliDb
 
     /**
      * Validate a database transaction
-     *
-     * @param		$log		Add more log to default log line
+     * @param		log			Add more log to default log line
      * @return	    int         1 if validation is OK or transaction level no started, 0 if ERROR
      */
     function commit($log='')
@@ -338,10 +344,9 @@ class DoliDb
     }
 
     /**
-     *	Annulation d'une transaction et retour aux anciennes valeurs
-     *
-     * 	@param		$log		Add more log to default log line
-     * 	@return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+     *	\brief      Annulation d'une transaction et retour aux anciennes valeurs
+     * 	\param		log			Add more log to default log line
+     * 	\return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
      */
     function rollback($log='')
     {
@@ -361,7 +366,6 @@ class DoliDb
 
     /**
      * 	Execute a SQL request and return the resultset
-     *
      * 	@param		query			SQL query string
      * 	@param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
      * 								Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
@@ -399,10 +403,9 @@ class DoliDb
     }
 
     /**
-     *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
-     *
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return	    object		Object result line or false if KO or end of cursor
+     *	\brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
+     *	\param      resultset   Curseur de la requete voulue
+     *	\return	    object		Object result line or false if KO or end of cursor
      */
     function fetch_object($resultset)
     {
@@ -413,10 +416,9 @@ class DoliDb
 
 
     /**
-     *	Renvoie les donnees dans un tableau
-     *
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return	    array
+     *	\brief      Renvoie les donnees dans un tableau.
+     *	\param      resultset   Curseur de la requete voulue
+     *	\return	    array
      */
     function fetch_array($resultset)
     {
@@ -426,10 +428,9 @@ class DoliDb
     }
 
     /**
-     *	Renvoie les donnees comme un tableau
-     *
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return	    array
+     *	\brief      Renvoie les donnees comme un tableau.
+     *	\param      resultset   Curseur de la requete voulue
+     *	\return	    array
      */
     function fetch_row($resultset)
     {
@@ -447,11 +448,10 @@ class DoliDb
     }
 
     /**
-     *	Renvoie le nombre de lignes dans le resultat d'une requete SELECT
-     *
-     *	@see    	affected_rows
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return     int		    Nombre de lignes
+     *	\brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
+     *	\see    	affected_rows
+     *	\param      resultset   Curseur de la requete voulue
+     *	\return     int		    Nombre de lignes
      */
     function num_rows($resultset)
     {
@@ -461,10 +461,10 @@ class DoliDb
     }
 
     /**
-     *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
-     *	@see    	num_rows
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return     int		    Nombre de lignes
+     *	\brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+     *	\see    	num_rows
+     *	\param      resultset   Curseur de la requete voulue
+     *	\return     int		    Nombre de lignes
      */
 
     function affected_rows($resultset)
@@ -478,9 +478,8 @@ class DoliDb
 
 
     /**
-     *	Libere le dernier resultset utilise sur cette connexion
-     *
-     *	@param      resultset   Curseur de la requete voulue
+     *	\brief      Libere le dernier resultset utilise sur cette connexion.
+     *	\param      resultset   Curseur de la requete voulue
      */
     function free($resultset=0)
     {
@@ -492,11 +491,10 @@ class DoliDb
 
 
     /**
-     *	Defini les limites de la requete
-     *
-     *	@param	    limit       nombre maximum de lignes retournees
-     *	@param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
-     *	@return	    string      chaine exprimant la syntax sql de la limite
+     *	\brief      Defini les limites de la requete.
+     *	\param	    limit       nombre maximum de lignes retournees
+     *	\param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
+     *	\return	    string      chaine exprimant la syntax sql de la limite
      */
     function plimit($limit=0,$offset=0)
     {
@@ -509,7 +507,6 @@ class DoliDb
 
     /**
      * Define sort criteria of request
-     *
      * @param	    sortfield   List of sort fields
      * @param	    sortorder   Sort order
      * @return	    string      String to provide syntax of a sort sql string
@@ -539,8 +536,7 @@ class DoliDb
 
 
     /**
-     *	Escape a string to insert data
-     *
+     *	Escape a string to insert data.
      *	@param	    stringtoencode		String to escape
      *	@return	    string				String escaped
      */
@@ -552,7 +548,6 @@ class DoliDb
     /**
      *   Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
      *   Function to use to build INSERT, UPDATE or WHERE predica
-     *
      *   @param	    param       Date TMS to convert
      *   @return	string      Date in a string YYYYMMDDHHMMSS
      */
@@ -564,7 +559,6 @@ class DoliDb
     /**
      *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
      * 	19700101020000 -> 3600 with TZ+1
-     *
      * 	@param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
      *	@return		date			Date TMS
      */
@@ -578,7 +572,6 @@ class DoliDb
 
     /**
      *  Formate a SQL IF
-     *
      *	@param		test            chaine test
      *	@param		resok           resultat si test egal
      *	@param		resko           resultat si test non egal
