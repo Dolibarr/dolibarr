@@ -1402,8 +1402,8 @@ tr.liste_titre:first-child {
     background-position: top right;
 }
 
-td.liste_titre_sel,   
-tr.liste_titre:first-child td {   
+th.liste_titre_sel, td.liste_titre_sel,
+tr.liste_titre:first-child td {
     color: #FFFFFF !important;
 }
 
@@ -1430,7 +1430,8 @@ tr.liste_titre td {
     background: none !important;
 }
 
-td.liste_titre {
+th.liste_titre, td.liste_titre
+{
     background-repeat: repeat-x;
     color: #333333;
     font-family: <?php print $fontlist ?>;
@@ -1438,6 +1439,7 @@ td.liste_titre {
     white-space: nowrap;
     background-image: none;
     background: none;
+    text-align: <?php echo $left; ?>;
 }
 
 /*tr.liste_titre select.flat {
@@ -1453,7 +1455,8 @@ tr.liste_titre input.button {
     /*margin: 30px 10px 10px 0px;*/
 }
 
-td.liste_titre_sel {
+th.liste_titre_sel, td.liste_titre_sel
+{
     background: #505050;
     background-repeat: repeat-x;
     color: #FFFFFF;
@@ -1462,6 +1465,7 @@ td.liste_titre_sel {
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
+    text-align: <?php echo $left; ?>;
 }
 
 input.liste_titre {
@@ -1479,19 +1483,6 @@ color: #332266;
 font-weight: normal;
 white-space: nowrap;
 padding: 5px;
-}
-
-th {
-/* background: #7699A9; */
-background: #91ABB3;
-color: #334444;
-font-family: <?php print $fontlist ?>;
-font-weight: bold;
-border-left: 1px solid #FFFFFF;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
-white-space: nowrap;
 }
 
 .impair {
@@ -2221,7 +2212,7 @@ a.cke_dialog_ui_button
     margin-left: -240px;
     margin-bottom: 30px;
     }
-    
+
 div#infoVersion {
 	position: relative;
     width: 100%;
@@ -2231,14 +2222,14 @@ div#infoVersion {
     font-size: 10px;
     background-color: #D6D6D6;
     }
-    
+
 div#logoBox {
 	position: relative;
     width: 100%;
     height: auto;
     margin-top: 30px;
     }
-    
+
 div#parameterBox {
 	position: relative;
     width: 100%;
@@ -2249,14 +2240,14 @@ div#parameterBox {
     background-repeat: no-repeat;
     background-position: top center;
     }
-    
+
 div#parameterBox div {
 	width: 100%;
     height: 20px;
     position: relative;
     line-height: 20px;
     }
-    
+
 div#parameterBox div label {
 	width: 190px;
     text-align: right;
@@ -2264,7 +2255,7 @@ div#parameterBox div label {
     float: left;
     margin-right: 10px;
     }
-    
+
 div#parameterBox div input[type="text"],
 div#parameterBox div input[type="password"] {
 	width: 180px;
@@ -2272,12 +2263,12 @@ div#parameterBox div input[type="password"] {
     font-size: 10px;
     margin-top: 2px;
     }
-    
+
 div#connectionLine {
 	margin: 10px 0px;
 	text-align: center;
     }
-    
+
 div#logBox {
 margin-top: 25px;
 }
@@ -2285,7 +2276,7 @@ margin-top: 25px;
 div.captchaBox {
 	margin-top: 10px;
     }
-    
+
 div.captchaImg {
 	margin-bottom: 10px;
     margin-top: 5px;
@@ -2295,7 +2286,7 @@ div.captchaImg {
 img#captcha {
 	margin-left: 200px;
     }
-    
+
 div#infoLogin {
     width: 100%;
     height: auto;
@@ -2314,11 +2305,11 @@ div.other {
     left: 50%;
     margin-left: -240px;
     }
-    
+
 form.listactionsfilter img {
 	display: none;
     }
-    
+
 form.listactionsfilter input[type="submit"] {
 	margin: 2px 0px;
 }
