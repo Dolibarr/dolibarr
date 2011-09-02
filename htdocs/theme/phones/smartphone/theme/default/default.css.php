@@ -316,33 +316,37 @@ padding: 0px 0px;
 
 
 
-tr.liste_titre {
-height: 24px;
-background: -moz-linear-gradient(center top , #81A8CE, #5E87B0) repeat scroll 0 0 #5E87B0;
-border: 1px solid #456F9A;
-color: #FFFFFF;
-font-family: <?php print $fontlist ?>;
-/* border-bottom: 1px solid #FDFFFF; */
-white-space: nowrap;
-}
-td.liste_titre {
-background: -moz-linear-gradient(center top , #81A8CE, #5E87B0) repeat scroll 0 0 #5E87B0;
-border: 1px solid #456F9A;
-color: #FFFFFF;
-font-family: <?php print $fontlist ?>;
-font-weight: normal;
-/* border-bottom: 1px solid #FDFFFF; */
-white-space: nowrap;
-}
-td.liste_titre_sel
+tr.liste_titre
 {
-background: -moz-linear-gradient(center top , #81A8CE, #5E87B0) repeat scroll 0 0 #5E87B0;
-color: #FFFFFF;
-font-family: <?php print $fontlist ?>;
-font-weight: normal;
-/* text-decoration: underline; */
-/* border-bottom: 1px solid #FDFFFF; */
-white-space: nowrap;
+    height: 24px;
+    background: -moz-linear-gradient(center top , #81A8CE, #5E87B0) repeat scroll 0 0 #5E87B0;
+    border: 1px solid #456F9A;
+    color: #FFFFFF;
+    font-family: <?php print $fontlist ?>;
+    /* border-bottom: 1px solid #FDFFFF; */
+    white-space: nowrap;
+}
+th.liste_titre, td.liste_titre
+{
+    background: -moz-linear-gradient(center top , #81A8CE, #5E87B0) repeat scroll 0 0 #5E87B0;
+    border: 1px solid #456F9A;
+    color: #FFFFFF;
+    font-family: <?php print $fontlist ?>;
+    font-weight: normal;
+    /* border-bottom: 1px solid #FDFFFF; */
+    white-space: nowrap;
+    text-align: <?php echo $left; ?>;
+}
+th.liste_titre_sel, td.liste_titre_sel
+{
+    background: -moz-linear-gradient(center top , #81A8CE, #5E87B0) repeat scroll 0 0 #5E87B0;
+    color: #FFFFFF;
+    font-family: <?php print $fontlist ?>;
+    font-weight: normal;
+    /* text-decoration: underline; */
+    /* border-bottom: 1px solid #FDFFFF; */
+    white-space: nowrap;
+    text-align: <?php echo $left; ?>;
 }
 input.liste_titre {
 background: transparent;
