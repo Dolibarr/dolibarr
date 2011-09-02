@@ -49,9 +49,8 @@ class Cotisation extends CommonObject
 
 
 	/**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$DB		Database handler
+	 *		\brief Constructor
+	 *		\param DB				Handler base de donnees
 	 */
 	function Cotisation($DB)
 	{
@@ -60,10 +59,9 @@ class Cotisation extends CommonObject
 
 
 	/**
-	 *	Fonction qui permet de creer la cotisation
-	 *
-	 *	@param 		userid		userid de celui qui insere
-	 *	@return		int			<0 si KO, Id cotisation cree si OK
+	 *	\brief 		Fonction qui permet de creer la cotisation
+	 *	\param 		userid		userid de celui qui insere
+	 *	\return		int			<0 si KO, Id cotisation cree si OK
 	 */
 	function create($userid)
 	{
@@ -97,10 +95,9 @@ class Cotisation extends CommonObject
 
 
 	/**
-	 *  Fonction qui permet de recuperer une cotisation
-	 *
-	 *  @param 		rowid		Id cotisation
-	 *  @return		int			<0 si KO, =0 si OK mais non trouve, >0 si OK
+	 *  \brief 		Fonction qui permet de recuperer une cotisation
+	 *  \param 		rowid		Id cotisation
+	 *  \return		int			<0 si KO, =0 si OK mais non trouve, >0 si OK
 	 */
 	function fetch($rowid)
 	{
@@ -147,11 +144,10 @@ class Cotisation extends CommonObject
 
 
 	/**
-	 *	Met a jour en base la cotisation
-	 *
-	 *	@param 		user			Objet user qui met a jour
-	 *	@param 		notrigger		0=Desactive les triggers
-	 *	@param		int				<0 if KO, >0 if OK
+	 *		\brief 		Met a jour en base la cotisation
+	 *		\param 		user			Objet user qui met a jour
+	 *		\param 		notrigger		0=Desactive les triggers
+	 *		\param		int				<0 if KO, >0 if OK
 	 */
 	function update($user,$notrigger=0)
 	{
@@ -188,10 +184,9 @@ class Cotisation extends CommonObject
 	}
 
 	/**
-	 *	Delete a subscription
-	 *
-	 *	@param 		rowid	Id cotisation
-	 *	@return		int		<0 si KO, 0 si OK mais non trouve, >0 si OK
+	 *		\brief		Delete a subscription
+	 *		\param 		rowid	Id cotisation
+	 *		\return		int		<0 si KO, 0 si OK mais non trouve, >0 si OK
 	 */
 	function delete($user)
 	{
@@ -255,10 +250,9 @@ class Cotisation extends CommonObject
 
 
 	/**
-	 *  Renvoie nom clicable (avec eventuellement le picto)
-	 *
-	 *	@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	@return		string			Chaine avec URL
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *		\return		string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0)
 	{
@@ -280,9 +274,8 @@ class Cotisation extends CommonObject
 
 
     /**
-     *  Charge les informations d'ordre info dans l'objet cotisation
-	 *
-     *  @param     id       Id adhesion a charger
+     *      \brief     Charge les informations d'ordre info dans l'objet cotisation
+     *      \param     id       Id adhesion a charger
      */
 	function info($id)
 	{
