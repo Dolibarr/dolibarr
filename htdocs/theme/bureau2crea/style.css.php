@@ -1439,7 +1439,6 @@ th.liste_titre, td.liste_titre
     white-space: nowrap;
     background-image: none;
     background: none;
-    text-align: <?php echo $left; ?>;
 }
 
 /*tr.liste_titre select.flat {
@@ -1455,8 +1454,7 @@ tr.liste_titre input.button {
     /*margin: 30px 10px 10px 0px;*/
 }
 
-th.liste_titre_sel, td.liste_titre_sel
-{
+td.liste_titre_sel {
     background: #505050;
     background-repeat: repeat-x;
     color: #FFFFFF;
@@ -1465,7 +1463,6 @@ th.liste_titre_sel, td.liste_titre_sel
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
-    text-align: <?php echo $left; ?>;
 }
 
 input.liste_titre {
