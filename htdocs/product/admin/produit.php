@@ -4,7 +4,8 @@
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- *
+ * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -30,50 +31,70 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $langs->load("admin");
-$langs->load("propal");
-$langs->load("products");
 
 // Security check
 if (!$user->admin)
 accessforbidden();
 
+$action = GETPOST("action");
+$value = GETPOST("value");
 
-if ($_POST["action"] == 'nbprod')
+if ($action == 'nbprod')
 {
-	dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", $_POST["value"],'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", $value,'chaine',0,'',$conf->entity);
 }
-else if ($_POST["action"] == 'multiprix_num')
+else if ($action == 'multiprix_num')
 {
-	dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $_POST["value"],'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $value,'chaine',0,'',$conf->entity);
 }
-if ($_POST["action"] == 'multiprix')
+if ($action == 'multiprix')
 {
-	dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
+	$multiprix = GETPOST("activate_multiprix");
+	
+	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $multiprix,'chaine',0,'',$conf->entity);
+	$res =dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
 }
-else if ($_POST["action"] == 'sousproduits')
+else if ($action == 'sousproduits')
 {
-	dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"],'chaine',0,'',$conf->entity);
+	$sousproduits = GETPOST("activate_sousproduits");
+	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $sousproduits,'chaine',0,'',$conf->entity);
 }
-else if ($_POST["action"] == 'viewProdDescInForm')
+else if ($action == 'viewProdDescInForm')
 {
-	dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"],'chaine',0,'',$conf->entity);
+	$view = GETPOST("activate_viewProdDescInForm");
+	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $view,'chaine',0,'',$conf->entity);
 }
-else if ($_POST["action"] == 'usesearchtoselectproduct')
+else if ($action == 'usesearchtoselectproduct')
 {
-	dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"],'chaine',0,'',$conf->entity);
+	$usesearch = GETPOST("activate_usesearchtoselectproduct");
+	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $usesearch,'chaine',0,'',$conf->entity);
 }
-else if ($_GET["action"] == 'set')
+else if ($action == 'set')
 {
 	$const = "PRODUCT_SPECIAL_".strtoupper($_GET["spe"]);
-	if ($_GET["value"]) dolibarr_set_const($db, $const, $_GET["value"],'chaine',0,'',$conf->entity);
-	else dolibarr_del_const($db, $const,$conf->entity);
+	if ($_GET["value"]) $res = dolibarr_set_const($db, $const, $value,'chaine',0,'',$conf->entity);
+	else $res = dolibarr_del_const($db, $const,$conf->entity);
 }
-else if ($_POST["action"] == 'useecotaxe')
+/*else if ($action == 'useecotaxe')
 {
-	dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $_POST["activate_useecotaxe"],'chaine',0,'',$conf->entity);
-}
+	$ecotaxe = GETPOST("activate_useecotaxe");
+	$res = dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $ecotaxe,'chaine',0,'',$conf->entity);
+}*/
 
+
+if($action)
+{
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
 
 /*
  * View
@@ -290,6 +311,8 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 
 	print '</table>';
 }
+
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 
