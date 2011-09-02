@@ -1339,30 +1339,31 @@ table.liste td {
 }
 
 tr.liste_titre {
-height: 20px;
-color: #842F00;
-font-weight: bold;
-font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-/*border-bottom: 1px solid #FDFFFF;*/
-border-radius: 8px;
-line-height: 18px;
-padding-left: 10px;
-padding-right: 10px;
-white-space: nowrap;
+    height: 20px;
+    color: #842F00;
+    font-weight: bold;
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    /*border-bottom: 1px solid #FDFFFF;*/
+    border-radius: 8px;
+    line-height: 18px;
+    padding-left: 10px;
+    padding-right: 10px;
+    white-space: nowrap;
 }
-
-tr.liste_titre td {
-	padding-left: 6px;
-        padding-right: 6px;
-        /*vertical-align: text-top;*/
-}
-
-td.liste_titre_sel
+th.liste_titre, td.liste_titre
 {
-background-position: top right;
-color: #A51B00;
-font-weight: bold;
-white-space: nowrap;
+	padding-left: 6px;
+    padding-right: 6px;
+    /*vertical-align: text-top;*/
+    text-align: <?php echo $left; ?>;
+}
+th.liste_titre_sel, td.liste_titre_sel
+{
+    background-position: top right;
+    color: #A51B00;
+    font-weight: bold;
+    white-space: nowrap;
+    text-align: <?php echo $left; ?>;
 }
 
 input.liste_titre {
@@ -1380,19 +1381,6 @@ background: #F0F0F0;
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
-white-space: nowrap;
-}
-
-th {
-/* background: #7699A9; */
-background: #91ABB3;
-color: #334444;
-font-family: <?php print $fontlist ?>;
-font-weight: bold;
-border-left: 1px solid #FFFFFF;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
 }
 
