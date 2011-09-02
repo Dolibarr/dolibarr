@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2010 Juanjo Menent			       <jmenent@2byte.es>
+/* Copyright (C) 2009 		Laurent Destailleur            <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2011  Juanjo Menent			       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,20 +36,32 @@ $langs->load("banks");
 if (!$user->admin)
   accessforbidden();
 
-$typeconst=array('yesno','texte','chaine');
+$action = GETPOST("action");
 
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
+if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
-    dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$_POST["BANK_CHEQUERECEIPT_FREE_TEXT"],'chaine',0,'',$conf->entity);
+	$free = GETPOST("BANK_CHEQUERECEIPT_FREE_TEXT");
+    $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
+    
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
 //Order display of bank account
-if ($_GET["action"] == 'setbankorder')
+if ($action == 'setbankorder')
 {
 	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
 	{
@@ -167,6 +179,8 @@ while ($i < sizeof($bankorder))
 }
 
 print "</table>\n";
+
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 
