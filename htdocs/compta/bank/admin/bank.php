@@ -47,7 +47,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
 	$free = GETPOST("BANK_CHEQUERECEIPT_FREE_TEXT");
     $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
-
+    
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -78,7 +78,7 @@ if ($action == 'setbankorder')
  * view
  */
 
-llxHeader("",$langs->trans("BankSetupModule"));
+llxHeader("","");
 
 $html=new Form($db);
 
@@ -144,8 +144,7 @@ $bankorder[1][2]='BankCode DeskCode BankAccountNumberKey AccountNumber';
 $var = true;
 $i=0;
 
-$nbofbank=count($bankorder);
-while ($i < $nbofbank)
+while ($i < sizeof($bankorder))
 {
 	$var = !$var;
 
@@ -175,11 +174,11 @@ while ($i < $nbofbank)
 		print '</a></td>';
 	}
 	print '<td>&nbsp;</td>';
-	print '</tr>'."\n";
+	print "</tr>\n";
 	$i++;
 }
 
-print '</table>'."\n";
+print "</table>\n";
 
 dol_htmloutput_mesg($mesg);
 

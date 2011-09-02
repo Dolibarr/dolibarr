@@ -2094,7 +2094,7 @@ class Propal extends CommonObject
 						$this->nbtodolate++;
 					}
 				}
-				// TODO Definir regle des propales a facturer en retard
+				// \todo Definir regle des propales a facturer en retard
 				// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
 			}
 			return 1;

@@ -27,7 +27,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/triggers/interface_modNotification_Notification.class.php");
 
 $langs->load("admin");
-$langs->load("mails");
 
 // Security check
 if (!$user->admin)
@@ -64,7 +63,7 @@ print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
 
 print $langs->trans("NotificationsDesc").'<br><br>';
 
-dol_htmloutput_mesg($mesg);
+if ($mesg) print $mesg.'<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -81,7 +80,6 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("NotificationEMailFrom").'</td><td>';
 print '<input size="32" type="text" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
-if (! empty($conf->global->NOTIFICATION_EMAIL_FROM) && ! isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) print ' '.img_warning($langs->trans("BadEMail"));
 print '</td></tr>';
 print '</table>';
 
@@ -123,4 +121,5 @@ $db->close();
 
 
 llxFooter();
+
 ?>

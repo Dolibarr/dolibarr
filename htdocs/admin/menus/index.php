@@ -300,7 +300,7 @@ if ($conf->use_javascript_ajax)
 		$num = $db->num_rows($res);
 
 		$i = 1;
-		while ($menu = $db->fetch_array($res))
+		while ($menu = $db->fetch_array ($res))
 		{
 			if (! empty($menu['langs'])) $langs->load($menu['langs']);
 			$titre = $langs->trans($menu['titre']);
