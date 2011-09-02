@@ -109,11 +109,11 @@ print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td align="center">';
 if ($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED == 0)
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 if($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED == 1)
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
 print "</td>";
 print '</tr>';
@@ -127,11 +127,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 	print '<td align="center">';
 	if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 0)
 	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_layoutmenu">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_layoutmenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	}
 	if($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 1)
 	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_layoutmenu">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_layoutmenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 	}
 	print "</td>";
 	print '</tr>';
