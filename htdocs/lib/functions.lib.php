@@ -58,10 +58,10 @@ function dol_shutdown()
 /**
  *  Return value of a param into GET or POST supervariable
  *
- *  @param          string	$paramname   Name of parameter to found
- *  @param			string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
- *  @param			int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return         string      		 Value found or '' if check fails
+ *  @param          paramname   Name of parameter to found
+ *  @param			check		Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
+ *  @param			method		Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ *  @return         string      Value found or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -88,7 +88,7 @@ function GETPOST($paramname,$check='',$method=0)
  *  This prefix is unique for instance and avoid conflict between multi-instances,
  *  even when having two instances with one root dir or two instances in virtual servers
  *
- *  @return         string      		A calculated prefix
+ *  @return         string      A calculated prefix
  */
 function dol_getprefix()
 {
@@ -102,8 +102,8 @@ function dol_getprefix()
  *  To link to a module file from a module file, use include('./mymodulefile');
  *  To link to a module file from a core file, then this function can be used
  *
- * 	@param			string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
- *  @return         int					false if include fails.
+ * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ *  @return         int			false if include fails.
  */
 function dol_include_once($relpath)
 {
@@ -115,9 +115,9 @@ function dol_include_once($relpath)
 /**
  *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails
  *
- * 	@param			string	$path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
- *  @param			int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
- *  @return         string				Full filsystem path (if mode=0), Full url path (if mode=1)
+ * 	@param			path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
+ *  @param			type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
+ *  @return         string		Full filsystem path (if mode=0), Full url path (if mode=1)
  */
 function dol_buildpath($path,$type=0)
 {
@@ -168,8 +168,8 @@ function dol_buildpath($path,$type=0)
  *	Create a clone of instance of object (new instance with same properties)
  * 	This function works for both PHP4 and PHP5
  *
- * 	@param			object	$object		Object to clone
- *	@return         object				Object clone
+ * 	@param			object		Object to clone
+ *	@return         date		Timestamp
  */
 function dol_clone($object)
 {
@@ -187,11 +187,11 @@ function dol_clone($object)
 /**
  *	Optimize a size for some browsers (phone, smarphone, ...)
  *
- * 	@param			int		$size		Size we want
- * 	@param			string	$type		Type of optimizing:
- * 										'' = function used to define a size for truncation
- * 										'width' = function is used to define a width
- *	@return         int					New size after optimizing
+ * 	@param			size		Size we want
+ * 	@param			type		Type of optimizing:
+ * 								'' = function used to define a size for truncation
+ * 								'width' = function is used to define a width
+ *	@return         int			New size after optimizing
  */
 function dol_size($size,$type='')
 {
@@ -318,8 +318,8 @@ function dol_string_nospecial($str,$newstr='_',$badchars='')
 /**
  *  Returns text escaped for inclusion into javascript code
  *
- *  @param       string		$stringtoescape		String to escape
- *  @return      string     		 			Escaped string
+ *  @param       $stringtoescape	String to escape
+ *  @return      string      		Escaped string
  */
 function dol_escape_js($stringtoescape)
 {
@@ -332,9 +332,9 @@ function dol_escape_js($stringtoescape)
 /**
  *  Returns text escaped for inclusion in HTML alt or title tags
  *
- *  @param      string		$stringtoescape		String to escape
- *  @param		int			$keepb				Do not clean b tags
- *  @return     string     				 		Escaped string
+ *  @param      $stringtoescape		String to escape
+ *  @param		$keepb				Do not clean b tags
+ *  @return     string      		Escaped string
  */
 function dol_escape_htmltag($stringtoescape,$keepb=0)
 {
@@ -358,8 +358,8 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *	On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  *
- * 	@param      string		$message	  Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *	@param      int			$level        Log level
+ * 	@param      string		message		 Line to log. Ne doit pas etre traduit si level = LOG_ERR
+ *	@param      int			level        Log level
  */
 function dol_syslog($message, $level=LOG_INFO)
 {
@@ -469,7 +469,6 @@ function dol_syslog($message, $level=LOG_INFO)
 
 /**
  *	Show tab header of a card
- *
  *	@param	    links		Array of tabs
  *	@param	    active      Active tab name
  *	@param      title       Title
@@ -483,7 +482,6 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
 
 /**
  *  Show tab header of a card
- *
  *  @param      links       Array of tabs
  *  @param      active      Active tab name
  *  @param      title       Title
@@ -550,8 +548,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 /**
  *  Show tab footer of a card
- *
- *  @param      int		$notab       0=Add tab footer, 1=no tab footer
+ *  @param      notab       0=Add tab footer, 1=no tab footer
  */
 function dol_fiche_end($notab=0)
 {
@@ -560,8 +557,7 @@ function dol_fiche_end($notab=0)
 
 /**
  *	Return tab footer of a card
- *
- *	@param      int		$notab		0=Add tab footer, 1=no tab footer
+ *	@param      notab		0=Add tab footer, 1=no tab footer
  */
 function dol_get_fiche_end($notab=0)
 {
@@ -578,8 +574,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
 
 /**
  *	Output date in a string format according to outputlangs (or langs if not defined).
- * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset
- *
+ * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset.
  *	@param	    time        	GM Timestamps date (or deprecated strings 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
  *	@param	    format      	Output date format
  *								"%d %b %Y",
@@ -726,7 +721,6 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 
 /**
  *	Convert a string date into a GM Timestamps date
- *
  *	@param		string			Date in a string
  *				                YYYYMMDD
  *	                 			YYYYMMDDHHMMSS
@@ -777,8 +771,7 @@ function dol_stringtotime($string, $gm=1)
 
 /**
  *	Return an array with date info
- *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *
+ *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows.
  *	@param		timestamp		Timestamp
  *	@param		fast			Fast mode
  *	@return		array			Array of informations
@@ -832,7 +825,6 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	Return a timestamp date built from detailed informations (by default a local PHP server timestamp)
  * 	Replace function mktime not available under Windows if year < 1970
  *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *
  * 	@param		hour			Hour	(can be -1 for undefined)
  *	@param		minute			Minute	(can be -1 for undefined)
  *	@param		second			Second	(can be -1 for undefined)
@@ -898,7 +890,6 @@ function dolibarr_date($fmt, $timestamp, $gm=false)
 
 /**
  *	Returns formated date
- *
  *	@param		fmt				Format (Exemple: 'Y-m-d H:i:s')
  *	@param		timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
  *	@param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
@@ -926,7 +917,6 @@ function dol_date($fmt, $timestamp, $gm=false)
 
 /**
  * Return string with formated size
- *
  * @param		size		Size to print
  * @param		shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
  * @param		shortunit	Use short value of size unit
@@ -959,7 +949,6 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
 
 /**
  * Show Url link
- *
  * @param		url			Url to show
  * @param		target		Target for link
  * @param		max			Max number of characters to show
@@ -981,7 +970,6 @@ function dol_print_url($url,$target='_blank',$max=32)
 
 /**
  * Show EMail link
- *
  * @param		email		EMail to show (only email, without 'Name of recipient' before)
  * @param 		cid 		Id of contact if known
  * @param 		socid 		Id of third party if known
@@ -1038,7 +1026,6 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$s
 
 /**
  * 	Format phone numbers according to country
- *
  * 	@param 		phone 		Phone number to format
  * 	@param 		country 	Country to use for formatting
  * 	@param 		cid 		Id of contact if known
@@ -1117,7 +1104,6 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 
 /**
  * 	Return an IP formated to be shown on screen
- *
  * 	@param 		ip			IP
  * 	@param		mode		1=return only country/flag,2=return only IP
  * 	@return 	string 		Formated IP, with country if GeoIP module is enabled
@@ -1157,7 +1143,6 @@ function dol_print_ip($ip,$mode=0)
 /**
  *  Return country code for current user.
  *  If software is used inside a local network, detection may fails (we need a public ip)
- *
  *  @return     string      country code (fr, es, it, us, ...)
  */
 function dol_user_country()
@@ -1182,7 +1167,6 @@ function dol_user_country()
 
 /**
  *  Format address string
- *
  *  @param      address     Address
  *  @param      htmlid      Html ID
  *  @param      mode        thirdparty|contact|member|other
@@ -1228,10 +1212,9 @@ function dol_print_address($address, $htmlid='gmap', $mode, $id)
 
 
 /**
- *	Return true if email syntax is ok
- *
- *	@param	    string		$address    email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	@return     boolean     			true if email syntax is OK, false if KO or empty string
+ *	Return true if email syntax is ok.
+ *	@param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@return     boolean     true if email syntax is OK, false if KO or empty string
  */
 function isValidEmail($address)
 {
@@ -1251,10 +1234,9 @@ function isValidEmail($address)
 }
 
 /**
- *  Return true if phone number syntax is ok
- *
- *  @param      string		$address    phone (Ex: "0601010101")
- *  @return     boolean     			true if phone syntax is OK, false if KO or empty string
+ *  Return true if phone number syntax is ok.
+ *  @param      address     phone (Ex: "0601010101")
+ *  @return     boolean     true if phone syntax is OK, false if KO or empty string
  */
 function isValidPhone($address)
 {
@@ -1263,11 +1245,10 @@ function isValidPhone($address)
 
 
 /**
- * Make a strlen call. Works even if mbstring module not enabled
- *
- * @param   string		$string				String to calculate length
- * @param   string		$stringencoding		Encoding of string
- * @return  int								Length of string
+ * Make a strlen call. Works even if mbstring module not enabled.
+ * @param   $string
+ * @param   $stringencoding
+ * @return  int
  */
 function dol_strlen($string,$stringencoding='UTF-8')
 {
@@ -1279,7 +1260,6 @@ function dol_strlen($string,$stringencoding='UTF-8')
 
 /**
  * Make a substring. Works even in mbstring module not enabled
- *
  * @param   $string
  * @param   $start
  * @param   $length
@@ -2572,71 +2552,79 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
 
 /**
  *	Get title line of an array
- *
  *	@param	    name        Label of field
  *	@param		thead		For thead format
  *	@param	    file        Url used when we click on sort picto
  *	@param	    field       Field to use for new sorting
  *	@param	    begin       ("" by defaut)
  *	@param	    moreparam   Add more parameters on sort url links ("" by default)
- *	@param      moreattrib  Add more attributes on th ("" by defaut)
+ *	@param      td          Options of attribute td ("" by defaut)
  *	@param      sortfield   Current field used to sort
  *	@param      sortorder   Current sort order
  */
-function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="")
+function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="")
 {
     global $conf;
-    //print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
-
+    //print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";
+    
     $out='';
-	// If field is used as sort criteria we use a specific class
-    // Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-    if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field)))
+    
+    if ($thead)
     {
-        $out.= '<th class="liste_titre_sel" '. $moreattrib.'>';
+    	$out.= '<th>'.$name.'</th>';
     }
     else
     {
-        $out.= '<th class="liste_titre" '. $moreattrib.'>';
+    	// Le champ de tri est mis en evidence.
+	    // Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
+	    if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field)))
+	    {
+	        $out.= '<td class="liste_titre_sel" '. $td.'>';
+	    }
+	    else
+	    {
+	        $out.= '<td class="liste_titre" '. $td.'>';
+	    }
+	    $out.= $name;
+	
+	    // If this is a sort field
+	    if ($field)
+	    {
+	        $options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
+	        $options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
+	        $options=preg_replace('/&+/i','&',$options);
+	        if (! preg_match('/^&/',$options)) $options='&'.$options;
+	
+	        //print "&nbsp;";
+	        $out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
+	        if (! $sortorder)
+	        {
+	            $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+	            $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+	        }
+	        else
+	        {
+	            if ($field != $sortfield)
+	            {
+	                $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+	                $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+	            }
+	            else {
+	                $sortorder=strtoupper($sortorder);
+	                if ($sortorder == 'DESC' ) {
+	                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+	                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+	                }
+	                if ($sortorder == 'ASC' ) {
+	                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+	                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+	                }
+	            }
+	        }
+	    }
+	    $out.= "</td>";
     }
-    $out.=$name;
-
-    if (empty($thead) && $field)    // If this is a sort field
-    {
-        $options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
-        $options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
-        $options=preg_replace('/&+/i','&',$options);
-        if (! preg_match('/^&/',$options)) $options='&'.$options;
-
-        //print "&nbsp;";
-        $out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-        if (! $sortorder)
-        {
-            $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-            $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-        }
-        else
-        {
-            if ($field != $sortfield)
-            {
-                $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-                $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-            }
-            else {
-                $sortorder=strtoupper($sortorder);
-                if ($sortorder == 'DESC' ) {
-                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-                }
-                if ($sortorder == 'ASC' ) {
-                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-                    $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-                }
-            }
-        }
-    }
-    $out.='</th>';
-
+    
     return $out;
 }
 
@@ -2664,7 +2652,6 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 
 /**
  *	Load a title with picto
- *
  *	@param	titre				Title to show
  *	@param	mesg				Added message to show on right
  *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
@@ -2697,7 +2684,6 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 
 /**
  *	Print a title with navigation controls for pagination
- *
  *	@param	titre				Title to show (required)
  *	@param	page				Numero of page (required)
  *	@param	file				Url of page (required)
@@ -2807,7 +2793,6 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 /**
  *	Fonction servant a afficher les fleches de navigation dans les pages de listes
- *
  *	@param	page				Numero of page
  *	@param	file				Lien
  *	@param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
@@ -2832,7 +2817,6 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 /**
  *	Fonction qui retourne un taux de tva formate pour visualisation
  *	Utilisee dans les pdf et les pages html
- *
  *	@param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
  *  @param		addpercent		Add a percent % sign in output
  *	@param		info_bits		Miscellanous information on vat
@@ -2861,7 +2845,6 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
 /**
  *		Fonction qui formate un montant pour visualisation
  *		Fonction utilisee dans les pdf et les pages html
- *
  *		@param	    amount			Montant a formater
  *		@param	    html			Type de formatage, html ou pas (par defaut)
  *		@param	    outlangs		Objet langs pour formatage text
@@ -2934,8 +2917,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 /**
  *	Function that return a number with universal decimal format (decimal separator is '.') from
  *	an amount typed by a user.
- *	Function to use on each input amount before any numeric test or database insert
- *
+ *	Function to use on each input amount before any numeric test or database insert.
  *	@param	    	amount			Amount to convert/clean
  *	@param	    	rounding		''=No rounding
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
@@ -3020,7 +3002,6 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 
 /**
  *	Return localtaxe rate for a particular tva
- *
  * 	@param      tva			         Vat taxe
  * 	@param      local		         Local taxe to search and return
  *  @param      societe_acheteuse    Object of buying third party
@@ -3059,8 +3040,7 @@ function get_localtax($tva, $local, $societe_acheteuse="")
 
 /**
  *	Return vat rate of a product in a particular selling country or default country
- *  vat if product is unknown
- *
+ *  vat if product is unknown.
  *  @param      idprod          Id of product or 0 if not a predefined product
  *  @param      countrycode     Country code (FR, US, IT, ...)
  *  @return     int             <0 if KO, Vat rate if OK
@@ -3119,7 +3099,6 @@ function get_product_vat_for_country($idprod, $countrycode)
 
 /**
  *	Return localtax rate of a product in a particular selling country
- *
  *  @param      idprod          Id of product
  *  @package    local           1 for localtax1, 2 for localtax 2
  *  @param      countrycode     Country code (FR, US, IT, ...)
@@ -3277,7 +3256,6 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 
 /**
  *	Return yes or no in current language
- *
  *	@param	yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
  *	@param	case			1=Yes/No, 0=yes/no
  *	@param	color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
@@ -3306,7 +3284,6 @@ function yn($yesno, $case=1, $color=0)
  *	Return a path to have a directory according to an id
  *  Examples:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
  *  Examples:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
- *
  *	@param      $num            Id to develop
  *	@param      $level		    Level of development (1, 2 or 3 level)
  * 	@param		$alpha		    Use alpha ref
@@ -3333,7 +3310,6 @@ function create_exdir($dir)
 
 /**
  *	Creation of a directory (recursive)
- *
  *	@param      $dir        Directory to create
  *	@return     int         < 0 if KO, 0 = already exists, > 0 if OK
  */
@@ -3395,7 +3371,6 @@ function dol_mkdir($dir)
 
 /**
  *	Return picto saying a field is required
- *
  *	@return  string		Chaine avec picto obligatoire
  */
 function picto_required()
@@ -3406,7 +3381,6 @@ function picto_required()
 
 /**
  *	Clean a string from all HTML tags and entities
- *
  *	@param   	StringHtml			String to clean
  *	@param		removelinefeed		Replace also all lines feeds by a space
  *	@return  	string	    		String cleaned
@@ -3431,8 +3405,7 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 
 
 /**
- *	Replace CRLF in string with a HTML BR tag
- *
+ *	Replace CRLF in string with a HTML BR tag.
  *	@param		stringtoencode		String to encode
  *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
  *  @param      forxml              false=Use <br>, true=Use <br />
@@ -3462,8 +3435,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *              - writeHTMLCell -> param must be encoded into HTML.
  *              - MultiCell -> param must not be encoded into HTML.
  *              Because writeHTMLCell convert also \n into <br>, if function
- *              is used to build PDF, nl2brmode must be 1
- *
+ *              is used to build PDF, nl2brmode must be 1.
  *	@param		stringtoencode		String to encode
  *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *  @param      pagecodefrom        Pagecode stringtoencode is encoded
@@ -3490,7 +3462,6 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 
 /**
  *	This function is called to decode a HTML string (it decodes entities and br tags)
- *
  *	@param		stringtodecode		String to decode
  *	@param		pagecodeto			Page code for result
  */
@@ -3506,7 +3477,6 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 
 /**
  *	This function remove all ending \n and br at end
- *
  *	@param		stringtodecode		String to decode
  */
 function dol_htmlcleanlastbr($stringtodecode)
@@ -3517,7 +3487,6 @@ function dol_htmlcleanlastbr($stringtodecode)
 
 /**
  *	This function is called to decode a string with HTML entities (it decodes entities tags)
- *
  * 	@param   	stringhtml      stringhtml
  *  @param      pagecodeto      Encoding of input string
  * 	@return  	string	  	    decodestring
@@ -3530,7 +3499,6 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 
 /**
  * Replace html_entity_decode functions to manage errors
- *
  * @param   a
  * @param   b
  * @param   c
@@ -3545,7 +3513,6 @@ function dol_html_entity_decode($a,$b,$c)
 
 /**
  * Replace htmlentities functions to manage errors
- *
  * @param   a
  * @param   b
  * @param   c
@@ -3562,8 +3529,7 @@ function dol_htmlentities($a,$b,$c)
 /**
  *	Check if a string is a correct iso string
  *	If not, it will we considered not HTML encoded even if it is by FPDF.
- *	Example, if string contains euro symbol that has ascii code 128
- *
+ *	Example, if string contains euro symbol that has ascii code 128.
  *	@param       s       String to check
  *	@return	     int     0 if bad iso, 1 if good iso
  */
@@ -3584,7 +3550,6 @@ function dol_string_is_good_iso($s)
 
 /**
  *	Return nb of lines of a clear text
- *
  *	@param		s			String to check
  * 	@param		maxchar		Not yet used
  *	@return		int			Number of lines
@@ -3601,7 +3566,6 @@ function dol_nboflines($s,$maxchar=0)
 
 /**
  *	Return nb of lines of a formated text with \n and <br>
- *
  *	@param	   	text      		Text
  *	@param	   	maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
  * 	@param		charset			Give the charset used to encode the $text variable in memory.
@@ -3638,7 +3602,6 @@ function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 
 /**
  *	 Same function than microtime in PHP 5 but compatible with PHP4
- *
  *	 @return		float		Time (millisecondes) with microsecondes in decimal part
  */
 function dol_microtime_float()
@@ -3649,7 +3612,6 @@ function dol_microtime_float()
 
 /**
  *		Return if a text is a html content
- *
  *		@param		msg			Content to check
  *		@param		option		0=Full detection, 1=Fast check
  *		@return		boolean		true/false
@@ -4112,8 +4074,7 @@ function verifCond($strRights)
 
 /**
  * Replace eval function to add more security.
- * This function is called by verifCond()
- *
+ * This function is called by verifCond().
  * @param 	string	$s
  */
 function dol_eval($s)
