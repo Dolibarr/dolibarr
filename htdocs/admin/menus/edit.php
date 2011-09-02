@@ -261,7 +261,7 @@ if ($action == 'create')
         if ($res)
         {
 
-            while ($menu = $db->fetch_array ($res))
+            while ($menu = $db->fetch_array($res))
             {
                 $parent_rowid = $menu['rowid'];
                 $parent_mainmenu = $menu['mainmenu'];
