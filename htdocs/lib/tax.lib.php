@@ -64,7 +64,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         // If vat paid on due invoices (non draft)
         if ($conf->global->MAIN_MODULE_ACCOUNTING)
         {
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
+            // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
             // n'est pas stocke dans la table des payments.
             // Seul le module compta expert peut resoudre ce probleme.
             // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
@@ -102,7 +102,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         if ($conf->global->MAIN_MODULE_ACCOUNTING)
         {
             // If vat paid on payments
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
+            // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
             // n'est pas stocke dans la table des payments.
             // Seul le module compta expert peut resoudre ce probleme.
             // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
@@ -215,7 +215,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     {
         if ($conf->global->MAIN_MODULE_ACCOUNTING)
         {
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
+            // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
             // n'est pas stocke dans la table des payments.
             // Seul le module compta expert peut resoudre ce probleme.
             // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
@@ -261,7 +261,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     {
         if ($conf->global->MAIN_MODULE_ACCOUNTING)
         {
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
+            // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
             // n'est pas stocke dans la table des payments.
             // Seul le module compta expert peut resoudre ce probleme.
             // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
@@ -376,7 +376,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         if ($conf->global->MAIN_MODULE_ACCOUNTING)
         {
             // Count on invoice date
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
+            // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
             // n'est pas stocke dans la table des payments.
             // Seul le module compta expert peut resoudre ce probleme.
             // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
@@ -423,7 +423,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         if ($conf->global->MAIN_MODULE_ACCOUNTING)
         {
             // Count on payments date
-            // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
+            // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
             // n'est pas stocke dans la table des payments.
             // Seul le module compta expert peut resoudre ce probleme.
             // (Il faut quand un paiement a lieu, stocker en plus du montant du paiement le

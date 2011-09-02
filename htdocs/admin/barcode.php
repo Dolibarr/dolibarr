@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/admin/barcode.php
+ *	\file       htdocs/includes/modules/barcode/admin/barcode.php
  *	\ingroup    barcode
- *	\brief      Page to setup barcode module
+ *	\brief      Page d'administration/configuration du module Code barre
  */
 
 require("../main.inc.php");
