@@ -1200,64 +1200,66 @@ padding: 0px 0px;
 /* For lists */
 
 table.liste {
-width: 100%;
-border-collapse: collapse;
-border-top-color: #FEFEFE;
+    width: 100%;
+    border-collapse: collapse;
+    border-top-color: #FEFEFE;
 
-border-left-width: 1px;
-border-left-color: #BBBBBB;
-border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #BBBBBB;
+    border-left-style: solid;
 
-border-right-width: 1px;
-border-right-color: #BBBBBB;
-border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: #BBBBBB;
+    border-right-style: solid;
 
-border-bottom-width: 1px;
-border-bottom-color: #BBBBBB;
-border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #BBBBBB;
+    border-bottom-style: solid;
 
-margin-bottom: 2px;
-margin-top: 0px;
+    margin-bottom: 2px;
+    margin-top: 0px;
 
--moz-box-shadow: 4px 4px 4px #CCC;
--webkit-box-shadow: 4px 4px 4px #CCC;
-box-shadow: 4px 4px 4px #CCC;
+    -moz-box-shadow: 4px 4px 4px #CCC;
+    -webkit-box-shadow: 4px 4px 4px #CCC;
+    box-shadow: 4px 4px 4px #CCC;
 }
 table.liste td {
-padding-right: 2px;
+	padding-right: 2px;
 }
 
-tr.liste_titre {
-height: 24px;
-background: #7699A9;
-background-image: url(<?php echo $img_liste_titre ?>);
-background-repeat: repeat-x;
-color: #FFFFFF;
-font-family: <?php print $fontlist ?>;
-/* border-bottom: 1px solid #FDFFFF; */
-white-space: nowrap;
-}
-td.liste_titre {
-background: #7699A9;
-background-image: url(<?php echo $img_liste_titre ?>);
-background-repeat: repeat-x;
-color: #FFFFFF;
-font-family: <?php print $fontlist ?>;
-font-weight: normal;
-/* border-bottom: 1px solid #FDFFFF; */
-white-space: nowrap;
-}
-td.liste_titre_sel
+tr.liste_titre
 {
-background: #7699A9;
-background-image: url(<?php echo $img_liste_titre ?>);
-background-repeat: repeat-x;
-color: #FFFFFF;
-font-family: <?php print $fontlist ?>;
-font-weight: normal;
-/* text-decoration: underline; */
-/* border-bottom: 1px solid #FDFFFF; */
-white-space: nowrap;
+    height: 24px;
+    background: #7699A9;
+    background-image: url(<?php echo $img_liste_titre ?>);
+    background-repeat: repeat-x;
+    color: #FFFFFF;
+    font-family: <?php print $fontlist ?>;
+    /* border-bottom: 1px solid #FDFFFF; */
+    white-space: nowrap;
+}
+th.liste_titre, td.liste_titre
+{
+    background: #7699A9;
+    background-image: url(<?php echo $img_liste_titre ?>);
+    background-repeat: repeat-x;
+    color: #FFFFFF;
+    font-family: <?php print $fontlist ?>;
+    font-weight: normal;
+    /* border-bottom: 1px solid #FDFFFF; */
+    white-space: nowrap;
+}
+th.liste_titre_sel, td.liste_titre_sel
+{
+    background: #7699A9;
+    background-image: url(<?php echo $img_liste_titre ?>);
+    background-repeat: repeat-x;
+    color: #FFFFFF;
+    font-family: <?php print $fontlist ?>;
+    font-weight: normal;
+    /* text-decoration: underline; */
+    /* border-bottom: 1px solid #FDFFFF; */
+    white-space: nowrap;
 }
 input.liste_titre {
 background: transparent;
@@ -1271,19 +1273,6 @@ background: #F0F0F0;
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
-white-space: nowrap;
-}
-
-th {
-/* background: #7699A9; */
-background: #91ABB3;
-color: #334444;
-font-family: <?php print $fontlist ?>;
-font-weight: bold;
-border-left: 1px solid #FFFFFF;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
 }
 
