@@ -32,69 +32,60 @@ $langs->load("stocks");
 if (!$user->admin)
 accessforbidden();
 
+$action = getpost("action");
+
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'STOCK_USERSTOCK_AUTOCREATE')
+if ($action == 'STOCK_USERSTOCK_AUTOCREATE')
 {
-	dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", $_POST["STOCK_USERSTOCK_AUTOCREATE"],'chaine',0,'',$conf->entity);
-	Header("Location: stock.php");
-	exit;
+	$db->begin();
+	$res = dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", GETPOST("STOCK_USERSTOCK_AUTOCREATE"),'chaine',0,'',$conf->entity);
 }
 // Mode of stock decrease
-if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL'
-|| $_POST["action"] == 'STOCK_CALCULATE_ON_VALIDATE_ORDER'
-|| $_POST["action"] == 'STOCK_CALCULATE_ON_SHIPMENT')
+if ($action == 'STOCK_CALCULATE_ON_BILL'
+|| $action == 'STOCK_CALCULATE_ON_VALIDATE_ORDER'
+|| $action == 'STOCK_CALCULATE_ON_SHIPMENT')
 {
-	$count=0;
 	$db->begin();
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", '','chaine',0,'',$conf->entity);
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", '','chaine',0,'',$conf->entity);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["STOCK_CALCULATE_ON_BILL"],'chaine',0,'',$conf->entity);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_VALIDATE_ORDER"],'chaine',0,'',$conf->entity);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SHIPMENT')       $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", $_POST["STOCK_CALCULATE_ON_SHIPMENT"],'chaine',0,'',$conf->entity);
-	if ($count == 4)
-	{
-		$db->commit();
-		Header("Location: stock.php");
-		exit;
-	}
-	else
-	{
-		$db->rollback();
-		dol_print_error("Error in some requests", LOG_ERR);
-	}
+	$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", '','chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", '','chaine',0,'',$conf->entity);
+	if ($action == 'STOCK_CALCULATE_ON_BILL')           $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", GETPOST("STOCK_CALCULATE_ON_BILL"),'chaine',0,'',$conf->entity);
+	if ($action == 'STOCK_CALCULATE_ON_VALIDATE_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", GETPOST("STOCK_CALCULATE_ON_VALIDATE_ORDER"),'chaine',0,'',$conf->entity);
+	if ($action == 'STOCK_CALCULATE_ON_SHIPMENT')       $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", GETPOST("STOCK_CALCULATE_ON_SHIPMENT"),'chaine',0,'',$conf->entity);
 }
 // Mode of stock increase
-if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
-|| $_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'
-|| $_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
+if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
+|| $action == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'
+|| $action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
 {
-	$count=0;
 	$db->begin();
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", '','chaine',0,'',$conf->entity);
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
-	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", '','chaine',0,'',$conf->entity);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", $_POST["STOCK_CALCULATE_ON_SUPPLIER_BILL"],'chaine',0,'',$conf->entity);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER"],'chaine',0,'',$conf->entity);
-	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $_POST["STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER"],'chaine',0,'',$conf->entity);
-	if ($count == 4)
-	{
-		$db->commit();
-		Header("Location: stock.php");
-		exit;
-	}
-	else
-	{
-		$db->rollback();
-		dol_print_error("Error in some requests", LOG_ERR);
-	}
+	$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", '','chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", '','chaine',0,'',$conf->entity);
+	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL')           $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", GETPOST("STOCK_CALCULATE_ON_SUPPLIER_BILL"),'chaine',0,'',$conf->entity);
+	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", GETPOST("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER"),'chaine',0,'',$conf->entity);
+	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", GETPSOT("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER"),'chaine',0,'',$conf->entity);
 }
 
+if($action)
+{
+	if (! $res > 0) $error++;
 
+ 	if (! $error)
+    {
+    	$db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+    	$db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
 
 /*
  * View
@@ -233,8 +224,10 @@ if ($conf->fournisseur->enabled)
 	print "</form>\n</td>\n</tr>\n";
 }
 
-
 print '</table>';
+
+dol_htmloutput_mesg($mesg);
+
 $db->close();
 
 llxFooter();
