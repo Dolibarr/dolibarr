@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/product/canvas/service/actions_card_service.class.php
+ *	\file       htdocs/product/canvas/service/product.service.class.php
  *	\ingroup    service
  *	\brief      Fichier de la classe des services par defaut
  */

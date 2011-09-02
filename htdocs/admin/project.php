@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011 Juanjo Menent		   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,27 +42,16 @@ $action=GETPOST('action');
  * Actions
  */
 
-if ($action == 'updateMask')
+if ($_POST["action"] == 'updateMask')
 {
-	$maskconstproject=GETPOST("maskconstproject");
-	$maskproject=GETPOST("maskproject");
-	if ($maskconstproject)  $res = dolibarr_set_const($db,$maskconstproject,$maskproject,'chaine',0,'',$conf->entity);
-	
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	$maskconstproject=$_POST['maskconstproject'];
+	$maskproject=$_POST['maskproject'];
+	if ($maskconstproject)  dolibarr_set_const($db,$maskconstproject,$maskproject,'chaine',0,'',$conf->entity);
 }
 
-if ($action == 'specimen')
+if ($_GET["action"] == 'specimen')
 {
-	$modele=GETPOST("module");
+	$modele=$_GET["module"];
 
 	$project = new Project($db);
 	$project->initAsSpecimen();
@@ -96,16 +84,13 @@ if ($action == 'specimen')
 	}
 }
 
-if ($action == 'set')
+if ($_GET["action"] == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
-	
 	$type='project';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
     $sql.= ")";
 	if ($db->query($sql))
 	{
@@ -113,7 +98,7 @@ if ($action == 'set')
 	}
 }
 
-if ($action == 'del')
+if ($_GET["action"] == 'del')
 {
 	$type='project';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
@@ -126,30 +111,27 @@ if ($action == 'del')
 	}
 }
 
-if ($action == 'setdoc')
+if ($_GET["action"] == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
-	
 	$db->begin();
 
-	if (dolibarr_set_const($db, "PROJECT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "PROJECT_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
 	{
-		$conf->global->PROJECT_ADDON_PDF = $value;
+		$conf->global->PROJECT_ADDON_PDF = $_GET["value"];
 	}
 
 	// On active le modele
 	$type='project';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
+	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
     $sql.= ")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
@@ -162,7 +144,7 @@ if ($action == 'setdoc')
 	}
 }
 
-if ($action == 'setmod')
+if ($_GET["action"] == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -397,10 +379,6 @@ if (is_resource($handle))
 }
 
 print '</table><br/>';
-
-dol_htmloutput_mesg($mesg);
-
-$db->close();
 
 llxFooter();
 ?>

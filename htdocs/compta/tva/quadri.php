@@ -114,11 +114,10 @@ function tva_coll($db,$y,$q)
 /**
  * Gets VAT to pay for the given month of the given year
  * The function gets the VAT in split results, as the VAT declaration asks
- * to report the amounts for different VAT rates as different lines
- *
- * @param		DoliDB	$db			Database handler object
- * @param		int		$y			Year
- * @param		int		$q			Year quarter (1-4)
+ * to report the amounts for different VAT rates as different lines.
+ * @param		object		Database handler object
+ * @param		y			Year
+ * @param		q			Year quarter (1-4)
  */
 function tva_paye($db, $y,$q)
 {
