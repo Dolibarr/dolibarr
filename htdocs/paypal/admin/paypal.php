@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,7 @@ if ($conf->use_javascript_ajax)
     print '</script>';
 }
 
-if ($mesg) print '<br>'.$mesg;
+dol_htmloutput_mesg($mesg);
 
 print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -213,6 +213,8 @@ print '</td></tr>';
 print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
 
+dol_fiche_end();
+
 print '<br><br>';
 
 // Help doc
@@ -234,7 +236,6 @@ print 'Your API authentication information can be found with following steps. We
 8. Click the "Modify" button after copying your API Username, Password, and Signature.
 ';
 print '</div>';
-
 
 print '<br><br>';
 
