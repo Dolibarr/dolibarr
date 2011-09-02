@@ -129,8 +129,8 @@ $form = new Form($db);
 
 llxHeader();
 
-$soc = new Societe($db);
-$result=$soc->fetch($socid);
+$object = new Societe($db);
+$result=$object->fetch($socid);
 
 if ($result > 0)
 {
@@ -138,7 +138,7 @@ if ($result > 0)
     $langs->load("other");
 
 
-    $head = societe_prepare_head($soc);
+    $head = societe_prepare_head($object);
 
     dol_fiche_head($head, 'notify', $langs->trans("ThirdParty"),0,'company');
 
@@ -146,7 +146,7 @@ if ($result > 0)
     print '<table class="border"width="100%">';
 
     print '<tr><td width="20%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
-    print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
+    print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
     print '</td></tr>';
 
     // Prefix
@@ -177,7 +177,7 @@ if ($result > 0)
     print '<td colspan="3">';
     $sql = "SELECT COUNT(n.rowid) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-    $sql.= " WHERE fk_soc = ".$soc->id;
+    $sql.= " WHERE fk_soc = ".$object->id;
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -197,11 +197,11 @@ if ($result > 0)
     print '</td></tr>';
     print '</table>';
 
-    print '</div>';
-
-
     // Help
-    print $langs->trans("NotificationsDesc").'<br><br>';
+    print '<br>'.$langs->trans("NotificationsDesc").'<br>';
+
+
+    dol_fiche_end();
 
 
     print "\n";
@@ -213,10 +213,11 @@ if ($result > 0)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
+    $param="&socid=".$socid;
+
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    $param="&socid=".$socid;
     print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),"fiche.php","",'',$param,'"width="10%"',$sortfield,$sortorder);
@@ -224,7 +225,7 @@ if ($result > 0)
     print '</tr>';
 
     $var=false;
-    $listofemails=$soc->thirdparty_and_contact_email_array();
+    $listofemails=$object->thirdparty_and_contact_email_array();
     if (count($listofemails) > 0)
     {
         $actions=array();
@@ -287,7 +288,7 @@ if ($result > 0)
     $sql.= " ".MAIN_DB_PREFIX."socpeople c";
     $sql.= " WHERE a.rowid = n.fk_action";
     $sql.= " AND c.rowid = n.fk_contact";
-    $sql.= " AND c.fk_soc = ".$soc->id;
+    $sql.= " AND c.fk_soc = ".$object->id;
 
     $resql=$db->query($sql);
     if ($resql)
@@ -350,9 +351,9 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),"fiche.php","a.titre",'',"&socid=$socid",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),"fiche.php","a.daten",'',$param,'align="right"',$sortfield,$sortorder);
     print '</tr>';
 
     // List
@@ -364,7 +365,7 @@ if ($result > 0)
     $sql.= " ".MAIN_DB_PREFIX."socpeople as c";
     $sql.= " WHERE a.rowid = n.fk_action";
     $sql.= " AND c.rowid = n.fk_contact";
-    $sql.= " AND c.fk_soc = ".$soc->id;
+    $sql.= " AND c.fk_soc = ".$object->id;
 
     $resql=$db->query($sql);
     if ($resql)
