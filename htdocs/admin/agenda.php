@@ -79,12 +79,9 @@ if ($action == "save" && empty($_POST["cancel"]))
 		//print "param=".$param." - ".$_POST[$param];
 		if (! empty($_POST[$param])) $res = dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
 		else $res = dolibarr_del_const($db,$param,$conf->entity);
+		if (! $res > 0) $error++;
 	}
-
-    $db->commit();
     
-	if (! $res > 0) $error++;
-
  	if (! $error)
     {
     	$db->commit();
