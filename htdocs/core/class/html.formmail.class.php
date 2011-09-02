@@ -380,7 +380,7 @@ class FormMail
                     $liste=array();
                     $soc=new Societe($this->db);
                     $soc->fetch($this->withtosocid);
-                    foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
+                    foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
                     {
                         $liste[$key]=$value;
                     }
@@ -414,7 +414,7 @@ class FormMail
                     $liste=array();
                     $soc=new Societe($this->db);
                     $soc->fetch($this->withtoccsocid);
-                    foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
+                    foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
                     {
                         $liste[$key]=$value;
                     }
@@ -448,7 +448,7 @@ class FormMail
                     $liste=array();
                     $soc=new Societe($this->db);
                     $soc->fetch($this->withtosocid);
-                    foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
+                    foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
                     {
                         $liste[$key]=$value;
                     }
