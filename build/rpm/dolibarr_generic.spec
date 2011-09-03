@@ -134,7 +134,7 @@ cui hai bisogno ed essere facile da usare.
 %config(noreplace) %{_sysconfdir}/dolibarr/file_contexts.dolibarr
 
 #lang(ar_SA) %_datadir/dolibarr/htdocs/langs/ar_SA
-#lang(ca_ES) %_datadir/dolibarr/htdocs/langs/ca_ES/*.lang
+#lang(ca_ES) %_datadir/dolibarr/htdocs/langs/ca_ES
 #lang(da_DK) %_datadir/dolibarr/htdocs/langs/da_DK
 #lang(de_AT) %_datadir/dolibarr/htdocs/langs/de_AT
 #lang(de_DE) %_datadir/dolibarr/htdocs/langs/de_DE
