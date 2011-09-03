@@ -578,9 +578,9 @@ if ($nboftargetok) {
     		$ret=`rpmbuild --clean -ba $BUILDROOT/${BUILDFIC}`;
     	
     		# Move to final dir
-   		    print "Move $RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH."*.rpm into $NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH."*.rpm\n";
+   		    print "Move $RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION."*.".$ARCH.".rpm into $NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH."*.rpm\n";
    		    #$cmd="mv \"$RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\" \"$NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\"";
-   		    $cmd="mv $RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH."*.rpm \"$NEWDESTI/\"";
+   		    $cmd="mv $RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION."*.".$ARCH.".rpm \"$NEWDESTI/\"";
     		$ret=`$cmd`;
    		    print "Move $RPMDIR/SRPMS/".$FILENAMETGZ2."-".$RPMSUBVERSION."*.src.rpm into $NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION."*.src.rpm\n";
    		    #$cmd="mv \"$RPMDIR/SRPMS/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm\" \"$NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm\"";
