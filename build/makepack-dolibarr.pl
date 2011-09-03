@@ -572,7 +572,6 @@ if ($nboftargetok) {
     
     		print "Copy patch file to $RPMDIR/SOURCES\n";
     		$ret=`cp "$SOURCE/build/rpm/dolibarr-forrpm.patch" "$RPMDIR/SOURCES"`;
-		    $ret=`chmod 644 $RPMDIR/SOURCES/dolibarr-forrpm.patch`;
 
     		print "Launch RPM build (rpmbuild --clean -ba $BUILDROOT/${BUILDFIC})\n";
     		#$ret=`rpmbuild -vvvv --clean -ba $BUILDROOT/${BUILDFIC}`;
