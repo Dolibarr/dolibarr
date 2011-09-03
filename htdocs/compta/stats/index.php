@@ -401,7 +401,7 @@ print "</table>";
  print '<br><table width="100%" class="noborder">';
 
  // Factures non reglees
- // \todo Y a bug ici. Il faut prendre le reste a payer et non le total des factures non reglees !
+ // Y a bug ici. Il faut prendre le reste a payer et non le total des factures non reglees !
 
  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid, f.total_ttc, sum(pf.amount) as am";
  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";

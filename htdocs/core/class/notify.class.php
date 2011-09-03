@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,11 @@ class Notify
     var $fk_project;
 
 	// Les codes actions sont definis dans la table llx_notify_def
-	// \todo utiliser des codes texte plutot que numerique
-	// 1 = Validation fiche inter
-	// 2 = Validation facture
 
     /**
-     *    \brief      Constructeur
-     *    \param      DB      Handler acces base
+	 *	Constructor
+	 *
+	 *	@param 		DoliDB		$DB		Database handler
      */
     function Notify($DB)
     {
