@@ -32,51 +32,92 @@ accessforbidden();
 $langs->load("admin");
 $langs->load("other");
 
+$action = GETPOST("action");
 
 /*
  * Actions
  */
-if (! empty($_POST["action"]) && $_POST["action"] == 'setlevel')
+if ($action== 'setlevel')
 {
-	dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"],'chaine',0,'',0);
-	dol_syslog("admin/syslog: level ".$_POST["level"]);
+	$level = GETPOST("level");
+	$res = dolibarr_set_const($db,"SYSLOG_LEVEL",$level,'chaine',0,'',0);
+	dol_syslog("admin/syslog: level ".$level);
+	
+	if (! $res > 0) $error++;
+	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
 }
 
-if (! empty($_POST["action"]) && $_POST["action"] == 'set')
+if ($action == 'set')
 {
-	$optionlogoutput=$_POST["optionlogoutput"];
+	$optionlogoutput=GETPOST("optionlogoutput"); 
+	$facility=GETPOST("facility");
 	if ($optionlogoutput == "syslog")
 	{
 		if (defined($_POST["facility"]))
 		{
+			$db->begin;
 			// Only LOG_USER supported on Windows
-			if (! empty($_SERVER["WINDIR"])) $_POST["facility"]='LOG_USER';
+			if (! empty($_SERVER["WINDIR"])) $facility='LOG_USER';
 
-			dolibarr_del_const($db,"SYSLOG_FILE",0);
-			dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"],'chaine',0,'',0);
-			dol_syslog("admin/syslog: facility ".$_POST["facility"]);
+			$res = dolibarr_del_const($db,"SYSLOG_FILE",0);
+			if (! $res > 0) $error++;
+			$res = dolibarr_set_const($db,"SYSLOG_FACILITY",$facility,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			dol_syslog("admin/syslog: facility ".$facility);
+			if (! $error)
+		    {
+		        $db->commit();
+		        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		    }
+		    else
+		    {
+		        $db->rollback();
+		        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+			}
 		}
 		else
 		{
-			print '<div class="error">'.$langs->trans("ErrorUnknownSyslogConstant",$_POST["facility"]).'</div>';
+			$mesg = "<font class=\"error\">".$langs->trans("ErrorUnknownSyslogConstant",$facility)."</font>";
 		}
 	}
 
 	if ($optionlogoutput == "file")
 	{
-		$filelog=$_POST["filename"];
+		$filename=GETPOST("filename");
+		$filelog=GETPOST("filename");
 		$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
 		$file=fopen($filelog,"a+");
 		if ($file)
 		{
 			fclose($file);
-			dolibarr_del_const($db,"SYSLOG_FACILITY",0);
-			dolibarr_set_const($db,"SYSLOG_FILE",$_POST["filename"],'chaine',0,'',0);
-			dol_syslog("admin/syslog: file ".$_POST["filename"]);
+			$db->begin;
+			$res = dolibarr_del_const($db,"SYSLOG_FACILITY",0);
+			if (! $res > 0) $error++;
+			$res = dolibarr_set_const($db,"SYSLOG_FILE",$filename,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			dol_syslog("admin/syslog: file ".$filename);
+			if (! $res > 0) $error++;
+			if (! $error)
+    		{
+        		$db->commit();
+        		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    		}
+    		else
+    		{
+        		$db->rollback();
+        		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+			}
 		}
 		else
 		{
-			print '<div class="error">'.$langs->trans("ErrorFailedToOpenFile",$_POST["filename"]).'</div>';
+			$mesg = "<font class=\"error\">".$langs->trans("ErrorFailedToOpenFile",$filename)."</font>";
 		}
 	}
 }
@@ -162,6 +203,10 @@ print '</select>';
 print '</td></tr>';
 print '</table>';
 print "</form>\n";
+
+dol_htmloutput_mesg($mesg);
+
+$db->close();
 
 llxFooter();
 ?>
