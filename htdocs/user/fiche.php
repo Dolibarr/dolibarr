@@ -187,22 +187,22 @@ if ($_POST["action"] == 'add' && $canadduser)
 
     if (! $message)
     {
-        $edituser->nom           = $_POST["nom"];
-        $edituser->prenom        = $_POST["prenom"];
-        $edituser->login         = $_POST["login"];
-        $edituser->admin         = $_POST["admin"];
-        $edituser->office_phone  = $_POST["office_phone"];
-        $edituser->office_fax    = $_POST["office_fax"];
-        $edituser->user_mobile   = $_POST["user_mobile"];
-        $edituser->email         = $_POST["email"];
-        $edituser->webcal_login  = $_POST["webcal_login"];
-        $edituser->signature     = $_POST["signature"];
-        $edituser->phenix_login  = $_POST["phenix_login"];
-        $edituser->phenix_pass   = $_POST["phenix_pass"];
-        $edituser->note          = $_POST["note"];
-        $edituser->ldap_sid      = $_POST["ldap_sid"];
+        $edituser->lastname		= $_POST["nom"];
+        $edituser->firstname	= $_POST["prenom"];
+        $edituser->login		= $_POST["login"];
+        $edituser->admin		= $_POST["admin"];
+        $edituser->office_phone	= $_POST["office_phone"];
+        $edituser->office_fax	= $_POST["office_fax"];
+        $edituser->user_mobile	= $_POST["user_mobile"];
+        $edituser->email		= $_POST["email"];
+        $edituser->webcal_login	= $_POST["webcal_login"];
+        $edituser->signature	= $_POST["signature"];
+        $edituser->phenix_login	= $_POST["phenix_login"];
+        $edituser->phenix_pass	= $_POST["phenix_pass"];
+        $edituser->note			= $_POST["note"];
+        $edituser->ldap_sid		= $_POST["ldap_sid"];
         // If multicompany is off, admin users must all be on entity 0.
-        $edituser->entity        = ( ! empty($_POST["admin"]) && (! empty($_POST["superadmin"]) || empty($_POST["entity"]) || empty($conf->multicompany->enabled)) ? 0 : $_POST["entity"]);
+        $edituser->entity		= ( ! empty($_POST["admin"]) && (! empty($_POST["superadmin"]) || empty($_POST["entity"]) || empty($conf->multicompany->enabled)) ? 0 : $_POST["entity"]);
 
         $db->begin();
 
@@ -284,21 +284,21 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             $edituser->oldcopy=dol_clone($edituser);
 
-            $edituser->nom           = $_POST["nom"];
-            $edituser->prenom        = $_POST["prenom"];
-            $edituser->login         = $_POST["login"];
-            $edituser->pass          = $_POST["password"];
-            $edituser->admin         = $_POST["admin"];
-            $edituser->office_phone  = $_POST["office_phone"];
-            $edituser->office_fax    = $_POST["office_fax"];
-            $edituser->user_mobile   = $_POST["user_mobile"];
-            $edituser->email         = $_POST["email"];
-            $edituser->signature     = $_POST["signature"];
-            $edituser->openid        = $_POST["openid"];
-            $edituser->webcal_login  = $_POST["webcal_login"];
-            $edituser->phenix_login  = $_POST["phenix_login"];
-            $edituser->phenix_pass   = $_POST["phenix_pass"];
-            $edituser->entity        = ( (! empty($_POST["superadmin"]) && ! empty($_POST["admin"]) || empty($_POST["entity"])) ? 0 : $_POST["entity"]);
+            $edituser->lastname		= $_POST["nom"];
+            $edituser->firstname	= $_POST["prenom"];
+            $edituser->login		= $_POST["login"];
+            $edituser->pass			= $_POST["password"];
+            $edituser->admin		= $_POST["admin"];
+            $edituser->office_phone	= $_POST["office_phone"];
+            $edituser->office_fax	= $_POST["office_fax"];
+            $edituser->user_mobile	= $_POST["user_mobile"];
+            $edituser->email		= $_POST["email"];
+            $edituser->signature	= $_POST["signature"];
+            $edituser->openid		= $_POST["openid"];
+            $edituser->webcal_login	= $_POST["webcal_login"];
+            $edituser->phenix_login	= $_POST["phenix_login"];
+            $edituser->phenix_pass	= $_POST["phenix_pass"];
+            $edituser->entity		= ( (! empty($_POST["superadmin"]) && ! empty($_POST["admin"]) || empty($_POST["entity"])) ? 0 : $_POST["entity"]);
             if (GETPOST('deletephoto')) $edituser->photo='';
             if (! empty($_FILES['photo']['name'])) $edituser->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 

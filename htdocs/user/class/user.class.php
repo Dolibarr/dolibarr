@@ -840,8 +840,10 @@ class User extends CommonObject
 
 		// Positionne parametres
 		$this->admin = 0;
-		$this->nom = $contact->nom;
-		$this->prenom = $contact->prenom;
+		$this->nom = $contact->nom;			// TODO deprecated
+		$this->prenom = $contact->prenom;	// TODO deprecated
+		$this->lastname = $contact->nom;
+		$this->firstname = $contact->prenom;
 		$this->email = $contact->email;
 
 		if (empty($login)) $login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
@@ -1011,8 +1013,10 @@ class User extends CommonObject
 		dol_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-		$this->nom          = trim($this->nom);
-		$this->prenom       = trim($this->prenom);
+		$this->nom          = trim($this->nom);		// TODO deprecated
+		$this->prenom       = trim($this->prenom);  // TODO deprecated
+		$this->lastname     = trim($this->lastname);
+		$this->firstname    = trim($this->firstname);
 		$this->login        = trim($this->login);
 		$this->pass         = trim($this->pass);
 		$this->office_phone = trim($this->office_phone);
@@ -1042,8 +1046,8 @@ class User extends CommonObject
 
 		// Mise a jour autres infos
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-		$sql.= " name = '".$this->db->escape($this->nom)."'";
-		$sql.= ", firstname = '".$this->db->escape($this->prenom)."'";
+		$sql.= " name = '".$this->db->escape($this->lastname)."'";
+		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", admin = ".$this->admin;
 		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
@@ -1104,8 +1108,8 @@ class User extends CommonObject
 
 					if ($result >= 0)
 					{
-						$adh->prenom=$this->prenom;
-						$adh->nom=$this->nom;
+						$adh->prenom=$this->firstname;
+						$adh->nom=$this->lastname;
 						$adh->login=$this->login;
 						$adh->pass=$this->pass;
 						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
