@@ -20,6 +20,7 @@ Vendor: Dolibarr dev team
 
 URL: http://www.dolibarr.org
 Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
+Patch0: %{name}-forrpm.patch
 BuildArch: noarch
 #BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
@@ -67,6 +68,7 @@ cui hai bisogno ed essere facile da usare.
 #---- prep
 %prep
 %setup -q
+%patch0 -p0 -b .patch
 
 
 
@@ -193,13 +195,13 @@ fi
 
 # Show result
 echo
-echo "----- Dolibarr %version - (c) Dolibarr dev team -----"
+echo "----- Dolibarr %version-%release - (c) Dolibarr dev team -----"
 echo "Dolibarr files are now installed (into /usr/share/dolibarr)."
 echo "To finish installation and use Dolibarr, click on the menu" 
 echo "entry Dolibarr ERP-CRM or call the following page from your"
 echo "web browser:"  
 echo "http://localhost/dolibarr/"
-echo "--------------------------------------------------"
+echo "-------------------------------------------------------"
 echo
 
 
