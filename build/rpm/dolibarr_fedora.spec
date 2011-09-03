@@ -98,13 +98,10 @@ cui hai bisogno ed essere facile da usare.
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
-#%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/doc/dolibarr
 %{__cp} -pr build/rpm/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
 %{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
 %{__cp} -pr scripts $RPM_BUILD_ROOT/usr/share/dolibarr
-#%{__cp} -pr doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-#%{__install} -m 644 COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
 
 
 #---- clean
@@ -121,7 +118,7 @@ cui hai bisogno ed essere facile da usare.
 %_datadir/dolibarr/scripts/*
 
 %defattr(-, root, root, 0755)
-#%doc %_datadir/doc/dolibarr
+%doc COPYRIGHT doc/index.html
 %dir %_datadir/dolibarr/build/rpm
 %dir %_datadir/dolibarr/build/tgz
 %dir %_datadir/dolibarr/htdocs
