@@ -1150,21 +1150,22 @@ class User extends CommonObject
 			if (! $error)
 			{
 				$this->db->commit();
+				return $nbrowsaffected;
 			}
 			else
 			{
+				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this)."::update error=".$this->error,LOG_ERR);
 				$this->db->rollback();
+				return -1;
 			}
-
-			return $nbrowsaffected;
 		}
 		else
 		{
-			$this->db->rollback();
-
 			$this->error=$this->db->lasterror();
-			dol_syslog("User::update ".$this->error,LOG_ERR);
-			return -1;
+			dol_syslog(get_class($this)."::update error=".$this->error,LOG_ERR);
+			$this->db->rollback();
+			return -2;
 		}
 
 	}
