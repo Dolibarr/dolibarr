@@ -2103,7 +2103,7 @@ class SMTPs
      * @return void
      *
      */
-    function setAttachment ( $strContent, $strFileName = 'unknown', $strMimeType = 'unknown' )
+    function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown')
     {
         if ( $strContent )
         {
@@ -2120,21 +2120,23 @@ class SMTPs
 
 
     // DOL_CHANGE LDR
+
     /**
-    * Method public void setImageInline( string )
-    *
-    * Image attachments are added to the content array as sub-arrays,
-    * allowing for multiple images for each outbound email
-    *
-    * @param string $strContent  Image data to attach to message
-    * @param string $strImageName Image Name to give to attachment
-    * @param string $strMimeType Image Mime Type of attachment
-    * @return void
-    *
-    */
-    function setImageInline ( $strContent, $strImageName = 'unknown', $strMimeType = 'unknown', $strImageCid = 'unknown' )
+     * Method public void setImageInline( string )
+     *
+     * Image attachments are added to the content array as sub-arrays,
+     * allowing for multiple images for each outbound email
+     *
+     * @param 	string $strContent  	Image data to attach to message
+     * @param 	string $strImageName 	Image Name to give to attachment
+     * @param 	string $strMimeType 	Image Mime Type of attachment
+     * @param 	string $strImageCid		CID
+     * @return 	void
+     *
+     */
+    function setImageInline($strContent, $strImageName = 'unknown', $strMimeType = 'unknown', $strImageCid = 'unknown')
     {
-        if ( $strContent )
+        if ($strContent)
         {
             $this->_msgContent['image'][$strImageName]['mimeType'] = $strMimeType;
             $this->_msgContent['image'][$strImageName]['imageName'] = $strImageName;
@@ -2170,7 +2172,7 @@ class SMTPs
      * @return void
      *
      */
-    function setSensitivity ( $_value = 0 )
+    function setSensitivity($_value = 0)
     {
         if ( ( is_numeric ($_value) ) &&
         ( ( $_value >= 0 ) && ( $_value <= 3 ) ) )
@@ -2516,7 +2518,10 @@ class SMTPs
 // ** CSV Version Control Info
 
 /**
- * $Log: smtps.php,v $
+ * $Log: smtps.class.php,v $
+ * Revision 1.1  2011/09/03 00:14:27  eldy
+ * Doxygen
+ *
  * Revision 1.4  2011/08/28 14:24:23  eldy
  * Doxygen
  *

@@ -1804,7 +1804,7 @@ else
 		print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-		print '<td class="liste_titre">&nbsp;</td>';
+		print_liste_field_titre('');
 		print "</tr>\n";
 		// Lignes des champs de filtre
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';

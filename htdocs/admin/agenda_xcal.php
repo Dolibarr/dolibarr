@@ -122,7 +122,7 @@ print '</div>';
 
 clearstatcache();
 
-if ($mesg) print "<br>$mesg<br>";
+//if ($mesg) print "<br>$mesg<br>";
 print "<br>";
 
 // Show message
@@ -145,6 +145,8 @@ $message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions5",$user->login,$user->login);
 print info_admin($message);
+
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2010	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2011 	    Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
-$langs->load("agenda");
 
 $action=$_POST["action"];
 
@@ -67,7 +67,7 @@ else
 /*
 *	Actions
 */
-if ($_POST["action"] == "save" && empty($_POST["cancel"]))
+if ($action == "save" && empty($_POST["cancel"]))
 {
     $i=0;
 
@@ -77,12 +77,21 @@ if ($_POST["action"] == "save" && empty($_POST["cancel"]))
 	{
 		$param='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		//print "param=".$param." - ".$_POST[$param];
-		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
-		else dolibarr_del_const($db,$param,$conf->entity);
+		if (! empty($_POST[$param])) $res = dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
+		else $res = dolibarr_del_const($db,$param,$conf->entity);
+		if (! $res > 0) $error++;
 	}
-
-    $db->commit();
-    $mesg = '<font class="ok">'.$langs->trans("SetupSaved").'</font>';
+    
+ 	if (! $error)
+    {
+    	$db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+    	$db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
 
@@ -150,11 +159,9 @@ print "</form>\n";
 
 print '</div>';
 
-
-
-if ($mesg) print "<br>$mesg<br>";
 print "<br>";
 
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 

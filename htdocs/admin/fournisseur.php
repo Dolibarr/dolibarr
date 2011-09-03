@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin           <regis@dolibarr.fr>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2010      Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,6 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 
 $langs->load("admin");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("orders");
 
 if (!$user->admin)
 accessforbidden();
@@ -57,12 +54,23 @@ if ($action == 'updateMask')
 {
 	$maskconstorder=$_POST['maskconstorder'];
 	$maskorder=$_POST['maskorder'];
-	if ($maskconstorder)  dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
+	if ($maskconstorder)  $res = dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
 if ($action == 'specimen')  // For orders
 {
-	$modele=$_GET["module"];
+	$modele=GETPOST("module");
 
 	$commande = new CommandeFournisseur($db);
 	$commande->initAsSpecimen();
@@ -99,7 +107,7 @@ if ($action == 'specimen')  // For orders
 
 if ($action == 'specimenfacture')   // For invoices
 {
-	$modele=$_GET["module"];
+	$modele=GETPOST("module");
 
 	$facture = new FactureFournisseur($db);
 	$facture->initAsSpecimen();
@@ -216,7 +224,19 @@ if ($action == 'addcat')
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 {
-	dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT",$_POST["SUPPLIER_INVOICE_FREE_TEXT"],'chaine',0,'',$conf->entity);
+	$free = GETPOST("SUPPLIER_INVOICE_FREE_TEXT");
+	$res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 /*
  * View
@@ -282,18 +302,22 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						// Show example of numbering module
 						print '<td nowrap="nowrap">';
 						$tmp=$module->getExample();
-						if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+						if (preg_match('/^Error/',$tmp)) 
+						{
+							$langs->load("errors");
+							print $langs->trans($tmp);
+						}
 						else print $tmp;
 						print '</td>'."\n";
 
 						print '<td align="center">';
 						if ($conf->global->COMMANDE_SUPPLIER_ADDON == "$file")
 						{
-							print img_picto($langs->trans("Activated"),'on');
+							print img_picto($langs->trans("Activated"),'switch_on');
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 						}
 						print '</td>';
 
@@ -414,19 +438,19 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">';
-							print img_picto($langs->trans("Enabled"),'on');
+							print img_picto($langs->trans("Enabled"),'switch_on');
 							print '</a>';
 						}
 						else
 						{
-							print img_picto($langs->trans("Enabled"),'on');
+							print img_picto($langs->trans("Enabled"),'switch_on');
 						}
 						print "</td>";
 					}
 					else
 					{
 						print '<td align="center">'."\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 						print "</td>";
 					}
 
@@ -546,19 +570,19 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">';
-							print img_picto($langs->trans("Enabled"),'on');
+							print img_picto($langs->trans("Enabled"),'switch_on');
 							print '</a>';
 						}
 						else
 						{
-							print img_picto($langs->trans("Enabled"),'on');
+							print img_picto($langs->trans("Enabled"),'switch_on');
 						}
 						print "</td>";
 					}
 					else
 					{
 						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 						print "</td>";
 					}
 
@@ -617,6 +641,10 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
+
+dol_htmloutput_mesg($mesg);
+
+$db->close();
 
 llxFooter();
 ?>

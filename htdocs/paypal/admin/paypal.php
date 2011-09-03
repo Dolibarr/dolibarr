@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,7 @@ if ($conf->use_javascript_ajax)
     print '</script>';
 }
 
-if ($mesg) print '<br>'.$mesg;
+dol_htmloutput_mesg($mesg);
 
 print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -125,26 +125,26 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SANDBOX").'</td><td>';
 print $form->selectyesno("PAYPAL_API_SANDBOX",$conf->global->PAYPAL_API_SANDBOX,1);
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';
 print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.$conf->global->PAYPAL_API_USER.'">';
 print ' &nbsp; '.$langs->trans("Example").': paypal_api1.mywebsite.com';
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_PASSWORD").'</td><td>';
 print '<input size="32" type="text" name="PAYPAL_API_PASSWORD" value="'.$conf->global->PAYPAL_API_PASSWORD.'">';
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SIGNATURE").'</td><td>';
 print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.$conf->global->PAYPAL_API_SIGNATURE.'">';
 print '<br>'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF';
@@ -157,7 +157,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_INTEGRAL_OR_PAYPALONLY").'</td><td>';
 print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY",array('integral'=>'Integral','paypalonly'=>'Paypal only'),$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
 print '</td></tr>';
@@ -213,6 +213,8 @@ print '</td></tr>';
 print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
 
+dol_fiche_end();
+
 print '<br><br>';
 
 // Help doc
@@ -235,11 +237,10 @@ print 'Your API authentication information can be found with following steps. We
 ';
 print '</div>';
 
-
 print '<br><br>';
 
 $token='';
-if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
 
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';

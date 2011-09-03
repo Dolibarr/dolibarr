@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- *
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,32 +40,43 @@ accessforbidden();
 
 $typeconst=array('yesno','texte','chaine');
 
+$action = getpost("action");
+
 
 // Action mise a jour ou ajout d'une constante
-if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
+if ($action == 'update' || $action == 'add')
 {
-    if (($_POST["constname"]=='ADHERENT_CARD_TYPE' || $_POST["constname"]=='ADHERENT_ETIQUETTE_TYPE')
-    && $_POST["constvalue"] == -1) $_POST["constvalue"]='';
-    if ($_POST["constname"]=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
+	$const=GETPOST("constname");
+    $value=GETPOST("constvalue");
+    
+    if (($const=='ADHERENT_CARD_TYPE' || $const=='ADHERENT_ETIQUETTE_TYPE')
+    && $value == -1) $value='';
+    if ($const=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
     {
-        if ($_POST["constvalue"]) $_POST["constvalue"]=0;
-        else $_POST["constvalue"]=1;
+        if ($value) $value=0;
+        else $value=1;
     }
 
-    $const=$_POST["constname"];
-    $value=$_POST["constvalue"];
+
     if (in_array($const,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $value=$_POST["constvalue".$const];
     $type=$_POST["consttype"];
-    $constnote=isset($_POST["constnote"])?$_POST["constnote"]:'';
-    $result=dolibarr_set_const($db,$const,$value,$typeconst[$type],0,$constnote,$conf->entity);
-    if ($result < 0)
+    $constnote=GETPOST("constnote");
+    $res=dolibarr_set_const($db,$const,$value,$typeconst[$type],0,$constnote,$conf->entity);
+	
+    if (! $res > 0) $error++;
+
+ 	if (! $error)
     {
-        print $db->error();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
 // Action activation d'un sous module du module adherent
-if ($_GET["action"] == 'set')
+if ($action == 'set')
 {
     $result=dolibarr_set_const($db, $_GET["name"],$_GET["value"],'',0,'',$conf->entity);
     if ($result < 0)
@@ -75,7 +86,7 @@ if ($_GET["action"] == 'set')
 }
 
 // Action desactivation d'un sous module du module adherent
-if ($_GET["action"] == 'unset')
+if ($action == 'unset')
 {
     $result=dolibarr_del_const($db,$_GET["name"],$conf->entity);
     if ($result < 0)
@@ -465,5 +476,11 @@ function form_constantes($tableau)
     }
     print '</table>';
 }
+
+dol_htmloutput_mesg($mesg);
+
+$db->close();
+
+llxFooter();
 
 ?>

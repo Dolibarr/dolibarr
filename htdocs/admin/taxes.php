@@ -55,7 +55,9 @@ $tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 if ($action == 'settaxmode')
 {
 	$tax_mode = GETPOST("tax_mode");
-  
+  	
+	$db->begin();
+	
 	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;	
 	
@@ -70,17 +72,22 @@ if ($action == 'settaxmode')
 	}
 	
 	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $value,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	
 	if (! $error)
     {
+    	$db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
     }
     else
     {
+    	$db->rollback();
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 	
