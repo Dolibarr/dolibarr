@@ -10,7 +10,7 @@ Name: dolibarr
 Version: __VERSION__
 Release: __RELEASE__
 Summary: ERP and CRM software for small and medium companies or foundations 
-Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
+Summary(es): Software ERP y CRM para pequeñas y medianas empresas, asociaciones o autónomos
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs ou associations
 Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
 
@@ -143,9 +143,9 @@ cui hai bisogno ed essere facile da usare.
 #lang(en_GB) %_datadir/dolibarr/htdocs/langs/el_GB
 #lang(en_IN) %_datadir/dolibarr/htdocs/langs/el_IN
 #lang(en_NZ) %_datadir/dolibarr/htdocs/langs/el_NZ
-#lang(en) %_datadir/dolibarr/htdocs/langs/en_US
+#lang(en)    %_datadir/dolibarr/htdocs/langs/en_US
 #lang(es_AR) %_datadir/dolibarr/htdocs/langs/es_AR
-#lang(es) %_datadir/dolibarr/htdocs/langs/es_ES
+#lang(es)    %_datadir/dolibarr/htdocs/langs/es_ES
 #lang(es_HN) %_datadir/dolibarr/htdocs/langs/es_HN
 #lang(es_MX) %_datadir/dolibarr/htdocs/langs/en_MX
 #lang(es_PR) %_datadir/dolibarr/htdocs/langs/en_PR
@@ -154,7 +154,7 @@ cui hai bisogno ed essere facile da usare.
 #lang(fr_BE) %_datadir/dolibarr/htdocs/langs/fr_BE
 #lang(fr_CA) %_datadir/dolibarr/htdocs/langs/fr_CA
 #lang(fr_CH) %_datadir/dolibarr/htdocs/langs/fr_CH
-#lang(fr) %_datadir/dolibarr/htdocs/langs/fr_FR
+#lang(fr)    %_datadir/dolibarr/htdocs/langs/fr_FR
 
 
 
@@ -291,7 +291,7 @@ fi
 # Remove apache link
 if [ -L $apachelink ] ;
 then
-    echo Delete apache config link for Dolibarr
+    echo "Delete apache config link for Dolibarr ($apachelink)"
     %{__rm} -f $apachelink
     status=purge
 fi
@@ -312,5 +312,5 @@ fi
 
 
 %changelog
-* Wed Jul 31 2011 Laurent Destailleur 3.1.0-0.2.beta1
+* Wed Jul 31 2011 Laurent Destailleur 3.2.0-0.1.a
 - Initial version (#723326)
