@@ -510,7 +510,7 @@ if (! defined('NOLOGIN'))
 		}
 		else
 		{
-		    if (! empty($conf->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default
+		    if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default
 		    {
     			// Call triggers
     			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

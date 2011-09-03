@@ -15,3 +15,6 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_availability integer AFT
 
 ALTER TABLE llx_element_element MODIFY COLUMN sourcetype varchar(32) NOT NULL;
 ALTER TABLE llx_element_element MODIFY COLUMN targettype varchar(32) NOT NULL;
+
+ALTER TABLE llx_user MODIFY ref_ext varchar(50);
+ALTER TABLE llx_user ADD COLUMN ref_int varchar(50) AFTER ref_ext;

@@ -142,7 +142,8 @@ class User extends CommonObject
 		$sql.= " u.datelastlogin as datel,";
 		$sql.= " u.datepreviouslogin as datep,";
 		$sql.= " u.photo as photo,";
-		$sql.= " u.openid as openid";
+		$sql.= " u.openid as openid,";
+		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
@@ -176,6 +177,9 @@ class User extends CommonObject
 			{
 				$this->id 			= $obj->rowid;
 				$this->ref 			= $obj->rowid;
+				
+				$this->ref_int 		= $obj->ref_int;
+				$this->ref_ext 		= $obj->ref_ext;
 
 				$this->ldap_sid 	= $obj->ldap_sid;
 				$this->nom 			= $obj->name;		// TODO deprecated
@@ -602,16 +606,14 @@ class User extends CommonObject
 		$error=0;
 
 		// Check parameters
-		if ($this->statut == $statut)
-		{
-			return 0;
-		}
+		if ($this->statut == $statut) return 0;
+		else $this->statut = $statut;
 
 		$this->db->begin();
 
 		// Desactive utilisateur
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-		$sql.= " SET statut = ".$statut;
+		$sql.= " SET statut = ".$this->statut;
 		$sql.= " WHERE rowid = ".$this->id;
 		$result = $this->db->query($sql);
 
@@ -634,7 +636,6 @@ class User extends CommonObject
 		else
 		{
 			$this->db->commit();
-			$this->statut=$statut;
 			return 1;
 		}
 	}

@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@ create table llx_user
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   entity            integer DEFAULT 1 NOT NULL, -- multi company id
 
-  ref_ext           varchar(30),                -- reference into an external system (not used by dolibarr)
+  ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
+  ref_int			varchar(50),				-- reference into an internal system (used by dolibarr)
 
   datec             datetime,
   tms               timestamp,
@@ -58,12 +59,3 @@ create table llx_user
   photo             varchar(255),     -- filename or url of photo
   lang              varchar(6)
 )ENGINE=innodb;
-
--- 
--- List of codes for the field entity
---
--- 0 : superadmin or global user
--- 1 : first company user
--- 2 : second company user
--- 3 : etc...
---
