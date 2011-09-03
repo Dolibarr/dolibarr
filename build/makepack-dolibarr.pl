@@ -287,7 +287,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
-	    $ret=`rm -f  $BUILDROOT/$PROJECT/doc/*/README`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/flyer`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/font`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot2.png`;
