@@ -40,9 +40,11 @@ $action = GETPOST("action");
 
 if ($action == "set")
 {
+	$db->begin();
 	for ($i = 0 ; $i < 2 ; $i++)
 	{
 		$res = dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"],'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 	}
 	
 	$id=$_POST["PRELEVEMENT_ID_BANKACCOUNT"];
@@ -51,23 +53,32 @@ if ($action == "set")
 	if($account->fetch($id)>0)
 	{
 		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_CODE_GUICHET", $account->code_guichet,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_NUMERO_COMPTE", $account->number,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_NUMBER_KEY", $account->cle_rib,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_IBAN", $account->iban,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
 	}
+	else $error++;
 	
-	if (! $res > 0) $error++;
-
  	if (! $error)
     {
+    	$db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
     }
     else
     {
+    	$db->rollback();
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
