@@ -195,13 +195,13 @@ fi
 
 # Show result
 echo
-echo "----- Dolibarr %version-%release - (c) Dolibarr dev team -----"
+echo "----- Dolibarr %version - (c) Dolibarr dev team -----"
 echo "Dolibarr files are now installed (into /usr/share/dolibarr)."
 echo "To finish installation and use Dolibarr, click on the menu" 
 echo "entry Dolibarr ERP-CRM or call the following page from your"
 echo "web browser:"  
 echo "http://localhost/dolibarr/"
-echo "-------------------------------------------------------"
+echo "--------------------------------------------------"
 echo
 
 
