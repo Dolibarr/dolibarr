@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2011 Juanjo Menent		   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,25 +32,35 @@ $langs->load("mails");
 if (!$user->admin)
   accessforbidden();
 
+$action = GETPOST("action");
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'setvalue' && $user->admin)
+if ($action == 'setvalue' && $user->admin)
 {
-	$result1=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$_POST["MAILING_EMAIL_FROM"],'chaine',0,'',$conf->entity);
-	$result2=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$_POST["MAILING_EMAIL_ERRORSTO"],'chaine',0,'',$conf->entity);
-	if (($result1 + $result2) == 2)
-  	{
-  		$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
-  	}
-  	else
-  	{
-		dol_print_error($db);
+	$db->begin();
+	
+	$mailfrom = GETPOST("MAILING_EMAIL_FROM");
+	$mailerror = GETPOST("MAILING_EMAIL_ERRORSTO");
+	
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$mailfrom,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$mailerror,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	
+ 	if (! $error)
+    {
+    	$db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+    	$db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
-
 
 
 /*
@@ -93,9 +104,7 @@ print '</td></tr>';
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
 
-
 $db->close();
-
 
 llxFooter();
 

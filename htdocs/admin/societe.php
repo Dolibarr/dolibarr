@@ -74,12 +74,10 @@ if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 	if (! $res > 0) $error++;
 	if (! $error)
     {
-        $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
     }
     else
     {
-        $db->rollback();
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
 	}
 }

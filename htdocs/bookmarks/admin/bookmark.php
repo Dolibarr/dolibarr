@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.org>
- *
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -29,18 +30,25 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+$action=GETPOST("action");
 
-if ($_POST["action"] == 'setvalue' && $user->admin)
+if ($action == 'setvalue')
 {
-	$result=dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$_POST["BOOKMARKS_SHOW_IN_MENU"],'chaine',0,'',$conf->entity);
-  	if ($result >= 0)
-  	{
-  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
-  	}
-  	else
-  	{
-		dol_print_error($db);
+	$showmenu = GETPOST("BOOKMARKS_SHOW_IN_MENU");
+	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$showmenu,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+	
+	if (! $error)
+    {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
     }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
 }
 
 
@@ -55,9 +63,6 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("BookmarkSetup"),$linkback,'setup');
 
 print $langs->trans("BookmarkDesc")."<br>\n";
-
-
-if ($mesg) print '<br>'.$mesg;
 
 print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -79,6 +84,8 @@ print '</td></tr>';
 
 print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
+
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 
