@@ -118,7 +118,7 @@ cui hai bisogno ed essere facile da usare.
 %_datadir/dolibarr/scripts/*
 
 %defattr(-, root, root, 0755)
-%doc COPYRIGHT doc/index.html
+%doc COPYING ChangeLog doc/index.html
 %dir %_datadir/dolibarr/build/rpm
 %dir %_datadir/dolibarr/build/tgz
 %dir %_datadir/dolibarr/htdocs
