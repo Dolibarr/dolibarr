@@ -549,7 +549,7 @@ if ($nboftargetok) {
     		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ2.tgz" $FILENAMETGZ2`;
 
     		print "Move $FILENAMETGZ2.tgz to $RPMDIR/SOURCES/$FILENAMETGZ2.tgz\n";
-    		rename("$BUILDROOT/$FILENAMETGZ2.tgz","$RPMDIR/SOURCES/$FILENAMETGZ2.tgz");
+    		$cmd="mv $BUILDROOT/$FILENAMETGZ2.tgz $RPMDIR/SOURCES/$FILENAMETGZ2.tgz";
             $ret=`$cmd`;
 
     		$BUILDFIC="${FILENAME}.spec";
