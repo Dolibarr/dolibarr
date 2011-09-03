@@ -22,7 +22,6 @@ URL: http://www.dolibarr.org
 Source0: http://www.dolibarr.org/files/opensuse/%{name}-%{version}.tgz
 Patch0: %{name}-forrpm.patch
 BuildArch: noarch
-#BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Productivity/Office/Management
@@ -89,7 +88,7 @@ cui hai bisogno ed essere facile da usare.
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 %{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-#desktop-file-install -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+#desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/dolibarr.desktop
 %{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm

@@ -22,11 +22,11 @@ URL: http://www.dolibarr.org
 Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
 Patch0: %{name}-forrpm.patch
 BuildArch: noarch
-#BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql dejavu-sans-fonts
+#BuildRequires: desktop-file-utils
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -91,20 +91,20 @@ cui hai bisogno ed essere facile da usare.
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 %{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-#desktop-file-install -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+#desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/dolibarr.desktop
 %{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/doc/dolibarr
+#%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/doc/dolibarr
 %{__cp} -pr build/rpm/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
 %{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
 %{__cp} -pr scripts $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__install} -m 644 COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
+#%{__cp} -pr doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
+#%{__install} -m 644 COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
 
 
 #---- clean
@@ -121,7 +121,7 @@ cui hai bisogno ed essere facile da usare.
 %_datadir/dolibarr/scripts/*
 
 %defattr(-, root, root, 0755)
-%doc %_datadir/doc/dolibarr
+#%doc %_datadir/doc/dolibarr
 %dir %_datadir/dolibarr/build/rpm
 %dir %_datadir/dolibarr/build/tgz
 %dir %_datadir/dolibarr/htdocs
