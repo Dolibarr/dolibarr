@@ -20,6 +20,7 @@ Vendor: Dolibarr dev team
 
 URL: http://www.dolibarr.org
 Source0: http://www.dolibarr.org/files/mandriva/%{name}-%{version}.tgz
+Patch0: %{name}-forrpm.patch
 BuildArch: noarch
 #BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
@@ -67,6 +68,7 @@ cui hai bisogno ed essere facile da usare.
 #---- prep
 %prep
 %setup -q
+%patch0 -p0 -b .patch
 
 
 

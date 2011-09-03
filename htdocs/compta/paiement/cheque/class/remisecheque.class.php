@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -44,9 +44,9 @@ class RemiseCheque extends CommonObject
 	var $errno;
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acces base de donnees
-	 *    \param  id          id compte (0 par defaut)
+	 *    Constructor
+	 *
+	 *    @param  	DoliDB	$DB		Database handler
 	 */
 	function RemiseCheque($DB)
 	{
@@ -56,10 +56,11 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	\brief 		Load record
-	 *	\param 		id 			Id record
-	 *	\param 		ref		 	Ref record
-	 * 	\return		int			<0 if KO, > 0 if OK
+	 *	Load record
+	 *
+	 *	@param 		id 			Id record
+	 *	@param 		ref		 	Ref record
+	 * 	@return		int			<0 if KO, > 0 if OK
 	 */
 	function fetch($id,$ref='')
 	{
@@ -113,6 +114,7 @@ class RemiseCheque extends CommonObject
 
 	/**
 	 *	Create a receipt to send cheques
+	 *
 	 *	@param  	user 			User making creation
 	 *	@param  	account_id 		Bank account for cheque receipt
 	 *  @param      limit           Limit number of cheque to this
@@ -270,6 +272,7 @@ class RemiseCheque extends CommonObject
 
 	/**
 	 *	Supprime la remise en base
+	 *
 	 *	@param  user utilisateur qui effectue l'operation
 	 */
 	function delete($user='')
@@ -324,6 +327,7 @@ class RemiseCheque extends CommonObject
 
 	/**
 	 *  Validate a receipt
+	 *
 	 *  @param     user 	User
 	 *  @return    int      <0 if KO, >0 if OK
 	 */
@@ -387,7 +391,7 @@ class RemiseCheque extends CommonObject
 	/**
 	 * Old module for cheque receipt numbering
 	 *
-	 * @return string
+	 * @return 	int		Next number of cheque
 	 */
 	function getNextNumber()
 	{
@@ -421,6 +425,7 @@ class RemiseCheque extends CommonObject
 
 	/**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
      *      @param      user                Objet user
      *      @param      filteraccountid     To get info for a particular account id
      *      @return     int                 <0 if KO, >0 if OK

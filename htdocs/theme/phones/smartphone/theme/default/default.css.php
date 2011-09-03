@@ -127,8 +127,8 @@ input.ui-input-text, textarea.ui-input-text {
 /* ============================================================================== */
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'2'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'6':''; ?>px;
+	margin-<?php print $left; ?>: <?php print (empty($conf->browser->phone)?'10':'2'); ?>px;
+	margin-<?php print $right; ?>: <?php print (empty($conf->browser->phone)?'6':''); ?>px;
 }
 
 div.fichecenter {

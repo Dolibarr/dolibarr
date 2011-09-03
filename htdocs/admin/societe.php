@@ -88,9 +88,9 @@ if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 if ($action == 'setModuleOptions')
 {
 	$post_size=count($_POST);
-	
+
 	$db->begin();
-	
+
 	for($i=0;$i < $post_size;$i++)
     {
     	if (array_key_exists('param'.$i,$_POST))
@@ -118,7 +118,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
 	$sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -150,7 +150,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$db->begin();
 
 	if (dolibarr_set_const($db, "COMPANY_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -189,7 +189,7 @@ if ($action == 'setdoc')
 if ($action == 'setprofid')
 {
 	$status = GETPOST("status");
-	
+
 	$idprof="SOCIETE_IDPROF".$value."_UNIQUE";
 	if (dolibarr_set_const($db, $idprof,$status,'chaine',0,'',$conf->entity) > 0)
 	{
@@ -518,7 +518,8 @@ $profid[3][1]=$langs->transcountry('ProfId4' ,$mysoc->pays_code);
 $var = true;
 $i=0;
 
-while ($i < sizeof($profid))
+$nbofloop=count($profid);
+while ($i < $nbofloop)
 {
 	$var = !$var;
 
