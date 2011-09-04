@@ -25,7 +25,8 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
-Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap 
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap 
+Requires: mysql-server, mysql 
 Requires: php-mysql >= 4.1.0 
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
