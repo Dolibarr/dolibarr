@@ -45,8 +45,7 @@ if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.139 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
-$VERSION="3.1 (build $REVISION)";
+$VERSION="3.1";
 
 
 
@@ -267,6 +266,7 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tgz`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.zip`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/doxygen/doxygen_warnings.log`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/cache.manifest`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
@@ -341,6 +341,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/free*.ctg.z`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/free*.z`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/langs/*/html`;
 		# Removed because not stable yet
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
 	}
@@ -888,17 +889,6 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/rpm`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/zip`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/perl`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/dbmodel`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/fpdf`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/initdata`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/iso-normes`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/phpcheckstyle`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/phpunit`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/flyer`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/font`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/tshirt`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/rollup`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/test`;
 
             $APSVERSION="1.1";
             print "Create APS files $BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\n";
