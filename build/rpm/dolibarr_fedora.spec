@@ -109,8 +109,12 @@ for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
 do
   lang=$(basename $i)
   lang1=`expr substr $lang 1 2`; 
-  lang2=`expr substr $lang 4 2`; 
-  echo "%lang(${lang1}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
+  lang2=`expr substr $lang 4 2 | tr "[:upper:]" "[:lower:]"`; 
+  if [ "$lang1" = "$lang2" ] ; then
+	echo "%lang(${lang1}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
+  else
+	echo "%lang(${lang}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
+  fi
 done >%{name}.lang
 
 
