@@ -99,6 +99,7 @@ class User extends CommonObject
 
 	/**
 	 *    Constructor de la classe
+	 *
 	 *    @param   DoliDb  $DB     Database handler
 	 */
 	function User($DB)
@@ -177,7 +178,7 @@ class User extends CommonObject
 			{
 				$this->id 			= $obj->rowid;
 				$this->ref 			= $obj->rowid;
-				
+
 				$this->ref_int 		= $obj->ref_int;
 				$this->ref_ext 		= $obj->ref_ext;
 
@@ -269,11 +270,12 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Ajoute un droit a l'utilisateur
-	 *    \param      rid         id du droit a ajouter
-	 *    \param      allmodule   Ajouter tous les droits du module allmodule
-	 *    \param      allperms    Ajouter tous les droits du module allmodule, perms allperms
-	 *    \return     int         > 0 si ok, < 0 si erreur
+	 *    Ajoute un droit a l'utilisateur
+	 *
+	 *    @param      rid         id du droit a ajouter
+	 *    @param      allmodule   Ajouter tous les droits du module allmodule
+	 *    @param      allperms    Ajouter tous les droits du module allmodule, perms allperms
+	 *    @return     int         > 0 si ok, < 0 si erreur
 	 */
 	function addrights($rid,$allmodule='',$allperms='')
 	{
@@ -367,11 +369,12 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief      Retire un droit a l'utilisateur
-	 *    \param      rid         id du droit a retirer
-	 *    \param      allmodule   Retirer tous les droits du module allmodule
-	 *    \param      allperms    Retirer tous les droits du module allmodule, perms allperms
-	 *    \return     int         > 0 si ok, < 0 si erreur
+	 *    Retire un droit a l'utilisateur
+	 *
+	 *    @param      rid         id du droit a retirer
+	 *    @param      allmodule   Retirer tous les droits du module allmodule
+	 *    @param      allperms    Retirer tous les droits du module allmodule, perms allperms
+	 *    @return     int         > 0 si ok, < 0 si erreur
 	 */
 	function delrights($rid,$allmodule='',$allperms='')
 	{
@@ -475,6 +478,7 @@ class User extends CommonObject
 
 	/**
 	 *	Load permissions granted to user into object user
+	 *
 	 *	@param      moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 */
 	function getrights($moduletag='')
@@ -597,6 +601,7 @@ class User extends CommonObject
 
 	/**
 	 *      Change status of a user
+	 *
 	 *      @return     int     <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	function setstatus($statut)
@@ -643,6 +648,7 @@ class User extends CommonObject
 
 	/**
 	 *    	Delete the user
+	 *
 	 * 		@return		int		<0 if KO, >0 if OK
 	 */
 	function delete()
@@ -702,6 +708,7 @@ class User extends CommonObject
 
 	/**
 	 *  Create a user into database
+	 *
 	 *  @param      user        	Objet user qui demande la creation
 	 *  @param      notrigger		1 ne declenche pas les triggers, 0 sinon
 	 *  @return     int         	<0 si KO, id compte cree si OK
@@ -828,7 +835,8 @@ class User extends CommonObject
 
 
 	/**
-	 *      Create a user from a contact object. User will be internal but if contact is linked to a third party, user will be external.
+	 *      Create a user from a contact object. User will be internal but if contact is linked to a third party, user will be external
+	 *
 	 *      @param    contact      Object for source contact
 	 * 		@param    login        Login to force
 	 *      @param    password     Password to force
@@ -896,6 +904,7 @@ class User extends CommonObject
 
 	/**
 	 *      Create a user into database from a member object
+	 *
 	 *      @param      member	Object member source
 	 * 		@param		login	Login to force
 	 *      @return     int		<0 if KO, if OK, return id of created account
@@ -954,8 +963,9 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Affectation des permissions par defaut
-	 *    \return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnes
+	 *    Affectation des permissions par defaut
+	 *
+	 *    @return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	 */
 	function set_default_rights()
 	{
@@ -997,6 +1007,7 @@ class User extends CommonObject
 
 	/**
 	 *  	Update a user into databse (and also password if this->pass is defined)
+	 *
 	 *		@param		user				User qui fait la mise a jour
 	 *    	@param      notrigger			1 ne declenche pas les triggers, 0 sinon
 	 *		@param		nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
@@ -1140,7 +1151,7 @@ class User extends CommonObject
 					}
 				}
 			}
-			
+
 			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
@@ -1175,9 +1186,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise e jour en base de la date de deniere connexion d'un utilisateur
-	 *				Fonction appelee lors d'une nouvelle connexion
-	 *    \return     <0 si echec, >=0 si ok
+	 *    Mise e jour en base de la date de deniere connexion d'un utilisateur
+	 *	  Fonction appelee lors d'une nouvelle connexion
+	 *
+	 *    @return     <0 si echec, >=0 si ok
 	 */
 	function update_last_login_date()
 	{
@@ -1207,6 +1219,7 @@ class User extends CommonObject
 
 	/**
 	 *  Change password of a user
+	 *
 	 *  @param     	user             		Object user of user making change
 	 *  @param     	password         		New password in clear text (to generate if not provided)
 	 *	@param		changelater				1=Change password only after clicking on confirm email
@@ -1334,11 +1347,12 @@ class User extends CommonObject
 
 
 	/**
-	 *   \brief     	Envoie mot de passe par mail
-	 *   \param     	user            Object user de l'utilisateur qui fait l'envoi
-	 *   \param			password        Nouveau mot de passe
-	 *	 \param			changelater		1=Change password only after clicking on confirm email
-	 *   \return    	int             < 0 si erreur, > 0 si ok
+	 *   Envoie mot de passe par mail
+	 *
+	 *   @param     	user            Object user de l'utilisateur qui fait l'envoi
+	 *   @param			password        Nouveau mot de passe
+	 *	 @param			changelater		1=Change password only after clicking on confirm email
+	 *   @return    	int             < 0 si erreur, > 0 si ok
 	 */
 	function send_password($user, $password='', $changelater=0)
 	{
@@ -1416,8 +1430,9 @@ class User extends CommonObject
 	}
 
 	/**
-	 * 		\brief     Renvoie la derniere erreur fonctionnelle de manipulation de l'objet
-	 * 		\return    string      chaine erreur
+	 * 		Renvoie la derniere erreur fonctionnelle de manipulation de l'objet
+	 *
+	 * 		@return    string      chaine erreur
 	 */
 	function error()
 	{
@@ -1426,8 +1441,9 @@ class User extends CommonObject
 
 
 	/**
-	 *    	\brief      Read clicktodial information for user
-	 * 		\return		<0 if KO, >0 if OK
+	 *    	Read clicktodial information for user
+	 *
+	 * 		@return		<0 if KO, >0 if OK
 	 */
 	function fetch_clicktodial()
 	{
@@ -1496,6 +1512,7 @@ class User extends CommonObject
 
 	/**
 	 *    Add user into a group
+	 *
 	 *    @param       group       Id of group
 	 *    @param       entity      Entity
 	 *    @param       notrigger   Disable triggers
@@ -1556,6 +1573,7 @@ class User extends CommonObject
 
 	/**
 	 *    Remove a user from a group
+	 *
      *    @param       group       Id of group
      *    @param       entity      Entity
      *    @param       notrigger   Disable triggers
@@ -1610,11 +1628,12 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Return a link to the user card (with optionnaly the picto)
-	 *		\param		withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
-	 *		\param		option			On what the link point to
-	 *		\return		string			String with URL
-	 * 		\remarks	Use this->id,this->nom, this->prenom
+	 *    	Return a link to the user card (with optionnaly the picto)
+	 * 		Use this->id,this->nom, this->prenom
+	 *
+	 *		@param		withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
+	 *		@param		option			On what the link point to
+	 *		@return		string			String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
@@ -1638,10 +1657,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie login clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\return		string			Chaine avec URL
+	 *    	Renvoie login clicable (avec eventuellement le picto)
+	 *
+	 *		@param		withpicto		Inclut le picto dans le lien
+	 *		@param		option			Sur quoi pointe le lien
+	 *		@return		string			Chaine avec URL
 	 */
 	function getLoginUrl($withpicto=0,$option='')
 	{
@@ -1665,6 +1685,7 @@ class User extends CommonObject
 
 	/**
 	 *    	Return full name (civility+' '+name+' '+lastname)
+	 *
 	 *		@param		langs			Language object for translation of civility
 	 *		@param		option			0=No option, 1=Add civility
 	 * 		@param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
@@ -1703,6 +1724,7 @@ class User extends CommonObject
 
 	/**
 	 *    Retourne le libelle du statut d'un user (actif, inactif)
+	 *
 	 *    @param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    @return     string        Label of status
 	 */
@@ -1713,6 +1735,7 @@ class User extends CommonObject
 
 	/**
 	 *    	Renvoi le libelle d'un statut donne
+	 *
 	 *    	@param      statut        	Id statut
 	 *    	@param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    	@return     string        	Label of status
@@ -1758,6 +1781,7 @@ class User extends CommonObject
 
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *
 	 *	@param		info		Info string loaded by _load_ldap_info
 	 *	@param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
 	 *							1=
@@ -1776,6 +1800,7 @@ class User extends CommonObject
 
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
+	 *
 	 *	@return		array		Tableau info des attributs
 	 */
 	function _load_ldap_info()
@@ -1880,6 +1905,7 @@ class User extends CommonObject
 
 	/**
 	 *       Load info of user object
+	 *
 	 *       @param     id     id of user to load
 	 */
 	function info($id)
@@ -1916,6 +1942,7 @@ class User extends CommonObject
 
 	/**
 	 *    Return number of mass Emailing received by this contacts with its email
+	 *
 	 *    @return       int     Number of EMailings
 	 */
 	function getNbOfEMailings()
@@ -1942,6 +1969,7 @@ class User extends CommonObject
 
 	/**
 	 *    Return number of existing users
+	 *
 	 *    @param		limitTo		limit to 'active' or 'superadmin' users
 	 *    @return       int     	Number of users
 	 */
