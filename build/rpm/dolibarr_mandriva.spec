@@ -25,7 +25,8 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
-Requires: mysql mysql-client apache-base apache-mod_php php-cgi php-cli php-bz2 php-gd php-ldap php-imap php-mysqli php-openssl fonts-ttf-dejavu 
+Requires: apache-base, apache-mod_php, php-cgi, php-cli, php-bz2, php-gd, php-ldap, php-imap, php-mysqli, php-openssl, fonts-ttf-dejavu 
+Requires: mysql, mysql-client 
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -82,28 +83,25 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr
-%{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
-%{__install} -m 644 build/rpm/httpd-dolibarr.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
-%{__install} -m 644 build/rpm/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
-%{__install} -m 644 build/rpm/install.forced.php.fedora $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
+%{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/conf.php
+%{__install} -m 644 build/rpm/httpd-dolibarr.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/apache.conf
+%{__install} -m 644 build/rpm/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/file_contexts.dolibarr
+%{__install} -m 644 build/rpm/install.forced.php.fedora $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/install.forced.php
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-%{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
+%{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-#desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/dolibarr.desktop
-%{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+#desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/%{name}.desktop
+%{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
 
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__cp} -pr build/rpm/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
-%{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
-%{__cp} -pr htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr scripts $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__install} -m 644 COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
+%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/%{name}/build/rpm
+%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz
+%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs
+%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/%{name}/scripts
+%{__cp} -pr build/rpm/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/build/rpm
+%{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz
+%{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
+%{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
 
 
 #---- clean
@@ -120,7 +118,7 @@ cui hai bisogno ed essere facile da usare.
 %_datadir/dolibarr/scripts/*
 
 %defattr(-, root, root, 0755)
-%doc %_datadir/doc/dolibarr
+%doc COPYING ChangeLog doc/index.html
 %dir %_datadir/dolibarr/build/rpm
 %dir %_datadir/dolibarr/build/tgz
 %dir %_datadir/dolibarr/htdocs
@@ -147,7 +145,7 @@ export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
 export apacheuser='apache';
 export apachegroup='apache';
 
-# Remove lock file
+# Remove dolibarr install/upgrade lock file if it exists
 %{__rm} -f $docdir/install.lock
 
 # Create empty directory for uploaded files and generated documents 
@@ -190,7 +188,7 @@ echo "To finish installation and use Dolibarr, click on the menu"
 echo "entry Dolibarr ERP-CRM or call the following page from your"
 echo "web browser:"  
 echo "http://localhost/dolibarr/"
-echo "--------------------------------------------------"
+echo "-------------------------------------------------------"
 echo
 
 

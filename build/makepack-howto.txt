@@ -15,6 +15,8 @@ beta version of Dolibarr, step by step.
 - Update version number with x.x.x-y in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.x.x-y in htdocs/filefunc.inc.php
 - Update version number with x.x.x-y in htdocs/install/inc.php
+- Update version number with x.x.x-y in htdocs/support/inc.php
+- Update version number with x.x.x-y in htdocs/build/rpm/*.spec
 - Commit all changes.
 - Add a CVS Tag (DOLIBARR_x_y_BETA)
 - Create a branch (DOLIBARR_x_y_BRANCH).
@@ -37,6 +39,8 @@ complete release of Dolibarr, step by step.
 - Update version number with x.x.x-y in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.x.x-y in htdocs/filefunc.inc.php
 - Update version number with x.x.x-y in htdocs/install/inc.php
+- Update version number with x.x.x-y in htdocs/support/inc.php
+- Update version number with x.x.x-y in htdocs/build/rpm/*.spec
 - Update PAD and DOAP files.
 - Commit all changes.
 - Add a CVS Tag (DOLIBARR_x_y)
