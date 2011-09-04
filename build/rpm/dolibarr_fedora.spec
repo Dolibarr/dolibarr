@@ -110,7 +110,7 @@ do
   lang=$(basename $i)
   lang1=`expr substr $lang 1 2`; 
   lang2=`expr substr $lang 4 2`; 
-  echo "%lang(${lang1}) %{_datadir}/%{name}/htdocs/langs/${lang}"
+  echo "%lang(${lang1}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
 done >%{name}.lang
 
 
