@@ -245,6 +245,10 @@ function ajax_constantonoff($code,$input=array())
 					if (input.length > 0) {
 						$.each(input, function(key,value) {
 							$( "#" + value).removeAttr("disabled");
+							if ( $( "#" + value).hasClass("butActionRefused") == true ) {
+								$( "#" + value).removeClass("butActionRefused");
+								$( "#" + value).addClass("butAction");
+							}
 						});
 					}
 				});
@@ -263,6 +267,10 @@ function ajax_constantonoff($code,$input=array())
 					if (input.length > 0) {
 						$.each(input, function(key,value) {
 							$( "#" + value).attr("disabled", true);
+							if ( $( "#" + value).hasClass("butAction") == true ) {
+								$( "#" + value).removeClass("butAction");
+								$( "#" + value).addClass("butActionRefused");
+							}
 						});
 					}
 				});
