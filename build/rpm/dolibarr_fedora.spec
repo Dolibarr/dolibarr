@@ -83,7 +83,7 @@ cui hai bisogno ed essere facile da usare.
 %install
 %{__rm} -rf $RPM_BUILD_ROOT
 
-%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr
+%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/conf.php
 %{__install} -m 644 build/rpm/httpd-dolibarr.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/apache.conf
 %{__install} -m 644 build/rpm/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/file_contexts.dolibarr
@@ -104,6 +104,19 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
 
+# Lang
+for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
+do
+  lang=$(basename $i)
+  lang1=`expr substr $lang 1 2`; 
+  lang2=`expr substr $lang 4 2 | tr "[:upper:]" "[:lower:]"`; 
+  if [ "$lang1" = "$lang2" ] ; then
+	echo "%lang(${lang1}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
+  else
+	echo "%lang(${lang}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
+  fi
+done >%{name}.lang
+
 
 #---- clean
 %clean
@@ -112,22 +125,69 @@ cui hai bisogno ed essere facile da usare.
 
 
 #---- files
-%files
+%files -f %{name}.lang
 
 %defattr(0755, root, root, 0755)
 %dir %_datadir/dolibarr/scripts
 %_datadir/dolibarr/scripts/*
 
 %defattr(-, root, root, 0755)
-%doc COPYING ChangeLog doc/index.html
-%dir %_datadir/dolibarr/build/rpm
-%dir %_datadir/dolibarr/build/tgz
-%dir %_datadir/dolibarr/htdocs
+%doc COPYING ChangeLog doc/index.html htdocs/langs/HOWTO-Translation.txt
+
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/dolibarr.desktop
+
+%dir %_datadir/dolibarr/build/rpm
 %_datadir/dolibarr/build/rpm/*
+
+%dir %_datadir/dolibarr/build/tgz
 %_datadir/dolibarr/build/tgz/*
-%_datadir/dolibarr/htdocs/*
+
+%dir %_datadir/dolibarr/htdocs
+%_datadir/dolibarr/htdocs/accountancy
+%_datadir/dolibarr/htdocs/adherents
+%_datadir/dolibarr/htdocs/admin
+%_datadir/dolibarr/htdocs/asterisk
+%_datadir/dolibarr/htdocs/bookmarks
+%_datadir/dolibarr/htdocs/boutique
+%_datadir/dolibarr/htdocs/cashdesk
+%_datadir/dolibarr/htdocs/categories
+%_datadir/dolibarr/htdocs/comm
+%_datadir/dolibarr/htdocs/commande
+%_datadir/dolibarr/htdocs/compta
+%_datadir/dolibarr/htdocs/conf
+%_datadir/dolibarr/htdocs/contact
+%_datadir/dolibarr/htdocs/contrat
+%_datadir/dolibarr/htdocs/core
+%_datadir/dolibarr/htdocs/cron
+%_datadir/dolibarr/htdocs/ecm
+%_datadir/dolibarr/htdocs/expedition
+%_datadir/dolibarr/htdocs/exports
+%_datadir/dolibarr/htdocs/externalsite
+%_datadir/dolibarr/htdocs/fichinter
+%_datadir/dolibarr/htdocs/fourn
+%_datadir/dolibarr/htdocs/ftp
+%_datadir/dolibarr/htdocs/imports
+%_datadir/dolibarr/htdocs/includes
+%_datadir/dolibarr/htdocs/install
+%_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
+%_datadir/dolibarr/htdocs/lib
+%_datadir/dolibarr/htdocs/livraison
+%_datadir/dolibarr/htdocs/mantis
+%_datadir/dolibarr/htdocs/paybox
+%_datadir/dolibarr/htdocs/paypal
+%_datadir/dolibarr/htdocs/product
+%_datadir/dolibarr/htdocs/projet
+%_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/societe
+%_datadir/dolibarr/htdocs/support
+%_datadir/dolibarr/htdocs/theme
+%_datadir/dolibarr/htdocs/user
+%_datadir/dolibarr/htdocs/webservices
+%_datadir/dolibarr/htdocs/*.ico
+%_datadir/dolibarr/htdocs/*.patch
+%_datadir/dolibarr/htdocs/*.php
+%_datadir/dolibarr/htdocs/*.txt
 
 %defattr(0664, -, -)
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
@@ -160,10 +220,8 @@ echo Create document directory $docdir
 echo Add SE Linux permissions for dolibarr
 # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
 semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
-#semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
 semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
 restorecon -R -v /etc/dolibarr
-#restorecon -R -v /usr/share/dolibarr
 restorecon -R -v /var/lib/dolibarr
 
 # Create a config link dolibarr.conf

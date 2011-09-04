@@ -54,6 +54,7 @@ class UserGroup extends CommonObject
 
 	/**
      *    Constructor de la classe
+     *
      *    @param   DoliDb  $DB     Database handler
 	 */
 	function UserGroup($DB)
@@ -66,8 +67,9 @@ class UserGroup extends CommonObject
 
 	/**
 	 *	Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
-	 *	@param      id      id du groupe a charger
-	 *	@return		int		<0 si KO, >0 si OK
+	 *
+	 *	@param      int		$id     id du groupe a charger
+	 *	@return		int				<0 if KO, >0 if OK
 	 */
 	function fetch($id)
 	{
@@ -115,8 +117,8 @@ class UserGroup extends CommonObject
 	/**
 	 * 	Return array of groups objects for a particular user
 	 *
-	 *	@param		userid    User id to search
-	 * 	@return		array     Array of groups objects
+	 *	@param		int		$userid 	User id to search
+	 * 	@return		array     			Array of groups objects
 	 */
 	function listGroupsForUser($userid)
 	{
@@ -214,11 +216,12 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *    \brief      Ajoute un droit a l'utilisateur
-	 *    \param      rid         id du droit a ajouter
-	 *    \param      allmodule   Ajouter tous les droits du module allmodule
-	 *    \param      allperms    Ajouter tous les droits du module allmodule, perms allperms
-	 *    \return     int         > 0 si ok, < 0 si erreur
+	 *    Ajoute un droit a l'utilisateur
+	 *
+	 *    @param      int		$rid         id du droit a ajouter
+	 *    @param      string	$allmodule   Ajouter tous les droits du module allmodule
+	 *    @param      string	$allperms    Ajouter tous les droits du module allmodule, perms allperms
+	 *    @return     int         			 > 0 if OK, < 0 if KO
 	 */
 	function addrights($rid,$allmodule='',$allperms='')
 	{
@@ -313,11 +316,12 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *    \brief      Retire un droit a l'utilisateur
-	 *    \param      rid         id du droit a retirer
-	 *    \param      allmodule   Retirer tous les droits du module allmodule
-	 *    \param      allperms    Retirer tous les droits du module allmodule, perms allperms
-	 *    \return     int         > 0 si ok, < 0 si erreur
+	 *    Retire un droit a l'utilisateur
+	 *
+	 *    @param      int		$rid         id du droit a retirer
+	 *    @param      string	$allmodule   Retirer tous les droits du module allmodule
+	 *    @param      string	$allperms    Retirer tous les droits du module allmodule, perms allperms
+	 *    @return     int         			 > 0 if OK, < 0 if OK
 	 */
 	function delrights($rid,$allmodule='',$allperms='')
 	{
@@ -410,8 +414,10 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *    \brief      Charge dans l'objet group, la liste des permissions auquels le groupe a droit
-	 *    \param      module    	Nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
+	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
+	 *
+	 *  @param      string	$module    	Nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
+	 *	@return		int					<0 if KO, >0 if OK
 	 */
 	function getrights($module='')
 	{
@@ -465,11 +471,13 @@ class UserGroup extends CommonObject
 			$this->all_permissions_are_loaded=1;
 		}
 
+        return 1;
 	}
 
 	/**
-	 *        \brief      Efface un groupe de la base
-	 *        \return     < 0 si erreur, > 0 si ok
+	 *        Efface un groupe de la base
+	 *
+	 *        @return     <0 if KO, > 0 if OK
 	 */
 	function delete()
 	{
@@ -510,8 +518,9 @@ class UserGroup extends CommonObject
 
 	/**
 	 *	Create group into database
-	 *	@param		notrigger	0=triggers enabled, 1=triggers disabled
-	 *	@return     int			<0 if KO, >=0 if OK
+	 *
+	 *	@param		int		$notrigger	0=triggers enabled, 1=triggers disabled
+	 *	@return     int					<0 if KO, >=0 if OK
 	 */
 	function create($notrigger=0)
 	{
@@ -565,8 +574,9 @@ class UserGroup extends CommonObject
 
 	/**
 	 *		Update group into database
-	 *      @param      notrigger	    0=triggers enabled, 1=triggers disabled
-	 *    	@return     int				<0 if KO, >=0 if OK
+	 *
+	 *      @param      int		$notrigger	    0=triggers enabled, 1=triggers disabled
+	 *    	@return     int						<0 if KO, >=0 if OK
 	 */
 	function update($notrigger=0)
 	{
@@ -612,12 +622,13 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
-	 *	\param		info		Info string loaded by _load_ldap_info
-	 *	\param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *							1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *							2=Return key only (uid=qqq)
-	 *	\return		string		DN
+	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *
+	 *	@param		string	$info		Info string loaded by _load_ldap_info
+	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+	 *									2=Return key only (uid=qqq)
+	 *	@return		string				DN
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
@@ -631,8 +642,9 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	\brief		Initialize the info array (array of LDAP values) that will be used to call LDAP functions
-	 *	\return		array		Tableau info des attributs
+	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
+	 *
+	 *	@return		array		Tableau info des attributs
 	 */
 	function _load_ldap_info()
 	{
@@ -667,7 +679,9 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le groupe avec valeurs fictives aleatoire
+	 *		Initialise le groupe avec valeurs fictives aleatoire
+	 *
+	 *		@return		void
 	 */
 	function initAsSpecimen()
 	{
