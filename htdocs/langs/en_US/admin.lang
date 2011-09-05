@@ -306,12 +306,16 @@ ConnectionTimeout=Connexion timeout
 ResponseTimeout=Response timeout
 SmsTestMessage=Test message from __PHONEFROM__ to __PHONETO__
 ModuleMustBeEnabledFirst=Module <b>%s</b> must be enabled first before using this feature.
-SecurityToken=Key to encrypt urls
+SecurityToken=Key to secure URLs
 NoSmsEngine=No SMS sender manager available. SMS sender manager are not installed with default distribution (because they depends on an external supplier) but you can find some on http://www.dolistore.com
 PDF=PDF
 PDFDesc=You can set each global options related to the PDF generation
 PDFAddressForging=Rules to forge address boxes
 HideAnyVATInformationOnPDF=Hide all information related to VAT on generated PDF
+UrlGenerationParameters=Parameters to secure URLs
+SecurityTokenIsUnique=Use a unique securekey parameter for each URL
+EnterRefToBuildUrl=Enter reference for object %s
+GetSecuredUrl=Get calculated URL
 
 # Modules
 Module0Name=Users & groups
@@ -878,7 +882,7 @@ DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT files for
 WatermarkOnDraft=Watermark on draft document
 CompanyIdProfChecker=Professional Id unique
 MustBeUnique=Must be unique ?
-Miscellanous=Miscellanous
+Miscellanous=Miscellaneous
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr events to WebCalendar

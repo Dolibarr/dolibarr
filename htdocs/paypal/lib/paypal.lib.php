@@ -21,6 +21,10 @@
  *  \ingroup		paypal
  *  \brief			Library for common paypal functions
  */
+
+
+
+
 function llxHeaderPaypal($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -55,6 +59,7 @@ function llxFooterPaypal()
 	print "</body>\n";
 	print "</html>\n";
 }
+
 
 /**
  * Show footer of company in HTML pages
@@ -147,28 +152,102 @@ function paypaladmin_prepare_head()
     return $head;
 }
 
+
 /**
+ * Return string with full Url
  *
+ * @param   int		$mode		0=True url, 1=Url formated with colors
+ * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param	string	$ref		Ref of object
+ * @param	int		$amount		Amount
+ * @param	string	$freetag	Free tag
+ * @return	string				Url string
  */
-function getPaypalPaymentUrl($source='',$ref='',$amount=0,$freetag='')
+function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
 {
 	global $conf;
-
 	require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 
-	if (! empty($source) && ! empty($ref))
-	{
-		$token='';
-		if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$source.$ref, 2);
-
-		if ($source == 'commande')	$source = 'order';
-		if ($source == 'facture')	$source = 'invoice';
-
-		$url = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source='.$source.'&ref='.$ref.$token;
-
-		return $url;
-	}
+    if ($type == 'free')
+    {
+	    $out=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
+	    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
+    }
+    if ($type == 'order')
+    {
+        $out=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
+        if ($mode == 1) $out.='order_ref';
+        if ($mode == 0) $out.=urlencode($ref);
+	    $out.=($mode?'</font>':'');
+        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+        {
+    	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
+            else
+            {
+                $out.='&securekey='.($mode?'<font color="#666666">':'');
+                if ($mode == 1) $out.="md5('".$conf->global->PAYPAL_SECURITY_TOKEN."'+order_ref)";
+                if ($mode == 0) $out.= md5($conf->global->PAYPAL_SECURITY_TOKEN.$ref);
+                $out.=($mode?'</font>':'');
+            }
+        }
+    }
+    if ($type == 'invoice')
+    {
+        $out=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
+        if ($mode == 1) $out.='invoice_ref';
+        if ($mode == 0) $out.=urlencode($ref);
+	    $out.=($mode?'</font>':'');
+        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+        {
+    	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
+            else
+            {
+                $out.='&securekey='.($mode?'<font color="#666666">':'');
+                if ($mode == 1) $out.="md5('".$conf->global->PAYPAL_SECURITY_TOKEN."'+invoice_ref)";
+                if ($mode == 0) $out.= md5($conf->global->PAYPAL_SECURITY_TOKEN.$ref);
+                $out.=($mode?'</font>':'');
+            }
+        }
+    }
+    if ($type == 'contractline')
+    {
+        $out=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref='.($mode?'<font color="#666666">':'');
+        if ($mode == 1) $out.='contractline_ref';
+        if ($mode == 0) $out.=urlencode($ref);
+	    $out.=($mode?'</font>':'');
+        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+        {
+    	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
+            else
+            {
+                $out.='&securekey='.($mode?'<font color="#666666">':'');
+                if ($mode == 1) $out.="md5('".$conf->global->PAYPAL_SECURITY_TOKEN."'+contractline_ref)";
+                if ($mode == 0) $out.= md5($conf->global->PAYPAL_SECURITY_TOKEN.$ref);
+                $out.=($mode?'</font>':'');
+            }
+        }
+    }
+    if ($type == 'membersubscription')
+    {
+        $out=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
+        if ($mode == 1) $out.='member_ref';
+        if ($mode == 0) $out.=urlencode($ref);
+	    $out.=($mode?'</font>':'');
+        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+        {
+    	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
+            else
+            {
+                $out.='&securekey='.($mode?'<font color="#666666">':'');
+                if ($mode == 1) $out.="md5('".$conf->global->PAYPAL_SECURITY_TOKEN."'+member_ref)";
+                if ($mode == 0) $out.= md5($conf->global->PAYPAL_SECURITY_TOKEN.$ref);
+                $out.=($mode?'</font>':'');
+            }
+        }
+    }
+    return $out;
 }
+
 
 /**
  * Send redirect to paypal to browser
@@ -244,11 +323,11 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
         $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
         $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
 
-        echo "SetExpressCheckout API call failed. \n";
-        echo "Detailed Error Message: " . $ErrorLongMsg." \n";
-        echo "Short Error Message: " . $ErrorShortMsg." \n";
-        echo "Error Code: " . $ErrorCode." \n";
-        echo "Error Severity Code: " . $ErrorSeverityCode." \n";
+        echo "SetExpressCheckout API call failed. <br>\n";
+        echo "Detailed Error Message: " . $ErrorLongMsg." <br>\n";
+        echo "Short Error Message: " . $ErrorShortMsg." <br>\n";
+        echo "Error Code: " . $ErrorCode." <br>\n";
+        echo "Error Severity Code: " . $ErrorSeverityCode." <br>\n";
     }
 
 }

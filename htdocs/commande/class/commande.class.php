@@ -2134,21 +2134,22 @@ class Commande extends CommonObject
 
 
 	/**
-	 *  \brief    	Update a line in database
-	 *  \param    	rowid            	Id of line to update
-	 *  \param    	desc             	Description de la ligne
-	 *  \param    	pu               	Prix unitaire
-	 *  \param    	qty              	Quantity
-	 *  \param    	remise_percent   	Pourcentage de remise de la ligne
-	 *  \param    	tva_tx           	Taux TVA
-	 * 	\param		txlocaltax1			Local tax 1 rate
-	 *  \param		txlocaltax2			Local tax 2 rate
-	 *  \param    	price_base_type		HT or TTC
-	 *  \param    	info_bits        	Miscellanous informations on line
-	 *  \param    	date_start        	Start date of the line
-	 *  \param    	date_end          	End date of the line
-	 * 	\param		type				Type of line (0=product, 1=service)
-	 *  \return   	int              	< 0 si erreur, > 0 si ok
+	 *  Update a line in database
+	 *
+	 *  @param    	rowid            	Id of line to update
+	 *  @param    	desc             	Description de la ligne
+	 *  @param    	pu               	Prix unitaire
+	 *  @param    	qty              	Quantity
+	 *  @param    	remise_percent   	Pourcentage de remise de la ligne
+	 *  @param    	tva_tx           	Taux TVA
+	 * 	@param		txlocaltax1			Local tax 1 rate
+	 *  @param		txlocaltax2			Local tax 2 rate
+	 *  @param    	price_base_type		HT or TTC
+	 *  @param    	info_bits        	Miscellaneous informations on line
+	 *  @param    	date_start        	Start date of the line
+	 *  @param    	date_end          	End date of the line
+	 * 	@param		type				Type of line (0=product, 1=service)
+	 *  @return   	int              	< 0 if KO, > 0 if OK
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0)
 	{
