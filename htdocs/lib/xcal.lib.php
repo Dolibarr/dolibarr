@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,12 @@
 /**
  *	Build a file from an array of events
  *  All input params and data must be encoded in $conf->charset_output
- *
- *	@param		string	$format				'vcal' or 'ical'
- *	@param		string	$title				Title of export
- *	@param		string	$desc				Description of export
- *	@param		array	$events_array		Array of events ('eid','startdate','duration','enddate','title','summary','category','email','url','desc','author')
- *	@param		string	$outputfile			Output file
- *	@return		int							<0 if ko, Nb of events in file if ok
+ *	@param		format				'vcal' or 'ical'
+ *	@param		title				Title of export
+ *	@param		desc				Description of export
+ *	@param		events_array		Array of events ('eid','startdate','duration','enddate','title','summary','category','email','url','desc','author')
+ *	@param		outputfile			Output file
+ *	@return		int					<0 if ko, Nb of events in file if ok
  */
 function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
 {
@@ -280,16 +279,15 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
 }
 
 /**
- *	Build a file from an array of events.
- *  All input data must be encoded in $conf->charset_output
- *
- *	@param		string	$format				'rss'
- *	@param		string	$title				Title of export
- *	@param		string	$desc				Description of export
- *	@param		array	$events_array		Array of events ('uid','startdate','summary','url','desc','author','category')
- *	@param		string	$outputfile			Output file
- *	@param		string	$filter				Filter
- *	@return		int							<0 if ko, Nb of events in file if ok
+ *	\brief		Build a file from an array of events
+ *              All input data must be encoded in $conf->charset_output
+ *	\param		format				'rss'
+ *	\param		title				Title of export
+ *	\param		desc				Description of export
+ *	\param		events_array		Array of events ('uid','startdate','summary','url','desc','author','category')
+ *	\param		outputfile			Output file
+ *	\param		filter				Filter
+ *	\return		int					<0 if ko, Nb of events in file if ok
  */
 function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$filter='')
 {
@@ -396,12 +394,11 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 
 
 /**
- * 	Encode for cal export
- * 	string must be encoded in conf->file->character_set_client
- *
- * 	@param		string	$format		vcal or ical
- * 	@param 		string	$string		string to encode
- * 	@return		string				string encoded
+ * 	\brief		Encode for cal export
+ * 	\param		format		vcal or ical
+ * 	\param 		string		string to encode
+ * 	\return		string		string encoded
+ * 	\remarks	string must be encoded in conf->file->character_set_client
  */
 function format_cal($format,$string)
 {
@@ -431,9 +428,8 @@ function format_cal($format,$string)
 /**
  *	Cut string after 75 chars. Add CRLF+Space.
  *	line must be encoded in UTF-8
- *
- *	@param		string	$line	String to convert
- *	@return		string 			String converted
+ *	@param		line		String to convert
+ *	@return		string 		String converted
  */
 function CalEncode($line)
 {
@@ -477,13 +473,6 @@ function CalEncode($line)
 }
 
 
-/**
- *	Encode into vcal format
- *
- *	@param		string	$str		String to convert
- *	@param		int		forcal		1=For cal
- *	@return		string 				String converted
- */
 function QPEncode($str,$forcal=0)
 {
 	$lines = preg_split("/\r\n/", $str);
@@ -514,13 +503,7 @@ function QPEncode($str,$forcal=0)
 	return trim ( $out );
 }
 
-/**
- *	Decode vcal format
- *
- *	@param		string	$str		String to convert
- *	@return		string 				String converted
- */
-function QPDecode($str)
+function QPDecode( $str )
 {
 	$out = preg_replace('/=\r?\n/', '', $str);
 	$out = preg_replace('/=([A-F0-9]{2})/e', chr( hexdec ('\\1' ) ), $out);
