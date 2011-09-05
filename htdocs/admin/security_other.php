@@ -293,7 +293,7 @@ print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
 // Check command in inside safe_mode
 print '</td>';
-print '<td>';
+print '<td align="center">';
 if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 {
 	$langs->load("errors");
@@ -321,7 +321,7 @@ print "<tr ".$bc[$var].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
 print '</td>';
-print '<td>';
+print '<td align="center">';
 print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size="72" value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM).'">';
 print "</td>";
 print '<td align="right">';
