@@ -750,14 +750,17 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 {
 	if (GETPOST('action') == 'switchentity' && $user->admin && ! $user->entity)
 	{
-		require_once("../class/actions_multicompany.class.php");
-
-		$mc = new ActionsMulticompany($db);
-
-		if($mc->switchEntity(GETPOST('entity')) > 0)
+		$res = @dol_include_once("/multicompany/class/actions_multicompany.class.php");
+		
+		if ($res)
 		{
-			Header("Location: ".DOL_URL_ROOT.'/');
-			exit;
+			$mc = new ActionsMulticompany($db);
+	
+			if($mc->switchEntity(GETPOST('entity')) > 0)
+			{
+				Header("Location: ".DOL_URL_ROOT.'/');
+				exit;
+			}
 		}
 	}
 }
