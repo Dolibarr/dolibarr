@@ -189,6 +189,7 @@ class FormMail
     /**
      *	Show the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+     *
      *	@param			addfileaction		Name of action when posting file attachments
      *	@param			removefileaction	Name of action when removing file attachments
      */
@@ -200,6 +201,7 @@ class FormMail
     /**
      *	Get the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+     *
      *	@param			addfileaction		Name of action when posting file attachments
      *	@param			removefileaction	Name of action when removing file attachments
      */
@@ -563,12 +565,12 @@ class FormMail
 
                 if ($this->param["models"]=='order_send')
                 {
-                    $url=getPaypalPaymentUrl('order',$this->substit['__ORDERREF__']);
+                    $url=getPaypalPaymentUrl(0,'order',$this->substit['__ORDERREF__']);
                     $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrderWithPaypalLink",$url);
                 }
                 if ($this->param["models"]=='facture_send')
                 {
-                    $url=getPaypalPaymentUrl('invoice',$this->substit['__FACREF__']);
+                    $url=getPaypalPaymentUrl(0,'invoice',$this->substit['__FACREF__']);
                     $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceWithPaypalLink",$url);
                 }
             }

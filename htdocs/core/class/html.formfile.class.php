@@ -129,6 +129,7 @@ class FormFile
 
     /**
      *      Show the box with list of available documents for object
+     *
      *      @param      modulepart          propal, facture, facture_fourn, ...
      *      @param      filename            Sub dir to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if filedir already complete)
      *      @param      filedir             Dir to scan
@@ -157,7 +158,8 @@ class FormFile
 
     /**
      *      Return a string to show the box with list of available documents for object.
-     *      This also set the property $this->numoffiles.
+     *      This also set the property $this->numoffiles
+     *
      *      @param      modulepart          propal, facture, facture_fourn, ...
      *      @param      filename            Sub dir to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if filedir already complete)
      *      @param      filedir             Dir to scan
