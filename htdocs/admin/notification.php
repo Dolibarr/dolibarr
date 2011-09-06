@@ -27,27 +27,28 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/triggers/interface_modNotification_Notification.class.php");
 
 $langs->load("admin");
-$langs->load("mails");
+$langs->load("other");
 
 // Security check
 if (!$user->admin)
   accessforbidden();
 
+$action = GETPOST("action");
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'setvalue' && $user->admin)
+if ($action == 'setvalue' && $user->admin)
 {
 	$result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM",$_POST["email_from"],'chaine',0,'',$conf->entity);
   	if ($result >= 0)
   	{
-  		$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
+  		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
   	}
   	else
   	{
-		dol_print_error($db);
+		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
@@ -62,9 +63,7 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
 
-print $langs->trans("NotificationsDesc").'<br><br>';
-
-dol_htmloutput_mesg($mesg);
+print $langs->trans("NotificationsDesc").'<br><br>';	
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -109,7 +108,7 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 foreach($listofnotifiedevents as $notifiedevent)
 {
     $var=!$var;
-    $label=$langs->trans("Notify_".$notifiedevent['code'])!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+    $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
     print '<tr '.$bc[$var].'>';
     print '<td>'.$notifiedevent['elementtype'].'</td>';
     print '<td>'.$notifiedevent['code'].'</td>';
@@ -118,9 +117,9 @@ foreach($listofnotifiedevents as $notifiedevent)
 }
 print '</table>';
 
+dol_htmloutput_mesg($mesg);
 
 $db->close();
-
 
 llxFooter();
 ?>
