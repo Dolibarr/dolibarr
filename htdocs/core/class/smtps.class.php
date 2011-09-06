@@ -1932,7 +1932,7 @@ class SMTPs
         $this->_msgContent[$strType]['data']     = $strContent;
 
         if ( $this->getMD5flag() )
-        $this->_msgContent[$strType]['md5']      = md5($strContent);
+        $this->_msgContent[$strType]['md5']      = dol_hash($strContent);
         //}
     }
 
@@ -2114,7 +2114,7 @@ class SMTPs
             $this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
 
             if ( $this->getMD5flag() )
-            $this->_msgContent['attachment'][$strFileName]['md5']      = md5($strContent);
+            $this->_msgContent['attachment'][$strFileName]['md5']      = dol_hash($strContent);
         }
     }
 
@@ -2144,7 +2144,7 @@ class SMTPs
             $this->_msgContent['image'][$strImageName]['data']     = $strContent;
 
             if ( $this->getMD5flag() )
-            $this->_msgContent['image'][$strFileName]['md5']      = md5($strContent);
+            $this->_msgContent['image'][$strFileName]['md5']      = dol_hash($strContent);
         }
     }
     // END DOL_CHANGE LDR
@@ -2519,6 +2519,9 @@ class SMTPs
 
 /**
  * $Log: smtps.class.php,v $
+ * Revision 1.2  2011/09/06 06:53:53  hregis
+ * Fix: use dol_hash instead md5 php function
+ *
  * Revision 1.1  2011/09/03 00:14:27  eldy
  * Doxygen
  *

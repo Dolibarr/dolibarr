@@ -244,7 +244,7 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 // Creation of a token against CSRF vulnerabilities
 if (! defined('NOTOKENRENEWAL'))
 {
-	$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+	$token = dol_hash(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 	// roulement des jetons car cree a chaque appel
 	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 	$_SESSION['newtoken'] = $token;

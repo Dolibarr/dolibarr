@@ -71,7 +71,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				// Check crypted password according to crypt algorithm
 				if ($cryptType == 'md5')
 				{
-					if (md5($passtyped) == $passcrypted)
+					if (dol_hash($passtyped) == $passcrypted)
 					{
 						$passok=true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - ".$cryptType." of pass is ok");

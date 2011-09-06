@@ -74,10 +74,10 @@ if ($_GET["action"] == 'activate_encrypt')
         while ($i < $numrows)
         {
             $obj=$db->fetch_object($resql);
-            if (md5($obj->pass))
+            if (dol_hash($obj->pass))
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-                $sql.= " SET pass_crypted = '".md5($obj->pass)."', pass = NULL";
+                $sql.= " SET pass_crypted = '".dol_hash($obj->pass)."', pass = NULL";
                 $sql.= " WHERE rowid=".$obj->rowid;
                 //print $sql;
 

@@ -467,9 +467,10 @@ function getRandomPassword($generic=false)
  * 	Returns a hash of a string
  * 	@param 	chain	String to hash
  * 	@param	type	Type of hash (0:md5, 1:sha1, 2:sha1+md5)
+ * 	@param	salt	Salt
  * 	@return	hash	hash of string
  */
-function dol_hash($chain,$type=0)
+function dol_hash($chain,$type=0,$salt='')
 {
 	if ($type == 1) return sha1($chain);
 	else if ($type == 2) return sha1(md5($chain));

@@ -64,7 +64,7 @@ if ($action == 'validatenewpassword' && $username && $passwordmd5)
     }
     else
     {
-        if (md5($edituser->pass_temp) == $passwordmd5)
+        if (dol_hash($edituser->pass_temp) == $passwordmd5)
         {
             $newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");

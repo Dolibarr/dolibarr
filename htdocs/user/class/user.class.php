@@ -1041,7 +1041,7 @@ class User extends CommonObject
 		$this->phenix_login = trim($this->phenix_login);
 		if ($this->phenix_pass != $this->phenix_pass_crypted)
 		{
-			$this->phenix_pass  = md5(trim($this->phenix_pass));
+			$this->phenix_pass  = dol_hash(trim($this->phenix_pass));
 		}
 		$this->admin        = $this->admin?$this->admin:0;
 
@@ -1243,7 +1243,7 @@ class User extends CommonObject
 		}
 
 		// Crypte avec md5
-		$password_crypted = md5($password);
+		$password_crypted = dol_hash($password);
 
 		// Mise a jour
 		if (! $changelater)
@@ -1409,7 +1409,7 @@ class User extends CommonObject
 			$mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
 			$mesg.= "You must click on the folowing link to validate its change.\n";
-			$url = $urlwithouturlroot.DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
+			$url = $urlwithouturlroot.DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".dol_hash($password);
 			$mesg.= $url."\n\n";
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
 			dol_syslog("User::send_password url=".$url);
