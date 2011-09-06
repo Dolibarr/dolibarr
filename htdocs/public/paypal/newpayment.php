@@ -144,8 +144,8 @@ if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 {
     if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
     {
-	    if ($REF) $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $REF);    // REF always defined if SOURCE is defined
-	    else $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN);
+	    if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
+	    else $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
     }
     else
     {
