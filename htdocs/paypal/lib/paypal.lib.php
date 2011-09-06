@@ -166,7 +166,6 @@ function paypaladmin_prepare_head()
 function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
 {
 	global $conf;
-	require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 
     if ($type == 'free')
     {

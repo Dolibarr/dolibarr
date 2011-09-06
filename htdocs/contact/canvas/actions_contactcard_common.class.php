@@ -339,7 +339,6 @@ abstract class ActionsContactCardCommon
         		$generated_password='';
         		if (! $ldap_sid)
         		{
-					include_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 	        		$generated_password=getRandomPassword('');
         		}
         		$password=$generated_password;

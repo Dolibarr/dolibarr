@@ -24,7 +24,6 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 
 $langs->load("users");
 $langs->load("admin");

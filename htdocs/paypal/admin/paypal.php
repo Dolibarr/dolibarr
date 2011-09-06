@@ -26,7 +26,6 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 
 $servicename='PayPal';

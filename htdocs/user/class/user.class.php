@@ -1238,7 +1238,6 @@ class User extends CommonObject
         // If new password not provided, we generate one
 		if (! $password)
 		{
-			include_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 	        $password=getRandomPassword('');
 		}
 

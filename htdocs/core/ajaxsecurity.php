@@ -28,8 +28,6 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
-
 
 /*
  * View
