@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,18 +36,22 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
-$langs->load("@externalsite");
+$langs->load("externalsite");
 
 $def = array();
 
+$action = GETPOST("action");
+
 // Sauvegardes parametres
-if ($_POST["action"] == 'update')
+if ($action == 'update')
 {
     $i=0;
 
     $db->begin();
+    
+    $exturl = GETPOST("EXTERNALSITE_URL");
 
-    $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($_POST["EXTERNALSITE_URL"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($exturl),'chaine',0,'',$conf->entity);
     //$i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($_POST["EXTERNALSITE_LABEL"]),'chaine',0,'',$conf->entity);
 
     if ($i >= 1)
@@ -57,7 +62,7 @@ if ($_POST["action"] == 'update')
     else
     {
         $db->rollback();
-        $mesg=$db->lasterror();
+        $mesg="<div class=\"error\">".$db->lasterror()."</div>";
     }
 }
 
@@ -110,7 +115,7 @@ print "</center>";
 print "</form>\n";
 
 
-if ($mesg) print "<br>$mesg<br>";
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 
