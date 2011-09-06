@@ -313,6 +313,10 @@ PDF=PDF
 PDFDesc=Puede definir aquí las opciones globales para la generación de los PDF
 PDFAddressForging=Reglas de visualización de direcciones
 HideAnyVATInformationOnPDF=Ocultar toda la información relacionada con el IVA en la generación de los PDF
+UrlGenerationParameters=Seguridad de las URLs
+SecurityTokenIsUnique=¿Usar un parámetro securekey único para cada URL?
+EnterRefToBuildUrl=Introduzca la referencia del objeto %s
+GetSecuredUrl=Obtener la URL calculada
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,9 @@ if (!$user->admin) accessforbidden();
 $def = array();
 $lastftpentry=0;
 
+$action = GETPOST("action");
+$entry = GETPOST("numero_entry");
+
 // Positionne la variable pour le nombre de rss externes
 $sql ="select MAX(name) as name from ".MAIN_DB_PREFIX."const";
 $sql.=" WHERE name like 'FTP_SERVER_%'";
@@ -48,21 +52,21 @@ else
     dol_print_error($db);
 }
 
-if ($_POST["action"] == 'add' || $_POST["modify"])
+if ($action == 'add' || GETPOST("modify"))
 {
-    $ftp_name = "FTP_NAME_" . $_POST["numero_entry"];
-	$ftp_server = "FTP_SERVER_" . $_POST["numero_entry"];
+    $ftp_name = "FTP_NAME_" . $entry;// $_POST["numero_entry"];
+	$ftp_server = "FTP_SERVER_" . $entry; //$_POST["numero_entry"];
 
 	$error=0;
 	$mesg='';
 
-	if (empty($_POST[$ftp_name]))
+	if (! GETPOST("$ftp_name"))
 	{
 		$error=1;
 		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")).'</div>';
 	}
 
-	if (empty($_POST[$ftp_server]))
+	if (! GETPOST("$ftp_server"))
 	{
 		$error=1;
 		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server")).'</div>';
@@ -70,17 +74,18 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 
     if (! $error)
     {
-    	$ftp_port = "FTP_PORT_" . $_POST["numero_entry"];
-        $ftp_user = "FTP_USER_" . $_POST["numero_entry"];
-        $ftp_password = "FTP_PASSWORD_" . $_POST["numero_entry"];
+    	
+    	$ftp_port = "FTP_PORT_" . $entry;
+        $ftp_user = "FTP_USER_" . $entry;
+        $ftp_password = "FTP_PASSWORD_" . $entry;
 
         $db->begin();
 
-		$result1=dolibarr_set_const($db, "FTP_PORT_" . $_POST["numero_entry"],$_POST[$ftp_port],'chaine',0,'',$conf->entity);
-		if ($result1) $result2=dolibarr_set_const($db, "FTP_SERVER_" . $_POST["numero_entry"],$_POST[$ftp_server],'chaine',0,'',$conf->entity);
-		if ($result2) $result3=dolibarr_set_const($db, "FTP_USER_" . $_POST["numero_entry"],$_POST[$ftp_user],'chaine',0,'',$conf->entity);
-		if ($result3) $result4=dolibarr_set_const($db, "FTP_PASSWORD_" . $_POST["numero_entry"],$_POST[$ftp_password],'chaine',0,'',$conf->entity);
-		if ($result4) $result5=dolibarr_set_const($db, "FTP_NAME_" . $_POST["numero_entry"],$_POST[$ftp_name],'chaine',0,'',$conf->entity);
+		$result1=dolibarr_set_const($db, "FTP_PORT_" . $entry,GETPOST($ftp_port),'chaine',0,'',$conf->entity);
+		if ($result1) $result2=dolibarr_set_const($db, "FTP_SERVER_" . $entry, GETPOST($ftp_server),'chaine',0,'',$conf->entity);
+		if ($result2) $result3=dolibarr_set_const($db, "FTP_USER_" . $entry,GETPOST($ftp_user),'chaine',0,'',$conf->entity);
+		if ($result3) $result4=dolibarr_set_const($db, "FTP_PASSWORD_" . $entry,GETPOST($ftp_password),'chaine',0,'',$conf->entity);
+		if ($result4) $result5=dolibarr_set_const($db, "FTP_NAME_" . $entry,GETPOST($ftp_name),'chaine',0,'',$conf->entity);
 
         if ($result1 && $result2 && $result3 && $result4 && $result5)
         {
@@ -99,15 +104,15 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 
 if ($_POST["delete"])
 {
-    if(isset($_POST["numero_entry"]))
+    if($entry)
     {
         $db->begin();
 
-		$result1=dolibarr_del_const($db,"ftp_port_" . $_POST["numero_entry"],$conf->entity);
-		if ($result1) $result2=dolibarr_del_const($db,"ftp_server_" . $_POST["numero_entry"],$conf->entity);
-		if ($result2) $result3=dolibarr_del_const($db,"ftp_user_" . $_POST["numero_entry"],$conf->entity);
-		if ($result3) $result4=dolibarr_del_const($db,"ftp_password_" . $_POST["numero_entry"],$conf->entity);
-		if ($result4) $result5=dolibarr_del_const($db,"ftp_name_" . $_POST["numero_entry"],$conf->entity);
+		$result1=dolibarr_del_const($db,"ftp_port_" . $entry,$conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db,"ftp_server_" . $entry,$conf->entity);
+		if ($result2) $result3=dolibarr_del_const($db,"ftp_user_" . $entry,$conf->entity);
+		if ($result3) $result4=dolibarr_del_const($db,"ftp_password_" . $entry,$conf->entity);
+		if ($result4) $result5=dolibarr_del_const($db,"ftp_name_" . $entry,$conf->entity);
 
         if ($result1 && $result2 && $result3 && $result4 && $result5)
         {
@@ -141,7 +146,6 @@ if (! function_exists('ftp_connect'))
 }
 else
 {
-	if ($mesg) print $mesg;
 
 	// Formulaire ajout
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
@@ -282,6 +286,7 @@ else
 
 }
 
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 

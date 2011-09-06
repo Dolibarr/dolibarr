@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,33 +36,40 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+  $action = GETPOST("action");
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'setvalue' && $user->admin)
+if ($action == 'setvalue' && $user->admin)
 {
 	$error=0;
 
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_TYPE',$_POST["type"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION',$_POST["version"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST',$_POST["host"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE',$_POST["slave"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_PORT',$_POST["port"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_DN',$_POST["dn"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_ADMIN_DN',$_POST["admin"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_ADMIN_PASS',$_POST["pass"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS',$_POST["usetls"],'chaine',0,'',$conf->entity)) $error++;
+	$db->begin();
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_TYPE',GETPOST("type"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION',GETPOST("version"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST',GETPOST("host"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE',GETPOST("slave"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_PORT',GETPOST("port"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_DN',GETPOST("dn"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_ADMIN_DN',GETPOST("admin"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_ADMIN_PASS',GETPOST("pass"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS',GETPOST("usetls"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',GETPOST("activesynchro"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE',GETPOST("activecontact"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_ACTIVE',GETPOST("activemembers"),'chaine',0,'',$conf->entity)) $error++;
 
-	if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',$_POST["activesynchro"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE',$_POST["activecontact"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_ACTIVE',$_POST["activemembers"],'chaine',0,'',$conf->entity)) $error++;
-
-	if ($error)
-	{
-		dol_print_error($db->error());
-	}
+	if (! $error)
+  	{
+  		$db->commit();
+  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+  	}
+  	else
+  	{
+  		$db->rollback();
+		dol_print_error($db);
+    }
 }
 
 
@@ -72,19 +80,17 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 
-print_fiche_titre($langs->trans("LDAPSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+
+print_fiche_titre($langs->trans("LDAPSetup"),$linkback,'setup');
 
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
-	$mesg=$langs->trans("LDAPFunctionsNotAvailableOnPHP");
+	$mesg.='<div class="error">'.$langs->trans("LDAPFunctionsNotAvailableOnPHP").'</div>';  ;
 }
-
-if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
-
 
 dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"));
 
@@ -315,6 +321,8 @@ if (function_exists("ldap_connect"))
 
 	}
 }
+
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 

@@ -25,7 +25,6 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 
 llxHeader();
 

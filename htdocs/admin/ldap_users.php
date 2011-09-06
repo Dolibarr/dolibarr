@@ -4,7 +4,8 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- *
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -38,43 +39,50 @@ $langs->load("errors");
 if (!$user->admin)
   accessforbidden();
 
+$action = GETPOST("action");
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'setvalue' && $user->admin)
+if ($action == 'setvalue' && $user->admin)
 {
 	$error=0;
-
-	if (! dolibarr_set_const($db, 'LDAP_USER_DN',$_POST["user"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_USER_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
-
-	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',$_POST["filterconnection"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD',$_POST["fieldpassword"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD_CRYPTED',$_POST["fieldpasswordcrypted"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',$_POST["fieldsid"],'chaine',0,'',$conf->entity)) $error++;
+	$db->begin();
+	
+	if (! dolibarr_set_const($db, 'LDAP_USER_DN',GETPOST("user"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_USER_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',GETPOST("filterconnection"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',GETPOST("fieldfullname"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',GETPOST("fieldlogin"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',GETPOST("fieldloginsamba"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD',GETPOST("fieldpassword"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD_CRYPTED',GETPOST("fieldpasswordcrypted"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',GETPOST("fieldname"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',GETPOST("fieldfirstname"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',GETPOST("fieldmail"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',GETPOST("fieldphone"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',GETPOST("fieldmobile"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',GETPOST("fielddescription"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',GETPOST("fieldsid"),'chaine',0,'',$conf->entity)) $error++;
 
     // This one must be after the others
     $valkey='';
-    $key=$_POST["key"];
+    $key=GETPOST("key");
     if ($key) $valkey=$conf->global->$key;
     if (! dolibarr_set_const($db, 'LDAP_KEY_USERS',$valkey,'chaine',0,'',$conf->entity)) $error++;
 
-	if ($error)
-	{
-		dol_print_error($db->error());
-	}
+	if (! $error)
+  	{
+  		$db->commit();
+  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+  	}
+  	else
+  	{
+  		$db->rollback();
+		dol_print_error($db);
+    }
 }
 
 
@@ -84,22 +92,19 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
  */
 
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
-print_fiche_titre($langs->trans("LDAPSetup"),'','setup');
+print_fiche_titre($langs->trans("LDAPSetup"),$linkback,'setup');
 
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
-	$mesg=$langs->trans("LDAPFunctionsNotAvailableOnPHP");
+	$mesg.='<div class="error">'.$langs->trans("LDAPFunctionsNotAvailableOnPHP").'</div>';  ;
 }
 
-if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
-
 dol_fiche_head($head, 'users', $langs->trans("LDAPSetup"));
-
 
 print $langs->trans("LDAPDescUsers").'<br>';
 print '<br>';
@@ -336,6 +341,7 @@ if (function_exists("ldap_connect"))
 	}
 }
 
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 

@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011 	    Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,10 +60,10 @@ else
     dol_print_error($db);
 }
 
-if ($action == 'add' || $_POST["modify"])
+if ($action == 'add' || GETPOST("modify"))
 {
-    $external_rss_title = "external_rss_title_" . $_POST["norss"];
-    $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
+    $external_rss_title = "external_rss_title_" . GETPOST("norss");
+    $external_rss_urlrss = "external_rss_urlrss_" . GETPOST("norss");
 
     if (! empty($_POST[$external_rss_urlrss]))
     {
@@ -90,7 +91,7 @@ if ($action == 'add' || $_POST["modify"])
 		{
 			// Ajoute boite box_external_rss dans definition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-			$sql.= " VALUES ('box_external_rss.php','".$db->escape($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
+			$sql.= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss").' ('.GETPOST($external_rss_title)).")')";
 	        if (! $db->query($sql))
 	        {
 	        	dol_print_error($db);
@@ -98,8 +99,8 @@ if ($action == 'add' || $_POST["modify"])
 	        }
 		}
 
-		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . $_POST["norss"],$_POST[$external_rss_title],'chaine',0,'',$conf->entity);
-		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$_POST[$external_rss_urlrss],'chaine',0,'',$conf->entity);
+		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss"),GETPOST($external_rss_title),'chaine',0,'',$conf->entity);
+		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss"),GETPOST($external_rss_urlrss),'chaine',0,'',$conf->entity);
 
         if ($result1 && $result2)
         {
@@ -118,13 +119,13 @@ if ($action == 'add' || $_POST["modify"])
 
 if ($_POST["delete"])
 {
-    if(isset($_POST["norss"]))
+    if(GETPOST("norss"))
     {
         $db->begin();
 
 		// Supprime boite box_external_rss de definition des boites
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
-        $sql.= " WHERE file = 'box_external_rss.php' AND note LIKE '".$_POST["norss"]." %'";
+        $sql.= " WHERE file = 'box_external_rss.php' AND note LIKE '".GETPOST("norss")." %'";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -163,8 +164,8 @@ if ($_POST["delete"])
         }
 
 
-		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . $_POST["norss"],$conf->entity);
-		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$conf->entity);
+		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . GETPOST("norss"),$conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . GETPOST("norss"),$conf->entity);
 
         if ($result1 && $result2)
         {

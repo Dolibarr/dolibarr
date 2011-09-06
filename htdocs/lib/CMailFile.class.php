@@ -107,13 +107,13 @@ class CMailFile
 		//if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
 
 		// On defini mixed_boundary
-		$this->mixed_boundary = md5(uniqid("dolibarr1"));
+		$this->mixed_boundary = dol_hash(uniqid("dolibarr1"));
 
 		// On defini related_boundary
-		$this->related_boundary = md5(uniqid("dolibarr2"));
+		$this->related_boundary = dol_hash(uniqid("dolibarr2"));
 
 		// On defini alternative_boundary
-		$this->alternative_boundary = md5(uniqid("dolibarr3"));
+		$this->alternative_boundary = dol_hash(uniqid("dolibarr3"));
 
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
@@ -884,7 +884,7 @@ class CMailFile
 						$this->html_images[$i]["content_type"] = $this->image_types[$ext];
 
 						// cid
-						$this->html_images[$i]["cid"] = md5(uniqid(time()));
+						$this->html_images[$i]["cid"] = dol_hash(uniqid(time()));
 						$this->html = preg_replace("/src=\"$src\"|src='$src'/i", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
 					}
 					$i++;

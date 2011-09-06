@@ -187,12 +187,11 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 }
 
 include_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
-
+include_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");	// Include by default
 
 // If password is encoded, we decode it
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
 	if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
 	{
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- *
+/* Copyright (C) 2009	Laurent Destailleur	<eldy@users.sourceforge.org>
+ * Copyright (C) 2011	Juanjo Menent		<jmenent@2byte.es>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -32,21 +33,36 @@ accessforbidden();
 $langs->load("admin");
 $langs->load("errors");
 
+$action = GETPOST("action");
+
 /*
  * Actions
  */
-if ($_POST["action"] == 'set')
+if ($action == 'set')
 {
 	$error=0;
-	if (! empty($_POST["GEOIPMAXMIND_COUNTRY_DATAFILE"]) && ! file_exists($_POST["GEOIPMAXMIND_COUNTRY_DATAFILE"]))
+	
+	$gimcdf= getpost("GEOIPMAXMIND_COUNTRY_DATAFILE");
+	
+	if (! $gimcdf && ! file_exists($gimcdf))
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFileNotFound",$_POST["GEOIPMAXMIND_COUNTRY_DATAFILE"]).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFileNotFound",$gimcdf).'</div>';
 		$error++;
 	}
 	
 	if (! $error)
 	{
-		dolibarr_set_const($db,"GEOIPMAXMIND_COUNTRY_DATAFILE",$_POST["GEOIPMAXMIND_COUNTRY_DATAFILE"],'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db,"GEOIPMAXMIND_COUNTRY_DATAFILE",$gimcdf,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		
+		if (! $error)
+	    {
+	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    }
+	    else
+	    {
+	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    }
 	}
 }
 
@@ -63,8 +79,6 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("GeoIPMaxmindSetup"),$linkback,'setup');
 print '<br>';
-
-if ($mesg) print $mesg;
 
 $version='';
 $geoip='';
@@ -125,6 +139,10 @@ if ($geoip)
 
 	$geoip->close();
 }
+
+dol_htmloutput_mesg($mesg);
+
+$db->close();
 
 llxFooter();
 ?>

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,6 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 
 $servicename='PayPal';
@@ -39,30 +39,44 @@ $langs->load("paybox");
 if (!$user->admin)
   accessforbidden();
 
+$action = GETPOST("action");
 
-if ($_POST["action"] == 'setvalue' && $user->admin)
+if ($action == 'setvalue' && $user->admin)
 {
-    $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",$_POST["PAYPAL_API_SANDBOX"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_API_USER",$_POST["PAYPAL_API_USER"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD",$_POST["PAYPAL_API_PASSWORD"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_API_SIGNATURE",$_POST["PAYPAL_API_SIGNATURE"],'chaine',0,'',$conf->entity);
-
-    $result=dolibarr_set_const($db, "PAYPAL_CREDITOR",$_POST["PAYPAL_CREDITOR"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",$_POST["PAYPAL_API_INTEGRAL_OR_PAYPALONLY"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_CSS_URL",$_POST["PAYPAL_CSS_URL"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN",$_POST["PAYPAL_SECURITY_TOKEN"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN_UNIQUE",$_POST["PAYPAL_SECURITY_TOKEN_UNIQUE"],'chaine',0,'',$conf->entity);
-
-    $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL",$_POST["PAYPAL_ADD_PAYMENT_URL"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",$_POST["PAYPAL_MESSAGE_OK"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",$_POST["PAYPAL_MESSAGE_KO"],'chaine',0,'',$conf->entity);
-
-	if ($result >= 0)
+	$db->begin();
+    $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",GETPOST("PAYPAL_API_SANDBOX"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_API_USER",GETPOST("PAYPAL_API_USER"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD",GETPOST("PAYPAL_API_PASSWORD"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_API_SIGNATURE",GETPOST("PAYPAL_API_SIGNATURE"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_CREDITOR",GETPOST("PAYPAL_CREDITOR"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",GETPOST("PAYPAL_API_INTEGRAL_OR_PAYPALONLY"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_CSS_URL",GETPOST("PAYPAL_CSS_URL"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN",GETPOST("PAYPAL_SECURITY_TOKEN"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN_UNIQUE",GETPOST("PAYPAL_SECURITY_TOKEN_UNIQUE"),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL",GETPOST("PAYPAL_ADD_PAYMENT_URL"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",GETPOST("PAYPAL_MESSAGE_OK"),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",GETPOST("PAYPAL_MESSAGE_KO"),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+	
+	if (! $error)
   	{
+  		$db->commit();
   		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
   	}
   	else
   	{
+  		$db->rollback();
 		dol_print_error($db);
     }
 }
@@ -262,7 +276,7 @@ $token='';
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<strong>'.getPaypalPaymentUrl(1,'free')."</strong><br>\n";
+print '<strong>'.getPaypalPaymentUrl(1,'free')."</strong><br><br>\n";
 if ($conf->commande->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
@@ -276,13 +290,14 @@ if ($conf->commande->enabled)
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_order_ref'))
         {
-            print ' -> <strong>';
+            print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'order',GETPOST('generate_order_ref'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if ($conf->facture->enabled)
 {
@@ -297,13 +312,14 @@ if ($conf->facture->enabled)
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_invoice_ref'))
         {
-            print ' -> <strong>';
+            print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'invoice',GETPOST('generate_invoice_ref'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if ($conf->contrat->enabled)
 {
@@ -318,13 +334,14 @@ if ($conf->contrat->enabled)
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_contract_ref'))
         {
-            print ' -> <strong>';
+            print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'contractline',GETPOST('generate_contract_ref'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if ($conf->adherent->enabled)
 {
@@ -339,7 +356,7 @@ if ($conf->adherent->enabled)
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_member_ref'))
         {
-            print ' -> <strong>';
+            print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'membersubscription',GETPOST('generate_member_ref'));
             print $url;
             print "</strong><br>\n";

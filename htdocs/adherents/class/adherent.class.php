@@ -752,16 +752,14 @@ class Adherent extends CommonObject
         // If new password not provided, we generate one
         if (! $password)
         {
-			include_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 	        $password=getRandomPassword('');
         }
 
         // Cryptage mot de passe
         if ($isencrypted)
         {
-            // Crypte avec systeme encodage par defaut du PHP
-            //$sqlpass = crypt($password, makesalt());
-            $password_indatabase = md5($password);
+            // Encryption
+            $password_indatabase = dol_hash($password);
         }
         else
         {
@@ -1390,8 +1388,6 @@ class Adherent extends CommonObject
      */
     function add_to_spip()
     {
-        require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
-
         dol_syslog(get_class($this)."::add_to_spip");
 
         if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
@@ -1400,7 +1396,7 @@ class Adherent extends CommonObject
         defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
         defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
         ){
-            $mdpass=md5($this->pass);
+            $mdpass=dol_hash($this->pass);
             $htpass=crypt($this->pass,makesalt());
             $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
             //      $mydb=new Db('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);

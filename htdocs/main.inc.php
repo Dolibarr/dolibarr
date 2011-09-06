@@ -244,7 +244,7 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 // Creation of a token against CSRF vulnerabilities
 if (! defined('NOTOKENRENEWAL'))
 {
-	$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+	$token = dol_hash(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 	// roulement des jetons car cree a chaque appel
 	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 	$_SESSION['newtoken'] = $token;
@@ -354,7 +354,6 @@ if (! defined('NOLOGIN'))
 		// Validation of login with a third party login module method
 		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
 		{
-			include_once(DOL_DOCUMENT_ROOT . "/lib/security.lib.php");
 			$login = getLoginMethod();
 			if ($login)	$test=false;
 		}
@@ -426,7 +425,6 @@ if (! defined('NOLOGIN'))
 		if (! $login)
 		{
 			// We show login page
-			include_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 			if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined
 			{
                 include_once(DOL_DOCUMENT_ROOT."/core/class/translate.class.php");
