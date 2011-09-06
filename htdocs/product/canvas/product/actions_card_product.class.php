@@ -26,7 +26,7 @@ include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
  *	\class      ActionsCardProduct
  *	\brief      Class with controller methods for product canvas
  */
-class ActionsCardProduct
+class ActionsCardProduct extends Product
 {
 	var $db;
     var $targetmodule;
@@ -182,7 +182,7 @@ class ActionsCardProduct
 	}
 
 	/**
-	 * 	\brief	Fetch datas list
+	 * 	Fetch datas list
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
@@ -219,7 +219,6 @@ class ActionsCardProduct
 
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		if (!$user->rights->produit->hidden) $sql.=' AND p.hidden = 0';
 
 		if ($sall)
 		{
@@ -257,6 +256,7 @@ class ActionsCardProduct
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit + 1 ,$offset);
 		//print $sql;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -306,7 +306,7 @@ class ActionsCardProduct
 		}
 		else
 		{
-			print $sql;
+			dol_print_error($db);
 		}
 	}
 
