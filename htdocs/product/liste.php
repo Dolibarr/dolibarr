@@ -64,7 +64,7 @@ if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
     $objcanvas = new Canvas($db,$action);
-    //$objcanvas->getCanvas('product','xxx',$canvas);
+    $objcanvas->getCanvas('product','list',$canvas);
 
     // Security check
     if ($type=='0') $result=$objcanvas->restrictedArea($user,'produit');
@@ -107,8 +107,8 @@ $html=new Form($db);
 
 if (! empty($objcanvas->template_dir))
 {
-	$classname = 'Product'.ucfirst($canvas);
-	include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$canvas.'/product.'.$canvas.'.class.php');
+	$classname = 'ActionsCard'.ucfirst($canvas);
+	include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$canvas.'/actions_card_'.$canvas.'.class.php');
 
 	$object = new $classname($db);
 	$object->getFieldList();
@@ -221,7 +221,7 @@ if ($resql)
 		print "</div><br>";
 	}
 
-	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
+	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/actions_card_'.$_GET["canvas"].'.class.php'))
 	{
 		$fieldlist = $object->field_list;
 		$datas = $object->list_datas;
@@ -233,8 +233,7 @@ if ($resql)
 		// Default templates directory
 		$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/tpl/';
 		// Check if a custom template is present
-		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl')
-		|| file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl.php'))
+		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl.php'))
 		{
 			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/';
 		}

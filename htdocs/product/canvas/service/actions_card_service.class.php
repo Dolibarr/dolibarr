@@ -20,12 +20,13 @@
  *	\ingroup    service
  *	\brief      Fichier de la classe des services par defaut
  */
+include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
 /**
  *	\class      ProductService
  *	\brief      Class with controller methods for product canvas
  */
-class ActionsCardService
+class ActionsCardService extends Product
 {
 	var $db;
     var $targetmodule;
