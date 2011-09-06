@@ -43,7 +43,7 @@ $action = GETPOST("action");
 
 if ($action == 'setvalue' && $user->admin)
 {
-	$db->begin;
+	$db->begin();
     $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",GETPOST("PAYPAL_API_SANDBOX"),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_USER",GETPOST("PAYPAL_API_USER"),'chaine',0,'',$conf->entity);
