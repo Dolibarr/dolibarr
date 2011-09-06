@@ -195,8 +195,7 @@ $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
 $sql.= " WHERE ur.fk_id = r.id";
-if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
-else $sql.= " AND r.entity = ".$fuser->entity;
+$sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : $conf->entity);
 $sql.= " AND ur.fk_user = ".$fuser->id;
 
 $result=$db->query($sql);
@@ -225,10 +224,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
 $sql.= " WHERE gr.fk_id = r.id";
-if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
-else $sql.= " AND r.entity = ".$fuser->entity;
-if (empty($conf->multicompany->enabled)) $sql.= " AND gu.entity IN (0,".$conf->entity.")";
-else $sql.= " AND gu.entity IN (0,".$fuser->entity.")";
+$sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : $conf->entity);
+$sql.= " AND gu.entity IN (0,".((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : $conf->entity).")";
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$fuser->id;
 
@@ -291,8 +288,7 @@ print '</tr>'."\n";
 $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
-else $sql.= " AND r.entity = ".$fuser->entity;
+$sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : $conf->entity);
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
