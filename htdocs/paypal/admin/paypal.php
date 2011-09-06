@@ -262,7 +262,7 @@ $token='';
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<strong>'.getPaypalPaymentUrl(1,'free')."</strong><br>\n";
+print '<strong>'.getPaypalPaymentUrl(1,'free')."</strong><br><br>\n";
 if ($conf->commande->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
@@ -276,13 +276,14 @@ if ($conf->commande->enabled)
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_order_ref'))
         {
-            print ' -> <strong>';
+            print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'order',GETPOST('generate_order_ref'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if ($conf->facture->enabled)
 {
@@ -297,13 +298,14 @@ if ($conf->facture->enabled)
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_invoice_ref'))
         {
-            print ' -> <strong>';
+            print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'invoice',GETPOST('generate_invoice_ref'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if ($conf->contrat->enabled)
 {
@@ -318,13 +320,14 @@ if ($conf->contrat->enabled)
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_contract_ref'))
         {
-            print ' -> <strong>';
+            print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'contractline',GETPOST('generate_contract_ref'));
             print $url;
             print "</strong><br>\n";
         }
         print '</form>';
 	}
+	print '<br>';
 }
 if ($conf->adherent->enabled)
 {
@@ -339,7 +342,7 @@ if ($conf->adherent->enabled)
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_member_ref'))
         {
-            print ' -> <strong>';
+            print '<br> -> <strong>';
             $url=getPaypalPaymentUrl(0,'membersubscription',GETPOST('generate_member_ref'));
             print $url;
             print "</strong><br>\n";
