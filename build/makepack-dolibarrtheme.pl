@@ -2,7 +2,6 @@
 #-----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrtheme.pl
 # \brief        Script to build a theme Package for Dolibarr
-# \version      $Revision: 1.10 $
 # \author       (c)2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 #-----------------------------------------------------------------------------
 
@@ -25,7 +24,7 @@ $PROJECT="dolibarr";
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.10 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='1.11';
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -75,9 +74,13 @@ my $copyalreadydone=0;
 my $batch=0;
 
 print "Makepack theme version $VERSION\n";
-print "Enter name of theme to package: ";
+print "Enter name of theme(s) to package (separated with space): ";
 $PROJECT=<STDIN>;
 chomp($PROJECT);
+
+@PROJECTLIST=split(/ /,$PROJECT);
+$PROJECT=join('',@PROJECTLIST);
+
 
 # Ask and set version $MAJOR and $MINOR
 print "Enter value for version: ";
@@ -94,6 +97,8 @@ if ($MINOR eq '')
 
 $FILENAME="$PROJECT";
 $FILENAMETGZ="theme_$PROJECT-$MAJOR.$MINOR";
+$FILENAMEZIP="theme_$PROJECT-$MAJOR.$MINOR";
+
 if (-d "/usr/src/redhat") {
     # redhat
     $RPMDIR="/usr/src/redhat";
@@ -202,11 +207,13 @@ if ($nboftargetok) {
     	mkdir "$BUILDROOT";
     	mkdir "$BUILDROOT/htdocs";
     	mkdir "$BUILDROOT/htdocs/theme";
-    	mkdir "$BUILDROOT/htdocs/theme/$PROJECT";
 
     	print "Copy $SOURCE into $BUILDROOT\n";
     	mkdir "$BUILDROOT";
-    	$ret=`cp -pr "$SOURCE/htdocs/theme/$PROJECT" "$BUILDROOT/htdocs/theme"`;
+		foreach my $tmp (@PROJECTLIST)
+		{
+    		$ret=`cp -pr "$SOURCE/htdocs/theme/$tmp" "$BUILDROOT/htdocs/theme"`;
+		}
     }
     print "Clean $BUILDROOT\n";
     $ret=`rm -fr $BUILDROOT/htdocs/theme/$PROJECT/Thumbs.db $BUILDROOT/htdocs/theme/$PROJECT/*/Thumbs.db $BUILDROOT/htdocs/theme/$PROJECT/*/*/Thumbs.db $BUILDROOT/htdocs/theme/$PROJECT/*/*/*/Thumbs.db`;
@@ -222,16 +229,12 @@ if ($nboftargetok) {
         
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
-#    		unlink $BUILDROOT/$FILENAMETGZ.tgz;
     		print "Compress $BUILDROOT/htdocs into $FILENAMETGZ.tgz...\n";
    		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" htdocs";
    		    $ret=`$cmd`;
-#        	$cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" htdocs\n";
-#        	$ret=`$cmd`;
             if ($OS =~ /windows/i) {
         		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
         		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
-#        		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
             }
     		next;
     	}
@@ -240,56 +243,9 @@ if ($nboftargetok) {
     		unlink $FILENAMEZIP.zip;
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
      		chdir("$BUILDROOT");
-            #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
-            #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-    		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-		print "Move $FILENAMEZIP.zip to $DESTI\n";
-    		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
-    		next;
-    	}
-    
-    	if ($target eq 'RPM') {                 # Linux only
-    		$BUILDFIC="$FILENAME.spec";
-    		unlink $FILENAMETGZ.tgz;
-    		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-    		$ret=`tar --exclude-vcs --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" --group=500 --owner=500 -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
-
-    		print "Move $FILENAMETGZ.tgz to $RPMDIR/SOURCES/$FILENAMETGZ.tgz\n";
-    		$cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
-            $ret=`$cmd`;
-
-    		print "Copy $SOURCE/make/rpm/${BUILDFIC} to $BUILDROOT\n";
-#    		$ret=`cp -p "$SOURCE/make/rpm/${BUILDFIC}" "$BUILDROOT"`;
-            open (SPECFROM,"<$SOURCE/make/rpm/${BUILDFIC}") || die "Error";
-            open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
-            while (<SPECFROM>) {
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$BUILD/;
-                print SPECTO $_;
-            }
-            close SPECFROM;
-            close SPECTO;
-    
-    		print "Launch RPM build (rpm --clean -ba $BUILDROOT/${BUILDFIC})\n";
-    		$ret=`rpm --clean -ba $BUILDROOT/${BUILDFIC}`;
-    	
-   		    print "Move $RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $DESTI/${FILENAMERPM}.noarch.rpm\n";
-   		    $cmd="mv \"$RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm\" \"$DESTI/${FILENAMERPM}.noarch.rpm\"";
-    		$ret=`$cmd`;
-    		next;
-    	}
-    	
-    	if ($target eq 'DEB') {
-            print "Automatic build for DEB is not yet supported.\n";
-        }
-        
-    	if ($target eq 'EXE') {
-    		unlink "$FILENAMEEXE.exe";
-    		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
-    		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
-            print "$command\n";
-    		$ret=`$command`;
-    		print "Move $FILENAMEEXE.exe to $DESTI\n";
-    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$DESTI/$FILENAMEEXE.exe");
+    		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip htdocs`;
+			print "Move $FILENAMEZIP.zip to $DESTI\n";
+    		$ret=`mv "$FILENAMEZIP.zip" "$DESTI/$FILENAMEZIP.zip"`;
     		next;
     	}
     
