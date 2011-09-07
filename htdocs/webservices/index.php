@@ -91,6 +91,9 @@ if ($conf->fournisseur->enabled)
 }
 print '<br>';
 
+print '<br>';
+print 'NUSoap library path used by Dolibarr: '.NUSOAP_PATH.'<br>';
+print '<br>';
 
 $db->close();
 
