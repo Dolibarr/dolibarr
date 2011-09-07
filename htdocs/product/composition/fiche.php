@@ -225,7 +225,7 @@ if ($id || $ref)
 					//print $productstatic->getNomUrl(1).'<br>';
 					//print $value[0];	// This contains a tr line.
 					print '<tr>';
-					print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].') &nbsp &nbsp</td>';
+					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp &nbsp</td>';
 					if ($conf->stock->enabled) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
 					print '</tr>';
 				}
@@ -248,7 +248,7 @@ if ($id || $ref)
 					$productstatic->type=$value["fk_product_type"];
 					$productstatic->ref=$value['label'];
 					print '<tr>';
-					print '<td>'.$productstatic->getNomUrl(1).'</td>';;
+					print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';;
 					print '</tr>';
 				}
 				print '</table>';
@@ -310,7 +310,7 @@ if ($id || $ref)
 				//print $productstatic->getNomUrl(1).'<br>';
 				//print $value[0];	// This contains a tr line.
 				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].') &nbsp &nbsp</td>';
+				print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp &nbsp</td>';
 				if ($conf->stock->enabled) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
 				print '</tr>';
 			}
@@ -333,7 +333,7 @@ if ($id || $ref)
 				$productstatic->type=$value["fk_product_type"];
 				$productstatic->ref=$value['label'];
 				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1).'</td>';;
+				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';;
 				print '</tr>';
 			}
 			print '</table>';
