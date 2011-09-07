@@ -73,8 +73,15 @@ $configfileparameters=array(
 							'?dolibarr_main_auth_ldap_debug',
                             'separator',
                             '?dolibarr_lib_ADODB_PATH',
-                            '?dolibarr_lib_ODTPHP_PATH',
-                            '?dolibarr_lib_ODTPHP_PATHTOPCLZIP'
+                            '?dolibarr_lib_TCPDF_PATH',
+                            '?dolibarr_lib_FPDFI_PATH',
+                            '?dolibarr_lib_NUSOAP_PATH',
+                            '?dolibarr_lib_PHPEXCEL_PATH',
+                            '?dolibarr_lib_GEOIP_PATH',
+							'?dolibarr_lib_ODTPHP_PATH',
+                            '?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+                            '?dolibarr_font_DOL_DEFAULT_TTF',
+                            '?dolibarr_font_DOL_DEFAULT_TTF_BOLD'
 						);
 $configfilelib=array(
 //					'separator',
@@ -104,9 +111,16 @@ $configfilelib=array(
 					'dolibarr_main_auth_ldap_admin_pass',
 					'dolibarr_main_auth_ldap_debug',
 					'separator',
-					'dolibarr_lib_ADODB_PATH',
+                    'dolibarr_lib_ADODB_PATH',
+                    'dolibarr_lib_TCPDF_PATH',
+                    'dolibarr_lib_FPDFI_PATH',
+                    'dolibarr_lib_NUSOAP_PATH',
+                    'dolibarr_lib_PHPEXCEL_PATH',
+                    'dolibarr_lib_GEOIP_PATH',
 					'dolibarr_lib_ODTPHP_PATH',
-					'dolibarr_lib_ODTPHP_PATHTOPCLZIP'
+                    'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+                    'dolibarr_font_DOL_DEFAULT_TTF',
+                    'dolibarr_font_DOL_DEFAULT_TTF_BOLD'
 					);
 $var=true;
 print '<table class="noborder" width="100%">';
