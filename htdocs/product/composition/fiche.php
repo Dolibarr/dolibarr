@@ -346,10 +346,14 @@ if ($id || $ref)
 
 		print '<br>';
 
+		$rowspan=1;
+		if ($conf->categorie->enabled) $rowspan++;
+
         print_fiche_titre($langs->trans("ProductToAddSearch"),'','');
 		print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
 		print '<table class="border" width="100%"><tr><td>';
 		print '<table class="nobordernopadding">';
+
 		print '<tr><td>';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print $langs->trans("KeywordFilter").' &nbsp; ';
@@ -357,15 +361,16 @@ if ($id || $ref)
 		print '<td><input type="text" name="key" value="'.$key.'">';
 		print '<input type="hidden" name="action" value="search">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '</td>';
+		print '<td rowspan="'.$rowspan.'" valign="middle">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Search").'">';
 		print '</td></tr>';
-
-		if($conf->categorie->enabled)
+		if ($conf->categorie->enabled)
 		{
 			print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
 			print '<td>'.$html->select_all_categories(0,$catMere).'</td></tr>';
 		}
 
-		print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 		print '</table>';
 		print '</td></td></table>';
 		print '</form>';
@@ -379,10 +384,10 @@ if ($id || $ref)
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<table class="nobordernopadding" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td class="liste_titre">'.$langs->trans("Ref").'</td>';
-			print '<td class="liste_titre">'.$langs->trans("Label").'</td>';
-			print '<td class="liste_titre" align="center">'.$langs->trans("AddDel").'</td>';
-			print '<td class="liste_titre" align="right">'.$langs->trans("Quantity").'</td>';
+			print '<th class="liste_titre">'.$langs->trans("Ref").'</td>';
+			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
+			print '<th class="liste_titre" align="center">'.$langs->trans("AddDel").'</td>';
+			print '<th class="liste_titre" align="right">'.$langs->trans("Quantity").'</td>';
 			print '</tr>';
 			if ($resql)
 			{
