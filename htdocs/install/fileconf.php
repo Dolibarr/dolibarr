@@ -64,7 +64,7 @@ dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
  *	View
  */
 
-pHeader($langs->trans("ConfigurationFile"),"etape0");
+pHeader($langs->trans("ConfigurationFile"),"etape1");
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
