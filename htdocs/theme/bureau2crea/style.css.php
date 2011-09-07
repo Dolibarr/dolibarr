@@ -1419,6 +1419,10 @@ border-top: 1px solid #333;
 div#stats {
 }
 
+tr.liste_titre {
+    text-align: <?php echo $left; ?>;
+}
+
 tr.liste_titre a {
 color: #333333;
 margin: 0px 5px;
@@ -1439,7 +1443,6 @@ th.liste_titre, td.liste_titre
     white-space: nowrap;
     background-image: none;
     background: none;
-    text-align: <?php echo $left; ?>;
 }
 
 /*tr.liste_titre select.flat {
@@ -1465,7 +1468,6 @@ th.liste_titre_sel, td.liste_titre_sel
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
-    text-align: <?php echo $left; ?>;
 }
 
 input.liste_titre {
