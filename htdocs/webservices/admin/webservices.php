@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -92,7 +92,7 @@ print "</center>";
 
 print '</form>';
 
-if ($mesg) print '<br>'.$mesg;
+dol_htmloutput_mesg($mesg);
 
 print '<br><br>';
 
@@ -140,7 +140,6 @@ if ($conf->fournisseur->enabled)
 }
 print '<br>';
 
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 
