@@ -24,9 +24,6 @@
  *	\file       htdocs/lib/databases/pgsql.lib.php
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
  */
-// For compatibility during upgrade
-if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
-if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
 /**

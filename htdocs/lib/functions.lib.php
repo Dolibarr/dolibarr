@@ -30,9 +30,6 @@
  *					This file contains all frequently used functions.
  */
 
-// For compatibility during upgrade
-if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
-if (! defined('ADODB_DATE_VERSION'))    include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 /**
  *  This function output memory used by PHP and exit everything. Used for debugging purpose.

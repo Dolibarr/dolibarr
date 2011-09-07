@@ -254,10 +254,22 @@ $dolibarr_main_prod='0';
 ##############################
 
 # Value to overwrite path to use shared libraries instead of embedded one
+#$dolibarr_lib_ADODB_PATH='';
+# Value to overwrite path to use shared libraries instead of embedded one
+#$dolibarr_lib_TCPDF_PATH='';
+# Value to overwrite path to use shared libraries instead of embedded one
+#$dolibarr_lib_FPDFI_PATH='';
+# Value to overwrite path to use shared libraries instead of embedded one
+#$dolibarr_lib_NUSOAP_PATH='';
+# Value to overwrite path to use shared libraries instead of embedded one
+#$dolibarr_lib_PHPEXCEL_PATH='';
+# Value to overwrite path to use shared libraries instead of embedded one
 #$dolibarr_lib_GEOIP_PATH='';
-
+# Value to overwrite path to use shared libraries instead of embedded one
+#$dolibarr_lib_ODTPHP_PATH='';
 # Value to overwrite some path to use shared libraries instead of embedded one
 #$dolibarr_lib_ODTPHP_PATHTOPCLZIP="/usr/share/php/libphp-pclzip";
+
 
 ##############################
 # Path to external font      #

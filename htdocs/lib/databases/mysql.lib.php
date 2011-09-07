@@ -23,9 +23,6 @@
  *	\file       	htdocs/lib/databases/mysql.lib.php
  *	\brief      	Class file to manage Dolibarr database access for a Mysql database
  */
-// For compatibility during upgrade
-if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
-if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
 /**
