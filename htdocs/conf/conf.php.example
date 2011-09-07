@@ -254,13 +254,13 @@ $dolibarr_main_prod='0';
 ##############################
 
 # Value to overwrite path to use shared libraries instead of embedded one
-#$dolibarr_lib_ADODB_PATH='';
+#$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
 # Value to overwrite path to use shared libraries instead of embedded one
 #$dolibarr_lib_TCPDF_PATH='';
 # Value to overwrite path to use shared libraries instead of embedded one
 #$dolibarr_lib_FPDFI_PATH='';
 # Value to overwrite path to use shared libraries instead of embedded one
-#$dolibarr_lib_NUSOAP_PATH='';
+#$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap/';
 # Value to overwrite path to use shared libraries instead of embedded one
 #$dolibarr_lib_PHPEXCEL_PATH='';
 # Value to overwrite path to use shared libraries instead of embedded one
