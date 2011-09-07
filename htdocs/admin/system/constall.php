@@ -63,14 +63,18 @@ $configfileparameters=array(
 							'separator',
 							'dolibarr_main_authentication',
 							'separator',
-							'dolibarr_main_auth_ldap_login_attribute',
-							'dolibarr_main_auth_ldap_host',
-							'dolibarr_main_auth_ldap_port',
-							'dolibarr_main_auth_ldap_version',
-							'dolibarr_main_auth_ldap_dn',
-							'dolibarr_main_auth_ldap_admin_login',
-							'dolibarr_main_auth_ldap_admin_pass',
-							'dolibarr_main_auth_ldap_debug'
+							'?dolibarr_main_auth_ldap_login_attribute',
+							'?dolibarr_main_auth_ldap_host',
+							'?dolibarr_main_auth_ldap_port',
+							'?dolibarr_main_auth_ldap_version',
+							'?dolibarr_main_auth_ldap_dn',
+							'?dolibarr_main_auth_ldap_admin_login',
+							'?dolibarr_main_auth_ldap_admin_pass',
+							'?dolibarr_main_auth_ldap_debug',
+                            'separator',
+                            '?dolibarr_lib_ADODB_PATH',
+                            '?dolibarr_lib_ODTPHP_PATH',
+                            '?dolibarr_lib_ODTPHP_PATHTOPCLZIP'
 						);
 $configfilelib=array(
 //					'separator',
@@ -98,7 +102,11 @@ $configfilelib=array(
 					'dolibarr_main_auth_ldap_dn',
 					'dolibarr_main_auth_ldap_admin_login',
 					'dolibarr_main_auth_ldap_admin_pass',
-					'dolibarr_main_auth_ldap_debug'
+					'dolibarr_main_auth_ldap_debug',
+					'separator',
+					'dolibarr_lib_ADODB_PATH',
+					'dolibarr_lib_ODTPHP_PATH',
+					'dolibarr_lib_ODTPHP_PATHTOPCLZIP'
 					);
 $var=true;
 print '<table class="noborder" width="100%">';
@@ -116,9 +124,23 @@ foreach($configfileparameters as $key)
 
 	if (empty($ignore))
 	{
+        $newkey = preg_replace('/^\?/','',$key);
+
+        if (preg_match('/^\?/',$key) && empty(${$newkey}))
+        {
+            $i++;
+            continue;    // We discard parametes starting with ?
+        }
+
+        if ($newkey == 'separator' && $lastkeyshown == 'separator')
+        {
+            $i++;
+            continue;
+        }
+
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		if ($key == 'separator')
+		if ($newkey == 'separator')
 		{
 			print '<td colspan="3">&nbsp;</td>';
 		}
@@ -127,16 +149,17 @@ foreach($configfileparameters as $key)
 			// Label
 			print "<td>".$configfilelib[$i].'</td>';
 			// Key
-			print '<td>'.$key.'</td>';
+			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
-			if ($key == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$key});
-			else if ($key == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$key})) print ${$key}.' => '.constant('DOL_MAIN_URL_ROOT');
-			else if ($key == 'dolibarr_main_url_root_alt' && preg_match('/__auto__/',${$key})) print ${$key}.' => '.constant('DOL_MAIN_URL_ROOT_ALT');
-			else print ${$key};
+			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$newkey});
+			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+			else if ($newkey == 'dolibarr_main_url_root_alt' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT_ALT');
+			else print ${$newkey};
 			print "</td>";
 		}
 		print "</tr>\n";
+		$lastkeyshown=$newkey;
 	}
 	$i++;
 }
