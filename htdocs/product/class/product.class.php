@@ -2238,7 +2238,12 @@ class Product extends CommonObject
             $lien = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.'">';
             $lienfin='</a>';
         }
-		else
+        else if ($option == 'composition')
+        {
+			$lien = '<a href="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+        }
+        else
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
 			$lienfin='</a>';

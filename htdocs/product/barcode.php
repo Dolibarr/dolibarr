@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libell
 
 // Barcode image
 $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($product->barcode_type_coder).'&code='.urlencode($product->barcode).'&encoding='.urlencode($product->barcode_type_code);
-print '<td width="300" align="center" rowspan="4">';
+print '<td width="300" align="center" rowspan="5">';
 print '<!-- url barcode = '.$url.' -->';
 print '<img src="'.$url.'">';
 print '</td>';

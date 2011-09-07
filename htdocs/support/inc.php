@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,23 @@
  *		\brief      File that define environment for support pages
  */
 
-define('DOL_VERSION','2.5-dev');	// Also defined in htdocs/master.inc.php
+define('DOL_VERSION','3.2.0-alpha');	// Also defined in htdocs/master.inc.php
+
+// Define DOL_DOCUMENT_ROOT an ADODB_PATH used for install/upgrade process
+if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
+if (! defined('ADODB_PATH'))
+{
+    $foundpath=DOL_DOCUMENT_ROOT .'/includes/adodbtime/';
+    if (! is_dir($foundpath)) $foundpath='/usr/share/php/adodb/';
+    define('ADODB_PATH', $foundpath);
+}
 
 require_once('../core/class/translate.class.php');
 require_once('../lib/functions.lib.php');
 require_once('../lib/admin.lib.php');
+require_once('../lib/files.lib.php');
+require_once(ADODB_PATH.'adodb-time.inc.php');
 
-// DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
 
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.

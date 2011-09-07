@@ -25,7 +25,7 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysql, dejavu-sans-fonts
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysql, php-adodb, php-nusoap, dejavu-sans-fonts
 Requires: mysql-server, mysql
 #BuildRequires: desktop-file-utils
 
@@ -103,6 +103,8 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/adodbtime  
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/nusoap
 
 # Lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
