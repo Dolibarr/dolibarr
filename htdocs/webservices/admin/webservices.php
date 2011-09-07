@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
- *
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -30,9 +31,7 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
-
-$actionsave=$_POST["save"];
-
+$actionsave=GETPOST("save");
 
 // Sauvegardes parametres
 if ($actionsave)
@@ -41,7 +40,7 @@ if ($actionsave)
 
     $db->begin();
 
-    $i+=dolibarr_set_const($db,'WEBSERVICES_KEY',trim($_POST["WEBSERVICES_KEY"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'WEBSERVICES_KEY',trim(GETPOST("WEBSERVICES_KEY")),'chaine',0,'',$conf->entity);
 
     if ($i >= 1)
     {
@@ -51,7 +50,7 @@ if ($actionsave)
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("SaveFailed")."</font>";
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
@@ -141,6 +140,7 @@ if ($conf->fournisseur->enabled)
 }
 print '<br>';
 
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 
