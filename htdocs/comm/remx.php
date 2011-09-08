@@ -33,7 +33,7 @@ $langs->load("bills");
 $langs->load("companies");
 
 // Security check
-$_socid = GETPOST("id");
+$_socid = $_GET["id"];
 if ($user->societe_id > 0)
 {
 	$_socid = $user->societe_id;
