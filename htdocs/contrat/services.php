@@ -167,7 +167,7 @@ if ($resql)
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_op1',$arrayofoperators,$_REQUEST['filter_op1'],1);
 	print ' ';
-	$filter_date1=dol_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['"op1year']);
+	$filter_date1=dol_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['op1year']);
 	print $form->select_date($filter_date1,'op1',0,0,1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
