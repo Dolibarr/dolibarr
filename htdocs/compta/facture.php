@@ -109,6 +109,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
 }
 
+// Change status of invoice
 if ($action == 'reopen' && $user->rights->facture->creer)
 {
     $result = $object->fetch($id);
@@ -128,7 +129,7 @@ if ($action == 'reopen' && $user->rights->facture->creer)
     }
 }
 
-// Suppression de la facture
+// Delete invoice
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
 {
     if ($user->rights->facture->supprimer)
@@ -147,9 +148,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
     }
 }
 
-/*
- *  Supprime une ligne produit AVEC ou SANS confirmation
- */
+// Delete line
 if ($action == 'confirm_deleteline' && $confirm == 'yes')
 {
     if ($user->rights->facture->creer)
@@ -185,7 +184,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
     }
 }
 
-// Supprime affectation d'un avoir a la facture
+// Delete link of credit note to invoice
 if ($action == 'unlinkdiscount')
 {
     if ($user->rights->facture->creer)
@@ -226,8 +225,8 @@ if ($action == 'set_thirdparty')
 {
     $object->updateObjectField('facture',$id,'fk_soc',$socid);
 
-        Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
-        exit;
+    Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+    exit;
 }
 
 if ($action == 'classin')
@@ -1291,7 +1290,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                         $object->actionmsg		= $actionmsg;  // Long text
                         $object->actionmsg2		= $actionmsg2; // Short text
                         $object->fk_element		= $object->id;
-						$object->elementtype	= $object->element;
+                        $object->elementtype	= $object->element;
 
                         // Appel des triggers
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1658,10 +1657,10 @@ if ($action == 'create')
 
     // Discounts for third party
     print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-    if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+    if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.$soc->remise_client.'</a>');
     else print $langs->trans("CompanyHasNoRelativeDiscount");
     print '. ';
-    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.price($absolute_discount).'</a>',$langs->trans("Currency".$conf->monnaie));
     else print $langs->trans("CompanyHasNoAbsoluteDiscount");
     print '.';
     print '</td></tr>';
@@ -2069,24 +2068,24 @@ else
             print '</td></tr>';
 
             // Third party
-			print '<tr><td>';
+            print '<tr><td>';
             print '<table class="nobordernopadding" width="100%">';
             print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '</td><td colspan="5">';
-			if ($conf->global->FACTURE_CHANGE_THIRDPARTY && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
+            print '</td><td colspan="5">';
+            if ($conf->global->FACTURE_CHANGE_THIRDPARTY && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
             print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="5">';
-			if ($action == 'editthirdparty')
+            if ($action == 'editthirdparty')
             {
                 $html->form_thirdparty($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->socid,'socid');
             }
-			else
-			{
-			print ' &nbsp;'.$soc->getNomUrl(1,'compta');
-            print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)';
-			}
-			print '</tr>';
+            else
+            {
+                print ' &nbsp;'.$soc->getNomUrl(1,'compta');
+                print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)';
+            }
+            print '</tr>';
 
             // Type
             print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
