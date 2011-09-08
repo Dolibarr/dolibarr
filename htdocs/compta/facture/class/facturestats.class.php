@@ -45,13 +45,13 @@ class FactureStats extends Stats
 
 
 	/**
-	 * Constructor
-	 *
-	 * @param 	$DB		   Database handler
-	 * @param 	$socid	   Id third party
-	 * @param 	$mode	   Option
-     * @param   $userid    Id user for filter
-	 * @return FactureStats
+     * 	Constructor
+     *
+	 * 	@param	DoliDB		$DB			Database handler
+	 * 	@param 	int			$socid		Id third party
+	 * 	@param 	string		$mode	   	Option
+     * 	@param	int			$userid    	Id user for filter
+	 * 	@return FactureStats
 	 */
 	function FactureStats($DB, $socid=0, $mode, $userid=0)
 	{

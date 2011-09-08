@@ -70,7 +70,7 @@ switch ($action)
 
 			$obj_facturation->montant_rendu ( $encaisse - $total );
 
-		
+
 		} else {
 			$obj_facturation->paiement_le ($_POST['txtDatePaiement']);
 		}
@@ -139,18 +139,16 @@ switch ($action)
 		$user->fetch($_SESSION['uid']);
 		$user->getrights();
 
-		$invoice=new Facture($db,$conf_fksoc);
-
+		$invoice=new Facture($db);
 
 		// Recuperation de la liste des articles du panier
-		$res=$db->query ('
-				SELECT fk_article, qte, fk_tva, remise_percent, remise, total_ht, total_ttc
+		$res=$db->query ('SELECT fk_article, qte, fk_tva, remise_percent, remise, total_ht, total_ttc
 				FROM '.MAIN_DB_PREFIX.'pos_tmp
 				WHERE 1');
 		$ret=array(); $i=0;
-		while ( $tab = $db->fetch_array($res) )
+		while ($tab = $db->fetch_array($res))
 		{
-			foreach ( $tab as $cle => $valeur )
+			foreach ($tab as $cle => $valeur)
 			{
 				$ret[$i][$cle] = $valeur;
 			}
@@ -249,7 +247,7 @@ switch ($action)
 				$paiement_id = $payment->create($user);
 				if ($paiement_id > 0)
 				{
-                  
+
                     /*if ( $obj_facturation->mode_reglement() == 'ESP' )
                     {
                         $bankaccountid=$conf_fkaccount_cash;
@@ -272,7 +270,7 @@ switch ($action)
                             $error++;
                         }
                     }
-                    
+
                     if (! $error)
                     {
                     	if ($invoice->total_ttc == $obj_facturation->prix_total_ttc()
@@ -282,7 +280,7 @@ switch ($action)
                     		$result=$invoice->set_paid($user);
                   			//print 'eeeee';exit;
                     	}
-                    	
+
                     }
 				}
 				else

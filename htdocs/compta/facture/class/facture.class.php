@@ -109,17 +109,13 @@ class Facture extends CommonObject
     var $errno = 0;
 
     /**
-     *	\brief  Constructeur de la classe
-     *	\param  DB         	handler acces base de donnees
-     *	\param  socid		id societe ('' par defaut)
-     *	\param  facid      	id facture ('' par defaut)
+     * 	Constructor
+     *
+	 * 	@param	DoliDB		$DB			Database handler
      */
-    function Facture($DB, $socid='', $facid='')
+    function Facture($DB)
     {
         $this->db = $DB;
-
-        $this->id = $facid;
-        $this->socid = $socid;
 
         $this->amount = 0;
         $this->remise = 0;
@@ -135,6 +131,7 @@ class Facture extends CommonObject
     /**
      *	Create invoice in database
      *  Note: this->ref can be set or empty. If empty, we will use "(PROV)"
+     *
      *	@param     	user       		Object user that create
      *	@param      notrigger		1=Does not execute triggers, 0 otherwise
      * 	@param		forceduedate	1=Do not recalculate due date from payment condition but force it with value
@@ -456,6 +453,7 @@ class Facture extends CommonObject
 
     /**
      *	Create a new invoice in database from current invoice
+     *
      *	@param      user    		Object user that ask creation
      *	@param		invertdetail	Reverse sign of amounts for lines
      *	@return		int				<0 if KO, >0 if OK
@@ -513,6 +511,7 @@ class Facture extends CommonObject
 
     /**
      *		Load an object from its id and create a new one in database
+     *
      *		@param      fromid     		Id of object to clone
      *		@param		invertdetail	Reverse sign of amounts for lines
      * 	 	@return		int				New id of clone
@@ -600,6 +599,7 @@ class Facture extends CommonObject
 
     /**
      *      Load an object from an order and create a new invoice into database
+     *
      *      @param      object          Object source
      *      @return     int             <0 if KO, 0 if nothing done, 1 if OK
      */
@@ -681,6 +681,7 @@ class Facture extends CommonObject
 
     /**
      *      Return clicable link of object (with eventually picto)
+     *
      *      @param      withpicto       Add picto into link
      *      @param      option          Where point the link
      *      @param      max             Maxlength of ref
@@ -719,6 +720,7 @@ class Facture extends CommonObject
 
     /**
      *	Get object and lines from database
+     *
      *	@param      rowid       Id of object to load
      * 	@param		ref			Reference of invoice
      * 	@param		ref_ext		External reference of invoice
@@ -854,6 +856,7 @@ class Facture extends CommonObject
 
     /**
      *	Recupere les lignes de factures dans this->lines
+     *
      *	@return     int         1 if OK, < 0 if KO
      */
     function fetch_lines()
@@ -932,10 +935,11 @@ class Facture extends CommonObject
 
 
     /**
-     *      \brief      Update database
-     *      \param      user        	User that modify
-     *      \param      notrigger	    0=launch triggers after, 1=disable triggers
-     *      \return     int         	<0 if KO, >0 if OK
+     *      Update database
+     *
+     *      @param      user        	User that modify
+     *      @param      notrigger	    0=launch triggers after, 1=disable triggers
+     *      @return     int         	<0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -1053,9 +1057,10 @@ class Facture extends CommonObject
 
 
     /**
-     *    \brief     Ajout en base d'une ligne remise fixe en ligne de facture
-     *    \param     idremise			Id de la remise fixe
-     *    \return    int          		>0 si ok, <0 si ko
+     *    Ajout en base d'une ligne remise fixe en ligne de facture
+     *
+     *    @param     idremise			Id de la remise fixe
+     *    @return    int          		>0 si ok, <0 si ko
      */
     function insert_discount($idremise)
     {
@@ -1137,7 +1142,12 @@ class Facture extends CommonObject
         }
     }
 
-
+    /**
+     *	Set customer ref
+     *
+     *	@param     	string	$ref_client		Customer ref
+     *	@return		int						<0 if KO, >0 if OK
+     */
     function set_ref_client($ref_client)
     {
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
@@ -1160,8 +1170,9 @@ class Facture extends CommonObject
 
     /**
      *	Delete invoice
-     *	@param     	rowid      	Id of invoice to delete
-     *	@return		int			<0 if KO, >0 if OK
+     *
+     *	@param     	int		$rowid      	Id of invoice to delete
+     *	@return		int						<0 if KO, >0 if OK
      */
     function delete($rowid=0)
     {

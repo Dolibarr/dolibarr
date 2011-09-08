@@ -68,7 +68,9 @@ class FactureRec extends Facture
 
 
 	/**
-	 * 		\brief		Initialisation de la classe
+	 *	Constructor
+	 *
+	 * 	@param		DoliDB		$DB		Database handler
 	 */
 	function FactureRec($DB)
 	{
@@ -76,10 +78,11 @@ class FactureRec extends Facture
 	}
 
 	/**
-	 * 		Create a predefined invoice
-	 * 		@param		user
-	 * 		@param		facid		Id of source invoice
-	 *		@return		int			<0 if KO, id of invoice if OK
+	 * 	Create a predefined invoice
+	 *
+	 * 	@param		User	$user
+	 * 	@param		int		$facid		Id of source invoice
+	 *	@return		int					<0 if KO, id of invoice if OK
 	 */
 	function create($user,$facid)
 	{

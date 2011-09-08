@@ -33,7 +33,7 @@ $langs->load("bills");
 $langs->load("companies");
 
 // Security check
-$_socid = $_GET["id"];
+$_socid = GETPOST("id");
 if ($user->societe_id > 0)
 {
 	$_socid = $user->societe_id;
@@ -274,18 +274,20 @@ if ($_socid > 0)
 	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
 	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
 
-	print '<tr><td align="center" colspan="2">';
+	print "</table>";
+
+	print '<center>';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
     if (GETPOST("backtopage"))
     {
         print '&nbsp; &nbsp; ';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     }
-	print '</td></tr>';
+	print '</center>';
 
-	print "</table></form>";
+	print '</form>';
 
-	print "</div>\n";
+	dol_fiche_end();
 
 	print '<br>';
 

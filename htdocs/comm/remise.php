@@ -19,7 +19,7 @@
 /**
  *	    \file       htdocs/comm/remise.php
  *      \ingroup    societe
- *		\brief      Onglet remise de la societe
+ *		\brief      Page to edit relative discount of a customer
  */
 
 require("../main.inc.php");
@@ -30,7 +30,7 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 
-$_socid = $_GET["id"];
+$_socid = GETPOST("id");
 // Security check
 if ($user->societe_id > 0)
 {
@@ -38,7 +38,17 @@ if ($user->societe_id > 0)
 }
 
 
-if ($_POST["action"] == 'setremise')
+/*
+ * Actions
+ */
+
+if (GETPOST('cancel') && GETPOST('backtopage'))
+{
+     Header("Location: ".GETPOST("backtopage"));
+     exit;
+}
+
+if (GETPOST("action") == 'setremise')
 {
 	$soc = New Societe($db);
 	$soc->fetch($_GET["id"]);
@@ -110,6 +120,7 @@ if ($_socid > 0)
 	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
+    print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
 
 	print '<table class="border" width="100%">';
 
@@ -121,13 +132,21 @@ if ($_socid > 0)
 	print '<tr><td colspan="2" width="25%">';
 	print $langs->trans("NoteReason").'</td><td colspan="2"><input type="text" size="60" name="note" value="'.$_POST["note"].'"></td></tr>';
 
-	print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-
 	print "</table>";
+
+	print '<center>';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+    if (GETPOST("backtopage"))
+    {
+        print '&nbsp; &nbsp; ';
+	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    }
+	print '</center>';
 
 	print "</form>";
 
-	print "</div>\n";
+	dol_fiche_end();
+
 	print '<br>';
 
 
