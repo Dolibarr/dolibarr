@@ -19,7 +19,7 @@
 /**
  *	    \file       htdocs/comm/remise.php
  *      \ingroup    societe
- *		\brief      Page to edit relative discount of a customer
+ *		\brief      Onglet remise de la societe
  */
 
 require("../main.inc.php");
@@ -30,7 +30,7 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 
-$_socid = GETPOST("id");
+$_socid = $_GET["id"];
 // Security check
 if ($user->societe_id > 0)
 {
@@ -38,17 +38,7 @@ if ($user->societe_id > 0)
 }
 
 
-/*
- * Actions
- */
-
-if (GETPOST('cancel') && GETPOST('backtopage'))
-{
-     Header("Location: ".GETPOST("backtopage"));
-     exit;
-}
-
-if (GETPOST("action") == 'setremise')
+if ($_POST["action"] == 'setremise')
 {
 	$soc = New Societe($db);
 	$soc->fetch($_GET["id"]);
@@ -120,7 +110,6 @@ if ($_socid > 0)
 	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
-    print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
 
 	print '<table class="border" width="100%">';
 
@@ -134,19 +123,11 @@ if ($_socid > 0)
 
 	print "</table>";
 
-	print '<center>';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-    if (GETPOST("backtopage"))
-    {
-        print '&nbsp; &nbsp; ';
-	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    }
-	print '</center>';
+	print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
 
 	print "</form>";
 
-	dol_fiche_end();
-
+	print "</div>\n";
 	print '<br>';
 
 
