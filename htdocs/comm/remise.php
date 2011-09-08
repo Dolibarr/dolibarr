@@ -127,7 +127,8 @@ if ($_socid > 0)
 
 	print "</form>";
 
-	print "</div>\n";
+	dol_fiche_end();
+
 	print '<br>';
 
 
