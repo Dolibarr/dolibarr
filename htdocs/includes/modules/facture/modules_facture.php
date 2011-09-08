@@ -242,7 +242,8 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 
 /**
  *	Create a meta file with document file into same directory.
- *  This should allow rgrep search.
+ *  This should allow rgrep search
+ *
  *	@param	    db  		Objet base de donnee
  *	@param	    facid		Id de la facture a creer
  *	@param      message     Message
@@ -251,7 +252,7 @@ function facture_meta_create($db, $facid, $message="")
 {
 	global $langs,$conf;
 
-	$fac = new Facture($db,"",$facid);
+	$fac = new Facture($db);
 	$fac->fetch($facid);
 	$fac->fetch_thirdparty();
 
@@ -298,6 +299,7 @@ function facture_meta_create($db, $facid, $message="")
 
 /**
  *	Supprime l'image de previsualitation, pour le cas de regeneration de facture
+ *
  *	@param	   db  		objet base de donnee
  *	@param	   facid	id de la facture a creer
  */
@@ -306,7 +308,7 @@ function facture_delete_preview($db, $facid)
 	global $langs,$conf;
     require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-	$fac = new Facture($db,"",$facid);
+	$fac = new Facture($db);
 	$fac->fetch($facid);
 
 	if ($conf->facture->dir_output)
