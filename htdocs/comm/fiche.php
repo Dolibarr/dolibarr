@@ -335,7 +335,7 @@ if ($socid > 0)
 		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
 	print '</td></tr></table>';
-	print '</td><td colspan="3">'.($objsoc->remise_client?$objsoc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
+	print '</td><td colspan="3">'.($objsoc->remise_client?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.$objsoc->remise_client.'%</a>':$langs->trans("DiscountNone")).'</td>';
 	print '</tr>';
 
 	// Absolute discounts (Discounts-Drawbacks-Rebates)
@@ -353,7 +353,7 @@ if ($socid > 0)
 	print '<td colspan="3">';
 	$amount_discount=$objsoc->getAvailableDiscounts();
 	if ($amount_discount < 0) dol_print_error($db,$societe->error);
-	if ($amount_discount > 0) print price($amount_discount).'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
+	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$objsoc->id).'">'.price($amount_discount).'</a>&nbsp;'.$langs->trans("Currency".$conf->monnaie);
 	else print $langs->trans("DiscountNone");
 	print '</td>';
 	print '</tr>';
