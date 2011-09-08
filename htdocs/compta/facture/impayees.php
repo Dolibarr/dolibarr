@@ -54,7 +54,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 	{
 	    $arrayofexclusion=array();
 	    foreach($_POST['toGenerate'] as $tmppdf) $arrayofexclusion[]=preg_quote($tmppdf.'.pdf','/');
-		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofexclusion),'\.meta$|\.png','date',SORT_DESC) ;
+		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofexclusion),'\.meta$|\.png','date',SORT_DESC);
 
 		// liste les fichiers
 		$files = array() ;
@@ -62,7 +62,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		foreach($_POST['toGenerate'] as $basename){
 			foreach($factures as $facture){
 				if(strstr($facture["name"],$basename)){
-					$files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"] ;
+					$files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"];
 				}
 			}
 		}
