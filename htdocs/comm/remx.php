@@ -274,20 +274,18 @@ if ($_socid > 0)
 	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
 	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
 
-	print "</table>";
-
-	print '<center>';
+	print '<tr><td align="center" colspan="2">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
     if (GETPOST("backtopage"))
     {
         print '&nbsp; &nbsp; ';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     }
-	print '</center>';
+	print '</td></tr>';
 
-	print '</form>';
+	print "</table></form>";
 
-	dol_fiche_end();
+	print "</div>\n";
 
 	print '<br>';
 

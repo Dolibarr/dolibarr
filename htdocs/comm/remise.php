@@ -121,14 +121,13 @@ if ($_socid > 0)
 	print '<tr><td colspan="2" width="25%">';
 	print $langs->trans("NoteReason").'</td><td colspan="2"><input type="text" size="60" name="note" value="'.$_POST["note"].'"></td></tr>';
 
-	print "</table>";
+	print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+	print "</table>";
 
 	print "</form>";
 
-	dol_fiche_end();
-
+	print "</div>\n";
 	print '<br>';
 
 
