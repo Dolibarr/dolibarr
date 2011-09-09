@@ -55,9 +55,11 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 	{
         require_once(DOL_DOCUMENT_ROOT."/includes/fpdf/fpdfi/fpdi.php");
         require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-
-		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('\.pdf|',$_POST['toGenerate']).'\.pdf','\.meta$|\.png','date',SORT_DESC) ;
-
+		
+		$arrayofexclusion=array();
+		foreach($_POST['toGenerate'] as $tmppdf) $arrayofexclusion[]=preg_quote($tmppdf.'.pdf','/');
+		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofexclusion),'\.meta$|\.png','date',SORT_DESC) ;
+		
 		// liste les fichiers
 		$files = array() ;
 		$factures_bak = $factures ;
