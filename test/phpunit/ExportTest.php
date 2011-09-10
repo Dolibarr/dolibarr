@@ -139,8 +139,6 @@ class ExportTest extends PHPUnit_Framework_TestCase
         $objexport->array_export_fields[0]=$array_export_fields;
         $objexport->array_export_alias[0]=$array_alias;
 
-        dol_mkdir($conf->export->dir_temp);
-        
         $model='csv';
 
         // Build export file
@@ -165,29 +163,5 @@ class ExportTest extends PHPUnit_Framework_TestCase
         return true;
     }
 
-    /**
-     * Test export function
-     *
-	 * @return void
-     */
-    public function testExportSociete()
-    {
-        global $conf,$user,$langs,$db;
-
-        $sql = "";
-        $datatoexport='societe_1';
-        $array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
-        $model='csv';
-        
-        $objexport=new Export($db);
-        $result=$objexport->load_arrays($user,$datatoexport);
-
-        // Build export file
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $sql);
-		$expectedresult=1;
-        $this->assertEquals($result,$expectedresult);
-
-        return true;
-    }
 }
 ?>
