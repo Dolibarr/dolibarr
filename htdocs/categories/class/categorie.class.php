@@ -80,7 +80,7 @@ class Categorie
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog("Categorie::fetch sql=".$sql);
-		$resql  = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$res = $this->db->fetch_array($resql);
@@ -102,7 +102,7 @@ class Categorie
 
 		$sql = "SELECT fk_categorie_mere";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
-		$sql.= " WHERE fk_categorie_fille = '".$id."'";
+		$sql.= " WHERE fk_categorie_fille = ".$id;
 
 		dol_syslog("Categorie::fetch sql=".$sql);
 		$resql  = $this->db->query($sql);
@@ -226,7 +226,7 @@ class Categorie
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'categorie_association';
-		$sql .= ' WHERE fk_categorie_fille = "'.$this->id.'"';
+		$sql.= ' WHERE fk_categorie_fille = '.$this->id;
 
 		dol_syslog("Categorie::update sql=".$sql);
 		if (! $this->db->query($sql))
@@ -239,7 +239,7 @@ class Categorie
 		if($this->id_mere !="" && $this->id_mere!=$this->id)
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
-			$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
+			$sql.= ' VALUES ('.$this->id_mere.', '.$this->id.')';
 
 			dol_syslog("Categorie::update sql=".$sql);
 			if (! $this->db->query($sql))
@@ -579,10 +579,10 @@ class Categorie
 	 * @param	int		$cate		Category id
 	 * @return	string				Description
 	 */
-	function get_desc ($cate)
+	function get_desc($cate)
 	{
 		$sql  = "SELECT description FROM ".MAIN_DB_PREFIX."categorie ";
-		$sql .= "WHERE rowid = '".$cate."'";
+		$sql .= "WHERE rowid = ".$cate;
 
 		$res  = $this->db->query($sql);
 		$n    = $this->db->fetch_array($res);
@@ -595,7 +595,7 @@ class Categorie
 	 *
 	 * @param	Category	$fille		Object category
 	 */
-	function is_fille ($fille)
+	function is_fille($fille)
 	{
 		$sql  = "SELECT count(fk_categorie_fille) FROM ".MAIN_DB_PREFIX."categorie_association ";
 		$sql .= "WHERE fk_categorie_mere = ".$this->id." AND fk_categorie_fille = ".$fille->id;
@@ -1077,7 +1077,7 @@ class Categorie
 		$sql = "SELECT ct.fk_categorie";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON ct.fk_categorie = c.rowid";
-		$sql.= " WHERE  ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
+		$sql.= " WHERE ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
 
 		$res = $this->db->query($sql);
 		if ($res)
