@@ -34,11 +34,12 @@ class ActionsCardIndividual extends ActionsCardCommon
     var $card;
 
     /**
-     *    Constructor
-     *    @param   DB              Handler acces base de donnees
-     *    @param   targetmodule    Name of directory of module where canvas is stored
-     *    @param   canvas          Name of canvas
-     *    @param   card            Name of tab (sub-canvas)
+	 *    Constructor
+	 *
+     *    @param   DoliDB	$DB              Handler acces base de donnees
+     *    @param   string	$targmetmodule   Name of directory of module where canvas is stored
+     *    @param   string	$canvas          Name of canvas
+     *    @param   string	$card            Name of tab (sub-canvas)
      */
 	function ActionsCardIndividual($DB,$targetmodule,$canvas,$card)
 	{
@@ -65,14 +66,6 @@ class ActionsCardIndividual extends ActionsCardCommon
         return $out;
     }
 
-
-	/**
-     *    Assigne les valeurs POST dans l'objet
-     */
-    function assign_post()
-    {
-    	parent::assign_post();
-    }
 
 	/**
 	 * 	Execute actions
