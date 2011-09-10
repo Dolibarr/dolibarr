@@ -734,14 +734,33 @@ if ($action == 'add' && $user->rights->facture->creer)
                         if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
                         $fk_parent_line=0;
-                        $num=sizeof($lines);
+                        $num=count($lines);
 
                         for ($i=0;$i<$num;$i++)
                         {
                             if ($lines[$i]->subprice < 0)
                             {
                                 // Negative line, we create a discount line
-                                // TODO
+                            	$discount = new DiscountAbsolute($db);
+                            	$discount->fk_soc=$object->socid;
+                                $discount->amount_ht=abs($lines[$i]->total_ht);
+                                $discount->amount_tva=abs($lines[$i]->total_tva);
+                                $discount->amount_ttc=abs($lines[$i]->total_ttc);
+                                $discount->tva_tx=$lines[$i]->tva_tx;
+                                $discount->fk_user=$user->id;
+                                $discount->description=$desc;
+                                $discountid=$discount->create($user);
+                                if ($discountid > 0)
+                                {
+                                    $result=$object->insert_discount($discountid);
+                                    //$result=$discount->link_to_invoice($lineid,$id);
+                                }
+                                else
+                                {
+                                    $mesg=$discount->error;
+                                    $error++;
+                                    break;
+                                }
                             }
                             else
                             {
@@ -791,8 +810,13 @@ if ($action == 'add' && $user->rights->facture->creer)
                                 $fk_parent_line
                                 );
 
-                                if ($result < 0)
+                                                            if ($result > 0)
                                 {
+                                    $lineid=$result;
+                                }
+                                else
+                                {
+                                    $lineid=0;
                                     $error++;
                                     break;
                                 }
@@ -956,7 +980,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
             }
 
             $desc = $prod->description;
-            $desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
+            $desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br>\n":"\n") : "";
             $desc.= $_POST['np_desc'];
             if (! empty($prod->customcode) || ! empty($prod->country_code))
             {
@@ -965,7 +989,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
                 if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
                 if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
                 $tmptxt.=')';
-                $desc.= (dol_textishtml($desc)?"<br />\n":"\n").$tmptxt;
+                $desc.= (dol_textishtml($desc)?"<br>\n":"\n").$tmptxt;
             }
             $type = $prod->type;
         }

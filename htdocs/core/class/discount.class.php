@@ -34,6 +34,7 @@ class DiscountAbsolute
 	var $error;
 
 	var $id;					// Id remise
+    var $fk_soc;
 	var $amount_ht;				//
 	var $amount_tva;			//
 	var $amount_ttc;			//
