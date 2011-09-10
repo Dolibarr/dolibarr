@@ -42,6 +42,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
 
 
 /**
+ *
  * @xcovers DoliDb
  * @xcovers Translate
  * @xcovers Conf
