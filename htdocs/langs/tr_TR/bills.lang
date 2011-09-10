@@ -253,6 +253,7 @@ NewGlobalDiscount=Yeni düzeltme indirim
 NewRelativeDiscount=Yeni göreli indirim
 NoteReason=Not / Nedeni
 ReasonDiscount=Neden
+AddDiscount=Indirimli ekle
 AddGlobalDiscount=Indirimli ekle
 DiscountOfferedBy=Tarafından verilen
 DiscountStillRemaining=Indirimli hareketsiz kalan

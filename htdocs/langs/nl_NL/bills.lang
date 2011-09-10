@@ -240,6 +240,7 @@ NewGlobalDiscount=Nieuwe korting
 NewRelativeDiscount=Nieuwe relatieve korting
 NoteReason=Opmerking/Reden
 ReasonDiscount=Reden
+AddDiscount=Toevoegen korting
 AddGlobalDiscount=Toevoegen korting
 DiscountOfferedBy=Verleend door
 DiscountStillRemaining=Kortingen nog steeds vast

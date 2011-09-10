@@ -220,6 +220,7 @@ DiscountFromCreditNote=Rabat od kredytu pamiętać %s
 NewGlobalDiscount=Nowe zniżki
 NoteReason=Uwaga / Reason
 ReasonDiscount=Powód
+AddDiscount=Dodaj zniżki
 AddGlobalDiscount=Dodaj zniżki
 DiscountOfferedBy=Przyznane przez
 DiscountStillRemaining=Rabat nadal pozostały

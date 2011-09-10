@@ -215,6 +215,7 @@ DiscountFromCreditNote=Rabatt aus Gutschrift %s
 NewGlobalDiscount=Neue Rabattregel
 NoteReason=Anmerkung/Begründung
 ReasonDiscount=Rabattgrund
+AddDiscount=Rabattregel hinzufügen
 AddGlobalDiscount=Rabattregel hinzufügen
 DiscountOfferedBy=Rabatt angeboten von
 DiscountStillRemaining=Noch verbleibender Rabatt

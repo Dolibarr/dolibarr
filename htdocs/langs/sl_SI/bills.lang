@@ -247,6 +247,7 @@ NewGlobalDiscount=Nov fiksni popust
 NewRelativeDiscount=Nov relativni popust
 NoteReason=Opomba/Razlog
 ReasonDiscount=Razlog
+AddDiscount=Dodaj popust
 AddGlobalDiscount=Dodaj popust
 DiscountOfferedBy=Odobril
 DiscountStillRemaining=Popust še vedno ostaja

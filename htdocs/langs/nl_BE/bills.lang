@@ -188,6 +188,7 @@ CreditNotes=Creditnota's
 NewGlobalDiscount=Nieuwe korting
 NoteReason=Nota/Reden
 ReasonDiscount=Reden
+AddDiscount=Korting toevoegen
 AddGlobalDiscount=Korting toevoegen
 DiscountOfferedBy=Verleend door
 DiscountStillRemaining=Korting nog steeds geldig / nog niet gerekend

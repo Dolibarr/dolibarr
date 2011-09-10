@@ -782,9 +782,10 @@ abstract class CommonObject
 
 
 	/**
-	 *      Stocke un numero de rang pour toutes les lignes de detail d'un element qui n'en ont pas.
+	 *  Stocke un numero de rang pour toutes les lignes de detail d'un element qui n'en ont pas.
 	 *
-	 * 		@param		renum		true to renum all already ordered lines, false to renum only not already ordered lines.
+	 * 	@param		boolean		$renum			true to renum all already ordered lines, false to renum only not already ordered lines.
+	 * 	@param		string		$rowidorder		ASC or DESC
 	 */
 	function line_order($renum=false, $rowidorder='ASC')
 	{
@@ -830,9 +831,9 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Update a line to have a lower rank
+	 * 	Update a line to have a lower rank
 	 *
-	 * @param $rowid
+	 * 	@param 		int		$rowid
 	 */
 	function line_up($rowid)
 	{
@@ -846,9 +847,9 @@ abstract class CommonObject
 	}
 
 	/**
-     * Update a line to have a higher rank
+     * 	Update a line to have a higher rank
      *
-	 * @param $rowid
+	 * 	@param		int		$rowid
 	 */
 	function line_down($rowid)
 	{
@@ -867,8 +868,8 @@ abstract class CommonObject
 	/**
 	 * 	Update position of line (rang)
 	 *
-	 * 	@param		rowid
-	 * 	@param		rang
+	 * 	@param		int		$rowid
+	 * 	@param		int		$rang
 	 */
 	function updateRangOfLine($rowid,$rang)
 	{
@@ -881,9 +882,9 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   Update position of line with ajax (rang)
+	 * 	Update position of line with ajax (rang)
 	 *
-	 * 		@param		roworder
+	 * 	@param		int		$roworder
 	 */
 	function line_ajaxorder($roworder)
 	{
@@ -897,10 +898,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   	Update position of line up (rang)
+	 * 	Update position of line up (rang)
 	 *
-	 * 		@param		rowid
-	 * 		@param		rang
+	 * 	@param		int		$rowid
+	 * 	@param		int		$rang
 	 */
 	function updateLineUp($rowid,$rang)
 	{
@@ -926,11 +927,11 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   	Update position of line down (rang)
+	 * 	Update position of line down (rang)
 	 *
-	 * 		@param	rowid
-	 * 		@param	rang
-	 * 		@param	max
+	 * 	@param	int		$rowid
+	 * 	@param	int		$rang
+	 * 	@param	int		$max
 	 */
 	function updateLineDown($rowid,$rang,$max)
 	{
@@ -956,10 +957,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   Get position of line (rang)
+	 * 	Get position of line (rang)
 	 *
-	 * 	   @param		rowid	Id of line
-	 *     @return     	int     Value of rang in table of lines
+	 * 	@param		int		$rowid		Id of line
+	 *  @return		int     			Value of rang in table of lines
 	 */
 	function getRangOfLine($rowid)
 	{
@@ -974,9 +975,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   Get rowid of the line relative to its position
+	 * 	Get rowid of the line relative to its position
 	 *
-	 *     @return     int     Rowid of the line
+	 * 	@param		int		$rang		Rang value
+	 *  @return     int     			Rowid of the line
 	 */
 	function getIdOfLine($rang)
 	{
@@ -992,10 +994,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   Get max value used for position of line (rang)
+	 * 	Get max value used for position of line (rang)
 	 *
-	 * 	   @param		fk_parent_line
-	 *     @return      int     			Max value of rang in table of lines
+	 * 	@param		int		$fk_parent_line		Parent line id
+	 *  @return     int  			   			Max value of rang in table of lines
 	 */
 	function line_max($fk_parent_line=0)
 	{
@@ -1031,10 +1033,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 *    Update private note of element
+	 *  Update private note of element
 	 *
-	 *    @param      note			New value for note
-	 *    @return     int         	<0 if KO, >0 if OK
+	 *  @param      string		$note	New value for note
+	 *  @return     int      		   	<0 if KO, >0 if OK
 	 */
 	function update_note($note)
 	{

@@ -223,6 +223,7 @@ DiscountFromCreditNote=Rabatt fra kreditnota %s
 NewGlobalDiscount=Ny rabatt
 NoteReason=Notat/Årsak
 ReasonDiscount=Årsak
+AddDiscount=Legg til rabatt
 AddGlobalDiscount=Legg til rabatt
 DiscountOfferedBy=Innrømmet av
 DiscountStillRemaining=Gjenstående rabatt

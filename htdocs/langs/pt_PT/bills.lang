@@ -232,6 +232,7 @@ DiscountFromDeposit=Pagamentos a partir de depósito na factura %s
 NewGlobalDiscount=Novo Desconto fixo
 NoteReason=Nota/Motivo
 ReasonDiscount=Motivo
+AddDiscount=Adicionar Desconto
 AddGlobalDiscount=Adicionar Desconto fixo
 DiscountOfferedBy=Acordado por
 DiscountStillRemaining=Descontos fixos Pendentes

@@ -252,6 +252,7 @@ NewGlobalDiscount=Ny fix rabatt
 NewRelativeDiscount=Nya relativa rabatt
 NoteReason=Not / Reason
 ReasonDiscount=Reason
+AddDiscount=Lägg rabatt
 AddGlobalDiscount=Lägg rabatt
 DiscountOfferedBy=Beviljats av
 DiscountStillRemaining=Rabatt återstår fortfarande

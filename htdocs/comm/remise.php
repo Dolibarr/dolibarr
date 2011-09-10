@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 
-$_socid = GETPOST("id");
+$socid = GETPOST("id");
 // Security check
 if ($user->societe_id > 0)
 {
-	$_socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
@@ -56,8 +56,16 @@ if (GETPOST("action") == 'setremise')
 
 	if ($result > 0)
 	{
-		Header("Location: remise.php?id=".$_GET["id"]);
-		exit;
+	    if (GETPOST('backtopage'))
+	    {
+    		Header("Location: ".GETPOST('backtopage'));
+    		exit;
+	    }
+	    else
+	    {
+    		Header("Location: remise.php?id=".$_GET["id"]);
+    		exit;
+	    }
 	}
 	else
 	{
@@ -80,21 +88,15 @@ llxHeader();
  * Mode fiche
  *
  *********************************************************************************/
-if ($_socid > 0)
+if ($socid > 0)
 {
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
-	$objsoc->id=$_socid;
-	$objsoc->fetch($_socid,$to);
+	$objsoc->id=$socid;
+	$objsoc->fetch($socid);
 
-	if ($errmesg)
-	{
-		print '<div class="error">'.$errmesg.'</div><br>';
-	}
+	dol_htmloutput_errors($errmesg);
 
-	/*
-	 * Affichage onglets
-	 */
 	$head = societe_prepare_head($objsoc);
 
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');

@@ -23,7 +23,6 @@
  * 	\ingroup    ficheinter
  * 	\brief      Fichier de la classe des gestion des fiches interventions
  */
-
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
@@ -61,7 +60,8 @@ class Fichinter extends CommonObject
 
 	/**
 	 *	Class constructor
-	 *	@param      DB		Data base handler access
+	 *
+	 *	@param		DoliDB	$DB		Data base handler access
 	 */
 	function Fichinter($DB)
 	{

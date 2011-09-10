@@ -215,6 +215,7 @@ DiscountFromCreditNote=Alennus menoilmoitus %s
 NewGlobalDiscount=Uusi edullisista
 NoteReason=Huomautus / syy
 ReasonDiscount=Perustelu
+AddDiscount=Lisää edullisista
 AddGlobalDiscount=Lisää edullisista
 DiscountOfferedBy=Myöntämä
 DiscountStillRemaining=Discount vielä jäljellä
