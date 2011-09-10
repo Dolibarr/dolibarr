@@ -52,7 +52,7 @@ abstract class CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " WHERE ref = '".$this->ref."'";
 		$sql.= " AND entity = ".$conf->entity;
-		dol_syslog("CommonObject::verifyNumRef sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::verifyNumRef sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -62,7 +62,7 @@ abstract class CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("CommonObject::verifyNumRef ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::verifyNumRef ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -80,19 +80,19 @@ abstract class CommonObject
 	{
 		global $user,$conf,$langs;
 
-		dol_syslog("CommonObject::add_contact $fk_socpeople, $type_contact, $source");
+		dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source");
 
 		// Check parameters
 		if ($fk_socpeople <= 0)
 		{
 			$this->error=$langs->trans("ErrorWrongValueForParameter","1");
-			dol_syslog("CommonObject::add_contact ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
 			return -1;
 		}
 		if (! $type_contact)
 		{
 			$this->error=$langs->trans("ErrorWrongValueForParameter","2");
-			dol_syslog("CommonObject::add_contact ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::add_contact ".$this->error,LOG_ERR);
 			return -2;
 		}
 
@@ -126,7 +126,7 @@ abstract class CommonObject
 		$sql.= $this->db->idate($datecreate);
 		$sql.= ", 4, '". $id_type_contact . "' ";
 		$sql.= ")";
-		dol_syslog("CommonObject::add_contact sql=".$sql);
+		dol_syslog(get_class($this)."::add_contact sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -200,7 +200,7 @@ abstract class CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql.= " WHERE rowid =".$rowid;
 
-		dol_syslog("CommonObject::delete_contact sql=".$sql);
+		dol_syslog(get_class($this)."::delete_contact sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			if (! $notrigger)
@@ -218,7 +218,7 @@ abstract class CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("CommonObject::delete_contact error=".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::delete_contact error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -243,7 +243,7 @@ abstract class CommonObject
 		$sql.= " WHERE element_id =".$this->id;
 		$sql.= " AND fk_c_type_contact IN (".$listId.")";
 
-		dol_syslog("CommonObject::delete_linked_contact sql=".$sql);
+		dol_syslog(get_class($this)."::delete_linked_contact sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			return 1;
@@ -251,7 +251,7 @@ abstract class CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("CommonObject::delete_linked_contact error=".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::delete_linked_contact error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -288,7 +288,7 @@ abstract class CommonObject
 		if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
 		$sql.=" ORDER BY t.name ASC";
 
-		dol_syslog("CommonObject::liste_contact sql=".$sql);
+		dol_syslog(get_class($this)."::liste_contact sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -440,7 +440,7 @@ abstract class CommonObject
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
 
-		dol_syslog("CommonObject::getIdContact sql=".$sql);
+		dol_syslog(get_class($this)."::getIdContact sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -453,7 +453,7 @@ abstract class CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommonObject::getIdContact ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::getIdContact ".$this->error, LOG_ERR);
 			return null;
 		}
 
@@ -606,7 +606,7 @@ abstract class CommonObject
 		$sql.= $field." = '".$value."'";
 		$sql.= " WHERE rowid = ".$id;
 
-		dol_syslog("CommonObject::updateObjectField sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::updateObjectField sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -632,7 +632,7 @@ abstract class CommonObject
 
 		if (! $this->table_element)
 		{
-			dol_print_error('',"CommonObject::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+			dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -720,7 +720,7 @@ abstract class CommonObject
 	{
 		if (! $this->table_element)
 		{
-			dol_syslog("CommonObject::setProject was called on objet with property table_element not defined",LOG_ERR);
+			dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
 
@@ -729,7 +729,7 @@ abstract class CommonObject
 		else $sql.= ' SET fk_projet = NULL';
 		$sql.= ' WHERE rowid = '.$this->id;
 
-		dol_syslog("CommonObject::setProject sql=".$sql);
+		dol_syslog(get_class($this)."::setProject sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			$this->fk_project = $projectid;
@@ -754,7 +754,7 @@ abstract class CommonObject
 	{
 		if (! $this->table_element)
 		{
-			dol_syslog("CommonObject::setDocModel was called on objet with property table_element not defined",LOG_ERR);
+			dol_syslog(get_class($this)."::setDocModel was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
 
@@ -766,7 +766,7 @@ abstract class CommonObject
 		// if ($this->element == 'facture') $sql.= " AND fk_statut < 2";
 		// if ($this->element == 'propal')  $sql.= " AND fk_statut = 0";
 
-		dol_syslog("CommonObject::setDocModel sql=".$sql);
+		dol_syslog(get_class($this)."::setDocModel sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -791,12 +791,12 @@ abstract class CommonObject
 	{
 		if (! $this->table_element_line)
 		{
-			dol_syslog("CommonObject::line_order was called on objet with property table_element_line not defined",LOG_ERR);
+			dol_syslog(get_class($this)."::line_order was called on objet with property table_element_line not defined",LOG_ERR);
 			return -1;
 		}
 		if (! $this->fk_element)
 		{
-			dol_syslog("CommonObject::line_order was called on objet with property fk_element not defined",LOG_ERR);
+			dol_syslog(get_class($this)."::line_order was called on objet with property fk_element not defined",LOG_ERR);
 			return -1;
 		}
 
@@ -1042,7 +1042,7 @@ abstract class CommonObject
 	{
 		if (! $this->table_element)
 		{
-			dol_syslog("CommonObject::update_note was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -1058,7 +1058,7 @@ abstract class CommonObject
 		}
 		$sql.= " WHERE rowid =". $this->id;
 
-		dol_syslog("CommonObject::update_note sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			$this->note = $note;
@@ -1067,7 +1067,7 @@ abstract class CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommonObject::update_note error=".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::update_note error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1081,7 +1081,7 @@ abstract class CommonObject
 	{
 		if (! $this->table_element)
 		{
-			dol_syslog("CommonObject::update_note_public was called on objet with property table_element not defined",LOG_ERR);
+			dol_syslog(get_class($this)."::update_note_public was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
 
@@ -1089,7 +1089,7 @@ abstract class CommonObject
 		$sql.= " SET note_public = '".$this->db->escape($note_public)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
-		dol_syslog("CommonObject::update_note_public sql=".$sql);
+		dol_syslog(get_class($this)."::update_note_public sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			$this->note_public = $note_public;
@@ -1130,7 +1130,7 @@ abstract class CommonObject
 		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 		if ($exclspec) $sql.= ' AND product_type <> 9';
 
-		dol_syslog("CommonObject::update_price sql=".$sql);
+		dol_syslog(get_class($this)."::update_price sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1194,7 +1194,7 @@ abstract class CommonObject
 			$sql .= ' WHERE rowid = '.$this->id;
 
 			//print "xx".$sql;
-			dol_syslog("CommonObject::update_price sql=".$sql);
+			dol_syslog(get_class($this)."::update_price sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1203,14 +1203,14 @@ abstract class CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("CommonObject::update_price error=".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::update_price error=".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommonObject::update_price error=".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::update_price error=".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
@@ -1236,7 +1236,7 @@ abstract class CommonObject
 		$sql.= ", '".$this->element."'";
 		$sql.= ")";
 
-        dol_syslog("CommonObject::add_object_linked sql=".$sql);
+        dol_syslog(get_class($this)."::add_object_linked sql=".$sql);
 		if ($this->db->query($sql))
 	  	{
 	  		$this->db->commit();
@@ -1293,7 +1293,7 @@ abstract class CommonObject
 		}
 		//print $sql;
 
-		dol_syslog("CommonObject::fetchObjectLink sql=".$sql);
+		dol_syslog(get_class($this)."::fetchObjectLink sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1382,73 +1382,25 @@ abstract class CommonObject
 		$sql.= " SET fk_statut = ".$statut;
 		$sql.= " WHERE rowid=".$elementId;
 
-		dol_syslog("CommonObject::setStatut sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::setStatut sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql)
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("CommonObject::setStatut ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::setStatut ".$this->error, LOG_ERR);
 			return -1;
 		}
 
 		return 1;
 	}
 
-	/**
-	 * 	Fetch field list
-	 */
-	function getFieldList()
-	{
-		global $conf, $langs;
-
-		$this->field_list = array();
-
-		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->fieldListName."'";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " ORDER BY rang ASC";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-
-			$i = 0;
-			while ($i < $num)
-			{
-				$fieldlist = array();
-
-				$obj = $this->db->fetch_object($resql);
-
-				$fieldlist["id"]		= $obj->rowid;
-				$fieldlist["name"]		= $obj->name;
-				$fieldlist["alias"]		= $obj->alias;
-				$fieldlist["title"]		= $langs->trans($obj->title);
-				$fieldlist["align"]		= $obj->align;
-				$fieldlist["sort"]		= $obj->sort;
-				$fieldlist["search"]	= $obj->search;
-				$fieldlist["enabled"]	= verifCond($obj->enabled);
-				$fieldlist["order"]		= $obj->rang;
-
-				array_push($this->field_list,$fieldlist);
-
-				$i++;
-			}
-			$this->db->free($resql);
-		}
-		else
-		{
-			dol_print_error($db,$sql);
-		}
-	}
 
     /**
      *  Load type of canvas of an object if it exists
      *
-     *  @param      id      Record id
-     *  @param      ref     Record ref
-     *  @return		int		<0 if KO, 0 if nothing done, >0 if OK
+     *  @param      int		$id     Record id
+     *  @param      string	$ref    Record ref
+     *  @return		int				<0 if KO, 0 if nothing done, >0 if OK
      */
     function getCanvas($id=0,$ref='')
     {
