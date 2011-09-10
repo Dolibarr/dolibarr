@@ -236,7 +236,7 @@ class Facture extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->type."'";
         $sql.= ", '".$socid."'";
-        $sql.= ", ".$this->db->idate($now);
+        $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$totalht."'";
         $sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
         $sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
