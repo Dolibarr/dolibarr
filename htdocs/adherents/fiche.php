@@ -1030,13 +1030,13 @@ if ($action == 'edit')
 	else print $langs->trans("NoDolibarrAccess");
 	print '</td></tr>';
 
-	print '</table>';
-	
-	print '<br><center>';
+	print '<tr><td colspan="3" align="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center';
+	print '</td></tr>';
+
+	print '</table>';
 
 	print '</form>';
 

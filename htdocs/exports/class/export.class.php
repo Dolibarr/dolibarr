@@ -217,7 +217,6 @@ class Export
 		// Build the sql request
 		$sql=$this->array_export_sql_start[$indice];
 		$i=0;
-		
 		//print_r($array_selected);
 		foreach ($this->array_export_fields[$indice] as $key => $value)
 		{
@@ -254,14 +253,7 @@ class Export
 		asort($array_selected);
 
 		dol_syslog("Export::build_file $model, $datatoexport, $array_selected");
-		
-		// Check parameters or context properties
-		if (! is_array($this->array_export_fields[$indice]))
-		{
-			$this->error="ErrorBadParameter";
-			return -1;
-		}
-		
+
 		// Creation de la classe d'export du model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
 		$file = "export_".$model.".modules.php";
@@ -286,7 +278,7 @@ class Export
 			$outputlangs=$langs;	// Lang for output
 
 			// Open file
-			dol_mkdir($dirname);
+			create_exdir($dirname);
 			$result=$objmodel->open_file($dirname."/".$filename, $outputlangs);
 
 			if ($result >= 0)

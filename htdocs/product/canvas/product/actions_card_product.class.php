@@ -36,35 +36,25 @@ class ActionsCardProduct extends Product
     //! Template container
 	var $tpl = array();
 
-	// List of fiels for action=list
-	var $field_list =array();
-
-
 	/**
-	 *    Constructor
-	 *
-     *    @param   DoliDB	$DB              Handler acces base de donnees
-     *    @param   string	$targmetmodule   Name of directory of module where canvas is stored
-     *    @param   string	$canvas          Name of canvas
-     *    @param   string	$card            Name of tab (sub-canvas)
+	 *    \brief      Constructeur de la classe
+	 *    \param      DB          Handler acces base de donnees
+	 *    \param      id          Id produit (0 par defaut)
 	 */
-	function ActionsCardIndividual($DB,$targetmodule,$canvas,$card)
+	function ActionsCardProduct($DB=0, $id=0, $user=0)
 	{
 		$this->db 				= $DB;
-		$this->targetmodule     = $targetmodule;
-        $this->canvas           = $canvas;
-        $this->card             = $card;
-
-        $this->name 			= "product";
+		$this->id 				= $id ;
+		$this->user 			= $user;
+		$this->module 			= "produit";
+		$this->canvas 			= "default";
+		$this->name 			= "default";
 		$this->definition 		= "Product canvas (défaut)";
 		$this->fieldListName    = "product_default";
 
 		$this->next_prev_filter = "canvas='default'";
 	}
 
-    /**
-     *  Return the title of card
-     */
 	function getTitle()
 	{
 		global $langs;
@@ -86,7 +76,7 @@ class ActionsCardProduct extends Product
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 *    @param      action     Type of action
+	 *    @param      action	Type of action
 	 */
 	function assign_values($action='')
 	{
@@ -189,64 +179,7 @@ class ActionsCardProduct extends Product
 
     		$this->tpl['fiche_end']=dol_get_fiche_end();
 		}
-
-		if ($action == 'list')
-		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
-		}
-
 	}
-
-
-	/**
-	 * 	Fetch field list
-	 */
-	function getFieldList()
-	{
-		global $conf, $langs;
-
-		$this->field_list = array();
-
-		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->fieldListName."'";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " ORDER BY rang ASC";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-
-			$i = 0;
-			while ($i < $num)
-			{
-				$fieldlist = array();
-
-				$obj = $this->db->fetch_object($resql);
-
-				$fieldlist["id"]		= $obj->rowid;
-				$fieldlist["name"]		= $obj->name;
-				$fieldlist["alias"]		= $obj->alias;
-				$fieldlist["title"]		= $langs->trans($obj->title);
-				$fieldlist["align"]		= $obj->align;
-				$fieldlist["sort"]		= $obj->sort;
-				$fieldlist["search"]	= $obj->search;
-				$fieldlist["enabled"]	= verifCond($obj->enabled);
-				$fieldlist["order"]		= $obj->rang;
-
-				array_push($this->field_list,$fieldlist);
-
-				$i++;
-			}
-			$this->db->free($resql);
-		}
-		else
-		{
-			dol_print_error($db,$sql);
-		}
-	}
-
 
 	/**
 	 * 	Fetch datas list
@@ -255,9 +188,7 @@ class ActionsCardProduct extends Product
 	{
 		global $conf, $langs;
 
-        $this->getFieldList();
-
-        $this->list_datas = array();
+		$this->list_datas = array();
 
 		//$_GET["sall"] = 'LL';
 		// Clean parameters
@@ -325,7 +256,7 @@ class ActionsCardProduct extends Product
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit + 1 ,$offset);
 		//print $sql;
-
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

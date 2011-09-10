@@ -77,7 +77,7 @@ class Canvas
 	 *  and MVC properties:    ->control (Controller), ->control->object (Model), ->template_dir (View)
 	 *
 	 * 	@param		module		Name of target module (thirdparty, contact, ...)
-	 * 	@param		card	 	Type of card (ex: 'card', 'info', 'contactcard', ...) or '' for a list page
+	 * 	@param		card	 	Type of card (ex: card, info, contactcard, ...)
 	 * 	@param		canvas		Name of canvas (ex: mycanvas, default, or mycanvas@myexternalmodule)
 	 */
 	function getCanvas($module, $card, $canvas)
@@ -161,7 +161,7 @@ class Canvas
     }
 
     /**
-     *  Get object
+     *  get object
 	 *
      *  @param      param1          Param1
      *  @param      param2          Param2
@@ -224,16 +224,16 @@ class Canvas
     /**
      *     Return the template to display canvas (if it exists)
 	 *
-     *     @param       string		$mode       'create', ''='view', 'edit', 'list'
-     *     @return      string      			Path to display canvas file if it exists, '' otherwise.
+     *     @param       mode        'create', ''='view', 'edit'
+     *     @return      string      Path to display canvas file if it exists, '' otherwise.
      */
     function displayCanvasExists($mode='view')
     {
         $newmode=$mode;
         if (empty($newmode)) $newmode='view';
         if (empty($this->template_dir)) return 0;
-        //print $this->template_dir.($this->card?$this->card.'_':'').$newmode.'.tpl.php';
-        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$newmode.'.tpl.php')) return 1;
+        //print $this->template_dir.$this->card.'_'.$newmode.'.tpl.php';
+        if (file_exists($this->template_dir.$this->card.'_'.$newmode.'.tpl.php')) return 1;
         else return 0;
     }
 
@@ -242,16 +242,16 @@ class Canvas
 	 *     Variables used by templates may have been defined, loaded before
 	 *     into the assign_values function.
 	 *
-	 *     @param      string	$mode        'create', 'view', 'edit'
-	 *     @param      int		$id          Id of object to show
+	 *     @param      mode        'create', 'view', 'edit'
+	 *     @param      id          Id of object to show
 	 */
 	function display_canvas($mode='view',$id=0)
 	{
 		global $db, $conf, $langs, $user, $canvas;
 		global $id, $form, $formfile;
 
-		//print $this->template_dir.($this->card?$this->card.'_':'').$mode.'.tpl.php';exit;
-		include($this->template_dir.($this->card?$this->card.'_':'').$mode.'.tpl.php');        // Include native PHP template
+		//print $this->template_dir.$this->card.'_'.$mode.'.tpl.php';exit;
+		include($this->template_dir.$this->card.'_'.$mode.'.tpl.php');        // Include native PHP template
 	}
 
 }

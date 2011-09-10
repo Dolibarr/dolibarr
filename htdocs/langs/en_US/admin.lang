@@ -1051,7 +1051,7 @@ LDAPFilterConnection=Search filter
 LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Example : samaccountname
-LDAPFieldFullname=First name
+LDAPFieldFullname=Firstname Name
 LDAPFieldFullnameExample=Example : cn
 LDAPFieldPassword=Password
 LDAPFieldPasswordNotCrypted=Password not crypted

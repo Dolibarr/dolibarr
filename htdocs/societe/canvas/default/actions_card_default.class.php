@@ -36,11 +36,10 @@ class ActionsCardDefault extends ActionsCardCommon
 
 	/**
 	 *    Constructor
-	 *
-     *    @param   DoliDB	$DB              Handler acces base de donnees
-     *    @param   string	$targmetmodule   Name of directory of module where canvas is stored
-     *    @param   string	$canvas          Name of canvas
-     *    @param   string	$card            Name of tab (sub-canvas)
+     *    @param   DB              Handler acces base de donnees
+     *    @param   targmetmodule   Name of directory of module where canvas is stored
+     *    @param   canvas          Name of canvas
+     *    @param   card            Name of tab (sub-canvas)
 	 */
 	function ActionsCardDefault($DB,$targetmodule,$canvas,$card)
 	{
@@ -66,6 +65,14 @@ class ActionsCardDefault extends ActionsCardCommon
         return $out;
     }
 
+
+	/**
+     *    Assigne les valeurs POST dans l'objet
+     */
+    function assign_post()
+    {
+    	parent::assign_post();
+    }
 
 	/**
 	 * 	Execute actions
