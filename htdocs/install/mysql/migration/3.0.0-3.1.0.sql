@@ -485,6 +485,3 @@ ALTER TABLE llx_user ADD civilite varchar(6) after entity;
 
 ALTER TABLE llx_element_element MODIFY sourcetype varchar(32) NOT NULL;
 ALTER TABLE llx_element_element MODIFY targettype varchar(32) NOT NULL;
-
-ALTER TABLE llx_societe_prices MODIFY tms timestamp NULL;
--- ALTER TABLE llx_societe_prices ALTER COLUMN tms DROP NOT NULL;
