@@ -215,8 +215,7 @@ class Categorie
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;
-		$this->visible = ($this->visible) != "" ? intval($this->visible) : 0;
-		
+
 		if ($this->already_exists())
 		{
 			$this->error=$langs->trans("ImpossibleUpdateCat");
