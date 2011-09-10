@@ -28,7 +28,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
 
 
 /*
@@ -49,7 +49,7 @@ if((isset($_GET['roworder']) && !empty($_GET['roworder'])) && (isset($_GET['tabl
 	&& (isset($_GET['fk_element']) && !empty($_GET['fk_element'])) && (isset($_GET['element_id']) && !empty($_GET['element_id'])) )
 {
 	$roworder = explode(',',$_GET['roworder']);
-	
+
 	foreach($roworder as $value)
 	{
 		if (!empty($value))
@@ -57,12 +57,12 @@ if((isset($_GET['roworder']) && !empty($_GET['roworder'])) && (isset($_GET['tabl
 			$newroworder[] = $value;
 		}
 	}
-	
+
 	$roworder = implode(',',$newroworder);
-	
+
 	dol_syslog("AjaxRow roworder=".$_GET['roworder']." neworder=".$roworder." element=".$_GET['element'], LOG_DEBUG);
 
-	$row=new CommonObject($db);
+	$row=new GenericObject($db);
 	$row->table_element_line = $_GET['table_element_line'];
 	$row->fk_element = $_GET['fk_element'];
 	$row->id = $_GET['element_id'];
