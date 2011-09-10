@@ -251,6 +251,7 @@ NewGlobalDiscount=新的修补程序折扣
 NewRelativeDiscount=新的相对折扣
 NoteReason=备注/原因
 ReasonDiscount=原因
+AddDiscount=添加折扣
 AddGlobalDiscount=添加折扣
 DiscountOfferedBy=获
 DiscountStillRemaining=折扣尚存

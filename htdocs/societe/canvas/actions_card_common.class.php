@@ -45,11 +45,12 @@ abstract class ActionsCardCommon
 	var $errors=array();
 
     /**
-     *    Constructor
-     *    @param   DB              Handler acces base de donnees
-     *    @param   targetmodule    Name of directory of module where canvas is stored
-     *    @param   canvas          Name of canvas
-     *    @param   card            Name of tab (sub-canvas)
+	 *    Constructor
+	 *
+     *    @param   DoliDB	$DB              Handler acces base de donnees
+     *    @param   string	$targmetmodule   Name of directory of module where canvas is stored
+     *    @param   string	$canvas          Name of canvas
+     *    @param   string	$card            Name of tab (sub-canvas)
 	 */
 	function ActionsCardCommon($DB,$targetmodule,$canvas,$card)
 	{

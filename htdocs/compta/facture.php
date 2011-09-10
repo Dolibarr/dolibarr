@@ -708,14 +708,33 @@ if ($action == 'add' && $user->rights->facture->creer)
                         if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
                         $fk_parent_line=0;
-                        $num=sizeof($lines);
+                        $num=count($lines);
 
                         for ($i=0;$i<$num;$i++)
                         {
                             if ($lines[$i]->subprice < 0)
                             {
                                 // Negative line, we create a discount line
-                                // TODO
+                            	$discount = new DiscountAbsolute($db);
+                            	$discount->fk_soc=$object->socid;
+                                $discount->amount_ht=abs($lines[$i]->total_ht);
+                                $discount->amount_tva=abs($lines[$i]->total_tva);
+                                $discount->amount_ttc=abs($lines[$i]->total_ttc);
+                                $discount->tva_tx=$lines[$i]->tva_tx;
+                                $discount->fk_user=$user->id;
+                                $discount->description=$desc;
+                                $discountid=$discount->create($user);
+                                if ($discountid > 0)
+                                {
+                                    $result=$object->insert_discount($discountid);
+                                    //$result=$discount->link_to_invoice($lineid,$id);
+                                }
+                                else
+                                {
+                                    $mesg=$discount->error;
+                                    $error++;
+                                    break;
+                                }
                             }
                             else
                             {
@@ -765,8 +784,13 @@ if ($action == 'add' && $user->rights->facture->creer)
                                 $fk_parent_line
                                 );
 
-                                if ($result < 0)
+                                if ($result > 0)
                                 {
+                                    $lineid=$result;
+                                }
+                                else
+                                {
+                                    $lineid=0;
                                     $error++;
                                     break;
                                 }
@@ -1658,9 +1682,12 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
     if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.$soc->remise_client.'</a>');
     else print $langs->trans("CompanyHasNoRelativeDiscount");
+    print ' <a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditRelativeDiscount").')</a>';
     print '. ';
+    print '<br>';
     if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.price($absolute_discount).'</a>',$langs->trans("Currency".$conf->monnaie));
     else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+    print ' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditGlobalDiscounts").')</a>';
     print '.';
     print '</td></tr>';
 
@@ -2126,13 +2153,15 @@ else
             print '</td></tr>';
 
             // Relative and absolute discounts
-            $addabsolutediscount=' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddGlobalDiscount").'</a>';
-            $addcreditnote=' <a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
+            $addrelativediscount='<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("EditRelativeDiscounts").'</a>';
+            $addabsolutediscount='<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("EditGlobalDiscounts").'</a>';
+            $addcreditnote='<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
 
             print '<tr><td>'.$langs->trans('Discounts');
             print '</td><td colspan="5">';
             if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
             else print $langs->trans("CompanyHasNoRelativeDiscount");
+            //print ' ('.$addrelativediscount.')';
 
             if ($absolute_discount > 0)
             {
@@ -2164,14 +2193,14 @@ else
                     // Remise dispo de type remise fixe (not credit note)
                     $filter='fk_facture_source IS NULL';
                     print '<br>';
-                    $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
+                    $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' ('.$addabsolutediscount.')');
                 }
             }
             else
             {
                 if ($absolute_creditnote > 0)    // If not linke will be added later
                 {
-                    if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
+                    if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' ('.$addabsolutediscount.')<br>';
                     else print '.';
                 }
                 else print '. ';
@@ -2202,7 +2231,7 @@ else
             if (! $absolute_discount && ! $absolute_creditnote)
             {
                 print $langs->trans("CompanyHasNoAbsoluteDiscount");
-                if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
+                if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' ('.$addabsolutediscount.')<br>';
                 else print '. ';
             }
             /*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)

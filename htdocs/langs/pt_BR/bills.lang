@@ -242,6 +242,7 @@ CreditNoteDepositUse=O projeto deve ser validado para utilizar este tipo de cré
 NewGlobalDiscount=Novo Desconto fixo
 NoteReason=Nota/Motivo
 ReasonDiscount=Motivo
+AddDiscount=Adicionar Desconto
 AddGlobalDiscount=Adicionar Desconto Fixo
 DiscountOfferedBy=Acordado por
 DiscountStillRemaining=Descontos fixos Pendentes

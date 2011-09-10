@@ -40,6 +40,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ *
  * @xcovers CommandeFournisseur
  * @xcovers CommandeFournisseurLigne
  *

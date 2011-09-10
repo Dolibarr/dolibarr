@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/SecurityTest.php
+ *      \file       test/phpunit/ImportTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -27,6 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -41,12 +42,13 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
 
 
 /**
+ * When no cover is provided. We use everything.
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FunctionsTest extends PHPUnit_Framework_TestCase
+class ExportTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,9 +59,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CoreTest
+	 * @return ExportTest
 	 */
-	function FunctionsTest()
+	function ExportTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -90,6 +92,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Ran on start
+	 *
+	 * @return void
 	 */
     protected function setUp()
     {
@@ -102,6 +107,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
     }
 	/**
+	 * Ran on start
+	 *
+	 * @return void
 	 */
     protected function tearDown()
     {
@@ -110,48 +118,76 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
 
     /**
+     * Test export function
+     *
+	 * @return void
      */
-    public function testHtmlCleanLastBr()
+    public function testExportPersonalizedExport()
     {
-        $input="A string<br>";
-        $after=dol_htmlcleanlastbr($input);
-        $this->assertEquals("A string",$after);
-        $input="A string first<br>\nA string second<br>";
-        $after=dol_htmlcleanlastbr($input);
-        $this->assertEquals("A string first<br>\nA string second",$after);
-        $input="A string\n<br type=\"_moz\" />\n";
-        $after=dol_htmlcleanlastbr($input);
-        $this->assertEquals("A string",$after);
-        $input="A string\n<br><br />\n\n";
-        $after=dol_htmlcleanlastbr($input);
-        $this->assertEquals("A string",$after);
+        global $conf,$user,$langs,$db;
+
+        $sql = "SELECT f.facnumber as f_facnumber, f.amount as f_amount, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+
+        $objexport=new Export($db);
+        //$objexport->load_arrays($user,$datatoexport);
+
+        // Define properties
+        $datatoexport='test';
+        $array_selected = array("f.facnumber"=>1, "f.amount"=>2, "f.total"=>3, "f.tva"=>4);
+        $array_export_fields = array("f.facnumber"=>"FacNumber", "f.amount"=>"FacAmount", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+        $array_alias = array("f_facnumber"=>"facnumber", "f_amount"=>"amount", "f_total"=>"total", "f_tva"=>"tva");
+        $objexport->array_export_fields[0]=$array_export_fields;
+        $objexport->array_export_alias[0]=$array_alias;
+
+        dol_mkdir($conf->export->dir_temp);
+        
+        $model='csv';
+
+        // Build export file
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $sql);
+		$expectedresult=1;
+        $this->assertEquals($result,$expectedresult);
+
+        $model='tsv';
+
+        // Build export file
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $sql);
+		$expectedresult=1;
+        $this->assertEquals($result,$expectedresult);
+
+        $model='excel';
+
+        // Build export file
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $sql);
+		$expectedresult=1;
+        $this->assertEquals($result,$expectedresult);
 
         return true;
     }
 
     /**
+     * Test export function
+     *
+	 * @return void
      */
-    public function testHtmlEntitiesBr()
+    public function testExportSociete()
     {
-        $input="A string\nwith a é, &, < and >.";   // Text not already HTML
-        $after=dol_htmlentitiesbr($input,0);    // Add <br> before \n
-        $this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.",$after);
+        global $conf,$user,$langs,$db;
 
-        $input="A string\nwith a é, &, < and >.";   // Text not already HTML
-        $after=dol_htmlentitiesbr($input,1);    // Replace \n with <br>
-        $this->assertEquals("A string<br>with a &eacute;, &amp;, &lt; and &gt;.",$after);
+        $sql = "";
+        $datatoexport='societe_1';
+        $array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
+        $model='csv';
+        
+        $objexport=new Export($db);
+        $result=$objexport->load_arrays($user,$datatoexport);
 
-        $input="A string<br>\nwith a é, &, < and >.";   // Text already HTML, so &,<,> should not be converted
-        $after=dol_htmlentitiesbr($input);
-        $this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.",$after);
-
-        $input="<li>\nA string with a é, &, < and >.</li>\nAnother string";   // Text already HTML, so &,<,> should not be converted
-        $after=dol_htmlentitiesbr($input);
-        $this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string",$after);
+        // Build export file
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $sql);
+		$expectedresult=1;
+        $this->assertEquals($result,$expectedresult);
 
         return true;
     }
-
-
 }
 ?>

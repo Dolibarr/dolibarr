@@ -232,7 +232,7 @@ class Facture extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->type."'";
         $sql.= ", '".$socid."'";
-        $sql.= ", ".$this->db->idate($now);
+        $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$totalht."'";
         $sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
         $sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
@@ -621,6 +621,9 @@ class Facture extends CommonObject
             $line->desc				= $object->lines[$i]->desc;
             $line->price			= $object->lines[$i]->price;
             $line->subprice			= $object->lines[$i]->subprice;
+            $line->total_ht			= $object->lines[$i]->total_ht;
+            $line->total_tva		= $object->lines[$i]->total_tva;
+            $line->total_ttc		= $object->lines[$i]->total_ttc;
             $line->tva_tx			= $object->lines[$i]->tva_tx;
             $line->localtax1_tx		= $object->lines[$i]->localtax1_tx;
             $line->localtax2_tx		= $object->lines[$i]->localtax2_tx;
@@ -633,11 +636,6 @@ class Facture extends CommonObject
             $line->rang				= $object->lines[$i]->rang;
             $line->special_code		= $object->lines[$i]->special_code;
             $line->fk_parent_line	= $object->lines[$i]->fk_parent_line;
-
-            // TODO it's ok ?
-            $line->total_ht			= $object->lines[$i]->total_ht;
-            $line->total_tva		= $object->lines[$i]->total_tva;
-            $line->total_ttc		= $object->lines[$i]->total_ttc;
 
             $this->lines[$i] = $line;
         }
@@ -1057,10 +1055,10 @@ class Facture extends CommonObject
 
 
     /**
-     *    Ajout en base d'une ligne remise fixe en ligne de facture
+     *    Add a discount line into invoice using an existing absolute discount
      *
-     *    @param     idremise			Id de la remise fixe
-     *    @return    int          		>0 si ok, <0 si ko
+     *    @param     int	$idremise	Id of absolute discount
+     *    @return    int          		>0 if OK, <0 if KO
      */
     function insert_discount($idremise)
     {
@@ -1781,30 +1779,31 @@ class Facture extends CommonObject
 
 
     /**
-     * 		Add an invoice line into database (linked to product/service or not)
-     * 		\param    	facid           	Id de la facture
-     * 		\param    	desc            	Description de la ligne
-     * 		\param    	pu_ht              	Prix unitaire HT (> 0 even for credit note)
-     * 		\param    	qty             	Quantite
-     * 		\param    	txtva           	Taux de tva force, sinon -1
-     * 		\param		txlocaltax1			Local tax 1 rate
-     *  	\param		txlocaltax2			Local tax 2 rate
-     *		\param    	fk_product      	Id du produit/service predefini
-     * 		\param    	remise_percent  	Pourcentage de remise de la ligne
-     * 		\param    	date_start      	Date de debut de validite du service
-     * 		\param    	date_end        	Date de fin de validite du service
-     * 		\param    	ventil          	Code de ventilation comptable
-     * 		\param    	info_bits			Bits de type de lignes
-     *		\param    	fk_remise_except	Id remise
-     *		\param		price_base_type		HT or TTC
-     * 		\param    	pu_ttc             	Prix unitaire TTC (> 0 even for credit note)
-     * 		\param		type				Type of line (0=product, 1=service)
-     *      \param      rang                Position of line
-     *    	\return    	int             	>0 if OK, <0 if KO
-     * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-     *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-     *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
-     *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+     * 		Add an invoice line into database (linked to product/service or not).
+     * 		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+     *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+     *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
+     *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+     *
+     * 		@param    	facid           	Id de la facture
+     * 		@param    	desc            	Description de la ligne
+     * 		@param    	pu_ht              	Prix unitaire HT (> 0 even for credit note)
+     * 		@param    	qty             	Quantite
+     * 		@param    	txtva           	Taux de tva force, sinon -1
+     * 		@param		txlocaltax1			Local tax 1 rate
+     *  	@param		txlocaltax2			Local tax 2 rate
+     *		@param    	fk_product      	Id du produit/service predefini
+     * 		@param    	remise_percent  	Pourcentage de remise de la ligne
+     * 		@param    	date_start      	Date de debut de validite du service
+     * 		@param    	date_end        	Date de fin de validite du service
+     * 		@param    	ventil          	Code de ventilation comptable
+     * 		@param    	info_bits			Bits de type de lignes
+     *		@param    	fk_remise_except	Id remise
+     *		@param		price_base_type		HT or TTC
+     * 		@param    	pu_ttc             	Prix unitaire TTC (> 0 even for credit note)
+     * 		@param		type				Type of line (0=product, 1=service)
+     *      @param      rang                Position of line
+     *    	@return    	int             	<0 if KO, Id of line if OK
      */
     function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0)
     {

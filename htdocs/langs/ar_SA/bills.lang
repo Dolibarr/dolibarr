@@ -221,6 +221,7 @@ NewGlobalDiscount=تحديد خصم جديد
 NewRelativeDiscount=خصم جديد النسبية
 NoteReason=ملاحظة / السبب
 ReasonDiscount=السبب
+AddDiscount=إضافة الخصم
 AddGlobalDiscount=إضافة الخصم
 DiscountOfferedBy=التي تمنحها
 DiscountStillRemaining=خصم لا يزالون

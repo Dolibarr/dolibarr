@@ -1230,7 +1230,8 @@ class User extends CommonObject
 	function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
 	{
 		global $conf, $langs;
-
+		require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
+		
 		$error=0;
 
 		dol_syslog("User::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);

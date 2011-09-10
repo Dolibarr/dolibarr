@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class ExportExcel extends ModeleExports
 	/**
 	 *	Constructor
 	 *
-	 *	@param	    db      databse handler
+	 *	@param	    DoliDB	$db      Database handler
 	 */
 	function ExportExcel($db)
 	{
@@ -109,8 +109,9 @@ class ExportExcel extends ModeleExports
 	/**
 	 *	Open output file
 	 *
-	 *	@param		file		Path of filename
-	 *	@return		int			<0 if KO, >=0 if OK
+	 * 	@param		string		$file			File name to generate
+	 *  @param		Translate	$outputlangs	Output language object
+	 *	@return		int							<0 if KO, >=0 if OK
 	 */
 	function open_file($file,$outputlangs)
 	{
@@ -158,7 +159,8 @@ class ExportExcel extends ModeleExports
 	/**
 	 *	Write header
 	 *
-     *	@param      outputlangs                 Object lang to translate values
+     *	@param      Translate	$outputlangs        Object lang to translate values
+	 * 	@return		int								<0 if KO, >0 if OK
 	 */
 	function write_header($outputlangs)
 	{
@@ -169,11 +171,12 @@ class ExportExcel extends ModeleExports
 
 
 	/**
-     *     Output title line into file
+     *  Output title line into file
      *
-     *     @param      array_export_fields_label   Array with list of label of fields
-     *     @param      array_selected_sorted       Array with list of field to export
-     *     @param      outputlangs                 Object lang to translate values
+     *  @param      array		$array_export_fields_label   	Array with list of label of fields
+     *  @param      array		$array_selected_sorted       	Array with list of field to export
+     *  @param      Translate	$outputlangs    				Object lang to translate values
+	 * 	@return		int											<0 if KO, >0 if OK
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
 	{
@@ -216,11 +219,12 @@ class ExportExcel extends ModeleExports
 	}
 
 	/**
-     *     Output record line into file
+     *  Output record line into file
      *
-     *     @param      array_selected_sorted       Array with list of field to export
-     *     @param      objp                        A record from a fetch with all fields from select
-     *     @param      outputlangs                 Object lang to translate values
+     *  @param      array		$array_selected_sorted      Array with list of field to export
+     *  @param      resource	$objp                       A record from a fetch with all fields from select
+     *  @param      Translate	$outputlangs                Object lang to translate values
+	 * 	@return		int										<0 if KO, >0 if OK
 	 */
 	function write_record($array_selected_sorted,$objp,$outputlangs)
 	{
@@ -312,7 +316,8 @@ class ExportExcel extends ModeleExports
 	/**
      *	Write footer
      *
-     *  @param      outputlangs                 Object lang to translate values
+	 * 	@param		Translate	$outputlangs	Output language object
+	 * 	@return		int							<0 if KO, >0 if OK
      */
 	function write_footer($outputlangs)
 	{
@@ -322,6 +327,8 @@ class ExportExcel extends ModeleExports
 
 	/**
      *	Close Excel file
+     *
+	 * 	@return		int							<0 if KO, >0 if OK
      */
 	function close_file()
 	{
@@ -344,8 +351,8 @@ class ExportExcel extends ModeleExports
 	/**
      * Clean a cell to respect rules of Excel file cells
      *
-     * @param 	newvalue	String to clean
-     * @return 	string		Value cleaned
+     * @param 	string	$newvalue	String to clean
+     * @return 	string				Value cleaned
      */
     function excel_clean($newvalue)
     {

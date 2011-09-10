@@ -135,6 +135,13 @@
         <severity>0</severity>
     </rule>
     -->
+    <rule ref="PEAR.Commenting.FunctionComment.WrongStyle">
+        <severity>0</severity>
+    </rule>
+    
+    <rule ref="PEAR.Commenting.FunctionComment.Empty">
+        <severity>5</severity>
+    </rule>
     
     <rule ref="PEAR.Commenting.FunctionComment" />
     <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">

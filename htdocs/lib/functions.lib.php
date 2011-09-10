@@ -1625,7 +1625,8 @@ function img_object($alt, $picto, $options='', $pictoisfullpath=0)
  *	Show picto whatever it's its name (generic function)
  *
  *	@param      alt         		Text on alt and title of image
- *	@param      picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into img directory.
+ *	@param      picto       		Name of image file to show ('filenew', ...)
+ *									If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
  *                                  Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)

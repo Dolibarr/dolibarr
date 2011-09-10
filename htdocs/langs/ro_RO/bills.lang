@@ -217,6 +217,7 @@ DiscountFromCreditNote=Reducere de la nota de credit %s
 NewGlobalDiscount=Noua reducere
 NoteReason=Notă / Motiv
 ReasonDiscount=Motiv
+AddDiscount=Adauga discount
 AddGlobalDiscount=Adauga discount
 DiscountOfferedBy=Acordate de către
 DiscountStillRemaining=Reducere rămânând

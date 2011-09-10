@@ -48,8 +48,9 @@ class Export
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB        Handler acces base de donnees
+	 *    Constructor
+	 *
+	 *    @param  	DoliDB		$DB		Database handler
 	 */
 	function Export($DB)
 	{
@@ -58,9 +59,11 @@ class Export
 
 
 	/**
-	 *    \brief  Load an exportable dataset
-	 *    \param  user      Object user making export
-	 *    \param  filter    Load a particular dataset only
+	 *    Load an exportable dataset
+	 *
+	 *    @param  	User		$user      	Object user making export
+	 *    @param  	string		$filter    	Load a particular dataset only
+	 *    @return	int						<0 if KO, >0 if OK
 	 */
 	function load_arrays($user,$filter='')
 	{
@@ -70,13 +73,13 @@ class Export
 
         $var=true;
         $i=0;
-        
+
         foreach ($conf->file->dol_document_root as $type => $dirroot)
 		{
 			$modulesdir[] = $dirroot . "/includes/modules/";
-			
+
 			if ($type == 'alt')
-			{	
+			{
 				$handle=@opendir($dirroot);
 				if (is_resource($handle))
 				{
@@ -185,7 +188,7 @@ class Export
 									$this->array_export_sql_end[$i]=$module->export_sql_end[$r];
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
-									dol_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
+									dol_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".count($module->export_fields_code[$r]));
 									$i++;
 									//	          }
 								}
@@ -196,21 +199,25 @@ class Export
                 closedir($handle);
 			}
 		}
+
+		return 1;
 	}
 
 
 	/**
-	 *      \brief      Build the sql export request
-	 *      \param      indice				Indice of export
-	 *      \param      array_selected      Filter on array of fields to export
-	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
-	 *                  aussi le parametre datatoexport est inutilise
+	 *      Build the sql export request.
+	 *      Arrays this->array_export_xxx are already loaded for required datatoexport
+	 *
+	 *      @param      int		$indice				Indice of export
+	 *      @param      array	$array_selected     Filter on array of fields to export
+	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
 	function build_sql($indice,$array_selected)
 	{
 		// Build the sql request
 		$sql=$this->array_export_sql_start[$indice];
 		$i=0;
+		
 		//print_r($array_selected);
 		foreach ($this->array_export_fields[$indice] as $key => $value)
 		{
@@ -228,14 +235,16 @@ class Export
 	}
 
 	/**
-	 *      \brief      Build export file
-	 *      \param      user                User that export
-	 *      \param      model               Export format
-	 *      \param      datatoexport        Name of dataset to export
-	 *      \param      array_selected      Filter on array of fields to export
-	 *      \param		sqlquery = ''		if set, transmit a sql query instead of building it from arrays
-	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
-	 *                  aussi le parametre datatoexport est inutilise
+	 *      Build export file.
+	 *      File is built into directory $conf->export->dir_temp.'/'.$user->id
+	 *      Arrays this->array_export_xxx are already loaded for required datatoexport
+	 *
+	 *      @param      User		$user               User that export
+	 *      @param      string		$model              Export format
+	 *      @param      string		$datatoexport       Name of dataset to export
+	 *      @param      array		$array_selected     Filter on array of fields to export
+	 *      @param		string		$sqlquery			If set, transmit a sql query instead of building it from arrays
+	 *      @return		int								<0 if KO, >0 if OK
 	 */
 	function build_file($user, $model, $datatoexport, $array_selected, $sqlquery = '')
  	{
@@ -245,7 +254,14 @@ class Export
 		asort($array_selected);
 
 		dol_syslog("Export::build_file $model, $datatoexport, $array_selected");
-
+		
+		// Check parameters or context properties
+		if (! is_array($this->array_export_fields[$indice]))
+		{
+			$this->error="ErrorBadParameter";
+			return -1;
+		}
+		
 		// Creation de la classe d'export du model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
 		$file = "export_".$model.".modules.php";
@@ -270,7 +286,7 @@ class Export
 			$outputlangs=$langs;	// Lang for output
 
 			// Open file
-			create_exdir($dirname);
+			dol_mkdir($dirname);
 			$result=$objmodel->open_file($dirname."/".$filename, $outputlangs);
 
 			if ($result >= 0)
@@ -317,6 +333,7 @@ class Export
 
 				// Close file
 				$objmodel->close_file();
+				return 1;
 			}
 			else
 			{
@@ -334,8 +351,10 @@ class Export
 	}
 
 	/**
-	 *  \brief	Save an export model in database
-	 *  \param	user 	Object user that save
+	 *  Save an export model in database
+	 *
+	 *  @param		User	$user 	Object user that save
+	 *  @return		int				<0 if KO, >0 if OK
 	 */
 	function create($user)
 	{
@@ -367,8 +386,10 @@ class Export
 	}
 
 	/**
-	 *    \brief      Load an export profil from database
-	 *    \param      rowid       id of profil to load
+	 *  Load an export profil from database
+	 *
+	 *  @param		int		$id		Id of profil to load
+	 *  @return		int				<0 if KO, >0 if OK
 	 */
 	function fetch($id)
 	{
@@ -377,7 +398,7 @@ class Export
 		$sql.= ' WHERE em.rowid = '.$id;
 
 		dol_syslog("Export::fetch sql=".$sql, LOG_DEBUG);
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$obj = $this->db->fetch_object($result);
@@ -405,10 +426,11 @@ class Export
 
 
 	/**
-	 *	\brief      Delete object in database
-	 *	\param      user        	User that delete
-	 *  \param      notrigger	    0=launch triggers after, 1=disable triggers
-	 *	\return		int				<0 if KO, >0 if OK
+	 *	Delete object in database
+	 *
+	 *	@param      User		$user        	User that delete
+	 *  @param      int			$notrigger	    0=launch triggers after, 1=disable triggers
+	 *	@return		int							<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{

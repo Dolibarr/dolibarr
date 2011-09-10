@@ -33,10 +33,10 @@ $langs->load("bills");
 $langs->load("companies");
 
 // Security check
-$_socid = GETPOST("id");
+$socid = GETPOST("id");
 if ($user->societe_id > 0)
 {
-	$_socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
@@ -204,16 +204,16 @@ if (GETPOST("action") == 'confirm_remove' && GETPOST("confirm")=='yes')
 $form=new Form($db);
 $facturestatic=new Facture($db);
 
-llxHeader();
+llxHeader('',$langs->trans("GlobalDiscount"));
 
-if ($_socid > 0)
+if ($socid > 0)
 {
 	dol_htmloutput_mesg($mesg);
 
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
-	$objsoc->id=$_socid;
-	$objsoc->fetch($_socid,$to);
+	$objsoc->id=$socid;
+	$objsoc->fetch($socid);
 
 	/*
 	 * Affichage onglets
@@ -256,10 +256,10 @@ if ($_socid > 0)
 	}
 
 	print '<tr><td width="38%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
-	print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT").'</td></tr>';
 	print '</table>';
 	print '<br>';
 
@@ -269,7 +269,7 @@ if ($_socid > 0)
 	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
 	print '<td>';
-	print $form->load_tva('tva_tx','0','',$mysoc,'');
+	print $form->load_tva('tva_tx',GETPOST('tva_tx'),'',$mysoc,'');
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
 	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';

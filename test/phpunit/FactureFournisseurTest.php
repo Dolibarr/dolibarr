@@ -39,6 +39,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ *
  * @xcovers DoliDb
  * @xcovers User
  * @xcovers Translate
