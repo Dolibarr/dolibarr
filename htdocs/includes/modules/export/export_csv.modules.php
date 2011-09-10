@@ -45,8 +45,9 @@ class ExportCsv extends ModeleExports
 
 
 	/**
-	 *		\brief      Constructeur
-	 *		\param	    db      Handler acces base de donnee
+	 *	Constructor
+	 *
+	 *	@param	    DoliDB	$db      Database handler
 	 */
 	function ExportCsv($db)
 	{
@@ -108,9 +109,11 @@ class ExportCsv extends ModeleExports
 
 
 	/**
-	 *	\brief		Open output file
-	 *	\param		file		Path of filename
-	 *	\return		int			<0 if KO, >=0 if OK
+	 *	Open output file
+	 *
+	 *	@param		string		$file			Path of filename to generate
+	 * 	@param		Translate	$outputlangs	Output language object
+	 *	@return		int							<0 if KO, >=0 if OK
 	 */
 	function open_file($file,$outputlangs)
 	{
@@ -133,8 +136,10 @@ class ExportCsv extends ModeleExports
 	}
 
 	/**
-	 * 	\brief		Output header into file
-	 * 	\param		langs		Output language
+	 * 	Output header into file
+	 *
+	 * 	@param		Translate	$outputlangs	Output language object
+	 * 	@return		int							<0 if KO, >0 if OK
 	 */
 	function write_header($outputlangs)
 	{
@@ -143,10 +148,12 @@ class ExportCsv extends ModeleExports
 
 
 	/**
-	 * 	   Output title line into file
-     *     @param      array_export_fields_label   Array with list of label of fields
-     *     @param      array_selected_sorted       Array with list of field to export
-     *     @param      outputlangs                 Object lang to translate values
+	 * 	Output title line into file
+	 *
+     *  @param      array		$array_export_fields_label   	Array with list of label of fields
+     *  @param      array		$array_selected_sorted       	Array with list of field to export
+     *  @param      Translate	$outputlangs    				Object lang to translate values
+	 * 	@return		int											<0 if KO, >0 if OK
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
 	{
@@ -174,10 +181,12 @@ class ExportCsv extends ModeleExports
 
 
 	/**
-     *     Output record line into file
-     *     @param      array_selected_sorted       Array with list of field to export
-     *     @param      objp                        A record from a fetch with all fields from select
-     *     @param      outputlangs                 Object lang to translate values
+     *	Output record line into file
+     *
+     *  @param     	array		$array_selected_sorted      Array with list of field to export
+     *  @param     	resource	$objp                       A record from a fetch with all fields from select
+     *  @param     	Translate	$outputlangs    			Object lang to translate values
+	 * 	@return		int										<0 if KO, >0 if OK
 	 */
 	function write_record($array_selected_sorted,$objp,$outputlangs)
 	{
@@ -197,6 +206,7 @@ class ExportCsv extends ModeleExports
 		{
 			$alias=str_replace(array('.','-'),'_',$code);
 			if (empty($alias)) dol_print_error('','Bad value for field with key='.$code.'. Try to redefine export.');
+
 			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
 
 			// Translation newvalue
@@ -216,8 +226,10 @@ class ExportCsv extends ModeleExports
 	}
 
 	/**
-	 * 	\brief		Output footer into file
-	 * 	\param		outputlangs		Output language
+	 * 	Output footer into file
+	 *
+	 * 	@param		Translate	$outputlangs	Output language object
+	 * 	@return		int							<0 if KO, >0 if OK
 	 */
 	function write_footer($outputlangs)
 	{
@@ -225,7 +237,9 @@ class ExportCsv extends ModeleExports
 	}
 
 	/**
-	 * 	\brief		Close file handle
+	 * 	Close file handle
+	 *
+	 * 	@return		int							<0 if KO, >0 if OK
 	 */
 	function close_file()
 	{
@@ -235,8 +249,9 @@ class ExportCsv extends ModeleExports
 
 	/**
 	 * Clean a cell to respect rules of CSV file cells
-	 * @param 	newvalue	String to clean
-	 * @return 	string		Value cleaned
+	 *
+	 * @param 	string	$newvalue	String to clean
+	 * @return 	string				Value cleaned
 	 */
 	function csv_clean($newvalue)
 	{

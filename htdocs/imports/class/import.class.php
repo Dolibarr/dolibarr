@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,9 @@ class Import
 
 
 	/**
-	 *    \brief  Constructor
-	 *    \param  DB        Database handler
+	 *    Constructor
+	 *
+	 *    @param  	DoliDB		$DB		Database handler
 	 */
 	function Import($DB)
 	{
@@ -51,9 +52,11 @@ class Import
 
 
 	/**
-	 *    Load description of an importable dataset
-	 *    @param  user      Object user making import
-	 *    @param  filter    Load a particular dataset only
+	 *  Load description of an importable dataset
+	 *
+	 *  @param		User	$user      	Object user making import
+	 *  @param  	string	$filter		Load a particular dataset only
+ 	 *  @return		int					<0 if KO, >0 if OK
 	 */
 	function load_arrays($user,$filter='')
 	{
@@ -152,7 +155,7 @@ class Import
 									// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
 									$this->array_import_convertvalue[$i]=$module->import_convertvalue_array[$r];
 
-									dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".sizeof($module->import_fields_code[$r]));
+									dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_code[$r]));
 									$i++;
 									//	                        }
 								}
@@ -163,18 +166,20 @@ class Import
 			}
 		}
 		closedir($handle);
+		return 1;
 	}
 
 
 
 	/**
-	 *      \brief      Lance la generation du fichier example
-	 *      \param      user                User qui exporte
-	 *      \param      model               Modele d'export
-	 *      \param      $headerlinefields   Array of values for first line of example file
-	 *      \param      $contentlinevalues  Array of values for content line of example file
-	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
-	 *                  aussi le parametre datatoexport est inutilise
+	 *  Build an import example file.
+	 *  Arrays this->array_export_xxx are already loaded for required datatoexport
+	 *
+	 *  @param      User	$user               User qui exporte
+	 *  @param      string	$model              Modele d'export
+	 *  @param      string	$headerlinefields   Array of values for first line of example file
+	 *  @param      string	$contentlinevalues	Array of values for content line of example file
+	 *  @return		string						<0 if KO, >0 if OK
 	 */
 	function build_example_file($user, $model, $headerlinefields, $contentlinevalues)
 	{
@@ -210,8 +215,10 @@ class Import
 	}
 
 	/**
-	 *  \brief	Save an export model in database
-	 *  \param	user 	Object user that save
+	 *  Save an export model in database
+	 *
+	 *  @param		User	$user 	Object user that save
+	 *  @return		int				<0 if KO, >0 if OK
 	 */
 	function create($user)
 	{
@@ -248,8 +255,10 @@ class Import
 	}
 
 	/**
-	 *    \brief      Load an import profil from database
-	 *    \param      rowid       id of profil to load
+	 *  Load an import profil from database
+	 *
+	 *  @param		int		$id		Id of profil to load
+	 *  @return		int				<0 if KO, >0 if OK
 	 */
 	function fetch($id)
 	{
@@ -285,10 +294,11 @@ class Import
 	}
 
 	/**
-	 *	\brief      Delete object in database
-	 *	\param      user        	User that delete
-	 *  \param      notrigger	    0=launch triggers after, 1=disable triggers
-	 *	\return		int				<0 if KO, >0 if OK
+	 *	Delete object in database
+	 *
+	 *	@param      User	$user        	User that delete
+	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{

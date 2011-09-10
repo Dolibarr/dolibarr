@@ -798,9 +798,10 @@ llxFooter();
 
 
 /**
- * 	\brief		Return table name of an alias. For this, we look for the "tablename as alias" in sql string.
- * 	\param		code				Alias.Fieldname
- * 	\param		sqlmaxforexport		SQL request to parse
+ * 	Return table name of an alias. For this, we look for the "tablename as alias" in sql string.
+ *
+ * 	@param		code				Alias.Fieldname
+ * 	@param		sqlmaxforexport		SQL request to parse
  */
 function getablenamefromfield($code,$sqlmaxforexport)
 {
