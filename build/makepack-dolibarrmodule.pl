@@ -75,8 +75,15 @@ for (0..@ARGV-1) {
     	$FILENAMESNAPSHOT.="-".$PREFIX; 
     }
 }
+$SOURCE="$DIR/..";
+$DESTI="$SOURCE/build";
+if ($ENV{"DESTI"}) { $DESTI = $ENV{"DESTI"}; }		# Force output dir if env DESTI is defined
+
 
 print "Makepack for modules version $VERSION\n";
+print "Source directory: $SOURCE\n";
+print "Target directory: $DESTI\n";
+
 
 # Ask and set version $MAJOR and $MINOR
 print "Enter value for version: ";
@@ -97,11 +104,6 @@ chomp($PROJECTINPUT);
 print "Move to ".$DIR." directory.\n";
 chdir($DIR);
 
-$SOURCE="$DIR/..";
-$DESTI="$SOURCE/build";
-
-print "Source directory: $SOURCE\n";
-print "Target directory: $DESTI\n";
 
 my @PROJECTLIST=();
 if ($PROJECTINPUT eq "all")
