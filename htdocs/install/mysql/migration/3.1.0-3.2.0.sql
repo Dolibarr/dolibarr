@@ -18,3 +18,7 @@ ALTER TABLE llx_element_element MODIFY COLUMN targettype varchar(32) NOT NULL;
 
 ALTER TABLE llx_user MODIFY ref_ext varchar(50);
 ALTER TABLE llx_user ADD COLUMN ref_int varchar(50) AFTER ref_ext;
+
+ALTER TABLE llx_societe MODIFY code_client varchar(24);
+ALTER TABLE llx_societe MODIFY code_fournisseur varchar(24);
+
