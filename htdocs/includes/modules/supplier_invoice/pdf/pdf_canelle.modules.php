@@ -58,7 +58,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
 	 *	Constructor
 	 *
-	 *	@param	    DoliDB	$db		Handler access data base
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_canelle($db,$object)
 	{

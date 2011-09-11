@@ -47,7 +47,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
-	/**		Constructor
+	/**
+	 *	Constructor
 	 */
 	function mod_codeclient_elephant()
 	{

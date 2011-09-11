@@ -41,8 +41,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 
 	/**
-	 *		\brief  Constructor
-	 *		\param	db		Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function doc_generic_odt($db)
 	{

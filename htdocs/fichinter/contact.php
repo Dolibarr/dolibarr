@@ -128,10 +128,10 @@ dol_htmloutput_mesg($mesg);
 $id = $_GET["id"];
 if ($id > 0)
 {
-	$fichinter = New Fichinter($db);
+	$fichinter = new Fichinter($db);
 	if ($fichinter->fetch($_GET['id']) > 0)
 	{
-		$soc = new Societe($db, $fichinter->socid);
+		$soc = new Societe($db);
 		$soc->fetch($fichinter->socid);
 
 

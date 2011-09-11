@@ -56,10 +56,11 @@ class Menubase
 
 
     /**
-     *      Constructor
-     *      @param     DB      Database handler
-     *      @param     menu_handler
-     *      @param     type
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
+     *  @param     	string		$menu_handler
+     *  @param     	string		$type
      */
     function Menubase($DB,$menu_handler='',$type='')
     {
@@ -72,8 +73,9 @@ class Menubase
 
     /**
      *      Create menu entry into database
-     *      @param      user        User that create
-     *      @return     int         <0 if KO, Id of record if OK
+     *
+     *      @param      User	$user       User that create
+     *      @return     int      			<0 if KO, Id of record if OK
      */
     function create($user=0)
     {

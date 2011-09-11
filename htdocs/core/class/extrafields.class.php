@@ -44,8 +44,9 @@ class ExtraFields
 
 
 	/**
-	 *  Constructor
-	 *  @param DB			base de donnees
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function ExtraFields($DB)
 	{
@@ -405,7 +406,7 @@ class ExtraFields
 	function showInputField($key,$value,$moreparam='')
 	{
 		global $conf;
-		
+
         $label=$this->attribute_label[$key];
 	    $type=$this->attribute_type[$key];
         $size=$this->attribute_size[$key];
@@ -427,7 +428,7 @@ class ExtraFields
             $showsize=round($size);
             if ($showsize > 48) $showsize=48;
         }
-        
+
 	    if ($type == 'varchar')
         {
         	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';

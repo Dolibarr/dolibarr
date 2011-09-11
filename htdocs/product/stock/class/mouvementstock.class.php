@@ -30,9 +30,13 @@
  */
 class MouvementStock
 {
+    var $error;
+    var $db;
+
     /**
-     * Constructor
-     * @param       DB      Database handler
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$DB      Database handler
      */
 	function MouvementStock($DB)
 	{

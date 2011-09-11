@@ -37,8 +37,10 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 class pdf_sirocco extends ModelePDFDeliveryOrder
 {
 
-	/**		\brief      Constructor
-	 *		\param	    db	    Database handler
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_sirocco($db)
 	{

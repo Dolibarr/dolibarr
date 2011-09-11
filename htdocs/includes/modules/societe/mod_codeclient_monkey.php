@@ -44,7 +44,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	var $prefixsupplier='SU';
 
 
-	/**		Constructor classe
+	/**
+	 * 	Constructor
 	 */
 	function mod_codeclient_monkey()
 	{

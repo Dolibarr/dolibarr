@@ -51,8 +51,9 @@ class Entrepot extends CommonObject
 	var $pays_id;
 
 	/**
-	 *    Constructor
-	 *    @param      DB      Database handler
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$DB      Database handler
 	 */
 	function Entrepot($DB)
 	{
@@ -65,6 +66,7 @@ class Entrepot extends CommonObject
 
 	/**
 	 *    Creation d'un entrepot en base
+	 *
 	 *    @param      Objet user qui cree l'entrepot
 	 */
 	function create($user)

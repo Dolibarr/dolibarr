@@ -5,24 +5,26 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.2 compared to 3.1 *****
 
 For users:
-- New: task #11243: Show quantity into stocks for each sub-products into the sub-product tab
-- New: task #10500: Option to choose if professional id are unique
-- New: Add hidden option FOURN_PRODUCT_AVAILABILITY
-- New: task #11123: Add best supplier price
+- New: Can edit customer discounts from invoice create and edit card.
+- New: task #11243: Show quantity into stocks for each sub-products into the sub-product tab.
+- New: task #10500: Option to choose if professional id are unique.
+- New: Add hidden option FOURN_PRODUCT_AVAILABILITY.
+- New: task #11123: Add best supplier price.
 - New: Enhancement in styles.
-- New: task #11289 : Modify third party accountancy code generator aquarium
-- New: task #10606 : more comprehensive message error
-- New: task #11278 : Option into point of sale module to add services in list
+- New: task #11289 : Modify third party accountancy code generator aquarium.
+- New: task #10606 : more comprehensive message error.
+- New: task #11278 : Option into point of sale module to add services in list.
 - New: task #11261 : Add an entry into menu called "New shipment".
-- New: Make option MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT available by default
+- New: Make option MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT available by default.
 - New: Can build PDF in USLetter format or canada format.
 
 For developers:
 - Qual: Removed no more used external libraries.
 - Qual: Cleaned a lot of dead code.
 - Qual: Parent templates classes were moved as abstract classes.
-- Qual: Added more "hooks"
+- Qual: Add more "hooks".
 - Qual: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
+- More OOP (usage of "abstract", "static", ...), unifformize constructors.
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****

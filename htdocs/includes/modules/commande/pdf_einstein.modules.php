@@ -59,9 +59,9 @@ class pdf_einstein extends ModelePDFCommandes
 
 
 	/**
-	 *		Constructor
-     *
-	 *		@param		DoliDb	$db		Database access handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_einstein($db)
 	{

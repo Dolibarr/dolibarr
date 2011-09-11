@@ -239,7 +239,7 @@ function commande_delete_preview($db, $commandeid, $commanderef='')
 
 	if (!$commanderef)
 	{
-		$com = new Commande($db,"",$commandeid);
+		$com = new Commande($db);
 		$com->fetch($commandeid);
 		$commanderef = $com->ref;
 	}

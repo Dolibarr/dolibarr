@@ -726,8 +726,7 @@ if ($action == 'add' && $user->rights->facture->creer)
                                 $discountid=$discount->create($user);
                                 if ($discountid > 0)
                                 {
-                                    $result=$object->insert_discount($discountid);
-                                    //$result=$discount->link_to_invoice($lineid,$id);
+                                    $result=$object->insert_discount($discountid);    // This include link_to_invoice
                                 }
                                 else
                                 {

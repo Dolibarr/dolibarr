@@ -41,7 +41,7 @@ class box_comptes extends ModeleBoxes {
 
 
 	/**
-	 *      \brief      Constructor for class
+	 *  Constructor
 	 */
 	function box_comptes()
 	{
@@ -52,8 +52,9 @@ class box_comptes extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Load data into info_box_contents array to show array later.
-	 *      \param      $max        Maximum number of records to load
+	 *  Load data into info_box_contents array to show array later.
+	 *
+	 *  @param      $max        Maximum number of records to load
 	 */
 	function loadBox($max=5)
 	{

@@ -34,10 +34,10 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 
 	/**
-	 * Constructor
+	 *	Constructor
 	 *
-	 * @param  $DB
-	 * @return mailing_thirdparties_services_expired
+	 *  @param		DoliDB		$DB      Database handler
+	 *  @return 	mailing_thirdparties_services_expired
 	 */
 	function mailing_thirdparties_services_expired($DB)
 	{

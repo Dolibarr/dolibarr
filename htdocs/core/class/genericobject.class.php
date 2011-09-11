@@ -33,9 +33,9 @@ class GenericObject extends CommonObject
 	var $db;
 
 	/**
-	 *	Class constructor
+	 *	Constructor
 	 *
-	 *	@param		DoliDB	$db		Data base handler access
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function GenericObject($db)
 	{

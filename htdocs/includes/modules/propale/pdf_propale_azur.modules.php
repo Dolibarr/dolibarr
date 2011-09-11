@@ -43,8 +43,8 @@ class pdf_propale_azur extends ModelePDFPropales
 
 	/**
 	 *	Constructor
-     *
-	 *	@param	    db		Database access handler
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_propale_azur($db)
 	{

@@ -32,7 +32,7 @@
  *	    \brief      Class to manage top menu Eldy (for internal users)
  */
 class MenuTop {
-	
+
 	var $db;
 	var $require_left=array("eldy_backoffice");     // Si doit etre en phase avec un gestionnaire de menu gauche particulier
 	var $hideifnotallowed=0;						// Put 0 for back office menu, 1 for front office menu
@@ -75,6 +75,7 @@ class MenuLeft {
 
     /**
      *  Constructor
+     *
      *  @param      db                  Database handler
      *  @param      menu_array          Table of menu entries to show before entries of menu handler
      *  @param      menu_array_after    Table of menu entries to show after entries of menu handler
@@ -88,8 +89,9 @@ class MenuLeft {
 
 
     /**
-     *      \brief      Show menu
-     *      \return     int     Number of menu entries shown
+     *  Show menu
+     *
+     *  @return     int     Number of menu entries shown
      */
     function showmenu()
     {

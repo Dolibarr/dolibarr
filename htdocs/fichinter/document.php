@@ -111,7 +111,7 @@ if ($object->id)
 {
 	$object->fetch_thirdparty();
 
-    $soc = new Societe($db, $object->societe->id);
+    $soc = new Societe($db);
     $soc->fetch($object->societe->id);
 
 	if ( $error_msg )

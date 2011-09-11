@@ -48,7 +48,7 @@ llxHeader();
 $fac = new FactureFournisseur($db);
 $fac->fetch($_GET["facid"]);
 $fac->info($_GET["facid"]);
-$soc = new Societe($db, $fac->socid);
+$soc = new Societe($db);
 $soc->fetch($fac->socid);
 
 $head = facturefourn_prepare_head($fac);

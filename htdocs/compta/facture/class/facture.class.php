@@ -1107,7 +1107,7 @@ class Facture extends CommonObject
                 $result=$this->update_price(1);
                 if ($result > 0)
                 {
-                    // Cr�e lien entre remise et ligne de facture
+                    // Create linke between discount and invoice line
                     $result=$remise->link_to_invoice($lineid,0);
                     if ($result < 0)
                     {

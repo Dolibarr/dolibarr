@@ -55,8 +55,9 @@ class Project extends CommonObject
 	var $statuts;
 
 	/**
-	 *    Constructor of class
-	 *    @param  DB          Database access handler
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$DB      Database handler
 	 */
 	function Project($DB)
 	{

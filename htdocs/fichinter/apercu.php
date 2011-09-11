@@ -55,7 +55,7 @@ if ($id > 0 || ! empty($ref))
 
 	if ($object->fetch($id,$ref) > 0)
 	{
-		$soc = new Societe($db, $object->socid);
+		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
 		$head = fichinter_prepare_head($object);
@@ -65,14 +65,14 @@ if ($id > 0 || ! empty($ref))
 		 *   Fiche intervention
 		 */
 		print '<table class="border" width="100%">';
-		
+
 		// Ref
 		print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
 		print '<td colspan="2">'.$object->ref.'</td>';
-		
+
 		$nbrow=4;
 		print '<td rowspan="'.$nbrow.'" valign="top" width="50%">';
-		
+
 		/*
 		 * Documents
 		 */
@@ -83,39 +83,39 @@ if ($id > 0 || ! empty($ref))
 		$filedetail = $filepath . $objectref . "-detail.pdf";
 		$relativepath = "${objectref}/${objectref}.pdf";
 		$relativepathdetail = "${objectref}/${objectref}-detail.pdf";
-		
+
 		// Chemin vers png apercus
 		$fileimage = $file.".png";          // Si PDF d'1 page
 		$fileimagebis = $file."-0.png";     // Si PDF de plus d'1 page
-		
+
 		$var=true;
-		
+
 		// Si fichier PDF existe
 		if (file_exists($file))
 		{
 			$encfile = urlencode($file);
 			print_titre($langs->trans("Documents"));
 			print '<table class="border" width="100%">';
-			
+
 			print "<tr $bc[$var]><td>".$langs->trans("Intervention")." PDF</td>";
-			
+
 			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
 			print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
 			print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
 			print '</tr>';
-			
+
 			// Si fichier detail PDF existe
 			if (file_exists($filedetail))
 			{
 				print "<tr $bc[$var]><td>Fiche d'intervention detaillee</td>";
-				
+
 				print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=ficheinter&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
 				print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
 				print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
 				print '</tr>';
 			}
 			print "</table>\n";
-			
+
 			// Conversion du PDF en image png si fichier png non existant
 			if (! file_exists($fileimage) && ! file_exists($fileimagebis))
 			{
@@ -131,26 +131,26 @@ if ($id > 0 || ! empty($ref))
 				}
 			}
 		}
-		
+
 		print "</td></tr>";
-		
+
 		// Client
 		print "<tr><td>".$langs->trans("Customer")."</td>";
 		print '<td colspan="2">';
 		print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a>';
 		print '</td>';
 		print '</tr>';
-		
+
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td>';
 		print "<td colspan=\"2\">".$object->getLibStatut(4)."</td>\n";
 		print '</tr>';
-		
+
 		// Date
 		print '<tr><td>'.$langs->trans("Date").'</td>';
 		print "<td colspan=\"2\">".dol_print_date($object->date,"daytext")."</td>\n";
 		print '</tr>';
-		
+
 		print '</table>';
 	}
 	else

@@ -41,7 +41,7 @@ class box_actions extends ModeleBoxes {
 
 
 	/**
-	 *      Constructor
+	 *  Constructor
 	 */
 	function box_actions()
 	{

@@ -40,21 +40,21 @@ class AccountancySystem
 
 
 	/**
-	 *    \brief  Constructor of class
-	 *    \param  DB          Database handler
-	 *    \param  id          Id compte (0 by default)
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
-	function AccountancySystem($DB, $id=0)
+	function AccountancySystem($DB)
 	{
 		$this->db = $DB;
-		$this->id   = $id ;
 	}
 
 
 	/**
-	 *    \brief  	Insert accountancy system name into database
-	 *    \param  	user 	User making insert
-	 *    \return	int		<0 if KO, Id of line if OK
+	 *  Insert accountancy system name into database
+	 *
+	 *  @param  	User	$user 	User making insert
+	 *  @return		int				<0 if KO, Id of line if OK
 	 */
 	function create($user)
 	{

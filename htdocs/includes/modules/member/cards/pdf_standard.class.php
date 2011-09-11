@@ -96,7 +96,9 @@ class pdf_standard {
 
 
 	/**
-	 * Constructor
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_standard($db)
 	{

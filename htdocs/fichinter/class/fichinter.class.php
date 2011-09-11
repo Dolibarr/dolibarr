@@ -59,9 +59,9 @@ class Fichinter extends CommonObject
 	var $lines = array();
 
 	/**
-	 *	Class constructor
+	 *	Constructor
 	 *
-	 *	@param		DoliDB	$DB		Data base handler access
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function Fichinter($DB)
 	{

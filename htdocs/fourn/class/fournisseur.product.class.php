@@ -49,7 +49,9 @@ class ProductFournisseur extends Product
 
 
     /**
-     * 	Constructor
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
      */
     function ProductFournisseur($db)
     {

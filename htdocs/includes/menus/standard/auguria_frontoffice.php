@@ -78,6 +78,7 @@ class MenuLeft {
 
     /**
      *  Constructor
+     *
      *  @param      db                  Database handler
      *  @param      menu_array          Table of menu entries to show before entries of menu handler
      *  @param      menu_array_after    Table of menu entries to show after entries of menu handler
@@ -91,8 +92,9 @@ class MenuLeft {
 
 
     /**
-     *      \brief      Show menu
-     *      \return     int     Number of menu entries shown
+     *  Show menu
+     *
+     *  @return     int     Number of menu entries shown
      */
     function showmenu()
     {

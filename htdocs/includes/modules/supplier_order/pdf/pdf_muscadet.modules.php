@@ -60,7 +60,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	/**
 	 *	Constructor
 	 *
-	 *	@param	    DoliDB	$db		Handler access data base
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_muscadet($db)
 	{

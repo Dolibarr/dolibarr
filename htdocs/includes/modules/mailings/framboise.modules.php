@@ -37,7 +37,11 @@ class mailing_framboise extends MailingTargets
 	var $db;
 
 
-	// CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
+	 */
 	function mailing_framboise($DB)
 	{
 		$this->db=$DB;

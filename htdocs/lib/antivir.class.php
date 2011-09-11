@@ -37,10 +37,10 @@ class AntiVir
 	var $db;
 
 	/**
-	 * Constructor
+	 *  Constructor
 	 *
-	 * @param  $db
-	 * @return AntiVir
+	 *  @param      DoliDB		$DB      Database handler
+	 *	@return AntiVir
 	 */
 	function AntiVir($db)
 	{

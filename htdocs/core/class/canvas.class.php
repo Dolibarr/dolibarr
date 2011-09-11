@@ -48,8 +48,8 @@ class Canvas
    /**
 	*   Constructor
 	*
-	*   @param     DB          Database handler
-	*   @param     action      Action ('create', 'view', 'edit')
+	*   @param     DoliDB	$DB          Database handler
+	*   @param     string	$action      Action ('create', 'view', 'edit')
 	*/
 	function Canvas($DB, $action='view')
 	{

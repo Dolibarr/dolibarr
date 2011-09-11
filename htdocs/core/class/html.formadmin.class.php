@@ -35,8 +35,9 @@ class FormAdmin
 
 
 	/**
-	 *	\brief     Constructor
-	 *	\param     DB      handler d'acces base de donnee
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function FormAdmin($DB)
 	{
@@ -46,7 +47,8 @@ class FormAdmin
 	}
 
 	/**
-	 *    	Output list with available languages.
+	 *    	Output list with available languages
+	 *
 	 *      @deprecated                 Use select_language instead
 	 *    	@param      selected        Langue pre-selectionnee
 	 *    	@param      htmlname        Nom de la zone select

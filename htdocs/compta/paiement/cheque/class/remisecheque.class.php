@@ -44,9 +44,9 @@ class RemiseCheque extends CommonObject
 	var $errno;
 
 	/**
-	 *    Constructor
+	 *	Constructor
 	 *
-	 *    @param  	DoliDB	$DB		Database handler
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function RemiseCheque($DB)
 	{

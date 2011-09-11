@@ -56,8 +56,9 @@ class Tva extends CommonObject
 
 
     /**
-     *      \brief      Constructor
-     *      \param      DB      Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
      */
     function Tva($DB)
     {
@@ -67,9 +68,10 @@ class Tva extends CommonObject
 
 
     /**
-     *      \brief      Create in database
-     *      \param      user        User that create
-     *      \return     int         <0 si ko, >0 si ok
+     *  Create in database
+     *
+     *  @param      User	$user       User that create
+     *  @return     int      			<0 if KO, >0 if OK
      */
     function create($user)
     {

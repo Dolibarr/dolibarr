@@ -41,11 +41,12 @@ class modGeneratePassStandard extends ModeleGenPassword
 
 
 	/**
-	 *		\brief      Constructor
-	 *		\param		db			Database handler
-	 *		\param		conf		Handler de conf
-	 *		\param		lang		Handler de langue
-	 *		\param		user		Handler du user connecte
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
+	 *	@param		conf		Handler de conf
+	 *	@param		lang		Handler de langue
+	 *	@param		user		Handler du user connecte
 	 */
 	function modGeneratePassStandard($db, $conf, $langs, $user)
 	{

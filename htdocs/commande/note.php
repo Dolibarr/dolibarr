@@ -85,7 +85,7 @@ $html = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	$soc = new Societe($db, $commande->socid);
+	$soc = new Societe($db);
 	$soc->fetch($commande->socid);
 
 	$head = commande_prepare_head($commande);

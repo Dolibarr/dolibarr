@@ -128,7 +128,7 @@ function supplier_invoice_delete_preview($db, $objectid)
 	global $langs,$conf;
     require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-	$comfourn = new FactureFournisseur($db,"",$objectid);
+	$comfourn = new FactureFournisseur($db);
 	$comfourn->fetch($objectid);
 	$client = new Societe($db);
 	$client->fetch($comfourn->socid);

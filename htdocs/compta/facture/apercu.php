@@ -63,7 +63,7 @@ if ($id > 0 || ! empty($ref))
 
     if ($object->fetch($id,$ref) > 0)
     {
-        $soc = new Societe($db, $object->socid);
+        $soc = new Societe($db);
         $soc->fetch($object->socid);
 
         $author = new User($db);

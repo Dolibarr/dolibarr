@@ -48,7 +48,8 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	var $code_auto; 	                // Numerotation automatique
 
 
-	/**		Constructor
+	/**
+	 *	Constructor
 	 */
 	function mod_codeclient_leopard()
 	{

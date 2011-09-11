@@ -40,8 +40,9 @@ class pdf_baleine extends ModelePDFProjects
 	var $emetteur;	// Objet societe qui emet
 
 	/**
-	 *		\brief  Constructor
-	 *		\param	db		Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_baleine($db)
 	{
