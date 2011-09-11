@@ -372,7 +372,7 @@ class Facture extends CommonObject
                 {
                     if ($_facrec->lines[$i]->fk_product)
                     {
-                        $prod = new Product($this->db, $_facrec->lines[$i]->fk_product);
+                        $prod = new Product($this->db);
                         $res=$prod->fetch($_facrec->lines[$i]->fk_product);
                     }
                     $tva_tx = get_default_tva($mysoc,$soc,$prod->id);
