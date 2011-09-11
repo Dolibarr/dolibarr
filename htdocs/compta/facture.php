@@ -903,7 +903,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
         // Ecrase $base_price_type par celui du produit
         if ($_POST['idprod'])
         {
-            $prod = new Product($db, $_POST['idprod']);
+            $prod = new Product($db);
             $prod->fetch($_POST['idprod']);
 
             $tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
@@ -1884,7 +1884,7 @@ else
 
             $result=$object->fetch_thirdparty();
 
-            $soc = new Societe($db, $object->socid);
+            $soc = new Societe($db);
             $soc->fetch($object->socid);
 
             $totalpaye  = $object->getSommePaiement();
