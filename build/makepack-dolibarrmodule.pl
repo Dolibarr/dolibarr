@@ -285,25 +285,31 @@ foreach my $PROJECT (@PROJECTLIST) {
 	        print "\nBuild package for target $target\n";
 	        
 	    	if ($target eq 'TGZ') {
+	    		$NEWDESTI=$DESTI;
+				if (-d $DESTI.'/../modules') { $NEWDESTI=$DESTI.'/../modules'; } 
+
 	    		print "Remove target $FILENAMETGZ.tgz...\n";
-	    		unlink("$DESTI/$FILENAMETGZ.tgz");
+	    		unlink("$NEWDESTI/$FILENAMETGZ.tgz");
 	    		print "Compress $BUILDROOT/* into $FILENAMETGZ.tgz...\n";
 	   		    $cmd="tar --exclude-vcs --exclude *.tgz --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" .";
 	   		    $ret=`$cmd`;
 	            if ($OS =~ /windows/i) {
-	        		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
-	        		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
+	        		print "Move $FILENAMETGZ.tgz to $NEWDESTI/$FILENAMETGZ.tgz\n";
+	        		$ret=`mv "$FILENAMETGZ.tgz" "$NEWDESTI/$FILENAMETGZ.tgz"`;
 	            }
 	            else
 	            {
-	        		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
+	        		$ret=`mv "$FILENAMETGZ.tgz" "$NEWDESTI/$FILENAMETGZ.tgz"`;
 	            }
 	            next;
 	    	}
 	
 	    	if ($target eq 'ZIP') {
+	    		$NEWDESTI=$DESTI;
+				if (-d $DESTI.'/../modules') { $NEWDESTI=$DESTI.'/../modules'; }
+				 
 	    		print "Remove target $FILENAMEZIP.zip...\n";
-	    		unlink "$DESTI/$FILENAMEZIP.zip";
+	    		unlink "$NEWDESTI/$FILENAMEZIP.zip";
 	    		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
 	
 	            print "Go to directory $BUILDROOT/$PROJECT\n";
@@ -314,20 +320,23 @@ foreach my $PROJECT (@PROJECTLIST) {
 				$ret= `$cmd`;
 	            chdir("$olddir");
 	
-	            print "Move $FILENAMEZIP.zip to $DESTI/$FILENAMEZIP.zip\n";
-	            $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$DESTI/$FILENAMEZIP.zip"`;
+	            print "Move $FILENAMEZIP.zip to $NEWDESTI/$FILENAMEZIP.zip\n";
+	            $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$NEWDESTI/$FILENAMEZIP.zip"`;
 	    		next;
 	    	}
 	    
 	    	if ($target eq 'EXE') {
+	    		$NEWDESTI=$DESTI;
+				if (-d $DESTI.'/../modules') { $NEWDESTI=$DESTI.'/../modules'; }
+
 	    		print "Remove target $FILENAMEEXE.exe...\n";
-	    		unlink "$DESTI/$FILENAMEEXE.exe";
+	    		unlink "$NEWDESTI/$FILENAMEEXE.exe";
 	    		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
 	    		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
 	            print "$command\n";
 	    		$ret=`$command`;
-	    		print "Move $FILENAMEEXE.exe to $DESTI\n";
-	    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$DESTI/$FILENAMEEXE.exe");
+	    		print "Move $FILENAMEEXE.exe to $NEWDESTI\n";
+	    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$NEWDESTI/$FILENAMEEXE.exe");
 	    		next;
 	    	}
 	    
@@ -340,7 +349,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 	    if ($CHOOSEDTARGET{$target} < 0) {
 	        print "Package $target not built (bad requirement).\n";
 	    } else {
-	        print "Package $target built successfully in $DESTI\n";
+	        print "Package $target built successfully in $NEWDESTI\n";
 	    }
 	}
 
