@@ -109,7 +109,7 @@ llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 if ($contrat->id)
 {
-    $soc = new Societe($db, $contrat->societe->id);
+    $soc = new Societe($db);
     $soc->fetch($contrat->societe->id);
 
 	if ( $error_msg )

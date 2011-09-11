@@ -135,7 +135,7 @@ if ($id > 0 || ! empty($ref))
 	$commande = new CommandeFournisseur($db);
 	if ( $commande->fetch($_GET['id'],$_GET['ref']) > 0)
 	{
-		$soc = new Societe($db, $commande->socid);
+		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
 
 

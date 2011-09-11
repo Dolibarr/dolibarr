@@ -337,7 +337,7 @@ else
 
 		if ($fac->fetch($facid, $user->societe_id) > 0)
 		{
-			$soc = new Societe($db, $fac->socid);
+			$soc = new Societe($db);
 			$soc->fetch($fac->socid);
 			$author = new User($db);
 			$author->fetch($fac->user_author);

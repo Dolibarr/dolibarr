@@ -49,7 +49,7 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 $commande = new Commande($db);
 $commande->fetch($_GET["id"]);
 $commande->info($_GET["id"]);
-$soc = new Societe($db, $commande->socid);
+$soc = new Societe($db);
 $soc->fetch($commande->socid);
 
 $head = commande_prepare_head($commande);

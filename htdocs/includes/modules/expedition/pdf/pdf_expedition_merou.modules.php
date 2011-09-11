@@ -40,8 +40,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 
 	/**
-	 *	\brief  Constructor
-	 *	\param	db		Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_expedition_merou($db=0)
 	{

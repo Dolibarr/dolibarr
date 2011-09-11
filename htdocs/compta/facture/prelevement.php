@@ -105,7 +105,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
     {
         if ($mesg) print $mesg.'<br>';
 
-        $soc = new Societe($db, $fac->socid);
+        $soc = new Societe($db);
         $soc->fetch($fac->socid);
 
         $totalpaye  = $fac->getSommePaiement();

@@ -105,12 +105,8 @@ llxHeader("","",$langs->trans("Categories"));
 print_fiche_titre($langs->trans("ModifCat"));
 
 
-if ($mesg)
-{
-	print '<div class="error">';
-	print $mesg;
-	print '</div>';
-}
+dol_htmloutput_errors($mesg);
+
 
 $categorie = new Categorie($db, $id);
 $html = new Form($db);

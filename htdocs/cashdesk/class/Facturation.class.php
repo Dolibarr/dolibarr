@@ -70,7 +70,7 @@ class Facturation {
 
 
 	/**
-	 * Constructor
+	 *	Constructor
 	 */
 	public function Facturation()
 	{

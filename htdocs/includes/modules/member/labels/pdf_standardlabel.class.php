@@ -97,7 +97,9 @@ class pdf_standardlabel {
 
 
 	/**
-	 * Constructor
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_standard($db)
 	{

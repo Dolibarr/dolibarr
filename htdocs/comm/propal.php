@@ -661,7 +661,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 		// Ecrase $txtva par celui du produit
 		if ($_POST['idprod'])
 		{
-			$prod = new Product($db, $_POST['idprod']);
+			$prod = new Product($db);
 			$prod->fetch($_POST['idprod']);
 
 			$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);

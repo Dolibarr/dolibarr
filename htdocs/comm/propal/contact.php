@@ -138,7 +138,7 @@ if ($id > 0 || ! empty($ref))
 	$propal = New Propal($db);
 	if ( $propal->fetch($id,$ref) > 0)
 	{
-		$soc = new Societe($db, $propal->socid);
+		$soc = new Societe($db);
 		$soc->fetch($propal->socid);
 
 

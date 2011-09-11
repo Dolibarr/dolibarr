@@ -84,12 +84,11 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *    Constructor
-     *    @param  DB          	Database access handler
-     *    @param  socid			Id societe ('' par defaut)
-     *    @param  facid       	Id facture ('' par defaut)
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
      */
-    function FactureFournisseur($DB, $socid='', $facid='')
+    function FactureFournisseur($DB)
     {
         $this->db = $DB ;
 
@@ -112,8 +111,9 @@ class FactureFournisseur extends Facture
 
     /**
      *    Create supplier invoice into database
-     *    @param      user        object utilisateur qui cree
-     *    @return     int         id facture si ok, < 0 si erreur
+     *
+     *    @param      User		$user       object utilisateur qui cree
+     *    @return     int    	     		id facture si ok, < 0 si erreur
      */
     function create($user)
     {

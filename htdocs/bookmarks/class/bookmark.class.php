@@ -41,15 +41,13 @@ class Bookmark
 
 
     /**
-     *    Constructor
-     *
-     *    @param      DoliDB	$db          Handler for Database Access
-     *    @param      int		$id          Bookmark Id
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
      */
-    function Bookmark($db, $id=-1)
+    function Bookmark($db)
     {
         $this->db = $db;
-        $this->id = $id;
     }
 
     /**

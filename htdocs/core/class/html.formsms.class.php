@@ -61,7 +61,8 @@ class FormSms
 
 	/**
 	 *	Constructor
-	 *  @param     DB      handler d'acces base de donnee
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function FormSms($DB)
 	{

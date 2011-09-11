@@ -39,6 +39,11 @@ class mailing_example extends MailingTargets
 
 
     // CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
+	 */
     function mailing_example($DB)
     {
         $this->db=$DB;

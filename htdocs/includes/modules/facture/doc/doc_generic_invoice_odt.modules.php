@@ -43,8 +43,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 
 	/**
-	 *		\brief  Constructor
-	 *		\param	db		Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function doc_generic_invoice_odt($db)
 	{

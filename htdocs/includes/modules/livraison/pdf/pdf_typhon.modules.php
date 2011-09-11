@@ -42,8 +42,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	var $emetteur;	// Objet societe qui emet
 
 	/**
-	 *		\brief  Constructor
-	 *		\param	db		Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function pdf_typhon($db)
 	{

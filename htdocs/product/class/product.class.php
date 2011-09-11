@@ -141,12 +141,11 @@ class Product extends CommonObject
 
 
 	/**
-	 *    Constructor
+	 *  Constructor
 	 *
-	 *    @param      DB          Handler acces base de donnees
-	 *    @param      id          Id produit (0 par defaut)
+	 *  @param      DoliDB		$DB      Database handler
 	 */
-	function Product($DB, $id=0)
+	function Product($DB)
 	{
 		global $langs;
 
@@ -158,8 +157,6 @@ class Product extends CommonObject
 		$this->stock_reel = 0;
 		$this->seuil_stock_alerte = 0;
 		$this->canvas = '';
-
-		if ($this->id > 0) $this->fetch($this->id);
 	}
 
 	/**

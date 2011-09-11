@@ -47,7 +47,9 @@ class CompanyBankAccount extends Account
     var $adresse_proprio;
 
     /**
-     * 	Constructor
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$DB      Database handler
      */
     function CompanyBankAccount($DB)
     {
@@ -63,7 +65,6 @@ class CompanyBankAccount extends Account
 
     /**
      * Create bank information record
-     *
      */
     function create()
     {

@@ -55,7 +55,8 @@ if ($_GET["action"] == 'cstc')
 // set prospect level
 if ($_POST["action"] == 'setprospectlevel' && $user->rights->societe->creer)
 {
-	$societe = new Societe($db, $_GET["socid"]);
+	$societe = new Societe($db);
+	$societe->fetch($_GET["socid"]);
 	$societe->fk_prospectlevel=$_POST['prospect_level_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_prospectlevel='".$_POST['prospect_level_id'];
 	$sql.= "' WHERE rowid='".$_GET["socid"]."'";

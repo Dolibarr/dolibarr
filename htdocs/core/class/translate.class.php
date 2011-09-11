@@ -47,10 +47,9 @@ class Translate {
 
 
 	/**
-	 *  Constructor
+	 *	Constructor
 	 *
-	 *  @param      dir             Force directory that contains /langs subdirectory (value is sometine '..' like into install/* pages
-	 *                              or support/* pages).
+	 *  @param      dir             Force directory that contains /langs subdirectory (value is sometine '..' like into install/* pages or support/* pages).
 	 *  @param      conf			Object with Dolibarr configuration
 	 */
 	function Translate($dir = "",$conf)

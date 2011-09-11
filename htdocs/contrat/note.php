@@ -92,9 +92,9 @@ $html = new Form($db);
 
 if ($_GET["id"])
 {
-	if ($mesg) print $mesg;
+	dol_htmloutput_mesg($mesg);
 
-    $soc = new Societe($db, $contrat->societe->id);
+    $soc = new Societe($db);
     $soc->fetch($contrat->societe->id);
 
     $head = contract_prepare_head($contrat);

@@ -99,10 +99,11 @@ class Commande extends CommonObject
 
 
 	/**
-	 *        \brief      Constructeur
-	 *        \param      DB      Handler d'acces base
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
-	function Commande($DB, $socid="", $commandeid=0)
+	function Commande($DB)
 	{
 		global $langs;
 		$langs->load('orders');
@@ -1152,7 +1153,8 @@ class Commande extends CommonObject
 			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
 			 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 			 {
-			 $prod = new Product($this->db, $idproduct);
+			 $prod = new Product($this->db);
+			 $prod->fetch($idproduct);
 			 $prod -> get_sousproduits_arbo ();
 			 $prods_arbo = $prod->get_each_prod();
 			 if(sizeof($prods_arbo) > 0)

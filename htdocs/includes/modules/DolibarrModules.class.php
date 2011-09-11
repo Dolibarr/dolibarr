@@ -53,9 +53,9 @@ abstract class DolibarrModules
 
 
     /**
-     *      Constructor
-     *
-     *      @param      DB      Database access handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
      */
     function DolibarrModules($DB)
     {

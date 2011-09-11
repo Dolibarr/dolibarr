@@ -55,11 +55,12 @@ class Notify
 
 
     /**
-     *    	\brief      Renvoie le message signalant les notifications qui auront lieu sur
-     *					un evenement pour affichage dans texte de confirmation evenement.
-     * 		\param		action		Id of action in llx_c_action_trigger
-     * 		\param		socid		Id of third party
-     *		\return		string		Message
+     *  Renvoie le message signalant les notifications qui auront lieu sur
+     *	un evenement pour affichage dans texte de confirmation evenement
+     *
+     * 	@param		action		Id of action in llx_c_action_trigger
+     * 	@param		socid		Id of third party
+     *	@return		string		Message
      */
 	function confirmMessage($action,$socid)
 	{

@@ -30,8 +30,8 @@ class GoogleAPI
 	/**
 	 * Constructor
 	 *
-	 * @param 	db			Database handler
-	 * @param	string		Google key
+	 * @param 	DoliDB		$db			Database handler
+	 * @param	string		$key		Google key
 	 * @return GoogleAPI
 	 */
 	function GoogleAPI($DB,$key)

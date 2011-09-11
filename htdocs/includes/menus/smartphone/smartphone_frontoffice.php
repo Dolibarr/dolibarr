@@ -34,8 +34,9 @@ class MenuSmart {
 
 
 	/**
-	 *    Constructor
-	 *    @param      db      Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function MenuSmart($db)
 	{
@@ -45,6 +46,7 @@ class MenuSmart {
 
 	/**
 	 *    Show menu
+	 *
 	 *    @param		limitmenuto		To limit menu to a top or left menu value
 	 */
 	function showmenu($limitmenuto)

@@ -374,7 +374,8 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 
 if ($_GET['action'] == 'del_ligne')
 {
-    $facfou = new FactureFournisseur($db,'',$_GET['facid']);
+    $facfou = new FactureFournisseur($db);
+    $facfou->fetch($_GET['facid']);
     $facfou->deleteline($_GET['lineid']);
     $_GET['action'] = 'edit';
 }
@@ -432,7 +433,7 @@ if ($_REQUEST['action'] == 'update_line')
 
 if ($_GET['action'] == 'addline')
 {
-    $facfou = new FactureFournisseur($db, '', $_GET['facid']);
+    $facfou = new FactureFournisseur($db);
     $ret=$facfou->fetch($_GET['facid']);
     if ($ret < 0)
     {
@@ -540,7 +541,7 @@ if ($_GET['action'] == 'addline')
 
 if ($_POST['action'] == 'classin')
 {
-    $facture = new FactureFournisseur($db,'',$_GET['facid']);
+    $facture = new FactureFournisseur($db);
     $facture->fetch($_GET['facid']);
     $result=$facture->setProject($_POST['projectid']);
 }

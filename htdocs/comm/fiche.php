@@ -84,14 +84,16 @@ if ($_POST['action'] == 'setcustomeraccountancycode')
 
 if ($_GET["action"] == 'attribute_prefix' && $user->rights->societe->creer)
 {
-	$societe = new Societe($db, $_GET["socid"]);
+	$societe = new Societe($db);
+	$societe->fetch($_GET["socid"]);
 	$societe->attribute_prefix($db, $_GET["socid"]);
 }
 // conditions de reglement
 if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
 {
 
-	$societe = new Societe($db, $_GET["socid"]);
+	$societe = new Societe($db);
+	$societe->fetch($_GET["socid"]);
 	$societe->cond_reglement=$_POST['cond_reglement_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id'];
 	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
@@ -101,7 +103,8 @@ if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
 // mode de reglement
 if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
 {
-	$societe = new Societe($db, $_GET["socid"]);
+	$societe = new Societe($db);
+	$societe->fetch($_GET["socid"]);
 	$societe->mode_reglement=$_POST['mode_reglement_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET mode_reglement='".$_POST['mode_reglement_id'];
 	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
@@ -111,7 +114,8 @@ if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
 // assujetissement a la TVA
 if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 {
-	$societe = new Societe($db, $_GET["socid"]);
+	$societe = new Societe($db);
+	$societe->fetch($_GET["socid"]);
 	$societe->tva_assuj=$_POST['assujtva_value'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$socid."'";
 	$result = $db->query($sql);

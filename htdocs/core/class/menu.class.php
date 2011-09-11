@@ -32,7 +32,7 @@ class Menu {
     var $liste;
 
     /**
-     *  \brief      Constructor for class menu
+	 *	Constructor
      */
     function Menu()
     {

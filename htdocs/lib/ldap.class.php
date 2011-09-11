@@ -100,9 +100,9 @@ class Ldap
 	 */
 	var $result;
 
+
 	/**
-	 * Constructor- creates a new instance of the authentication class
-	 *
+	 *  Constructor
 	 */
 	function Ldap ()
 	{

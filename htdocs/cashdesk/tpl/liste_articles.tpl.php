@@ -64,7 +64,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			/** add Ditto for MultiPrix*/
 			if($conf->global->PRODUIT_MULTIPRICES)
 			{
-				$product = new Product($db, $ret[$i]['id']);
+				$product = new Product($db);
+                $product->fetch($ret[$i]['id']);
 
 				if(isset($product->multiprices[$societe->price_level]))
 				{

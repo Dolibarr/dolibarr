@@ -39,8 +39,9 @@ class DolCookie
 	var $cookie;
 
 	/**
-	 *      \brief      Constructor
-	 *      \param      key      Personnal key
+	 *  Constructor
+	 *
+	 *  @param      string	$key      Personnal key
 	 */
 	function DolCookie($key = '')
 	{
@@ -53,7 +54,7 @@ class DolCookie
 
 
 	/**
-	 *      \brief      Encrypt en create the cookie
+	 *   Encrypt en create the cookie
 	 */
 	function cryptCookie()
 	{

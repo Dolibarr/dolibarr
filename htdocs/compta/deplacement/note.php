@@ -102,7 +102,7 @@ if ($id > 0 || ! empty($ref))
 	$trip = new Deplacement($db);
 	$trip->fetch($id,$ref);
 
-	$soc = new Societe($db, $trip->socid);
+	$soc = new Societe($db);
     $soc->fetch($trip->socid);
 
 	$h=0;

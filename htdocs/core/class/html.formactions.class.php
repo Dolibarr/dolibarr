@@ -35,8 +35,9 @@ class FormActions
 
 
     /**
-     *		Constructor
-     *		@param     DB      Database access handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
      */
     function FormActions($DB)
     {
@@ -48,6 +49,7 @@ class FormActions
 
     /**
      *      Show list of action status
+     *
      * 		@param		formname	Name of form where select in included
      * 		@param		selected	Preselected value
      * 		@param		canedit		1=can edit, 0=read only

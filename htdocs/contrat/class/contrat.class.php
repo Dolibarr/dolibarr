@@ -72,8 +72,9 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *    Constructor of classe
-	 *    @param      DB          Databse handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function Contrat($DB)
 	{

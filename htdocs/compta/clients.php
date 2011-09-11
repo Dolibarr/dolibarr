@@ -63,7 +63,8 @@ $thirdpartystatic=new Societe($db);
 
 if ($action == 'attribute_prefix')
 {
-	$societe = new Societe($db, $socid);
+	$societe = new Societe($db);
+	$societe->fetch($socid);
 	$societe->attribute_prefix($db, $socid);
 }
 

@@ -55,8 +55,9 @@ class Form
 
 
     /**
-     * Constructor
-     * @param      $DB      Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
      */
     function Form($DB)
     {
@@ -65,6 +66,7 @@ class Form
 
     /**
      * Output key field for an editable field
+     *
      * @param      text            Text of label
      * @param      htmlname        Name of select field
      * @param      preselected     Preselected value for parameter

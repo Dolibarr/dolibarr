@@ -37,8 +37,9 @@ class FormFile
 
 
     /**
-     *		Constructor
-     *		@param     DB      handler d'acces base de donnee
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
      */
     function FormFile($DB)
     {

@@ -65,7 +65,7 @@ llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Notes"),$help_url)
 
 if ($socid > 0)
 {
-    $societe = new Societe($db, $socid);
+    $societe = new Societe($db);
     $societe->fetch($socid);
 
     /*

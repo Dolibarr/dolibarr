@@ -55,23 +55,23 @@ class Categorie
 
 
 	/**
-	 * 	Constructor
+	 *	Constructor
 	 *
-	 * 	@param	DB		acces base de donnees
-	 * 	@param	id		id de la categorie
+	 *  @param		DoliDB		$DB     Database handler
+	 *  @param		int			$id		Id of category to fetch during init
 	 */
 	function Categorie($DB, $id=-1)
 	{
 		$this->db = $DB;
 		$this->id = $id;
 
-		if ($id != -1) $this->fetch ($this->id);
+		if ($id != -1) $this->fetch($this->id);
 	}
 
 	/**
 	 * 	Load category into memory from database
 	 *
-	 * 	@param		id		id of category
+	 * 	@param		int		$id		Id of category
 	 */
 	function fetch($id)
 	{
@@ -216,7 +216,7 @@ class Categorie
 		$this->description=trim($this->description);
 		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;
 		$this->visible = ($this->visible) != "" ? intval($this->visible) : 0;
-		
+
 		if ($this->already_exists())
 		{
 			$this->error=$langs->trans("ImpossibleUpdateCat");

@@ -40,7 +40,7 @@ class DolGeoIP
 	 *
 	 * @param 	$type		'country' or 'city'
 	 * @param	$datfile	Data file
-	 * @return GeoIP
+	 * @return 	GeoIP
 	 */
 	function DolGeoIP($type,$datfile)
 	{

@@ -100,7 +100,7 @@ if ($id > 0 || ! empty($ref))
 	$fac = new Facture($db);
 	$fac->fetch($id,$ref);
 
-	$soc = new Societe($db, $fac->socid);
+	$soc = new Societe($db);
     $soc->fetch($fac->socid);
 
     $head = facture_prepare_head($fac);

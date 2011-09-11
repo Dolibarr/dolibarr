@@ -53,8 +53,9 @@ class PaymentSocialContribution extends CommonObject
 	var $fk_user_modif;
 
 	/**
-	 *      \brief      Constructor
-	 *      \param      DB      Database handler
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function PaymentSocialContribution($DB)
 	{
@@ -63,10 +64,11 @@ class PaymentSocialContribution extends CommonObject
 	}
 
 	/**
-	 *      Create payment of social contribution into database.
-     *      Use this->amounts to have list of lines for the payment
-	 *      @param      user    User making payment
-	 *      @return     int     <0 if KO, id of payment if OK
+	 *  Create payment of social contribution into database.
+     *  Use this->amounts to have list of lines for the payment
+     *
+	 *  @param      User		$user   User making payment
+	 *  @return     int     			<0 if KO, id of payment if OK
 	 */
 	function create($user)
 	{
