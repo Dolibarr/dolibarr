@@ -198,7 +198,6 @@ function pdf_format_address($outputlangs,$object)
 
 /**
  *   	Return a string with full address formated
- *
  * 		@param		outputlangs		Output langs object
  *   	@param      sourcecompany	Source company object
  *   	@param      targetcompany	Target company object
@@ -297,10 +296,9 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 /**
  *   	Show header of page for PDF generation
- *
- *   	@param      PDF			$pdf     		Object PDF
- *      @param      Translate	$outputlangs	Object lang for output
- * 		@param		int			$page_height	Height of page
+ *   	@param      pdf     		Object PDF
+ *      @param      outputlang		Object lang for output
+ * 		@param		page_height
  */
 function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 {
@@ -316,11 +314,10 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 
 /**
  *      Add a draft watermark on PDF files
- *
  *      @param      pdf             Object PDF
  *      @param      outputlangs     Object lang
- *      @param      h		        Height of PDF
- *      @param      w		        Width of PDF
+ *      @param      height          Height of PDF
+ *      @param      width           Width of PDF
  *      @param      unit            Unit of height (mmn, pt, ...)
  *      @param      text            Text to show
  */
@@ -495,9 +492,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 
 /**
  *   	Show footer of page for PDF generation
- *
  *   	@param      pdf     		The PDF factory
- *      @param      outputlangs		Object lang for output
+ *      @param      outputlang		Object lang for output
  * 		@param		paramfreetext	Constant name of free text
  * 		@param		fromcompany		Object company
  * 		@param		marge_basse		Margin bottom
@@ -692,19 +688,17 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 
 /**
  *	Output line description into PDF
- *
- *  @param      PDF				$pdf                PDF object
- *	@param		Object			$object				Object
- *	@param		int				$i					Current line number
- *  @param    	Translate		$outputlangs		Object lang for output
- *  @param      int				$w					Width
- *  @param      int				$h					Height
- *  @param      int				$posx				Pos x
- *  @param      int				$posy				Pos y
- *  @param    	int				$hideref       		Hide reference
- *  @param      int				$hidedesc            Hide description
- * 	@param		int				$issupplierline		Is it a line for a supplier object ?
- * 	@param		HookManager		$hookmanager		Instance of HookManager
+ *  @param      pdf                 PDF object
+ *	@param		object				Object
+ *	@param		i					Current line number
+ *  @param    	outputlang			Object lang for output
+ *  @param      w
+ *  @param      h
+ *  @param      posx
+ *  @param      posy
+ *  @param    	hideref       		Hide reference
+ *  @param      hidedesc            Hide description
+ * 	@param		issupplierline		Is it a line for a supplier object ?
  */
 function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0,$hookmanager=false)
 {
@@ -1193,9 +1187,9 @@ function pdf_getTotalQty($object,$type='',$outputlangs,$hookmanager=false)
 /**
  *	Convert a currency code into its symbol
  *
- *  @param      PDF		$pdf                 PDF object
- *  @param		string	$currency_code		Currency code
- *  @return		string						Currency symbol encoded into UTF8
+ *  @param      pdf                 PDF object
+ *  @param		currency_code		Currency code
+ *  @param		string				Currency symbol encoded into UTF8
  */
 function pdf_getCurrencySymbol(&$pdf, $currency_code)
 {
