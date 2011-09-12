@@ -673,7 +673,8 @@ pFooter($error,$setuplang,'jsinfo');
 /**
  *  Create main file. No particular permissions are set by installer.
  *
- *  @param      mainfile        Path to conf file to generate/update
+ *  @param      string		$mainfile       Full path name of main file to generate/update
+ *  @param		string		$main_dir		Full path name to main.inc.php file
  */
 function write_main_file($mainfile,$main_dir)
 {
@@ -693,7 +694,8 @@ function write_main_file($mainfile,$main_dir)
 /**
  *  Create master file. No particular permissions are set by installer.
  *
- *  @param      masterfile        Path to conf file to generate/update
+ *  @param      string		$masterfile     Full path name of master file to generate/update
+ *  @param		string		$main_dir		Full path name to master.inc.php file
  */
 function write_master_file($masterfile,$main_dir)
 {

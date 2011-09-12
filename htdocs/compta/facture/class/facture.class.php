@@ -512,9 +512,10 @@ class Facture extends CommonObject
     /**
      *		Load an object from its id and create a new one in database
      *
-     *		@param      fromid     		Id of object to clone
-     *		@param		invertdetail	Reverse sign of amounts for lines
-     * 	 	@return		int				New id of clone
+     *		@param      int				$fromid     	Id of object to clone
+     *		@param		int				$invertdetail	Reverse sign of amounts for lines
+	 *		@param		HookManager		$hookmanager	Hook manager instance
+     * 	 	@return		int								New id of clone
      */
     function createFromClone($fromid,$invertdetail=0,$hookmanager=false)
     {
@@ -598,10 +599,11 @@ class Facture extends CommonObject
     }
 
     /**
-     *      Load an object from an order and create a new invoice into database
+     *  Load an object from an order and create a new invoice into database
      *
-     *      @param      object          Object source
-     *      @return     int             <0 if KO, 0 if nothing done, 1 if OK
+     *  @param      Object			$object         	Object source
+	 *	@param		HookManager		$hookmanager		Hook manager instance
+     *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
      */
     function createFromOrder($object, $hookmanager=false)
     {

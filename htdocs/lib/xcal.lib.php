@@ -481,7 +481,7 @@ function CalEncode($line)
  *	Encode into vcal format
  *
  *	@param		string	$str		String to convert
- *	@param		int		forcal		1=For cal
+ *	@param		int		$forcal		1=For cal
  *	@return		string 				String converted
  */
 function QPEncode($str,$forcal=0)

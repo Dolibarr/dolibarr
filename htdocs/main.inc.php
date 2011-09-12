@@ -62,8 +62,13 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 	}
 }
 
-// Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST)
-function test_sql_and_script_inject($val,$get)
+/**
+ * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST)
+ *
+ * @param		string		$val		Value
+ * @param		string		$get		1=GET, 0=POST
+ */
+function test_sql_and_script_inject($val, $get)
 {
 	$sql_inj = 0;
 	// For SQL Injection
@@ -80,8 +85,13 @@ function test_sql_and_script_inject($val,$get)
 	if ($get) $sql_inj += preg_match('/"/i', $val);	// We refused " in GET parameters value
 	return $sql_inj;
 }
-// Security: Return true if OK, false otherwise
-function analyse_sql_and_script(&$var,$get)
+/**
+ * Security: Return true if OK, false otherwise
+ *
+ * @param		string		$var		Variable name
+ * @param		string		$get		1=GET, 0=POST
+ */
+function analyse_sql_and_script(&$var, $get)
 {
 	if (is_array($var))
 	{
@@ -638,10 +648,10 @@ if (! defined('NOLOGIN'))
 		$conf->theme=$user->conf->MAIN_THEME;
 		$conf->css  = "/theme/".$conf->theme."/style.css.php";
 	}
-	
+
 	// If theme support optim like flip-hide left menu and we use a smartphone, we force it
 	if (! empty($conf->global->MAIN_SMARTPHONE_OPTIM) && $conf->browser->phone && $conf->theme == 'eldy') $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
-	
+
 	// Set javascript option
     if (! GETPOST('nojs'))   // If javascript was not disabled on URL
     {
@@ -815,7 +825,6 @@ function top_httphead()
  *
  * @param 	string 	$head			Optionnal head lines
  * @param 	string 	$title			HTML title
- * @param 	string 	$help_url		Link to online url help to show on left menu
  * @param 	int    	$disablejs		More content into html header
  * @param 	int    	$disablehead	More content into html header
  * @param 	array  	$arrayofjs		Array of complementary js files
@@ -1057,14 +1066,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 /**
  *  Show an HTML header + a BODY + The top menu bar
  *
- *  @param      string	head    		Lines in the HEAD
- *  @param      string	title   		Title of web page
- *  @param      string	target  		Target to use in menu links
- *	@param		int		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	@param		int		disablehead		Do not output head section
- *	@param		array	arrayofjs		Array of js files to add in header
- *	@param		array	arrayofcss		Array of css files to add in header
- *  @param		string	morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ *  @param      string	$head    			Lines in the HEAD
+ *  @param      string	$title   			Title of web page
+ *  @param      string	$target  			Target to use in menu links
+ *	@param		int		$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		int		$disablehead		Do not output head section
+ *	@param		array	$arrayofjs			Array of js files to add in header
+ *	@param		array	$arrayofcss			Array of css files to add in header
+ *  @param		string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  */
 function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 {

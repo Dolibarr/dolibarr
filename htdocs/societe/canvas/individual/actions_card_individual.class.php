@@ -36,10 +36,10 @@ class ActionsCardIndividual extends ActionsCardCommon
     /**
 	 *    Constructor
 	 *
-     *    @param   DoliDB	$DB              Handler acces base de donnees
-     *    @param   string	$targmetmodule   Name of directory of module where canvas is stored
-     *    @param   string	$canvas          Name of canvas
-     *    @param   string	$card            Name of tab (sub-canvas)
+     *    @param   DoliDB	$DB             Handler acces base de donnees
+     *    @param   string	$targetmodule	Name of directory of module where canvas is stored
+     *    @param   string	$canvas         Name of canvas
+     *    @param   string	$card           Name of tab (sub-canvas)
      */
 	function ActionsCardIndividual($DB,$targetmodule,$canvas,$card)
 	{

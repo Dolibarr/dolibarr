@@ -39,8 +39,9 @@ class ModelePDFLabels
 
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *      Return list of active generation modules
+	 *
+	 * 		@param		DoliDB		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -58,13 +59,14 @@ class ModelePDFLabels
 
 
 /**
- *	\brief   	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
- *	\param   	db  			objet base de donnee
- *	\param   	id				id de la facture a creer
- *	\param	    message			message
- *	\param	    modele			force le modele a utiliser ('' to not force)
- *	\param		outputlangs		objet lang a utiliser pour traduction
- *	\return  	int        		<0 if KO, >0 if OK
+ *  Create a document onto disk accordign to template module
+ *
+ *	@param   	DoliDB		$db				objet base de donnee
+ *	@param   	int			$id				id de la facture a creer
+ *	@param	    string		$message		message
+ *	@param	    string		$modele			force le modele a utiliser ('' to not force)
+ *	@param		string		$outputlangs	objet lang a utiliser pour traduction
+ *	@return  	int        					<0 if KO, >0 if OK
  */
 function members_label_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 {

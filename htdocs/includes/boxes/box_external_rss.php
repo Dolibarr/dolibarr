@@ -58,10 +58,10 @@ class box_external_rss extends ModeleBoxes {
     /**
      *  Load information for box into memory to show them later with this->showBox method.
      *
-     *  @param      $max        	Max numbe rof records to load
-     *  @param		$cachedelay		Delay we accept for cache file
+     *  @param      int		$max        	Max numbe rof records to load
+     *  @param		int		$cachedelay		Delay we accept for cache file
      */
-    function loadBox($max=5, $cachdelay=3600)
+    function loadBox($max=5, $cachedelay=3600)
     {
         global $user, $langs, $conf;
         $langs->load("boxes");
@@ -80,7 +80,7 @@ class box_external_rss extends ModeleBoxes {
         $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
 
         $rssparser=new RssParser($db);
-		$result = $rssparser->parser($url, $this->max, $cachdelay, $conf->externalrss->dir_temp);
+		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
 
 		// INFO on channel
 		$description=$rssparser->getDescription();
