@@ -67,7 +67,6 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
  *
  * @param		string		$val		Value
  * @param		string		$get		1=GET, 0=POST
- * @return		boolean					true if ther is an injection
  */
 function test_sql_and_script_inject($val, $get)
 {
@@ -86,13 +85,11 @@ function test_sql_and_script_inject($val, $get)
 	if ($get) $sql_inj += preg_match('/"/i', $val);	// We refused " in GET parameters value
 	return $sql_inj;
 }
-
 /**
  * Security: Return true if OK, false otherwise
  *
  * @param		string		$var		Variable name
  * @param		string		$get		1=GET, 0=POST
- * @return		boolean					true if ther is an injection
  */
 function analyse_sql_and_script(&$var, $get)
 {
@@ -117,7 +114,6 @@ function analyse_sql_and_script(&$var, $get)
 		return (test_sql_and_script_inject($var,$get) <= 0);
 	}
 }
-
 // Sanity check on URL
 if (! empty($_SERVER["PHP_SELF"]))
 {
@@ -788,17 +784,17 @@ if (! function_exists("llxHeader"))
 {
 	/**
 	 *	Show HTML header HTML + BODY + Top menu + left menu + DIV
-	 *
-     * @param 	string 	$head				Optionnal head lines
-     * @param 	string 	$title				HTML title
-     * @param	string	$help_url			Url links to help page
-	 * 		                            	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
-	 *                                  	For other external page: http://server/url
-     * @param 	int    	$disablejs			More content into html header
-     * @param 	int    	$disablehead		More content into html header
-     * @param 	array  	$arrayofjs			Array of complementary js files
-     * @param 	array  	$arrayofcss			Array of complementary css files
-	 * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+	 * 	@param   	head			Add optionnal head lines
+	 *  @param      title   		Title of web page
+	 * 	@param      help_url		Url links to help page
+	 *                              Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+	 *                                         For other external page: http://server/url
+	 *  @param      target  		Target to use in menu links
+	 *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+	 *	@param		disablehead		Do not output head section
+	 *	@param		arrayofjs		Array of js files to add in header
+	 *	@param		arrayofcss		Array of css files to add in header
+	 *  @param		morequerystring Query string to add to the link "print" to get same parameters (use only if autodetect fails)
 	 */
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
@@ -833,7 +829,7 @@ function top_httphead()
  * @param 	int    	$disablehead	More content into html header
  * @param 	array  	$arrayofjs		Array of complementary js files
  * @param 	array  	$arrayofcss		Array of complementary css files
- * @return	void
+ * @return	none
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
