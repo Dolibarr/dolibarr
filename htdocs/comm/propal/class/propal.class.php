@@ -820,10 +820,12 @@ class Propal extends CommonObject
 
 	/**
 	 *		Load an object from its id and create a new one in database
-	 *		@param      fromid     		Id of object to clone
-	 *		@param		invertdetail	Reverse sign of amounts for lines
-	 *		@param		socid			Id of thirdparty
-	 * 	 	@return		int				New id of clone
+	 *
+	 *		@param      int				$fromid     	Id of object to clone
+	 *		@param		int				$invertdetail	Reverse sign of amounts for lines
+	 *		@param		int				$socid			Id of thirdparty
+	 *		@param		HookManager		$hookmanager	Hook manager instance
+	 * 	 	@return		int								New id of clone
 	 */
 	function createFromClone($fromid,$invertdetail=0,$socid=0,$hookmanager=false)
 	{
