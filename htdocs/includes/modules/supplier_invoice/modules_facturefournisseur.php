@@ -60,7 +60,6 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
  *	@param	    Object		$object			object supplier invoice
  *	@param	    string		$model			force le modele a utiliser ('' to not force)
  *	@param		Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @param      HookManager	$hookmanager	Hook manager instance
  *  @return     int         				0 if KO, 1 if OK
  */
 function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
