@@ -247,8 +247,15 @@ class MouvementStock
 
 	/**
 	 *  Create movement in database for all subproducts
-	 * 	@param 		label		Label of stock movement
-	 * 	@return 	int     	<0 if KO, 0 if OK
+	 *
+	 * 	@param 		User	$user			Object user
+	 * 	@param		int		$idProduct		Id product
+	 * 	@param		int		$entrepot_id	Warehouse id
+	 * 	@param		int		$qty			Quantity
+	 * 	@param		int		$type			Type
+	 * 	@param		int		$price			Price
+	 * 	@param		string	$label			Label of movement
+	 * 	@return 	int     				<0 if KO, 0 if OK
 	 */
 	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0, $label='')
 	{
@@ -290,49 +297,15 @@ class MouvementStock
 
 
 	/**
-	 *      Cree un mouvement en base pour toutes les compositions de produits
-	 * 		@param 		label		Label of stock movement
-	 * 	 	@return     int     	<0 if KO, 0 if OK
-	 */
-	/* This function is specific to a module. Should be inside the trigger of module instead of core code.
-	function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
-	{
-		dol_syslog("MouvementStock::_createProductComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price, $label");
-		$products_compo = array();
-
-		$sql = "SELECT fk_product_composition, qte, etat_stock";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_composition";
-		$sql.= " WHERE fk_product = $fk_product;";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($item = $this->db->fetch_object($resql))
-			{
-				if ($item->etat_stock != 0) array_push($products_compo,$item);
-			}
-			$this->db->free($resql);
-		}
-		else
-		{
-			dol_syslog("MouvementStock::_createProductComposition echec update ".$this->error, LOG_ERR);
-			return -1;
-		}
-
-		// Create movement for each subproduct
-		foreach($products_compo as $product)
-		{
-			$this->_create($user, $product->fk_product_composition, $entrepot_id, ($qty*$product->qte), $type, 0, $label);
-		}
-
-		return 0;
-	}*/
-
-
-	/**
 	 *	Decrease stock for product and subproducts
-	 * 	@param 		label		Label of stock movement
-	 * 	@return		int			<0 if KO, >0 if OK
+	 *
+	 * 	@param 		User	$user			Object user
+	 * 	@param		int		$fk_product		Id product
+	 * 	@param		int		$entrepot_id	Warehouse id
+	 * 	@param		int		$qty			Quantity
+	 * 	@param		int		$price			Price
+	 * 	@param		string	$label			Label of stock movement
+	 * 	@return		int						<0 if KO, >0 if OK
 	 */
 	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
 	{
@@ -342,8 +315,13 @@ class MouvementStock
 
 	/**
 	 *	Increase stock for product and subproducts
-     *  @param      label       Label of stock movement
-	 *	@return		int		    <0 if KO, >0 if OK
+	 *
+	 * 	@param 		User	$user			Object user
+	 * 	@param		int		$fk_product		Id product
+	 * 	@param		int		$entrepot_id	Warehouse id
+	 * 	@param		int		$qty			Quantity
+	 * 	@param		int		$price			Price
+	 * 	@param		string	$label			Label of stock movement
 	 */
 	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
 	{
@@ -353,8 +331,9 @@ class MouvementStock
 
 	/**
 	 * Return nb of subproducts lines for a product
-	 * @param      $id
-	 * @return     int
+	 *
+	 * @param      int		$id				Id of product
+	 * @return     int						<0 if KO, nb of subproducts if OK
 	 */
 	function nbOfSubProdcuts($id)
 	{

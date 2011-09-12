@@ -61,12 +61,11 @@ class ModelePDFLabels
 /**
  *  Create a document onto disk accordign to template module
  *
- *	@param   	DoliDB		$db				objet base de donnee
- *	@param   	int			$id				id de la facture a creer
- *	@param	    string		$message		message
- *	@param	    string		$modele			force le modele a utiliser ('' to not force)
- *	@param		string		$outputlangs	objet lang a utiliser pour traduction
- *	@return  	int        					<0 if KO, >0 if OK
+ *	@param   	DoliDB		$db					Database handler
+ *	@param   	array		$arrayofmembers		Array of members
+ *	@param	    string		$modele				Force le modele a utiliser ('' to not force)
+ *	@param		Translate	$outputlangs		Objet lang a utiliser pour traduction
+ *	@return  	int        						<0 if KO, >0 if OK
  */
 function members_label_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 {

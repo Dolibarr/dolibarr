@@ -61,7 +61,7 @@ class RssParser
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	public function RssParser($db)
 	{
