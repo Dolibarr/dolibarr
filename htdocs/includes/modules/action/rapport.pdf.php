@@ -227,7 +227,7 @@ class CommActionRapport
 	 *      Show page head
 	 *
 	 *      @param      pdf             Objet PDF
-	 *      @param      outputlang		Objet lang cible
+	 *      @param      outputlangs		Objet lang cible
 	 * 		@param		pagenb			Page nb
 	 */
 	function _pagehead(&$pdf, $outputlangs, $pagenb)

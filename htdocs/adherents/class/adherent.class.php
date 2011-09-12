@@ -133,6 +133,7 @@ class Adherent extends CommonObject
 
     /**
      *  Fonction envoyant un email a l'adherent avec le texte fourni en parametre.
+     *
      *  @param	    text				contenu du message (not html entities encoded)
      *  @param	    subject				subject of message
      *  @param 		filename_list       tableau de fichiers attaches
@@ -142,7 +143,8 @@ class Adherent extends CommonObject
      *  @param 		addr_bcc            email bcc
      *  @param 		deliveryreceipt		demande accuse reception
      *  @param		msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-     *  @return		int					<0 si ko, >0 si ok
+     *  @param		errorsto			erros to
+     *  @return		int					<0 if KO, >0 if OK
      */
     function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
     {
@@ -179,6 +181,7 @@ class Adherent extends CommonObject
 
     /**
      * Make substitution
+     *
      * @param       text        Text to make substitution to
      * @return      string      Value of input text string with substitutions done
      */
@@ -835,8 +838,9 @@ class Adherent extends CommonObject
 
     /**
      *    Set link to a user
-     *    @param     userid           	Id of user to link to
-     *    @return    int				1=OK, -1=KO
+     *
+     *    @param     int	$userid        	Id of user to link to
+     *    @return    int					1=OK, -1=KO
      */
     function setUserId($userid)
     {
@@ -868,8 +872,9 @@ class Adherent extends CommonObject
 
     /**
      *    Set link to a third party
-     *    @param     userid           	Id of user to link to
-     *    @return    int				1=OK, -1=KO
+     *
+     *    @param     int	$thirdpartyid		Id of user to link to
+     *    @return    int						1=OK, -1=KO
      */
     function setThirdPartyId($thirdpartyid)
     {
@@ -939,6 +944,7 @@ class Adherent extends CommonObject
 
     /**
      *	Load member from database
+     *
      *	@param      rowid       Id of object to load
      * 	@param		ref			To load member from its ref
      * 	@param		fk_soc		To load member from its link to third party
@@ -1064,6 +1070,7 @@ class Adherent extends CommonObject
      *				first_subscription_amount
      *				last_subscription_date
      *				last_subscription_amount
+     *
      *	@return		int			<0 si KO, >0 si OK
      */
     function fetch_subscriptions()
@@ -1123,10 +1130,11 @@ class Adherent extends CommonObject
 
     /**
      *	Fonction qui insere la cotisation dans la base de donnees
-     *	et eventuellement liens dans banques, mailman, etc...
+     *	et eventuellement liens dans banques, mailman, etc.
+     *
      *	@param	    date        	Date d'effet de la cotisation
      *	@param	    montant     	Montant cotisation (accepte 0 pour les adherents non soumis e cotisation)
-     *	@param		account_id		Id compte bancaire
+     *	@param		accountid		Id compte bancaire
      *	@param		operation		Type operation (si Id compte bancaire fourni)
      *	@param		label			Label operation (si Id compte bancaire fourni)
      *	@param		num_chq			Numero cheque (si Id compte bancaire fourni)
