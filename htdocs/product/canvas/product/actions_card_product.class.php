@@ -73,6 +73,17 @@ class ActionsCardProduct extends Product
 	}
 
 	/**
+	 *    \brief      Lecture des donnees dans la base
+	 *    \param      id          Product id
+	 */
+	function fetch($id='', $ref='', $action='')
+	{
+		$result = parent::fetch($id);
+
+		return $result;
+	}
+
+	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
 	 *    @param      action     Type of action
