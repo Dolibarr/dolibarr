@@ -279,26 +279,29 @@ class Propal extends CommonObject
 
 	/**
 	 *    	Add a proposal line into database (linked to product/service or not)
-	 * 		\param    	propalid        	Id de la propale
-	 * 		\param    	desc            	Description de la ligne
-	 * 		\param    	pu_ht              	Prix unitaire
-	 * 		\param    	qty             	Quantite
-	 * 		\param    	txtva           	Taux de tva
-	 * 		\param		txlocaltax1			Local tax 1 rate
-	 *  	\param		txlocaltax2			Local tax 2 rate
-	 *		\param    	fk_product      	Id du produit/service predefini
-	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
-	 * 		\param    	price_base_type		HT or TTC
-	 * 		\param    	pu_ttc             	Prix unitaire TTC
-	 * 		\param    	info_bits			Bits de type de lignes
-	 *      \param      type                Type of line (product, service)
-	 *      \param      rang                Position of line
-	 *    	\return    	int             	>0 if OK, <0 if KO
+	 * 		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+	 *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
+	 *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 *
+	 * 		@param    	propalid        	Id de la propale
+	 * 		@param    	desc            	Description de la ligne
+	 * 		@param    	pu_ht              	Prix unitaire
+	 * 		@param    	qty             	Quantite
+	 * 		@param    	txtva           	Taux de tva
+	 * 		@param		txlocaltax1			Local tax 1 rate
+	 *  	@param		txlocaltax2			Local tax 2 rate
+	 *		@param    	fk_product      	Id du produit/service predefini
+	 * 		@param    	remise_percent  	Pourcentage de remise de la ligne
+	 * 		@param    	price_base_type		HT or TTC
+	 * 		@param    	pu_ttc             	Prix unitaire TTC
+	 * 		@param    	info_bits			Bits de type de lignes
+	 *      @param      type                Type of line (product, service)
+	 *      @param      rang                Position of line
+	 *      @param		special_code		Special code
+	 *      @param		fk_parent_line		Id of parent line
+	 *    	@return    	int             	>0 if OK, <0 if KO
 	 *    	@see       	add_product
-	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
-	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
 	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0)
 	{

@@ -146,7 +146,6 @@ class ModeleNumRefSuppliersOrders
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
  *  @param      int			$hideref        Hide ref
- *  @param      HookManager	$hookmanager	Hook manager instance
  *  @return     int          				0 if KO, 1 if OK
  */
 function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
