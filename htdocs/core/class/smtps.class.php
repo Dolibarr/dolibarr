@@ -47,22 +47,16 @@
 
 /**
  * Version number of Class
- * @const SMTPs_VER
- *
  */
 define('SMTPs_VER', '1.15', false);
 
 /**
  * SMTPs Success value
- * @const SMTPs_SUCCEED
- *
  */
 define('SMTPs_SUCCEED', true, false);
 
 /**
  * SMTPs Fail value
- * @const SMTPs_FAIL
- *
  */
 define('SMTPs_FAIL', false, false);
 
@@ -72,8 +66,6 @@ define('SMTPs_FAIL', false, false);
 
 /**
  * Improper parameters
- * @const SMTPs_INVALID_PARAMETERS
- *
  */
 define('SMTPs_INVALID_PARAMETERS', 50, false);
 
@@ -2405,10 +2397,13 @@ class SMTPs
         return $this->_smtpsBoundary;
     }
 
-    // This function has been modified as provided
-    // by SirSir to allow multiline responses when
-    // using SMTP Extensions
-    //
+    /**
+     * This function has been modified as provided by SirSir to allow multiline responses when
+     * using SMTP Extensions
+     *
+     * @param	$socket
+     * @param	$response
+     */
     function server_parse($socket, $response)
     {
         /**
@@ -2519,6 +2514,9 @@ class SMTPs
 
 /**
  * $Log: smtps.class.php,v $
+ * Revision 1.3  2011/09/12 07:49:59  eldy
+ * Doxygen
+ *
  * Revision 1.2  2011/09/06 06:53:53  hregis
  * Fix: use dol_hash instead md5 php function
  *

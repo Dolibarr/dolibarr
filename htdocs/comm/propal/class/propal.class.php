@@ -1527,9 +1527,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *		\brief		Set draft status
-	 *		\param		user		Object user that modify
-	 *		\param		int			<0 if KO, >0 if OK
+	 *		Set draft status
+	 *
+	 *		@param		User	$user		Object user that modify
+	 *		@return		int					<0 if KO, >0 if OK
 	 */
 	function set_draft($user)
 	{
@@ -1550,16 +1551,17 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    \brief       Return list of proposal (eventually filtered on user) into an array
-	 *    \param       shortlist       0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref)
-	 *    \param       draft		   0=not draft, 1=draft
-	 *    \param       notcurrentuser  0=current user, 1=not current user
-	 *    \param       socid           Id third pary
-	 *    \param       limit           For pagination
-	 *    \param       offset          For pagination
-	 *    \param       sortfield       Sort criteria
-	 *    \param       sortorder       Sort order
-	 *    \return      int		       -1 if KO, array with result if OK
+	 *    Return list of proposal (eventually filtered on user) into an array
+	 *
+	 *    @param       shortlist       0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref)
+	 *    @param       draft		   0=not draft, 1=draft
+	 *    @param       notcurrentuser  0=current user, 1=not current user
+	 *    @param       socid           Id third pary
+	 *    @param       limit           For pagination
+	 *    @param       offset          For pagination
+	 *    @param       sortfield       Sort criteria
+	 *    @param       sortorder       Sort order
+	 *    @return      int		       -1 if KO, array with result if OK
 	 */
 	function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
 	{
@@ -1613,8 +1615,9 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie un tableau contenant les numeros de factures associees
-	 *		\return		array		Tableau des id de factures
+	 *  Renvoie un tableau contenant les numeros de factures associees
+	 *
+	 *	@return		array		Tableau des id de factures
 	 */
 	function getInvoiceArrayList()
 	{
@@ -1622,9 +1625,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie un tableau contenant les id et ref des factures associees
-	 *		\param		id			Id propal
-	 *		\return		array		Tableau des id de factures
+	 *  Renvoie un tableau contenant les id et ref des factures associees
+	 *
+	 *	@param		int		$id			Id propal
+	 *	@return		array				Array of invoices id
 	 */
 	function InvoiceArrayList($id)
 	{
