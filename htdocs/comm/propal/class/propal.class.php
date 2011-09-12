@@ -430,20 +430,22 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    Update a proposal line
-	 *    @param      rowid             Id de la ligne
-	 *    @param      pu		        Prix unitaire (HT ou TTC selon price_base_type)
-	 *    @param      qty             	Quantity
-	 *    @param      remise_percent  	Remise effectuee sur le produit
-	 *    @param      txtva	          	Taux de TVA
-	 * 	  @param	  txlocaltax1		Local tax 1 rate
-	 *    @param	  txlocaltax2		Local tax 2 rate
-	 *    @param      desc            	Description
-	 *	  @param	  price_base_type	HT ou TTC
-	 *	  @param      info_bits        	Miscellanous informations
-	 *	  @param      special_code      Set special code ('' = we don't change it)
-	 *	  @param      fk_parent_line    Id of line parent
-	 *    @return     int             	0 en cas de succes
+	 *  Update a proposal line
+	 *
+	 *  @param      rowid           	Id de la ligne
+	 *  @param      pu		     	  	Prix unitaire (HT ou TTC selon price_base_type)
+	 *  @param      qty            	 	Quantity
+	 *  @param      remise_percent  	Remise effectuee sur le produit
+	 *  @param      txtva	          	Taux de TVA
+	 * 	@param	  	txlocaltax1			Local tax 1 rate
+	 *  @param	  	txlocaltax2			Local tax 2 rate
+	 *  @param      desc            	Description
+	 *	@param	  	price_base_type		HT ou TTC
+	 *	@param      info_bits        	Miscellanous informations
+	 *	@param      special_code      	Set special code ('' = we don't change it)
+	 *	@param      fk_parent_line    	Id of line parent
+	 *  @param		skip_update_total	Skip update total
+	 *  @return     int             	0 if OK, <0 if KO
 	 */
 	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0)
 	{
@@ -543,9 +545,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Supprime une ligne de detail
-	 *      \param      idligne     Id de la ligne detail a supprimer
-	 *      \return     int         >0 si ok, <0 si ko
+	 *  Supprime une ligne de detail
+	 *
+	 *  @param		int		$lineid			Id of line to delete
+	 *  @return     int         			>0 if OK, <0 if KO
 	 */
 	function deleteline($lineid)
 	{
@@ -575,10 +578,12 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      Create commercial proposal into database
-	 * 		this->ref can be set or empty. If empty, we will use "(PROVid)"
-	 * 		@param		user		User that create
-	 *      @return     int     	<0 if KO, >=0 if OK
+	 *  Create commercial proposal into database
+	 * 	this->ref can be set or empty. If empty, we will use "(PROVid)"
+	 *
+	 * 	@param		User	$user		User that create
+	 * 	@param		int		$notrigger	Disable trigger
+	 *  @return     int     			<0 if KO, >=0 if OK
 	 */
 	function create($user='', $notrigger=0)
 	{
@@ -1288,10 +1293,11 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Set delivery
-	 *      \param      user		  Objet utilisateur qui modifie
-	 *      \param      delivery      delai de livraison
-	 *      \return     int           <0 si ko, >0 si ok
+	 *  Set delivery
+	 *
+	 *  @param		User	$user		  	Objet utilisateur qui modifie
+	 *  @param      int		$id				Availability id
+	 *  @return     int           			<0 if KO, >0 if OK
 	 */
 	function set_availability($user, $id)
 	{
@@ -1316,10 +1322,11 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Set source of demand
-	 *      \param      user		  Objet utilisateur qui modifie
-	 *      \param      demand_reason  source of demand
-	 *      \return     int           <0 si ko, >0 si ok
+	 *  Set source of demand
+	 *
+	 *  @param		User	$user		Objet utilisateur qui modifie
+	 *  @param      int		$id			Input reason id
+	 *  @return     int           		<0 if KO, >0 if OK
 	 */
 	function set_demand_reason($user, $id)
 	{
@@ -1344,10 +1351,11 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Positionne numero reference client
-	 *      \param      user            Utilisateur qui modifie
-	 *      \param      ref_client      Reference client
-	 *      \return     int             <0 si ko, >0 si ok
+	 *  Positionne numero reference client
+	 *
+	 *  @param      user            Utilisateur qui modifie
+	 *  @param      ref_client      Reference client
+	 *  @return     int             <0 si ko, >0 si ok
 	 */
 	function set_ref_client($user, $ref_client)
 	{
@@ -1802,9 +1810,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *   \brief      Change les conditions de reglement de la facture
-	 *   \param      cond_reglement_id      Id de la nouvelle condition de reglement
-	 *   \return     int                    >0 si ok, <0 si ko
+	 *  Change les conditions de reglement de la facture
+	 *
+	 *  @param      cond_reglement_id      Id de la nouvelle condition de reglement
+	 *  @return     int                    >0 if OK, <0 if KO
 	 */
 	function cond_reglement($cond_reglement_id)
 	{
@@ -1836,9 +1845,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *   \brief      Change le mode de reglement
-	 *   \param      mode_reglement     Id du nouveau mode
-	 *   \return     int         		>0 si ok, <0 si ko
+	 *  Change le mode de reglement
+	 *
+	 *  @param      mode_reglement_id     	Id du nouveau mode
+	 *  @return     int         			>0 if OK, <0 if KO
 	 */
 	function mode_reglement($mode_reglement_id)
 	{
@@ -1868,10 +1878,11 @@ class Propal extends CommonObject
 		}
 	}
 
-/**
-	 *   \brief      Change le delai de livraison
-	 *   \param      availability_id      Id du nouveau delai de livraison
-	 *   \return     int                    >0 si ok, <0 si ko
+	/**
+	 *  Change le delai de livraison
+	 *
+	 *  @param      availability_id      Id du nouveau delai de livraison
+	 *  @return     int                  >0 if OK, <0 if KO
 	 */
 	function availability($availability_id)
 	{
