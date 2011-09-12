@@ -198,6 +198,7 @@ function pdf_format_address($outputlangs,$object)
 
 /**
  *   	Return a string with full address formated
+ *
  * 		@param		outputlangs		Output langs object
  *   	@param      sourcecompany	Source company object
  *   	@param      targetcompany	Target company object
@@ -296,9 +297,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 /**
  *   	Show header of page for PDF generation
- *   	@param      pdf     		Object PDF
- *      @param      outputlang		Object lang for output
- * 		@param		page_height
+ *
+ *   	@param      PDF			$pdf     		Object PDF
+ *      @param      Translate	$outputlang		Object lang for output
+ * 		@param		int			$page_height	Height of page
  */
 function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 {
@@ -314,10 +316,11 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 
 /**
  *      Add a draft watermark on PDF files
+ *
  *      @param      pdf             Object PDF
  *      @param      outputlangs     Object lang
- *      @param      height          Height of PDF
- *      @param      width           Width of PDF
+ *      @param      h		        Height of PDF
+ *      @param      w		        Width of PDF
  *      @param      unit            Unit of height (mmn, pt, ...)
  *      @param      text            Text to show
  */
@@ -492,8 +495,9 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 
 /**
  *   	Show footer of page for PDF generation
+ *
  *   	@param      pdf     		The PDF factory
- *      @param      outputlang		Object lang for output
+ *      @param      outputlangs		Object lang for output
  * 		@param		paramfreetext	Constant name of free text
  * 		@param		fromcompany		Object company
  * 		@param		marge_basse		Margin bottom
@@ -688,17 +692,19 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 
 /**
  *	Output line description into PDF
- *  @param      pdf                 PDF object
- *	@param		object				Object
- *	@param		i					Current line number
- *  @param    	outputlang			Object lang for output
- *  @param      w
- *  @param      h
- *  @param      posx
- *  @param      posy
- *  @param    	hideref       		Hide reference
- *  @param      hidedesc            Hide description
- * 	@param		issupplierline		Is it a line for a supplier object ?
+ *
+ *  @param      PDF				$pdf                PDF object
+ *	@param		Object			$object				Object
+ *	@param		int				$i					Current line number
+ *  @param    	Translate		$outputlangs		Object lang for output
+ *  @param      int				$w					Width
+ *  @param      int				$h					Height
+ *  @param      int				$posx				Pos x
+ *  @param      int				$posy				Pos y
+ *  @param    	int				$hideref       		Hide reference
+ *  @param      int				$hidedesc            Hide description
+ * 	@param		int				$issupplierline		Is it a line for a supplier object ?
+ * 	@param		HookManager		$hookmanager		Instance of HookManager
  */
 function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0,$hookmanager=false)
 {

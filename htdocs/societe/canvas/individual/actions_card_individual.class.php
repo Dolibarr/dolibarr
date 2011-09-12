@@ -69,7 +69,8 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 	/**
 	 * 	Execute actions
-	 * 	@param 		Id of object (may be empty for creation)
+	 *
+	 * 	@param		int		$socid		Id of object (may be empty for creation)
 	 */
 	function doActions($socid)
 	{
@@ -79,9 +80,9 @@ class ActionsCardIndividual extends ActionsCardCommon
 	}
 
 	/**
-	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
+	 *  Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 *    @param      action     Type of action
+	 *  @param		string	$action		Type of action
 	 */
 	function assign_values($action='')
 	{
