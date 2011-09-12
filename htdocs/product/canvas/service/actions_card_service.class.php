@@ -43,10 +43,10 @@ class ActionsCardService extends Product
 	/**
 	 *    Constructor
 	 *
-     *    @param   DoliDB	$DB              Handler acces base de donnees
-     *    @param   string	$targmetmodule   Name of directory of module where canvas is stored
-     *    @param   string	$canvas          Name of canvas
-     *    @param   string	$card            Name of tab (sub-canvas)
+     *    @param   DoliDB	$DB             Handler acces base de donnees
+     *    @param   string	$targetmodule   Name of directory of module where canvas is stored
+     *    @param   string	$canvas         Name of canvas
+     *    @param   string	$card           Name of tab (sub-canvas)
 	 */
 	function ActionsCardIndividual($DB,$targetmodule,$canvas,$card)
 	{
@@ -70,17 +70,6 @@ class ActionsCardService extends Product
 		global $langs;
 
 		return $langs->trans("Products");
-	}
-
-	/**
-	 *    \brief      Lecture des donnees dans la base
-	 *    \param      id          Product id
-	 */
-	function fetch($id='', $ref='', $action='')
-	{
-		$result = parent::fetch($id);
-
-		return $result;
 	}
 
 	/**

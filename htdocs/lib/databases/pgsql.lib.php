@@ -989,17 +989,16 @@ class DoliDb
 
 
 	/**
-	 *	Cree une table
+	 *	Create a table into database
 	 *
-	 *	@param	    table 			Nom de la table
-	 *	@param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
-	 *	@param	    primary_key 	Nom du champ qui sera la clef primaire
-	 *	@param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-	 *	@param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
-	 *	@param	    key 			Tableau des champs cles noms => valeur
-	 *	@param	    type 			Type de la table
-	 *	@return	    int				<0 si KO, >=0 si OK
-	 * TODO
+	 *	@param	    string	$table 			Nom de la table
+	 *	@param	    array	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
+	 *	@param	    string	$type 			Type de la table
+	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
+	 *	@param	    string	$keys 			Tableau des champs cles noms => valeur
+	 *	@return	    int						<0 if KO, >=0 if OK
 	 */
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
@@ -1060,7 +1059,7 @@ class DoliDb
 		$sql .=") type=".$type;
 
 		dol_syslog($sql,LOG_DEBUG);
-		if(! $this -> query($sql))
+		if(! $this->query($sql))
 		return -1;
 		else
 		return 1;

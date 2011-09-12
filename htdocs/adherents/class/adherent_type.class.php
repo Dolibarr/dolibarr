@@ -61,11 +61,12 @@ class AdherentType extends CommonObject
 
 
     /**
-     *  \brief      Fonction qui permet de creer le status de l'adherent
-     *  \param      userid			userid de l'adherent
-     *  \return     > 0 si ok, < 0 si ko
+     *  Fonction qui permet de creer le status de l'adherent
+     *
+     *  @param      User		$user		User making creation
+     *  @return     						>0 if OK, < 0 if KO
      */
-    function create($userid)
+    function create($user)
     {
         global $conf;
 
@@ -84,7 +85,7 @@ class AdherentType extends CommonObject
         if ($result)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
-            return $this->update();
+            return $this->update($user);
         }
         else
         {
@@ -95,10 +96,12 @@ class AdherentType extends CommonObject
 
 
     /**
-     *  \brief      Met a jour en base donnees du type
-     *  \return     > 0 si ok, < 0 si ko
+     *  Met a jour en base donnees du type
+     *
+     *	@param		User	$user	Object user making change
+     *  @return		int				>0 if OK, < 0 if KO
      */
-    function update()
+    function update($user)
     {
         $this->libelle=trim($this->libelle);
 
@@ -110,11 +113,9 @@ class AdherentType extends CommonObject
         $sql.= "note = '".$this->db->escape($this->note)."',";
         $sql.= "vote = '".$this->vote."',";
         $sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
-
         $sql .= " WHERE rowid = $this->id";
 
         $result = $this->db->query($sql);
-
         if ($result)
         {
             return 1;
@@ -127,12 +128,13 @@ class AdherentType extends CommonObject
     }
 
     /**
-     *	\brief      Fonction qui permet de supprimer le status de l'adherent
-     *	\param      rowid
+     *	Fonction qui permet de supprimer le status de l'adherent
+     *
+     *	@param      int		$rowid		Id of member type to delete
+     *  @return		int					>0 if OK, < 0 if KO
      */
     function delete($rowid)
     {
-
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = $rowid";
 
         $resql=$this->db->query($sql);
@@ -155,9 +157,10 @@ class AdherentType extends CommonObject
     }
 
     /**
-     *  \brief 		Fonction qui permet de recuperer le status de l'adherent
-     *  \param 		rowid
-     *  \return		int			<0 si KO, >0 si OK
+     *  Fonction qui permet de recuperer le status de l'adherent
+     *
+     *  @param 		int		$rowid		Id of member type to load
+     *  @return		int					<0 if KO, >0 if OK
      */
     function fetch($rowid)
     {
@@ -237,10 +240,9 @@ class AdherentType extends CommonObject
     /**
      *    	Renvoie nom clicable (avec eventuellement le picto)
      *
-     *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		maxlen			length max libelle
-     *		@param		option			Page lien
-     *		@return		string			Chaine avec URL
+     *		@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		@param		int		$maxlen			length max libelle
+     *		@return		string					String with URL
      */
     function getNomUrl($withpicto=0,$maxlen=0)
     {

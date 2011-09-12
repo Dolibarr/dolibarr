@@ -92,7 +92,9 @@ function delivery_prepare_head($object)
 /**
  * List sendings and receive receipts
  *
- * @param   $option
+ * @param   string		$origin			Origin
+ * @param	int			$origin_id		Origin id
+ * @param	string		$filter			Filter
  * @return
  */
 function show_list_sending_receive($origin='commande',$origin_id,$filter='')

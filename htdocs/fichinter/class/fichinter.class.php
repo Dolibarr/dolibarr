@@ -758,57 +758,30 @@ class Fichinter extends CommonObject
 	{
 		global $user,$langs,$conf;
 
-		// Charge tableau des produits prodids
-		$prodids = array();
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND tosell = 1";
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_prods = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_prods)
-			{
-				$i++;
-				$row = $this->db->fetch_row($resql);
-				$prodids[$i] = $row[0];
-			}
-		}
-        else dol_print_error($this->db);
+		$now=dol_now();
 
 		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;
-		$this->date = time();
-		$this->date_lim_reglement=$this->date+3600*24*30;
-		$this->cond_reglement_code = 'RECEP';
-		$this->mode_reglement_code = 'CHQ';
+		$this->date = $now;
 		$this->note_public='SPECIMEN';
+		$this->duree = 0;
 		$nbp = 5;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
 			$line=new FichinterLigne($this->db);
 			$line->desc=$langs->trans("Description")." ".$xnbp;
-			$line->qty=1;
-			$line->subprice=100;
-			$line->price=100;
-			$line->tva_tx=19.6;
-			$prodid = rand(1, $num_prods);
-			$line->fk_product=$prodids[$prodid];
-
+			$line->datei=($now-3600*(1+$xnbp));
+			$line->duration=600;
+            $line->fk_fichinter=0;
 			$this->lines[$xnbp]=$line;
 			$xnbp++;
-		}
 
-		$this->amount_ht      = $xnbp*100;
-		$this->total_ht       = $xnbp*100;
-		$this->total_tva      = $xnbp*19.6;
-		$this->total_ttc      = $xnbp*119.6;
+			$this->duree+=$line->duration;
+		}
 	}
 
 	/**

@@ -36,10 +36,10 @@ class ActionsCardIndividual extends ActionsCardCommon
     /**
 	 *    Constructor
 	 *
-     *    @param   DoliDB	$DB              Handler acces base de donnees
-     *    @param   string	$targmetmodule   Name of directory of module where canvas is stored
-     *    @param   string	$canvas          Name of canvas
-     *    @param   string	$card            Name of tab (sub-canvas)
+     *    @param   DoliDB	$DB             Handler acces base de donnees
+     *    @param   string	$targetmodule	Name of directory of module where canvas is stored
+     *    @param   string	$canvas         Name of canvas
+     *    @param   string	$card           Name of tab (sub-canvas)
      */
 	function ActionsCardIndividual($DB,$targetmodule,$canvas,$card)
 	{
@@ -69,7 +69,8 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 	/**
 	 * 	Execute actions
-	 * 	@param 		Id of object (may be empty for creation)
+	 *
+	 * 	@param		int		$socid		Id of object (may be empty for creation)
 	 */
 	function doActions($socid)
 	{
@@ -79,9 +80,9 @@ class ActionsCardIndividual extends ActionsCardCommon
 	}
 
 	/**
-	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
+	 *  Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 *    @param      action     Type of action
+	 *  @param		string	$action		Type of action
 	 */
 	function assign_values($action='')
 	{

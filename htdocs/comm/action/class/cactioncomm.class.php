@@ -27,42 +27,44 @@
  *      \class      CActionComm
  *	    \brief      Class to manage different types of events
  */
-class CActionComm {
-  var $db;
+class CActionComm
+{
+    var $error;
+    var $db;
 
-  var $id;
+    var $id;
 
-  var $code;
-  var $type;
-  var $libelle;
-  var $active;
+    var $code;
+    var $type;
+    var $libelle;
+    var $active;
 
-  var $error;
-
-  var $type_actions=array();
+    var $type_actions=array();
 
 
-  /**
-   *    \brief      Constructeur
-   *    \param      DB          Handler d'acces base de donnee
-   */
-  function CActionComm($DB)
+    /**
+     *  Constructor
+     *
+     *  @param	DoliDB		$DB		Database handler
+     */
+    function CActionComm($DB)
     {
-      $this->db = $DB;
+        $this->db = $DB;
     }
 
-  /**
-   *    \brief      Charge l'objet type d'action depuis la base
-   *    \param      id          id ou code du type d'action a recuperer
-   *    \return     int         1=ok, 0=aucune action, -1=erreur
-   */
-	function fetch($id)
+    /**
+     *  Charge l'objet type d'action depuis la base
+     *
+     *  @param      id          id ou code du type d'action a recuperer
+     *  @return     int         1=ok, 0=aucune action, -1=erreur
+     */
+    function fetch($id)
     {
 
         $sql = "SELECT id, code, type, libelle, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-		if (is_numeric($id)) $sql.= " WHERE id=".$id;
-		else $sql.= " WHERE code='".$id."'";
+        if (is_numeric($id)) $sql.= " WHERE id=".$id;
+        else $sql.= " WHERE code='".$id."'";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -93,82 +95,84 @@ class CActionComm {
         }
     }
 
-	/**
-	 *    Return list of event types
-	 *    @param      active      1 or 0 to filter on event state active or not ('' bu default = no filter)
-	 *    @return     array       Array of all event types if OK, <0 if KO
-	 */
-	function liste_array($active='',$idorcode='id')
-	{
-		global $langs,$conf;
-		$langs->load("commercial");
+    /**
+     *    Return list of event types
+     *
+     *    @param    int			$active     1 or 0 to filter on event state active or not ('' bu default = no filter)
+     *    @param	string		$idorcode	'id' or 'code'
+     *    @return   array       			Array of all event types if OK, <0 if KO
+     */
+    function liste_array($active='',$idorcode='id')
+    {
+        global $langs,$conf;
+        $langs->load("commercial");
 
-		$repid = array();
-		$repcode = array();
+        $repid = array();
+        $repcode = array();
 
-		$sql = "SELECT id, code, libelle, module";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-		if ($active != '')
-		{
-			$sql.=" WHERE active=".$active;
-		}
-		$sql.= " ORDER BY module, position";
+        $sql = "SELECT id, code, libelle, module";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
+        if ($active != '')
+        {
+            $sql.=" WHERE active=".$active;
+        }
+        $sql.= " ORDER BY module, position";
 
-		dol_syslog("CActionComm::liste_array sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$nump = $this->db->num_rows($resql);
-			if ($nump)
-			{
-				$i = 0;
-				while ($i < $nump)
-				{
-					$obj = $this->db->fetch_object($resql);
-					$qualified=1;
-					if ($obj->module)
-					{
-						if ($obj->module == 'invoice' && ! $conf->facture->enabled)	 $qualified=0;
-						if ($obj->module == 'order'   && ! $conf->commande->enabled) $qualified=0;
-						if ($obj->module == 'propal'  && ! $conf->propal->enabled)	 $qualified=0;
+        dol_syslog("CActionComm::liste_array sql=".$sql);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $nump = $this->db->num_rows($resql);
+            if ($nump)
+            {
+                $i = 0;
+                while ($i < $nump)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $qualified=1;
+                    if ($obj->module)
+                    {
+                        if ($obj->module == 'invoice' && ! $conf->facture->enabled)	 $qualified=0;
+                        if ($obj->module == 'order'   && ! $conf->commande->enabled) $qualified=0;
+                        if ($obj->module == 'propal'  && ! $conf->propal->enabled)	 $qualified=0;
                         if ($obj->module == 'invoice_supplier' && ! $conf->fournisseur->enabled)   $qualified=0;
                         if ($obj->module == 'order_supplier'   && ! $conf->fournisseur->enabled)   $qualified=0;
-					}
-					if ($qualified)
-					{
-						$transcode=$langs->trans("Action".$obj->code);
-						$repid[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$langs->trans($obj->libelle));
-						$repcode[$obj->code] = ($transcode!="Action".$obj->code?$transcode:$langs->trans($obj->libelle));
-					}
-					$i++;
-				}
-			}
-			if ($idorcode == 'id') $this->liste_array=$repid;
-			if ($idorcode == 'code') $this->liste_array=$repcode;
-			return $this->liste_array;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
-	}
+                    }
+                    if ($qualified)
+                    {
+                        $transcode=$langs->trans("Action".$obj->code);
+                        $repid[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$langs->trans($obj->libelle));
+                        $repcode[$obj->code] = ($transcode!="Action".$obj->code?$transcode:$langs->trans($obj->libelle));
+                    }
+                    $i++;
+                }
+            }
+            if ($idorcode == 'id') $this->liste_array=$repid;
+            if ($idorcode == 'code') $this->liste_array=$repcode;
+            return $this->liste_array;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            return -1;
+        }
+    }
 
 
-	/**
-	*   \brief      Renvoie le nom sous forme d'un libelle traduit d'un type d'action
-	*	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	*	\param		option			Sur quoi pointe le lien
-	*   \return     string      	Libelle du type d'action
-	*/
-	function getNomUrl($withpicto=0)
-	{
-		global $langs;
+    /**
+     *  Renvoie le nom sous forme d'un libelle traduit d'un type d'action
+     *
+     *	@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *  @return     string      	Libelle du type d'action
+     */
+    function getNomUrl($withpicto=0)
+    {
+        global $langs;
 
-		// Check if translation available
-		$transcode=$langs->trans("Action".$this->code);
-		if ($transcode != "Action".$this->code) return $transcode;
-	}
+        // Check if translation available
+        $transcode=$langs->trans("Action".$this->code);
+        if ($transcode != "Action".$this->code) return $transcode;
+    }
 
 }
 ?>

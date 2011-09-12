@@ -34,8 +34,9 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *  Return list of active generation modules
+	 *
+	 * 	@param		DoliDB		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -53,12 +54,13 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 }
 
 /**
- *		Create object on disk
- *		@param	    db  			objet base de donnee
- *		@param	    object			object supplier invoice
- *		@param	    model			force le modele a utiliser ('' to not force)
- *		@param		outputlangs		objet lang a utiliser pour traduction
- *      @return     int         	0 si KO, 1 si OK
+ *	Create object on disk.
+ *
+ *	@param	    DoliDB		$db  			objet base de donnee
+ *	@param	    Object		$object			object supplier invoice
+ *	@param	    string		$model			force le modele a utiliser ('' to not force)
+ *	@param		Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @return     int         				0 if KO, 1 if OK
  */
 function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 {

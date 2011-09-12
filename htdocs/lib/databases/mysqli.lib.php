@@ -687,9 +687,10 @@ class DoliDb
     }
 
     /**
-     *	\brief     Recupere l'id genere par le dernier INSERT.
-     *	\param     tab     Nom de la table concernee par l'insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
-     *	\return    int     id
+     *	Recupere l'id genere par le dernier INSERT.
+     *
+     *	@param     tab     Nom de la table concernee par l'insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+     *	@return    int     id
      */
     function last_insert_id($tab)
     {
@@ -699,6 +700,7 @@ class DoliDb
     /**
      *	Encrypt sensitive data in database
      *  Warning: This function includes the escape, so it must use direct value
+     *
      *	@param	        fieldorvalue	Field name or value to encrypt
      * 	@param			withQuotes		Return string with quotes
      * 	@return	        return			XXX(field) or XXX('value') or field or 'value'
@@ -852,15 +854,16 @@ class DoliDb
     }
 
     /**
-     *	\brief      Cree une table
-     *	\param	    table 			Nom de la table
-     *	\param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
-     *	\param	    primary_key 	Nom du champ qui sera la clef primaire
-     *	\param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-     *	\param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
-     *	\param	    key 			Tableau des champs cles noms => valeur
-     *	\param	    type 			Type de la table
-     *	\return	    int				<0 si KO, >=0 si OK
+	 *	Create a table into database
+	 *
+	 *	@param	    string	$table 			Nom de la table
+	 *	@param	    array	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
+	 *	@param	    string	$type 			Type de la table
+	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
+	 *	@param	    string	$keys 			Tableau des champs cles noms => valeur
+	 *	@return	    int						<0 if KO, >=0 if OK
      */
     function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
     {

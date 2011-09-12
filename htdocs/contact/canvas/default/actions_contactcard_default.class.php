@@ -38,7 +38,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
      *    Constructor
      *
      *    @param   DoliDB	$DB              Handler acces base de donnees
-     *    @param   string	$targmetmodule   Name of directory of module where canvas is stored
+     *    @param   string	$targetmodule    Name of directory of module where canvas is stored
      *    @param   string	$canvas          Name of canvas
      *    @param   string	$card            Name of tab (sub-canvas)
 	 */
@@ -50,24 +50,6 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         $this->card             = $card;
 	}
 
-    /**
-     *  Execute actions
-     *  @param      Id of object (may be empty for creation)
-     */
-    function doActions($id)
-    {
-        $return = parent::doActions($id);
-        return $return;
-    }
-
-
-	/**
-	 * 	Return the title of card
-	 */
-	function getTitle($action)
-	{
-		return parent::getTitle($action);
-	}
 
 	/**
      *    Assigne les valeurs POST dans l'objet
@@ -79,7 +61,8 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 	/**
 	 *    Assign custom values for canvas
-	 *    @param      action     Type of action
+	 *
+	 *    @param      string	$action     Type of action
 	 */
 	function assign_values($action='')
 	{
@@ -122,6 +105,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
 	 * 	If $_REQUEST['action'] defined, we also check write permission.
+	 *
 	 * 	@param      user      	  	User to check
 	 * 	@param      features	    Features to check (in most cases, it's module name)
 	 * 	@param      objectid      	Object ID if we want to check permission on a particular record (optionnal)

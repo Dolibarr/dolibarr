@@ -1431,10 +1431,11 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Update notes
-     *	@param		user
-     *	@param		note
-     *	@param		note_public
-     *	@return		int			<0 if KO, >=0 if OK
+     *
+     *	@param		User		$user			Object user
+     *	@param		string		$note			Private note
+     *	@param		string		$note_public	Public note
+     *	@return		int							<0 if KO, >=0 if OK
      *	TODO Use instead update_note_public and update_note
      */
     function UpdateNote($user, $note, $note_public)
@@ -1548,14 +1549,15 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Update line
+     *
      *	@param     	rowid           Id de la ligne de facture
      *	@param     	desc            Description de la ligne
      *	@param     	pu              Prix unitaire
      *	@param     	qty             Quantity
      *	@param     	remise_percent  Pourcentage de remise de la ligne
      *	@param     	tva_tx          Taux TVA
-     *  @param     	localtax1_tx    Localtax1 tax
-     *  @param     	localtax2_tx    Localtax2 tax
+     *  @param     	localtax1	    Localtax1 tax
+     *  @param     	localtax2   	Localtax2 tax
      *  @param     	price_base_type Type of price base
      *	@param		info_bits		Miscellanous informations
      *	@param		type			Type of line (0=product, 1=service)

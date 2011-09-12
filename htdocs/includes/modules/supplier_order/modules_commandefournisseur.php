@@ -70,6 +70,7 @@ class ModeleNumRefSuppliersOrders
 	var $error='';
 
 	/**  Return if a module can be used or not
+	 *
 	 *   @return		boolean     true if module can be used
 	 */
 	function isEnabled()
@@ -78,6 +79,7 @@ class ModeleNumRefSuppliersOrders
 	}
 
 	/**  Renvoie la description par defaut du modele de numerotation
+	 *
 	 *   @return     string      Texte descripif
 	 */
 	function info()
@@ -88,6 +90,7 @@ class ModeleNumRefSuppliersOrders
 	}
 
 	/**   Renvoie un exemple de numerotation
+	 *
 	 *    @return     string      Example
 	 */
 	function getExample()
@@ -98,6 +101,7 @@ class ModeleNumRefSuppliersOrders
 	}
 
 	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	 *
 	 *   @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -106,6 +110,7 @@ class ModeleNumRefSuppliersOrders
 	}
 
 	/**  Renvoie prochaine valeur attribuee
+	 *
 	 *   @return     string      Valeur
 	 */
 	function getNextValue()
@@ -115,6 +120,7 @@ class ModeleNumRefSuppliersOrders
 	}
 
 	/**   Renvoie version du module numerotation
+	 *
 	 *    @return     string      Valeur
 	 */
 	function getVersion()
@@ -131,15 +137,16 @@ class ModeleNumRefSuppliersOrders
 
 
 /**
- *  Cree un bon de commande sur disque en fonction d'un modele
- *  @param	    db  			data base object
- *  @param	    object			object order
- *  @param	    modele			force le modele a utiliser ('' to not force)
- *  @param		outputlangs		objet lang a utiliser pour traduction
- *  @param      hidedetails     Hide details of lines
- *  @param      hidedesc        Hide description
- *  @param      hideref         Hide ref
- *  @return     int             0 if KO, 1 if OK
+ *  Create a document onto disk accordign to template module.
+ *
+ *  @param	    DoliDB		$db  			data base object
+ *  @param	    Object		$object			object order
+ *  @param	    string		$modele			force le modele a utiliser ('' to not force)
+ *  @param		Translate	$outputlangs	Objet lang a utiliser pour traduction
+ *  @param      int			$hidedetails    Hide details of lines
+ *  @param      int			$hidedesc       Hide description
+ *  @param      int			$hideref        Hide ref
+ *  @return     int          				0 if KO, 1 if OK
  */
 function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {

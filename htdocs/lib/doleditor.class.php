@@ -48,19 +48,19 @@ class DolEditor
     /**
      *      Create an object to build an HTML area to edit a large string content
      *
-     *      @param 	htmlname		        HTML name of WYSIWIG form
-     *      @param 	content			        Content of WYSIWIG form
-     *      @param	width					Width in pixel of edit area (auto by default)
-     *      @param 	height			        Height in pixel of edit area (200px by default)
-     *      @param 	toolbarname		        Name of bar set to use ('Full', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_mailings')
-     *      @param  toolbarlocation       	Where bar is stored :
-     *                                    	'In' each window has its own toolbar
-     *                                    	'Out:name' share toolbar into the div called 'name'
-     *      @param  toolbarstartexpanded  	Bar is visible or not at start
-	 *		@param	uselocalbrowser			Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *      @param  okforextandededitor     True=Allow usage of extended editor tool (like fckeditor)
-     *      @param  rows                    Size of rows for textarea tool
-	 *      @param  cols                    Size of cols for textarea tool
+     *      @param 	string	$htmlname		        HTML name of WYSIWIG form
+     *      @param 	string	$content		        Content of WYSIWIG form
+     *      @param	int		$width					Width in pixel of edit area (auto by default)
+     *      @param 	int		$height			        Height in pixel of edit area (200px by default)
+     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_mailings')
+     *      @param  string	$toolbarlocation       	Where bar is stored :
+     *                       		             	'In' each window has its own toolbar
+     *                              		      	'Out:name' share toolbar into the div called 'name'
+     *      @param  boolean	$toolbarstartexpanded  	Bar is visible or not at start
+	 *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
+     *      @param  int		$rows                   Size of rows for textarea tool
+	 *      @param  int		$cols                   Size of cols for textarea tool
 	 */
     function DolEditor($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0)
     {

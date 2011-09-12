@@ -279,26 +279,29 @@ class Propal extends CommonObject
 
 	/**
 	 *    	Add a proposal line into database (linked to product/service or not)
-	 * 		\param    	propalid        	Id de la propale
-	 * 		\param    	desc            	Description de la ligne
-	 * 		\param    	pu_ht              	Prix unitaire
-	 * 		\param    	qty             	Quantite
-	 * 		\param    	txtva           	Taux de tva
-	 * 		\param		txlocaltax1			Local tax 1 rate
-	 *  	\param		txlocaltax2			Local tax 2 rate
-	 *		\param    	fk_product      	Id du produit/service predefini
-	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
-	 * 		\param    	price_base_type		HT or TTC
-	 * 		\param    	pu_ttc             	Prix unitaire TTC
-	 * 		\param    	info_bits			Bits de type de lignes
-	 *      \param      type                Type of line (product, service)
-	 *      \param      rang                Position of line
-	 *    	\return    	int             	>0 if OK, <0 if KO
+	 * 		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+	 *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
+	 *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 *
+	 * 		@param    	propalid        	Id de la propale
+	 * 		@param    	desc            	Description de la ligne
+	 * 		@param    	pu_ht              	Prix unitaire
+	 * 		@param    	qty             	Quantite
+	 * 		@param    	txtva           	Taux de tva
+	 * 		@param		txlocaltax1			Local tax 1 rate
+	 *  	@param		txlocaltax2			Local tax 2 rate
+	 *		@param    	fk_product      	Id du produit/service predefini
+	 * 		@param    	remise_percent  	Pourcentage de remise de la ligne
+	 * 		@param    	price_base_type		HT or TTC
+	 * 		@param    	pu_ttc             	Prix unitaire TTC
+	 * 		@param    	info_bits			Bits de type de lignes
+	 *      @param      type                Type of line (product, service)
+	 *      @param      rang                Position of line
+	 *      @param		special_code		Special code
+	 *      @param		fk_parent_line		Id of parent line
+	 *    	@return    	int             	>0 if OK, <0 if KO
 	 *    	@see       	add_product
-	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
-	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
 	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0)
 	{
@@ -430,20 +433,22 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    Update a proposal line
-	 *    @param      rowid             Id de la ligne
-	 *    @param      pu		        Prix unitaire (HT ou TTC selon price_base_type)
-	 *    @param      qty             	Quantity
-	 *    @param      remise_percent  	Remise effectuee sur le produit
-	 *    @param      txtva	          	Taux de TVA
-	 * 	  @param	  txlocaltax1		Local tax 1 rate
-	 *    @param	  txlocaltax2		Local tax 2 rate
-	 *    @param      desc            	Description
-	 *	  @param	  price_base_type	HT ou TTC
-	 *	  @param      info_bits        	Miscellanous informations
-	 *	  @param      special_code      Set special code ('' = we don't change it)
-	 *	  @param      fk_parent_line    Id of line parent
-	 *    @return     int             	0 en cas de succes
+	 *  Update a proposal line
+	 *
+	 *  @param      rowid           	Id de la ligne
+	 *  @param      pu		     	  	Prix unitaire (HT ou TTC selon price_base_type)
+	 *  @param      qty            	 	Quantity
+	 *  @param      remise_percent  	Remise effectuee sur le produit
+	 *  @param      txtva	          	Taux de TVA
+	 * 	@param	  	txlocaltax1			Local tax 1 rate
+	 *  @param	  	txlocaltax2			Local tax 2 rate
+	 *  @param      desc            	Description
+	 *	@param	  	price_base_type		HT ou TTC
+	 *	@param      info_bits        	Miscellanous informations
+	 *	@param      special_code      	Set special code ('' = we don't change it)
+	 *	@param      fk_parent_line    	Id of line parent
+	 *  @param		skip_update_total	Skip update total
+	 *  @return     int             	0 if OK, <0 if KO
 	 */
 	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0)
 	{
@@ -543,9 +548,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Supprime une ligne de detail
-	 *      \param      idligne     Id de la ligne detail a supprimer
-	 *      \return     int         >0 si ok, <0 si ko
+	 *  Supprime une ligne de detail
+	 *
+	 *  @param		int		$lineid			Id of line to delete
+	 *  @return     int         			>0 if OK, <0 if KO
 	 */
 	function deleteline($lineid)
 	{
@@ -575,10 +581,12 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      Create commercial proposal into database
-	 * 		this->ref can be set or empty. If empty, we will use "(PROVid)"
-	 * 		@param		user		User that create
-	 *      @return     int     	<0 if KO, >=0 if OK
+	 *  Create commercial proposal into database
+	 * 	this->ref can be set or empty. If empty, we will use "(PROVid)"
+	 *
+	 * 	@param		User	$user		User that create
+	 * 	@param		int		$notrigger	Disable trigger
+	 *  @return     int     			<0 if KO, >=0 if OK
 	 */
 	function create($user='', $notrigger=0)
 	{
@@ -820,10 +828,12 @@ class Propal extends CommonObject
 
 	/**
 	 *		Load an object from its id and create a new one in database
-	 *		@param      fromid     		Id of object to clone
-	 *		@param		invertdetail	Reverse sign of amounts for lines
-	 *		@param		socid			Id of thirdparty
-	 * 	 	@return		int				New id of clone
+	 *
+	 *		@param      int				$fromid     	Id of object to clone
+	 *		@param		int				$invertdetail	Reverse sign of amounts for lines
+	 *		@param		int				$socid			Id of thirdparty
+	 *		@param		HookManager		$hookmanager	Hook manager instance
+	 * 	 	@return		int								New id of clone
 	 */
 	function createFromClone($fromid,$invertdetail=0,$socid=0,$hookmanager=false)
 	{
@@ -1286,10 +1296,11 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Set delivery
-	 *      \param      user		  Objet utilisateur qui modifie
-	 *      \param      delivery      delai de livraison
-	 *      \return     int           <0 si ko, >0 si ok
+	 *  Set delivery
+	 *
+	 *  @param		User	$user		  	Objet utilisateur qui modifie
+	 *  @param      int		$id				Availability id
+	 *  @return     int           			<0 if KO, >0 if OK
 	 */
 	function set_availability($user, $id)
 	{
@@ -1314,10 +1325,11 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Set source of demand
-	 *      \param      user		  Objet utilisateur qui modifie
-	 *      \param      demand_reason  source of demand
-	 *      \return     int           <0 si ko, >0 si ok
+	 *  Set source of demand
+	 *
+	 *  @param		User	$user		Objet utilisateur qui modifie
+	 *  @param      int		$id			Input reason id
+	 *  @return     int           		<0 if KO, >0 if OK
 	 */
 	function set_demand_reason($user, $id)
 	{
@@ -1342,10 +1354,11 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Positionne numero reference client
-	 *      \param      user            Utilisateur qui modifie
-	 *      \param      ref_client      Reference client
-	 *      \return     int             <0 si ko, >0 si ok
+	 *  Positionne numero reference client
+	 *
+	 *  @param      user            Utilisateur qui modifie
+	 *  @param      ref_client      Reference client
+	 *  @return     int             <0 si ko, >0 si ok
 	 */
 	function set_ref_client($user, $ref_client)
 	{
@@ -1527,9 +1540,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *		\brief		Set draft status
-	 *		\param		user		Object user that modify
-	 *		\param		int			<0 if KO, >0 if OK
+	 *		Set draft status
+	 *
+	 *		@param		User	$user		Object user that modify
+	 *		@return		int					<0 if KO, >0 if OK
 	 */
 	function set_draft($user)
 	{
@@ -1550,16 +1564,17 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    \brief       Return list of proposal (eventually filtered on user) into an array
-	 *    \param       shortlist       0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref)
-	 *    \param       draft		   0=not draft, 1=draft
-	 *    \param       notcurrentuser  0=current user, 1=not current user
-	 *    \param       socid           Id third pary
-	 *    \param       limit           For pagination
-	 *    \param       offset          For pagination
-	 *    \param       sortfield       Sort criteria
-	 *    \param       sortorder       Sort order
-	 *    \return      int		       -1 if KO, array with result if OK
+	 *    Return list of proposal (eventually filtered on user) into an array
+	 *
+	 *    @param       shortlist       0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref)
+	 *    @param       draft		   0=not draft, 1=draft
+	 *    @param       notcurrentuser  0=current user, 1=not current user
+	 *    @param       socid           Id third pary
+	 *    @param       limit           For pagination
+	 *    @param       offset          For pagination
+	 *    @param       sortfield       Sort criteria
+	 *    @param       sortorder       Sort order
+	 *    @return      int		       -1 if KO, array with result if OK
 	 */
 	function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
 	{
@@ -1613,8 +1628,9 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie un tableau contenant les numeros de factures associees
-	 *		\return		array		Tableau des id de factures
+	 *  Renvoie un tableau contenant les numeros de factures associees
+	 *
+	 *	@return		array		Tableau des id de factures
 	 */
 	function getInvoiceArrayList()
 	{
@@ -1622,9 +1638,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie un tableau contenant les id et ref des factures associees
-	 *		\param		id			Id propal
-	 *		\return		array		Tableau des id de factures
+	 *  Renvoie un tableau contenant les id et ref des factures associees
+	 *
+	 *	@param		int		$id			Id propal
+	 *	@return		array				Array of invoices id
 	 */
 	function InvoiceArrayList($id)
 	{
@@ -1796,9 +1813,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *   \brief      Change les conditions de reglement de la facture
-	 *   \param      cond_reglement_id      Id de la nouvelle condition de reglement
-	 *   \return     int                    >0 si ok, <0 si ko
+	 *  Change les conditions de reglement de la facture
+	 *
+	 *  @param      cond_reglement_id      Id de la nouvelle condition de reglement
+	 *  @return     int                    >0 if OK, <0 if KO
 	 */
 	function cond_reglement($cond_reglement_id)
 	{
@@ -1830,9 +1848,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *   \brief      Change le mode de reglement
-	 *   \param      mode_reglement     Id du nouveau mode
-	 *   \return     int         		>0 si ok, <0 si ko
+	 *  Change le mode de reglement
+	 *
+	 *  @param      mode_reglement_id     	Id du nouveau mode
+	 *  @return     int         			>0 if OK, <0 if KO
 	 */
 	function mode_reglement($mode_reglement_id)
 	{
@@ -1862,10 +1881,11 @@ class Propal extends CommonObject
 		}
 	}
 
-/**
-	 *   \brief      Change le delai de livraison
-	 *   \param      availability_id      Id du nouveau delai de livraison
-	 *   \return     int                    >0 si ok, <0 si ko
+	/**
+	 *  Change le delai de livraison
+	 *
+	 *  @param      availability_id      Id du nouveau delai de livraison
+	 *  @return     int                  >0 if OK, <0 if KO
 	 */
 	function availability($availability_id)
 	{

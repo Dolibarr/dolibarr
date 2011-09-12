@@ -70,8 +70,10 @@ class Project extends CommonObject
 
 	/**
 	 *    Create a project into database
-	 *    @param      user        User making creation
-	 *    @return     int         <0 if KO, id of created project if OK
+	 *
+	 *    @param    User	$user       	User making creation
+	 *    @param	int		$notrigger		Disable triggers
+	 *    @return   int         			<0 if KO, id of created project if OK
 	 */
 	function create($user, $notrigger=0)
 	{
@@ -221,9 +223,10 @@ class Project extends CommonObject
 
 	/**
 	 *	Get object and lines from database
-	 *	@param      rowid       id of object to load
-	 * 	@param		ref			Ref of project
-	 *	@return     int         >0 if OK, 0 if not found, <0 if KO
+	 *
+	 *	@param      int		$id       	Id of object to load
+	 * 	@param		string	$ref		Ref of project
+	 *	@return     int      		   	>0 if OK, 0 if not found, <0 if KO
 	 */
 	function fetch($id,$ref='')
 	{

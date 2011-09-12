@@ -42,7 +42,8 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
 
 	/**
 	 *  Return list of active generation modules
-	 * 	@param		$db		Database handler
+	 *
+	 * 	@param		DoliDB		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -70,6 +71,7 @@ class ModeleNumRefCommandes
 	var $error='';
 
 	/**  Return if a module can be used or not
+	 *
 	 *   @return		boolean     true if module can be used
 	 */
 	function isEnabled()
@@ -78,6 +80,7 @@ class ModeleNumRefCommandes
 	}
 
 	/**  Renvoie la description par defaut du modele de numerotation
+	 *
 	 *   @return     string      Texte descripif
 	 */
 	function info()
@@ -88,6 +91,7 @@ class ModeleNumRefCommandes
 	}
 
 	/**  Renvoie un exemple de numerotation
+	 *
 	 *   @return     string      Example
 	 */
 	function getExample()
@@ -98,6 +102,7 @@ class ModeleNumRefCommandes
 	}
 
 	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	 *
 	 *   @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -106,6 +111,7 @@ class ModeleNumRefCommandes
 	}
 
 	/**  Renvoie prochaine valeur attribuee
+	 *
 	 *   @return     string      Valeur
 	 */
 	function getNextValue()
@@ -115,6 +121,7 @@ class ModeleNumRefCommandes
 	}
 
 	/**  Renvoie version du module numerotation
+	 *
 	 *   @return     string      Valeur
 	 */
 	function getVersion()
@@ -131,15 +138,17 @@ class ModeleNumRefCommandes
 
 
 /**
- *  Cree un bon de commande sur disque en fonction d'un modele
- *  @param	    db  			data base object
- *  @param	    object			object order
- *  @param	    modele			force le modele a utiliser ('' to not force)
- *  @param		outputlangs		objet lang a utiliser pour traduction
- *  @param      hidedetails     Hide details of lines
- *  @param      hidedesc        Hide description
- *  @param      hideref         Hide ref
- *  @return     int             0 if KO, 1 if OK
+ *  Create a document onto disk accordign to template module.
+ *
+ *  @param	    DoliDB		$db  			Database handler
+ *  @param	    Object		$object			Object order
+ *  @param	    string		$modele			Force le modele a utiliser ('' to not force)
+ *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param      int			$hidedetails    Hide details of lines
+ *  @param      int			$hidedesc       Hide description
+ *  @param      int			$hideref        Hide ref
+ *  @param      HookManager	$hookmanager	Hook manager instance
+ *  @return     int         				0 if KO, 1 if OK
  */
 function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {

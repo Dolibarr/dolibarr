@@ -64,11 +64,12 @@ class Address
 	}
 
 	/**
-	 *    \brief      Cree l'adresse de la societe en base
-	 *    \param      user        Objet utilisateur qui demande la creation
-	 *    \return     int         0 si ok, < 0 si erreur
+	 *  Create address into database
+	 *
+	 *  @param      socid       Company socid
+	 *  @param      user        Object user making creation
+	 *  @return     int         0 if OK, < 0 if KO
 	 */
-
 	function create($socid, $user='')
 	{
 		global $langs,$conf;
@@ -135,8 +136,9 @@ class Address
 
 
 	/**
-	 *    \brief      Verification lors de la modification de l'adresse
-	 *    \return     0 si ok, < 0 en cas d'erreur
+	 *  Verification lors de la modification de l'adresse
+	 *
+	 *  @return		int	    0 if OK, <0 if KO
 	 */
 	function verify()
 	{
@@ -153,10 +155,12 @@ class Address
 
 
 	/**
-	 *      \brief      Mise a jour des parametres de l'adresse
-	 *      \param      id              id address
-	 *      \param      user            Utilisateur qui demande la mise a jour
-	 *      \return     int             <0 si ko, >=0 si ok
+	 *  Mise a jour des parametres de l'adresse
+	 *
+	 *  @param      id              id address
+	 *  @param		socid			id third party
+	 *  @param      user            Utilisateur qui demande la mise a jour
+	 *  @return     int             <0 si ko, >=0 si ok
 	 */
 	function update($id, $socid, $user='')
 	{
@@ -401,8 +405,10 @@ class Address
 
 
 	/**
-	 *    \brief      Suppression d'une adresse
-	 *    \param      id      id de la societe a supprimer
+	 * 	Suppression d'une adresse
+	 *
+	 *  @param      id      id de la societe a supprimer
+	 *  @param		socid	id third party
 	 */
 	function delete($id,$socid)
 	{
@@ -421,9 +427,10 @@ class Address
 	}
 
 
-	/*
-	 *       \brief     Charge les informations d'ordre info dans l'objet societe
-	 *       \param     id     id de la societe a charger
+	/**
+	 * 	Charge les informations d'ordre info dans l'objet societe
+	 *
+	 *  @param     id     id de la societe a charger
 	 */
 	function info($id)
 	{

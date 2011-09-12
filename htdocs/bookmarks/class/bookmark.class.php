@@ -43,7 +43,7 @@ class Bookmark
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
      */
     function Bookmark($db)
     {

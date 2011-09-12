@@ -88,21 +88,6 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-// ---------- start deprecated. Must use hook to hook actions.
-/*if (method_exists($objcanvas->control,'doActions'))
-{
-    $objcanvas->doActions($socid);
-
-    if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && sizeof($objcanvas->errors) > 0))
-    {
-        $error=$objcanvas->error; $errors=$objcanvas->errors;
-        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
-        if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
-    }
-}*/
-// ---------- end deprecated.
-
-
 if (empty($reshook))
 {
     if ($_POST["getcustomercode"])
@@ -539,7 +524,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 }
 else
 {
-
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------

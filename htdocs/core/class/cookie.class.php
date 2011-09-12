@@ -41,7 +41,7 @@ class DolCookie
 	/**
 	 *  Constructor
 	 *
-	 *  @param      string	$key      Personnal key
+	 *  @param      string		$key      Personnal key
 	 */
 	function DolCookie($key = '')
 	{
@@ -75,7 +75,7 @@ class DolCookie
 	}
 
 	/**
-	 *      \brief      Decrypt the cookie
+	 *  Decrypt the cookie
 	 */
 	function decryptCookie()
 	{
@@ -97,9 +97,14 @@ class DolCookie
 	}
 
 	/**
-	 *      \brief  Set and create the cookie
-	 *      \param  cookie  Cookie name
-	 *      \param  value   Cookie value
+	 *   Set and create the cookie
+	 *
+	 *   @param  	string		$cookie  	Cookie name
+	 *   @param  	string		$value   	Cookie value
+	 *   @param		string		$expire		Expiration
+	 *   @param		string		$path		Path of cookie
+	 *   @param		string		$domaine	Domain name
+	 *   @param		int			$secure		0 or 1
 	 */
 	function _setCookie($cookie, $value, $expire=0, $path="/", $domain="", $secure=0)
 	{
@@ -116,10 +121,10 @@ class DolCookie
 	}
 
 	/**
-	 *      \brief   Get the cookie
-	 *      \param   cookie         Cookie name
-	 *      \param   value          Cookie value
-	 *      \return  decryptValue   Decrypted value
+	 *  Get the cookie
+	 *
+	 *  @param   	string		$cookie         Cookie name
+	 *  @return  	string						Decrypted value
 	 */
 	function _getCookie($cookie)
 	{

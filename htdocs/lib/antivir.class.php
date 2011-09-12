@@ -39,7 +39,7 @@ class AntiVir
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDB		$DB      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 *	@return AntiVir
 	 */
 	function AntiVir($db)
@@ -50,6 +50,7 @@ class AntiVir
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
+	 *
 	 *	@param	 	file			File to scan
 	 *	@return	 	int				<0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */

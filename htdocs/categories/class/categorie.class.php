@@ -399,14 +399,12 @@ class Categorie
 	/**
 	 * 	Ajout d'une sous-categorie
 	 *
-	 * 	@param	$fille		objet categorie
 	 * 	@return	int			 1 : OK
 	 *          			-2 : $fille est deja dans la famille de $this
 	 *          			-3 : categorie ($this ou $fille) invalide
 	 */
 	function add_fille()
 	{
-
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_association (fk_categorie_mere, fk_categorie_fille)";
 		$sql.= " VALUES (".$this->id_mere.", ".$this->id.")";
 
@@ -488,7 +486,8 @@ class Categorie
 	/**
 	 * Suppresion d'un produit de la categorie
 	 *
-	 * @param 	$prod est un objet de type produit
+	 * @param 	$obj	Object
+	 * @param	$type	Type
 	 * @return 	int		1 if OK, -1 if KO
 	 */
 	function del_type($obj,$type)
@@ -511,9 +510,9 @@ class Categorie
 	/**
 	 * 	Return list of contents of a category
 	 *
-	 * 	@param	field	Field name for select in table. Full field name will be fk_field.
-	 * 	@param	class	PHP Class of object to store entity
-	 * 	@param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
+	 * 	@param	field		Field name for select in table. Full field name will be fk_field.
+	 * 	@param	classname	PHP Class of object to store entity
+	 * 	@param	table		Table name for select in table. Full table name will be PREFIX_categorie_table.
 	 */
 	function get_type($field,$classname,$table='')
 	{
@@ -1212,10 +1211,9 @@ class Categorie
 	/**
 	 *    Build thumb
 	 *
-	 *    @param      sdir           Repertoire destination finale
-	 *    @param      file           Chemin du fichier d'origine
-	 *    @param      maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *    @param      maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *    @param      string	$file           Chemin du fichier d'origine
+	 *    @param      int		$maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
+	 *    @param      int		$maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
 	 */
 	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
 	{
@@ -1231,9 +1229,9 @@ class Categorie
 	/**
 	 *    Return tableau de toutes les photos de la categorie
 	 *
-	 *    @param      dir         Repertoire a scanner
-	 *    @param      nbmax       Nombre maximum de photos (0=pas de max)
-	 *    @return     array       Tableau de photos
+	 *    @param      string	$dir        Repertoire a scanner
+	 *    @param      int		$nbmax      Nombre maximum de photos (0=pas de max)
+	 *    @return     array       			Tableau de photos
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{

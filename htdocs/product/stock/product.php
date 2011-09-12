@@ -296,8 +296,15 @@ if ($_GET["id"] || $_GET["ref"])
 			dol_print_error($db);
 		}
 		print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
-		if ($lastmovementdate) print dol_print_date($lastmovementdate,'dayhour').' ';
-		print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("FullList").'</a>)';
+		if ($lastmovementdate)
+		{
+		    print dol_print_date($lastmovementdate,'dayhour').' ';
+		    print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("FullList").'</a>)';
+		}
+		else
+		{
+		     print '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("None").'</a>';
+		}
 		print "</td></tr>";
 
 		print "</table>";
