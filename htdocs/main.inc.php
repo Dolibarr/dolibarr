@@ -67,7 +67,6 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
  *
  * @param		string		$val		Value
  * @param		string		$get		1=GET, 0=POST
- * @return		boolean					true if ther is an injection
  */
 function test_sql_and_script_inject($val, $get)
 {
@@ -92,7 +91,6 @@ function test_sql_and_script_inject($val, $get)
  *
  * @param		string		$var		Variable name
  * @param		string		$get		1=GET, 0=POST
- * @return		boolean					true if ther is an injection
  */
 function analyse_sql_and_script(&$var, $get)
 {
@@ -117,7 +115,6 @@ function analyse_sql_and_script(&$var, $get)
 		return (test_sql_and_script_inject($var,$get) <= 0);
 	}
 }
-
 // Sanity check on URL
 if (! empty($_SERVER["PHP_SELF"]))
 {

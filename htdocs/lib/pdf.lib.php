@@ -299,7 +299,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
  *   	Show header of page for PDF generation
  *
  *   	@param      PDF			$pdf     		Object PDF
- *      @param      Translate	$outputlangs	Object lang for output
+ *      @param      Translate	$outputlang		Object lang for output
  * 		@param		int			$page_height	Height of page
  */
 function pdf_pagehead(&$pdf,$outputlangs,$page_height)
@@ -1193,9 +1193,9 @@ function pdf_getTotalQty($object,$type='',$outputlangs,$hookmanager=false)
 /**
  *	Convert a currency code into its symbol
  *
- *  @param      PDF		$pdf                 PDF object
- *  @param		string	$currency_code		Currency code
- *  @return		string						Currency symbol encoded into UTF8
+ *  @param      pdf                 PDF object
+ *  @param		currency_code		Currency code
+ *  @param		string				Currency symbol encoded into UTF8
  */
 function pdf_getCurrencySymbol(&$pdf, $currency_code)
 {

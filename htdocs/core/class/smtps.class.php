@@ -565,8 +565,8 @@ class SMTPs
      * This is defaulted to 'localhost'
      * This is  used only with 'socket' based mail transmission
      *
-     * @param 	string 	$_strHost 		Host Name or IP of the Mail Server to use
-     * @return 	void
+     * @param string $_strHost Host Name or IP of the Mail Server to use
+     * @return void
      */
     function setHost($_strHost)
     {
@@ -578,7 +578,7 @@ class SMTPs
      * Retrieves the Host Name or IP of the Mail Server to use
      * This is  used only with 'socket' based mail transmission
      *
-     * @return 	string 	$_strHost 		Host Name or IP of the Mail Server to use
+     * @return string $_strHost Host Name or IP of the Mail Server to use
      */
     function getHost()
     {
@@ -590,8 +590,8 @@ class SMTPs
      * This is defaulted to '25'
      * This is  used only with 'socket' based mail transmission
      *
-     * @param 	int 	$_intPort 		Port Number of the Mail Server to use
-     * @return 	void
+     * @param int $_smtpsPort Port Number of the Mail Server to use
+     * @return void
      */
     function setPort($_intPort)
     {
@@ -604,7 +604,7 @@ class SMTPs
      * Retrieves the Port Number of the Mail Server to use
      * This is  used only with 'socket' based mail transmission
      *
-     * @return 	string 		Port Number of the Mail Server to use
+     * @return string $_smtpsPort Port Number of the Mail Server to use
      */
     function getPort()
     {
@@ -614,10 +614,10 @@ class SMTPs
     /**
      * User Name for authentication on Mail Server
      *
-     * @param 	string 	$_strID 	User Name for authentication on Mail Server
-     * @return 	void
+     * @param string $_strID User Name for authentication on Mail Server
+     * @return void
      */
-    function setID($_strID)
+    function setID($_strID )
     {
         $this->_smtpsID = $_strID;
     }
@@ -625,7 +625,7 @@ class SMTPs
     /**
      * Retrieves the User Name for authentication on Mail Server
      *
-     * @return string 	User Name for authentication on Mail Server
+     * @return string _smtpsID User Name for authentication on Mail Server
      */
     function getID()
     {
@@ -635,8 +635,8 @@ class SMTPs
     /**
      * User Password for authentication on Mail Server
      *
-     * @param 	string 	$_strPW 	User Password for authentication on Mail Server
-     * @return 	void
+     * @param string $_strPW User Password for authentication on Mail Server
+     * @return void
      */
     function setPW($_strPW)
     {
@@ -646,7 +646,7 @@ class SMTPs
     /**
      * Retrieves the User Password for authentication on Mail Server
      *
-     * @return 	string 		User Password for authentication on Mail Server
+     * @return string $_smtpsPW User Password for authentication on Mail Server
      */
     function getPW()
     {
@@ -732,7 +732,7 @@ class SMTPs
     /**
      * Retrieves the Content-Transfer-Encoding
      *
-     * @return 	string 		Content-Transfer-Encoding
+     * @return string $_smtpsTransEncode Content-Transfer-Encoding
      */
     function getTransEncodeType()
     {
@@ -780,8 +780,8 @@ class SMTPs
      * structured array. This array is designed to remove duplicate
      * addresses and to sort them by Domain.
      *
-     * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
-     * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
+     * @param string $_type TO, CC, or BCC lists to add addrresses into
+     * @param mixed $_addrList Array or COMMA delimited string of addresses
      * @return void
      *
      */
@@ -854,8 +854,7 @@ class SMTPs
      * - $_aryEmail[host] = "domain.tld"
      * - $_aryEmail[user] = "userName"
      *
-     *	@param		string		$_strAddr		Email address
-     * 	@return 	array	 					An array of the various parts of an email address
+     * @return array $_aryEmail An array of the various parts of an email address
      */
     function _strip_email($_strAddr)
     {
@@ -897,7 +896,7 @@ class SMTPs
      * This is a "build as you go" method. Each time this method is called
      * the underlaying array is destroyed and reconstructed.
      *
-     * @return 		array		Returns an array of bares addresses
+     * @return array $_RCPT_list Returns an array of bares addresses
      */
     function get_RCPT_list()
     {
@@ -925,10 +924,10 @@ class SMTPs
     /**
      * Returns an array of addresses for a specific type; TO, CC or BCC
      *
-     * @param 		mixed 	$_which 	Which collection of adresses to return
-     * @return 		array 				Array of emaill address
+     * @param mixed $_which Which collection of adresses to return
+     * @return array $_RCPT_list Array of emaill address
      */
-    function get_email_list($_which = null)
+    function get_email_list( $_which = null )
     {
         // We need to know which address segment to pull
         if ( $_which )
@@ -976,10 +975,10 @@ class SMTPs
     /**
      * TO Address[es] inwhich to send mail to
      *
-     * @param 	mixed 	$_addrTo 	TO Address[es] inwhich to send mail to
-     * @return 	void
+     * @param mixed $_addrTo TO Address[es] inwhich to send mail to
+     * @return void
      */
-    function setTO($_addrTo)
+    function setTO ( $_addrTo )
     {
         if ( $_addrTo )
         $this->_buildAddrList( 'to', $_addrTo );
@@ -988,7 +987,7 @@ class SMTPs
     /**
      * Retrieves the TO Address[es] inwhich to send mail to
      *
-     * @return 	string 	TO Address[es] inwhich to send mail to
+     * @return string $_msgRecipients TO Address[es] inwhich to send mail to
      */
     function getTo()
     {
@@ -998,8 +997,8 @@ class SMTPs
     /**
      * CC Address[es] inwhich to send mail to
      *
-     * @param 	string	$_strCC		CC Address[es] inwhich to send mail to
-     * @return 	void
+     * @param string $_msgRecipients CC Address[es] inwhich to send mail to
+     * @return void
      */
     function setCC($_strCC)
     {
@@ -1010,7 +1009,7 @@ class SMTPs
     /**
      * Retrieves the CC Address[es] inwhich to send mail to
      *
-     * @return 	string 		CC Address[es] inwhich to send mail to
+     * @return string $_msgRecipients CC Address[es] inwhich to send mail to
      */
     function getCC()
     {
@@ -1020,8 +1019,8 @@ class SMTPs
     /**
      * BCC Address[es] inwhich to send mail to
      *
-     * @param 	string		$_strBCC	Recipients BCC Address[es] inwhich to send mail to
-     * @return 	void
+     * @param string $_msgRecipients BCC Address[es] inwhich to send mail to
+     * @return void
      */
     function setBCC($_strBCC)
     {
@@ -1032,7 +1031,7 @@ class SMTPs
     /**
      * Retrieves the BCC Address[es] inwhich to send mail to
      *
-     * @return 	string		BCC Address[es] inwhich to send mail to
+     * @return string $_msgRecipients BCC Address[es] inwhich to send mail to
      */
     function getBCC()
     {
@@ -1042,8 +1041,8 @@ class SMTPs
     /**
      * Message Subject
      *
-     * @param 	string 	$_strSubject	Message Subject
-     * @return 	void
+     * @param string $_msgSubject Message Subject
+     * @return void
      */
     function setSubject($_strSubject = '')
     {
@@ -1054,7 +1053,7 @@ class SMTPs
     /**
      * Retrieves the Message Subject
      *
-     * @return 	string 		Message Subject
+     * @return string $_msgSubject Message Subject
      */
     function getSubject()
     {
@@ -1335,8 +1334,8 @@ class SMTPs
      *   - [2] Private
      *   - [3] Company Confidential
      *
-     * @param 	string	$_value		Message Sensitivity
-     * @return 	void
+     * @param string $_value Message Sensitivity
+     * @return void
      */
     function setSensitivity($_value = 0)
     {
@@ -1353,8 +1352,8 @@ class SMTPs
      *   - [2] Private
      *   - [3] Company Confidential
      *
-     * @param 	string 	Message Sensitivity
-     * @return 	void
+     * @param string $_msgSensitivity Message Sensitivity
+     * @return void
      */
     function getSensitivity()
     {
@@ -1371,8 +1370,8 @@ class SMTPs
      *  - [4] 'Low'
      *  - [5] 'Lowest'
      *
-     * @param 	string 	$_value 	Message Priority
-     * @return 	void
+     * @param string $_value Message Priority
+     * @return void
      */
     function setPriority ( $_value = 3 )
     {
@@ -1391,6 +1390,7 @@ class SMTPs
      *  - [4] 'Low'
      *  - [5] 'Lowest'
      *
+     * @param string $_value Message Priority
      * @return void
      */
     function getPriority()
@@ -1403,8 +1403,8 @@ class SMTPs
     /**
      * Set flag which determines whether to calculate message MD5 checksum.
      *
-     * @param 	string 	$_flag		Message Priority
-     * @return 	void
+     * @param string $_value Message Priority
+     * @return void
      */
     function setMD5flag($_flag = false)
     {
@@ -1414,7 +1414,7 @@ class SMTPs
     /**
      * Gets flag which determines whether to calculate message MD5 checksum.
      *
-     * @return 	string 				Message Priority
+     * @return string $_value Message Priority
      */
     function getMD5flag()
     {
