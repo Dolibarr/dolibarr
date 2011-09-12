@@ -143,7 +143,7 @@ class Adherent extends CommonObject
      *  @param 		addr_bcc            email bcc
      *  @param 		deliveryreceipt		demande accuse reception
      *  @param		msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-     *  @param		errorsto			erros to
+     *  @param		errors_to			erros to
      *  @return		int					<0 if KO, >0 if OK
      */
     function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
@@ -1454,6 +1454,7 @@ class Adherent extends CommonObject
 
     /**
      *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
+     *
      *  @return     int     1=existe, 0=n'existe pas, -1=erreur
      */
     function is_in_spip()
@@ -1476,20 +1477,19 @@ class Adherent extends CommonObject
                 {
                     if ($mydb->num_rows($result))
                     {
-                        # nous avons au moins une reponse
+                        // nous avons au moins une reponse
                         $mydb->close($result);
                         return 1;
                     }
                     else
                     {
-                        # nous n'avons pas de reponse => n'existe pas
+                        // nous n'avons pas de reponse => n'existe pas
                         $mydb->close($result);
                         return 0;
                     }
                 }
                 else
                 {
-                    # error
                     $this->error=$mydb->error();
                     return -1;
                 }
@@ -1502,6 +1502,7 @@ class Adherent extends CommonObject
 
     /**
      *  Subscribe an email to all mailing-lists
+     *
      *  @param      listes    To force mailing-list (string separated with ,)
      *  @return		int		  <=0 if KO, >0 if OK
      */
@@ -1544,7 +1545,7 @@ class Adherent extends CommonObject
 				$this->pass,
 				$conf->global->ADHERENT_MAILMAN_ADMINPW
 				);
-				$curl_url = preg_replace ($patterns, $replace, $conf->global->ADHERENT_MAILMAN_URL);
+				$curl_url = preg_replace($patterns, $replace, $conf->global->ADHERENT_MAILMAN_URL);
 
                 dol_syslog("Call URL to subscribe : ".$curl_url);
 				$ch = curl_init();
@@ -1558,7 +1559,7 @@ class Adherent extends CommonObject
 				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
 				//--- Start buffering
 				//ob_start();
-				$result=curl_exec ($ch);
+				$result=curl_exec($ch);
 				dol_syslog($result);
 				//--- End buffering and clean output
 				//ob_end_clean();
@@ -1567,7 +1568,7 @@ class Adherent extends CommonObject
 				    // error
 				    return -2;
 				}
-				curl_close ($ch);
+				curl_close($ch);
 
             }
             return 1;
@@ -1582,6 +1583,7 @@ class Adherent extends CommonObject
     /**
      *  Unsubscribe an email from all mailing-lists
      *  Used when a user is resiliated
+     *
      *  @param      listes      To force mailing-list (string separated with ,)
      *  @return     int         <=0 if KO, >0 if OK
      */
@@ -1629,7 +1631,7 @@ class Adherent extends CommonObject
 				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
 				//--- Start buffering
 				//ob_start();
-				$result=curl_exec ($ch);
+				$result=curl_exec($ch);
 				dol_syslog($result);
 				//--- End buffering and clean output
 				//ob_end_clean();
@@ -1640,7 +1642,7 @@ class Adherent extends CommonObject
 				    // error
 				    return -2;
 				}
-				curl_close ($ch);
+				curl_close($ch);
 
             }
             return 1;
@@ -1654,6 +1656,7 @@ class Adherent extends CommonObject
 
     /**
      *    	Return full name (civility+' '+name+' '+lastname)
+     *
      *		@param		langs			Language object for translation of civility
      *		@param		option			0=No option, 1=Add civility
      * 		@param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
@@ -1691,6 +1694,7 @@ class Adherent extends CommonObject
 
     /**
      *    Return label of a civility of a contact
+     *
      *    @param        nohtmlentities      0=Encode with htmlentities for HTML output, 1=No htmlentities for memory translation
      *    @return       string              Name translated of civility
      */
@@ -1706,6 +1710,7 @@ class Adherent extends CommonObject
 
     /**
      *    	Renvoie nom clicable (avec eventuellement le picto)
+     *
      *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      *		@param		maxlen			length max libelle
      *		@param		option			Page lien
@@ -1740,6 +1745,7 @@ class Adherent extends CommonObject
 
     /**
      * 	Return full address of member
+     *
      * 	@param		withcountry		1=Add country into address string
      *  @param		sep				Separator to use to build string
      *	@return		string			Full address string
@@ -1765,6 +1771,7 @@ class Adherent extends CommonObject
 
     /**
      *    	Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
+     *
      *    	@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *    	@return     string		Libelle
      */
@@ -1775,6 +1782,7 @@ class Adherent extends CommonObject
 
     /**
      *    	Renvoi le libelle d'un statut donne
+     *
      *    	@param      statut      			Id statut
      *		@param		need_subscription		1 si type adherent avec cotisation, 0 sinon
      *		@param		date_end_subscription	Date fin adhesion
@@ -1856,6 +1864,7 @@ class Adherent extends CommonObject
 
     /**
      *      Charge indicateurs this->nb de tableau de bord
+     *
      *      @return     int         <0 si ko, >0 si ok
      */
     function load_state_board()
@@ -1889,6 +1898,7 @@ class Adherent extends CommonObject
 
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
      *      @param          user    Objet user
      *      @return         int     <0 if KO, >0 if OK
      */
@@ -1979,6 +1989,7 @@ class Adherent extends CommonObject
 
     /**
      *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+     *
      *	@param		info		Info string loaded by _load_ldap_info
      *	@param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
      *							1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
@@ -1998,6 +2009,7 @@ class Adherent extends CommonObject
 
     /**
      *	Initialise tableau info (tableau des attributs LDAP)
+     *
      *	@return		array		Tableau info des attributs
      */
     function _load_ldap_info()
@@ -2044,7 +2056,8 @@ class Adherent extends CommonObject
 
     /**
      *      Charge les informations d'ordre info dans l'objet adherent
-     *      @param     id       Id du membre a charger
+     *
+     *      @param     int		$id       Id of member to load
      */
     function info($id)
     {
