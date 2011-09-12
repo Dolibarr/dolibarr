@@ -33,14 +33,14 @@ require_once(DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php');
 
 $langs->load("admin");
 $langs->load("errors");
-$langs->load("interventions");
+/*$langs->load("other");
+$langs->load("interventions");*/
 
 if (!$user->admin)
 accessforbidden();
 
 $action = GETPOST("action");
 $value = GETPOST("value");
-
 
 /*
  * Actions

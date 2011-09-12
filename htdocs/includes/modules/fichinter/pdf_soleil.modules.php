@@ -2,7 +2,6 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011      Fabrice CHERRIER (12/05/2011) http://www.fcinc.fr
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +26,6 @@
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
 
 
 /**
@@ -272,32 +270,25 @@ class pdf_soleil extends ModelePDFFicheinter
 					$height_note=0;
 				}
 
-				$pdf->SetXY($this->marge_gauche, $tab_top);
+				$pdf->SetXY (10, $tab_top);
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
-				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8 );
+				$pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
 
 				$pdf->SetFont('','', $default_font_size - 1);
 
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
-				$pdf->SetXY($this->marge_gauche, $tab_top + 8 );
-				$text=$fichinter->description;
-				if ($fichinter->duree > 0)
-				{
-				    $totaltime=ConvertSecondToTime($fichinter->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
-				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
-				}
-				$desc=dol_htmlentitiesbr($text,1);
+				$pdf->SetXY (10, $tab_top + 8 );
+				$desc=dol_htmlentitiesbr($fichinter->description,1);
 				//print $outputlangs->convToOutputCharset($desc); exit;
-
 				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
 				$nexY = $pdf->GetY();
 
-				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
+				$pdf->line(10, $nexY, 200, $nexY);
 
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
 
 				//dol_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
-				$nblignes = count($fichinter->lines);
+				$nblignes = sizeof($fichinter->lines);
 
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
@@ -308,16 +299,16 @@ class pdf_soleil extends ModelePDFFicheinter
 					$fichinterligne = $fichinter->lines[$i];
 
 					$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
-					if ($valide>0 || $fichinter->specimen)
+					if ($valide>0)
 					{
 						$curY = $nexY+3;
 
-						$pdf->SetXY($this->marge_gauche, $curY);
+						$pdf->SetXY (10, $curY);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY,
 						dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
 						$nexY = $pdf->GetY();
 
-						$pdf->SetXY($this->marge_gauche, $curY + 3);
+						$pdf->SetXY (10, $curY + 3);
 						$desc = dol_htmlentitiesbr($fichinterligne->desc,1);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY + 3, $desc, 0, 1, 0);
 						$nexY+=dol_nboflines_bis($fichinterligne->desc,52,$outputlangs->charset_output)*3;
@@ -326,8 +317,8 @@ class pdf_soleil extends ModelePDFFicheinter
 				//$pdf->line(10, $tab_top+$tab_height+3, 200, $tab_top+$tab_height+3);
 
 				// Rectangle for title and all lines
-				$pdf->Rect($this->marge_gauche, $tab_top, ($this->page_largeur-$this->marge_gauche-$this->marge_droite), $tab_height+3);
-				$pdf->SetXY($this->marge_gauche, $pdf->GetY() + 20);
+				$pdf->Rect(10, $tab_top, 190, $tab_height+3);
+				$pdf->SetXY (10, $pdf->GetY() + 20);
 				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
 				$pdf->SetXY(20,220);
