@@ -16,16 +16,16 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/default/dao_thirdparty_default.class.php
+ *	\file       htdocs/societe/canvas/company/dao_thirdparty_company.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe des tiers par defaut
  */
 
 /**
- *	\class      DaoThirdPartyDefault
+ *	\class      DaoThirdPartyCompany
  *	\brief      Classe permettant la gestion des tiers par defaut, cette classe surcharge la classe societe
  */
-class DaoThirdPartyDefault extends Societe
+class DaoThirdPartyCompany extends Societe
 {
 	var $db;
 
@@ -33,10 +33,11 @@ class DaoThirdPartyDefault extends Societe
 	var $errno = 0;
 
 	/**
-	 *    Constructeur de la classe
-	 *    @param	DB		Handler acces base de donnees
+	 *    Constructor
+	 *    
+	 *    @param	DoliDB		$DB		Databae handler
 	 */
-	function DaoThirdPartyDefault($DB)
+	function DaoThirdPartyCompany($DB)
 	{
 		$this->db = $DB;
 	}

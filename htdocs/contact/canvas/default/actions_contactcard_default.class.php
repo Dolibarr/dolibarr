@@ -52,14 +52,6 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 
 	/**
-     *    Assigne les valeurs POST dans l'objet
-     */
-    function assign_post()
-    {
-    	parent::assign_post();
-    }
-
-	/**
 	 *    Assign custom values for canvas
 	 *
 	 *    @param      string	$action     Type of action
@@ -69,7 +61,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		global $conf, $db, $langs, $user;
 		global $form;
 
-		parent::assign_values($action);
+        parent::assign_values($action);
 
         $this->tpl['title'] = $this->getTitle($action);
         $this->tpl['error'] = $this->error;

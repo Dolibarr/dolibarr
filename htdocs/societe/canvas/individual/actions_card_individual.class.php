@@ -53,7 +53,7 @@ class ActionsCardIndividual extends ActionsCardCommon
     /**
      *  Return the title of card
      */
-    function getTitle($action)
+    private function getTitle($action)
     {
         global $langs;
 
@@ -84,7 +84,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 *
 	 *  @param		string	$action		Type of action
 	 */
-	function assign_values($action='')
+	function assign_values($action)
 	{
 		global $conf, $langs;
 		global $form, $formcompany;

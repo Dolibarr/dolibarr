@@ -65,7 +65,7 @@ class ActionsCardProduct extends Product
     /**
      *  Return the title of card
      */
-	function getTitle()
+	private function getTitle()
 	{
 		global $langs;
 
@@ -77,11 +77,71 @@ class ActionsCardProduct extends Product
 	 *
 	 *    @param      action     Type of action
 	 */
-	function assign_values($action='')
+	function assign_values($action)
 	{
 		global $conf,$langs,$user;
 		global $html, $formproduct;
 
+		// canvas
+		$this->tpl['canvas'] = $this->canvas;
+
+		// id
+		$this->tpl['id'] = $this->id;
+
+		// Ref
+		$this->tpl['ref'] = $this->ref;
+
+		// Label
+		$this->tpl['label'] = $this->libelle;
+
+		// Description
+		$this->tpl['description'] = nl2br($this->description);
+
+		// Statut
+		$this->tpl['status'] = $this->getLibStatut(2);
+
+		// Note
+		$this->tpl['note'] = nl2br($this->note);
+
+		if ($action == 'create')
+		{
+			// Price
+			$this->tpl['price'] = $this->price;
+			$this->tpl['price_min'] = $this->price_min;
+			$this->tpl['price_base_type'] = $html->load_PriceBaseType($this->price_base_type, "price_base_type");
+
+			// VAT
+			$this->tpl['tva_tx'] = $html->load_tva("tva_tx",-1,$mysoc,'');
+		}
+
+		if ($action == 'create' || $action == 'edit')
+		{
+			// Status
+			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+			$this->tpl['status'] = $html->selectarray('statut',$statutarray,$this->status);
+
+			//To Buy
+			$statutarray=array('1' => $langs->trans("Yes"), '0' => $langs->trans("No"));
+			$this->tpl['tobuy'] = $html->selectarray('tobuy',$statutarray,$this->status_buy);
+
+            $this->tpl['description'] = $this->description;
+            $this->tpl['note'] = $this->note;
+		}
+
+		if ($action == 'view')
+		{
+			// Ref
+			$this->tpl['ref'] = $html->showrefnav($this,'ref','',1,'ref');
+
+			// Accountancy buy code
+			$this->tpl['accountancyBuyCodeKey'] = $html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,'id',$this->id,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,'id',$this->id,$user->rights->produit->creer);
+
+			// Accountancy sell code
+			$this->tpl['accountancySellCodeKey'] = $html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
+		}
+		
 		$this->tpl['finished'] = $this->object->finished;
 		$this->tpl['ref'] = $this->object->ref;
 		$this->tpl['label'] = $this->object->label;
@@ -190,7 +250,7 @@ class ActionsCardProduct extends Product
 	/**
 	 * 	Fetch field list
 	 */
-	function getFieldList()
+	private function getFieldList()
 	{
 		global $conf, $langs;
 

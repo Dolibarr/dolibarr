@@ -56,7 +56,7 @@ $object = new Product($db);
 $extrafields = new ExtraFields($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-if ($id || $ref) $object->getCanvas($id,$ref);
+$object->getCanvas($id,$ref);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
@@ -68,7 +68,7 @@ if (! empty($canvas))
 // Security check
 if (isset($id) || isset($ref)) $value = isset($id)?$id:(isset($ref)?$ref:'');
 $type = isset($ref)?'ref':'rowid';
-$result=restrictedArea($user,'produit|service',$value,'product','','',$type);
+$result=restrictedArea($user,'produit|service',$value,'product','','',$type, $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -644,7 +644,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if ($action == 'create')
     {
-        $objcanvas->assign_post();              // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);     // Set value for templates
         $objcanvas->display_canvas($action,0);  // Show template
     }
@@ -657,7 +656,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             $object->fetch($id);
             $objcanvas->control->object=$object;
         }
-        $objcanvas->assign_post();              // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);     // Set value for templates
         $objcanvas->display_canvas($action);    // Show template
     }

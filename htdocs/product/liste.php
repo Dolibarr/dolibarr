@@ -58,26 +58,19 @@ $limit = $conf->liste_limit;
 
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-//if ($id) $object->getCanvas($id);
+//$object->getCanvas($id);
 $canvas = GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('product','list',$canvas);
+}
 
-    // Security check
-    if ($type=='0') $result=$objcanvas->restrictedArea($user,'produit');
-    else if ($type=='1') $result=$objcanvas->restrictedArea($user,'service');
-    else $result=$objcanvas->restrictedArea($user,'produit|service');
-}
-else
-{
-    // Security check
-    if ($type=='0') $result=restrictedArea($user,'produit');
-    else if ($type=='1') $result=restrictedArea($user,'service');
-    else $result=restrictedArea($user,'produit|service');
-}
+// Security check
+if ($type=='0') $result=restrictedArea($user,'produit','','','','','',$objcanvas);
+else if ($type=='1') $result=restrictedArea($user,'service','','','','','',$objcanvas);
+else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
 
 
 /*

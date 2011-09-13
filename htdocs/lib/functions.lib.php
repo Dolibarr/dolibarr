@@ -2038,27 +2038,34 @@ function info_admin($text,$infoonimgalt=0)
  *	@param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
  *	@param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
  *	@param      feature2		Feature to check, second level of permission (optionnal)
- *  @param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
- *  @param      dbt_select      Field name for select if not rowid. (optionnal)
+ *  @param      dbt_keyfield    Field name for socid foreign key if not fk_soc (optionnal)
+ *  @param      dbt_select      Field name for select if not rowid (optionnal)
+ *  @param		objcanvas		Object canvas	
  * 	@return		int				Always 1, die process if not allowed
  */
-function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
+function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
     global $db, $conf;
 
     //dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
-    if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
-
     //print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
     //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
     //print ", perm: ".$features."->".$feature2."=".$user->rights->$features->$feature2->lire."<br>";
+    
+    // If we use canvas, we try to use function that overlod restrictarea if provided with canvas
+    if (is_object($objcanvas))
+    {
+	    if (method_exists($objcanvas->control,'restrictedArea')) return $objcanvas->control->restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
+    }
+    
+    if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
     // More features to check
     $features = explode("&",$features);
     //var_dump($features);
 
     // Check read permission from module
-    // TODO Replace "feature" param by permission for reading
+    // TODO Replace "feature" param into caller by first level of permission
     $readok=1;
     foreach ($features as $feature)
     {
