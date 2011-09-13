@@ -235,6 +235,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	if (preg_match('/\.xls(b|m|x)?$/i',$tmpfile))			   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
 	if (preg_match('/\.xlt(x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
 	if (preg_match('/\.xla(m)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
+	if (preg_match('/\.xsl(b|m|x)?$/i',$tmpfile))			   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
 	if (preg_match('/\.pps(m|x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-powerpoint'; $imgmime='ppt.png'; }
 	if (preg_match('/\.ppt(m|x)?$/i',$tmpfile))				   { $mime='application/x-mspowerpoint'; $imgmime='ppt.png'; }
 	// Other

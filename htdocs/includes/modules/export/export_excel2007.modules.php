@@ -23,13 +23,14 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/export/modules_export.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/export/export_excel.modules.php");
 
 
 /**
- *	\class      ExportExcel
+ *	\class      ExportExcel2007
  *	\brief      Class to build export files with Excel format
  */
-class ExportExcel extends ModeleExports
+class ExportExcel2007 extends ExportExcel
 {
 	var $id;
 	var $label;
@@ -51,16 +52,16 @@ class ExportExcel extends ModeleExports
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
-	function ExportExcel($db)
+	function ExportExcel2007($db)
 	{
 		global $conf;
 		$this->db = $db;
 
-		$this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 95';             // Label of driver
-		$this->desc='<b>Excel</b> file format (.xls)<br>This is native Excel 95 format.';
-		$this->extension='xls';             // Extension for generated file by this driver
-        $this->picto='mime/xls';					// Picto
+		$this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
+		$this->label='Excel 2007';               // Label of driver
+		$this->desc='<b>Excel</b> file format (.xslx)<br>This is native Excel 2007 format.';
+		$this->extension='xslx';             // Extension for generated file by this driver
+        $this->picto='mime/xls';			// Picto
 		$this->version='1.30';             // Driver version
 
 		// If driver use an external library, put its name here
@@ -339,7 +340,7 @@ class ExportExcel extends ModeleExports
     	else
     	{
             require_once(PHPEXCEL_PATH."PHPExcel/Writer/Excel5.php");
-    	    $objWriter = new PHPExcel_Writer_Excel5($this->workbook);
+    	    $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
             $objWriter->save($this->file);
             $this->workbook->disconnectWorksheets();
             unset($this->workbook);
