@@ -53,7 +53,7 @@ class ActionsCardIndividual extends ActionsCardCommon
     /**
      *  Return the title of card
      */
-    function getTitle($action)
+    private function getTitle($action)
     {
         global $langs;
 

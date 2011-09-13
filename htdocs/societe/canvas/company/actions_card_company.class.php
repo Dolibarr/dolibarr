@@ -17,17 +17,17 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/default/actions_card_default.class.php
+ *	\file       htdocs/societe/canvas/default/actions_card_company.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty card controller (default canvas)
  */
 include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 
 /**
- *	\class      ActionsCardDefault
+ *	\class      ActionsCardCompany
  *	\brief      Class with controller methods for thirdparty canvas
  */
-class ActionsCardDefault extends ActionsCardCommon
+class ActionsCardCompany extends ActionsCardCommon
 {
 	var $db;
     var $targetmodule;
@@ -42,7 +42,7 @@ class ActionsCardDefault extends ActionsCardCommon
      *    @param   string	$canvas         Name of canvas
      *    @param   string	$card           Name of tab (sub-canvas)
 	 */
-	function ActionsCardDefault($DB,$targetmodule,$canvas,$card)
+	function ActionsCardCompany($DB,$targetmodule,$canvas,$card)
 	{
         $this->db               = $DB;
         $this->targetmodule     = $targetmodule;
@@ -53,7 +53,7 @@ class ActionsCardDefault extends ActionsCardCommon
     /**
      *  Return the title of card
      */
-    function getTitle($action)
+    private function getTitle($action)
     {
         global $langs;
 
@@ -96,7 +96,8 @@ class ActionsCardDefault extends ActionsCardCommon
 		$this->tpl['profid3'] 	= $this->object->ape;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
 
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) {
+		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) 
+		{
 			$js = "\n";
 	        $js.= '<script language="JavaScript" type="text/javascript">';
 	        $js.= "function CheckVAT(a) {\n";

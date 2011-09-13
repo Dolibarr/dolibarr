@@ -65,7 +65,7 @@ class ActionsCardService extends Product
     /**
      *  Return the title of card
      */
-	function getTitle()
+	private function getTitle()
 	{
 		global $langs;
 

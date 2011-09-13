@@ -65,7 +65,7 @@ class ActionsCardProduct extends Product
     /**
      *  Return the title of card
      */
-	function getTitle()
+	private function getTitle()
 	{
 		global $langs;
 
@@ -250,7 +250,7 @@ class ActionsCardProduct extends Product
 	/**
 	 * 	Fetch field list
 	 */
-	function getFieldList()
+	private function getFieldList()
 	{
 		global $conf, $langs;
 
