@@ -1511,6 +1511,59 @@ abstract class CommonObject
 
 
     /**
+	 *     Add/Update extra fields
+	 */
+	function insertExtraFields()
+	{
+	    if (sizeof($this->array_options) > 0)
+        {
+            $this->db->begin();
+
+            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+            dol_syslog(get_class($this)."::insertExtraFields delete sql=".$sql_del);
+            $this->db->query($sql_del);
+
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
+            foreach($this->array_options as $key => $value)
+            {
+                // Add field of attribut
+                $sql.=",".substr($key,8);   // Remove 'options_' prefix
+            }
+            $sql .= ") VALUES (".$this->id;
+            foreach($this->array_options as $key => $value)
+            {
+                // Add field o fattribut
+                if ($this->array_options[$key] != '')
+                {
+                    $sql.=",'".$this->array_options[$key]."'";
+                }
+                else
+                {
+                    $sql.=",null";
+                }
+            }
+            $sql.=")";
+
+            dol_syslog(get_class($this)."::insertExtraFields insert sql=".$sql);
+            $resql = $this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+                $this->db->rollback();
+                return -1;
+            }
+            else
+            {
+                $this->db->commit();
+                return 1;
+            }
+        }
+        else return 0;
+	}
+    
+    
+    /**
      *  Function to check if an object is used by others
      *
      *  @param		id				Id of object
@@ -1977,59 +2030,6 @@ abstract class CommonObject
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
 
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
-	}
-
-
-	/**
-	 *     Add/Update extra fields
-	 */
-	function insertExtraFields()
-	{
-	    if (sizeof($this->array_options) > 0)
-        {
-            $this->db->begin();
-
-            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
-            dol_syslog(get_class($this)."::insertExtraFields delete sql=".$sql_del);
-            $this->db->query($sql_del);
-
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
-            foreach($this->array_options as $key => $value)
-            {
-                // Add field of attribut
-                $sql.=",".substr($key,8);   // Remove 'options_' prefix
-            }
-            $sql .= ") VALUES (".$this->id;
-            foreach($this->array_options as $key => $value)
-            {
-                // Add field o fattribut
-                if ($this->array_options[$key] != '')
-                {
-                    $sql.=",'".$this->array_options[$key]."'";
-                }
-                else
-                {
-                    $sql.=",null";
-                }
-            }
-            $sql.=")";
-
-            dol_syslog(get_class($this)."::insertExtraFields insert sql=".$sql);
-            $resql = $this->db->query($sql);
-            if (! $resql)
-            {
-                $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
-                $this->db->rollback();
-                return -1;
-            }
-            else
-            {
-                $this->db->commit();
-                return 1;
-            }
-        }
-        else return 0;
 	}
 }
 
