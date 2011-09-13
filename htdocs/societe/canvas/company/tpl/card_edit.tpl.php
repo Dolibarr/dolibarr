@@ -97,7 +97,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 				<input type="hidden" name="code_fournisseur" value="<?php echo $this->control->tpl['suppliercode']; ?>">
 				<?php } ?>
 				</td>
-				<td><?php echo $this->tpl['help_suppliercode']; ?></td>
+				<td><?php echo $this->control->tpl['help_suppliercode']; ?></td>
 			</tr>
 		</table>
 	</td>
