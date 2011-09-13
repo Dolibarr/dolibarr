@@ -1298,7 +1298,7 @@ white-space: nowrap;
 
 .impair {
 /* background: #d0d4d7; */
-background: #eaeaea;
+background: #f6f6f6;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 margin-bottom: 1px;
