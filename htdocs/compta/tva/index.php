@@ -33,11 +33,11 @@ $langs->load("other");
 $year=$_GET["year"];
 if ($year == 0 )
 {
-  $year_current = strftime("%Y",time());
-  $year_start = $year_current;
+    $year_current = strftime("%Y",time());
+    $year_start = $year_current;
 } else {
-  $year_current = $year;
-  $year_start = $year;
+    $year_current = $year;
+    $year_start = $year;
 }
 
 // Security check
@@ -62,27 +62,27 @@ function pt ($db, $sql, $date)
         $num = $db->num_rows($result);
         $i = 0;
         $total = 0;
-        print "<table class=\"noborder\" width=\"100%\">";
-        print "<tr class=\"liste_titre\">";
-        print "<td nowrap width=\"60%\">$date</td>";
-        print "<td align=\"right\">".$langs->trans("Amount")."</td>";
-        print "<td>&nbsp;</td>\n";
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td nowrap="nowrap" width="60%">'.$date.'</td>';
+        print '<td align="right">'.$langs->trans("Amount").'</td>';
+        print '<td>&nbsp;</td>'."\n";
         print "</tr>\n";
         $var=True;
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
             $var=!$var;
-            print "<tr $bc[$var]>";
-            print "<td nowrap>$obj->dm</td>\n";
+            print '<tr '.$bc[$var].'>';
+            print '<td nowrap="nowrap">'.$obj->dm."</td>\n";
             $total = $total + $obj->mm;
 
-            print "<td nowrap align=\"right\">".price($obj->mm)."</td><td >&nbsp;</td>\n";
+            print '<td nowrap="nowrap" align="right">'.price($obj->mm)."</td><td >&nbsp;</td>\n";
             print "</tr>\n";
 
             $i++;
         }
-        print "<tr class=\"liste_total\"><td align=\"right\">".$langs->trans("Total")." :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>";
+        print '<tr class="liste_total"><td align="right">'.$langs->trans("Total")." :</td><td nowrap=\"nowrap\" align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>";
 
         print "</table>";
         $db->free($result);
@@ -141,71 +141,71 @@ $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )
 {
-	$coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
-	$coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
+    $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
+    $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
 
-	if (! is_array($coll_listbuy) && $coll_listbuy == -1)
-	{
-		$langs->load("errors");
-		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-		break;
-	}
-	if (! is_array($coll_listbuy) && $coll_listbuy == -2)
-	{
-		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-		break;
-	}
+    if (! is_array($coll_listbuy) && $coll_listbuy == -1)
+    {
+        $langs->load("errors");
+        print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
+        break;
+    }
+    if (! is_array($coll_listbuy) && $coll_listbuy == -2)
+    {
+        print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+        break;
+    }
 
-	$var=!$var;
-	print "<tr $bc[$var]>";
-	print '<td nowrap>'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
+    $var=!$var;
+    print "<tr $bc[$var]>";
+    print '<td nowrap><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
 
-	$x_coll = 0;
-	foreach($coll_listsell as $vatrate=>$val)
-	{
-		$x_coll+=$val['vat'];
-	}
-	$subtotalcoll = $subtotalcoll + $x_coll;
-	print "<td nowrap align=\"right\">".price($x_coll)."</td>";
+    $x_coll = 0;
+    foreach($coll_listsell as $vatrate=>$val)
+    {
+        $x_coll+=$val['vat'];
+    }
+    $subtotalcoll = $subtotalcoll + $x_coll;
+    print "<td nowrap align=\"right\">".price($x_coll)."</td>";
 
-	$x_paye = 0;
-	foreach($coll_listbuy as $vatrate=>$val)
-	{
-		$x_paye+=$val['vat'];
-	}
-	$subtotalpaye = $subtotalpaye + $x_paye;
-	print "<td nowrap align=\"right\">".price($x_paye)."</td>";
+    $x_paye = 0;
+    foreach($coll_listbuy as $vatrate=>$val)
+    {
+        $x_paye+=$val['vat'];
+    }
+    $subtotalpaye = $subtotalpaye + $x_paye;
+    print "<td nowrap align=\"right\">".price($x_paye)."</td>";
 
-	$diff = $x_coll - $x_paye;
-	$total = $total + $diff;
-	$subtotal = $subtotal + $diff;
+    $diff = $x_coll - $x_paye;
+    $total = $total + $diff;
+    $subtotal = $subtotal + $diff;
 
-	print "<td nowrap align=\"right\">".price($diff)."</td>\n";
-	print "<td>&nbsp;</td>\n";
-	print "</tr>\n";
+    print "<td nowrap align=\"right\">".price($diff)."</td>\n";
+    print "<td>&nbsp;</td>\n";
+    print "</tr>\n";
 
-	$i++;
-	if ($i > 2) {
-		print '<tr class="liste_total">';
-		print '<td align="right">'.$langs->trans("SubTotal").':</td>';
-		print '<td nowrap align="right">'.price($subtotalcoll).'</td>';
-		print '<td nowrap align="right">'.price($subtotalpaye).'</td>';
-		print '<td nowrap align="right">'.price($subtotal).'</td>';
-		print '<td>&nbsp;</td></tr>';
-		$i = 0;
-		$subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
-	}
+    $i++;
+    if ($i > 2) {
+        print '<tr class="liste_total">';
+        print '<td align="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.($m/3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
+        print '<td nowrap="nowrap" align="right">'.price($subtotalcoll).'</td>';
+        print '<td nowrap="nowrap" align="right">'.price($subtotalpaye).'</td>';
+        print '<td nowrap="nowrap" align="right">'.price($subtotal).'</td>';
+        print '<td>&nbsp;</td></tr>';
+        $i = 0;
+        $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
+    }
 }
 print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td nowrap align="right">'.price($total).'</td>';
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
 /*}
-else
-{
-	print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-	print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
-}*/
+ else
+ {
+ print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+ print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
+ }*/
 
 print '</table>';
 
@@ -213,8 +213,8 @@ print '</table>';
 echo '</td><td>&nbsp;</td><td valign="top" width="50%">';
 
 /*
-* Payed
-*/
+ * Payed
+ */
 
 $sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
