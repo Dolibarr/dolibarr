@@ -36,23 +36,23 @@ $socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 
-$search_nom=trim(isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"]);
-$search_nom_only=trim(isset($_GET["search_nom_only"])?$_GET["search_nom_only"]:$_POST["search_nom_only"]);
-$search_all=trim(isset($_GET["search_all"])?$_GET["search_all"]:$_POST["search_all"]);
-$search_ville=trim(isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"]);
-$socname=trim(isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"]);
-$search_idprof1=trim($_REQUEST['search_idprof1']);
-$search_idprof2=trim($_REQUEST['search_idprof2']);
-$search_idprof3=trim($_REQUEST['search_idprof3']);
-$search_idprof4=trim($_REQUEST['search_idprof4']);
+$search_nom=trim(GETPOST("search_nom"));
+$search_nom_only=trim(GETPOST("search_nom_only"));
+$search_all=trim(GETPOST("search_all"));
+$search_ville=trim(GETPOT("search_ville"));
+$socname=trim(GETPOST("socname"));
+$search_idprof1=trim(GETPOST('search_idprof1'));
+$search_idprof2=trim(GETPOST('search_idprof2'));
+$search_idprof3=trim(GETPOST('search_idprof3'));
+$search_idprof4=trim(GETPOST('search_idprof4'));
+$search_sale=trim(GETPOST("search_sale"));
+$search_categ=trim(GETPOST("search_categ"));
+$mode=GETPOST("mode");
+$modesearch=GETPOST("mode-search");
 
-// Load sale and categ filters
-$search_sale = GETPOST("search_sale");
-$search_categ = GETPOST("search_categ");
-
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sortfield=GETPOST("sortfield");
+$sortorder=GETPOST("sortorder");
+$page=GETPOST("page");
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 if ($page == -1) { $page = 0 ; }
@@ -66,12 +66,9 @@ $pagenext = $page + 1;
  */
 
 // Recherche
-$mode=isset($_GET["mode"])?$_GET["mode"]:$_POST["mode"];
-$modesearch=isset($_GET["mode-search"])?$_GET["mode-search"]:$_POST["mode-search"];
-
 if ($mode == 'search')
 {
-	$_POST["search_nom"]=$socname;
+	$search_nom=$socname;
 
 	$sql = "SELECT s.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -115,13 +112,6 @@ if ($mode == 'search')
 		}
 		$db->free($result);
 	}
-}
-
-// Security check
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
 }
 
 

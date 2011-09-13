@@ -56,21 +56,17 @@ $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-if ($socid) $object->getCanvas($socid);
+$object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('thirdparty','card',$canvas);
-    // Security check
-    $result = $objcanvas->restrictedArea($user, 'societe', $socid);
 }
-else
-{
-    // Security check
-    $result = restrictedArea($user, 'societe', $socid);
-}
+
+// Security check
+$result = restrictedArea($user, 'societe', $socid, '', '', '', '', $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -492,7 +488,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if ($action == 'create')
     {
-        $objcanvas->assign_post();              // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);     // Set value for templates
         $objcanvas->display_canvas($action,0);  // Show template
     }
@@ -505,7 +500,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             $object->fetch($socid);
             $objcanvas->control->object=$object;
         }
-        $objcanvas->assign_post();              // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);     // Set value for templates
         $objcanvas->display_canvas($action);    // Show template
     }

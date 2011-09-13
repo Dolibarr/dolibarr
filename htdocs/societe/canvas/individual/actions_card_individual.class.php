@@ -84,7 +84,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 *
 	 *  @param		string	$action		Type of action
 	 */
-	function assign_values($action='')
+	function assign_values($action)
 	{
 		global $conf, $langs;
 		global $form, $formcompany;

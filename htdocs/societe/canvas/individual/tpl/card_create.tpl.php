@@ -29,9 +29,9 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 <?php echo $this->control->tpl['ajax_selecttype']; ?>
 <br>
 <?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
-<input type="radio" id="radiocompany" class="flat" name="private" value="0"'<?php echo (! $_REQUEST["private"]?' checked="checked"':''); ?>>
+<input type="radio" id="radiocompany" class="flat" name="private" value="0">
 <?php echo $langs->trans("Company/Fundation"); ?> &nbsp; &nbsp;
-<input type="radio" id="radioprivate" class="flat" name="private" value="1"'<?php echo (! $_REQUEST["private"]?'':' checked="checked"'); ?>> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
+<input type="radio" id="radioprivate" class="flat" name="private" value="1" checked="checked"> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
 <br>
 <br>
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>

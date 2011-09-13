@@ -47,22 +47,17 @@ if ($user->societe_id) $socid=$user->societe_id;
 $object = new Contact($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-if ($id) $object->getCanvas($id);
+$object->getCanvas($id);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('contact','contactcard',$canvas);
+}
 
-    // Security check
-    $result = $objcanvas->restrictedArea($user, 'contact', $id, 'socpeople');
-}
-else
-{
-    // Security check
-    $result = restrictedArea($user, 'contact', $id, 'socpeople'); // If we create a contact with no company (shared contacts), no check on write permission
-}
+// Security check
+$result = restrictedArea($user, 'contact', $id, 'socpeople', '', '', '', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -300,7 +295,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if ($action == 'create')
     {
-        $objcanvas->assign_post();            // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }
@@ -313,7 +307,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             $object->fetch($id,$user);
             $objcanvas->control->object=$object;
         }
-       	$objcanvas->assign_post();            // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }

@@ -213,6 +213,8 @@ abstract class ActionsContactCardCommon
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
+        if ($action == 'create' || $action == 'edit') $this->assign_post($action);
+        
         foreach($this->object as $key => $value)
         {
             $this->tpl[$key] = $value;
@@ -395,7 +397,7 @@ abstract class ActionsContactCardCommon
     /**
      *    Assigne les valeurs POST dans l'objet
      */
-    function assign_post()
+    function assign_post($action)
     {
         global $langs, $mysoc;
 

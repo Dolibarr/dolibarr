@@ -84,7 +84,7 @@ class ActionsCardDefault extends ActionsCardCommon
 	 *
 	 *    @param	string	$action     Type of action
 	 */
-	function assign_values($action='')
+	function assign_values($action)
 	{
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;

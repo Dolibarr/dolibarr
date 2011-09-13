@@ -365,11 +365,13 @@ abstract class ActionsCardCommon
      *    Assigne les valeurs par defaut pour le canvas
      *    @param      action     Type of template
      */
-    function assign_values($action='')
+    function assign_values($action)
     {
         global $conf, $langs, $user, $mysoc, $canvas;
         global $form, $formadmin, $formcompany;
 
+        if ($action == 'create' || $action == 'edit') $this->assign_post();
+        
         if ($_GET["type"]=='f')  		{ $this->object->fournisseur=1; }
         if ($_GET["type"]=='c')  		{ $this->object->client=1; }
         if ($_GET["type"]=='p')  		{ $this->object->client=2; }
@@ -650,7 +652,7 @@ abstract class ActionsCardCommon
     /**
      *    Assigne les valeurs POST dans l'objet
      */
-    function assign_post()
+    function assign_post($action)
     {
         global $langs, $mysoc;
 
