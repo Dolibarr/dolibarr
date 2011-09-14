@@ -208,9 +208,11 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 		$body=make_substitutions($body,$substitutionarrayfortest);
 
 		require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
-		$filepath,$mimetype,$filename,
-		$sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml,$errors_to);
+		$mailfile = new CMailFile(
+			$subject, $sendto, $email_from, $body,
+			$filepath, $mimetype, $filename,
+			$sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml, $errors_to
+		);
 
 		$result=$mailfile->sendfile();
 
@@ -270,10 +272,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
 	$html=new Form($db);
 
-    if ($conf->use_javascript_ajax)
-    {
-        print "\n".'<script type="text/javascript" language="javascript">';
-        print 'jQuery(document).ready(function () {
+	if ($conf->use_javascript_ajax)
+	{
+		print "\n".'<script type="text/javascript" language="javascript">';
+		print 'jQuery(document).ready(function () {
                     function initfields()
                     {
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'mail\')
@@ -282,12 +284,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_TLS").attr(\'disabled\', \'disabled\');
                             ';
-        if ($linuxlike)
-        {
-            print '         jQuery("#MAIN_MAIL_SMTP_SERVER").attr(\'disabled\', \'disabled\');';
-            print '         jQuery("#MAIN_MAIL_SMTP_PORT").attr(\'disabled\', \'disabled\');';
-        }
-        print '
+		if ($linuxlike)
+		{
+			print '         jQuery("#MAIN_MAIL_SMTP_SERVER").attr(\'disabled\', \'disabled\');';
+			print '         jQuery("#MAIN_MAIL_SMTP_PORT").attr(\'disabled\', \'disabled\');';
+		}
+		print '
                         }
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\')
                         {
@@ -303,8 +305,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
                         initfields();
                     });
                })';
-        print '</script>'."\n";
-    }
+		print '</script>'."\n";
+	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -357,8 +359,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	else
 	{
 		$smtpserver = ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined");
-        if ($linuxlike) print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
-        else print $langs->trans("MAIN_MAIL_SMTP_SERVER",$smtpserver);
+		if ($linuxlike) print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
+		else print $langs->trans("MAIN_MAIL_SMTP_SERVER",$smtpserver);
 		print '</td><td>';
 		// SuperAdministrator access only
 		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
@@ -590,15 +592,15 @@ else
 	print '</table>';
 
 
-    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
-    {
-       $sendmailoption=ini_get('mail.force_extra_parameters');
-       //print 'x'.$sendmailoption;
-       if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
-       {
-            print '<br>'.info_admin($langs->trans("SendmailOptionNotComplete"));
-       }
-    }
+	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	{
+		$sendmailoption=ini_get('mail.force_extra_parameters');
+		//print 'x'.$sendmailoption;
+		if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
+		{
+			print '<br>'.info_admin($langs->trans("SendmailOptionNotComplete"));
+		}
+	}
 
 
 	// Boutons actions
@@ -711,8 +713,8 @@ else
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;
 		$formmail->withto=(! empty($_POST['sendto'])?$_POST['sendto']:($user->email?$user->email:1));
-        $formmail->withtocc=(! empty($_POST['sendtocc'])?$_POST['sendtocc']:1);       // ! empty to keep field if empty
-        $formmail->withtoccc=(! empty($_POST['sendtoccc'])?$_POST['sendtoccc']:1);    // ! empty to keep field if empty
+		$formmail->withtocc=(! empty($_POST['sendtocc'])?$_POST['sendtocc']:1);       // ! empty to keep field if empty
+		$formmail->withtoccc=(! empty($_POST['sendtoccc'])?$_POST['sendtoccc']:1);    // ! empty to keep field if empty
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formmail->withtopicreadonly=0;
 		$formmail->withfile=2;

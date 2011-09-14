@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/projet/tasks/task.php
  *	\ingroup    projet
- *	\brief      Fiche taches d'un projet
+ *	\brief      Page of a project task
  */
 
 require ("../../main.inc.php");
@@ -29,8 +29,8 @@ require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
-$taskid = (isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:''));
-$taskref = (isset($_GET["ref"])?$_GET["ref"]:'');
+$taskid = GETPOST("id");
+$taskref = GETPOST("ref");
 
 // Security check
 $socid=0;
@@ -129,7 +129,7 @@ if ($taskid)
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 		//$arrayofuseridoftask=$task->getListContactId('internal');
 
-		if ($mesg) print $mesg;
+		dol_htmloutput_mesg($mesg);
 
 		$head=task_prepare_head($task);
 
@@ -143,8 +143,6 @@ if ($taskid)
 			print '<input type="hidden" name="id" value="'.$task->id.'">';
 
 			print '<table class="border" width="100%">';
-
-			if ($mesg) print $mesg.'<br>';
 
 			// Ref
 			print '<tr><td width="30%">'.$langs->trans("Ref").'</td>';
@@ -191,10 +189,13 @@ if ($taskid)
 			print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$task->description.'</textarea>';
 			print '</td></tr>';
 
-			print '<tr><td align="center" colspan="2">';
-			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 			print '</table>';
+			
+			print '<center><br>';
+			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<center>';
+
 			print '</form>';
 		}
 		else
@@ -255,9 +256,15 @@ if ($taskid)
 			print nl2br($task->description);
 			print '</td></tr>';
 
-			print '</table></form>';
-			print '</div>';
+			print '</table>';
+			
+		}
 
+		dol_fiche_end();
+		
+		
+		if ($_GET["action"] != 'edit')
+		{
 			/*
 			 * Actions
 			 */

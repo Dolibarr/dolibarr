@@ -519,9 +519,9 @@ if ($conf->don->enabled && $user->rights->societe->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedDonations",$max).'</td>';
-        print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-        print '<td width="16">&nbsp;</td>';
+        print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
+		print '<td class="liste_titre" align="right">'.$langs->trans("DateModificationShort").'</td>';
+        print '<td class="liste_titre" width="16">&nbsp;</td>';
 		print '</tr>';
 		if ($num)
 		{
@@ -552,7 +552,7 @@ if ($conf->don->enabled && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

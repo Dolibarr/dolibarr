@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,13 +39,13 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
 
-$userAccess=0;
-
 $langs->load("users");
 $langs->load("projects");
 
 $progress=GETPOST('progress');
 $description=GETPOST('description');
+
+$userAccess=0;
 
 
 /*
@@ -154,7 +154,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 {
 	print_fiche_titre($langs->trans("NewTask"));
 
-	if ($mesg) print '<div class="error">'.$mesg.'</div>';
+	dol_htmloutput_errors($mesg);
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -198,16 +198,14 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$description.'</textarea>';
 	print '</td></tr>';
 
-	print '<tr><td colspan="2" align="center">';
-	//if (sizeof($tasksarray))
-	//{
-		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
-		print ' &nbsp; &nbsp; ';
-	//}
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</td></tr>';
-
 	print '</table>';
+	
+	print '<center><br>';
+	print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</center>';
+
 	print '</form>';
 
 }

@@ -40,21 +40,21 @@ class AccountancyAccount
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acces base de donnees
-	 *    \param  id          id compte (0 par defaut)
+	 *  Constructor
+	 *  
+	 *  @param		$DoliDB		$DB		Database handler
 	 */
-	function AccountancyAccount($DB, $id=0)
+	function AccountancyAccount($DB)
 	{
 		$this->db = $DB;
-		$this->id   = $id ;
 	}
 
 
 	/**
-	 *    \brief  	Ins�re le compte en base
-	 *    \param  	user 	Utilisateur qui effectue l'insertion
-	 *    \return	int		<0 si ko, Id ligne ajout�e si ok
+	 *    Insert account into database
+	 *    
+	 *    @param  	User	$user 	User making add
+	 *    @return	int				<0 if KO, Id line added if OK
 	 */
 	function create($user)
 	{

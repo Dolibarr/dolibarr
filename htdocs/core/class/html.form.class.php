@@ -67,14 +67,14 @@ class Form
     /**
      * Output key field for an editable field
      *
-     * @param      text            Text of label
-     * @param      htmlname        Name of select field
-     * @param      preselected     Preselected value for parameter
-     * @param      paramkey        Key of parameter (unique if there is several parameter to show)
-     * @param      paramvalue      Value of parameter
-     * @param      perm            Permission to allow button to edit parameter
-     * @param      typeofdata      Type of data (string by default, email, ...)
-     * @return     string          HTML edit field
+     * @param      string	$text            Text of label
+     * @param      string	$htmlname        Name of select field
+     * @param      string	$preselected     Preselected value for parameter
+     * @param      string	$paramkey        Key of parameter (unique if there is several parameter to show)
+     * @param      string	$paramvalue      Value of parameter
+     * @param      boolean	$perm            Permission to allow button to edit parameter
+     * @param      string	$typeofdata      Type of data (string by default, email, ...)
+     * @return     string    			      HTML edit field
      * TODO no GET or POST in class file, use a param
      */
     function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
@@ -91,14 +91,15 @@ class Form
 
     /**
      *	Output val field for an editable field
-     * 	@param		text			Text of label (not used in this function)
-     * 	@param		htmlname		Name of select field
-     * 	@param		preselected		Preselected value for parameter
-     * 	@param		paramkey		Key of parameter (unique if there is several parameter to show)
-     * 	@param		perm			Permission to allow button to edit parameter
-     * 	@param		typeofdata		Type of data ('string' by default, 'email', 'text', ...)
-     * 	@param		editvalue		Use this value instead $preselected
-     *  @return     string          HTML edit field
+     *
+     * 	@param		string	$text			Text of label (not used in this function)
+     * 	@param		string	$htmlname		Name of select field
+     * 	@param		string	$preselected	Preselected value for parameter
+     * 	@param		string	$paramkey		Key of parameter (unique if there is several parameter to show)
+     * 	@param		boolean	$perm			Permission to allow button to edit parameter
+     * 	@param		string	$typeofdata		Type of data ('string' by default, 'email', 'text', ...)
+     * 	@param		string	$editvalue		Use this value instead $preselected
+     *  @return     string   		      	HTML edit field
      *  TODO no GET or POST in class file, use a param
      */
     function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string',$editvalue='')
@@ -137,6 +138,7 @@ class Form
 
     /**
      *	Show a text and picto with tooltip on text or picto
+     *
      *	@param  text				Text to show
      *	@param  htmltext	    	Content html of tooltip. Must be HTML/UTF8 encoded.
      *	@param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
@@ -236,6 +238,7 @@ class Form
 
     /**
      *    Return combo list of activated countries, into language of user
+     *    
      *    @param     selected         Id or Code or Label of preselected country
      *    @param     htmlname         Name of html select object
      *    @param     htmloption       Options html on select object
@@ -247,6 +250,7 @@ class Form
 
     /**
      *    Return combo list of activated countries, into language of user
+     *    
      *    @param     selected         Id or Code or Label of preselected country
      *    @param     htmlname         Name of html select object
      *    @param     htmloption       Options html on select object
@@ -316,6 +320,7 @@ class Form
 
     /**
      *    Retourne la liste des types de comptes financiers
+     *    
      *    @param      selected        Type pre-selectionne
      *    @param      htmlname        Nom champ formulaire
      */
@@ -351,6 +356,7 @@ class Form
     /**
      *		Return list of social contributions.
      * 		Use mysoc->pays_id or mysoc->pays_code so they must be defined.
+     * 
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in form
      * 		@param		useempty		Set to 1 if we want an empty value
@@ -420,6 +426,7 @@ class Form
     /**
      *		Return list of types of lines (product or service)
      * 		Example: 0=product, 1=service, 9=other (for external module)
+     * 
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in html form
      * 		@param		showempty		Add an empty field
@@ -467,6 +474,7 @@ class Form
 
     /**
      *		Return list of types of notes
+     *
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in form
      * 		@param		showempty		Add an empty field
@@ -509,6 +517,7 @@ class Form
 
     /**
      *    	Output html form to select a third party
+     *    
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in form
      *    	@param      filter          Optionnal filters criteras
@@ -523,6 +532,7 @@ class Form
 
     /**
      *    	Output html form to select a third party
+     *    
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in form
      *    	@param      filter          Optionnal filters criteras
@@ -598,6 +608,7 @@ class Form
 
     /**
      *    	Return HTML combo list of absolute discounts
+     *    
      *    	@param      selected        Id remise fixe pre-selectionnee
      *    	@param      htmlname        Nom champ formulaire
      *    	@param      filter          Criteres optionnels de filtre
@@ -663,6 +674,7 @@ class Form
 
     /**
      *    	Return list of all contacts (for a third party or all)
+     *    
      *    	@param      socid      	    Id ot third party or 0 for all
      *    	@param      selected   	    Id contact pre-selectionne
      *    	@param      htmlname  	    Name of HTML field ('none' for a not editable field)
@@ -888,6 +900,7 @@ class Form
 
     /**
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
+     *  
      *  @param		selected				Preselected products
      *  @param		htmlname				Name of HTML seletc field (must be unique in page)
      *  @param		filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
@@ -927,6 +940,7 @@ class Form
 
     /**
      *	Return list of products for a customer
+     *
      *	@param      selected        Preselected product
      *	@param      htmlname        Name of select html
      *  @param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
@@ -1143,6 +1157,7 @@ class Form
 
     /**
      *	Return list of products for customer in Ajax if Ajax activated or go to select_produits_fournisseurs_do
+     *
      *	@param		socid			Id third party
      *	@param     	selected        Preselected product
      *	@param     	htmlname        Name of HTML Select
@@ -1167,6 +1182,7 @@ class Form
 
     /**
      *	Retourne la liste des produits de fournisseurs
+     *
      *	@param		socid   		Id societe fournisseur (0 pour aucun filtre)
      *	@param      selected        Produit pre-selectionne
      *	@param      htmlname        Nom de la zone select
@@ -1319,8 +1335,10 @@ class Form
 
     /**
      *	Return list of suppliers prices for a product
-     *  @param		productid       Id of product
-     *  @param      htmlname        Name of HTML field
+     *
+     *  @param		int		$productid       Id of product
+     *  @param      string	$htmlname        Name of HTML field
+     *  @return		void
      */
     function select_product_fourn_price($productid,$htmlname='productfournpriceid')
     {
@@ -1407,10 +1425,12 @@ class Form
 
     /**
      *    Return list of delivery address
-     *    @param      selected          Id contact pre-selectionn
-     *    @param      socid
-     *    @param      htmlname          Name of HTML field
-     *    @param      showempty         Add an empty field
+     *    
+     *    @param    string	$selected          	Id contact pre-selectionn
+     *    @param    int		$socid				Id of company
+     *    @param    string	$htmlname          	Name of HTML field
+     *    @param    int		$showempty         	Add an empty field
+     *    @return	void
      */
     function select_address($selected='', $socid, $htmlname='address_id',$showempty=0)
     {
@@ -1457,13 +1477,14 @@ class Form
 
     /**
      *      Charge dans cache la liste des conditions de paiements possibles
+     *      
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_conditions_paiements()
     {
         global $langs;
 
-        if (sizeof($this->cache_conditions_paiements)) return 0;    // Cache deja charge
+        if (count($this->cache_conditions_paiements)) return 0;    // Cache deja charge
 
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
@@ -1495,13 +1516,14 @@ class Form
 
     /**
      *      Charge dans cache la liste des délais de livraison possibles
+     *      
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_availability()
     {
         global $langs;
 
-        if (sizeof($this->cache_availability)) return 0;    // Cache deja charge
+        if (count($this->cache_availability)) return 0;    // Cache deja charge
 
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';
@@ -1533,6 +1555,7 @@ class Form
 
 	/**
      *      Retourne la liste des types de delais de livraison possibles
+     *      
      *      @param      selected        Id du type de delais pre-selectionne
      *      @param      htmlname        Nom de la zone select
      *      @param      filtertype      To add a filter
@@ -1565,13 +1588,14 @@ class Form
 
 	/**
      *      Load into cache cache_demand_reason, array of input reasons
+     *      
      *      @return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
      */
     function load_cache_demand_reason()
     {
         global $langs;
 
-        if (sizeof($this->cache_demand_reason)) return 0;    // Cache already loaded
+        if (count($this->cache_demand_reason)) return 0;    // Cache already loaded
 
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
@@ -1608,6 +1632,7 @@ class Form
 
 	/**
      *      Return list of events that triggered an object creation
+     *      
      *      @param      selected        Id du type d'origine pre-selectionne
      *      @param      htmlname        Nom de la zone select
      *      @param      exclude         To exclude a code value (Example: SRC_PROP)
@@ -1642,13 +1667,14 @@ class Form
 
     /**
      *      Charge dans cache la liste des types de paiements possibles
+     *      
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_types_paiements()
     {
         global $langs;
 
-        if (sizeof($this->cache_types_paiements)) return 0;    // Cache deja charge
+        if (count($this->cache_types_paiements)) return 0;    // Cache deja charge
 
         $sql = "SELECT id, code, libelle, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -1960,7 +1986,7 @@ class Form
         $output = '<select class="flat" name="'.$select_name.'">';
         if (is_array($cate_arbo))
         {
-            if (! sizeof($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+            if (! count($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
             else
             {
                 $output.= '<option value="-1">&nbsp;</option>';
@@ -2213,6 +2239,7 @@ class Form
      *    @param      socid       Id societe
      *    @param      selected    Id projet pre-selectionne
      *    @param      htmlname    Nom du formulaire select
+     *    @return	void
      */
     function form_project($page, $socid, $selected='', $htmlname='projectid')
     {
@@ -2254,6 +2281,7 @@ class Form
      *    	@param      selected    	Id condition pre-selectionne
      *    	@param      htmlname    	Name of select html field
      *		@param		addempty		Ajoute entree vide
+     *    @return	void
      */
     function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)
     {
@@ -2289,6 +2317,7 @@ class Form
      *    	@param      selected    	Id condition pre-selectionne
      *    	@param      htmlname    	Name of select html field
      *		@param		addempty		Ajoute entree vide
+     *    @return	void
      */
     function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
     {
@@ -2324,6 +2353,7 @@ class Form
      *    	@param      selected    	Id condition pre-selectionne
      *    	@param      htmlname    	Name of select html field
      *		@param		addempty		Add empty entry
+     *    @return	void
      */
     function form_demand_reason($page, $selected='', $htmlname='demandreason', $addempty=0)
     {
@@ -2365,6 +2395,7 @@ class Form
      *    @param      page        Page
      *    @param      selected    Date preselected
      *    @param      htmlname    Name of input html field
+     *    @return	void
      */
     function form_date($page, $selected='', $htmlname)
     {
@@ -2403,6 +2434,7 @@ class Form
      *    	@param      htmlname    	Name of input html field
      *  	@param      exclude         List of users id to exclude
      *  	@param      include         List of users id to include
+     *    @return	void
      */
     function form_users($page, $selected='', $htmlname='userid', $exclude='', $include='')
     {
@@ -2443,6 +2475,7 @@ class Form
      *    @param      page        Page
      *    @param      selected    Id mode pre-selectionne
      *    @param      htmlname    Name of select html field
+     *    @return	void
      */
     function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id')
     {
@@ -2483,6 +2516,7 @@ class Form
      * 	  	@param		filter			SQL filter on discounts
      * 	  	@param		maxvalue		Max value for lines that can be selected
      *      @param      more            More string to add
+     *    @return	void
      */
     function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $amount, $filter='', $maxvalue=0, $more='')
     {
@@ -2533,6 +2567,7 @@ class Form
      *    @param      page        Page
      *    @param      selected    Id contact pre-selectionne
      *    @param      htmlname    Nom du formulaire select
+     *    @return	void
      */
     function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
     {
@@ -2577,6 +2612,7 @@ class Form
      *    @param      page        Page
      *    @param      selected    Id contact pre-selectionne
      *    @param      htmlname    Nom du formulaire select
+     *    @return	void
      */
     function form_thirdparty($page, $selected='', $htmlname='socid')
     {
@@ -2616,6 +2652,7 @@ class Form
      *    	@param      htmlname    	Nom du formulaire select
      *		@param		origin        	Origine de l'appel pour pouvoir creer un retour
      *      @param      originid      	Id de l'origine
+     *    @return	void
      */
     function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
     {
@@ -2655,6 +2692,7 @@ class Form
      *
      *    @param     selected    code devise pre-selectionne
      *    @param     htmlname    nom de la liste deroulante
+     *    @return	void
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
@@ -2742,6 +2780,7 @@ class Form
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Sinon la TVA proposee par defaut=0. Fin de regle.
      *      @deprecated
+     *    @return	void
      */
     function select_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
     {
@@ -2764,6 +2803,7 @@ class Form
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Sinon la TVA proposee par defaut=0. Fin de regle.
+     *    @return	void
      */
     function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
     {
@@ -3178,9 +3218,10 @@ class Form
     /**
      *	Function to show a form to select a duration on a page
      *
-     *	@param		prefix   	prefix
-     *	@param  	iSecond  	Default preselected duration (number of seconds)
-     * 	@param		disabled	Disable the combo box
+     *	@param	string	$prefix   	prefix
+     *	@param  int		$iSecond  	Default preselected duration (number of seconds)
+     * 	@param	int		$disabled	Disable the combo box
+     *  @return	void
      */
     function select_duration($prefix,$iSecond='',$disabled=0)
     {
@@ -3280,6 +3321,7 @@ class Form
      *	Show a select form from an array
      *
      * 	@deprecated				Use selectarray instead
+     *  @return	void
      */
     function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0)
     {
@@ -3331,6 +3373,7 @@ class Form
      *    @param      htmlname          Nom de la zone select
      *    @param      type              Type des modeles recherches
      *    @param      useempty          Affiche valeur vide dans liste
+     *  @return	void
      */
     function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
     {
@@ -3518,14 +3561,15 @@ class Form
     /**
      *	Return select list of groups
      *
-     *  @param      selected        Id group preselected
-     *  @param      htmlname        Field name in form
-     *  @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *  @param      exclude         Array list of groups id to exclude
-     * 	@param		disabled		If select list must be disabled
-     *  @param      include         Array list of groups id to include
-     * 	@param		enableonly		Array list of groups id to be enabled. All other must be disabled
-     * 	@param		force_entity	Possibility to force entity
+     *  @param	string	$selected        Id group preselected
+     *  @param  string	$htmlname        Field name in form
+     *  @param  int		$show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param  string	$exclude         Array list of groups id to exclude
+     * 	@param	int		$disabled		If select list must be disabled
+     *  @param  string	$include         Array list of groups id to include
+     * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
+     * 	@param	int		$force_entity	Possibility to force entity
+     *  @return	void
      */
     function select_dolgroups($selected='',$htmlname='groupid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity='')
     {
@@ -3574,7 +3618,7 @@ class Form
                 {
                     $obj = $this->db->fetch_object($resql);
                     $disableline=0;
-                    if (is_array($enableonly) && sizeof($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
+                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
 
                     $out.= '<option value="'.$obj->rowid.'"';
                     if ($disableline) $out.= ' disabled="disabled"';

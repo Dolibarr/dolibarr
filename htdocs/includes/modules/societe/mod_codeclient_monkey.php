@@ -212,7 +212,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	{
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE code_client = '".$code."'";
-		$sql.= " AND rowid != '".$soc->id."'";
+		if ($soc->id > 0) $sql.= " AND rowid != ".$soc->id;
 
 		$resql=$db->query($sql);
 		if ($resql)

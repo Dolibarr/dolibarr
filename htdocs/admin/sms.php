@@ -161,7 +161,7 @@ if ($action == 'edit')
 {
 	$html=new Form($db);
 
-	if (! sizeof($listofmethods)) print '<div class="error">'.$langs->trans("NoSmsEngine").'</div>';
+	if (! count($listofmethods)) print '<div class="error">'.$langs->trans("NoSmsEngine").'</div>';
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -205,7 +205,7 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><center>';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!sizeof($listofmethods)?' disabled="disbaled"':'').'>';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods)?' disabled="disbaled"':'').'>';
 	print ' &nbsp; &nbsp; ';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</center>';

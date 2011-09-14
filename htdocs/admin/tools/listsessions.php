@@ -167,7 +167,7 @@ if ($savehandler == 'files')
 		$i++;
 	}
 
-	if (sizeof($listofsessions) == 0)
+	if (count($listofsessions) == 0)
 	{
 		print '<tr><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
 	}
@@ -197,7 +197,7 @@ else
 
 if ($savehandler == 'files')
 {
-	if (sizeof($listofsessions))
+	if (count($listofsessions))
 	{
 	    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("PurgeSessions").'</a>';
 	}

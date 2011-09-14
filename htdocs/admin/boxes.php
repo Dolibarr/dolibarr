@@ -289,7 +289,7 @@ if ($resql)
 		$box=new $boxname($db,$obj->note);
 		
 		$enabled=true;
-		if ($box->depends && sizeof($box->depends) > 0)
+		if ($box->depends && count($box->depends) > 0)
 		{
 			foreach($box->depends as $module)
 			{
@@ -446,7 +446,7 @@ if ($resql)
 print '</table><br>';
 
 
-# Other parameters
+// Other parameters
 print_titre($langs->trans("Other"));
 print '<table class="noborder" width="100%">';
 

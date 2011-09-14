@@ -86,7 +86,7 @@ print '<td>';
 $disabled=0;
 $langs->load("companies");
 if (! empty($conf->global->CASHDESK_ID_THIRDPARTY)) $disabled=1; // If a particular third party is defined, we disable choice
-$form->select_societes(GETPOST('socid')?GETPOST('socid'):$conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client=1',!$disabled,$disabled,1);
+$form->select_societes(GETPOST('socid')?GETPOST('socid'):$conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',!$disabled,$disabled,1);
 //print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 print '</td>';
 print "</tr>\n";

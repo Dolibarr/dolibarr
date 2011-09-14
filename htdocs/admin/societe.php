@@ -123,11 +123,9 @@ if ($action == 'set')
 	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
 	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
 	$sql.= ")";
-	if ($db->query($sql))
-	{
-
-	}
-	else dol_print_error($db);
+	
+	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
 }
 
 // Disable a document generator module
@@ -136,11 +134,8 @@ if ($action== 'del')
 	$type='company';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql.= " WHERE nom='".$db->escape($value)."' AND type='".$type."' AND entity=".$conf->entity;
-	if ($db->query($sql))
-	{
-
-	}
-	else dol_print_error($db);
+	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
 }
 
 // Define default generator
@@ -505,13 +500,13 @@ print '<td align="center">'.$langs->trans("MustBeUnique").'</td>';
 print "</tr>\n";
 
 $profid[0][0]=$langs->trans("ProfId1");
-$profid[0][1]=$langs->transcountry('ProfId1' ,$mysoc->pays_code);
+$profid[0][1]=$langs->transcountry('ProfId1', $mysoc->pays_code);
 $profid[1][0]=$langs->trans("ProfId2");
-$profid[1][1]=$langs->transcountry('ProfId2' ,$mysoc->pays_code);
+$profid[1][1]=$langs->transcountry('ProfId2', $mysoc->pays_code);
 $profid[2][0]=$langs->trans("ProfId3");
-$profid[2][1]=$langs->transcountry('ProfId3' ,$mysoc->pays_code);
+$profid[2][1]=$langs->transcountry('ProfId3', $mysoc->pays_code);
 $profid[3][0]=$langs->trans("ProfId4");
-$profid[3][1]=$langs->transcountry('ProfId4' ,$mysoc->pays_code);
+$profid[3][1]=$langs->transcountry('ProfId4', $mysoc->pays_code);
 
 $var = true;
 $i=0;

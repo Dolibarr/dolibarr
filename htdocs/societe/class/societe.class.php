@@ -36,15 +36,11 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Societe extends CommonObject
 {
-    var $db;
-    var $error;
-    var $errors=array();
-
-    var $element='societe';
-    var $table_element = 'societe';
-	var $fk_element='fk_soc';
-    var $childtables=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");
-    var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $element='societe';
+    public $table_element = 'societe';
+	public $fk_element='fk_soc';
+    public $childtables=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");
+    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
     var $name;     // TODO obsolete
@@ -136,8 +132,6 @@ class Societe extends CommonObject
     var $commercial_id; //Id du commercial affecte
     var $default_lang;
 
-    var $canvas;
-
     var $ref_int;
     var $import_key;
 
@@ -148,10 +142,9 @@ class Societe extends CommonObject
     /**
      *    Constructor
      *
-     *    @param  DB     handler acces base de donnees
-     *    @param  id     id societe (0 par defaut)
+     *    @param	DoliDB		$DB		Database handler
      */
-    function Societe($DB, $id=0)
+    public function Societe($DB)
     {
         global $conf;
 

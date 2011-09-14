@@ -185,7 +185,7 @@ print "\n";
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-# Affiche lignes des constantes
+// Show constants
 $sql = "SELECT";
 $sql.= " rowid";
 $sql.= ", ".$db->decrypt('name')." as name";

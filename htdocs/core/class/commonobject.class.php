@@ -31,9 +31,10 @@
 
 abstract class CommonObject
 {
-	var $db;
-
-	var $canvas;                // Contains canvas name if it is
+	protected $db;
+	public $error;
+	public $errors;
+	public $canvas;                // Contains canvas name if it is
 
 
 	// No constructor as it is an abstract class
