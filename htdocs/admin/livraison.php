@@ -108,9 +108,7 @@ if ($action == 'set')
     $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
     $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
-    if ($db->query($sql))
-    {
-    }
+    $resql=$db->query($sql);
 }
 
 if ($action == 'del')

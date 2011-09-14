@@ -83,7 +83,13 @@ function compare($x, $y)
 	return 1;
 }
 
-
+/**
+ * Compare revisions
+ * 
+ * @param 	array 	$x	Parts of version 1
+ * @param 	array 	$y	Parts of version 2
+ * @return	int			1 if 1<2, 0 if 1=2, -1 if 1>2
+ */
 function revcompare($x, $y)
 {
 	global $sortby, $langs;
@@ -96,7 +102,12 @@ function revcompare($x, $y)
 	return -1;
 }
 
-
+/**
+ * Output table
+ * 
+ * @param 	array	$list	Array of records
+ * @return 	void
+ */
 function create_script_table($list)
 {
 	global $sortby,$bc,$langs;
@@ -127,15 +138,15 @@ function create_script_table($list)
 <table class="noborder">
 	<tr>
 		<th><a
-			href="<?php print $_SERVER['PHP_SELF']?>?sort=file&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Filename"); ?></a>&nbsp;<? if($sortby == "file") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=file&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Filename"); ?></a>&nbsp;<?php if($sortby == "file") print ($order == "asc" ? "&darr;" : "&uarr;") ?></th>
 		<th><a
-			href="<?php print $_SERVER['PHP_SELF']?>?sort=mtime&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Date"); ?></a>&nbsp;<? if($sortby == "mtime") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=mtime&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Date"); ?></a>&nbsp;<?php if($sortby == "mtime") print ($order == "asc" ? "&darr;" : "&uarr;") ?></th>
 		<th><a
-			href="<?php print $_SERVER['PHP_SELF']?>?sort=size&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Size"); ?></a>&nbsp;<? if($sortby == "size") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=size&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Size"); ?></a>&nbsp;<?php if($sortby == "size") print ($order == "asc" ? "&darr;" : "&uarr;") ?></th>
 		<th><a
-			href="<?php print $_SERVER['PHP_SELF']?>?sort=reloads&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Reloads"); ?></a>&nbsp;<? if($sortby == "reloads") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=reloads&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Reloads"); ?></a>&nbsp;<?php if($sortby == "reloads") print ($order == "asc" ? "&darr;" : "&uarr;") ?></th>
 		<th><a
-			href="<?php print $_SERVER['PHP_SELF']?>?sort=hits&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Hits"); ?></a>&nbsp;<? if($sortby == "hits") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=hits&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Hits"); ?></a>&nbsp;<?php if($sortby == "hits") print ($order == "asc" ? "&darr;" : "&uarr;") ?></th>
 	</tr>
 	<?php
 	switch ($sortby) {
@@ -166,8 +177,12 @@ function create_script_table($list)
 	<?php
 }
 
-
-
+/**
+ * Output table
+ * 
+ * @param	array	$list		Array of records
+ * @return	void
+ */
 function create_key_table($list)
 {
 	global $bc,$langs;
