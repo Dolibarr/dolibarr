@@ -205,7 +205,7 @@ if ($action == 'create')
 
 	print_fiche_titre($langs->trans("NewFinancialAccount"));
 
-	if ($message) { print "$message<br>\n"; }
+	dol_htmloutput_mesg($message);
 
     if ($conf->use_javascript_ajax)
     {
@@ -323,9 +323,11 @@ if ($action == 'create')
 	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalDesired").'</td>';
 	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->account_min_desired).'"></td></tr>';
 
-	print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></td></tr>';
-	print '</form>';
 	print '</table>';
+	
+	print '<center><br><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></center>';
+	
+	print '</form>';
 }
 /* ************************************************************************** */
 /*                                                                            */
