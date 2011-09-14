@@ -12,6 +12,9 @@
 
 define('NEWLINE', "\n");
 
+/**
+ *	Class DHTML_Calendar 
+ */
 class DHTML_Calendar {
     var $calendar_lib_path;
 
