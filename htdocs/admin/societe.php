@@ -134,8 +134,11 @@ if ($action== 'del')
 	$type='company';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql.= " WHERE nom='".$db->escape($value)."' AND type='".$type."' AND entity=".$conf->entity;
-	$resql=$db->query($sql);
-	if (! $resql) dol_print_error($db);
+	if ($db->query($sql))
+	{
+
+	}
+	else dol_print_error($db);
 }
 
 // Define default generator
