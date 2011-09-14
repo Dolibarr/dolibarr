@@ -71,11 +71,11 @@ if ($_POST["action"] == 'add' && $user->rights->stock->creer)
 		}
 
 		$_GET["action"] = 'create';
-		$mesg="<div class='error'>".$entrepot->error."</div>";
+		$mesg='<div class="error">'.$entrepot->error.'</div>';
 	}
 	else {
-		$mesg="<div class='error'>".$langs->trans("ErrorWarehouseRefRequired")."</div>";
-		$_GET["action"]="create";   // Force retour sur page cr�ation
+		$mesg='<div class="error">'.$langs->trans("ErrorWarehouseRefRequired").'</div>';
+		$_GET["action"]="create";   // Force retour sur page creation
 	}
 }
 
@@ -116,7 +116,7 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		{
 			$_GET["action"] = '';
 			$_GET["id"] = $_POST["id"];
-			//$mesg = '<div class="ok">Fiche mise � jour</div>';
+			//$mesg = '<div class="ok">Fiche mise a jour</div>';
 		}
 		else
 		{
@@ -161,10 +161,7 @@ if ($_GET["action"] == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="type" value="'.$type.'">'."\n";
 
-	if ($mesg)
-	{
-		print $mesg;
-	}
+	dol_htmloutput_mesg($mesg);
 
 	print '<table class="border" width="100%">';
 
@@ -199,16 +196,17 @@ if ($_GET["action"] == 'create')
 	print '</select>';
 	print '</td></tr>';
 
-	print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-
 	print '</table>';
+	
+	print '<center><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+
 	print '</form>';
 }
 else
 {
 	if ($_GET["id"])
 	{
-		if ($mesg) print $mesg;
+		dol_htmloutput_mesg($mesg);
 
 		$entrepot = new Entrepot($db);
 		$result = $entrepot->fetch($_GET["id"]);
