@@ -63,7 +63,7 @@ if ($action == 'update' || $action == 'add')
 	$consttype = GETPOST("consttype");
 	$constnote = GETPOST("constnote");
 	
-	$res = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote ,$conf->entity);
+	$res = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
 	
 	if (! $res > 0) $error++;
 
@@ -157,8 +157,7 @@ if ($result)
 	}
 }*/
 
-$num=sizeof($list);
-
+$num=count($list);
 if ($num)
 {
 	print '<table class="noborder" width="100%">';

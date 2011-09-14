@@ -110,10 +110,7 @@ if ($_GET["action"] == 'set')
     $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
     $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
     $sql.= ")";
-    if ($db->query($sql))
-    {
-
-    }
+    $resql=$db->query($sql);
 }
 
 if ($_GET["action"] == 'del')
@@ -121,10 +118,7 @@ if ($_GET["action"] == 'del')
     $type='donation';
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
     $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    if ($db->query($sql))
-    {
-
-    }
+    $resql=$db->query($sql);
 }
 
 

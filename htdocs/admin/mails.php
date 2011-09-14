@@ -208,9 +208,9 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 		$body=make_substitutions($body,$substitutionarrayfortest);
 
 		require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
-		$filepath,$mimetype,$filename,
-		$sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml,$errors_to);
+		$mailfile = new CMailFile($subject, $sendto, $email_from, $body,
+								  $filepath, $mimetype, $filename,
+								  $sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml, $errors_to);
 
 		$result=$mailfile->sendfile();
 
