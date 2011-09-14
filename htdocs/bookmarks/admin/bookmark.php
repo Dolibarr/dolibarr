@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $langs->load("admin");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 $action=GETPOST("action");
 
@@ -36,18 +36,18 @@ if ($action == 'setvalue')
 {
 	$showmenu = GETPOST("BOOKMARKS_SHOW_IN_MENU");
 	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$showmenu,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
-	
+
 	if (! $error)
-    {
-        $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	{
+		$db->commit();
+		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	}
+	else
+	{
+		$db->rollback();
+		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
 	}
 }
 
