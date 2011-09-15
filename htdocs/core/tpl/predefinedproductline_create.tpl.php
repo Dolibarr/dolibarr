@@ -51,7 +51,17 @@
 	<td colspan="3">
 	<?php
 
-	$html->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
+
+	if ($conf->global->MAIN_MODULE_ASSORTMENT==1 && ($conf->global->ASSORTMENT_ON_ORDER==1 || $conf->global->ASSORTMENT_ON_ORDER_FOUR==1))
+	{	
+		require_once(DOL_DOCUMENT_ROOT.'/assortment/class/html.formassortment.class.php');
+		$htmlAssort = new FormAssortment($html->db);
+		$htmlAssort->select_produits_assort('','idprod','',$conf->product->limit_size,$pricelevel,1,2,'',0,(isset($this->socid)?$this->socid:0));
+	}
+	else
+	{
+		$html->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
+	}
 
 	if (is_object($hookmanager))
 	{

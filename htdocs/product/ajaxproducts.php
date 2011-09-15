@@ -69,6 +69,13 @@ $searchkey=$_GET[$idprod];
 if (empty($searchkey)) $searchkey=$_GET[$htmlname];
 $outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
 
+//if Use of Module assortment need to pass socid to select_produits_do_assort
+$socid=0;
+if ($conf->global->MAIN_MODULE_ASSORTMENT==1 && ($conf->global->ASSORTMENT_ON_ORDER==1 || $conf->global->ASSORTMENT_ON_ORDER_FOUR==1))
+{
+	$socid=$_GET['socid'];
+}
+
 // Get list of product.
 $status=-1;
 if (isset($_GET['status'])) $status=$_GET['status'];
@@ -76,11 +83,31 @@ if (isset($_GET['status'])) $status=$_GET['status'];
 $form = new Form($db);
 if (empty($_GET['mode']) || $_GET['mode'] == 1)
 {
-	$arrayresult=$form->select_produits_do("",$htmlname,$_GET["type"],"",$_GET["price_level"],$searchkey,$status,2,$outjson);
+	if ($conf->global->MAIN_MODULE_ASSORTMENT==1 && $conf->global->ASSORTMENT_ON_ORDER==1)
+	{ 
+		require_once(DOL_DOCUMENT_ROOT.'/assortment/class/html.formassortment.class.php');
+		$formAssortment = new FormAssortment($db);
+		$arrayresult=$formAssortment->select_produits_do_assort("",$htmlname,$_GET["type"],"",$_GET["price_level"],$searchkey,$status,2,$outjson,$socid);
+	}
+	else
+	{
+		$arrayresult=$form->select_produits_do("",$htmlname,$_GET["type"],"",$_GET["price_level"],$searchkey,$status,2,$outjson);
+	}
+	
 }
 if ($_GET['mode'] == 2)
 {
-	$arrayresult=$form->select_produits_fournisseurs_do($_GET["socid"],"",$htmlname,$_GET["type"],"",$searchkey,$status,$outjson);
+	if ($conf->global->MAIN_MODULE_ASSORTMENT==1 && $conf->global->ASSORTMENT_ON_ORDER_FOUR==1)
+	{ 
+		require_once(DOL_DOCUMENT_ROOT.'/assortment/class/html.formassortment.class.php');
+		$formAssortment = new FormAssortment($db);
+		$arrayresult=$formAssortment->select_produits_fournisseurs_do_assort($_GET["socid"],"",$htmlname,$_GET["type"],"",$searchkey,$statut,$outjson);
+	}
+	else
+	{
+		$arrayresult=$form->select_produits_fournisseurs_do($_GET["socid"],"",$htmlname,$_GET["type"],"",$searchkey,$status,$outjson);
+	}
+	
 }
 
 $db->close();
