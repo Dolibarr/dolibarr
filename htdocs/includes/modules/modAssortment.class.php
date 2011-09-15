@@ -129,8 +129,8 @@ class modAssortment extends DolibarrModules
 		$this->const[$r][5] = 0;
 
 		// Array to add new pages in new tabs
-		$this->tabs = array('thirdparty:Assortment:@assortment:/assortment/assortment.php?socid=__ID__&type=1',
-							'product:Assortment:@assortment:/assortment/assortment.php?prodid=__ID__&type=0');
+		$this->tabs = array('thirdparty:+tabAssortment:Assortment:assortment:/assortment/assortment.php?socid=__ID__&type=1',
+							'product:+tabAssortment:Assortment:assortment:/assortment/assortment.php?prodid=__ID__&type=0');
 
 		// Permissions
 		$this->rights = array();
