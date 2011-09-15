@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,7 @@
 /**
  *	    \file       htdocs/comm/remise.php
  *      \ingroup    societe
- *		\brief      Onglet remise de la societe
- *		\version    $Id: remise.php,v 1.35 2011/08/03 00:46:27 eldy Exp $
+ *		\brief      Page to edit relative discount of a customer
  */
 
 require("../main.inc.php");
@@ -31,15 +30,25 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 
-$_socid = $_GET["id"];
+$socid = GETPOST("id");
 // Security check
 if ($user->societe_id > 0)
 {
-	$_socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
 
 
-if ($_POST["action"] == 'setremise')
+/*
+ * Actions
+ */
+
+if (GETPOST('cancel') && GETPOST('backtopage'))
+{
+     Header("Location: ".GETPOST("backtopage"));
+     exit;
+}
+
+if (GETPOST("action") == 'setremise')
 {
 	$soc = New Societe($db);
 	$soc->fetch($_GET["id"]);
@@ -47,8 +56,16 @@ if ($_POST["action"] == 'setremise')
 
 	if ($result > 0)
 	{
-		Header("Location: remise.php?id=".$_GET["id"]);
-		exit;
+	    if (GETPOST('backtopage'))
+	    {
+    		Header("Location: ".GETPOST('backtopage'));
+    		exit;
+	    }
+	    else
+	    {
+    		Header("Location: remise.php?id=".$_GET["id"]);
+    		exit;
+	    }
 	}
 	else
 	{
@@ -71,21 +88,15 @@ llxHeader();
  * Mode fiche
  *
  *********************************************************************************/
-if ($_socid > 0)
+if ($socid > 0)
 {
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
-	$objsoc->id=$_socid;
-	$objsoc->fetch($_socid,$to);
+	$objsoc->id=$socid;
+	$objsoc->fetch($socid);
 
-	if ($errmesg)
-	{
-		print '<div class="error">'.$errmesg.'</div><br>';
-	}
+	dol_htmloutput_errors($errmesg);
 
-	/*
-	 * Affichage onglets
-	 */
 	$head = societe_prepare_head($objsoc);
 
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');
@@ -111,6 +122,7 @@ if ($_socid > 0)
 	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
+    print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
 
 	print '<table class="border" width="100%">';
 
@@ -122,13 +134,21 @@ if ($_socid > 0)
 	print '<tr><td colspan="2" width="25%">';
 	print $langs->trans("NoteReason").'</td><td colspan="2"><input type="text" size="60" name="note" value="'.$_POST["note"].'"></td></tr>';
 
-	print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-
 	print "</table>";
+
+	print '<center>';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+    if (GETPOST("backtopage"))
+    {
+        print '&nbsp; &nbsp; ';
+	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    }
+	print '</center>';
 
 	print "</form>";
 
-	print "</div>\n";
+	dol_fiche_end();
+
 	print '<br>';
 
 
@@ -180,5 +200,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.35 $');
+llxFooter();
 ?>

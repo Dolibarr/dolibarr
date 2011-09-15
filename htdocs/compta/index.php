@@ -553,7 +553,7 @@ if ($conf->don->enabled && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

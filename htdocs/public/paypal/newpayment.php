@@ -308,7 +308,7 @@ $var=false;
 $valid=true;
 if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) )
 {
-	$token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $SOURCE . $ref, 2);
+	$token = $conf->global->PAYPAL_SECURITY_TOKEN;
 	if ($SECUREKEY != $token) $valid=false;
 }
 

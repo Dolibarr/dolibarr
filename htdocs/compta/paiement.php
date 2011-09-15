@@ -361,7 +361,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
         $rowspan=5;
-        if ($conf->use_javascript_ajax) $rowspan++;
+        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT)) $rowspan++;
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';

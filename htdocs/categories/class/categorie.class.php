@@ -57,6 +57,7 @@ class Categorie
 
 	/**
 	 * 	Constructor
+     *
 	 * 	@param	DB		acces base de donnees
 	 * 	@param	id		id de la categorie
 	 */
@@ -70,6 +71,7 @@ class Categorie
 
 	/**
 	 * 	Load category into memory from database
+
 	 * 	@param		id		id of category
 	 */
 	function fetch($id)
@@ -79,7 +81,7 @@ class Categorie
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog("Categorie::fetch sql=".$sql);
-		$resql  = $this->db->query ($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$res = $this->db->fetch_array($resql);
@@ -95,16 +97,16 @@ class Categorie
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 
 		$sql = "SELECT fk_categorie_mere";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
-		$sql.= " WHERE fk_categorie_fille = '".$id."'";
+		$sql.= " WHERE fk_categorie_fille = ".$id;
 
 		dol_syslog("Categorie::fetch sql=".$sql);
-		$resql  = $this->db->query ($sql);
+		$resql  = $this->db->query($sql);
 		if ($resql)
 		{
 			$res = $this->db->fetch_array($resql);
@@ -114,13 +116,14 @@ class Categorie
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
 
 	/**
 	 * 	Add category into database
+	 *
 	 * 	@return	int 	-1 : erreur SQL
 	 *          		-2 : nouvel ID inconnu
 	 *          		-3 : categorie invalide
@@ -159,10 +162,10 @@ class Categorie
 		//$sql.= ",".$this->parentId;
 		$sql.= ")";
 
-		$res  = $this->db->query ($sql);
+		$res  = $this->db->query($sql);
 		if ($res)
 		{
-			$id = $this->db->last_insert_id (MAIN_DB_PREFIX."categorie");
+			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."categorie");
 
 			if ($id > 0)
 			{
@@ -192,13 +195,14 @@ class Categorie
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
 
 	/**
 	 * 	Update category
+	 *
 	 * 	@return	int		 1 : OK
 	 *          		-1 : SQL error
 	 *          		-2 : invalid category
@@ -211,18 +215,19 @@ class Categorie
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;
-
+		$this->visible = ($this->visible) != "" ? intval($this->visible) : 0;
+		
 		if ($this->already_exists())
 		{
 			$this->error=$langs->trans("ImpossibleUpdateCat");
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
 			return -1;
-		}	
-			
+		}
+
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'categorie_association';
-		$sql .= ' WHERE fk_categorie_fille = "'.$this->id.'"';
+		$sql.= ' WHERE fk_categorie_fille = '.$this->id;
 
 		dol_syslog("Categorie::update sql=".$sql);
 		if (! $this->db->query($sql))
@@ -235,7 +240,7 @@ class Categorie
 		if($this->id_mere !="" && $this->id_mere!=$this->id)
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
-			$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
+			$sql.= ' VALUES ('.$this->id_mere.', '.$this->id.')';
 
 			dol_syslog("Categorie::update sql=".$sql);
 			if (! $this->db->query($sql))
@@ -284,6 +289,7 @@ class Categorie
 
 	/**
 	 * 	Delete a category from database
+	 *
 	 * 	@param		user		Object user that ask to delete
 	 */
 	function delete($user)
@@ -544,21 +550,21 @@ class Categorie
 		$sql  = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association ";
 		$sql .= "WHERE fk_categorie_mere = ".$this->id;
 
-		$res  = $this->db->query ($sql);
+		$res  = $this->db->query($sql);
 
 		if ($res)
 		{
 			$cats = array ();
-			while ($rec = $this->db->fetch_array ($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$cat = new Categorie ($this->db, $rec['fk_categorie_fille']);
+				$cat = new Categorie($this->db, $rec['fk_categorie_fille']);
 				$cats[] = $cat;
 			}
 			return $cats;
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -567,13 +573,13 @@ class Categorie
 	/**
 	 * retourne la description d'une categorie
 	 */
-	function get_desc ($cate)
+	function get_desc($cate)
 	{
 		$sql  = "SELECT description FROM ".MAIN_DB_PREFIX."categorie ";
-		$sql .= "WHERE rowid = '".$cate."'";
+		$sql .= "WHERE rowid = ".$cate;
 
-		$res  = $this->db->query ($sql);
-		$n    = $this->db->fetch_array ($res);
+		$res  = $this->db->query($sql);
+		$n    = $this->db->fetch_array($res);
 
 		return ($n[0]);
 	}
@@ -581,12 +587,12 @@ class Categorie
 	/**
 	 * La categorie $fille est-elle une fille de cette categorie ?
 	 */
-	function is_fille ($fille)
+	function is_fille($fille)
 	{
 		$sql  = "SELECT count(fk_categorie_fille) FROM ".MAIN_DB_PREFIX."categorie_association ";
 		$sql .= "WHERE fk_categorie_mere = ".$this->id." AND fk_categorie_fille = ".$fille->id;
 
-		$res  = $this->db->query ($sql);
+		$res  = $this->db->query($sql);
 
 		$n    = $this->db->fetch_array($res);
 
@@ -627,7 +633,7 @@ class Categorie
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 
@@ -660,7 +666,7 @@ class Categorie
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 
@@ -778,20 +784,20 @@ class Categorie
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 
-		$res = $this->db->query ($sql);
+		$res = $this->db->query($sql);
 		if ($res)
 		{
 			$cats = array ();
-			while ($record = $this->db->fetch_array ($res))
+			while ($record = $this->db->fetch_array($res))
 			{
-				$cat = new Categorie ($this->db, $record['rowid']);
+				$cat = new Categorie($this->db, $record['rowid']);
 				$cats[$record['rowid']] = $cat;
 			}
 			return $cats;
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -804,7 +810,7 @@ class Categorie
 	{
 		$sql = "SELECT count(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$res = $this->db->query ($sql);
+		$res = $this->db->query($sql);
 		if ($res)
 		{
 			$res = $this->db->fetch_array($res);
@@ -866,7 +872,7 @@ class Categorie
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -874,22 +880,22 @@ class Categorie
 	/**
 	 * 		\brief		Retourne les categories de premier niveau (qui ne sont pas filles)
 	 */
-	function get_main_categories ()
+	function get_main_categories()
 	{
-		$allcats = $this->get_all_categories ();
+		$allcats = $this->get_all_categories();
 		$maincats = array ();
 		$filles   = array ();
 
 		$sql = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association";
-		$res = $this->db->query ($sql);
-		while ($res = $this->db->fetch_array ($res))
+		$res = $this->db->query($sql);
+		while ($res = $this->db->fetch_array($res))
 		{
 			$filles[] = $res['fk_categorie_fille'];
 		}
 
 		foreach ($allcats as $cat)
 		{
-			if (!in_array ($cat->id, $filles))
+			if (! in_array($cat->id, $filles))
 			{
 				$maincats[] = $cat;
 			}
@@ -943,7 +949,7 @@ class Categorie
 			{
 				if(sizeof($way)<$primary_way["taille"] || $primary_way["taille"]<0)
 				{
-					$primary_way["taille"] = sizeOf($way);
+					$primary_way["taille"] = count($way);
 					$primary_way["chemin"] = $way;
 				}
 			}
@@ -978,26 +984,26 @@ class Categorie
 	/**
 	 * Retourne un tableau contenant la liste des categories meres
 	 */
-	function get_meres ()
+	function get_meres()
 	{
-		$meres = array ();
+		$meres = array();
 
 		$sql  = "SELECT fk_categorie_mere FROM ".MAIN_DB_PREFIX."categorie_association ";
 		$sql .= "WHERE fk_categorie_fille = ".$this->id;
 
-		$res  = $this->db->query ($sql);
+		$res  = $this->db->query($sql);
 
 		if ($res)
 		{
-			while ($cat = $this->db->fetch_array ($res))
+			while ($cat = $this->db->fetch_array($res))
 			{
-				$meres[] = new Categorie ($this->db, $cat['fk_categorie_mere']);
+				$meres[] = new Categorie($this->db, $cat['fk_categorie_mere']);
 			}
 			return $meres;
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -1010,9 +1016,9 @@ class Categorie
 	{
 		$ways = array ();
 
-		foreach ($this->get_meres () as $mere)
+		foreach ($this->get_meres() as $mere)
 		{
-			foreach ($mere->get_all_ways () as $way)
+			foreach ($mere->get_all_ways() as $way)
 			{
 				$w   = $way;
 				$w[] = $this;
@@ -1021,7 +1027,7 @@ class Categorie
 			}
 		}
 
-		if (sizeof ($ways) == 0)
+		if (count($ways) == 0)
 		$ways[0][0] = $this;
 
 		return $ways;
@@ -1046,21 +1052,21 @@ class Categorie
 		$sql = "SELECT ct.fk_categorie";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON ct.fk_categorie = c.rowid";
-		$sql.= " WHERE  ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
+		$sql.= " WHERE ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
 
-		$res = $this->db->query ($sql);
+		$res = $this->db->query($sql);
 		if ($res)
 		{
-			while ($cat = $this->db->fetch_array ($res))
+			while ($cat = $this->db->fetch_array($res))
 			{
-				$cats[] = new Categorie ($this->db, $cat['fk_categorie']);
+				$cats[] = new Categorie($this->db, $cat['fk_categorie']);
 			}
 
 			return $cats;
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -1081,7 +1087,7 @@ class Categorie
 		{
 			if (! $exact)
 			{
-				$nom = '%'.str_replace ('*', '%', $nom).'%';
+				$nom = '%'.str_replace('*', '%', $nom).'%';
 			}
 			$sql.= "AND label LIKE '".$nom."'";
 		}
@@ -1090,12 +1096,12 @@ class Categorie
 			$sql.="AND rowid = '".$id."'";
 		}
 
-		$res  = $this->db->query ($sql);
+		$res  = $this->db->query($sql);
 		if ($res)
 		{
-			while ($id = $this->db->fetch_array ($res))
+			while ($id = $this->db->fetch_array($res))
 			{
-				$cats[] = new Categorie ($this->db, $id['rowid']);
+				$cats[] = new Categorie($this->db, $id['rowid']);
 			}
 
 			return $cats;

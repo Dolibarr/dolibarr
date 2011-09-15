@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client=1',1,1);
+print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',1,1);
 print '</td></tr>';
 if ($conf->banque->enabled)
 {

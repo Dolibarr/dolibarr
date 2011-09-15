@@ -60,8 +60,6 @@ ALTER TABLE llx_facture_fourn ADD COLUMN ref_ext varchar(30) AFTER entity;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN ref_ext varchar(30) AFTER entity;
 ALTER TABLE llx_adherent ADD COLUMN ref_ext varchar(30) after entity;
 
-ALTER TABLE llx_commande ADD COLUMN fk_demand_reason integer AFTER fk_availability;
-
 ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
 
@@ -114,6 +112,8 @@ INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (1, 'AV_NOW', 'I
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  '1 week', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'AV_2W',  '2 weeks', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'AV_3W',  '3 weeks', 1);
+
+ALTER TABLE llx_commande ADD COLUMN fk_demand_reason integer AFTER fk_availability;
 
 ALTER TABLE llx_propaldet ADD INDEX idx_propaldet_fk_product (fk_product);
 ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_product (fk_product);
@@ -487,3 +487,6 @@ ALTER TABLE llx_user ADD civilite varchar(6) after entity;
 
 ALTER TABLE llx_element_element MODIFY sourcetype varchar(32) NOT NULL;
 ALTER TABLE llx_element_element MODIFY targettype varchar(32) NOT NULL;
+
+ALTER TABLE llx_societe_prices MODIFY tms timestamp NULL;
+-- ALTER TABLE llx_societe_prices ALTER COLUMN tms DROP NOT NULL;

@@ -1329,15 +1329,17 @@ class Societe extends CommonObject
     {
         if ($this->id)
         {
+        	$now=dol_now();
+        	
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
             $sql .= " SET price_level = '".$price_level."'";
-            $sql .= " WHERE rowid = " . $this->id .";";
+            $sql .= " WHERE rowid = " . $this->id;
 
             $this->db->query($sql);
 
             $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices ";
             $sql .= " ( datec, fk_soc, price_level, fk_user_author )";
-            $sql .= " VALUES (".$this->db->idate(mktime()).",".$this->id.",'".$price_level."',".$user->id.")";
+            $sql .= " VALUES ('".$this->db->idate($now)."',".$this->id.",'".$price_level."',".$user->id.")";
 
             if (! $this->db->query($sql) )
             {
