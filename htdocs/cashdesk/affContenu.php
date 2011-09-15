@@ -22,7 +22,7 @@
  *	\ingroup    cashdesk
  *	\brief      Include to show main page for cashdesk module
  */
-require ('class/Facturation.class.php');
+require_once('class/Facturation.class.php');
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
 if ( $_GET['id'] == 'NOUV' )
@@ -40,7 +40,7 @@ if ( isset ($_SESSION['serObjFacturation']) )
 else
 {
 	// ... sinon, c'est une nouvelle vente
-	$obj_facturation = new Facturation;
+	$obj_facturation = new Facturation();
 }
 
 print '<div class="liste_articles">';
