@@ -113,25 +113,33 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 
     // Show prof id 1 in address into pdf
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId1",$mysoc->pays_code).'</td><td>';
+    $pid1=$langs->transcountry("ProfId1",$mysoc->pays_code);
+    if ($pid1 == '-') $pid1=$langs->transcountry("ProfId1");
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid1.'</td><td>';
 	print $html->selectyesno('MAIN_PROFID1_IN_ADDRESS',isset($conf->global->MAIN_PROFID1_IN_ADDRESS)?$conf->global->MAIN_PROFID1_IN_ADDRESS:0,1);
     print '</td></tr>';
 
     // Show prof id 2 in address into pdf
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId2",$mysoc->pays_code).'</td><td>';
+    $pid2=$langs->transcountry("ProfId2",$mysoc->pays_code);
+    if ($pid2 == '-') $pid2=$langs->transcountry("ProfId2");
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid2.'</td><td>';
 	print $html->selectyesno('MAIN_PROFID2_IN_ADDRESS',isset($conf->global->MAIN_PROFID2_IN_ADDRESS)?$conf->global->MAIN_PROFID2_IN_ADDRESS:0,1);
     print '</td></tr>';
 
     // Show prof id 3 in address into pdf
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId3",$mysoc->pays_code).'</td><td>';
+    $pid3=$langs->transcountry("ProfId3",$mysoc->pays_code);
+    if ($pid3 == '-') $pid3=$langs->transcountry("ProfId3");
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid3.'</td><td>';
 	print $html->selectyesno('MAIN_PROFID3_IN_ADDRESS',isset($conf->global->MAIN_PROFID3_IN_ADDRESS)?$conf->global->MAIN_PROFID3_IN_ADDRESS:0,1);
     print '</td></tr>';
 
     // Show prof id 4 in address into pdf
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId4",$mysoc->pays_code).'</td><td>';
+    $pid4=$langs->transcountry("ProfId4",$mysoc->pays_code);
+    if ($pid4 == '-') $pid4=$langs->transcountry("ProfId4");
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid4.'</td><td>';
 	print $html->selectyesno('MAIN_PROFID4_IN_ADDRESS',isset($conf->global->MAIN_PROFID4_IN_ADDRESS)?$conf->global->MAIN_PROFID4_IN_ADDRESS:0,1);
     print '</td></tr>';
 
@@ -199,25 +207,33 @@ else	// Show
 
     // Show prof id 1 in address into pdf
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId1",$mysoc->pays_code).'</td><td>';
+    $pid1=$langs->transcountry("ProfId1",$mysoc->pays_code);
+    if ($pid1 == '-') $pid1=$langs->transcountry("ProfId1");
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid1.'</td><td>';
     print yn($conf->global->MAIN_PROFID1_IN_ADDRESS,1);
     print '</td></tr>';
 
     // Show prof id 2 in address into pdf
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId2",$mysoc->pays_code).'</td><td>';
+    $pid2=$langs->transcountry("ProfId2",$mysoc->pays_code);
+    if ($pid2 == '-') $pid2=$langs->transcountry("ProfId2");
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid2.'</td><td>';
     print yn($conf->global->MAIN_PROFID2_IN_ADDRESS,1);
     print '</td></tr>';
 
     // Show prof id 3 in address into pdf
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId3",$mysoc->pays_code).'</td><td>';
+    $pid3=$langs->transcountry("ProfId3",$mysoc->pays_code);
+    if ($pid3 == '-') $pid3=$langs->transcountry("ProfId3");
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid3.'</td><td>';
     print yn($conf->global->MAIN_PROFID3_IN_ADDRESS,1);
     print '</td></tr>';
 
     // Show prof id 4 in address into pdf
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId4",$mysoc->pays_code).'</td><td>';
+    $pid4=$langs->transcountry("ProfId4",$mysoc->pays_code);
+    if ($pid4 == '-') $pid4=$langs->transcountry("ProfId4");
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid4.'</td><td>';
     print yn($conf->global->MAIN_PROFID4_IN_ADDRESS,1);
     print '</td></tr>';
 
