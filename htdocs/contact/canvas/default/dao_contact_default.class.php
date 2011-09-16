@@ -33,8 +33,9 @@ class DaoContactDefault extends Contact
 	var $errno = 0;
 
 	/**
-	 *    Constructeur de la classe
-	 *    @param	DB		Handler acces base de donnees
+	 *    Constructor
+	 *
+	 *    @param	DoliDB	$DB		Handler acces base de donnees
 	 */
 	function DaoContactDefault($DB)
 	{
@@ -42,20 +43,10 @@ class DaoContactDefault extends Contact
 	}
 
 	/**
-	 *    Lecture des donnees dans la base
-	 *    @param	id          Element id
-	 */
-	function fetch($id)
-	{
-		$result = parent::fetch($id);
-
-		return $result;
-	}
-
-	/**
      *    Create third party in database
-     *    @param      user        Object of user that ask creation
-     *    @return     int         >= 0 if OK, < 0 if KO
+     *
+     *    @param      User		$user   	Object of user that ask creation
+     *    @return     int        			>= 0 if OK, < 0 if KO
      */
     function create($user='')
     {
@@ -65,13 +56,14 @@ class DaoContactDefault extends Contact
     }
 
 	/**
-     *      Update parameters of third party
-     *      @param      id              			id societe
-     *      @param      user            			Utilisateur qui demande la mise a jour
-     *      @param      call_trigger    			0=non, 1=oui
-     *		@param		allowmodcodeclient			Inclut modif code client et code compta
-     *		@param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
-     *      @return     int             			<0 si ko, >=0 si ok
+     *  Update parameters of third party
+     *
+     *  @param		int		$id        					Id societe
+     *  @param      User	$user      					Utilisateur qui demande la mise a jour
+     *  @param      int		$call_trigger  				0=non, 1=oui
+     *	@param		int		$allowmodcodeclient			Inclut modif code client et code compta
+     *	@param		int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
+     *  @return     int             					<0 if KO, >=0 if OK
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
     {
@@ -81,8 +73,9 @@ class DaoContactDefault extends Contact
     }
 
 	/**
-     *    Delete third party in database
-     *    @param      id      id de la societe a supprimer
+     *  Delete third party in database
+     *
+     *  @return     int             					<0 if KO, >=0 if OK
      */
     function delete()
     {

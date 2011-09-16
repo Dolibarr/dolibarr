@@ -193,10 +193,11 @@ class Contact extends CommonObject
 
 	/**
 	 *      Update informations into database
-	 *      @param      id          	Id of contact/address to update
-	 *      @param      user        	Objet user making change
-	 *      @param      notrigger	    0=no, 1=yesi
-	 *      @return     int         	<0 if KO, >0 if OK
+	 *
+	 *      @param      int		$id          	Id of contact/address to update
+	 *      @param      User	$user        	Objet user making change
+	 *      @param      int		$notrigger	    0=no, 1=yesi
+	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
 	function update($id, $user=0, $notrigger=0)
 	{
@@ -280,12 +281,13 @@ class Contact extends CommonObject
 
 
 	/**
-	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
-	 *	\param		info		Info string loaded by _load_ldap_info
-	 *	\param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *							1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *							2=Return key only (uid=qqq)
-	 *	\return		string		DN
+	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *
+	 *	@param		array	$info		Info string loaded by _load_ldap_info
+	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+	 *									2=Return key only (uid=qqq)
+	 *	@return		string				DN
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
@@ -299,8 +301,9 @@ class Contact extends CommonObject
 
 
 	/**
-	 *	\brief		Initialise tableau info (tableau des attributs LDAP)
-	 *	\return		array		Tableau info des attributs
+	 *	Initialise tableau info (tableau des attributs LDAP)
+	 *
+	 *	@return		array		Tableau info des attributs
 	 */
 	function _load_ldap_info()
 	{
@@ -368,10 +371,11 @@ class Contact extends CommonObject
 
 
 	/**
-	 *    Update field alert birthday
-	 *    @param       id          Id of contact
-	 *    @param       user        User asking to change alert or birthday
-	 *    @return      int
+	 *  Update field alert birthday
+	 *
+	 *  @param      int			$id         Id of contact
+	 *  @param      User		$user		User asking to change alert or birthday
+     *  @return     int         			<0 if KO, >=0 if OK
 	 */
 	function update_perso($id, $user=0)
 	{
@@ -431,11 +435,12 @@ class Contact extends CommonObject
 	}
 
 
-	/*
-	 *    \brief      Charge l'objet contact
-	 *    \param      id          id du contact
-	 *    \param      user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
-	 *    \return     int         -1 if KO, 0 if OK but not found, 1 if OK
+	/**
+	 *  Charge l'objet contact
+	 *
+	 *  @param      int		$id          id du contact
+	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
+	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
 	function fetch($id, $user=0)
 	{
@@ -584,12 +589,13 @@ class Contact extends CommonObject
 
 
 	/**
-	 *    \brief        Charge le nombre d'elements auquel est lie ce contact
-	 *                  ref_facturation
-	 *                  ref_contrat
-	 *                  ref_commande
-	 *                  ref_propale
-	 *    \return       int         0 si ok, -1 si erreur
+	 *  Charge le nombre d'elements auquel est lie ce contact
+	 *  ref_facturation
+	 *  ref_contrat
+	 *  ref_commande
+	 *  ref_propale
+	 *
+     *  @return     int             					<0 if KO, >=0 if OK
 	 */
 	function load_ref_elements()
 	{
@@ -628,8 +634,9 @@ class Contact extends CommonObject
 
 	/**
 	 *   	Efface le contact de la base
-	 *   	@param		notrigger	Disable all trigger
-	 *		@return		int			<0 if KO, >0 if OK
+	 *
+	 *   	@param		int		$notrigger		Disable all trigger
+	 *		@return		int						<0 if KO, >0 if OK
 	 */
 	function delete($notrigger=0)
 	{
@@ -721,9 +728,11 @@ class Contact extends CommonObject
 	}
 
 
-	/*
-	 *    \brief      Charge les informations sur le contact, depuis la base
-	 *    \param      id      id du contact a charger
+	/**
+	 *  Charge les informations sur le contact, depuis la base
+	 *
+	 *  @param		int		$id      Id du contact a charger
+	 *  @return		void
 	 */
 	function info($id)
 	{
@@ -766,8 +775,9 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *    \brief        Return number of mass Emailing received by this contacts with its email
-	 *    \return       int     Number of EMailings
+	 *  Return number of mass Emailing received by this contacts with its email
+	 *
+	 *  @return       int     Number of EMailings
 	 */
 	function getNbOfEMailings()
 	{
@@ -792,12 +802,13 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *    	Return name of contact with link (and eventually picto)
-	 *		Use $this->id, $this->name, $this->firstname, this->civilite_id
-	 *		@param		withpicto		Include picto with link
-	 *		@param		option			Where the link point to
-	 *		@param		maxlen			Max length of
-	 *		@return		string			String with URL
+	 *  Return name of contact with link (and eventually picto)
+	 *	Use $this->id, $this->name, $this->firstname, this->civilite_id
+	 *
+	 *	@param		int			$withpicto		Include picto with link
+	 *	@param		string		$option			Where the link point to
+	 *	@param		int			$maxlen			Max length of
+	 *	@return		string						String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlen=0)
 	{
@@ -822,9 +833,10 @@ class Contact extends CommonObject
 
     /**
      * 	Return full address of contact
-     * 	@param		withcountry		1=Add country into address string
-     *  @param		sep				Separator to use to build string
-     *	@return		string			Full address string
+     *
+     * 	@param		int			$withcountry		1=Add country into address string
+     *  @param		string		$sep				Separator to use to build string
+     *	@return		string							Full address string
      */
     function getFullAddress($withcountry=0,$sep="\n")
     {
@@ -847,6 +859,7 @@ class Contact extends CommonObject
 
 	/**
 	 *    Return label of a civility contact
+	 *
 	 *    @return     string      Translated name of civility
 	 */
 	function getCivilityLabel()
@@ -868,10 +881,11 @@ class Contact extends CommonObject
 
 	/**
 	 *    	Return full name (civility+' '+name+' '+lastname)
-	 *		@param		langs			Language object for translation of civility
-	 *		@param		option			0=No option, 1=Add civility
-	 * 		@param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-	 * 		@return		string			String with full name
+	 *
+	 *		@param		Translate	$langs			Language object for translation of civility
+	 *		@param		string		$option			0=No option, 1=Add civility
+	 * 		@param		int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+	 * 		@return		string						String with full name
 	 */
 	function getFullName($langs,$option=0,$nameorder=-1)
 	{
@@ -904,9 +918,10 @@ class Contact extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libelle du statut du contact
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string      Libelle
+	 *  Retourne le libelle du statut du contact
+	 *
+	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return     string      			Libelle
 	 */
 	function getLibStatut($mode)
 	{
@@ -914,12 +929,13 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *		\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 *	Renvoi le libelle d'un statut donne
+	 *
+	 *  @param      int			$statut     Id statut
+	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return     string					Libelle
 	 */
-	function LibStatut($statut,$mode)
+	function LibStatut($statut, $mode)
 	{
 		global $langs;
 
@@ -969,9 +985,10 @@ class Contact extends CommonObject
 
 
 	/**
-	 *		\brief      Return translated label of Public or Private
-	 *    	\param      type		Type (0 = public, 1 = private)
-	 *    	\return     string		Label translated
+	 *	Return translated label of Public or Private
+	 *
+	 * 	@param      int			$statut		Type (0 = public, 1 = private)
+	 *  @return     string					Label translated
 	 */
 	function LibPubPriv($statut)
 	{
@@ -982,7 +999,9 @@ class Contact extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le contact avec valeurs fictives aleatoire
+	 *	Initialise le contact avec valeurs fictives aleatoire
+	 *
+	 *	@return		void
 	 */
 	function initAsSpecimen()
 	{
