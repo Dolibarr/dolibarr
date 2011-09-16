@@ -26,6 +26,7 @@
 
 /**
  *  Return an array with timezone values
+ *
  *  @return     array   Array with timezone values
  */
 function get_tz_array()
@@ -62,10 +63,11 @@ function get_tz_array()
 
 /**
  *  Add a delay to a date
- *  @param      time                Date timestamp (or string with format YYYY-MM-DD)
- *  @param      duration_value      Value of delay to add
- *  @param      duration_unit       Unit of added delay (d, m, y)
- *  @return     int                 New timestamp
+ *
+ *  @param      timestamp	$time               Date timestamp (or string with format YYYY-MM-DD)
+ *  @param      int			$duration_value     Value of delay to add
+ *  @param      int			$duration_unit      Unit of added delay (d, m, y)
+ *  @return     timestamp      			        New timestamp
  */
 function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
@@ -80,10 +82,11 @@ function dol_time_plus_duree($time,$duration_value,$duration_unit)
 
 
 /**   Converti les heures et minutes en secondes
- *    @param      iHours      Heures
- *    @param      iMinutes    Minutes
- *    @param      iSeconds    Secondes
- *    @return     iResult	    Temps en secondes
+ *
+ *    @param      int		$iHours      Heures
+ *    @param      int		$iMinutes    Minutes
+ *    @param      int		$iSeconds    Secondes
+ *    @return     int		$iResult	 Temps en secondes
  */
 function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 {
@@ -93,12 +96,13 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 
 
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
- *    	@param      iSecond		    Number of seconds
- *    	@param      format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes, sec: displays only seconds, month: display month only, year: displays only year);
- *      @param      lengthOfDay     Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
- *      @param      lengthOfWeek    Length of week (default 7)
- *    	@return     sTime		    Formated text of duration
- * 	                                Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
+ *
+ *    	@param      int		$iSecond		Number of seconds
+ *    	@param      string	$format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes, sec: displays only seconds, month: display month only, year: displays only year);
+ *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
+ *      @param      int		$lengthOfWeek   Length of week (default 7)
+ *    	@return     sTime		 		 	Formated text of duration
+ * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  */
 function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOfWeek=7)
 {
@@ -178,10 +182,11 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
 
 
 /** Return previous day
- *  @param      day     Day
- *  @param      month   Month
- *  @param      year    Year
- *  @return     array   Previous year,month,day
+ *
+ *  @param      int			$day     	Day
+ *  @param      int			$month   	Month
+ *  @param      int			$year    	Year
+ *  @return     array   				Previous year,month,day
  */
 function dol_get_prev_day($day, $month, $year)
 {
@@ -192,10 +197,11 @@ function dol_get_prev_day($day, $month, $year)
 }
 
 /** Return next day
- *  @param      day     Day
- *  @param      month   Month
- *  @param      year    Year
- *  @return     array   Next year,month,day
+ *
+ *  @param      int			$day    	Day
+ *  @param      int			$month  	Month
+ *  @param      int			$year   	Year
+ *  @return     array   				Next year,month,day
  */
 function dol_get_next_day($day, $month, $year)
 {
@@ -206,9 +212,10 @@ function dol_get_next_day($day, $month, $year)
 }
 
 /**	Return previous month
- *	@param		month	Month
- *	@param		year	Year
- *	@return		array	Previous year,month
+ *
+ *	@param		int			$month		Month
+ *	@param		int			$year		Year
+ *	@return		array					Previous year,month
  */
 function dol_get_prev_month($month, $year)
 {
@@ -226,9 +233,10 @@ function dol_get_prev_month($month, $year)
 }
 
 /**	Return next month
- *	@param		month	Month
- *	@param		year	Year
- *	@return		array	Next year,month
+ *
+ *	@param		int			$month		Month
+ *	@param		int			$year		Year
+ *	@return		array					Next year,month
  */
 function dol_get_next_month($month, $year)
 {
@@ -246,11 +254,12 @@ function dol_get_next_month($month, $year)
 }
 
 /**	Return previous week
- *  @param      day     Day
- * 	@param		week	Week
- * 	@param		month	Month
- *	@param		year	Year
- *	@return		array	Previous year,month,day
+ *
+ *  @param      int			$day     	Day
+ *  @param      int			$week    	Week
+ *  @param      int			$month   	Month
+ *	@param		int			$year		Year
+ *	@return		array					Previous year,month,day
  */
 function dol_get_prev_week($day, $week, $month, $year)
 {
@@ -263,11 +272,12 @@ function dol_get_prev_week($day, $week, $month, $year)
 }
 
 /**	Return next week
- *  @param      day     Day
- *  @param      week    Week
- *  @param      month   Month
- *	@param		year	Year
- *	@return		array	Next year,month,day
+ *
+ *  @param      int			$day     	Day
+ *  @param      int			$week    	Week
+ *  @param      int			$month   	Month
+ *	@param		int			$year		Year
+ *	@return		array					Next year,month,day
  */
 function dol_get_next_week($day, $week, $month, $year)
 {
@@ -282,12 +292,13 @@ function dol_get_next_week($day, $week, $month, $year)
 }
 
 /**	Return GMT time for first day of a month or year
- *	@param		year		Year
- * 	@param		month		Month
- * 	@param		gm			False = Return date to compare with server TZ, True to compare with GM date.
- *                          Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
- *                          Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
- *  @return		Timestamp	Date for first day
+ *
+ *	@param		int			$year		Year
+ * 	@param		int			$month		Month
+ * 	@param		boolean		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
+ *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
+ *  @return		timestamp				Date for first day
  */
 function dol_get_first_day($year,$month=1,$gm=false)
 {
@@ -296,10 +307,11 @@ function dol_get_first_day($year,$month=1,$gm=false)
 
 
 /**	Return GMT time for last day of a month or year
- *	@param		year		Year
- * 	@param		month		Month
- * 	@param		gm			False = Return date to compare with server TZ, True to compare with GM date.
- *	@return		Timestamp	Date for first day
+ *
+ *	@param		int			$year		Year
+ * 	@param		int			$month		Month
+ * 	@param		boolean		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ *	@return		timestamp				Date for first day
  */
 function dol_get_last_day($year,$month=12,$gm=false)
 {
@@ -321,11 +333,12 @@ function dol_get_last_day($year,$month=12,$gm=false)
 }
 
 /**	Return first day of week for a date
- *	@param		day			Day
- * 	@param		month		Month
- *  @param		year		Year
- * 	@param		gm			False = Return date to compare with server TZ, True to compare with GM date.
- *	@return		array		year,month, week,first_day,prev_year,prev_month,prev_day
+ *
+ *	@param		int		$day		Day
+ * 	@param		int		$month		Month
+ *  @param		int		$year		Year
+ * 	@param		int		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ *	@return		array				year,month, week,first_day,prev_year,prev_month,prev_day
  */
 function dol_get_first_day_week($day,$month,$year,$gm=false)
 {
@@ -393,10 +406,11 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
 /**
  *	Fonction retournant le nombre de jour fieries samedis et dimanches entre 2 dates entrees en timestamp
  *	Called by function num_open_day
- *	@param	    timestampStart      Timestamp de debut
- *	@param	    timestampEnd        Timestamp de fin
- *  @param      countrycode         Country code
- *	@return   	nbFerie             Nombre de jours feries
+ *
+ *	@param	    timestamp	$timestampStart     Timestamp de debut
+ *	@param	    timestamp	$timestampEnd       Timestamp de fin
+ *  @param      string		$countrycode        Country code
+ *	@return   	int								Nombre de jours feries
  */
 function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 {
@@ -433,12 +447,13 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			// Paques
 
 			// Calcul du jour de l ascension (38 jours apres Paques)
-			$date_ascension = mktime(date("H", $date_paques),
-			date("i", $date_paques),
-			date("s", $date_paques),
-			date("m", $date_paques),
-			date("d", $date_paques) + 38,
-			date("Y", $date_paques)
+			$date_ascension = mktime(
+                date("H", $date_paques),
+                date("i", $date_paques),
+                date("s", $date_paques),
+                date("m", $date_paques),
+                date("d", $date_paques) + 38,
+                date("Y", $date_paques)
 			);
 			$jour_ascension = date("d", $date_ascension);
 			$mois_ascension = date("m", $date_ascension);
@@ -446,12 +461,13 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			//Ascension
 
 			// Calcul de Pentecote (11 jours apres Paques)
-			$date_pentecote = mktime(date("H", $date_ascension),
-			date("i", $date_ascension),
-			date("s", $date_ascension),
-			date("m", $date_ascension),
-			date("d", $date_ascension) + 11,
-			date("Y", $date_ascension)
+			$date_pentecote = mktime(
+                date("H", $date_ascension),
+                date("i", $date_ascension),
+                date("s", $date_ascension),
+                date("m", $date_ascension),
+                date("d", $date_ascension) + 11,
+                date("Y", $date_ascension)
 			);
 			$jour_pentecote = date("d", $date_pentecote);
 			$mois_pentecote = date("m", $date_pentecote);
@@ -520,10 +536,11 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 
 /**
  *	Fonction retournant le nombre de jour entre deux dates
- *	@param	   timestampStart      Timestamp de debut
- *	@param	   timestampEnd        Timestamp de fin
- *	@param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
- *	@return    nbjours             Nombre de jours
+ *
+ *	@param	   timestamp	$timestampStart     Timestamp de debut
+ *	@param	   timestamp	$timestampEnd       Timestamp de fin
+ *	@param     int			$lastday            On prend en compte le dernier jour, 0: non, 1:oui
+ *	@return    int								Nombre de jours
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 {
@@ -544,11 +561,12 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 
 /**
  *	Fonction retournant le nombre de jour entre deux dates sans les jours feries (jours ouvres)
- *	@param	   timestampStart      Timestamp de debut
- *	@param	   timestampEnd        Timestamp de fin
- *	@param     inhour              0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)
- *	@param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
- *	@return    nbjours             Nombre de jours ou d'heures
+ *
+ *	@param	   timestamp	$timestampStart     Timestamp de debut
+ *	@param	   timestamp	$timestampEnd       Timestamp de fin
+ *	@param     int			$inhour             0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)
+ *	@param     int			$lastday            On prend en compte le dernier jour, 0: non, 1:oui
+ *	@return    int								Nombre de jours ou d'heures
  */
 function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 {
@@ -574,8 +592,8 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 /**
  *	Return array of translated months or selected month
  *
- *	@param   selected			-1 to return array of all months or motnh to select
- *	@return  string or array	Month string or array if selected < 0
+ *	@param   int		$selected		-1 to return array of all months or motnh to select
+ *	@return  mixed						Month string or array if selected < 0
  */
 function monthArrayOrSelected($selected=0)
 {

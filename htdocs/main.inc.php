@@ -368,7 +368,7 @@ if (! defined('NOLOGIN'))
 		// Validation of login with a third party login module method
 		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
 		{
-			$login = getLoginMethod();
+			$login = getLoginMethod($_POST["username"],$_POST["password"],$_POST["entity"]);
 			if ($login)	$test=false;
 		}
 

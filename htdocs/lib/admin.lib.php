@@ -24,9 +24,10 @@
 
 
 /**
- *  \brief      Renvoi une version en chaine depuis une version en tableau
- *  \param	   versionarray        Tableau de version (vermajeur,vermineur,autre)
- *  \return     string              Chaine version
+ *  Renvoi une version en chaine depuis une version en tableau
+ *
+ *  @param		array		$versionarray		Tableau de version (vermajeur,vermineur,autre)
+ *  @return     string        			      	Chaine version
  */
 function versiontostring($versionarray)
 {
@@ -39,17 +40,21 @@ function versiontostring($versionarray)
 
 /**
  *	Compare 2 versions (stored into 2 arrays)
- *	@param      versionarray1       Array of version (vermajor,verminor,patch)
- *	@param      versionarray2       Array of version (vermajor,verminor,patch)
- *	@return     int                 -4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
- * 									0 if same
- * 									1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
+ *
+ *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
+ *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
+ *	@return     int          			       	-4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
+ * 												0 if same
+ * 												1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
  */
 function versioncompare($versionarray1,$versionarray2)
 {
 	$ret=0;
 	$level=0;
-	while ($level < max(sizeof($versionarray1),sizeof($versionarray2)))
+	$count1=count($versionarray1);
+	$count2=count($versionarray2);
+	$maxcount=max($count1,$count2);
+	while ($level < $maxcount)
 	{
 		$operande1=isset($versionarray1[$level])?$versionarray1[$level]:0;
 		$operande2=isset($versionarray2[$level])?$versionarray2[$level]:0;
@@ -71,6 +76,7 @@ function versioncompare($versionarray1,$versionarray2)
 
 /**
  *	Return version PHP
+ *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
  */
 function versionphparray()
@@ -79,10 +85,11 @@ function versionphparray()
 }
 
 /**
- *	\brief      Return version Dolibarr
- *	\return     array               Tableau de version (vermajeur,vermineur,autre)
+ *	Return version Dolibarr
+ *
+ *	@return     array               Tableau de version (vermajeur,vermineur,autre)
  */
-function versiondolibarrarray($fortest=0)
+function versiondolibarrarray()
 {
 	return explode('.',DOL_VERSION);
 }
@@ -95,12 +102,13 @@ function versiondolibarrarray($fortest=0)
  *  - Running specific Sql by a module init
  *  Install process however does not use it.
  *  Note that Sql files must have all comments at start of line.
- *	@param		sqlfile			Full path to sql file
- * 	@param		silent			1=Do not output anything, 0=Output line for update page
- * 	@param		entity			Entity targeted for multicompany module
- *	@param		usesavepoint	1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
- *	@param		handler			Handler targeted for menu
- * 	@return		int				<=0 if KO, >0 if OK
+ *
+ *	@param		string	$sqlfile		Full path to sql file
+ * 	@param		int		$silent			1=Do not output anything, 0=Output line for update page
+ * 	@param		int		$entity			Entity targeted for multicompany module
+ *	@param		int		$usesavepoint	1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+ *	@param		string	$handler		Handler targeted for menu
+ * 	@return		int						<=0 if KO, >0 if OK
  */
 function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 {
@@ -120,7 +128,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 	$fp = fopen($sqlfile,"r");
 	if ($fp)
 	{
-		while (!feof ($fp))
+		while (! feof($fp))
 		{
 			$buf = fgets($fp, 4096);
 
@@ -130,7 +138,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 				$versioncommande=explode('.',$reg[1]);
 				//print var_dump($versioncommande);
 				//print var_dump($versionarray);
-				if (sizeof($versioncommande) && sizeof($versionarray)
+				if (count($versioncommande) && count($versionarray)
 				&& versioncompare($versioncommande,$versionarray) <= 0)
 				{
 					// Version qualified, delete SQL comments
@@ -336,11 +344,13 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 
 /**
  *	Effacement d'une constante dans la base de donnees
+ *
+ *	@param	    DoliDB		$db         Database handler
+ *	@param	    string		$name		Name of constant or rowid of line
+ *	@param	    int			$entity		Multi company id, -1 for all entities
+ *	@return     int         			<0 if KO, >0 if OK
+ *
  *	@see		dolibarr_get_const, dolibarr_sel_const
- *	@param	    db          Handler d'acces base
- *	@param	    name		Name of constant or rowid of line
- *	@param	    entity		Multi company id, -1 for all entities
- *	@return     int         <0 if KO, >0 if OK
  */
 function dolibarr_del_const($db, $name, $entity=1)
 {
@@ -368,11 +378,13 @@ function dolibarr_del_const($db, $name, $entity=1)
 
 /**
  *	Recupere une constante depuis la base de donnees.
+ *
+ *	@param	    DoliDB		$db         Database handler
+ *	@param	    string		$name		Nom de la constante
+ *	@param	    int			$entity		Multi company id
+ *	@return     string      			Valeur de la constante
+ *
  *	@see		dolibarr_del_const, dolibarr_set_const
- *	@param	    db          Handler d'acces base
- *	@param	    name		Nom de la constante
- *	@param	    entity		Multi company id
- *	@return     string      Valeur de la constante
  */
 function dolibarr_get_const($db, $name, $entity=1)
 {
@@ -397,15 +409,17 @@ function dolibarr_get_const($db, $name, $entity=1)
 
 /**
  *	Insert a parameter (key,value) into database.
+ *
+ *	@param	    DoliDB		$db         Database handler
+ *	@param	    string		$name		Name of constant
+ *	@param	    string		$value		Value of constant
+ *	@param	    string		$type		Type of constante (chaine par defaut)
+ *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
+ *	@param	    string		$note		Note on parameter
+ *	@param	    int			$entity		Multi company id (0 means all entities)
+ *	@return     int         			-1 if KO, 1 if OK
+ *
  *	@see		dolibarr_del_const, dolibarr_get_const
- *	@param	    db          Database handler
- *	@param	    name		Name of constant
- *	@param	    value		Value of constant
- *	@param	    type		Type of constante (chaine par defaut)
- *	@param	    visible	    Is constant visible in Setup->Other page (0 by default)
- *	@param	    note		Note on parameter
- *	@param	    entity		Multi company id (0 means all entities)
- *	@return     int         -1 if KO, 1 if OK
  */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='', $entity=1)
 {
@@ -464,8 +478,9 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
 
 /**
- *  \brief      	Define head array for tabs of security setup pages
- *  \return			Array of head
+ *  Define head array for tabs of security setup pages
+ *
+ *  @return		array		Array of head
  */
 function security_prepare_head()
 {
@@ -504,6 +519,7 @@ function security_prepare_head()
 
 /**
  * 	Return list of session
+ *
  *	@return		array			Array list of sessions
  */
 function listOfSessions()
@@ -534,9 +550,9 @@ function listOfSessions()
 						$idsess=$tmp[1];
 						$login = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i',$sessValues,$regs);
 						$arrayofSessions[$idsess]["login"] = $regs[1];
-						$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
-						$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
-						$arrayofSessions[$idsess]["modification"] = filemtime( $fullpath );
+						$arrayofSessions[$idsess]["age"] = time()-filectime($fullpath);
+						$arrayofSessions[$idsess]["creation"] = filectime($fullpath);
+						$arrayofSessions[$idsess]["modification"] = filemtime($fullpath);
 						$arrayofSessions[$idsess]["raw"] = $sessValues;
 					}
 				}
@@ -550,8 +566,9 @@ function listOfSessions()
 
 /**
  * 	Purge existing sessions
- * 	@param		mysessionid		To avoid to try to delete my own session
- * 	@return		int		>0 if OK, <0 if KO
+ *
+ * 	@param		int		$mysessionid		To avoid to try to delete my own session
+ * 	@return		int							>0 if OK, <0 if KO
  */
 function purgeSessions($mysessionid)
 {
@@ -598,93 +615,92 @@ function purgeSessions($mysessionid)
 
 /**
  *  Enable a module
- *  @param      value       Name of module to activate
- *  @param      withdeps    Activate/Disable also all dependencies
- *  @return     string      Error message or '';
+ *
+ *  @param      string		$value      Name of module to activate
+ *  @param      int			$withdeps   Activate/Disable also all dependencies
+ *  @return     string      			Error message or '';
  */
 function Activate($value,$withdeps=1)
 {
     global $db, $modules, $langs, $conf;
 
-    $modName = $value;
+    // Check parameters
+    if (empty($value)) return 'ErrorBadParameter';
 
     $ret='';
+    $modName = $value;
+    $modFile = $modName . ".class.php";
+    $modulesdir = array();
 
-    // Activate module
-    if ($modName)
+    // Loop on each directory
+    $found=false;
+	foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
-        $modFile = $modName . ".class.php";
+        $modulesdir[] = $dirroot."/includes/modules/";
 
-        // Loop on each directory
-        $found=false;
-    	foreach ($conf->file->dol_document_root as $type => $dirroot)
-        {
-            $modulesdir[] = $dirroot."/includes/modules/";
-            
-            if ($type == 'alt')
-			{	
-				$handle=@opendir($dirroot);
-				if (is_resource($handle))
+        if ($type == 'alt')
+		{
+			$handle=@opendir($dirroot);
+			if (is_resource($handle))
+			{
+				while (($file = readdir($handle))!==false)
 				{
-					while (($file = readdir($handle))!==false)
-					{
-					    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-					    {
-					    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
-					    	{
-					    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
-					    	}
-					    }
-					}
-					closedir($handle);
+				    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+				    {
+				    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+				    	{
+				    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+				    	}
+				    }
 				}
+				closedir($handle);
 			}
-        }
-
-        foreach ($modulesdir as $dir)
-        {
-        	if (file_exists($dir.$modFile))
-        	{
-        		$found=@include_once($dir.$modFile);
-        		if ($found) break;
-        	}
-        }
-
-        $objMod = new $modName($db);
-
-        // Test if PHP version ok
-        $verphp=versionphparray();
-        $vermin=isset($objMod->phpmin)?$objMod->phpmin:0;
-        if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
-        {
-            return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
-        }
-
-        // Test if Dolibarr version ok
-        $verdol=versiondolibarrarray();
-        $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
-        //print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
-        if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
-        {
-            return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
-        }
-
-        // Test if javascript requirement ok
-        if (! empty($objMod->need_javascript_ajax) && empty($conf->use_javascript_ajax))
-        {
-            return $langs->trans("ErrorModuleRequireJavascript");
-        }
-
-        $result=$objMod->init();
-        if ($result <= 0) $ret=$objMod->error;
+		}
     }
+
+    foreach ($modulesdir as $dir)
+    {
+    	if (file_exists($dir.$modFile))
+    	{
+    		$found=@include_once($dir.$modFile);
+    		if ($found) break;
+    	}
+    }
+
+    $objMod = new $modName($db);
+
+    // Test if PHP version ok
+    $verphp=versionphparray();
+    $vermin=isset($objMod->phpmin)?$objMod->phpmin:0;
+    if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
+    {
+        return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
+    }
+
+    // Test if Dolibarr version ok
+    $verdol=versiondolibarrarray();
+    $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
+    //print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
+    if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
+    {
+        return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
+    }
+
+    // Test if javascript requirement ok
+    if (! empty($objMod->need_javascript_ajax) && empty($conf->use_javascript_ajax))
+    {
+        return $langs->trans("ErrorModuleRequireJavascript");
+    }
+
+    $result=$objMod->init();
+    if ($result <= 0) $ret=$objMod->error;
 
     if (! $ret && $withdeps)
     {
         if (is_array($objMod->depends) && !empty($objMod->depends))
         {
             // Activation des modules dont le module depend
-            for ($i = 0; $i < sizeof($objMod->depends); $i++)
+            for ($i = 0; $i < count($objMod->depends); $i++)
             {
                 if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->depends[$i].".class.php"))
                 {
@@ -696,7 +712,7 @@ function Activate($value,$withdeps=1)
         if (isset($objMod->conflictwith) && is_array($objMod->conflictwith))
         {
             // Desactivation des modules qui entrent en conflit
-            for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+            for ($i = 0; $i < count($objMod->conflictwith); $i++)
             {
                 if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->conflictwith[$i].".class.php"))
                 {
@@ -712,80 +728,79 @@ function Activate($value,$withdeps=1)
 
 /**
  *  Disable a module
- *  @param      value               Nom du module a desactiver
- *  @param      requiredby          1=Desactive aussi modules dependants
- *  @return     string              Error message or '';
+ *
+ *  @param      string		$value               Nom du module a desactiver
+ *  @param      int			$requiredby          1=Desactive aussi modules dependants
+ *  @return     string     				         Error message or '';
  */
-function UnActivate($value,$requiredby=1)
+function UnActivate($value, $requiredby=1)
 {
     global $db, $modules, $conf;
 
-    $modName = $value;
+    // Check parameters
+    if (empty($value)) return 'ErrorBadParameter';
 
     $ret='';
+    $modName = $value;
+    $modFile = $modName . ".class.php";
     $modulesdir=array();
 
-    // Desactivation du module
-    if ($modName)
+    // Loop on each directory
+	$found=false;
+    foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
-        $modFile = $modName . ".class.php";
+        $modulesdir[] = $dirroot."/includes/modules/";
 
-        // Loop on each directory
-		$found=false;
-        foreach ($conf->file->dol_document_root as $type => $dirroot)
-        {
-            $modulesdir[] = $dirroot."/includes/modules/";
-            
-            if ($type == 'alt')
-			{	
-				$handle=@opendir($dirroot);
-				if (is_resource($handle))
+        if ($type == 'alt')
+		{
+			$handle=@opendir($dirroot);
+			if (is_resource($handle))
+			{
+				while (($file = readdir($handle))!==false)
 				{
-					while (($file = readdir($handle))!==false)
-					{
-					    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-					    {
-					    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
-					    	{
-					    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
-					    	}
-					    }
-					}
-					closedir($handle);
+				    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+				    {
+				    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+				    	{
+				    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+				    	}
+				    }
 				}
+				closedir($handle);
 			}
-        }
+		}
+    }
 
-        foreach ($modulesdir as $dir)
-        {
-        	if (file_exists($dir.$modFile))
-        	{
-        		$found=@include_once($dir.$modFile);
-        		if ($found) break;
-        	}
-        }
+    foreach ($modulesdir as $dir)
+    {
+    	if (file_exists($dir.$modFile))
+    	{
+    		$found=@include_once($dir.$modFile);
+    		if ($found) break;
+    	}
+    }
 
-        if ($found)
-        {
-            $objMod = new $modName($db);
-            $result=$objMod->remove();
-        }
-        else
-        {
-            $genericMod = new DolibarrModules($db);
-            $genericMod->name=preg_replace('/^mod/i','',$modName);
-            $genericMod->style_sheet=1;
-            $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
-            $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
-            dol_syslog("modules::UnActivate Failed to find module file, we use generic function with name ".$genericMod->name);
-            $genericMod->_remove();
-        }
+    if ($found)
+    {
+        $objMod = new $modName($db);
+        $result=$objMod->remove();
+    }
+    else
+    {
+        $genericMod = new DolibarrModules($db);
+        $genericMod->name=preg_replace('/^mod/i','',$modName);
+        $genericMod->style_sheet=1;
+        $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
+        $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
+        dol_syslog("modules::UnActivate Failed to find module file, we use generic function with name ".$genericMod->name);
+        $genericMod->_remove();
     }
 
     // Desactivation des modules qui dependent de lui
     if ($requiredby)
     {
-        for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
+        $countrb=count($objMod->requiredby);
+        for ($i = 0; $i < $countrb; $i++)
         {
             UnActivate($objMod->requiredby[$i]);
         }
@@ -797,6 +812,18 @@ function UnActivate($value,$requiredby=1)
 
 /**
  *  Add external modules to list of dictionnaries
+ *
+ * 	@param		array		&$taborder			Taborder
+ * 	@param		array		&$tabname			Tabname
+ * 	@param		array		&$tablib			Tablib
+ * 	@param		array		&$tabsql			Tabsql
+ * 	@param		array		&$tabsqlsort		Tabsqlsort
+ * 	@param		array		&$tabfield			Tabfield
+ * 	@param		array		&$tabfieldvalue		Tabfieldvalue
+ * 	@param		array		&$tabfieldinsert	Tabfieldinsert
+ * 	@param		array		&$tabrowid			Tabrowid
+ * 	@param		array		&$tabcond			Tabcond
+ * 	@return		int			1
  */
 function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond)
 {
@@ -867,7 +894,7 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
                                 $taborder[] = 0;
                                 foreach($objMod->dictionnaries['tabname'] as $val)
                                 {
-                                    $taborder[] = sizeof($tabname)+1;
+                                    $taborder[] = count($tabname)+1;
                                     $tabname[] = $val;
                                 }
                                 foreach($objMod->dictionnaries['tablib'] as $val) $tablib[] = $val;
@@ -899,7 +926,7 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
         }
     }
 
-    return $ret;
+    return 1;
 }
 
 ?>

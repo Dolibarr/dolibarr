@@ -77,7 +77,7 @@
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">
         <properties>
-            <property name="nestingLevel" value="5" />
+            <property name="nestingLevel" value="6" />
             <property name="absoluteNestingLevel" value="50" />
         </properties>
     </rule>
@@ -181,11 +181,13 @@
 	</rule>
 
 	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
+	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
+        <severity>0</severity>
+	</rule>
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
         <severity>0</severity>
 	</rule>
-
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
+	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
         <severity>0</severity>
 	</rule>
 

@@ -63,6 +63,9 @@ abstract class ActionsCardCommon
 
     /**
      *    Load data control
+     *
+     *    @param	int		$socid		Id of third party
+     *    @return	void
      */
     function doActions($socid)
     {
@@ -337,7 +340,7 @@ abstract class ActionsCardCommon
                 }
                 else
                 {
-                    Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$this->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+                    Header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$this->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                     exit;
                 }
             }
@@ -347,6 +350,9 @@ abstract class ActionsCardCommon
 
     /**
      *  Return the title of card
+     *
+     *  @param	string		$action		Type of action
+     *  @return	string					HTML output
      */
     private function getTitle($action)
     {
@@ -362,9 +368,10 @@ abstract class ActionsCardCommon
     }
 
 	/**
-     *    Assigne les valeurs par defaut pour le canvas
-     *    
-     *    @param      string	$action     Type of template
+     *  Set content of ->tpl array, to use into template
+     *
+     *  @param      string		$action     Type of action
+     *  @return		string					HTML output
      */
     function assign_values($action)
     {
@@ -372,7 +379,7 @@ abstract class ActionsCardCommon
         global $form, $formadmin, $formcompany;
 
         if ($action == 'create' || $action == 'edit') $this->assign_post();
-        
+
         if ($_GET["type"]=='f')  		{ $this->object->fournisseur=1; }
         if ($_GET["type"]=='c')  		{ $this->object->client=1; }
         if ($_GET["type"]=='p')  		{ $this->object->client=2; }
@@ -583,7 +590,7 @@ abstract class ActionsCardCommon
             // Sales representatives
             $this->tpl['sales_representatives'] = '';
             $listsalesrepresentatives=$this->object->getSalesRepresentatives($user);
-            $nbofsalesrepresentative=sizeof($listsalesrepresentatives);
+            $nbofsalesrepresentative=count($listsalesrepresentatives);
             if ($nbofsalesrepresentative > 3)   // We print only number
             {
             	$this->tpl['sales_representatives'].= '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->object->id.'">';
@@ -651,7 +658,10 @@ abstract class ActionsCardCommon
     }
 
     /**
-     *    Assigne les valeurs POST dans l'objet
+     *  Assign POST values into object
+     *
+     *	@param		string		$action		Action string
+     *  @return		string					HTML output
      */
     private function assign_post($action)
     {

@@ -55,7 +55,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("PostOrFunction" ); ?></td>
+	<td><?php echo $langs->trans("PostOrFunction"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['poste']; ?></td>
 </tr>
 

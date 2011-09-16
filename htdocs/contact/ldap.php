@@ -176,7 +176,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Affichage arbre
-	if (sizeof($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{

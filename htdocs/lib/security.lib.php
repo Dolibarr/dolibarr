@@ -24,12 +24,14 @@
 
 
 /**
- *   Return a login if login/pass was successfull using an external login method
+ *  Return a login if login/pass was successfull using an external login method.
  *
- *   @return	string		Login or ''
- * 	 TODO Provide usertotest, passwordtotest and entitytotest by parameters
+ *	@param		string	$usertotest			Login value to test
+ *	@param		string	$passwordtotest		Password value to test
+ *	@param		string	$entitytotest		Instance to test
+ *  @return		string						Login or ''
  */
-function getLoginMethod()
+function getLoginMethod($usertotest,$passwordtotest,$entitytotest=1)
 {
 	global $conf,$langs;
 
@@ -54,9 +56,6 @@ function getLoginMethod()
 					if ($result)
 					{
 						// Call function to check user/password
-						$usertotest=$_POST["username"];
-						$passwordtotest=$_POST["password"];
-						$entitytotest=$_POST["entity"];
 						$function='check_user_password_'.$mode;
 						$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
 						if ($login)
@@ -67,7 +66,7 @@ function getLoginMethod()
 					else
 					{
 						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-						sleep(1);
+						sleep(1);    // To slow brut force cracking
 						$langs->load('main');
 						$langs->load('other');
 						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
@@ -83,9 +82,10 @@ function getLoginMethod()
 /**
  *	Show Dolibarr default login page
  *
- *	@param		langs		Lang object (must be initialized by a new).
- *	@param		conf		Conf object
- *	@param		mysoc		Company object
+ *	@param		Translate	$langs		Lang object (must be initialized by a new).
+ *	@param		Conf		$conf		Conf object
+ *	@param		Societe		$mysoc		Company object
+ *	@return		void
  */
 function dol_loginfunction($langs,$conf,$mysoc)
 {
@@ -274,10 +274,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 /**
  *  Fonction pour initialiser un salt pour la fonction crypt
  *
- *  @param		$type		2=>renvoi un salt pour cryptage DES
- *							12=>renvoi un salt pour cryptage MD5
- *							non defini=>renvoi un salt pour cryptage par defaut
- *	@return		string		Chaine salt
+ *  @param		int		$type		2=>renvoi un salt pour cryptage DES
+ *									12=>renvoi un salt pour cryptage MD5
+ *									non defini=>renvoi un salt pour cryptage par defaut
+ *	@return		string				Salt string
  */
 function makesalt($type=CRYPT_SALT_LENGTH)
 {
@@ -303,8 +303,8 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 /**
  *  Encode or decode database password in config file
  *
- *  @param   	level   	Encode level: 0 no encoding, 1 encoding
- *	@return		int			<0 if KO, >0 if OK
+ *  @param   	int		$level   	Encode level: 0 no encoding, 1 encoding
+ *	@return		int					<0 if KO, >0 if OK
  */
 function encodedecode_dbpassconf($level=0)
 {
@@ -405,12 +405,14 @@ function encodedecode_dbpassconf($level=0)
 
 /**
  *	Encode a string
- *	@param   chain			chaine de caracteres a encoder
- *	@return  string_coded  	chaine de caracteres encodee
+ *
+ *	@param   string		$chain		chaine de caracteres a encoder
+ *	@return  string					chaine de caracteres encodees
  */
 function dol_encode($chain)
 {
-	for($i=0;$i<dol_strlen($chain);$i++)
+    $strlength=dol_strlen($chain);
+	for ($i=0; $i < $strlength; $i++)
 	{
 		$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
 	}
@@ -421,14 +423,16 @@ function dol_encode($chain)
 
 /**
  *	Decode a string
- *	@param   chain    chaine de caracteres a decoder
- *	@return  string_coded  chaine de caracteres decodee
+ *
+ *	@param   string		$chain		chaine de caracteres a decoder
+ *	@return  string					chaine de caracteres decodee
  */
 function dol_decode($chain)
 {
 	$chain = base64_decode($chain);
 
-	for($i=0;$i<dol_strlen($chain);$i++)
+	$strlength=dol_strlen($chain);
+	for($i=0; $i < $strlength;$i++)
 	{
 		$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
 	}
@@ -440,8 +444,9 @@ function dol_decode($chain)
 
 /**
  * Return a generated password using default module
- * @param		generic		Create generic password
- * @return		string		New value for password
+ *
+ * @param		boolean		$generic		Create generic password
+ * @return		string						New value for password
  */
 function getRandomPassword($generic=false)
 {
@@ -465,12 +470,12 @@ function getRandomPassword($generic=false)
 
 /**
  * 	Returns a hash of a string
- * 	@param 	chain	String to hash
- * 	@param	type	Type of hash (0:md5, 1:sha1, 2:sha1+md5)
- * 	@param	salt	Salt
- * 	@return	hash	hash of string
+ *
+ * 	@param 		string		$chain		String to hash
+ * 	@param		int			$type		Type of hash (0:md5, 1:sha1, 2:sha1+md5)
+ * 	@return		string					Hash of string
  */
-function dol_hash($chain,$type=0,$salt='')
+function dol_hash($chain,$type=0)
 {
 	if ($type == 1) return sha1($chain);
 	else if ($type == 2) return sha1(md5($chain));

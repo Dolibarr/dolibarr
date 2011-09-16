@@ -32,7 +32,7 @@
  *	@param		string	$outputfile			Output file
  *	@return		int							<0 if ko, Nb of events in file if ok
  */
-function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
+function build_calfile($format,$title,$desc,$events_array,$outputfile)
 {
 	global $conf,$langs;
 
@@ -64,7 +64,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
         $ss=ConvertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'sec');
         //fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
         if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)
-        && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60) fwrite($calfileh,"X-PUBLISHED-TTL: "."P".$hh."H".$mm."M".$ss."S\n");
+        && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60) fwrite($calfileh,"X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
 
 		foreach ($events_array as $date => $event)
 		{
@@ -291,7 +291,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
  *	@param		string	$filter				Filter
  *	@return		int							<0 if ko, Nb of events in file if ok
  */
-function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$filter='')
+function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter='')
 {
 	global $user,$conf,$langs;
 	global $dolibarr_main_url_root;
@@ -313,8 +313,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		fwrite($fichier, $html);
 		fwrite($fichier, "\n");
 
-		$html="<channel>\n".
-		"<title>".$title."</title>\n";
+		$html="<channel>\n<title>".$title."</title>\n";
 		fwrite($fichier, $html);
 
 		$html='<description><![CDATA['.$desc.'.]]></description>'."\n".
@@ -326,18 +325,8 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
   		$url=$urlwithouturlroot.DOL_URL_ROOT.'/public/agenda/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
 		$html.='<link><![CDATA['.$url.']]></link>'."\n";
-//		'<managingEditor>editor@example.com</managingEditor>'."\n"
-//    	'<webMaster>webmaster@example.com</webMaster>'."\n"
-//		'<ttl>5</ttl>'."\n"
-//		'<image>'."\n"
-//		'<url><![CDATA[http://www.lesbonnesannonces.com/images/logo_rss.gif]]></url>'."\n"
-//		'<title><![CDATA[Dolibarr events]]></title>'."\n"
-//		'<link><![CDATA[http://www.lesbonnesannonces.com/]]></link>'."\n"
-//		'<width>144</width>'."\n"
-//		'<height>36</height>'."\n"
-//		'</image>'."\n";
 
-		#print $html;
+		//print $html;
 		fwrite($fichier, $html);
 
 
@@ -368,24 +357,24 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 				$description=preg_replace('/<br[\s\/]?>/i',"\n",$event['desc']);
  				$description=dol_string_nohtmltag($description,0);	// Remove html tags
 
-				fwrite ($fichier, "<item>\n");
-				fwrite ($fichier, "<title><![CDATA[".$summary."]]></title>"."\n");
-				fwrite ($fichier, "<link><![CDATA[".$url."]]></link>"."\n");
-				fwrite ($fichier, "<author><![CDATA[".$author."]]></author>"."\n");
-				fwrite ($fichier, "<category><![CDATA[".$category."]]></category>"."\n");
-				fwrite ($fichier, "<description><![CDATA[");
-				if ($description) fwrite ($fichier, $description);
-				//else fwrite ($fichier, 'NoDesc');
-				fwrite ($fichier, "]]></description>\n");
-				fwrite ($fichier, "<pubDate>".date("r", $startdate)."</pubDate>\n");
-				fwrite ($fichier, "<guid isPermaLink=\"true\"><![CDATA[".$uid."]]></guid>\n");
-				fwrite ($fichier, "<source><![CDATA[Dolibarr]]></source>\n");
-				fwrite ($fichier, "</item>\n");
+				fwrite($fichier, "<item>\n");
+				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
+				fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
+				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
+				fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
+				fwrite($fichier, "<description><![CDATA[");
+				if ($description) fwrite($fichier, $description);
+				//else fwrite($fichier, 'NoDesc');
+				fwrite($fichier, "]]></description>\n");
+				fwrite($fichier, "<pubDate>".date("r", $startdate)."</pubDate>\n");
+				fwrite($fichier, "<guid isPermaLink=\"true\"><![CDATA[".$uid."]]></guid>\n");
+				fwrite($fichier, "<source><![CDATA[Dolibarr]]></source>\n");
+				fwrite($fichier, "</item>\n");
 			}
 		}
 
 		fwrite($fichier, '</channel>');
-		fwrite ($fichier, "\n");
+		fwrite($fichier, "\n");
 		fwrite($fichier, '</rss>');
 
 		fclose($fichier);
@@ -413,7 +402,7 @@ function format_cal($format,$string)
 	// Now newstring is always UTF8 string
 	if ($format == 'vcal')
 	{
-		$newstring=QPEncode($newstring);
+		$newstring=quotedPrintEncode($newstring);
 	}
 	if ($format == 'ical')
 	{
@@ -422,7 +411,7 @@ function format_cal($format,$string)
 		$newstring=preg_replace('/'."\n\r".'/i',"\n",$newstring);
 		$newstring=preg_replace('/'."\n".'/i','\n',$newstring);
 		// Must not exceed 75 char. Cut with "\r\n"+Space
-		$newstring=CalEncode($newstring);
+		$newstring=calEncode($newstring);
 	}
 
 	return $newstring;
@@ -435,7 +424,7 @@ function format_cal($format,$string)
  *	@param		string	$line	String to convert
  *	@return		string 			String converted
  */
-function CalEncode($line)
+function calEncode($line)
 {
 	$out = '';
 
@@ -444,11 +433,12 @@ function CalEncode($line)
 	// If mb_ functions exists, it's better to use them
 	if (function_exists('mb_strlen'))
 	{
-		for ($j = 0; $j <= mb_strlen($line, 'UTF-8') - 1; $j++)
+	    $strlength=mb_strlen($line, 'UTF-8');
+		for ($j = 0; $j <= ($strlength - 1); $j++)
 		{
-			$char = mb_substr ( $line, $j, 1, 'UTF-8' );	// Take char at position $j
+			$char = mb_substr($line, $j, 1, 'UTF-8');	// Take char at position $j
 
-			if ( ( mb_strlen ( $newpara, 'UTF-8') + mb_strlen ( $char, 'UTF-8' ) ) >= 75 )
+			if ((mb_strlen($newpara, 'UTF-8') + mb_strlen($char, 'UTF-8')) >= 75)
 			{
 				$out .= $newpara . "\r\n ";	// CRLF + Space for cal
 				$newpara = '';
@@ -459,11 +449,12 @@ function CalEncode($line)
 	}
 	else
 	{
-		for ($j = 0; $j <= dol_strlen($line) - 1; $j++)
+	    $strlength=dol_strlen($line);
+		for ($j = 0; $j <= ($strlength - 1); $j++)
 		{
-			$char = substr ( $line, $j, 1 );	// Take char at position $j
+			$char = substr($line, $j, 1);	// Take char at position $j
 
-			if ( ( dol_strlen ( $newpara ) + dol_strlen ( $char ) ) >= 75 )
+			if ((dol_strlen($newpara) + dol_strlen($char)) >= 75 )
 			{
 				$out .= $newpara . "\r\n ";	// CRLF + Space for cal
 				$newpara = '';
@@ -484,7 +475,7 @@ function CalEncode($line)
  *	@param		int		$forcal		1=For cal
  *	@return		string 				String converted
  */
-function QPEncode($str,$forcal=0)
+function quotedPrintEncode($str,$forcal=0)
 {
 	$lines = preg_split("/\r\n/", $str);
 	$out = '';
@@ -493,15 +484,16 @@ function QPEncode($str,$forcal=0)
 	{
 		$newpara = '';
 
-		for ($j = 0; $j <= dol_strlen($line) - 1; $j++)
+		$strlength=dol_strlen($line);
+		for ($j = 0; $j <= ($strlength - 1); $j++)
 		{
-			$char = substr ( $line, $j, 1 );
-			$ascii = ord ( $char );
+			$char = substr($line, $j, 1);
+			$ascii = ord($char);
 
 			if ( $ascii < 32 || $ascii == 61 || $ascii > 126 )
-			$char = '=' . strtoupper ( sprintf("%02X", $ascii ) );
+			$char = '=' . strtoupper(sprintf("%02X", $ascii));
 
-			if ( ( dol_strlen ( $newpara ) + dol_strlen ( $char ) ) >= 76 )
+			if ((dol_strlen($newpara) + dol_strlen($char)) >= 76 )
 			{
 				$out .= $newpara . '=' . "\r\n";	// CRLF
 				if ($forcal) $out .= " ";		// + Space for cal
@@ -511,7 +503,7 @@ function QPEncode($str,$forcal=0)
 		}
 		$out .= $newpara;
 	}
-	return trim ( $out );
+	return trim($out);
 }
 
 /**
@@ -520,10 +512,10 @@ function QPEncode($str,$forcal=0)
  *	@param		string	$str		String to convert
  *	@return		string 				String converted
  */
-function QPDecode($str)
+function quotedPrintDecode($str)
 {
 	$out = preg_replace('/=\r?\n/', '', $str);
-	$out = preg_replace('/=([A-F0-9]{2})/e', chr( hexdec ('\\1' ) ), $out);
+	$out = preg_replace('/=([A-F0-9]{2})/e', chr(hexdec('\\1')), $out);
 
 	return trim($out);
 }

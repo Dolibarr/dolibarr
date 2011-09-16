@@ -64,6 +64,7 @@ abstract class ActionsContactCardCommon
      *  Load data control
      *
      *	@param	int		$id		Id of object
+     *	@return	void
      */
     function doActions($id)
     {
@@ -189,7 +190,8 @@ abstract class ActionsContactCardCommon
     /**
      *  Return the title of card
      *
-     *  @param		string		$action		Type of action
+     *  @param	string		$action		Type of action
+     *  @return	string					HTML output
      */
     function getTitle($action)
     {
@@ -204,9 +206,10 @@ abstract class ActionsContactCardCommon
     }
 
 	/**
-     *    Set content of ->tpl array, to use into template
+     *  Set content of ->tpl array, to use into template
      *
-     *    @param      string	$action     Type of action
+     *  @param      string		$action     Type of action
+     *  @return		string					HTML output
      */
     function assign_values($action='')
     {
@@ -214,7 +217,7 @@ abstract class ActionsContactCardCommon
         global $form, $formcompany, $objsoc;
 
         if ($action == 'create' || $action == 'edit') $this->assign_post($action);
-        
+
         foreach($this->object as $key => $value)
         {
             $this->tpl[$key] = $value;
@@ -250,7 +253,7 @@ abstract class ActionsContactCardCommon
         	}
 
         	// Civility
-        	$this->tpl[select_civility] = $formcompany->select_civility($this->object->civilite_id);
+        	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civilite_id);
 
         	// Predefined with third party
         	if ($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS))
@@ -395,9 +398,12 @@ abstract class ActionsContactCardCommon
     }
 
     /**
-     *    Assigne les valeurs POST dans l'objet
+     *  Assign POST values into object
+     *
+     *	@param		string		$action		Action string
+     *  @return		string					HTML output
      */
-    function assign_post($action)
+    private function assign_post($action)
     {
         global $langs, $mysoc;
 

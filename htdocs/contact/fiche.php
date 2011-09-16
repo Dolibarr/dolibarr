@@ -79,7 +79,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if (method_exists($objcanvas->control,'doActions'))
 {
     $objcanvas->doActions($id);
-    if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && sizeof($objcanvas->errors) > 0))
+    if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && count($objcanvas->errors) > 0))
     {
         $error=$objcanvas->error; $errors=$objcanvas->errors;
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
