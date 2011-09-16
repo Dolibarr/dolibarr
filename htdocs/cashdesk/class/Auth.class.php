@@ -89,7 +89,7 @@ class Auth {
         if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
         {
             include_once(DOL_DOCUMENT_ROOT . "/lib/security.lib.php");
-            $login = getLoginMethod();
+            $login = getLoginMethod($_POST["username"],$_POST["password"],$_POST["entity"]);
             if ($login) $test=false;
         }
 
@@ -110,8 +110,8 @@ class Auth {
                     $result=include_once($authfile);
                     if ($result)
                     {
-                        $this->login ($aLogin);
-                        $this->passwd ($aPasswd);
+                        $this->login($aLogin);
+                        $this->passwd($aPasswd);
                         $entitytotest=$conf->entity;
 
                         $function='check_user_password_'.$mode;
