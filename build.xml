@@ -90,7 +90,7 @@
  <!-- Generate API documentation -->
  <target name="doxygen" description="Dolibarr documentation" >
   <exec executable="doxygen" dir="${basedir}/hudson/doxygen" failonerror="false">
-   <arg value="${basedir}/build/doxygen/dolibarr-doxygen.doxyfile"/>
+   <arg value="${basedir}/build/doxygen/hudson-doxygen.doxyfile"/>
   </exec>
  </target>
  
