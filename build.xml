@@ -76,14 +76,14 @@
  </target>
    
  <!-- Generate checkstyle.xml -->
+
  <target name="phpcs">
-  <exec executable="phpcs" output="/dev/null">
-   <arg line="--report=checkstyle
-              --report-file='${basedir}/hudson/logs/checkstyle.xml'
-              --standard=Sebastian
-              --ignore=*\\htdocs\\includes\\*
-              htdocs
-              " />
+  <exec executable="phpcs" dir="${basedir}" output="${basedir}/hudson/logs/checkstyle.xml">
+    <arg line=" --standard=${basedir}/dev/codesniffer/ruleset.xml
+                --ignore=${basedir}/htdocs/includes
+                --report=checkstyle
+                htdocs
+                "/>
   </exec>
  </target>
 
