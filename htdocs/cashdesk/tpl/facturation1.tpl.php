@@ -101,7 +101,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				</select>
 			</td>
 			</tr>
-			<!--  <tr><td><div id="resultats_dhtml"></div></td></tr> -->
+			  <tr><td><div id="resultats_dhtml"></div></td></tr>
 		</table>
 	</form>
 
@@ -190,23 +190,27 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				<td>
 				<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 				<?php echo $langs->trans("DateEcheance"); ?> :
-				<input class="texte2" type="text" id="txtDatePaiement" name="txtDatePaiement" value="" />
+<?php
+    $form=new Form($db);
+    print $form->select_date(-1,'txtDatePaiement');
+?>
+<!-- <input class="texte2" type="text" id="txtDatePaiement" name="txtDatePaiement" value="" />
 				<input class="bouton_cal" type="image" src="img/calendrier.png" id="btnCalendrier" value="..." title="<?php echo $langs->trans("CalTip"); ?>" />
-				</td>
+ -->
+ 				</td>
 			</tr>
 
 		</table>
 </fieldset>
 </form>
 
-
 <script type="text/javascript">
-	Calendar.setup ({
+/*	Calendar.setup ({
 		inputField	: "txtDatePaiement",
 		ifFormat	: "%Y-%m-%d",
 		button		: "btnCalendrier"
 	});
-
+*/
 	if (document.getElementById('frmFacturation').txtRef.value) {
 
 		modif();
