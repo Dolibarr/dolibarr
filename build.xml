@@ -6,10 +6,7 @@
 
   <!-- Create build directories -->
   <mkdir dir="${basedir}/hudson/doxygen"/>
-  <mkdir dir="${basedir}/hudson/code-browser"/>
-  <mkdir dir="${basedir}/hudson/coverage"/>
   <mkdir dir="${basedir}/hudson/logs"/>
-  <mkdir dir="${basedir}/hudson/pdepend"/>
  </target>
 
  <!-- Run unit tests and generate junit.xml and clover.xml -->
