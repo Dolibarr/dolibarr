@@ -201,8 +201,10 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			// on supprime l'image correspondant au preview
-			commande_delete_preview($db, $object->id);
+
+			// we delete preview files
+        	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+			dol_delete_preview($object);
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -233,59 +235,5 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		}
 		return 0;
 	}
-}
-
-/**
- *  Supprime l'image de previsualitation, pour le cas de regeneration de commande
- *  @param	    db  		data base object
- *  @param	    commandeid	id de la commande a effacer
- *  @param      commanderef reference de la commande si besoin
- */
-function commande_delete_preview($db, $commandeid, $commanderef='')
-{
-	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-
-	if (!$commanderef)
-	{
-		$com = new Commande($db);
-		$com->fetch($commandeid);
-		$commanderef = $com->ref;
-	}
-
-	if ($conf->commande->dir_output)
-	{
-		$comref = dol_sanitizeFileName($commanderef);
-		$dir = $conf->commande->dir_output . "/" . $comref ;
-		$file = $dir . "/" . $comref . ".pdf.png";
-		$multiple = $file . ".";
-
-		if ( file_exists( $file ) && is_writable( $file ) )
-		{
-			if ( ! dol_delete_file($file,1) )
-			{
-				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-				return 0;
-			}
-		}
-		else
-		{
-			for ($i = 0; $i < 20; $i++)
-			{
-				$preview = $multiple.$i;
-
-				if ( file_exists( $preview ) && is_writable( $preview ) )
-				{
-					if ( ! dol_delete_file($preview,1) )
-					{
-						$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
-						return 0;
-					}
-				}
-			}
-		}
-	}
-
-	return 1;
 }
 ?>
