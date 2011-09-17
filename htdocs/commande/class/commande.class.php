@@ -2322,16 +2322,16 @@ class Commande extends CommonObject
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
             $err++;
         }
-
+ 
         // On efface le repertoire de pdf provisoire
         $comref = dol_sanitizeFileName($this->ref);
         if ($conf->commande->dir_output)
         {
             $dir = $conf->commande->dir_output . "/" . $comref ;
             $file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-            if (file_exists($file))
+            if (file_exists($file))	// We must delete all files before deleting directory
             {
-                commande_delete_preview($this->db, $this->id, $this->ref);
+                dol_delete_preview($object);
 
                 if (!dol_delete_file($file))
                 {

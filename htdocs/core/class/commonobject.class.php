@@ -1609,7 +1609,7 @@ abstract class CommonObject
         }
         else return 0;
     }
-
+    
 
     // --------------------
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
@@ -1619,6 +1619,7 @@ abstract class CommonObject
 	/**
 	 *
 	 * Enter description here ...
+	 * 
 	 * @param unknown_type $objectid
 	 * @param unknown_type $objecttype
 	 * @param unknown_type $withpicto

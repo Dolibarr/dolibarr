@@ -605,6 +605,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 
 /**
  *  Remove a file or several files with a mask
+ *  
  *  @param      file            File to delete or mask of file to delete
  *  @param      disableglob     Disable usage of glob like *
  *  @param      nophperrors     Disable all PHP output errors
@@ -658,6 +659,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$trigg
 /**
  *  Remove a directory (not recursive, so content must be empty).
  *  If directory is not empty, return false
+ *  
  *  @param      dir             Directory to delete
  *  @param      nophperrors     Disable all PHP output errors
  *  @return     boolean         True if success, false if error
@@ -710,6 +712,54 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 
     //echo "return=".$count;
     return $count;
+}
+
+    
+/**
+ *  Delete all preview files linked to object instance
+ *  
+ *  @param	Object	$object		Object to clean
+ *  @return	int					0 if error, 1 if OK
+ */
+function dol_delete_preview($object)
+{
+	global $langs,$conf;
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+    if ($object->element == 'commande') $dir = $conf->commande->dir_output;
+    if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';
+    
+	$refsan = dol_sanitizeFileName($object->ref);
+	$dir = $dir . "/" . $refsan ;
+	$file = $dir . "/" . $refsan . ".pdf.png";
+	$multiple = $file . ".";
+
+	if (file_exists($file) && is_writable($file))
+	{
+		if ( ! dol_delete_file($file,1) )
+		{
+			$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+			return 0;
+		}
+	}
+	else
+	{
+		for ($i = 0; $i < 20; $i++)
+		{
+			$preview = $multiple.$i;
+
+			if (file_exists($preview) && is_writable($preview))
+			{
+				if ( ! dol_delete_file($preview,1) )
+				{
+					$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
+					return 0;
+				}
+			}
+		}
+	}
+
+	return 1;
 }
 
 
