@@ -6,4 +6,5 @@ custom2/
 nbproject
 .settings/
 .buildpath
+default.properties
 /.git
