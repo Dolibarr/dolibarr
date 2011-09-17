@@ -10,7 +10,7 @@
   <mkdir dir="${basedir}/hudson/coverage"/>
  </target>
 
- <!-- Run pdepend, phpmd, phpcpd, phpcs, phpdoc and phploc in parallel -->
+ <!-- Run phpmd, phpcpd, phpcs, doxygen and phploc in parallel -->
  <target name="parallelTasks">
   <parallel>
    <antcall target="phpmd"/>
@@ -71,10 +71,22 @@
  
  <!-- Run unit tests and generate junit.xml and clover.xml -->
  <target name="phpunit">
+  <exec command="phpunit
+  				--log-xml ${basedir}/hudson/phpunit.xml
+  				--log-pmd ${basedir}/hudson/phpunit.pmd.xml
+  				--coverage-clover ${basedir}/hudson/coverage/clover.xml
+  				--coverage-html ${basedir}/hudson/coverage/
+  				test/phpunit/AllTests.php
+  				"/>
+ </target>
+
+<!-- remove for test
+ <target name="phpunit">
   <exec dir="${basedir}" executable="phpunit" failonerror="true">
-   <arg line="--configuration test/phpunit/hudson-phpunit.xml" />
+   <arg line="\-\-configuration test/phpunit/hudson-phpunit.xml" />
   </exec>
  </target>
-  
+-->
+
  <target name="hudson" depends="clean,parallelTasks,phpunit"/>
 </project>
