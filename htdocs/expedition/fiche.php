@@ -99,7 +99,8 @@ if ($action == 'add')
 	$object->ref_int				= $_POST["ref_int"];
 
 	//var_dump($_POST);exit;
-	for ($i = 0 ; $i < sizeof($objectsrc->lines) ; $i++)
+	$num=count($objectsrc->lines);
+	for ($i = 0; $i < $num; $i++)
 	{
 		$qty = "qtyl".$i;
 		if ($_POST[$qty] > 0)
@@ -625,7 +626,7 @@ if ($action == 'create')
 			print '<br><table class="nobordernopadding" width="100%">';
 
 			//$lines = $object->fetch_lines(1);
-			$numAsked = sizeof($object->lines);
+			$numAsked = count($object->lines);
 
 			/* Lecture des expeditions deja effectuees */
 			$object->loadExpeditions();
@@ -784,7 +785,7 @@ if ($action == 'create')
 				{
 					$product->get_sousproduits_arbo ();
 					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-					if(sizeof($prods_arbo) > 0)
+					if(count($prods_arbo) > 0)
 					{
 						foreach($prods_arbo as $key => $value)
 						{
@@ -831,7 +832,7 @@ else
 			exit -1;
 		}
 		$lines = $object->lines;
-		$num_prod = sizeof($lines);
+		$num_prod = count($lines);
 
 		if ($object->id > 0)
 		{

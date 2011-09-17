@@ -205,7 +205,7 @@ class pdf_oursin extends ModelePDFFactures
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
-				$nblignes = sizeof($object->lines);
+				$nblignes = count($object->lines);
 
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
@@ -742,7 +742,7 @@ class pdf_oursin extends ModelePDFFactures
         $pdf->SetXY($this->marges['g']+153,$tab_top + 1);
         $pdf->MultiCell(0, 4, $outputlangs->transnoentities("Qty"), 0, 'L');
 
-		$nblignes = sizeof($object->lines);
+		$nblignes = count($object->lines);
 		$rem=0;
 		for ($i = 0 ; $i < $nblignes ; $i++)
 		{
@@ -849,7 +849,7 @@ class pdf_oursin extends ModelePDFFactures
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','BILLING');
-			if (sizeof($arrayidcontact) > 0)
+			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
 				$result=$object->fetch_contact($arrayidcontact[0]);
@@ -971,7 +971,7 @@ class pdf_oursin extends ModelePDFFactures
 	    	if ($objecttype == 'propal')
 	    	{
 	    		$outputlangs->load('propal');
-	    		$num=sizeof($objects);
+	    		$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
 	    			$posy+=4;
@@ -982,7 +982,7 @@ class pdf_oursin extends ModelePDFFactures
 			}
 			else if ($objecttype == 'commande')
 			{
-				$num=sizeof($objects);
+				$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
 	    			$posy+=4;

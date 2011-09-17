@@ -285,7 +285,7 @@ if ($id > 0 || ! empty($ref))
 		foreach(array('internal','external') as $source)
 		{
 			$tab = $propal->liste_contact(-1,$source);
-			$num=sizeof($tab);
+			$num=count($tab);
 
 			$i = 0;
 			while ($i < $num)

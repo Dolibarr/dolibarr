@@ -755,7 +755,7 @@ class Project extends CommonObject
 			foreach(array('internal','external') as $source)
 			{
 				$userRole = $this->liste_contact(4,$source);
-				$num=sizeof($userRole);
+				$num=count($userRole);
 
 				$nblinks = 0;
 				while ($nblinks < $num)

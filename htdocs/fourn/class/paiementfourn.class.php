@@ -251,7 +251,7 @@ class PaiementFourn extends Paiement
 		$billsarray=$this->getBillsArray('paye=1');
 		if (is_array($billsarray))
 		{
-			if (sizeof($billsarray))
+			if (count($billsarray))
 			{
 				$this->error='Impossible de supprimer un paiement portant sur au moins une facture a l\'etat paye';
 				$this->db->rollback();

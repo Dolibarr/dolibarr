@@ -86,7 +86,7 @@ if ($_POST["action"] == 'add_payment')
 			}
 		}
 
-        if (sizeof($amounts) <= 0)
+        if (count($amounts) <= 0)
         {
             $error++;
             $errmsg='ErrorNoPaymentDefined';

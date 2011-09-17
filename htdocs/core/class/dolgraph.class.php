@@ -311,8 +311,8 @@ class DolGraph
 		$k = 0;
 		$vals = array();
 
-		$nblines = sizeof($this->data);
-		$nbvalues = sizeof($this->data[0]) - 1;
+		$nblines = count($this->data);
+		$nbvalues = count($this->data[0]) - 1;
 
 		for ($j = 0 ; $j < $nblines ; $j++)
 		{
@@ -331,8 +331,8 @@ class DolGraph
 		$k = 0;
 		$vals = array();
 
-		$nblines = sizeof($this->data);
-		$nbvalues = sizeof($this->data[0]) - 1;
+		$nblines = count($this->data);
+		$nbvalues = count($this->data[0]) - 1;
 
 		for ($j = 0 ; $j < $nblines ; $j++)
 		{
@@ -397,7 +397,7 @@ class DolGraph
 	 */
 	function draw($file)
 	{
-		if (! is_array($this->data) || sizeof($this->data) < 1)
+		if (! is_array($this->data) || count($this->data) < 1)
 		{
 			$this->error="Call to draw method was made but SetData was not called or called with an empty dataset for parameters";
 			dol_syslog("DolGraph::draw ".$this->error, LOG_ERR);
@@ -471,7 +471,7 @@ class DolGraph
 		// On boucle sur chaque lot de donnees
 		$legends=array();
 		$i=0;
-		$nblot=sizeof($this->data[0])-1;
+		$nblot=count($this->data[0])-1;
 
 		while ($i < $nblot)
 		{
@@ -558,7 +558,7 @@ class DolGraph
 
 			$group->legend->setTextFont(new $artichow_defaultfont(10)); // This is to force Artichow to use awFileFontDriver to
 														// solve a bug in Artichow with UTF8
-			if (sizeof($this->Legend))
+			if (count($this->Legend))
 			{
 				if ($this->type == 'bars')  $group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
 				if ($this->type == 'lines') $group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);

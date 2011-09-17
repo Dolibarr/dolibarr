@@ -223,7 +223,7 @@ if (empty($reshook))
             $_GET["action"] = $_POST["action"] = 'edit';
         }
 
-        if (! sizeof($errors))
+        if (! count($errors))
         {
             $object->fetch($_POST["contactid"]);
 

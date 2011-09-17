@@ -223,7 +223,7 @@ print_liste_field_titre($langs->trans("OtherStatistics"),$_SERVER["PHP_SELF"],""
 print "</tr>\n";
 $var=true;
 
-if (sizeof($amount))
+if (count($amount))
 {
     $arrayforsort=$name;
 

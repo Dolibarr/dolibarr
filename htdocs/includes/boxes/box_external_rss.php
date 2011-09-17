@@ -101,7 +101,7 @@ class box_external_rss extends ModeleBoxes {
 
 		// INFO on items
 		$items=$rssparser->getItems();
-		$nbitems=sizeof($items);
+		$nbitems=count($items);
         for($i = 0; $i < $max && $i < $nbitems; $i++)
         {
             $item = $items[$i];

@@ -119,7 +119,7 @@ class box_comptes extends ModeleBoxes {
 				}
 
 				// Total
-				if (sizeof($listofcurrencies) <= 1)
+				if (count($listofcurrencies) <= 1)
 				{
 					$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="right" class="liste_total"',
 					'text' => $langs->trans('Total')

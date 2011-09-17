@@ -283,7 +283,7 @@ else
 $companystatic->LoadSupplierCateg();
 $categstatic=new Categorie($db);
 
-if (sizeof($companystatic->SupplierCategories))
+if (count($companystatic->SupplierCategories))
 {
 	print '<br>';
 

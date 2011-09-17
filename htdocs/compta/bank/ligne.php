@@ -274,7 +274,7 @@ if ($result)
         print '</tr>';
 
         // Show links of bank transactions
-        if (sizeof($links))
+        if (count($links))
         {
             print "<tr><td>".$langs->trans("Links")."</td>";
             print '<td colspan="4">';

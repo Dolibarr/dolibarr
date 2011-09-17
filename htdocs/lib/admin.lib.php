@@ -69,7 +69,7 @@ function versioncompare($versionarray1,$versionarray2)
 		if ($operande1 < $operande2) { $ret = -$level; break; }
 		if ($operande1 > $operande2) { $ret = $level; break; }
 	}
-	//print join('.',$versionarray1).'('.sizeof($versionarray1).') / '.join('.',$versionarray2).'('.sizeof($versionarray2).') => '.$ret;
+	//print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret;
 	return $ret;
 }
 

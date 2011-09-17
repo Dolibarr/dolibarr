@@ -57,7 +57,7 @@ function dol_setcache($memoryid,$data)
 		$rescode=$m->getResultCode();
 		if ($rescode == 0)
 		{
-			return sizeof($data);
+			return count($data);
 		}
 		else
 		{
@@ -74,7 +74,7 @@ function dol_setcache($memoryid,$data)
 		$result=$m->add($memoryid,$data);    // This fails if key already exists
 		if ($result)
 		{
-			return sizeof($data);
+			return count($data);
 		}
 		else
 		{
@@ -111,7 +111,7 @@ function dol_getcache($memoryid)
 		//print "Get memoryid=".$memoryid;
 		$data=$m->get($memoryid);
 		$rescode=$m->getResultCode();
-		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".sizeof($data)."\n<br>";
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
 		//var_dump($data);
 		if ($rescode == 0)
 		{
@@ -130,7 +130,7 @@ function dol_getcache($memoryid)
 		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$data=$m->get($memoryid);
-		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".sizeof($data)."\n<br>";
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
 		//var_dump($data);
 		if ($data)
 		{

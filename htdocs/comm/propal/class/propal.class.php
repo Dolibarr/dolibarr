@@ -692,7 +692,7 @@ class Propal extends CommonObject
 				if (! $error)
 				{
 					$fk_parent_line=0;
-					$num=sizeof($this->lines);
+					$num=count($this->lines);
 
 					for ($i=0;$i<$num;$i++)
 					{
@@ -1651,7 +1651,7 @@ class Propal extends CommonObject
 		$this->fetchObjectLinked($id,$this->element);
 		foreach($this->linkedObjectsIds as $objecttype => $objectid)
 		{
-			$numi=sizeof($objectid);
+			$numi=count($objectid);
 			for ($i=0;$i<$numi;$i++)
 			{
 				// Cas des factures liees directement
@@ -1665,7 +1665,7 @@ class Propal extends CommonObject
 					$this->fetchObjectLinked($objectid[$i],$objecttype);
 					foreach($this->linkedObjectsIds as $subobjecttype => $subobjectid)
 					{
-						$numj=sizeof($subobjectid);
+						$numj=count($subobjectid);
 						for ($j=0;$j<$numj;$j++)
 						{
 							$linkedInvoices[] = $subobjectid[$j];
@@ -1675,7 +1675,7 @@ class Propal extends CommonObject
 			}
 		}
 
-		if (sizeof($linkedInvoices) > 0)
+		if (count($linkedInvoices) > 0)
 		{
     		$sql= "SELECT rowid as facid, facnumber, total, datef as df, fk_user_author, fk_statut, paye";
     		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
@@ -2115,7 +2115,7 @@ class Propal extends CommonObject
 					}
 				}
 				// TODO Definir regle des propales a facturer en retard
-				// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
+				// if ($mode == 'signed' && ! count($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
 			}
 			return 1;
 		}

@@ -95,7 +95,7 @@ print '<td>'.$langs->trans("ExportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
 $var=true;
-if (sizeof($export->array_export_code))
+if (count($export->array_export_code))
 {
     foreach ($export->array_export_code as $key => $value)
     {
@@ -123,7 +123,7 @@ print '</table>';
 print '<br>';
 
 print '<center>';
-if (sizeof($export->array_export_code))
+if (count($export->array_export_code))
 {
 	if ($user->rights->export->creer)
 	{

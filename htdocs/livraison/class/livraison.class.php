@@ -142,7 +142,8 @@ class Livraison extends CommonObject
 				/*
 				 *  Insertion des produits dans la base
 				 */
-				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+				$num=count($this->lines);
+				for ($i = 0; $i < $num; $i++)
 				{
 					$origin_id=$this->lines[$i]->origin_line_id;
 					if (! $origin_id) $origin_id=$this->lines[$i]->commande_ligne_id;	// For backward compatibility
@@ -456,7 +457,8 @@ class Livraison extends CommonObject
 
 		$this->lines = array();
 
-		for ($i = 0 ; $i < sizeof($expedition->lines) ; $i++)
+		$num=count($expedition->lines);
+		for ($i = 0; $i < $num; $i++)
 		{
 			$line = new LivraisonLigne($this->db);
 			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
@@ -488,7 +490,7 @@ class Livraison extends CommonObject
 	 */
 	function addline( $id, $qty )
 	{
-		$num = sizeof($this->lines);
+		$num = count($this->lines);
 		$line = new LivraisonLigne($this->db);
 
 		$line->commande_ligne_id = $id;

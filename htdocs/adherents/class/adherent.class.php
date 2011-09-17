@@ -339,7 +339,7 @@ class Adherent extends CommonObject
                     // Fin appel triggers
                 }
 
-                if (sizeof($this->errors))
+                if (count($this->errors))
                 {
                     dol_syslog(get_class($this)."::create ".join(',',$this->errors), LOG_ERR);
                     $this->db->rollback();

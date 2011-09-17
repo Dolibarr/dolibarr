@@ -57,7 +57,7 @@ class Menu {
      */
     function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='')
     {
-        $i = sizeof($this->liste);
+        $i = count($this->liste);
         $this->liste[$i]['url'] = $url;
         $this->liste[$i]['titre'] = $titre;
         $this->liste[$i]['level'] = $level;
@@ -71,7 +71,7 @@ class Menu {
      */
     function remove_last()
     {
-    	if (sizeof($this->liste) > 1) array_pop($this->liste);
+    	if (count($this->liste) > 1) array_pop($this->liste);
     }
 
 }

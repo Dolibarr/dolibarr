@@ -337,7 +337,7 @@ if ($step == 1 || ! $datatoimport)
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 	$val=true;
-	if (sizeof($objimport->array_import_code))
+	if (count($objimport->array_import_code))
 	{
 		foreach ($objimport->array_import_code as $key => $value)
 		{
@@ -635,21 +635,22 @@ if ($step == 4 && $datatoimport)
 	// Load targets fields in database
 	$fieldstarget=$objimport->array_import_fields[0];
 
-	$maxpos=max(sizeof($fieldssource),sizeof($fieldstarget));
+	$maxpos=max(count($fieldssource),count($fieldstarget));
 
 	//var_dump($array_match_file_to_database);
 
 	// Is it a first time in page (if yes, we must initialize array_match_file_to_database)
-	if (sizeof($array_match_file_to_database) == 0)
+	if (count($array_match_file_to_database) == 0)
 	{
 		// This is first input in screen, we need to define
 		// $array_match_file_to_database
 		// $serialized_array_match_file_to_database
 		// $_SESSION["dol_array_match_file_to_database"]
 		$pos=1;
-		while ($pos <= sizeof($fieldssource))
+		$num=count($fieldssource);
+		while ($pos <= $num)
 		{
-			if (sizeof($fieldssource) >= 1 && $pos <= sizeof($fieldssource))
+			if ($num >= 1 && $pos <= $num)
 			{
 				$posbis=1;
 				foreach($fieldstarget as $key => $val)
@@ -800,13 +801,14 @@ if ($step == 4 && $datatoimport)
 		$valforsourcefieldnb[$lefti]=$key;
 		$lefti++;
 
-		if ($lefti > sizeof($fieldstarget)) break;	// Other fields are in the not imported area
+		if ($lefti > count($fieldstarget)) break;	// Other fields are in the not imported area
 	}
 	//var_dump($valforsourcefieldnb);
 
-	// Complete source fields from sizeof($fieldssource)+1 to sizeof($fieldstarget)
+	// Complete source fields from count($fieldssource)+1 to count($fieldstarget)
 	$more=1;
-	while ($lefti <= sizeof($fieldstarget))
+	$num=count($fieldssource);
+	while ($lefti <= $num)
 	{
 		$var=!$var;
 		$newkey=getnewkey($fieldssource,$listofkeys);
@@ -849,8 +851,8 @@ if ($step == 4 && $datatoimport)
 		if (preg_match('/\*$/',$label))
 		{
 			$text='<span class="fieldrequired">'.$text.'</span>';
-			$more=((! empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= sizeof($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
-			if ($mandatoryfieldshavesource) $mandatoryfieldshavesource=(! empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= sizeof($fieldssource)));
+			$more=((! empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= count($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
+			if ($mandatoryfieldshavesource) $mandatoryfieldshavesource=(! empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= count($fieldssource)));
 			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
 		}
 		print $text;
@@ -860,7 +862,7 @@ if ($step == 4 && $datatoimport)
 		$filecolumn=$array_match_database_to_file[$code];
 		// Source field info
 		$htmltext ='<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
-		if ($filecolumn > sizeof($fieldssource)) $htmltext.=$langs->trans("DataComeFromNoWhere").'<br>';
+		if ($filecolumn > count($fieldssource)) $htmltext.=$langs->trans("DataComeFromNoWhere").'<br>';
 		else
 		{
 			if (empty($objimport->array_import_convertvalue[0][$code]))	// If source file does not need convertion
@@ -991,7 +993,7 @@ if ($step == 4 && $datatoimport)
 	 */
 	print '<div class="tabsAction">';
 
-	if (sizeof($array_match_file_to_database))
+	if (count($array_match_file_to_database))
 	{
 		if ($mandatoryfieldshavesource)
 		{
@@ -1007,7 +1009,7 @@ if ($step == 4 && $datatoimport)
 
 
 	// Area for profils import
-	if (sizeof($array_match_file_to_database))
+	if (count($array_match_file_to_database))
 	{
 		print '<br>'."\n";
 		print '<!-- Area to add new import profile -->'."\n";
@@ -1204,12 +1206,12 @@ if ($step == 5 && $datatoimport)
 	foreach($array_match_file_to_database as $code=>$label)
 	{
 		//var_dump($fieldssource);
-		if ($code > sizeof($fieldssource)) continue;
+		if ($code > count($fieldssource)) continue;
 		//print $code.'-'.$label;
 		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
 	}
-	if (sizeof($listtables))
+	if (count($listtables))
 	{
 		$newval='';
 		//ksort($listtables);
@@ -1247,12 +1249,12 @@ if ($step == 5 && $datatoimport)
 	{
 		$i++;
 		//var_dump($fieldssource);
-		if ($code > sizeof($fieldssource)) continue;
+		if ($code > count($fieldssource)) continue;
 		//print $code.'-'.$label;
 		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
-	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
+	print count($listfields)?(join(', ',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
@@ -1309,10 +1311,10 @@ if ($step == 5 && $datatoimport)
                 $arrayrecord=$obj->import_read_record();
                 if ($excludefirstline && $sourcelinenb == 1) continue;
 
-                $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
-                if (sizeof($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
-                if (sizeof($obj->warnings)) $arrayofwarnings[$sourcelinenb]=$obj->warnings;
-                if (! sizeof($obj->errors) && ! sizeof($obj->warnings)) $nbok++;
+                $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
+                if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
+                if (count($obj->warnings)) $arrayofwarnings[$sourcelinenb]=$obj->warnings;
+                if (! count($obj->errors) && ! count($obj->warnings)) $nbok++;
             }
             // Close file
             $obj->import_close_file();
@@ -1325,21 +1327,21 @@ if ($step == 5 && $datatoimport)
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
-        if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b><br><br>';
+        if (! count($arrayoferrors) && ! count($arrayofwarnings)) print img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b><br><br>';
         else print $langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
 
         // Show Errors
         //var_dump($arrayoferrors);
-        if (sizeof($arrayoferrors))
+        if (count($arrayoferrors))
         {
-            print img_error().' <b>'.$langs->trans("ErrorsOnXLines",sizeof($arrayoferrors)).'</b><br>';
+            print img_error().' <b>'.$langs->trans("ErrorsOnXLines",count($arrayoferrors)).'</b><br>';
             print '<table width="100%" class="border"><tr><td>';
             foreach ($arrayoferrors as $key => $val)
             {
                 $nboferrors++;
                 if ($nboferrors > $maxnboferrors)
                 {
-                    print $langs->trans("TooMuchErrors",(sizeof($arrayoferrors)-$nboferrors))."<br>";
+                    print $langs->trans("TooMuchErrors",(count($arrayoferrors)-$nboferrors))."<br>";
                     break;
                 }
                 print '* '.$langs->trans("Line").' '.$key.'<br>';
@@ -1354,16 +1356,16 @@ if ($step == 5 && $datatoimport)
 
         // Show Warnings
         //var_dump($arrayoferrors);
-        if (sizeof($arrayofwarnings))
+        if (count($arrayofwarnings))
         {
-            print img_warning().' <b>'.$langs->trans("WarningsOnXLines",sizeof($arrayofwarnings)).'</b><br>';
+            print img_warning().' <b>'.$langs->trans("WarningsOnXLines",count($arrayofwarnings)).'</b><br>';
             print '<table width="100%" class="border"><tr><td>';
             foreach ($arrayofwarnings as $key => $val)
             {
                 $nbofwarnings++;
                 if ($nbofwarnings > $maxnbofwarnings)
                 {
-                    print $langs->trans("TooMuchWarnings",(sizeof($arrayofwarnings)-$nbofwarnings))."<br>";
+                    print $langs->trans("TooMuchWarnings",(count($arrayofwarnings)-$nbofwarnings))."<br>";
                     break;
                 }
                 print ' * '.$langs->trans("Line").' '.$key.'<br>';
@@ -1553,12 +1555,12 @@ if ($step == 6 && $datatoimport)
 	foreach($array_match_file_to_database as $code=>$label)
 	{
 		//var_dump($fieldssource);
-		if ($code > sizeof($fieldssource)) continue;
+		if ($code > count($fieldssource)) continue;
 		//print $code.'-'.$label;
 		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
 	}
-	if (sizeof($listtables))
+	if (count($listtables))
 	{
 		$newval='';
 		foreach ($listtables as $val)
@@ -1594,12 +1596,12 @@ if ($step == 6 && $datatoimport)
 	{
 		$i++;
 		//var_dump($fieldssource);
-		if ($code > sizeof($fieldssource)) continue;
+		if ($code > count($fieldssource)) continue;
 		//print $code.'-'.$label;
 		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
-	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
+	print count($listfields)?(join(', ',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
@@ -1631,10 +1633,10 @@ if ($step == 6 && $datatoimport)
 			$arrayrecord=$obj->import_read_record();
 			if ($excludefirstline && $sourcelinenb == 1) continue;
 
-			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
-			if (sizeof($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
-			if (sizeof($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
-			if (! sizeof($obj->errors) && ! sizeof($obj->warnings)) $nbok++;
+			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
+			if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
+			if (count($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
+			if (! count($obj->errors) && ! count($obj->warnings)) $nbok++;
 		}
 		// Close file
 		$obj->import_close_file();
@@ -1644,7 +1646,7 @@ if ($step == 6 && $datatoimport)
 		print $langs->trans("ErrorFailedToOpenFile",$pathfile);
 	}
 
-	if (sizeof($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
+	if (count($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
 	else  $db->commit();	// We can commit if no errors.
 
 	print '</div>';
@@ -1681,7 +1683,7 @@ function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
 	print '<div class="box" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
-	if ($pos && $pos > sizeof($fieldssource))	// No fields
+	if ($pos && $pos > count($fieldssource))	// No fields
 	{
 		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
@@ -1732,7 +1734,7 @@ function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
  */
 function getnewkey(&$fieldssource,&$listofkey)
 {
-	$i=sizeof($fieldssource)+1;
+	$i=count($fieldssource)+1;
 	// Max number of key
 	$maxkey=0;
 	foreach($listofkey as $key=>$val)

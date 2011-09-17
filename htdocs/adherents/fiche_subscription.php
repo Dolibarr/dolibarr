@@ -91,7 +91,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 			//print 'datef='.$subscription->datef.' '.$_POST['datesubendday'];
 
 			$result=$subscription->update($user);
-			if ($result >= 0 && ! sizeof($subscription->errors))
+			if ($result >= 0 && ! count($subscription->errors))
 			{
 				$db->commit();
 

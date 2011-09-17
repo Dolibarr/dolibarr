@@ -331,7 +331,8 @@ if (! $error && $db->connected && $action == "set")
 			$dir[6] = $main_data_dir."/produit";
 
 			// Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
-			for ($i = 0 ; $i < sizeof($dir) ; $i++)
+			$num=count($dir);
+			for ($i = 0; $i < $num; $i++)
 			{
 				if (is_dir($dir[$i]))
 				{

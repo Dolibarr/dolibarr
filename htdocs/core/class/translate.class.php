@@ -229,7 +229,7 @@ class Translate {
 
 				    require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
 					$tmparray=dol_getcache($usecachekey);
-					if (is_array($tmparray) && sizeof($tmparray))
+					if (is_array($tmparray) && count($tmparray))
 					{
 						$this->tab_translate=array_merge($tmparray,$this->tab_translate);	// Already found values tab_translate overwrites duplicates
 						//print $newdomain."\n";
@@ -281,7 +281,7 @@ class Translate {
 
 						// TODO Move cache write out of loop on dirs
 						// To save lang content for usecachekey into cache
-						if ($usecachekey && sizeof($tabtranslatedomain))
+						if ($usecachekey && count($tabtranslatedomain))
 						{
 							$ressetcache=dol_setcache($usecachekey,$tabtranslatedomain);
 							if ($ressetcache < 0)

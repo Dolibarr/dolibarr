@@ -1067,7 +1067,7 @@ elseif ($fichinterid)
         if ($action != 'editdescription')
         {
             // Validate
-            if ($object->statut == 0 && $user->rights->ficheinter->creer && sizeof($object->lines) > 0)
+            if ($object->statut == 0 && $user->rights->ficheinter->creer && count($object->lines) > 0)
             {
                 print '<a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
                 print '>'.$langs->trans("Valid").'</a>';

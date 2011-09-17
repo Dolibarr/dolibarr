@@ -404,7 +404,7 @@ else
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
 
-			$num = sizeof($fac->lines);
+			$num = count($fac->lines);
 			$i = 0;
 			$var=True;
 			while ($i < $num)

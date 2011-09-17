@@ -533,7 +533,7 @@ if ($id > 0 || ! empty($ref))
 					// Define a new tree with quantiies recalculated
 					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
 					//var_dump($prods_arbo);
-					if(sizeof($prods_arbo) > 0)
+					if(count($prods_arbo) > 0)
 					{
 						foreach($prods_arbo as $key => $value)
 						{

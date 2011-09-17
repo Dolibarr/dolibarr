@@ -105,7 +105,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		if ($conf->projet->dir_output)
 		{
-			$nblignes = sizeof($object->lines);
+			$nblignes = count($object->lines);
 
 			$default_font_size = pdf_getPDFFontsize($outputlangs);
 
@@ -139,7 +139,7 @@ class pdf_baleine extends ModelePDFProjects
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
 				$object->lines=$tasksarray;
-				$nblignes=sizeof($object->lines);
+				$nblignes=count($object->lines);
 
 				$pdf->Open();
 				$pagenb=0;
@@ -382,7 +382,7 @@ class pdf_baleine extends ModelePDFProjects
 	    	if ($objecttype == 'commande')
 	    	{
 	    		$outputlangs->load('orders');
-	    		$num=sizeof($objects);
+	    		$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
 	    			$posy+=4;

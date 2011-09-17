@@ -114,7 +114,8 @@ abstract class DolibarrModules
         // Execute les requetes sql complementaires
         if (! $err)
         {
-            for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+            $num=count($array_sql);
+        	for ($i = 0; $i < $num; $i++)
             {
                 if (! $err)
                 {
@@ -211,7 +212,8 @@ abstract class DolibarrModules
         if (! $err) $err+=$this->delete_dirs();
 
         // Run complementary sql requests
-        for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+        $num=count($array_sql);
+        for ($i = 0; $i < $num; $i++)
         {
             if (! $err)
             {
@@ -955,7 +957,7 @@ abstract class DolibarrModules
 
         $err=0;
 
-        //print $this->rights_class." ".sizeof($this->rights)."<br>";
+        //print $this->rights_class." ".count($this->rights)."<br>";
 
         // Test if module is activated
         $sql_del = "SELECT ".$this->db->decrypt('value')." as value";

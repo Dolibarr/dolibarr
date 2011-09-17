@@ -463,7 +463,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
     $showonrightsize='';
 
-	if (sizeof($sectionauto))
+	if (count($sectionauto))
 	{
 		// Root title line (Automatic section)
 		print '<tr>';

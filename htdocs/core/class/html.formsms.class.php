@@ -195,7 +195,7 @@ function limitChars(textarea, limit, infodiv)
                     dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
                     $resultsender[0]->number=$this->fromsms;
                 }
-                if (sizeof($resultsender) > 0)
+                if (count($resultsender) > 0)
                 {
                     print '<select name="fromsms" id="valid" class="flat">';
                     foreach($resultsender as $obj)

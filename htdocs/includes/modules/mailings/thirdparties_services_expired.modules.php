@@ -204,7 +204,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 		$s='';
         $s.='<select name="filter" class="flat">';
-        if (sizeof($this->arrayofproducts)) $s.='<option value="0">&nbsp;</option>';
+        if (count($this->arrayofproducts)) $s.='<option value="0">&nbsp;</option>';
         else $s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
         foreach($this->arrayofproducts as $key => $val)
         {

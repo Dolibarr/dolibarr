@@ -238,7 +238,7 @@ if ($action == 'add' && $user->rights->commande->creer)
                 if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
                 $fk_parent_line=0;
-                $num=sizeof($lines);
+                $num=count($lines);
 
                 for ($i=0;$i<$num;$i++)
                 {

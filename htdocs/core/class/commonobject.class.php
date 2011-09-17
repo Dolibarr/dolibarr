@@ -699,7 +699,7 @@ abstract class CommonObject
 	{
 		$contactAlreadySelected = array();
 		$tab = $this->liste_contact(-1,$source);
-		$num=sizeof($tab);
+		$num=count($tab);
 		$i = 0;
 		while ($i < $num)
 		{
@@ -1345,7 +1345,7 @@ abstract class CommonObject
 		            {
 			            dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
-						$num=sizeof($objectids);
+						$num=count($objectids);
 
 						for ($i=0;$i<$num;$i++)
 						{
@@ -1474,7 +1474,7 @@ abstract class CommonObject
         }
 
         // Request to get complementary values
-        if (sizeof($optionsArray) > 0)
+        if (count($optionsArray) > 0)
         {
             $sql = "SELECT rowid";
             foreach ($optionsArray as $name => $label)
@@ -1516,7 +1516,7 @@ abstract class CommonObject
 	 */
 	function insertExtraFields()
 	{
-	    if (sizeof($this->array_options) > 0)
+	    if (count($this->array_options) > 0)
         {
             $this->db->begin();
 
@@ -1679,7 +1679,7 @@ abstract class CommonObject
 
         $this->fetchObjectLinked();
 
-        $num = sizeof($this->linkedObjects);
+        $num = count($this->linkedObjects);
 
         foreach($this->linkedObjects as $objecttype => $objects)
         {

@@ -934,7 +934,7 @@ class pdf_einstein extends ModelePDFCommandes
 			// If CUSTOMER contact defined on order, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
-			if (sizeof($arrayidcontact) > 0)
+			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
 				$result=$object->fetch_contact($arrayidcontact[0]);
