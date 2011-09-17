@@ -27,7 +27,20 @@
   <exec executable="phpmd">
    <arg line="htdocs xml codesize,unusedcode
               --reportfile '${basedir}/hudson/logs/pmd.xml'
-              --exclude '${basedir}/htdocs/includes'
+              --exclude '${basedir}/htdocs/includes/adodbtime'
+              --exclude '${basedir}/htdocs/includes/artichow'
+              --exclude '${basedir}/htdocs/includes/barcode/php-barcode'
+              --exclude '${basedir}/htdocs/includes/ckeditor'
+              --exclude '${basedir}/htdocs/includes/fpdf'
+              --exclude '${basedir}/htdocs/includes/fpdfi'
+              --exclude '${basedir}/htdocs/includes/geoip'
+              --exclude '${basedir}/htdocs/includes/iwebkit'
+              --exclude '${basedir}/htdocs/includes/jquery'
+              --exclude '${basedir}/htdocs/includes/jsgantt'
+              --exclude '${basedir}/htdocs/includes/nusoap'
+              --exclude '${basedir}/htdocs/includes/odtphp'
+              --exclude '${basedir}/htdocs/includes/phpexcel'
+              --exclude '${basedir}/htdocs/includes/tcpdf'
               " />
   </exec>
  </target>
@@ -36,7 +49,20 @@
  <target name="phpcpd">
   <exec executable="phpcpd">
    <arg line="--log-pmd '${basedir}/hudson/logs/pmd-cpd.xml'
-              --exclude '${basedir}/htdocs/includes'
+              --exclude '${basedir}/htdocs/includes/adodbtime'
+              --exclude '${basedir}/htdocs/includes/artichow'
+              --exclude '${basedir}/htdocs/includes/barcode/php-barcode'
+              --exclude '${basedir}/htdocs/includes/ckeditor'
+              --exclude '${basedir}/htdocs/includes/fpdf'
+              --exclude '${basedir}/htdocs/includes/fpdfi'
+              --exclude '${basedir}/htdocs/includes/geoip'
+              --exclude '${basedir}/htdocs/includes/iwebkit'
+              --exclude '${basedir}/htdocs/includes/jquery'
+              --exclude '${basedir}/htdocs/includes/jsgantt'
+              --exclude '${basedir}/htdocs/includes/nusoap'
+              --exclude '${basedir}/htdocs/includes/odtphp'
+              --exclude '${basedir}/htdocs/includes/phpexcel'
+              --exclude '${basedir}/htdocs/includes/tcpdf'
               htdocs
               " />
   </exec>
@@ -46,7 +72,20 @@
  <target name="phploc">
   <exec executable="phploc">
    <arg line="--log-csv '${basedir}/hudson/logs/phploc.csv'
-              --exclude '${basedir}/htdocs/includes'
+              --exclude '${basedir}/htdocs/includes/adodbtime'
+              --exclude '${basedir}/htdocs/includes/artichow'
+              --exclude '${basedir}/htdocs/includes/barcode/php-barcode'
+              --exclude '${basedir}/htdocs/includes/ckeditor'
+              --exclude '${basedir}/htdocs/includes/fpdf'
+              --exclude '${basedir}/htdocs/includes/fpdfi'
+              --exclude '${basedir}/htdocs/includes/geoip'
+              --exclude '${basedir}/htdocs/includes/iwebkit'
+              --exclude '${basedir}/htdocs/includes/jquery'
+              --exclude '${basedir}/htdocs/includes/jsgantt'
+              --exclude '${basedir}/htdocs/includes/nusoap'
+              --exclude '${basedir}/htdocs/includes/odtphp'
+              --exclude '${basedir}/htdocs/includes/phpexcel'
+              --exclude '${basedir}/htdocs/includes/tcpdf'
               htdocs
               " />
   </exec>
@@ -56,8 +95,21 @@
  <target name="phpcs">
   <exec executable="phpcs" dir="${basedir}" output="${basedir}/hudson/logs/checkstyle.xml">
     <arg line=" --standard=${basedir}/dev/codesniffer/ruleset.xml
-                --ignore=${basedir}/htdocs/includes
-                --report=checkstyle
+    			--report=checkstyle
+                --ignore=${basedir}/htdocs/includes/adodbtime
+                --ignore=${basedir}/htdocs/includes/artichow
+                --ignore=${basedir}/htdocs/includes/barcode/php-barcode
+                --ignore=${basedir}/htdocs/includes/ckeditor
+                --ignore=${basedir}/htdocs/includes/fpdf
+                --ignore=${basedir}/htdocs/includes/fpdfi
+                --ignore=${basedir}/htdocs/includes/geoip
+                --ignore=${basedir}/htdocs/includes/iwebkit
+                --ignore=${basedir}/htdocs/includes/jquery
+                --ignore=${basedir}/htdocs/includes/jsgantt
+                --ignore=${basedir}/htdocs/includes/nusoap
+                --ignore=${basedir}/htdocs/includes/odtphp
+                --ignore=${basedir}/htdocs/includes/phpexcel
+                --ignore=${basedir}/htdocs/includes/tcpdf
                 htdocs
                 "/>
   </exec>
