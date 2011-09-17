@@ -71,13 +71,14 @@
  
  <!-- Run unit tests and generate junit.xml and clover.xml -->
  <target name="phpunit">
-  <exec command="phpunit
-  				--log-xml ${basedir}/hudson/phpunit.xml
-  				--log-pmd ${basedir}/hudson/phpunit.pmd.xml
-  				--coverage-clover ${basedir}/hudson/coverage/clover.xml
+  <exec executable="phpunit" dir="${basedir}" failonerror="true">
+   <arg line="	--log-xml ${basedir}/hudson/phpunit.xml
+				--log-pmd ${basedir}/hudson/phpunit.pmd.xml
+				--coverage-clover ${basedir}/hudson/coverage/clover.xml
   				--coverage-html ${basedir}/hudson/coverage/
   				test/phpunit/AllTests.php
   				"/>
+  </exec>
  </target>
 
 <!-- remove for test
