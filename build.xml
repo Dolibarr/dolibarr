@@ -2,7 +2,7 @@
 <project name="dolibarr" default="hudson" basedir=".">
 
  <!-- Exclude/ignore paths -->
- <property name="ignorepaths" value="htdocs/includes/adodbtime,htdocs/includes/artichow,htdocs/includes/barcode/php-barcode,htdocs/includes/ckeditor,htdocs/includes/fpdf,htdocs/includes/fpdfi,htdocs/includes/geoip,htdocs/includes/iwebkit,htdocs/includes/jquery,htdocs/includes/jsgantt,htdocs/includes/nusoap,htdocs/includes/odtphp,htdocs/includes/phpexcel,htdocs/includes/tcpdf" />
+ <property name="ignorepaths" value="${basedir}/htdocs/includes/adodbtime,${basedir}/htdocs/includes/artichow,${basedir}/htdocs/includes/barcode/php-barcode,${basedir}/htdocs/includes/ckeditor,${basedir}/htdocs/includes/fpdf,${basedir}/htdocs/includes/fpdfi,${basedir}/htdocs/includes/geoip,${basedir}/htdocs/includes/iwebkit,${basedir}/htdocs/includes/jquery,${basedir}/htdocs/includes/jsgantt,${basedir}/htdocs/includes/nusoap,${basedir}/htdocs/includes/odtphp,${basedir}/htdocs/includes/phpexcel,${basedir}/htdocs/includes/tcpdf" />
 
  <target name="clean">
   <!-- Clean up -->
