@@ -5,12 +5,8 @@
   <delete dir="${basedir}/hudson"/>
 
   <!-- Create build directories -->
-  <mkdir dir="${basedir}/hudson/api"/>
   <mkdir dir="${basedir}/hudson/doxygen"/>
-  <mkdir dir="${basedir}/hudson/code-browser"/>
-  <mkdir dir="${basedir}/hudson/coverage"/>
   <mkdir dir="${basedir}/hudson/logs"/>
-  <mkdir dir="${basedir}/hudson/pdepend"/>
  </target>
 
  <!-- Run unit tests and generate junit.xml and clover.xml -->
@@ -23,26 +19,12 @@
  <!-- Run pdepend, phpmd, phpcpd, phpcs, phpdoc and phploc in parallel -->
  <target name="parallelTasks">
   <parallel>
-   <antcall target="pdepend"/>
    <antcall target="phpmd"/>
    <antcall target="phpcpd"/>
    <antcall target="phpcs"/>
    <antcall target="doxygen"/>
    <antcall target="phploc"/>
   </parallel>
- </target>
-
- <!-- Generate jdepend.xml and software metrics charts -->
- <target name="pdepend">
-  <exec executable="pdepend">
-   <arg line="--jdepend-xml='${basedir}/hudson/logs/jdepend.xml'
-              --jdepend-chart='${basedir}/hudson/pdepend/dependencies.svg'
-              --summary-xml='${basedir}/hudson/logs/jdepend-summary.xml'
-              --overview-pyramid='${basedir}/hudson/pdepend/overview-pyramid.svg'
-              --ignore='${basedir}/htdocs/includes'
-              htdocs
-              " />
-  </exec>
  </target>
 
  <!-- Generate pmd.xml -->
@@ -76,7 +58,6 @@
  </target>
    
  <!-- Generate checkstyle.xml -->
-
  <target name="phpcs">
   <exec executable="phpcs" dir="${basedir}" output="${basedir}/hudson/logs/checkstyle.xml">
     <arg line=" --standard=${basedir}/dev/codesniffer/ruleset.xml
@@ -87,20 +68,10 @@
   </exec>
  </target>
 
- <!-- Generate API documentation -->
+ <!-- Generate Doxygen documentation -->
  <target name="doxygen" description="Dolibarr documentation" >
   <exec executable="doxygen" dir="${basedir}" failonerror="false">
    <arg value="${basedir}/build/doxygen/hudson-doxygen.doxyfile"/>
-  </exec>
- </target>
- 
- <target name="phpcb">
-  <exec executable="phpcb">
-   <arg line="--log    '${basedir}/hudson/logs'
-              --source '${basedir}/htdocs'
-              --output '${basedir}/hudson/code-browser'
-              --ignore '${basedir}/htdocs/includes'
-              " />
   </exec>
  </target>
   
