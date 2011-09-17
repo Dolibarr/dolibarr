@@ -7,13 +7,7 @@
   <!-- Create build directories -->
   <mkdir dir="${basedir}/hudson/doxygen"/>
   <mkdir dir="${basedir}/hudson/logs"/>
- </target>
-
- <!-- Run unit tests and generate junit.xml and clover.xml -->
- <target name="phpunit">
-  <exec dir="${basedir}" executable="phpunit" failonerror="true">
-   <arg line="--configuration test/phpunit/hudson-phpunit.xml" />
-  </exec>
+  <mkdir dir="${basedir}/hudson/coverage"/>
  </target>
 
  <!-- Run pdepend, phpmd, phpcpd, phpcs, phpdoc and phploc in parallel -->
@@ -72,6 +66,13 @@
  <target name="doxygen" description="Dolibarr documentation" >
   <exec executable="doxygen" dir="${basedir}" failonerror="false">
    <arg value="${basedir}/build/doxygen/hudson-doxygen.doxyfile"/>
+  </exec>
+ </target>
+ 
+ <!-- Run unit tests and generate junit.xml and clover.xml -->
+ <target name="phpunit">
+  <exec dir="${basedir}" executable="phpunit" failonerror="true">
+   <arg line="--configuration test/phpunit/hudson-phpunit.xml" />
   </exec>
  </target>
   
