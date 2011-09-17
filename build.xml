@@ -3,6 +3,7 @@
  <target name="clean">
   <!-- Clean up -->
   <delete dir="${basedir}/hudson"/>
+  <delete dir="${basedir}/generatedJUnitFiles"/>
 
   <!-- Create build directories -->
   <mkdir dir="${basedir}/hudson/doxygen"/>
@@ -72,8 +73,7 @@
  <!-- Run unit tests and generate junit.xml and clover.xml -->
  <target name="phpunit">
   <exec executable="phpunit" dir="${basedir}" failonerror="true">
-   <arg line="	--log-xml ${basedir}/hudson/phpunit.xml
-				--log-pmd ${basedir}/hudson/phpunit.pmd.xml
+   <arg line="	--log-junit ${basedir}/hudson/junit.xml
 				--coverage-clover ${basedir}/hudson/coverage/clover.xml
   				--coverage-html ${basedir}/hudson/coverage/
   				test/phpunit/AllTests.php
