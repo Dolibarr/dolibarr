@@ -75,5 +75,5 @@
   </exec>
  </target>
   
- <target name="hudson" depends="clean,parallelTasks,phpunit,phpcb"/>
+ <target name="hudson" depends="clean,parallelTasks,phpunit"/>
 </project>
