@@ -52,9 +52,10 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 
 	/**
-	 *    Assign custom values for canvas
+	 *  Assign custom values for canvas
 	 *
-	 *    @param      string	$action     Type of action
+	 *  @param		string		$action     Type of action
+	 *  @return		void
 	 */
 	function assign_values($action='')
 	{
@@ -92,24 +93,6 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
             $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->object,1);
 		}
-	}
-
-	/**
-	 * 	Check permissions of a user to show a page and an object. Check read permission
-	 * 	If $_REQUEST['action'] defined, we also check write permission.
-	 *
-	 * 	@param      user      	  	User to check
-	 * 	@param      features	    Features to check (in most cases, it's module name)
-	 * 	@param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
-	 *  @param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
-	 *  @param      feature2		Feature to check (second level of permission)
-	 *  @param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
-	 *  @param      dbt_select      Field name for select if not rowid. (optionnal)
-	 *  @return		int				1
-	 */
-	function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
-	{
-		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
 
 }

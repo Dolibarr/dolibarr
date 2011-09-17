@@ -71,7 +71,7 @@ if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice
 	}
 
 	$count=0;
-	if (sizeof($filesarray))
+	if (count($filesarray))
 	{
 
 		foreach($filesarray as $key => $value)

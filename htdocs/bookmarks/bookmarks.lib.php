@@ -24,11 +24,11 @@
 /**
  * Add area with bookmarks in menu
  *
- * @param 	DoliDb		$aDb		Database handler
+ * @param 	DoliDb  	$aDb		Database handler
  * @param 	Translate	$aLangs		Object lang
  * @return	string
  */
-function printBookmarksList ($aDb, $aLangs)
+function printBookmarksList($aDb, $aLangs)
 {
 	global $conf, $user;
 

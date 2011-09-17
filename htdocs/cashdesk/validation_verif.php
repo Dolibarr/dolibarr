@@ -62,17 +62,20 @@ switch ($action)
 		}
 
 		if ( $mode_reglement != 'DIF') {
-			$obj_facturation->montant_encaisse ($montant);
+			$obj_facturation->montant_encaisse($montant);
 
 			//Determination de la somme rendue
 			$total = $obj_facturation->prix_total_ttc ();
 			$encaisse = $obj_facturation->montant_encaisse();
 
-			$obj_facturation->montant_rendu ( $encaisse - $total );
-
-
-		} else {
-			$obj_facturation->paiement_le ($_POST['txtDatePaiement']);
+			$obj_facturation->montant_rendu($encaisse - $total);
+		}
+		else
+		{
+		    //$txtDatePaiement=$_POST['txtDatePaiement'];
+		    $datePaiement=dol_mktime(0,0,0,$_POST['txtDatePaiementmonth'],$_POST['txtDatePaiementday'],$_POST['txtDatePaiementyear']);
+		    $txtDatePaiement=dol_print_date($datePaiement,'dayrfc');
+			$obj_facturation->paiement_le($txtDatePaiement);
 		}
 
 		$redirection = 'affIndex.php?menu=validation';

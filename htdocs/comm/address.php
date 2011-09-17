@@ -70,12 +70,12 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 
         if ($result >= 0)
         {
-            if ($origin == commande)
+            if ($origin == 'commande')
             {
                 Header("Location: ../commande/fiche.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
                 exit;
             }
-            elseif ($origin == propal)
+            elseif ($origin == 'propal')
             {
                 Header("Location: ../comm/propal.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
                 exit;
@@ -102,17 +102,17 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 
         if ($result >= 0)
         {
-            if ($origin == commande)
+            if ($origin == 'commande')
             {
                 Header("Location: ../commande/fiche.php?id=".$originid);
                 exit;
             }
-            elseif ($origin == propal)
+            elseif ($origin == 'propal')
             {
                 Header("Location: ../comm/propal.php?id=".$originid);
                 exit;
             }
-            elseif ($origin == shipment)
+            elseif ($origin == 'shipment')
             {
                 Header("Location: ../expedition/fiche.php?id=".$originid);
                 exit;
@@ -161,7 +161,8 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-if (!empty($mesg)) print '<div class="error">'.$mesg.'</div>';
+dol_htmloutput_errors($mesg);
+
 
 if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 {
@@ -439,7 +440,7 @@ else
         print '</div>';
     }
 
-    $nblines = sizeof($address->lines);
+    $nblines = count($address->lines);
     if ($nblines)
     {
         for ($i = 0 ; $i < $nblines ; $i++)

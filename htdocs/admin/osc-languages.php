@@ -53,14 +53,13 @@ $offset = $limit * $page ;
 print_barre_liste("Liste des langues oscommerce", $page, "osc-languages.php");
 
 $sql = "SELECT l.languages_id, l.name, l.code FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."languages as l";
-
-$sql .= $db->plimit( $limit ,$offset);
+$sql.= $db->plimit($limit, $offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-print "<TR class=\"liste_titre\">";
+print "<tr class=\"liste_titre\">";
 print "<td>id</td>";
 print "<td>Name</td>";
-print "<TD>Code</TD>";
+print "<td>Code</td>";
 print "</TR>\n";
 
 $resql=$db->query($sql);

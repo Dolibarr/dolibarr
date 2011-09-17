@@ -111,7 +111,7 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 	{
 		$var=!$var;
 		print '<tr '.$bc[$var].'><td width="300">'.$key.'</td>';
-		print '<td>'.sizeof($val).'</td>';
+		print '<td>'.count($val).'</td>';
 		print '<td align="right">'.dol_getshmopaddress($key).'</td>';
 		print '</tr>'."\n";
 	}
@@ -180,13 +180,12 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970,1,false).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,false),'dayhour').')</td>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,true),'dayhour').')</td>';
-# Parent company
+// Parent company
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CompanyTZ").'</td><td>'.$langs->trans("FeatureNotYetAvailable").'</td></tr>'."\n";
 $var=!$var;
-#print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CompanyHour")."</td><td>".dol_print_date(dol_now('tzuser'),'dayhour')."</td></tr>\n";
 print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("CompanyHour").'</td><td>'.$langs->trans("FeatureNotYetAvailable").'</td></tr>'."\n";
-# Client
+// Client
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("ClientTZ").'</td><td>'.($_SESSION['dol_tz']!=''?($_SESSION['dol_tz']>=0?'+':'').$_SESSION['dol_tz']:'').' ('.($_SESSION['dol_tz']>=0?'+':'').($_SESSION['dol_tz']*60*60).')</td></tr>'."\n";
 //$var=!$var;
@@ -195,7 +194,6 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("DaylingSavingTime").'</td><td>'.($_SESSION['dol_dst']>=0?yn(1):yn(0)).' ('.($_SESSION['dol_dst']>=0?'+':'').($_SESSION['dol_dst']*60*60).')</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzuser').'</td></tr>'."\n";
-#print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
 
 $var=!$var;
 $filesystemencoding=ini_get("unicode.filesystem_encoding");	// Disponible avec PHP 6.0

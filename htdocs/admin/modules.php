@@ -310,22 +310,16 @@ if ($mode != 4)
         if ($objMod->special == $mode)
         {
             $atleastoneforfamily++;
-            $var=!$var;
 
-            print '<tr height="18" '.$bc[$var].">\n";
-
-            //print '  <td valign="top" nowrap="nowrap">';
             if ($family!=$oldfamily)
             {
                 $familytext=empty($familylib[$family])?$family:$familylib[$family];
                 //print $familytext;
                 $oldfamily=$family;
             }
-            else
-            {
-                //print '&nbsp;';
-            }
-            //print "</td>\n";
+            
+            $var=!$var;
+            print '<tr height="18" '.$bc[$var].">\n";
 
             // Picto
             print '  <td valign="top" width="14" align="center">';

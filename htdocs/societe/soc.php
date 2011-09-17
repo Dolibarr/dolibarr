@@ -108,7 +108,6 @@ if (empty($reshook))
         {
             $object->fetch($socid);
         }
-        else if ($canvas) $object->canvas=$canvas;
 
         if (GETPOST("private") == 1)
         {

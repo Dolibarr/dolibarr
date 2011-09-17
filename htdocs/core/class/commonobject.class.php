@@ -31,9 +31,10 @@
 
 abstract class CommonObject
 {
-	var $db;
-
-	var $canvas;                // Contains canvas name if it is
+	protected $db;
+	public $error;
+	public $errors;
+	public $canvas;                // Contains canvas name if it is
 
 
 	// No constructor as it is an abstract class
@@ -1608,7 +1609,7 @@ abstract class CommonObject
         }
         else return 0;
     }
-
+    
 
     // --------------------
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
@@ -1618,6 +1619,7 @@ abstract class CommonObject
 	/**
 	 *
 	 * Enter description here ...
+	 * 
 	 * @param unknown_type $objectid
 	 * @param unknown_type $objecttype
 	 * @param unknown_type $withpicto

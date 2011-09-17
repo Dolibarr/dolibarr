@@ -693,7 +693,7 @@ if ($_GET["id"])
             // There is several pages
             if ($num > $listlimit)
             {
-                print '<tr class="none"><td align="right" colspan="'.(3+sizeof($fieldlist)).'">';
+                print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
                 print_fleche_navigation($page,$_SERVER["PHP_SELF"],'&id='.GETPOST('id'),($num > $listlimit),$langs->trans("Page").' '.($page+1));
                 print '</td></tr>';
             }
@@ -899,9 +899,11 @@ llxFooter();
 
 
 /**
- *	\brief      Show field
- * 	\param		fieldlist		Array of fields
- * 	\param		obj				If we show a particular record, obj is filled with record fields
+ *	Show field
+ *
+ * 	@param		array	$fieldlist		Array of fields
+ * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
+ *	@return		void		
  */
 function fieldList($fieldlist,$obj='')
 {

@@ -162,9 +162,9 @@ if ($result)
 
         // Check if permission is inside module definition
         // TODO If not, we remove it
-        foreach($objMod->rights as $key => $val)
+        /*foreach($objMod->rights as $key => $val)
         {
-        }
+        }*/
 
         // Break found, it's a new module to catch
         if ($old <> $obj->module)

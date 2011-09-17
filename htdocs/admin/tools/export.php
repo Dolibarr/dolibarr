@@ -257,11 +257,11 @@ if ($what == 'postgresql')
 	//if ($compression == 'bz')
 	$paramcrypted=$param;
 	$paramclear=$param;
-	if (! empty($dolibarr_main_db_pass))
+	/*if (! empty($dolibarr_main_db_pass))
 	{
-		//$paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
-		//$paramclear.=" -W".$dolibarr_main_db_pass;
-	}
+		$paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
+		$paramclear.=" -W".$dolibarr_main_db_pass;
+	}*/
 	$paramcrypted.=" -w ".$dolibarr_main_db_name;
 	$paramclear.=" -w ".$dolibarr_main_db_name;
 
