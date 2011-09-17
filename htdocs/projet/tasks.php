@@ -315,7 +315,7 @@ else
 	print '<td align="right">'.$langs->trans("Progress").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print "</tr>\n";
-	if (sizeof($tasksarray) > 0)
+	if (count($tasksarray) > 0)
 	{
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j=0;
@@ -329,14 +329,14 @@ else
 
 
 	// Test if database is clean. If not we clean it.
-	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' sizeof($tasksarray)='.sizeof($tasksarray).' sizeof($tasksrole)='.sizeof($tasksrole).'<br>';
+	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
 	if ($_REQUEST["mode"]=='mine')
 	{
-		if ($nboftaskshown < sizeof($tasksrole)) clean_orphelins($db);
+		if ($nboftaskshown < count($tasksrole)) clean_orphelins($db);
 	}
 	else
 	{
-		if ($nboftaskshown < sizeof($tasksarray)) clean_orphelins($db);
+		if ($nboftaskshown < count($tasksarray)) clean_orphelins($db);
 	}
 }
 

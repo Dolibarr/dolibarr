@@ -234,7 +234,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
     $alt=0;
     if (is_array($menu_array))
     {
-        for ($i = 0 ; $i < sizeof($menu_array) ; $i++)
+        $num=count($menu_array);
+    	for ($i = 0; $i < $num; $i++)
         {
             $alt++;
             if (empty($menu_array[$i]['level']))
@@ -314,7 +315,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
         }
     }
 
-    return sizeof($menu_array);
+    return count($menu_array);
 }
 
 ?>

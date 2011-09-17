@@ -115,9 +115,9 @@ class RejetPrelevement
 			dol_syslog("RejetPrelevement::create Erreur 5");
 			$error++;
 		}
-
-
-		for ($i = 0 ; $i < sizeof($facs) ; $i++)
+		
+		$num=count($facs);
+		for ($i = 0; $i < $num; $i++)
 		{
 			$fac = new Facture($this->db);
 			$fac->fetch($facs[$i]);

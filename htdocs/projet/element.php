@@ -186,12 +186,13 @@ foreach ($listofreferent as $key => $value)
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 		$elementarray = $project->get_element_list($key);
-		if (sizeof($elementarray)>0 && is_array($elementarray))
+		if (count($elementarray)>0 && is_array($elementarray))
 		{
 			$var=true;
 			$total_ht = 0;
 			$total_ttc = 0;
-			for ($i = 0; $i<sizeof($elementarray);$i++)
+			$num=count($elementarray);
+			for ($i = 0; $i < $num; $i++)
 			{
 				$element = new $classname($db);
 				$element->fetch($elementarray[$i]);

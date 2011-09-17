@@ -189,7 +189,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			else
 			{
 				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
-				if (sizeof($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
@@ -210,7 +210,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         $texte.= '</table>';
 
 		// Scan directories
-		if (sizeof($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.sizeof($listoffiles).'</b>';
+		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
 		$texte.= '</td>';
 
@@ -306,7 +306,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 // If BILLING contact defined on invoice, we use it
                 $usecontact=false;
                 $arrayidcontact=$object->getIdContact('external','BILLING');
-                if (sizeof($arrayidcontact) > 0)
+                if (count($arrayidcontact) > 0)
                 {
                     $usecontact=true;
                     $result=$object->fetch_contact($arrayidcontact[0]);

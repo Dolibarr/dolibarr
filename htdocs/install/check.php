@@ -400,7 +400,7 @@ else
 			print $langs->trans("UpgradeDesc");
 			if ($ok)
 			{
-				if (sizeof($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and a version x.y already available
+				if (count($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and a version x.y already available
 				{
 					// Now we check if this is the first qualified choice
 					if ($allowupgrade && empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
@@ -408,7 +408,7 @@ else
 						print '<br>';
 						//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
 						print '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div>';
-						if ($count < sizeof($migarray))	// There is other choices after
+						if ($count < count($migarray))	// There is other choices after
 						{
 							print $langs->trans("MigrateIsDoneStepByStep",DOL_VERSION);
 						}
@@ -427,7 +427,7 @@ else
 			if ($allowupgrade)
 			{
 				// If it's not last updagre script, action = upgrade_tmp, if last action = upgrade
-				print '<a href="upgrade.php?action=upgrade'.($count<sizeof($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+				print '<a href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
 			}
 			else
 			{

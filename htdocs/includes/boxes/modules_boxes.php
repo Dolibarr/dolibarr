@@ -105,8 +105,8 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 
 		// Define nbcol and nblines of the box to show
 		$nbcol=0;
-		if (isset($contents[0])) $nbcol=sizeof($contents[0]);
-		$nblines=sizeof($contents);
+		if (isset($contents[0])) $nbcol=count($contents[0]);
+		$nblines=count($contents);
 
 		print "\n\n<!-- Box start -->\n";
 		print '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
@@ -167,7 +167,7 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 					else print '<tr valign="top" '.$bcx[$var].'>';
 
 					// Loop on each TD
-					$nbcolthisline=sizeof($contents[$i]);
+					$nbcolthisline=count($contents[$i]);
 					for ($j=0; $j < $nbcolthisline; $j++)
 					{
 						// Define tdparam

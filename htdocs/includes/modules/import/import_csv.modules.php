@@ -246,7 +246,7 @@ class ImportCsv extends ModeleImports
 				}
 			}
 
-			$this->col=sizeof($newarrayres);
+			$this->col=count($newarrayres);
 		}
 
 		return $newarrayres;
@@ -289,8 +289,8 @@ class ImportCsv extends ModeleImports
 
 		//var_dump($sort_array_match_file_to_database);
 
-		if (sizeof($arrayrecord) == 0 ||
-		(sizeof($arrayrecord) == 1 && empty($arrayrecord[0]['val'])))
+		if (count($arrayrecord) == 0 ||
+		(count($arrayrecord) == 1 && empty($arrayrecord[0]['val'])))
 		{
 			//print 'W';
 			$this->warnings[$warning]['lib']=$langs->trans('EmptyLine');

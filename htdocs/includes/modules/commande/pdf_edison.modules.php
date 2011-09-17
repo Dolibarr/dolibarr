@@ -186,7 +186,7 @@ class pdf_edison extends ModelePDFCommandes
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
-				$nblignes = sizeof($object->lines);
+				$nblignes = count($object->lines);
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
@@ -569,7 +569,7 @@ class pdf_edison extends ModelePDFCommandes
     		// If CUSTOMER contact defined on invoice, we use it
     		$usecontact=false;
     		$arrayidcontact=$object->getIdContact('external','CUSTOMER');
-    		if (sizeof($arrayidcontact) > 0)
+    		if (count($arrayidcontact) > 0)
     		{
     			$usecontact=true;
     			$result=$object->fetch_contact($arrayidcontact[0]);

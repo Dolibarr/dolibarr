@@ -122,7 +122,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		{
 			$object->fetch_thirdparty();
 
-			$nblines = sizeof($object->lines);
+			$nblines = count($object->lines);
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->expedition->dir_output."/receipt";
@@ -550,7 +550,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				foreach($object->linkedObjects as $elementtype => $objects)
 				{
-					$num=sizeof($objects);
+					$num=count($objects);
 					for ($i=0;$i<$num;$i++)
 					{
 						$order=new Commande($this->db);
@@ -612,7 +612,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			// If SHIPPING contact defined on invoice, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
-			if (sizeof($arrayidcontact) > 0)
+			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
 				$result=$object->fetch_contact($arrayidcontact[0]);

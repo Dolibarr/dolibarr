@@ -417,7 +417,8 @@ class CommandeFournisseur extends Commande
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-                for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+                $num=count($this->lines);
+                for ($i = 0; $i < $num; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
@@ -643,7 +644,8 @@ class CommandeFournisseur extends Commande
                 {
                     require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-                    for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+                    $num=count($this->lines);
+                    for ($i = 0; $i < $num; $i++)
                     {
                         // Product with reference
                         if ($this->lines[$i]->fk_product > 0)
@@ -1404,7 +1406,8 @@ class CommandeFournisseur extends Commande
 
         $this->lines = array();
 
-        for ($i = 0 ; $i < sizeof($comclient->lines) ; $i++)
+        $num=count($comclient->lines);
+        for ($i = 0; $i < $num; $i++)
         {
             $prod = new Product($this->db);
             if ($prod->fetch($comclient->lines[$i]->fk_product) > 0)

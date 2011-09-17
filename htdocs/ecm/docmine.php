@@ -280,7 +280,7 @@ print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 print '/ecm/'.$relativepath;
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
-print sizeof($filearray);
+print count($filearray);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
 print dol_print_size($totalsize);
@@ -321,7 +321,7 @@ if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete')
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
-	if (sizeof($filearray) == 0)
+	if (count($filearray) == 0)
 	{
 		if ($user->rights->ecm->setup)
 		{

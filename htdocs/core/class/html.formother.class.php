@@ -370,7 +370,7 @@ class FormOther
 	function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
 	{
 	    global $langs;
-		if (! is_array($arrayofcolors) || sizeof($arrayofcolors) < 1)
+		if (! is_array($arrayofcolors) || count($arrayofcolors) < 1)
 		{
 			$langs->load("other");
 		    print '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
@@ -662,7 +662,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selecte
 
 	$lastprojectid=0;
 
-	$numlines=sizeof($lines);
+	$numlines=count($lines);
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($lines[$i]->fk_parent == $parent)

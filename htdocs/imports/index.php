@@ -91,7 +91,7 @@ print '<td>'.$langs->trans("ImportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
 $val=true;
-if (sizeof($import->array_import_code))
+if (count($import->array_import_code))
 {
     foreach ($import->array_import_code as $key => $value)
     {
@@ -118,7 +118,7 @@ print '</table>';
 print '<br>';
 
 print '<center>';
-if (sizeof($import->array_import_code))
+if (count($import->array_import_code))
 {
 	//if ($user->rights->import->run)
 	//{

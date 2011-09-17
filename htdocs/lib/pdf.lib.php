@@ -1177,7 +1177,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0,$hookman
 function pdf_getTotalQty($object,$type='',$outputlangs,$hookmanager=false)
 {
 	$total=0;
-	$nblignes=sizeof($object->lines);
+	$nblignes=count($object->lines);
 
 	// Loop on each lines
 	for ($i = 0 ; $i < $nblignes ; $i++)

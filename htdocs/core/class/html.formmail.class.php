@@ -514,7 +514,7 @@ class FormMail
             $out.= '    });';
             $out.= '})';
             $out.= '</script>'."\n";
-            if (sizeof($listofpaths))
+            if (count($listofpaths))
             {
                 foreach($listofpaths as $key => $val)
                 {

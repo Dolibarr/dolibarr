@@ -143,7 +143,7 @@ class HookManager
                     if ($method == 'doActions' && method_exists($actioninstance,$method))
                     {
                         $resaction+=$actioninstance->doActions($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
+                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && count($actioninstance->errors) > 0))
                         {
                             $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
                             if ($action=='add')    $action='create';    // TODO this change must be inside the doActions
@@ -153,7 +153,7 @@ class HookManager
                     else if ($method == 'showInputFields' && method_exists($actioninstance,$method))
                     {
                         $resaction+=$actioninstance->showInputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
+                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && count($actioninstance->errors) > 0))
                         {
                             $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
                         }
@@ -161,7 +161,7 @@ class HookManager
                     else if ($method == 'showOutputFields' && method_exists($actioninstance,$method))
                     {
                         $resaction+=$actioninstance->showOutputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
+                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && count($actioninstance->errors) > 0))
                         {
                             $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
                         }

@@ -296,7 +296,7 @@ if ($action == "set")
 						$versioncommande=explode('.',$reg[1]);
 						//print var_dump($versioncommande);
 						//print var_dump($versionarray);
-						if (sizeof($versioncommande) && sizeof($versionarray)
+						if (count($versioncommande) && count($versionarray)
 						&& versioncompare($versioncommande,$versionarray) <= 0)
 						{
 							// Version qualified, delete SQL comments
@@ -309,7 +309,7 @@ if ($action == "set")
 						$versioncommande=explode('.',$reg[1]);
 						//print var_dump($versioncommande);
 						//print var_dump($versionarray);
-						if (sizeof($versioncommande) && sizeof($versionarray)
+						if (count($versioncommande) && count($versionarray)
 						&& versioncompare($versioncommande,$versionarray) <= 0)
 						{
 							// Version qualified, delete SQL comments
@@ -533,7 +533,7 @@ if ($action == "set")
                 }
                 fclose($fp);
 
-                dolibarr_install_syslog("Found ".$linefound." records, defined ".sizeof($arrayofrequests)." groups.",LOG_DEBUG);
+                dolibarr_install_syslog("Found ".$linefound." records, defined ".count($arrayofrequests)." groups.",LOG_DEBUG);
 
                 // We loop on each requests
                 foreach($arrayofrequests as $buffer)

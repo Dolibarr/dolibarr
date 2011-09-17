@@ -388,7 +388,8 @@ function migrate_paiements($db,$langs,$conf)
 			if ($db->begin())
 			{
 				$res = 0;
-				for ($i = 0 ; $i < sizeof($row) ; $i++)
+				$num=count($row);
+				for ($i = 0; $i < $num; $i++)
 				{
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
 					$sql.= " VALUES (".$row[$i][1].",".$row[$i][0].",".$row[$i][2].")";
@@ -403,7 +404,7 @@ function migrate_paiements($db,$langs,$conf)
 				}
 			}
 
-			if ($res == (2 * sizeof($row)))
+			if ($res == (2 * count($row)))
 			{
 				$db->commit();
 				print $langs->trans('MigrationSuccessfullUpdate')."<br>";
@@ -483,13 +484,14 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 			dol_print_error($db);
 		}
 
-		if (sizeof($row))
+		if (count($row))
 		{
-			print $langs->trans('OrphelinsPaymentsDetectedByMethod', 1).': '.sizeof($row)."<br>\n";
+			print $langs->trans('OrphelinsPaymentsDetectedByMethod', 1).': '.count($row)."<br>\n";
 			$db->begin();
 
 			$res = 0;
-			for ($i = 0 ; $i < sizeof($row) ; $i++)
+			$num=count($row);
+			for ($i = 0; $i < $num; $i++)
 			{
 				if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
@@ -605,13 +607,14 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 
 		$nberr=0;
 
-		if (sizeof($row))
+		$num=count($row);
+		if ($num)
 		{
-			print $langs->trans('OrphelinsPaymentsDetectedByMethod', 2).': '.sizeof($row)."<br>\n";
+			print $langs->trans('OrphelinsPaymentsDetectedByMethod', 2).': '.count($row)."<br>\n";
 			$db->begin();
 
 			$res = 0;
-			for ($i = 0 ; $i < sizeof($row) ; $i++)
+			for ($i = 0; $i < $num; $i++)
 			{
 				if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
@@ -1707,7 +1710,7 @@ function migrate_modeles($db,$langs,$conf)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 		$modellist=ModelePDFFactures::liste_modeles($db);
-		if (sizeof($modellist)==0)
+		if (count($modellist)==0)
 		{
 			// Aucun model par defaut.
 			$sql=" insert into llx_document_model(nom,type) values('crabe','invoice')";
@@ -1720,7 +1723,7 @@ function migrate_modeles($db,$langs,$conf)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
 		$modellist=ModelePDFCommandes::liste_modeles($db);
-		if (sizeof($modellist)==0)
+		if (count($modellist)==0)
 		{
 			// Aucun model par defaut.
 			$sql=" insert into llx_document_model(nom,type) values('einstein','order')";
@@ -1733,7 +1736,7 @@ function migrate_modeles($db,$langs,$conf)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
 		$modellist=ModelePDFExpedition::liste_modeles($db);
-		if (sizeof($modellist)==0)
+		if (count($modellist)==0)
 		{
 			// Aucun model par defaut.
 			$sql=" insert into llx_document_model(nom,type) values('rouget','shipping')";

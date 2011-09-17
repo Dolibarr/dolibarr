@@ -584,7 +584,7 @@ class Contrat extends CommonObject
 			return -2;
 		}
 
-		$this->nbofservices=sizeof($this->lines);
+		$this->nbofservices=count($this->lines);
         $this->total_ttc = price2num($total_ttc);   // TODO For the moment value is false as value is not stored in database for line linked to products
         $this->total_vat = price2num($total_vat);   // TODO For the moment value is false as value is not stored in database for line linked to products
         $this->total_ht = price2num($total_ht);     // TODO For the moment value is false as value is not stored in database for line linked to products

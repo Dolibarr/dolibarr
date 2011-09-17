@@ -63,7 +63,7 @@ class FormEcm
 		$output = '<select class="flat" name="'.$select_name.'">';
 		if (is_array($cate_arbo))
 		{
-			if (! sizeof($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+			if (! count($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
 			else
 			{
 				$output.= '<option value="-1">&nbsp;</option>';

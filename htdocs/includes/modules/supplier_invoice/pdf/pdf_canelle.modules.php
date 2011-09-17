@@ -167,7 +167,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			if (file_exists($dir))
 			{
-				$nblignes = sizeof($object->lines);
+				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
 
@@ -821,7 +821,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','BILLING');
-			if (sizeof($arrayidcontact) > 0)
+			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
 				$result=$object->fetch_contact($arrayidcontact[0]);

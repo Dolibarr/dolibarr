@@ -120,7 +120,7 @@ if ($_GET["id"])
       $c = new Categorie($db);
       $cats = $c->containing($_REQUEST['id'],0);
 
-      if (sizeof($cats) > 0)
+      if (count($cats) > 0)
 	{
 	  print "Vous avez stock� le produit dans les cat�gorie suivantes:<br/><br/>";
 	  print '<table class="noborder" width="100%">';

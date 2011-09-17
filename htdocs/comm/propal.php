@@ -1531,7 +1531,7 @@ if ($id > 0 || ! empty($ref))
 			// Validate
 			if ($object->statut == 0 && $user->rights->propale->valider)
 			{
-			    if (sizeof($object->lines) > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
+			    if (count($object->lines) > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
 			    else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 			}
 
@@ -1574,7 +1574,7 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				$arraypropal=$object->getInvoiceArrayList();
-				if (is_array($arraypropal) && sizeof($arraypropal) > 0)
+				if (is_array($arraypropal) && count($arraypropal) > 0)
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 				}

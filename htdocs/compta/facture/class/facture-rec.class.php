@@ -143,7 +143,8 @@ class FactureRec extends Facture
 				/*
 				 * Lines
 				 */
-				for ($i = 0 ; $i < sizeof($facsrc->lines) ; $i++)
+				$num=count($facsrc->lines);
+				for ($i = 0; $i < $num; $i++)
 				{
 					$result_insert = $this->addline($this->id,
 					$facsrc->lines[$i]->desc,

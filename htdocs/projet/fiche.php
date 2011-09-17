@@ -384,7 +384,7 @@ else
         $text=$langs->trans("ConfirmDeleteAProject");
         $task=new Task($db);
         $taskarray=$task->getTasksArray(0,0,$project->id,0,0);
-        $nboftask=sizeof($taskarray);
+        $nboftask=count($taskarray);
         if ($nboftask) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoRemoveTasks",$nboftask);
         $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
         if ($ret == 'html') print '<br>';

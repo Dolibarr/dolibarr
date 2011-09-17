@@ -334,8 +334,9 @@ class BonPrelevement extends CommonObject
             {
                 $facs = array();
                 $facs = $this->_get_list_factures();
-
-                for ($i = 0 ; $i < sizeof($facs) ; $i++)
+                
+                $num=count($facs);
+                for ($i = 0; $i < $num; $i++)
                 {
                     /* Tag invoice as payed */
                     dol_syslog("BonPrelevement::set_credite set_paid fac ".$facs[$i]);
@@ -423,7 +424,8 @@ class BonPrelevement extends CommonObject
 
                         $facs = $this->_get_list_factures();
 
-                        for ($i = 0 ; $i < sizeof($facs) ; $i++)
+                        $num=count($facs);
+                        for ($i = 0; $i < $num; $i++)
                         {
                             $fac = new Facture($this->db);
                             $fac->fetch($facs[$i]);
@@ -781,7 +783,7 @@ class BonPrelevement extends CommonObject
             $i = 0;
             dol_syslog("Start RIB check");
 
-            if (sizeof($factures) > 0)
+            if (count($factures) > 0)
             {
                 foreach ($factures as $fac)
                 {
@@ -825,12 +827,12 @@ class BonPrelevement extends CommonObject
         $ok=0;
 
         // Withdraw invoices in factures_prev array
-        $out=sizeof($factures_prev)." invoices will be withdrawn.";
+        $out=count($factures_prev)." invoices will be withdrawn.";
         //print $out."\n";
         dol_syslog($out);
 
 
-        if (sizeof($factures_prev) > 0)
+        if (count($factures_prev) > 0)
         {
             if ($mode=='real')
             {
@@ -917,7 +919,7 @@ class BonPrelevement extends CommonObject
              */
             if (!$error)
             {
-                if (sizeof($factures_prev) > 0)
+                if (count($factures_prev) > 0)
                 {
                     foreach ($factures_prev as $fac)
                     {
@@ -977,9 +979,9 @@ class BonPrelevement extends CommonObject
                  * Withdraw receipt
                  */
 
-                dol_syslog("Debut prelevement - Nombre de factures ".sizeof($factures_prev));
+                dol_syslog("Debut prelevement - Nombre de factures ".count($factures_prev));
 
-                if (sizeof($factures_prev) > 0)
+                if (count($factures_prev) > 0)
                 {
                     $bonprev->date_echeance = $datetimeprev;
                     $bonprev->reference_remise = $ref;
@@ -1033,7 +1035,7 @@ class BonPrelevement extends CommonObject
                 dol_syslog("Error",LOG_ERROR);
             }
 
-            return sizeof($factures_prev);
+            return count($factures_prev);
         }
         else
         {

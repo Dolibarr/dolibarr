@@ -206,7 +206,7 @@ class Notify
 	                    $message,
 	                    array($file),
 	                    array($mimefile),
-	                    array($filename[sizeof($filename)-1]),
+	                    array($filename[count($filename)-1]),
 	                    '', '', 0, $msgishtml
 	                    );
 

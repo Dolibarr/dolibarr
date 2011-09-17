@@ -511,7 +511,7 @@ class FormCompany
 		{
 			// For ajax search we limit here. For combo list, we limit later
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT
-			&& is_array($limitto) && sizeof($limitto))
+			&& is_array($limitto) && count($limitto))
 			{
 				$sql.= " WHERE rowid in (".join(',',$limitto).")";
 			}
@@ -571,7 +571,7 @@ class FormCompany
 						$obj = $this->db->fetch_object($resql);
 						if ($i == 0) $firstCompany = $obj->rowid;
 						$disabled=0;
-						if (is_array($limitto) && sizeof($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
+						if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
 							print '<option value="'.$obj->rowid.'"';

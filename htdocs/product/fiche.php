@@ -1323,7 +1323,7 @@ if ($object->id && $action == '' && $object->status)
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" width="100%">';
-			if (is_array($otherprop) && sizeof($otherprop))
+			if (is_array($otherprop) && count($otherprop))
 			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td colspan="3">';
@@ -1441,7 +1441,7 @@ if ($object->id && $action == '' && $object->status)
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" width="100%">';
-			if (is_array($othercom) && sizeof($othercom))
+			if (is_array($othercom) && count($othercom))
 			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td colspan="3">';

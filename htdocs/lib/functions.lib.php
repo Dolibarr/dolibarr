@@ -515,7 +515,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
     if (is_array($links))
     {
         $keys=array_keys($links);
-        if (sizeof($keys)) $maxkey=max($keys);
+        if (count($keys)) $maxkey=max($keys);
     }
 
     // Show tabs
@@ -1375,7 +1375,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
             {
                 //print '{ label: "'.($showlegend?$serie['values'][0]:$serie['label'].'<br>'.$serie['values'][0]).'", data: '.$serie['values'][0].' }';
                 print '{ label: "'.dol_escape_js($serie['label']).'", data: '.$serie['values'][0].' }';
-                if ($i < sizeof($data['series'])) print ',';
+                if ($i < count($data['series'])) print ',';
                 print "\n";
                 $i++;
             }
@@ -1417,7 +1417,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
                     },
                     ';
                     $i=0; $outputserie=0;
-            		if (sizeof($datacolor))
+            		if (count($datacolor))
             		{
 	                    print 'colors: [';
 	                    foreach($datacolor as $val)
@@ -1457,7 +1457,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
                 foreach($serie['values'] as $val)
                 {
                     print '['.$j.','.$val.']';
-                    if ($j < sizeof($serie['values'])) print ', ';
+                    if ($j < count($serie['values'])) print ', ';
                     $j++;
                 }
                 print ']}'."\n";
@@ -1477,7 +1477,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
                 foreach($serie['values'] as $val)
                 {
                     print '['.$j.','.$val.']';
-                    if ($j < sizeof($serie['values'])) print ', ';
+                    if ($j < count($serie['values'])) print ', ';
                     $j++;
                 }
                 print ']}'."\n";
@@ -1490,7 +1490,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
             foreach($data['xlabel'] as $label)
             {
                 print '['.$i.',\''.$label.'\']';
-                if ($i < sizeof($data['xlabel'])) print ',';
+                if ($i < count($data['xlabel'])) print ',';
                 $i++;
             }
             print '];
@@ -1508,14 +1508,14 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
                         interactive: true
                     },
                     ';
-                    if (sizeof($datacolor))
+                    if (count($datacolor))
                     {
                         print 'colors: [';
                         $j=0;
                         foreach($datacolor as $val)
                         {
                             print '"'.$val.'"';
-                            if ($j < sizeof($datacolor)) print ',';
+                            if ($j < count($datacolor)) print ',';
                             $j++;
                         }
                         print '], ';
@@ -3368,7 +3368,8 @@ function dol_mkdir($dir)
 
     $ccdir = '';
     $cdir = explode("/",$dir);
-    for ($i = 0 ; $i < sizeof($cdir) ; $i++)
+    $num=count($cdir);
+    for ($i = 0; $i < $num; $i++)
     {
         if ($i > 0) $ccdir .= '/'.$cdir[$i];
         else $ccdir = $cdir[$i];
@@ -3610,7 +3611,7 @@ function dol_nboflines($s,$maxchar=0)
 {
     if ($s == '') return 0;
     $arraystring=explode("\n",$s);
-    $nb=sizeof($arraystring);
+    $nb=count($arraystring);
 
     return $nb;
 }
@@ -3840,17 +3841,17 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
         $divend='</div>';
     }
 
-    if ((is_array($mesgarray) && sizeof($mesgarray)) || $mesgstring)
+    if ((is_array($mesgarray) && count($mesgarray)) || $mesgstring)
     {
         $langs->load("errors");
         $out.=$divstart;
-        if (is_array($mesgarray) && sizeof($mesgarray))
+        if (is_array($mesgarray) && count($mesgarray))
         {
             foreach($mesgarray as $message)
             {
                 $ret++;
                 $out.= $langs->trans($message);
-                if ($ret < sizeof($mesgarray)) $out.= "<br>\n";
+                if ($ret < count($mesgarray)) $out.= "<br>\n";
             }
         }
         if ($mesgstring)
@@ -3926,7 +3927,7 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  */
 function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
-    if (empty($mesgstring) && (! is_array($mesgarray) || sizeof($mesgarray) == 0)) return;
+    if (empty($mesgstring) && (! is_array($mesgarray) || count($mesgarray) == 0)) return;
 
     $iserror=0;
     if (is_array($mesgarray))
@@ -4204,7 +4205,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
             $values=explode(':',$value);
             if ($mode == 'add')
             {
-                if (sizeof($values) == 6)       // new declaration with permissions
+                if (count($values) == 6)       // new declaration with permissions
                 {
                     if ($values[0] != $type) continue;
                     if (verifCond($values[4]))
@@ -4216,7 +4217,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
                         $h++;
                     }
                 }
-                else if (sizeof($values) == 5)       // new declaration
+                else if (count($values) == 5)       // new declaration
                 {
                     if ($values[0] != $type) continue;
                     if ($values[3]) $langs->load($values[3]);
@@ -4225,7 +4226,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
                     $head[$h][2] = str_replace('+','',$values[1]);
                     $h++;
                 }
-                else if (sizeof($values) == 4)   // old declaration, for backward compatibility
+                else if (count($values) == 4)   // old declaration, for backward compatibility
                 {
                     if ($values[0] != $type) continue;
                     if ($values[2]) $langs->load($values[2]);

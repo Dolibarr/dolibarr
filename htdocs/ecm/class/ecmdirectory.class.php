@@ -560,7 +560,7 @@ class EcmDirectory // extends CommonObject
 				{
 					if (is_array($this->cats[$obj->rowid]['id_children']))
 					{
-						$newelempos=sizeof($this->cats[$obj->rowid]['id_children']);
+						$newelempos=count($this->cats[$obj->rowid]['id_children']);
 						//print "this->cats[$i]['id_children'] est deja un tableau de $newelem elements<br>";
 						$this->cats[$obj->rowid]['id_children'][$newelempos]=$obj->rowid_fille;
 					}
@@ -653,7 +653,7 @@ class EcmDirectory // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql.= " cachenbofdoc = '".sizeof($filelist)."'";
+		$sql.= " cachenbofdoc = '".count($filelist)."'";
 		if (empty($all))  // By default
 		{
 			$sql.= " WHERE rowid = ".$this->id;
@@ -667,7 +667,7 @@ class EcmDirectory // extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->cachenbofdoc=sizeof($filelist);
+			$this->cachenbofdoc=count($filelist);
 			return $this->cachenbofdoc;
 		}
 		else

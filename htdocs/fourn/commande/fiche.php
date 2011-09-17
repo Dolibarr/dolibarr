@@ -1033,7 +1033,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="noborder" width="100%">';
 
-		$num = sizeof($object->lines);
+		$num = count($object->lines);
 		$i = 0;	$total = 0;
 
 		if ($num)

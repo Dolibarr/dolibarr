@@ -193,7 +193,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				//Generation du tableau
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
-				$nblignes = sizeof($object->lines);
+				$nblignes = count($object->lines);
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
@@ -508,7 +508,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		// If SHIPPING contact defined on order, we use it
 		$usecontact=false;
 		$arrayidcontact=$object->$origin->getIdContact('external','SHIPPING');
-		if (sizeof($arrayidcontact) > 0)
+		if (count($arrayidcontact) > 0)
 		{
 			$usecontact=true;
 			$result=$object->fetch_contact($arrayidcontact[0]);

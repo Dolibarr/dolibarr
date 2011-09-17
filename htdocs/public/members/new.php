@@ -359,7 +359,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
     $tmp=array_keys($listoftype);
     $defaulttype='';
     $isempty=1;
-    if (sizeof($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
+    if (count($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
     print '<tr><td width="15%">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td width="35%">';
     print $html->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
     print '</td></tr>'."\n";

@@ -903,7 +903,7 @@ function weight_convert($weight,&$from_unit,$to_unit)
 function dol_set_user_param($db, $conf, &$user, $tab)
 {
     // Verification parametres
-    if (sizeof($tab) < 1) return -1;
+    if (count($tab) < 1) return -1;
 
     $db->begin();
 
@@ -1080,11 +1080,11 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (is_dir($tmpdir))
                     {
                         $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
-                        if (sizeof($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+                        if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }
 
-                if (sizeof($listoffiles))
+                if (count($listoffiles))
                 {
                     foreach($listoffiles as $record)
                     {

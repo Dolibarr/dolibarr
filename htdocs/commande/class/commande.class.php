@@ -241,7 +241,8 @@ class Commande extends CommonObject
                 $langs->load("agenda");
 
                 // Loop on each line
-                for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+                $num=count($this->lines);
+                for ($i = 0; $i < $num; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
@@ -352,7 +353,8 @@ class Commande extends CommonObject
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
                 $langs->load("agenda");
 
-                for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+                $num=count($this->lines);
+                for ($i = 0; $i < $num; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
@@ -647,7 +649,7 @@ class Commande extends CommonObject
             if ($this->id)
             {
                 $fk_parent_line=0;
-                $num=sizeof($this->lines);
+                $num=count($this->lines);
 
                 /*
                  *  Insertion du detail des produits dans la base
@@ -874,7 +876,8 @@ class Commande extends CommonObject
             $this->date_commande = dol_now();
             $this->source = 0;
 
-            for ($i = 0 ; $i < sizeof($object->lines) ; $i++)
+            $num=count($object->lines);
+            for ($i = 0; $i < $num; $i++)
             {
                 $line = new OrderLine($this->db);
 
@@ -1161,7 +1164,7 @@ class Commande extends CommonObject
              $prod->fetch($idproduct);
              $prod -> get_sousproduits_arbo ();
              $prods_arbo = $prod->get_each_prod();
-             if(sizeof($prods_arbo) > 0)
+             if(count($prods_arbo) > 0)
              {
              foreach($prods_arbo as $key => $value)
              {
@@ -1582,7 +1585,7 @@ class Commande extends CommonObject
 
 
         // Recherche total en stock pour chaque produit
-        if (sizeof($array_of_product))
+        if (count($array_of_product))
         {
             $sql = "SELECT fk_product, sum(ps.reel) as total";
             $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";

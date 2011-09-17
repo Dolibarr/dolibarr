@@ -199,7 +199,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					$arr_css  = array();
 
 					$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
-					if (sizeof($listofpaths))
+					if (count($listofpaths))
 					{
 						foreach($listofpaths as $key => $val)
 						{
@@ -333,7 +333,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 
         // Attached files
 		$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
-		if (sizeof($listofpaths))
+		if (count($listofpaths))
 		{
 			foreach($listofpaths as $key => $val)
 			{
@@ -909,7 +909,7 @@ else
 				print '<tr><td>'.$langs->trans("MailFile").' '.$i.'</td><td colspan="3">';
 				// List of files
 				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
-				if (sizeof($listofpaths))
+				if (count($listofpaths))
 				{
 					foreach($listofpaths as $key => $val)
 					{
@@ -1001,7 +1001,7 @@ else
 				print '<td colspan="3">';
 				// List of files
 				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
-				if (sizeof($listofpaths))
+				if (count($listofpaths))
 				{
 					foreach($listofpaths as $key => $val)
 					{

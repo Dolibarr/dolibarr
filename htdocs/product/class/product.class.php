@@ -1876,7 +1876,7 @@ class Product extends CommonObject
 		include_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php";
 
 		$list = $this->list_suppliers();
-		if (sizeof($list) > 0)
+		if (count($list) > 0)
 		{
 			dol_syslog("Product::fastappro");
 			$fournisseur = new Fournisseur($this->db);
@@ -2038,7 +2038,7 @@ class Product extends CommonObject
 			// on est dans une sous-categorie
 			if(is_array($desc_pere))
 			$this->res[]= array($desc_pere[1],$desc_pere[0]);
-			if(sizeof($desc_pere) >1)
+			if(count($desc_pere) >1)
 			{
 				$this ->fetch_prods($desc_pere);
 			}
@@ -2076,7 +2076,7 @@ class Product extends CommonObject
 		{
 			foreach($this -> sousprods as $nom_pere => $desc_pere)
 			{
-				if(sizeof($desc_pere) >1)
+				if(count($desc_pere) >1)
 				$this ->fetch_prods($desc_pere);
 
 			}

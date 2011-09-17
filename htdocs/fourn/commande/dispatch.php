@@ -282,7 +282,7 @@ if ($id > 0 || ! empty($ref))
 
 						// Warehouse
 						print '<td align="right">';
-						if (sizeof($listwarehouses))
+						if (count($listwarehouses))
 						{
 							print $html->selectarray("entrepot_".$i, $listwarehouses, '', $disabled, 0, 0, '', 0, 0, $disabled);
 						}
