@@ -33,6 +33,8 @@
 
 /**
  *  This function output memory used by PHP and exit everything. Used for debugging purpose.
+ *  
+ *  @return	void
  */
 function dol_stopwithmem()
 {
@@ -43,6 +45,8 @@ function dol_stopwithmem()
 
 /**
  *  Function called at end of web php process
+ *  
+ *  @return	void
  */
 function dol_shutdown()
 {
@@ -55,10 +59,10 @@ function dol_shutdown()
 /**
  *  Return value of a param into GET or POST supervariable
  *
- *  @param          string	$paramname   Name of parameter to found
- *  @param			string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
- *  @param			int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @return         string      		 Value found or '' if check fails
+ *  @param	string	$paramname   Name of parameter to found
+ *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ *  @return string      		 Value found or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -85,7 +89,7 @@ function GETPOST($paramname,$check='',$method=0)
  *  This prefix is unique for instance and avoid conflict between multi-instances,
  *  even when having two instances with one root dir or two instances in virtual servers
  *
- *  @return         string      		A calculated prefix
+ *  @return	string      		A calculated prefix
  */
 function dol_getprefix()
 {
@@ -99,8 +103,8 @@ function dol_getprefix()
  *  To link to a module file from a module file, use include('./mymodulefile');
  *  To link to a module file from a core file, then this function can be used
  *
- * 	@param			string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
- *  @return         int					false if include fails.
+ * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ *  @return int					false if include fails.
  */
 function dol_include_once($relpath)
 {
@@ -112,9 +116,9 @@ function dol_include_once($relpath)
 /**
  *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails
  *
- * 	@param			string	$path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
- *  @param			int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
- *  @return         string				Full filsystem path (if mode=0), Full url path (if mode=1)
+ * 	@param	string	$path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
+ *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
+ *  @return string				Full filsystem path (if mode=0), Full url path (if mode=1)
  */
 function dol_buildpath($path,$type=0)
 {
@@ -165,8 +169,8 @@ function dol_buildpath($path,$type=0)
  *	Create a clone of instance of object (new instance with same properties)
  * 	This function works for both PHP4 and PHP5
  *
- * 	@param			object	$object		Object to clone
- *	@return         object				Object clone
+ * 	@param	object	$object		Object to clone
+ *	@return object				Object clone
  */
 function dol_clone($object)
 {
@@ -184,11 +188,11 @@ function dol_clone($object)
 /**
  *	Optimize a size for some browsers (phone, smarphone, ...)
  *
- * 	@param			int		$size		Size we want
- * 	@param			string	$type		Type of optimizing:
+ * 	@param	int		$size		Size we want
+ * 	@param	string	$type		Type of optimizing:
  * 										'' = function used to define a size for truncation
  * 										'width' = function is used to define a width
- *	@return         int					New size after optimizing
+ *	@return int					New size after optimizing
  */
 function dol_size($size,$type='')
 {
@@ -202,11 +206,11 @@ function dol_size($size,$type='')
 /**
  *	Return date for now. We should always use this function without parameters (that means GMT time)
  *
- * 	@param			mode		'gmt' => we return GMT timestamp,
+ * 	@param	string		$mode	'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone
  * 								'tzuser' => we add the user timezone
- *	@return         date		Timestamp
+ *	@return timestamp   $date	Timestamp
  */
 function dol_now($mode='gmt')
 {
@@ -235,9 +239,10 @@ function dol_now($mode='gmt')
 /**
  *	Clean a string to use it as a file name
  *
- *	@param          str             String to clean
- * 	@param			newstr			String to replace bad chars with
- *	@return         string          String cleaned (a-zA-Z_)
+ *	@param	string	$str            String to clean
+ * 	@param	string	$newstr			String to replace bad chars with
+ *	@return string          		String cleaned (a-zA-Z_)
+ *
  * 	@see        	dol_string_nospecial, dol_string_unaccent
  */
 function dol_sanitizeFileName($str,$newstr='_')
@@ -249,8 +254,9 @@ function dol_sanitizeFileName($str,$newstr='_')
 /**
  *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
  *
- *	@param          str             String to clean
- *	@return         string          Cleaned string
+ *	@param	string	$str			String to clean
+ *	@return string   	       		Cleaned string
+ *
  * 	@see    		dol_sanitizeFilename, dol_string_nospecial
  */
 function dol_string_unaccent($str)
@@ -296,10 +302,11 @@ function dol_string_unaccent($str)
 /**
  *	Clean a string from all punctuation characters to use it as a ref or login
  *
- *	@param          str             String to clean
- * 	@param			newstr			String to replace forbidden chars with
- *  @param          badchars        List of forbidden characters
- * 	@return         string          Cleaned string
+ *	@param	string	$str            String to clean
+ * 	@param	string	$newstr			String to replace forbidden chars with
+ *  @param  array	$badchars       List of forbidden characters
+ * 	@return string          		Cleaned string
+ * 
  * 	@see    		dol_sanitizeFilename, dol_string_unaccent
  */
 function dol_string_nospecial($str,$newstr='_',$badchars='')
@@ -467,11 +474,12 @@ function dol_syslog($message, $level=LOG_INFO)
 /**
  *	Show tab header of a card
  *
- *	@param	    links		Array of tabs
- *	@param	    active      Active tab name
- *	@param      title       Title
- *	@param      notab		0=Add tab header, 1=no tab header
- * 	@param		picto		Add a picto on tab title
+ *	@param	array	$links		Array of tabs
+ *	@param	int		$active     Active tab name
+ *	@param  string	$title      Title
+ *	@param  int		$notab		0=Add tab header, 1=no tab header
+ * 	@param	string	$picto		Add a picto on tab title
+ * 	@return	void
  */
 function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
 {
@@ -481,11 +489,12 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
 /**
  *  Show tab header of a card
  *
- *  @param      links       Array of tabs
- *  @param      active      Active tab name
- *  @param      title       Title
- *  @param      notab       0=Add tab header, 1=no tab header
- *  @param      picto       Add a picto on tab title
+ *	@param	array	$links		Array of tabs
+ *	@param	int		$active     Active tab name
+ *	@param  string	$title      Title
+ *	@param  int		$notab		0=Add tab header, 1=no tab header
+ * 	@param	string	$picto		Add a picto on tab title
+ * 	@return	void
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
 {
@@ -548,7 +557,8 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 /**
  *  Show tab footer of a card
  *
- *  @param      int		$notab       0=Add tab footer, 1=no tab footer
+ *  @param	int		$notab       0=Add tab footer, 1=no tab footer
+ *  @return	void	
  */
 function dol_fiche_end($notab=0)
 {
@@ -558,7 +568,8 @@ function dol_fiche_end($notab=0)
 /**
  *	Return tab footer of a card
  *
- *	@param      int		$notab		0=Add tab footer, 1=no tab footer
+ *	@param  int		$notab		0=Add tab footer, 1=no tab footer
+ *  @return	void	
  */
 function dol_get_fiche_end($notab=0)
 {
@@ -896,10 +907,11 @@ function dolibarr_date($fmt, $timestamp, $gm=false)
 /**
  *	Returns formated date
  *
- *	@param		fmt				Format (Exemple: 'Y-m-d H:i:s')
- *	@param		timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
- *	@param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
- *	@return		string			Formated date
+ *	@param		string		$fmt			Format (Exemple: 'Y-m-d H:i:s')
+ *	@param		timestamp	$timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
+ *	@param		boolean		$gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
+ *	@return		string						Formated date
+ *
  *  @deprecated Replaced by dol_print_date
  */
 function dol_date($fmt, $timestamp, $gm=false)
@@ -924,10 +936,10 @@ function dol_date($fmt, $timestamp, $gm=false)
 /**
  * Return string with formated size
  *
- * @param		size		Size to print
- * @param		shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
- * @param		shortunit	Use short value of size unit
- * @return		string		Link
+ * @param	int		$size		Size to print
+ * @param	int		$shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
+ * @param	int		$shortunit	Use short value of size unit
+ * @return	string				Link
  */
 function dol_print_size($size,$shortvalue=0,$shortunit=0)
 {
@@ -957,10 +969,10 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
 /**
  * Show Url link
  *
- * @param		url			Url to show
- * @param		target		Target for link
- * @param		max			Max number of characters to show
- * @return		string		HTML Link
+ * @param	string		$url		Url to show
+ * @param	string		$target		Target for link
+ * @param	int			$max		Max number of characters to show
+ * @return	string					HTML Link
  */
 function dol_print_url($url,$target='_blank',$max=32)
 {
@@ -979,13 +991,13 @@ function dol_print_url($url,$target='_blank',$max=32)
 /**
  * Show EMail link
  *
- * @param		email		EMail to show (only email, without 'Name of recipient' before)
- * @param 		cid 		Id of contact if known
- * @param 		socid 		Id of third party if known
- * @param 		addlink		0=no link to create action
- * @param		max			Max number of characters to show
- * @param		showinvalid	Show warning if syntax email is wrong
- * @return		string		HTML Link
+ * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
+ * @param 	int			$cid 			Id of contact if known
+ * @param 	int			$socid 			Id of third party if known
+ * @param 	int			$addlink		0=no link to create action
+ * @param	int			$max			Max number of characters to show
+ * @param	int			$showinvalid	Show warning if syntax email is wrong
+ * @return	string						HTML Link
  */
 function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=1)
 {
@@ -4181,12 +4193,12 @@ function picto_from_langcode($codelang)
  *                              'member'           to add a tab in fundation member view
  *                              'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
  *  @param      mode            'add' to complete head, 'remove' to remove entries
+ *	@return		void
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
 {
     if (is_array($conf->tabs_modules[$type]))
     {
-        $i=0;
         foreach ($conf->tabs_modules[$type] as $value)
         {
             $values=explode(':',$value);
