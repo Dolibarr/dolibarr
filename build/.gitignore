@@ -1,0 +1,9 @@
+/dolibarr_*.deb
+/dolibarr_*.dsc
+/dolibarr_*.changes
+/dolibarr_*.gz
+/dolibarr-*.tgz
+/dolibarr-*.rpm
+/dolibarr-*.zip
+/dolibarr-*.tgz
+/*.exe
