@@ -242,14 +242,17 @@ if ($nboftargetok) {
 	    }
 	    print "Clean $BUILDROOT\n";
         $ret=`rm -f  $BUILDROOT/$PROJECT/index.php`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/.buildpath`;
+	    $ret=`rm -f  $BUILDROOT/$PROJECT/.buildpath`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/.gitmodules`;
+	    $ret=`rm -f  $BUILDROOT/$PROJECT/.gitmodules`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/pom.xml`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/default.properties`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/default.properties`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/git2cvs.sh`;
+        
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliW*-*`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliM*-*`;
