@@ -1,0 +1,10 @@
+htdocs/conf/conf.php
+htdocs/conf/conf.php.old
+documents/
+custom/
+custom2/
+nbproject
+default.properties
+.settings/
+.buildpath
+.gitmodules
