@@ -15,7 +15,7 @@
 
 # Tag name used to indicate last commit exported to CVS
 tag_name="CVS-LAST-EXPORT-3.1"
-branch="3.1-beta"
+branch="3.1"
 export CVS_DIR="/media/DATA/Mes Developpements/dolibarroldcvs"
 export GIT_DIR="/home/ldestail/git/dolibarrold/.git"
 
