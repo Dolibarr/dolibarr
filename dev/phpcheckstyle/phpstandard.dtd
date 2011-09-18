@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT phpcheckstyle-configuration (test+)>
+<!ELEMENT test (property*,item*,exception*)>
+<!ATTLIST test name CDATA "">
+<!ATTLIST test regexp CDATA "">
+<!ATTLIST test level CDATA "">
+<!ELEMENT property (#PCDATA)>
+<!ATTLIST property value CDATA "">
+<!ATTLIST property name CDATA "">
+<!ELEMENT item (#PCDATA)>
+<!ATTLIST item value CDATA "">
+<!ELEMENT exception (#PCDATA)>
+<!ATTLIST exception value CDATA "">
