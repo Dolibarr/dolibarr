@@ -131,6 +131,7 @@ OrderSource5=Comercial
 OrderSource6=Revistes
 QtyOrdered=Qt. demanda
 AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la comanda
+SetDemandReason=Indicar origen de la comanda
 # Document models
 PDFEinsteinDescription=Model de comanda complet (logo...)
 PDFEdisonDescription=Model de comanda simple
