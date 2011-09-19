@@ -108,7 +108,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			else
 			{
 				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
-				if (sizeof($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
@@ -129,7 +129,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
         $texte.= '</table>';
 
 		// Scan directories
-		if (sizeof($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.sizeof($listoffiles).'</b>';
+		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
 		$texte.= '</td>';
 

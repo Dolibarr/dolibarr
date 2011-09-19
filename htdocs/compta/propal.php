@@ -486,7 +486,7 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		$arraypropal=$object->getInvoiceArrayList();
-		if ($object->statut == 2 && is_array($arraypropal) && sizeof($arraypropal) > 0)
+		if ($object->statut == 2 && is_array($arraypropal) && count($arraypropal) > 0)
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=setstatut&statut=4&socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 		}

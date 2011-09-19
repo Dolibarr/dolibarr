@@ -631,7 +631,7 @@ class Task extends CommonObject
 		$contactAlreadySelected = array();
 		$tab = $this->liste_contact(-1,$source);
 		//var_dump($tab);
-		$num=sizeof($tab);
+		$num=count($tab);
 		$i = 0;
 		while ($i < $num)
 		{

@@ -309,7 +309,7 @@ if (! defined('NOLOGIN'))
 	$authmode=explode(',',$dolibarr_main_authentication);
 
 	// No authentication mode
-	if (! sizeof($authmode) && empty($conf->login_method_modules))
+	if (! count($authmode) && empty($conf->login_method_modules))
 	{
 		$langs->load('main');
 		dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
@@ -1647,7 +1647,7 @@ if (! function_exists("llxFooter"))
 
 
 		// If there is some logs in buffer to show
-		if (sizeof($conf->logbuffer))
+		if (count($conf->logbuffer))
 		{
 			print "\n";
 			print "<!-- Start of log output\n";

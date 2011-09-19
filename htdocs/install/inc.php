@@ -385,7 +385,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
 	print '</form>'."\n";
 
 	// If there is some logs in buffer to show
-	if (isset($conf->logbuffer) && sizeof($conf->logbuffer))
+	if (isset($conf->logbuffer) && count($conf->logbuffer))
 	{
 		print "\n";
 		print "<!-- Start of log output\n";

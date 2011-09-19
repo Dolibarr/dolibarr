@@ -266,7 +266,8 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 					$lines = $srcobject->lines;
 					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
-					for ($i = 0 ; $i < sizeof($lines) ; $i++)
+					$num=count($lines);
+					for ($i = 0; $i < $num; $i++)
 					{
 					    $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
 						$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
@@ -1301,7 +1302,7 @@ else
             }
 
             $facidavoir=$fac->getListIdAvoirFromInvoice();
-            if (sizeof($facidavoir) > 0)
+            if (count($facidavoir) > 0)
             {
                 print ' ('.$langs->transnoentities("InvoiceHasAvoir");
                 $i=0;
@@ -1488,7 +1489,8 @@ else
             print '<br>';
             print '<table class="noborder" width="100%">';
             $var=1;
-            for ($i = 0 ; $i < sizeof($fac->lines) ; $i++)
+            $num=count($fac->lines);
+            for ($i = 0; $i < $num; $i++)
             {
                 if ($i == 0)
                 {
@@ -1807,7 +1809,7 @@ else
             //Validate
             if ($_GET['action'] != 'edit' && $fac->statut == 0)
             {
-                if (sizeof($fac->lines))
+                if (count($fac->lines))
                 {
                     if ($user->rights->fournisseur->facture->valider)
                     {

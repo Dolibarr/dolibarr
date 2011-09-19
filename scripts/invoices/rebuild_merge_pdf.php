@@ -153,7 +153,7 @@ foreach ($argv as $key => $value)
 }
 
 // Check if an option and a filter has been provided
-if (empty($option) && sizeof($filter) <= 0)
+if (empty($option) && count($filter) <= 0)
 {
 	usage();
 	exit;

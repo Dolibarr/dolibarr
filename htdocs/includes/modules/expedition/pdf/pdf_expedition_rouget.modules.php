@@ -209,7 +209,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 				$nexY = $tab_top + 7;
 
-				for ($i = 0 ; $i < sizeof($object->lines) ; $i++)
+				$num=count($object->lines);
+				for ($i = 0; $i < $num; $i++)
 				{
 					$curY = $nexY;
 
@@ -439,7 +440,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			$carac_emetteur='';
 		 	// Add internal contact of proposal if defined
 			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
-		 	if (sizeof($arrayidcontact) > 0)
+		 	if (count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user($arrayidcontact[0]);
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
@@ -477,7 +478,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			// If CUSTOMER contact defined, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
-			if (sizeof($arrayidcontact) > 0)
+			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
 				$result=$object->fetch_contact($arrayidcontact[0]);

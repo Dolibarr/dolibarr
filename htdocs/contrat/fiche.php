@@ -584,7 +584,7 @@ else
 
         dol_htmloutput_errors($mesg,'');
 
-		$nbofservices=sizeof($object->lines);
+		$nbofservices=count($object->lines);
 
         $author = new User($db);
         $author->fetch($object->user_author_id);
@@ -793,7 +793,7 @@ else
 					}
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
 					print '<td align="right" nowrap="nowrap">';
-					if ($user->rights->contrat->creer && sizeof($arrayothercontracts) && ($object->statut >= 0))
+					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0))
 					{
 						print '<a href="fiche.php?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');

@@ -169,7 +169,8 @@ class MenuLeft {
         $this->menu_array=$newmenu->liste;
 
         $alt=0;
-        for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)
+        $num=count($this->menu_array);
+        for ($i = 0; $i < $num; $i++)
         {
             $alt++;
             if (empty($this->menu_array[$i]['level']))

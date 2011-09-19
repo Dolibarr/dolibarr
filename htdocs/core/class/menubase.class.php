@@ -411,7 +411,7 @@ class Menubase
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
         // Load datas into tabMenu
-        if (sizeof($tabMenu) == 0)
+        if (count($tabMenu) == 0)
         {
             $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
         }
@@ -464,7 +464,7 @@ class Menubase
         $this->newmenu = $newmenu;
 
         // Load datas into tabMenu
-        if (sizeof($tabMenu) == 0)
+        if (count($tabMenu) == 0)
         {
             $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
         }

@@ -391,7 +391,7 @@ if ($_GET["id"] || $_GET["ref"])
 				$product_fourn = new ProductFournisseur($db);
 				$product_fourn_list = $product_fourn->fetch_product_fournisseur($product->id);
 
-				if (sizeof($product_fourn_list)>0)
+				if (count($product_fourn_list)>0)
 				{
 					$var=true;
 

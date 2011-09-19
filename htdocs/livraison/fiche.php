@@ -72,7 +72,8 @@ if ($_POST["action"] == 'add')
 	$commande = new Commande($db);
 	$commande->fetch($delivery->commande_id);
 	$commande->fetch_lines();
-	for ($i = 0 ; $i < sizeof($commande->lines) ; $i++)
+	$num=count($commande->lines);
+	for ($i = 0; $i < $num; $i++)
 	{
 		$qty = "qtyl".$i;
 		$idl = "idl".$i;
@@ -271,7 +272,7 @@ if ($_GET["action"] == 'create')
 		// Lecture des livraisons deja effectuees
 		$commande->livraison_array();
 
-		$num = sizeof($commande->lines);
+		$num = count($commande->lines);
 		$i = 0;
 
 		if ($num)
@@ -496,7 +497,7 @@ else
 			 * Lignes produits
 			 */
 
-			$num_prod = sizeof($delivery->lines);
+			$num_prod = count($delivery->lines);
 			$i = 0; $total = 0;
 
 			print '<table class="noborder" width="100%">';

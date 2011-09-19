@@ -723,8 +723,8 @@ class Form
                     if ($htmlname != 'none')
                     {
                         $disabled=0;
-                        if (is_array($exclude) && sizeof($exclude) && in_array($obj->rowid,$exclude)) $disabled=1;
-                        if (is_array($limitto) && sizeof($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
+                        if (is_array($exclude) && count($exclude) && in_array($obj->rowid,$exclude)) $disabled=1;
+                        if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
                         if ($selected && $selected == $obj->rowid)
                         {
                             print '<option value="'.$obj->rowid.'"';
@@ -854,7 +854,7 @@ class Form
                     $userstatic->prenom=$obj->firstname;
 
                     $disableline=0;
-                    if (is_array($enableonly) && sizeof($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
+                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
 
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
@@ -1769,7 +1769,7 @@ class Form
         foreach($this->cache_types_paiements as $id => $arraytypes)
         {
             // On passe si on a demande de filtrer sur des modes de paiments particuliers
-            if (sizeof($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
+            if (count($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
 
             // We discard empty line if showempty is on because an empty line has already been output.
             if ($empty && empty($arraytypes['code'])) continue;
@@ -2917,10 +2917,10 @@ class Form
         // Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
         if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         {
-            $defaulttx = $txtva[sizeof($txtva)-1];
+            $defaulttx = $txtva[count($txtva)-1];
         }
 
-        $nbdetaux = sizeof($txtva);
+        $nbdetaux = count($txtva);
         if ($nbdetaux > 0)
         {
             $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';

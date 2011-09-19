@@ -2129,7 +2129,7 @@ else
             }
 
             $facidavoir=$object->getListIdAvoirFromInvoice();
-            if (sizeof($facidavoir) > 0)
+            if (count($facidavoir) > 0)
             {
                 print ' ('.$langs->transnoentities("InvoiceHasAvoir");
                 $i=0;
@@ -2666,7 +2666,7 @@ else
                     }
 
                     // Validate
-                    if ($object->statut == 0 && sizeof($object->lines) > 0 &&
+                    if ($object->statut == 0 && count($object->lines) > 0 &&
                     (
                     (($object->type == 0 || $object->type == 1 || $object->type == 3 || $object->type == 4) && $object->total_ttc >= 0)
                     || ($object->type == 2 && $object->total_ttc <= 0))

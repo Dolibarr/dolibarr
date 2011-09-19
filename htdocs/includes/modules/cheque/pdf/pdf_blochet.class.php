@@ -137,7 +137,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 		$pdf->SetAutoPageBreak(1,0);
 
-		$nboflines=sizeof($this->lines);
+		$nboflines=count($this->lines);
 		// Define nb of page
 		$pages = intval($nboflines / $this->line_per_page);
 		if (($nboflines % $this->line_per_page)>0)
@@ -288,7 +288,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetFillColor(220,220,220);
 		$yp = 0;
 		$lineinpage=0;
-		for ($j = 0 ; $j < sizeof($this->lines) ; $j++)
+		$num=count($this->lines);
+		for ($j = 0; $j < $num; $j++)
 		{
 		    $lineinpage++;
 
@@ -309,7 +310,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 			$yp = $yp + $this->line_height;
 
-			if ($lineinpage >= $this->line_per_page && $j < (sizeof($this->lines)-1))
+			if ($lineinpage >= $this->line_per_page && $j < (count($this->lines)-1))
 			{
 			    $lineinpage=0; $yp=0;
 

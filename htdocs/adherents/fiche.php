@@ -283,7 +283,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		}
 
 		$result=$object->update($user,0,$nosyncuser,$nosyncuserpass);
-		if ($result >= 0 && ! sizeof($object->errors))
+		if ($result >= 0 && ! count($object->errors))
 		{
             $dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1).'/photos';
 		    $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
@@ -514,7 +514,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
     $adht = new AdherentType($db);
     $adht->fetch($object->typeid);
 
-	if ($result >= 0 && ! sizeof($object->errors))
+	if ($result >= 0 && ! count($object->errors))
 	{
         // Send confirmation Email (selon param du type adherent sinon generique)
 		if ($object->email && $_POST["send_mail"])
@@ -548,7 +548,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 
     $result=$object->resiliate($user);
 
-    if ($result >= 0 && ! sizeof($object->errors))
+    if ($result >= 0 && ! count($object->errors))
 	{
 	    if ($object->email && $_POST["send_mail"])
 		{
@@ -576,7 +576,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 
 if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 {
-	if (! sizeof($object->errors))
+	if (! count($object->errors))
 	{
 	    if(!$object->del_to_spip()){
 	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$object->error."<BR>\n";
@@ -586,7 +586,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip'
 
 if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 {
-	if (! sizeof($object->errors))
+	if (! count($object->errors))
 	{
 	    if (!$object->add_to_spip())
 	    {
@@ -683,7 +683,7 @@ if ($action == 'create')
     // Type
     print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberType").'</span></td><td>';
     $listetype=$adht->liste_array();
-    if (sizeof($listetype))
+    if (count($listetype))
     {
         print $html->selectarray("typeid", $listetype, isset($_POST["typeid"])?$_POST["typeid"]:$typeid, 1);
     } else {

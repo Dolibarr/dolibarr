@@ -60,7 +60,7 @@ class FormProduct
 	{
 		global $langs;
 
-		if (empty($fk_product) && sizeof($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
+		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 
 		$sql = "SELECT e.rowid, e.label";
 		if ($fk_product) $sql.= ", ps.reel";
@@ -130,7 +130,7 @@ class FormProduct
 		print '</select>';
 		if ($disabled) print '<input type="hidden" name="'.$htmlname.'" value="'.$selected.'">';
 
-		return sizeof($this->cache_warehouses);
+		return count($this->cache_warehouses);
 	}
 
 	/**

@@ -210,7 +210,8 @@ class Expedition extends CommonObject
 			if ($this->db->query($sql))
 			{
 				// Insertion des lignes
-				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+				$num=count($this->lines);
+				for ($i = 0; $i < $num; $i++)
 				{
 					if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty) > 0)
 					{
@@ -617,7 +618,7 @@ class Expedition extends CommonObject
 	 */
 	function addline( $entrepot_id, $id, $qty )
 	{
-		$num = sizeof($this->lines);
+		$num = count($this->lines);
 		$line = new ExpeditionLigne($this->db);
 
 		$line->entrepot_id = $entrepot_id;

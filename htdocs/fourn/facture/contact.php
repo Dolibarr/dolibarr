@@ -262,7 +262,7 @@ if ($id > 0)
 		foreach(array('internal','external') as $source)
 		{
 			$tab = $facture->liste_contact(-1,$source);
-        	$num=sizeof($tab);
+        	$num=count($tab);
 
 			$i = 0;
 			while ($i < $num)

@@ -953,7 +953,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 			$carac_emetteur='';
 		 	// Add internal contact of proposal if defined
 			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
-		 	if (sizeof($arrayidcontact) > 0)
+		 	if (count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user($arrayidcontact[0]);
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
@@ -991,7 +991,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 			// If CUSTOMER contact defined, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
-			if (sizeof($arrayidcontact) > 0)
+			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
 				$result=$object->fetch_contact($arrayidcontact[0]);

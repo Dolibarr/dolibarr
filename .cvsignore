@@ -11,3 +11,4 @@ documents
 DEBIAN
 install.lock
 *.patch
+default.properties

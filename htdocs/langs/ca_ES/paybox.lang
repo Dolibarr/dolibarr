@@ -1,27 +1,27 @@
 # Dolibarr language file - ca_ES - paybox 
-CHARSET= UTF-8
-PayBoxSetup= Configuració mòdul PayBox
-PayBoxDesc= Aquest mòdul ofereix una pàgina de pagament a través del proveïdor <a href="http://www.paybox.com" target="_blank">Paybox</a> per realitzar qualsevol pagament o un pagament en relació amb un objecte Dolibarr (factures, comandes ...)
-PaymentForm= Formulari de pagament
-FollowingUrlAreAvailableToMakePayments= Les següents URL estan disponibles per a permetre a un client fer un pagament
-WelcomeOnPaymentPage= Benvingut als nostres serveis de pagament en línia
-ThisScreenAllowsYouToPay= Aquesta pantalla li permet fer el seu pagament en línia destinat a %s.
-ThisIsInformationOnPayment= Aquí està la informació sobre el pagament a realitzar
-ToComplete= A completar
-YourEMail= E-mail de confirmació de pagament
-Creditor= Beneficiari
-PaymentCode= Codi de pagament
-PayBoxDoPayment= Continua el pagament amb targeta
-YouWillBeRedirectedOnPayBox= Serà redirigit a la pàgina segura de PayBox per indicar la seva targeta de crèdit
-PleaseBePatient= Espereu uns segons
-Continue= Continuar
-ToOfferALinkForOnlinePaymentOnOrder= URL que ofereix una interfície de pagament en línia %s basada en l'import d'una comanda de client
-ToOfferALinkForOnlinePaymentOnInvoice= URL que ofereix una interfície de pagament en línia %s basada en l'import d'una factura a client
-ToOfferALinkForOnlinePaymentOnContractLine= URL que ofereix una interfície de pagament en línia %s basada en l'import d'una línia de contracte
-ToOfferALinkForOnlinePaymentOnFreeAmount= URL que ofereix una interfície de pagament en línia %s basada en un impport llíure
-ToOfferALinkForOnlinePaymentOnMemberSubscription= URL que ofereix una interfície de pagament en línia %s basada en la cotització d'un membre
-YouCanAddTagOnUrl= També pot afegir el paràmetre url <b>&tag=<i>value</i></b> per a qualsevol d'aquestes adreces (obligatori només per al pagament lliure) per veure el seu propi codi de comentari de pagament.
-SetupPayBoxToHavePaymentCreatedAutomatically= Configureu la vostra url Paybox <b>%s</b> per tal que el pagament es creu automàticament al validar.
+CHARSET=UTF-8
+PayBoxSetup=Configuració mòdul PayBox
+PayBoxDesc=Aquest mòdul ofereix una pàgina de pagament a través del proveïdor <a href="http://www.paybox.com" target="_blank">Paybox</a> per realitzar qualsevol pagament o un pagament en relació amb un objecte Dolibarr (factures, comandes ...)
+PaymentForm=Formulari de pagament
+FollowingUrlAreAvailableToMakePayments=Les següents URL estan disponibles per a permetre a un client fer un pagament
+WelcomeOnPaymentPage=Benvingut als nostres serveis de pagament en línia
+ThisScreenAllowsYouToPay=Aquesta pantalla li permet fer el seu pagament en línia destinat a %s.
+ThisIsInformationOnPayment=Aquí està la informació sobre el pagament a realitzar
+ToComplete=A completar
+YourEMail=E-mail de confirmació de pagament
+Creditor=Beneficiari
+PaymentCode=Codi de pagament
+PayBoxDoPayment=Continua el pagament amb targeta
+YouWillBeRedirectedOnPayBox=Serà redirigit a la pàgina segura de PayBox per indicar la seva targeta de crèdit
+PleaseBePatient=Espereu uns segons
+Continue=Continuar
+ToOfferALinkForOnlinePaymentOnOrder=URL que ofereix una interfície de pagament en línia %s basada en l'import d'una comanda de client
+ToOfferALinkForOnlinePaymentOnInvoice=URL que ofereix una interfície de pagament en línia %s basada en l'import d'una factura a client
+ToOfferALinkForOnlinePaymentOnContractLine=URL que ofereix una interfície de pagament en línia %s basada en l'import d'una línia de contracte
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofereix una interfície de pagament en línia %s basada en un impport llíure
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofereix una interfície de pagament en línia %s basada en la cotització d'un membre
+YouCanAddTagOnUrl=També pot afegir el paràmetre url <b>&tag=<i>value</i></b> per a qualsevol d'aquestes adreces (obligatori només per al pagament lliure) per veure el seu propi codi de comentari de pagament.
+SetupPayBoxToHavePaymentCreatedAutomatically=Configureu la vostra url Paybox <b>%s</b> per tal que el pagament es creu automàticament al validar.
 YourPaymentHasBeenRecorded=Aquesta pàgina confirma que el pagament s'ha registrat correctament. Gràcies.
 YourPaymentHasNotBeenRecorded=El seu pagament no ha estat registrat i la transacció ha estat anul.lada. Gràcies.
 AccountParameter=Paràmetres del compte

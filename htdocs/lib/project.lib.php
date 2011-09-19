@@ -61,7 +61,7 @@ function project_prepare_head($object)
 	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
+	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'document';
 	$h++;
@@ -129,7 +129,7 @@ function task_prepare_head($object)
 	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
+	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'document';
 	$h++;
@@ -259,7 +259,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
 
 	$var=true;
 
-	$numlines=sizeof($lines);
+	$numlines=count($lines);
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -372,7 +372,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 
 	$projectsArrayId=explode(',',$projectsListId);
 
-	$numlines=sizeof($lines);
+	$numlines=count($lines);
 
 	$total=0;
 
@@ -518,7 +518,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 {
 	//print 'Search in line with parent id = '.$parent.'<br>';
-	$numlines=sizeof($lines);
+	$numlines=count($lines);
     for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		// Process line $lines[$i]
@@ -574,7 +574,7 @@ function clean_orphelins($db)
 		dol_print_error($db);
 	}
 
-	if (sizeof($listofid))
+	if (count($listofid))
 	{
 		// Removed orphelins records
 		print 'Some orphelins were found and restored to be parents so records are visible again: ';

@@ -661,7 +661,7 @@ class ActionComm extends CommonObject
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 		require_once (DOL_DOCUMENT_ROOT ."/lib/date.lib.php");
 
-		dol_syslog("ActionComm::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
+		dol_syslog("ActionComm::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
 		// Check parameters
 		if (empty($format)) return -1;

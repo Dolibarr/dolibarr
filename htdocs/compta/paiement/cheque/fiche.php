@@ -586,7 +586,7 @@ else
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && sizeof($accounts) == 1 && $action == 'new' && $user->rights->banque->cheque)
+if ($user->societe_id == 0 && count($accounts) == 1 && $action == 'new' && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
 }

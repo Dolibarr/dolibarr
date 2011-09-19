@@ -202,14 +202,14 @@ if ($id || $ref)
 			// Number of subproducts
 			$prodsfather = $product->getFather(); //Parent Products
 			$product->get_sousproduits_arbo ();
-			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
+			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.count($product->get_arbo_each_prod()).'</td>';
 
 			dol_fiche_end();
 
 
 			// List of subproducts
 			$prods_arbo = $product->get_arbo_each_prod();
-			if(sizeof($prods_arbo) > 0)
+			if(count($prods_arbo) > 0)
 			{
 				print '<tr><td colspan="2">';
 				print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
@@ -234,9 +234,9 @@ if ($id || $ref)
 			}
 
 			// Number of parent products
-			print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.sizeof($prodsfather).'</td>';
+			print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.count($prodsfather).'</td>';
 
-			if(sizeof($prodsfather) > 0)
+			if(count($prodsfather) > 0)
 			{
 				print '<tr><td colspan="2">';
 				print '<b>'.$langs->trans("ProductParentList").'</b><br>';
@@ -288,13 +288,13 @@ if ($id || $ref)
 		// Number of subproducts
 		$prodsfather = $product->getFather(); //Parent Products
 		$product->get_sousproduits_arbo ();
-		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
+		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.count($product->get_arbo_each_prod()).'</td>';
 		print '</tr>';
 
 		// List of subproducts
 		$prods_arbo = $product->get_arbo_each_prod();
 		//var_dump($prods_arbo);
-		if(sizeof($prods_arbo) > 0)
+		if(count($prods_arbo) > 0)
 		{
 			print '<tr><td colspan="2">';
 			print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
@@ -319,9 +319,9 @@ if ($id || $ref)
 		}
 
 		// Number of parent products
-		print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.sizeof($prodsfather).'</td>';
+		print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.count($prodsfather).'</td>';
 
-		if(sizeof($prodsfather) > 0)
+		if(count($prodsfather) > 0)
 		{
 			print '<tr><td colspan="2">';
 			print '<b>'.$langs->trans("ProductParentList").'</b><br>';
@@ -411,7 +411,7 @@ if ($id || $ref)
 							$prod_arbo->get_sousproduits_arbo ();
 							// associations sousproduits
 							$prods_arbo = $prod_arbo->get_arbo_each_prod();
-							if (sizeof($prods_arbo) > 0)
+							if (count($prods_arbo) > 0)
 							{
 								foreach($prods_arbo as $key => $value)
 								{

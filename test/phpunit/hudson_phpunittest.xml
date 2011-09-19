@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE phpunit SYSTEM "phpunit.dtd" >
-<phpunit>
+<phpunit 
+	backupGlobals="true"
+	backupStaticAttributes="false"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	colors="true"
+	processIsolation="false"
+	stopOnFailure="false"
+	syntaxCheck="false">
 <filter>
   <blacklist>
-    <directory suffix=".php">../CVS/</directory>
     <directory suffix=".php">../../build/</directory>
     <directory suffix=".php">../../dev/</directory>
     <directory suffix=".php">../../doc/</directory>
@@ -32,7 +40,7 @@
     <file>../../htdocs/lib/databases/mysql.lib.php</file>
     <!--  <file>../../htdocs/lib/databases/mysqli.lib.php</file> -->
   </blacklist>
-  <whitelist>
+  <whitelist addUncoveredFilesFromWhitelist="true">
     <directory suffix=".class.php">../../htdocs/</directory>
     <directory suffix=".lib.php">../../htdocs/</directory>
     <directory suffix=".modules.php">../../htdocs/</directory>
@@ -42,7 +50,6 @@
     <file>../../htdocs/includes/modules/project/modules_project.php</file>
     <file>../../htdocs/includes/modules/fichinter/modules_fichinter.php</file>
     <exclude>
-    <directory suffix=".php">../CVS/</directory>
     <directory suffix=".php">../../build/</directory>
     <directory suffix=".php">../../dev/</directory>
     <directory suffix=".php">../../doc/</directory>

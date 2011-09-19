@@ -131,6 +131,7 @@ OrderSource5=Comercial
 OrderSource6=Revistas
 QtyOrdered=Cant. pedida
 AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
+SetDemandReason=Indicar origen del pedido
 # Document models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple

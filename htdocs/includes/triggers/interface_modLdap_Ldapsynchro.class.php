@@ -136,7 +136,7 @@ class InterfaceLdapsynchro
         		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
         		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
         		$records=$ldap->search($container,$search);
-        		if (sizeof($records) && $records['count'] == 0)
+        		if (count($records) && $records['count'] == 0)
         		{
         			$olddn = '';
         		}
@@ -167,7 +167,7 @@ class InterfaceLdapsynchro
                 $container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
                 $search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
                 $records=$ldap->search($container,$search);
-                if (sizeof($records) && $records['count'] == 0)
+                if (count($records) && $records['count'] == 0)
                 {
                     $olddn = '';
                 }
@@ -240,7 +240,7 @@ class InterfaceLdapsynchro
         		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
         		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
         		$records=$ldap->search($container,$search);
-        		if (sizeof($records) && $records['count'] == 0)
+        		if (count($records) && $records['count'] == 0)
         		{
         			$olddn = '';
         		}
@@ -310,7 +310,7 @@ class InterfaceLdapsynchro
         		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
         		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
         		$records=$ldap->search($container,$search);
-        		if (sizeof($records) && $records['count'] == 0)
+        		if (count($records) && $records['count'] == 0)
         		{
         			$olddn = '';
         		}
@@ -433,7 +433,7 @@ class InterfaceLdapsynchro
         		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
         		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
         		$records=$ldap->search($container,$search);
-        		if (sizeof($records) && $records['count'] == 0)
+        		if (count($records) && $records['count'] == 0)
         		{
         			$olddn = '';
         		}

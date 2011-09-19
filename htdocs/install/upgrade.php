@@ -184,10 +184,10 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			}
 		}
 
-		dolibarr_install_syslog("upgrade: result is num=".$num." sizeof(couples)=".sizeof($couples));
+		dolibarr_install_syslog("upgrade: result is num=".$num." count(couples)=".count($couples));
 
 		// If there is duplicates couples or child with two parents
-		if (sizeof($couples) > 0 && $num > sizeof($couples))
+		if (count($couples) > 0 && $num > count($couples))
 		{
 			$error=0;
 
@@ -211,7 +211,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			if (! $error)
 			{
 				print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
-				print '<td align="right">'.$langs->trans("Success").' ('.$num.'=>'.sizeof($couples).')</td></tr>';
+				print '<td align="right">'.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
 				$db->commit();
 			}
 			else
@@ -233,7 +233,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 	if ($ok && preg_match('/mysql/',$db->type))
 	{
 		$versioncommande=explode('.','4.0');
-		if (sizeof($versioncommande) && sizeof($versionarray)
+		if (count($versioncommande) && count($versionarray)
 			&& versioncompare($versioncommande,$versionarray) <= 0)	// Si mysql >= 4.0
 		{
 			// Suppression vieilles contraintes sans noms et en doubles

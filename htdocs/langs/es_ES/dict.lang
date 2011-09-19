@@ -1,4 +1,4 @@
-# Dolibarr language file - en_FR - dict = 
+# Dolibarr language file - es_ES - dict
 CHARSET=UTF-8
 CountryFR=Francia
 CountryBE=Bélgica
@@ -246,11 +246,13 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint-Barthélemy
 CountryMF=Saint-Martin
+
 ##### Civilities #####
 CivilityMME=Señora
 CivilityMR=Señor
 CivilityMLE=Señorita
 CivilityMTRE=Don
+
 ##### Currencies #####
 Currencyeuros=Euros
 CurrencyAUD=Dólares Aus.
@@ -291,6 +293,7 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=Francos CFP
 CurrencySingXPF=Franco CFP
+
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Campaña correo

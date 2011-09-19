@@ -4,6 +4,7 @@ documents/
 custom/
 custom2/
 nbproject
+default.properties
 .settings/
 .buildpath
 .gitmodules

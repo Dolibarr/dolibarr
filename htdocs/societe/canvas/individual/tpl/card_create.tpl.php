@@ -100,7 +100,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 	</td>
 </tr>
 
-<?php if (sizeof($this->control->tpl['suppliercategory']) > 0) { ?>
+<?php if (count($this->control->tpl['suppliercategory']) > 0) { ?>
 <tr>
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>

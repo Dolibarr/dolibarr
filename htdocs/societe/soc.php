@@ -383,7 +383,7 @@ if (empty($reshook))
                 }
                 ### Gestion du logo de la société
 
-                if (! $error && ! sizeof($errors))
+                if (! $error && ! count($errors))
                 {
 
                     Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
@@ -775,7 +775,7 @@ else
                 $load = $object->LoadSupplierCateg();
                 if ( $load == 0)
                 {
-                    if (sizeof($object->SupplierCategories) > 0)
+                    if (count($object->SupplierCategories) > 0)
                     {
                         print '<tr>';
                         print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
@@ -1219,7 +1219,7 @@ else
                     $load = $object->LoadSupplierCateg();
                     if ( $load == 0)
                     {
-                        if (sizeof($object->SupplierCategories) > 0)
+                        if (count($object->SupplierCategories) > 0)
                         {
                             print '<tr>';
                             print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
@@ -1820,7 +1820,7 @@ else
         print '<td colspan="3">';
 
         $listsalesrepresentatives=$object->getSalesRepresentatives($user);
-        $nbofsalesrepresentative=sizeof($listsalesrepresentatives);
+        $nbofsalesrepresentative=count($listsalesrepresentatives);
         if ($nbofsalesrepresentative > 3)   // We print only number
         {
             print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">';

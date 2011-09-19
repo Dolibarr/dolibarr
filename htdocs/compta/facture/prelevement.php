@@ -181,7 +181,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         }
 
         $facidavoir=$fac->getListIdAvoirFromInvoice();
-        if (sizeof($facidavoir) > 0)
+        if (count($facidavoir) > 0)
         {
             print ' ('.$langs->transnoentities("InvoiceHasAvoir");
             $i=0;

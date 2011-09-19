@@ -151,7 +151,7 @@ if ($_GET["account"])
 			$bankaccount->fetch($id);
 			$bankaccount->label=$bankaccount->ref;
 			print $bankaccount->getNomUrl(1);
-			if ($key < (sizeof($listid)-1)) print ', ';
+			if ($key < (count($listid)-1)) print ', ';
 		}
 	}
 }

@@ -109,7 +109,7 @@ if ($id > 0 || ! empty($ref))
         }
 
         $facidavoir=$object->getListIdAvoirFromInvoice();
-        if (sizeof($facidavoir) > 0)
+        if (count($facidavoir) > 0)
         {
             print ' ('.$langs->transnoentities("InvoiceHasAvoir");
             $i=0;

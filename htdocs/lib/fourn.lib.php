@@ -53,7 +53,7 @@ function facturefourn_prepare_head($object)
 	/*$filesdir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($fac->id,2).$fac->id;
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
+	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
@@ -107,7 +107,7 @@ function ordersupplier_prepare_head($object)
 	/*$filesdir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($commande->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
+	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;

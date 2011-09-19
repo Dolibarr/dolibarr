@@ -133,7 +133,7 @@ abstract class MailingTargets
 
         // Insert emailing targest from array into database
         $j = 0;
-        $num = sizeof($cibles);
+        $num = count($cibles);
         for ($i = 0 ; $i < $num ; $i++)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";

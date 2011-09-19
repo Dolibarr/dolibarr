@@ -176,7 +176,7 @@ class pdf_crabe extends ModelePDFFactures
 
 			if (file_exists($dir))
 			{
-				$nblignes = sizeof($object->lines);
+				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
 
@@ -1104,7 +1104,7 @@ class pdf_crabe extends ModelePDFFactures
 	    	if ($objecttype == 'propal')
 	    	{
 	    		$outputlangs->load('propal');
-	    		$num=sizeof($objects);
+	    		$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
 	    			$posy+=4;
@@ -1116,7 +1116,7 @@ class pdf_crabe extends ModelePDFFactures
 			else if ($objecttype == 'commande')
 			{
 				$outputlangs->load('orders');
-				$num=sizeof($objects);
+				$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
 	    			$posy+=4;
@@ -1165,7 +1165,7 @@ class pdf_crabe extends ModelePDFFactures
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','BILLING');
-			if (sizeof($arrayidcontact) > 0)
+			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
 				$result=$object->fetch_contact($arrayidcontact[0]);
