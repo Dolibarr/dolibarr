@@ -1,5 +1,5 @@
 # Dolibarr language file - es_ES - oscommerce
-CHARSET= UTF-8
+CHARSET=UTF-8
 OSCommerce=OS Commerce
 OSCommerceSetup=Configuración del módulo OS Commerce
 OSCommerceSetupSaved=Configuración OS Commerce guardada

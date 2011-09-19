@@ -1,43 +1,43 @@
 # Dolibarr language file - ca_ES - agenda
-CHARSET= UTF-8
-Actions= Esdeveniments
-ActionsArea= Àrea d'esdeveniments (accions i tasques)
-Agenda= Agenda
-Agendas= Agendes
-Calendar= Calendari
-Calendars= Calendaris
-AffectedTo= Assignada a
-DoneBy= Realitzat per
-Events= Esdeveniments
-ListOfActions= Llista d'esdeveniments
+CHARSET=UTF-8
+Actions=Esdeveniments
+ActionsArea=Àrea d'esdeveniments (accions i tasques)
+Agenda=Agenda
+Agendas=Agendes
+Calendar=Calendari
+Calendars=Calendaris
+AffectedTo=Assignada a
+DoneBy=Realitzat per
+Events=Esdeveniments
+ListOfActions=Llista d'esdeveniments
 EventOnFullDay=Esdeveniment per tot el dia
-Location= Localització
-SearchAnAction= Cercar un esdeveniment/tasca
-MenuToDoActions= Esdeveniments incomplets
-MenuDoneActions= Esdeveniments acabats
-MenuToDoMyActions= Els meus esdeveniments incomplets
-MenuDoneMyActions= Els meus esdeveniments acabats
-ListOfEvents= Llistat d'esdeveniments Dolibarr
-ActionsAskedBy= Esdeveniments registrats per
-ActionsToDoBy= Esdeveniments assignats a
-ActionsDoneBy= Esdeveniments realitzats per
-AllMyActions= Tots els meus esdeveniments/tasques
-AllActions= Tots els esdeveniments/tasques
+Location=Localització
+SearchAnAction=Cercar un esdeveniment/tasca
+MenuToDoActions=Esdeveniments incomplets
+MenuDoneActions=Esdeveniments acabats
+MenuToDoMyActions=Els meus esdeveniments incomplets
+MenuDoneMyActions=Els meus esdeveniments acabats
+ListOfEvents=Llistat d'esdeveniments Dolibarr
+ActionsAskedBy=Esdeveniments registrats per
+ActionsToDoBy=Esdeveniments assignats a
+ActionsDoneBy=Esdeveniments realitzats per
+AllMyActions=Tots els meus esdeveniments/tasques
+AllActions=Tots els esdeveniments/tasques
 ViewList=Vista llistat
 ViewCal=Vista mensual
 ViewDay=Vista diària
 ViewWeek=Vista setmanal
-ViewWithPredefinedFilters= Veure amb els filtres predefinits
-AutoActions= Inclusió automàtica a l'agenda
-AgendaAutoActionDesc= Definir els esdeveniments aquí per què voleu que Dolibarr creu automàticament una acció en l'ordre del dia. Si no està marcada (per defecte), es podran crear manualment.
-AgendaSetupOtherDesc= Aquesta pàgina us permet configurar altres paràmetres del mòdul agenda.
+ViewWithPredefinedFilters=Veure amb els filtres predefinits
+AutoActions=Inclusió automàtica a l'agenda
+AgendaAutoActionDesc=Definir els esdeveniments aquí per què voleu que Dolibarr creu automàticament una acció en l'ordre del dia. Si no està marcada (per defecte), es podran crear manualment.
+AgendaSetupOtherDesc=Aquesta pàgina us permet configurar altres paràmetres del mòdul agenda.
 AgendaExtSitesDesc=Aquesta pàgina permet configurar calendaris externs per a la seva visualització en l'agenda de Dolibarr.
-ActionsEvents= Esdeveniments per a què Dolibarr crei una acció de forma automàtica
-PropalValidatedInDolibarr= Pressupost %s validat
-InvoiceValidatedInDolibarr= Factura %s validada
+ActionsEvents=Esdeveniments per a què Dolibarr crei una acció de forma automàtica
+PropalValidatedInDolibarr=Pressupost %s validat
+InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceBackToDraftInDolibarr=Factura %s tornada a borrador
-OrderValidatedInDolibarr= Comanda %s validada
-InterventionValidatedInDolibarr= Intervenció %s validada
+OrderValidatedInDolibarr=Comanda %s validada
+InterventionValidatedInDolibarr=Intervenció %s validada
 ProposalSentByEMail=Pressupost %s enviat per e-mail
 OrderSentByEMail=Comanda de client %s enviada per e-mail
 InvoiceSentByEMail=Factura a client %s enviada per e-mail
@@ -45,20 +45,20 @@ SupplierOrderSentByEMail=Comanda a proveïdor %s enviada per e-mail
 SupplierInvoiceSentByEMail=Factura de proveïdor %s enviada per e-mail
 ShippingSentByEMail=Expedició %s enviada per e-mail
 InterventionSentByEMail=Intervenció %s enviada per e-mail
-NewCompanyToDolibarr= Tercer creat
-DateActionPlannedStart= Data d'inici prevista
-DateActionPlannedEnd= Data fi prevista
-DateActionDoneStart= Data real d'inici
-DateActionDoneEnd= Data real de finalització
-DateActionStart= Data d'inici
-DateActionEnd= Data finalització
-AgendaUrlOptions1= Podeu també afegir aquests paràmetres al filtre de sortida:
-AgendaUrlOptions2= <b>login=%s</b> per a restringir insercions a accions creades, que afectin o realitzades per l'usuari <b>%s</b>.
-AgendaUrlOptions3= <b>logina=%s</b> per a restringir insercions a accciones creades per l'usuari <b>%s</b>.
-AgendaUrlOptions4= <b>logint=%s</b> per a restringir insercions a accions que afectin a l'usuari <b>%s</b>.
-AgendaUrlOptions5= <b>logind= %s</b> per a restringir insercions a accions realitzades per l'usuari <b>%s</b>.
-AgendaShowBirthdayEvents= Mostra aniversari dels contactes
-AgendaHideBirthdayEvents= Amaga aniversari dels contacte
+NewCompanyToDolibarr=Tercer creat
+DateActionPlannedStart=Data d'inici prevista
+DateActionPlannedEnd=Data fi prevista
+DateActionDoneStart=Data real d'inici
+DateActionDoneEnd=Data real de finalització
+DateActionStart=Data d'inici
+DateActionEnd=Data finalització
+AgendaUrlOptions1=Podeu també afegir aquests paràmetres al filtre de sortida:
+AgendaUrlOptions2=<b>login=%s</b> per a restringir insercions a accions creades, que afectin o realitzades per l'usuari <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> per a restringir insercions a accciones creades per l'usuari <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> per a restringir insercions a accions que afectin a l'usuari <b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> per a restringir insercions a accions realitzades per l'usuari <b>%s</b>.
+AgendaShowBirthdayEvents=Mostra aniversari dels contactes
+AgendaHideBirthdayEvents=Amaga aniversari dels contacte
 ExtSites=Calendaris externs
 
 # External Sites ical

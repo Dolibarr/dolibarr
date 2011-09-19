@@ -108,4 +108,3 @@ DataIDSourceIsInsertedInto= El ID del objeto padre encontrado a partir del dato 
 SourceRequired= Datos de origen obligatorios
 SourceExample= Ejemplo de datos de origen posibles
 CSVFormatDesc=Archivo con formato <b>Valores separados por coma</b> (.csv).<br>Es un fichero con formato de texto en el que los campos son separados por el carácter [ %s ]. Si el separador se encuentra en el contenido de un campo, El campo debe de estar acotado por el carácter [ %s ]. El carácter de escape para incluir un carácter de entorno en un dato es [ %s ].
-

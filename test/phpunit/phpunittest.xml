@@ -3,7 +3,7 @@
 <phpunit>
 <filter>
   <blacklist>
-    <directorye suffix=".php">../CVS/</directorye>
+    <directory suffix=".php">../CVS/</directory>
     <directory suffix=".php">../../build/</directory>
     <directory suffix=".php">../../dev/</directory>
     <directory suffix=".php">../../doc/</directory>
