@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE phpunit SYSTEM "phpunit.dtd" >
-<phpunit
+<phpunit 
+	backupGlobals="true"
+	backupStaticAttributes="false"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	colors="true"
-	processIsolation="true"
-	stopOnFailure="true"
-	syntaxCheck="false"
-	backupGlobals="false">
+	processIsolation="false"
+	stopOnFailure="false"
+	syntaxCheck="false">
 <filter>
   <blacklist>
     <directory suffix=".php">../../build/</directory>
