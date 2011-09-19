@@ -31,7 +31,7 @@ PROJECT_NAME = dolibarr
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER = 3.2.0
+PROJECT_NUMBER = 3.1.0
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -611,7 +611,7 @@ RECURSIVE = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE = build dev doc documents htdocs/conf/conf.php htdocs/includes/adodbtime htdocs/includes/artichow htdocs/includes/barcode htdocs/includes/ckeditor htdocs/includes/fckeditor htdocs/includes/fpdfi htdocs/includes/geoip htdocs/includes/jquery htdocs/includes/nusoap htdocs/includes/odtphp htdocs/includes/pear htdocs/includes/phpexcel htdocs/includes/smtps htdocs/includes/tcpdf htdocs/includes/vcard htdocs/document htdocs/documents htdocs/oscommerce_ws/ws_client_demo htdocs/oscommerce_ws/ws_server scripts/addons scripts/courrier scripts/lolix scripts/energie
+EXCLUDE = build dev doc documents htdocs/conf/conf.php htdocs/includes/adodbtime htdocs/includes/artichow htdocs/includes/barcode htdocs/includes/ckeditor htdocs/includes/efc_xfss htdocs/includes/fckeditor htdocs/includes/fpdf htdocs/includes/geoip htdocs/includes/jquery htdocs/includes/jsgantt htdocs/includes/magpierss htdocs/includes/nusoap htdocs/includes/odtphp htdocs/includes/php_writeexcel htdocs/includes/phpexcel htdocs/includes/smarty htdocs/includes/smtps htdocs/includes/tcpdf htdocs/includes/vcard htdocs/document htdocs/documents htdocs/oscommerce_ws/ws_client_demo htdocs/oscommerce_ws/ws_server scripts/addons scripts/courrier scripts/lolix scripts/energie
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
