@@ -23,11 +23,11 @@
  *  \version    $Id: assortment.php,v 1.0 2011/01/01 eldy Exp $
  */
 
-require("../../main.inc.php");
+require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
-$langs->load("assortment");
+$langs->load("assortment@assortment");
 
 // Security check
 if (!$user->admin)

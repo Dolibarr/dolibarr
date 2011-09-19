@@ -24,7 +24,7 @@
  *  \brief      Assortment Library pages
  *  \version    $Id: assortment.php,v 1.0 2011/01/01 eldy Exp $
  */
-require_once(DOL_DOCUMENT_ROOT."/assortment/class/html.formassortment.class.php"); 
+require_once(DOL_DOCUMENT_ROOT_ALT."/assortment/class/html.formassortment.class.php"); 
  
 /**
  *		\brief		Construct the form to manage assortment

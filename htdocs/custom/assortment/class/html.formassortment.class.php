@@ -27,7 +27,7 @@
  
 // Put here all includes required by your class file
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT."/assortment/class/assortment_category.class.php");
+require_once(DOL_DOCUMENT_ROOT_ALT."/assortment/class/assortment_category.class.php");
 
 /**
  *      \class      FormAsoortment

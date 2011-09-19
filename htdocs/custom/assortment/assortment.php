@@ -26,18 +26,18 @@
  */
 
 
-/*error_reporting(E_ALL);
+error_reporting(E_ALL);
 ini_set('display_errors', true);
-ini_set('html_errors', false);*/
+ini_set('html_errors', false);
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/assortment/class/assortment.class.php");
-require_once(DOL_DOCUMENT_ROOT."/assortment/lib/assortment.lib.php");
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT_ALT."/assortment/class/assortment.class.php");
+require_once(DOL_DOCUMENT_ROOT_ALT."/assortment/lib/assortment.lib.php");
 
 
 
 // Load traductions files requiredby by page
-$langs->load("assortment");
+$langs->load("assortment@assortment");
 
 if ($conf->global->ASSORTMENT_BY_CAT == 1)
 {

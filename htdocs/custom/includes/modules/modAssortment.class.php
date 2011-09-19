@@ -83,7 +83,7 @@ class modAssortment extends DolibarrModules
 		//$this->style_sheet = '/Assortment/Assortment.css.php';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("../assortment/admin/assortment.php");
+		$this->config_page_url = array(DOL_MAIN_URL_ROOT_ALT."/assortment/admin/assortment.php");
 
 		// Dependencies
 		$this->depends = array("modProduct","modSociete");		// List of modules id that must be enabled if this module is enabled
@@ -129,8 +129,8 @@ class modAssortment extends DolibarrModules
 		$this->const[$r][5] = 0;
 
 		// Array to add new pages in new tabs
-		$this->tabs = array('thirdparty:+tabAssortment:Assortment:assortment:/assortment/assortment.php?socid=__ID__&type=1',
-							'product:+tabAssortment:Assortment:assortment:/assortment/assortment.php?prodid=__ID__&type=0');
+		$this->tabs = array('thirdparty:+tabAssortment:assortment:assortment@assortment:/assortment/assortment.php?socid=__ID__&type=1',
+							'product:+tabAssortment:assortment:assortment@assortment:/assortment/assortment.php?prodid=__ID__&type=0');
 
 		// Permissions
 		$this->rights = array();
