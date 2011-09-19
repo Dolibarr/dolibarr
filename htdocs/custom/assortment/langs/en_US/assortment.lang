@@ -1,5 +1,11 @@
 # Dolibarr language file - en_US - products
 CHARSET=UTF-8
+Module50500Name=Assortment
+Module50500Desc=Used for limit item list should be avaible by Customer/Supplier
+Permission50501=See assortment
+Permission50502=Create/Update assortment
+Permission50503=Delete assortment
+Permission50504=Export Assortment
 assortment=assortment
 Assortment=Assortment
 AssortmentSetup=Configure assortment
