@@ -854,6 +854,7 @@ MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contrasenya del servidor proxy
 DefineHereComplementaryAttributes=Definiu aquí la llista d'atributs addicionals, no disponibles a estàndard, i que vol gestionar per %s.
 ExtraFields=Atributs addicionals
+SendingMailSetup=Configuración del envío por mail
 SendmailOptionNotComplete=Atenció, en alguns sistemes Linux, amb aquest mètode d'enviament, per poder enviar mails en nom seu, la configuració de sendmail ha de contenir l'opció <b>-ba</b> (paràmetre <b>mail.force_extra_parameters</b> a l'arxiu <b>php.ini</b>). Si alguns dels seus destinataris no reben els seus missatges, proveu de modificar aquest paràmetre PHP amb <b>mail.force_extra_parameters =-ba </b>.
 
 ##### Module password generation
@@ -1156,6 +1157,7 @@ SendingsNumberingModules=Mòduls de numeració de notes de lliurament
 SendingsAbility=Ús de notes de lliurament per als enviaments a clients
 NoNeedForDeliveryReceipts=En la majoria dels casos, les notes de lliurament (llista de productes enviats) també actuen com a notes de recepció i són signades pel client. La gestió de les notes de recepció és per tant redundant i poques vegades s'activarà.
 FreeLegalTextOnDeliveryReceipts=Text lliure a les notes de lliurament
+FreeLegalTextOnShippings=Menció complementària en les notes de lliurament
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Mòdul de numeració de les notes de recepció
 DeliveryOrderModel=Model de notes de recepció

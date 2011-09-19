@@ -854,6 +854,7 @@ MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contraseña del servidor proxy
 DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales, no disponibles en estándar, y que desea gestionar para %s.
 ExtraFields=Atributos adicionales
+SendingMailSetup=Configuración del envío por mail
 SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters = -ba</b>.
 	 
 ##### Module password generation
@@ -1156,6 +1157,7 @@ SendingsNumberingModules=Módulos de numeración de notas de entrega
 SendingsAbility=Uso de notas de entrega para los envíos a clientes
 NoNeedForDeliveryReceipts=En la mayoría de los casos, las notas de entrega (lista de productos enviados ) también actúan como notas de recepción y son firmadas por el cliente. La gestión de las notas de recepción es por lo tanto redundante y rara vez se activará.
 FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de recepción
+FreeLegalTextOnShippings=Mención complementaria en las notas de entrega
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Módulo de numeración de las notas de entraga
 DeliveryOrderModel=Modelo de notas de recepción
