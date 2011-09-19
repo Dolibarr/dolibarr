@@ -105,7 +105,8 @@
  <!-- Run unit tests and generate junit.xml and clover.xml -->
  <target name="phpunit">
   <exec executable="phpunit" dir="${basedir}" failonerror="true">
-   <arg line="	--log-junit ${basedir}/hudson/logs/junit.xml
+   <arg line="	--configuration ${basedir}/test/phpunit/phpunittest.xml
+				--log-junit ${basedir}/hudson/logs/junit.xml
 				--coverage-clover ${basedir}/hudson/coverage/clover.xml
   				--coverage-html ${basedir}/hudson/coverage/
   				test/phpunit/AllTests.php
