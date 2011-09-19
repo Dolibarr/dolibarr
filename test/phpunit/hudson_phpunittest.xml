@@ -1,71 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE phpunit SYSTEM "phpunit.dtd" >
-<phpunit>
+<phpunit
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	colors="true"
+	processIsolation="true"
+	stopOnFailure="true"
+	syntaxCheck="false"
+	backupGlobals="false">
 <filter>
   <blacklist>
-    <directory suffix=".php">build/</directory>
-    <directory suffix=".php">dev/</directory>
-    <directory suffix=".php">doc/</directory>
-    <directory suffix=".php">test/</directory>
-    <directory suffix=".php">htdocs/custom/</directory>
-    <directory suffix=".php">htdocs/custom2/</directory>
-    <directory suffix=".php">htdocs/products/canvas/</directory>
-    <directory suffix=".php">htdocs/contact/canvas/</directory>
-    <directory suffix=".php">htdocs/societe/canvas/</directory>
-    <directory suffix=".php">htdocs/includes/adodbtime/</directory>
-    <directory suffix=".php">htdocs/includes/artichow/</directory>
-    <directory suffix=".php">htdocs/includes/barcode/php-barcode/</directory>
-    <directory suffix=".php">htdocs/includes/ckeditor/</directory>
-    <directory suffix=".php">htdocs/includes/fpdfi/</directory>
-    <directory suffix=".php">htdocs/includes/geoip/</directory>
-    <directory suffix=".php">htdocs/includes/jquery/</directory>
-    <directory suffix=".php">htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">htdocs/includes/menus/smartphone/</directory>
-    <directory suffix=".php">htdocs/includes/nusoap/</directory>
-    <directory suffix=".php">htdocs/includes/odtphp/</directory>
-    <directory suffix=".php">htdocs/includes/phpexcel/</directory>
-    <directory suffix=".php">htdocs/includes/tcpdf/</directory>
-    <file>htdocs/lib/databases/mssql.lib.php</file>
-    <file>htdocs/lib/databases/pgsql.lib.php</file>
-    <file>htdocs/lib/databases/mysql.lib.php</file>
-    <!--  <file>htdocs/lib/databases/mysqli.lib.php</file> -->
+    <directory suffix=".php">../../build/</directory>
+    <directory suffix=".php">../../dev/</directory>
+    <directory suffix=".php">../../doc/</directory>
+    <directory suffix=".php">../../htdocs/CVS/</directory>
+    <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/custom/</directory>
+    <directory suffix=".php">../../htdocs/custom2/</directory>
+    <directory suffix=".php">../../htdocs/products/canvas/</directory>
+    <directory suffix=".php">../../htdocs/contact/canvas/</directory>
+    <directory suffix=".php">../../htdocs/societe/canvas/</directory>
+    <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
+    <directory suffix=".php">../../htdocs/includes/artichow/</directory>
+    <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
+    <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
+    <directory suffix=".php">../../htdocs/includes/fpdfi/</directory>
+    <directory suffix=".php">../../htdocs/includes/geoip/</directory>
+    <directory suffix=".php">../../htdocs/includes/jquery/</directory>
+    <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
+    <directory suffix=".php">../../htdocs/includes/menus/smartphone/</directory>
+    <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
+    <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
+    <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
+    <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
+    <file>../../htdocs/lib/databases/mssql.lib.php</file>
+    <file>../../htdocs/lib/databases/pgsql.lib.php</file>
+    <file>../../htdocs/lib/databases/mysql.lib.php</file>
+    <!--  <file>../../htdocs/lib/databases/mysqli.lib.php</file> -->
   </blacklist>
-  <whitelist>
-    <directory suffix=".class.php">htdocs/</directory>
-    <directory suffix=".lib.php">htdocs/</directory>
-    <directory suffix=".modules.php">htdocs/</directory>
-    <file>htdocs/includes/modules/facture/modules_facture.php</file>
-    <file>htdocs/includes/modules/commande/modules_commande.php</file>
-    <file>htdocs/includes/modules/propale/modules_propale.php</file>
-    <file>htdocs/includes/modules/project/modules_project.php</file>
-    <file>htdocs/includes/modules/fichinter/modules_fichinter.php</file>
+  <whitelist addUncoveredFilesFromWhitelist="true">
+    <directory suffix=".class.php">../../htdocs/</directory>
+    <directory suffix=".lib.php">../../htdocs/</directory>
+    <directory suffix=".modules.php">../../htdocs/</directory>
+    <file>../../htdocs/includes/modules/facture/modules_facture.php</file>
+    <file>../../htdocs/includes/modules/commande/modules_commande.php</file>
+    <file>../../htdocs/includes/modules/propale/modules_propale.php</file>
+    <file>../../htdocs/includes/modules/project/modules_project.php</file>
+    <file>../../htdocs/includes/modules/fichinter/modules_fichinter.php</file>
     <exclude>
-    <directory suffix=".php">build/</directory>
-    <directory suffix=".php">dev/</directory>
-    <directory suffix=".php">doc/</directory>
-    <directory suffix=".php">test/</directory>
-    <directory suffix=".php">htdocs/custom/</directory>
-    <directory suffix=".php">htdocs/custom2/</directory>
-    <directory suffix=".php">htdocs/products/canvas/</directory>
-    <directory suffix=".php">htdocs/contact/canvas/</directory>
-    <directory suffix=".php">htdocs/societe/canvas/</directory>
-    <directory suffix=".php">htdocs/includes/adodbtime/</directory>
-    <directory suffix=".php">htdocs/includes/artichow/</directory>
-    <directory suffix=".php">htdocs/includes/barcode/php-barcode/</directory>
-    <directory suffix=".php">htdocs/includes/ckeditor/</directory>
-    <directory suffix=".php">htdocs/includes/fpdfi/</directory>
-    <directory suffix=".php">htdocs/includes/geoip/</directory>
-    <directory suffix=".php">htdocs/includes/jquery/</directory>
-    <directory suffix=".php">htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">htdocs/includes/menus/smartphone</directory>
-    <directory suffix=".php">htdocs/includes/nusoap/</directory>
-    <directory suffix=".php">htdocs/includes/odtphp/</directory>
-    <directory suffix=".php">htdocs/includes/phpexcel/</directory>
-    <directory suffix=".php">htdocs/includes/tcpdf/</directory>
-    <file>htdocs/lib/databases/mssql.lib.php</file>
-    <file>htdocs/lib/databases/pgsql.lib.php</file>
-    <file>htdocs/lib/databases/mysql.lib.php</file>
-    <!--  <file>htdocs/lib/databases/mysqli.lib.php</file> -->
+    <directory suffix=".php">../../build/</directory>
+    <directory suffix=".php">../../dev/</directory>
+    <directory suffix=".php">../../doc/</directory>
+    <directory suffix=".php">../../htdocs/CVS/</directory>
+    <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/custom/</directory>
+    <directory suffix=".php">../../htdocs/custom2/</directory>
+    <directory suffix=".php">../../htdocs/products/canvas/</directory>
+    <directory suffix=".php">../../htdocs/contact/canvas/</directory>
+    <directory suffix=".php">../../htdocs/societe/canvas/</directory>
+    <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
+    <directory suffix=".php">../../htdocs/includes/artichow/</directory>
+    <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
+    <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
+    <directory suffix=".php">../../htdocs/includes/fpdfi/</directory>
+    <directory suffix=".php">../../htdocs/includes/geoip/</directory>
+    <directory suffix=".php">../../htdocs/includes/jquery/</directory>
+    <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
+    <directory suffix=".php">../../htdocs/includes/menus/smartphone</directory>
+    <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
+    <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
+    <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
+    <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
+    <file>../../htdocs/lib/databases/mssql.lib.php</file>
+    <file>../../htdocs/lib/databases/pgsql.lib.php</file>
+    <file>../../htdocs/lib/databases/mysql.lib.php</file>
+    <!--  <file>../../htdocs/lib/databases/mysqli.lib.php</file> -->
     </exclude>
   </whitelist>
 </filter>
