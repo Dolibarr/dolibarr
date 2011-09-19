@@ -1264,7 +1264,18 @@ if ($id > 0 || ! empty($ref))
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td colspan="3">';
-				$html->select_produits_fournisseurs($object->fourn_id,'','idprodfournprice','',$filtre);
+				if ($conf->global->MAIN_MODULE_ASSORTMENT==1 && ($conf->global->ASSORTMENT_ON_ORDER_FOUR==1))
+				{	
+					require_once(DOL_DOCUMENT_ROOT.'/assortment/class/html.formassortment.class.php');
+					$htmlAssort = new FormAssortment($html->db);
+					$htmlAssort->select_produits_fournisseurs_assort($object->fourn_id,'','idprodfournprice','',$filtre);
+				}
+				else
+				{
+					$html->select_produits_fournisseurs($object->fourn_id,'','idprodfournprice','',$filtre);
+				}
+				
+				
 
 				if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 

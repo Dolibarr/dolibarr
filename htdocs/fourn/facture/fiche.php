@@ -1724,7 +1724,19 @@ else
                     $var=! $var;
                     print '<tr '.$bc[$var].'>';
                     print '<td colspan="4">';
-                    $html->select_produits_fournisseurs($fac->socid,'','idprodfournprice','',$filtre);
+                    
+                    if ($conf->global->MAIN_MODULE_ASSORTMENT==1 && ($conf->global->ASSORTMENT_ON_ORDER_FOUR==1))
+					{	
+						require_once(DOL_DOCUMENT_ROOT.'/assortment/class/html.formassortment.class.php');
+						$htmlAssort = new FormAssortment($html->db);
+						$htmlAssort->select_produits_fournisseurs_assort($fac->socid,'','idprodfournprice','',$filtre);
+					}
+					else
+					{
+						$html->select_produits_fournisseurs($fac->socid,'','idprodfournprice','',$filtre);
+					}
+                    
+                    
                     print '</td>';
                     print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
                     print '<td>&nbsp;</td>';

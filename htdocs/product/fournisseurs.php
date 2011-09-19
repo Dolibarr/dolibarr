@@ -282,8 +282,17 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				else
 				{
-					$html=new Form($db);
-					$html->select_societes($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
+					if ($conf->global->MAIN_MODULE_ASSORTMENT==1 && ($conf->global->ASSORTMENT_ON_ORDER_FOUR==1))
+					{	
+						require_once(DOL_DOCUMENT_ROOT.'/assortment/class/html.formassortment.class.php');
+						$htmlAssort=new FormAssortment($db);
+						$htmlAssort->select_societes_assort($_POST["id_fourn"],'id_fourn','fournisseur=1',1,0,0,$_GET["id"]);
+					}
+					else
+					{
+						$html=new Form($db);
+						$html->select_societes($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
+					}
 				}
 				print '</td></tr>';
 
