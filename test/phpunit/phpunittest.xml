@@ -18,7 +18,7 @@
     <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
     <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
-    <directory suffix=".php">../../htdocs/includes/fpdi/</directory>
+    <directory suffix=".php">../../htdocs/includes/fpdfi/</directory>
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
@@ -26,9 +26,7 @@
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
-    <directory suffix=".php">../../htdocs/includes/smtps/</directory>
     <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
-    <directory suffix=".php">../../htdocs/includes/vcard/</directory>
     <file>../../htdocs/lib/databases/mssql.lib.php</file>
     <file>../../htdocs/lib/databases/pgsql.lib.php</file>
     <file>../../htdocs/lib/databases/mysql.lib.php</file>
@@ -58,7 +56,8 @@
     <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
     <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
-    <directory suffix=".php">../../htdocs/includes/fpdi/</directory>
+    <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
+    <directory suffix=".php">../../htdocs/includes/fpdfi/</directory>
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
@@ -66,9 +65,7 @@
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
-    <directory suffix=".php">../../htdocs/includes/smtps/</directory>
     <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
-    <directory suffix=".php">../../htdocs/includes/vcard/</directory>
     <file>../../htdocs/lib/databases/mssql.lib.php</file>
     <file>../../htdocs/lib/databases/pgsql.lib.php</file>
     <file>../../htdocs/lib/databases/mysql.lib.php</file>
