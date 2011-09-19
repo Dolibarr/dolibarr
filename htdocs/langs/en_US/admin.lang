@@ -1239,7 +1239,8 @@ SupposedToBeInvoiceDate=Invoice date used
 Buy=Buy
 Sell=Sell
 InvoiceDateUsed=Invoice date used
-YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Foundation), so there is no VAT options to setup.  
+YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Foundation), so there is no VAT options to setup.
+AccountancyCode=Accountancy Code  
 ##### Agenda #####
 AgendaSetup=Actions and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link
