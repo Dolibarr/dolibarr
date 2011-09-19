@@ -1,5 +1,5 @@
 # Dolibarr language file - ca_ES - ldap
-CHARSET= UTF-8
+CHARSET=UTF-8
 DomainPassword=Contrasenya del domini
 YouMustChangePassNextLogon=La contrasenya de <b>%s </b> en el domini <b>%s </b> ha de ser modificada.
 UserMustChangePassNextLogon=L'usuari ha de canviar de contrasenya en la propera connexió

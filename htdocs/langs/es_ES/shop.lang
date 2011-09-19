@@ -1,5 +1,5 @@
 # Dolibarr language file - es_ES - shop
-CHARSET= UTF-8
+CHARSET=UTF-8
 Shop=Tienda
 ShopWeb=Tienda web
 LastOrders=Últimos pedidos
