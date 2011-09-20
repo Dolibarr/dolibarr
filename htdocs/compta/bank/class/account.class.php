@@ -34,10 +34,8 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class Account extends CommonObject
 {
-    var $db;
-    var $error;
-    var $element='bank_account';
-    var $table_element='bank_account';
+    public $element='bank_account';
+    public $table_element='bank_account';
 
     var $rowid;
     var $ref;
@@ -987,7 +985,11 @@ class Account extends CommonObject
     }
 
     /**
-     * Initialize properties with test values
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {

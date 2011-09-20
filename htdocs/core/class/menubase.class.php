@@ -328,8 +328,11 @@ class Menubase
 
 
     /**
-     *		Initialise object with example values
-     *		Id must be 0 if object instance is a specimen.
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {

@@ -32,10 +32,8 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
  */
 class PaiementFourn extends Paiement
 {
-    var $db;
-    var $error;
-    var $element='payment_supplier';
-    var $table_element='paiementfourn';
+    public $element='payment_supplier';
+    public $table_element='paiementfourn';
 
     var $id;
 	var $ref;
@@ -188,7 +186,7 @@ class PaiementFourn extends Paiement
 							dol_syslog('Paiement::Create Erreur INSERT dans paiement_facture '.$facid);
 							$error++;
 						}
-						
+
 					}
 					else
 					{

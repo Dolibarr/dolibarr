@@ -37,11 +37,9 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/co
  */
 class Livraison extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element="delivery";
-	var $fk_element="fk_livraison";
-	var $table_element="livraison";
+	public $element="delivery";
+	public $fk_element="fk_livraison";
+	public $table_element="livraison";
 
 	var $id;
 	var $brouillon;
@@ -713,7 +711,11 @@ class Livraison extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise object with default value to be used as example
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

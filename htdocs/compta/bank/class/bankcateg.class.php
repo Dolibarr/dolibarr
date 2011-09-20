@@ -36,14 +36,10 @@
  */
 class BankCateg // extends CommonObject
 {
-    var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
-    var $errors=array();				//!< To return several error codes (or messages)
-    //var $element='bank_categ';			//!< Id that identify managed objects
-    //var $table_element='bank_categ';	//!< Name of table without prefix where object is stored
+    //public $element='bank_categ';			//!< Id that identify managed objects
+    //public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
 
     var $id;
-
     var $label;
 
 
@@ -345,16 +341,17 @@ class BankCateg // extends CommonObject
 
 
     /**
-     *		\brief		Initialise object with example values
-     *		\remarks	id must be 0 if object instance is a specimen.
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {
         $this->id=0;
 
         $this->label='';
-
-
     }
 
 }

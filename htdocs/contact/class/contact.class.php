@@ -34,10 +34,8 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class Contact extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element='contact';
-	var $table_element='socpeople';
+	public $element='contact';
+	public $table_element='socpeople';
 
 	var $id;
 	var $civilite_id;  // In fact we stor civility_code
@@ -999,9 +997,11 @@ class Contact extends CommonObject
 
 
 	/**
-	 *	Initialise le contact avec valeurs fictives aleatoire
-	 *
-	 *	@return		void
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

@@ -462,10 +462,11 @@ class DiscountAbsolute
 
 
 	/**
-	 *	Initializes the intervention with random values
-	 *	Used to generate a intervention for the preview or demo models
-	 *
-	 *	@return void
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

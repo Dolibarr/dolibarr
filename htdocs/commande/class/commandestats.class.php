@@ -33,12 +33,11 @@ include_once DOL_DOCUMENT_ROOT . "/fourn/class/fournisseur.commande.class.php";
  */
 class CommandeStats extends Stats
 {
-	var $db ;
+	public $table_element;
 
 	var $socid;
     var $userid;
 
-	var $table_element;
     var $from;
 	var $field;
     var $where;

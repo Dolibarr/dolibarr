@@ -32,12 +32,9 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
  */
 class ActionComm extends CommonObject
 {
-	var $db;
-	var $error;
-	var $errors=array();
-	var $element='action';
-	var $table_element = 'actioncomm';
-	var $ismultientitymanaged = 2;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $element='action';
+	public $table_element = 'actioncomm';
+	protected $ismultientitymanaged = 2;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $type_id;
     var $type_code;

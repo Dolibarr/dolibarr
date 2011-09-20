@@ -31,13 +31,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Cotisation extends CommonObject
 {
-	var $id;
-	var $db;
-	var $error;
-	var $errors;
-	var $element='subscription';
-	var $table_element='cotisation';
+	public $element='subscription';
+	public $table_element='cotisation';
 
+	var $id;
 	var $datec;
 	var $datem;
 	var $dateh;				// Subscription start date

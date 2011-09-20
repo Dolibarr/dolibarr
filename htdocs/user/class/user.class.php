@@ -36,12 +36,9 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class User extends CommonObject
 {
-	var $db;
-	var $error;
-	var $errors=array();
-	var $element='user';
-	var $table_element='user';
-	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $element='user';
+	public $table_element='user';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id=0;
 	var $ldap_sid;
@@ -1231,7 +1228,7 @@ class User extends CommonObject
 	{
 		global $conf, $langs;
 		require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
-		
+
 		$error=0;
 
 		dol_syslog("User::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
@@ -1871,7 +1868,11 @@ class User extends CommonObject
 
 
 	/**
-	 *		Initialize user with default values
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

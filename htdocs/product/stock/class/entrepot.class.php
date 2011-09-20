@@ -33,10 +33,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
 class Entrepot extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element='label';
-	var $table_element='entrepot';
+	public $element='label';
+	public $table_element='entrepot';
 
 	var $id;
 	var $libelle;

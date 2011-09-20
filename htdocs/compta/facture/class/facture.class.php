@@ -40,14 +40,11 @@ require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
  */
 class Facture extends CommonObject
 {
-    var $db;
-    var $error;
-    var $errors=array();
-    var $element='facture';
-    var $table_element='facture';
-    var $table_element_line = 'facturedet';
-    var $fk_element = 'fk_facture';
-    var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $element='facture';
+    public $table_element='facture';
+    public $table_element_line = 'facturedet';
+    public $fk_element = 'fk_facture';
+    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
     //! Id client
@@ -3062,8 +3059,11 @@ class Facture extends CommonObject
 
 
     /**
-     *		Initialise an example of invoice with random values
-     *		Used to build previews or test instances
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {

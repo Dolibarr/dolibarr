@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,15 @@
  */
 abstract class Stats
 {
-	var $db ;
+	protected $db;
 
+
+	/**
+	 *	Constructor
+	 *
+	 *	@param 		DoliDB		$DB		Database handler
+	 * 	@return 	Stats
+	 */
 	function Stats($DB)
 	{
 		$this->db = $DB;
@@ -37,6 +44,7 @@ abstract class Stats
 
 	/**
 	 * Return nb of entity by month for several years
+	 *
 	 * @param 	endyear		Start year
 	 * @param 	startyear	End year
 	 * @return 	array		Array of values
@@ -110,6 +118,7 @@ abstract class Stats
 
 	/**
 	 * 	Return nb of elements by year
+	 *
 	 *	@param		sql		SQL request
 	 * 	@return		array
 	 */
@@ -139,6 +148,7 @@ abstract class Stats
 
 	/**
 	 * 	Return nb of elements, total amount and avg amount by year
+	 *
 	 *	@param		sql		SQL request
 	 * 	@return		array
 	 */
@@ -171,6 +181,7 @@ abstract class Stats
 
 	/**
 	 *     Renvoie le nombre de proposition par mois pour une annee donnee
+	 *
      *     @param      year        Year
      *     @param      sql         SQL
 	 */
@@ -218,6 +229,7 @@ abstract class Stats
 
 	/**
 	 *     Renvoie le nombre d'element par mois pour une annee donnee
+	 *
 	 *     @param      year        Year
 	 *     @param      sql         SQL
 	 */
@@ -262,6 +274,7 @@ abstract class Stats
 
 	/**
 	 *	    Renvoie le montant moyen par mois pour une annee donnee
+	 *
      *      @param      year        Year
      *      @param      sql         SQL
 	 */

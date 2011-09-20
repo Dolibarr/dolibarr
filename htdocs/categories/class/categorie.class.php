@@ -36,11 +36,8 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
  */
 class Categorie
 {
-	var $error;
-	var $db;
-
-	var $element='category';
-	var $table_element='category';
+	public $element='category';
+	public $table_element='category';
 
 	var $id;
 	var $id_mere;
@@ -550,7 +547,7 @@ class Categorie
 
 	/**
 	 * Retourne les filles de la categorie
-	 * 
+	 *
 	 * @return	void
 	 */
 	function get_filles()
@@ -936,7 +933,7 @@ class Categorie
 	/**
 	 * Retourne les chemin de la categorie, avec les noms des categories
 	 * separes par $sep (" >> " par defaut)
-	 * 
+	 *
 	 * @param	string	$sep	Separator
 	 * @param	string	$url	Url
 	 * @return	void
@@ -1053,7 +1050,7 @@ class Categorie
 	/**
 	 * 	Retourne dans un tableau tous les chemins possibles pour arriver a la categorie
 	 * 	en partant des categories principales, representes par des tableaux de categories
-	 *	
+	 *
 	 *	@return		void
 	 */
 	function get_all_ways ()
@@ -1344,9 +1341,10 @@ class Categorie
 
 
     /**
-     *  Initialise an example of instance with random values
-     *  Used to build previews or test instances
-     *      
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
      *  @return	void
      */
     function initAsSpecimen()

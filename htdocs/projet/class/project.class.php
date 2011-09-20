@@ -30,11 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Project extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
-	var $element='project';				//!< Id that identify managed objects
-	var $table_element='projet';		//!< Name of table without prefix where object is stored
+	public $element='project';				//!< Id that identify managed objects
+	public $table_element='projet';		//!< Name of table without prefix where object is stored
 
 	var $id;
 	var $ref;
@@ -666,9 +663,11 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *	Initialise object with default value to be used as example
-	 *
-	 *	@return	void
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

@@ -32,11 +32,10 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class Fichinter extends CommonObject
 {
-	var $db;
-	var $element='fichinter';
-	var $table_element='fichinter';
-	var $fk_element='fk_fichinter';
-	var $table_element_line='fichinterdet';
+	public $element='fichinter';
+	public $table_element='fichinter';
+	public $fk_element='fk_fichinter';
+	public $table_element_line='fichinterdet';
 
 	var $id;
 
@@ -751,8 +750,11 @@ class Fichinter extends CommonObject
 
 
 	/**
-	 *	Initializes the intervention with random values
-	 *	Used to generate a intervention for the preview or demo models
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

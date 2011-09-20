@@ -34,16 +34,12 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class Product extends CommonObject
 {
-	var $db;
-	var $error;
-	var $errno = 0;
-
-	var $element='product';
-	var $table_element='product';
-	var $fk_element='fk_product';
-	var $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur');
-	var $isnolinkedbythird = 1;     // No field fk_soc
-	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $element='product';
+	public $table_element='product';
+	public $fk_element='fk_product';
+	public $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur');
+	protected $isnolinkedbythird = 1;     // No field fk_soc
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	//! Identifiant unique
 	var $id ;
