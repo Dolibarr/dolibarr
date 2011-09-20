@@ -30,55 +30,24 @@ include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
  */
 class Client extends Societe
 {
-    var $db;
-
+    var $nb;
 
     /**
-     *    \brief  Constructeur de la classe
-     *    \param  DB     handler acces base de donnees
-     *    \param  id     id societe (0 par defaut)
+     *  Constructor
+     *
+     *  @param	DoliDB	$DB		Database handler
      */
-    function Client($DB, $id=0)
+    function Client($DB)
     {
         global $config;
 
         $this->db = $DB;
-        $this->id = $id;
-        $this->factures = array();
-
-        return 0;
     }
-
-    function read_factures()
-    {
-        $sql = "SELECT rowid, facnumber";
-        $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-        $sql .= " WHERE f.fk_soc = ".$this->id;
-        $sql .= " ORDER BY datef DESC";
-
-        $i = 0;
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-
-            while ($i < $num )
-            {
-                $row = $this->db->fetch_row($resql);
-
-                $this->factures[$i][0] = $row[0];
-                $this->factures[$i][1] = $row[1];
-
-                $i++;
-            }
-        }
-        return $result;
-    }
-
 
     /**
-     *      \brief      Charge indicateurs this->nb de tableaux de bord
-     *      \return     int         <0 si ko, >0 si ok
+     *  Load indicators into this->nb for board
+     *
+     *  @return     int         <0 if KO, >0 if OK
      */
     function load_state_board()
     {

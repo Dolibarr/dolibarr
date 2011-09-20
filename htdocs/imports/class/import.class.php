@@ -62,7 +62,7 @@ class Import
 	{
 		global $langs,$conf;
 
-		dol_syslog("Import::load_arrays user=".$user->id." filter=".$filter);
+		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
         $var=true;
         $i=0;
@@ -168,19 +168,18 @@ class Import
 	 *  Build an import example file.
 	 *  Arrays this->array_export_xxx are already loaded for required datatoexport
 	 *
-	 *  @param      User	$user               User qui exporte
-	 *  @param      string	$model              Modele d'export
+	 *  @param      string	$model              Name of import engine ('csv', ...)
 	 *  @param      string	$headerlinefields   Array of values for first line of example file
 	 *  @param      string	$contentlinevalues	Array of values for content line of example file
 	 *  @return		string						<0 if KO, >0 if OK
 	 */
-	function build_example_file($user, $model, $headerlinefields, $contentlinevalues)
+	function build_example_file($model, $headerlinefields, $contentlinevalues)
 	{
 		global $conf,$langs;
 
 		$indice=0;
 
-		dol_syslog("Import::build_example_file ".$model);
+		dol_syslog(get_class($this)."::build_example_file ".$model);
 
 		// Creation de la classe d'import du model Import_XXX
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
@@ -231,7 +230,7 @@ class Import
 		$sql.= ')';
 		$sql.= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
 
-		dol_syslog("Import::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -242,7 +241,7 @@ class Import
 		{
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog("Import::create error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -260,7 +259,7 @@ class Import
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
 
-		dol_syslog("Import::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
