@@ -36,7 +36,7 @@ $micro_start_time=0;
 if (! empty($_SERVER['DOL_TUNING']))
 {
 	list($usec, $sec) = explode(" ", microtime());
-	$micro_start_time=((float)$usec + (float)$sec);
+	$micro_start_time=((float) $usec + (float) $sec);
 	// Add Xdebug code coverage
 	//define('XDEBUGCOVERAGE',1);
 	if (defined('XDEBUGCOVERAGE')) { xdebug_start_code_coverage(); }

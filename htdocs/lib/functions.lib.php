@@ -3662,7 +3662,7 @@ function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 function dol_microtime_float()
 {
     list($usec, $sec) = explode(" ", microtime());
-    return ((float)$usec + (float)$sec);
+    return ((float) $usec + (float) $sec);
 }
 
 /**

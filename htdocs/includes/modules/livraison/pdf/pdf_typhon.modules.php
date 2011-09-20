@@ -270,7 +270,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 // dans le tableau tva["taux"]=total_tva
 					 $tvaligne=$object->lines[$i]->price * $object->lines[$i]->qty;
 					 if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
-					 $this->tva[ (string)$object->lines[$i]->tva_tx ] += $tvaligne;
+					 $this->tva[ (string) $object->lines[$i]->tva_tx ] += $tvaligne;
 					 */
 					$nexY+=2;    // Passe espace entre les lignes
 

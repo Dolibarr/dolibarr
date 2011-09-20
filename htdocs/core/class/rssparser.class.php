@@ -601,7 +601,7 @@ function xml2php($xml)
        //To deal with the attributes
        foreach($value->attributes() as $ak=>$av)
        {
-           $child[$ak] = (string)$av;
+           $child[$ak] = (string) $av;
 
        }
 
@@ -632,7 +632,7 @@ function xml2php($xml)
 
    if($fils==0)
    {
-       return (string)$xml;
+       return (string) $xml;
    }
 
    return $array;

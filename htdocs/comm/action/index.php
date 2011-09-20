@@ -151,7 +151,7 @@ if ($action=='show_week')
 
     $week = $prev['week'];
 
-    $day =(int)$day;
+    $day = (int) $day;
     $next = dol_get_next_week($day, $week, $month, $year);
     $next_year  = $next['year'];
     $next_month = $next['month'];
@@ -165,7 +165,7 @@ if ($action=='show_week')
 
     $tmpday = $first_day;
 }
-if ($action=='show_day')
+if ($action == 'show_day')
 {
     $prev = dol_get_prev_day($day, $month, $year);
     $prev_year  = $prev['year'];
