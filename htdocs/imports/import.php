@@ -28,6 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/class/import.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/import.lib.php");
 
 $langs->load("exports");
 $langs->load("errors");
@@ -101,6 +102,7 @@ foreach($fieldsarray as $elem)
 /*
  * Actions
  */
+
 /*
 if ($action=='downfield' || $action=='upfield')
 {
@@ -309,20 +311,9 @@ if ($step == 1 || ! $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	$h = 0;
+    $head = import_prepare_head($param, 1);
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
-	$head[$h][1] = $langs->trans("Step")." 1";
-	$hselected=$h;
-	$h++;
-
-	/*
-	 $head[$h][0] = '';
-	 $head[$h][1] = $langs->trans("Step")." 2";
-	 $h++;
-	 */
-
-	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step1', $langs->trans("NewImport"));
 
 
 	print '<table class="notopnoleftnoright" width="100%">';
@@ -369,7 +360,7 @@ if ($step == 1 || ! $datatoimport)
 
 	print '</table>';
 
-	print '</div>';
+    dol_fiche_end();
 
 	if ($mesg) print $mesg;
 
@@ -384,18 +375,9 @@ if ($step == 2 && $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	$h = 0;
+    $head = import_prepare_head($param,2);
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
-	$head[$h][1] = $langs->trans("Step")." 1";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
-	$head[$h][1] = $langs->trans("Step")." 2";
-	$hselected=$h;
-	$h++;
-
-	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step2', $langs->trans("NewImport"));
 
 
 	print '<table width="100%" class="border">';
@@ -450,7 +432,7 @@ if ($step == 2 && $datatoimport)
 
 	print '</table></form>';
 
-	print '</div>';
+    dol_fiche_end();
 
 	if ($mesg) print $mesg;
 }
@@ -466,25 +448,9 @@ if ($step == 3 && $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
+    $head = import_prepare_head($param,3);
 
-	$h = 0;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
-	$head[$h][1] = $langs->trans("Step")." 1";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
-	$head[$h][1] = $langs->trans("Step")." 2";
-	$hselected=$h;
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
-	$head[$h][1] = $langs->trans("Step")." 3";
-	$hselected=$h;
-	$h++;
-
-
-	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step3', $langs->trans("NewImport"));
 
 
 	print '<table width="100%" class="border">';
@@ -595,7 +561,7 @@ if ($step == 3 && $datatoimport)
 	print '</table></form>';
 
 
-	print '</div>';
+    dol_fiche_end();
 
 	if ($mesg) print $mesg;
 }
@@ -684,27 +650,9 @@ if ($step == 4 && $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	$h = 0;
+    $head = import_prepare_head($param,4);
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
-	$head[$h][1] = $langs->trans("Step")." 1";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
-	$head[$h][1] = $langs->trans("Step")." 2";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
-	$head[$h][1] = $langs->trans("Step")." 3";
-	$hselected=$h;
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4'.$param;
-	$head[$h][1] = $langs->trans("Step")." 4";
-	$hselected=$h;
-	$h++;
-
-	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step4', $langs->trans("NewImport"));
 
 	print '<table width="100%" class="border">';
 
@@ -793,7 +741,7 @@ if ($step == 4 && $datatoimport)
 	foreach ($array_match_file_to_database as $key => $val)
 	{
 		$var=!$var;
-		show_elem($fieldssource,$lefti,$key,$val,$var);		// key is field number in source file
+		show_elem($fieldssource,$key,$val,$var);		// key is field number in source file
 		//print '> '.$lefti.'-'.$key.'-'.$val;
 		$listofkeys[$key]=1;
 		$fieldsplaced[$key]=1;
@@ -811,7 +759,7 @@ if ($step == 4 && $datatoimport)
 	{
 		$var=!$var;
 		$newkey=getnewkey($fieldssource,$listofkeys);
-		show_elem($fieldssource,$lefti,$newkey,'',$var);	// key start after field number in source file
+		show_elem($fieldssource,$newkey,'',$var);	// key start after field number in source file
 		//print '> '.$lefti.'-'.$newkey;
 		$listofkeys[$key]=1;
 		$lefti++;
@@ -915,7 +863,7 @@ if ($step == 4 && $datatoimport)
 		{
 			//$var=!$var;
 			$nbofnotimportedfields++;
-			show_elem($fieldssource,$lefti,$key,'',$var,'nostyle');
+			show_elem($fieldssource,$key,'',$var,'nostyle');
 			//print '> '.$lefti.'-'.$key;
 			$listofkeys[$key]=1;
 			$lefti++;
@@ -924,7 +872,7 @@ if ($step == 4 && $datatoimport)
 
 	// Print one more empty field
 	$newkey=getnewkey($fieldssource,$listofkeys);
-	show_elem($fieldssource,$lefti,$newkey,'',$var,'nostyle');
+	show_elem($fieldssource,$newkey,'',$var,'nostyle');
 	//print '> '.$lefti.'-'.$newkey;
 	$listofkeys[$newkey]=1;
 	$nbofnotimportedfields++;
@@ -938,14 +886,15 @@ if ($step == 4 && $datatoimport)
 	while ($i < $nbofnotimportedfields)
 	{
 		// Print empty cells
-		show_elem('','','','none',$var,'nostyle');
+		show_elem('','','none',$var,'nostyle');
 		$i++;
 	}
 	print '</td></tr>';
 
 	print '</table>';
 
-	print '</div>';
+    dol_fiche_end();
+
 
 	if ($conf->use_javascript_ajax)
 	{
@@ -1108,30 +1057,10 @@ if ($step == 5 && $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	$h = 0;
+    $head = import_prepare_head($param,5);
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
-	$head[$h][1] = $langs->trans("Step")." 1";
-	$h++;
+	dol_fiche_head($head, 'step5', $langs->trans("NewImport"));
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
-	$head[$h][1] = $langs->trans("Step")." 2";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
-	$head[$h][1] = $langs->trans("Step")." 3";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4'.$param;
-	$head[$h][1] = $langs->trans("Step")." 4";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5'.$param;
-	$head[$h][1] = $langs->trans("Step")." 5";
-	$hselected=$h;
-	$h++;
-
-	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
 
 	print '<table width="100%" class="border">';
 
@@ -1258,7 +1187,7 @@ if ($step == 5 && $datatoimport)
 
 	print '</table>';
 
-	print '</div>';
+    dol_fiche_end();
 
 
     if (GETPOST('action') != 'launchsimu')
@@ -1454,34 +1383,10 @@ if ($step == 6 && $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	$h = 0;
+    $head = import_prepare_head($param,6);
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
-	$head[$h][1] = $langs->trans("Step")." 1";
-	$h++;
+	dol_fiche_head($head, 'step6', $langs->trans("NewImport"));
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
-	$head[$h][1] = $langs->trans("Step")." 2";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
-	$head[$h][1] = $langs->trans("Step")." 3";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4'.$param;
-	$head[$h][1] = $langs->trans("Step")." 4";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5'.$param;
-	$head[$h][1] = $langs->trans("Step")." 5";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=6'.$param;
-	$head[$h][1] = $langs->trans("Step")." 6";
-	$hselected=$h;
-	$h++;
-
-	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
 
 	print '<table width="100%" class="border">';
 
@@ -1648,7 +1553,8 @@ if ($step == 6 && $datatoimport)
 	if (count($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
 	else  $db->commit();	// We can commit if no errors.
 
-	print '</div>';
+    dol_fiche_end();
+
 
 	// Show result
 	print '<center>';
@@ -1671,10 +1577,17 @@ $db->close();
 llxFooter();
 
 
-/*
+/**
  * Function to put the movable box of a source field
+ *
+ * @param	array	$fieldssource	List of source fields
+ * @param	int		$pos			Pos
+ * @param	string	$key			Key
+ * @param	boolean	$var			Line style (odd or not)
+ * @param	int		$nostyle		Hide style
+ * @return	void
  */
-function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
+function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 {
 	global $langs,$bc;
 
@@ -1727,9 +1640,10 @@ function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
 
 /**
  * Return not used field number
- * @param 	$fieldssource
- * @param	$listofkey
- * @return
+ *
+ * @param 	array	$fieldssource
+ * @param	array	$listofkey
+ * @return	void
  */
 function getnewkey(&$fieldssource,&$listofkey)
 {
