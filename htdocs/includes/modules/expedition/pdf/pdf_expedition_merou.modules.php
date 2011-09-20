@@ -311,11 +311,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetY(-23);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("GoodStatusDeclaration") , 0, 'L');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("GoodStatusDeclaration"), 0, 'L');
 		$pdf->SetY(-13);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ToAndDate") , 0, 'C');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ToAndDate"), 0, 'C');
 		$pdf->SetXY(120,-23);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("NameAndSignature") , 0, 'C');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("NameAndSignature"), 0, 'C');
 
 		// Show page nb only on iso languages (so default Helvetica font)
         //if (pdf_getPDFFont($outputlangs) == 'Helvetica')
@@ -387,7 +387,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,7);
 		$pdf->SetFont('','B', $default_font_size + 2);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("SendingSheet"), '', 'L');	// Bordereau expedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 142;
@@ -395,7 +395,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '' , 'R');
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		//$this->Code39($Xoff+43, $Yoff+1, $object->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 
 		// Add list of linked elements
@@ -460,7 +460,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX-80,$blSocY+20);
 		$pdf->SetFont('','B', $default_font_size - 2);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_delivery,'day',false,$outputlangs,true), '' , 'L');
+		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_delivery,'day',false,$outputlangs,true), '', 'L');
 
 		// Deliverer
 		$pdf->SetXY($blSocX-80,$blSocY+23);
@@ -483,12 +483,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$label=$outputlangs->transnoentities("Deliverer");
 				}
 
-				$pdf->writeHTMLCell(50, 8, '', '', $label." ".$object->tracking_url, '' , 'L');
+				$pdf->writeHTMLCell(50, 8, '', '', $label." ".$object->tracking_url, '', 'L');
 			}
 		}
 		else
 		{
-			$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($this->livreur->getFullName($outputlangs)), '' , 'L');
+			$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($this->livreur->getFullName($outputlangs)), '', 'L');
 		}
 
 

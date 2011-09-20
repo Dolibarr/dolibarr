@@ -176,7 +176,7 @@ if ($result > 0)
 		print '<form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_date" />';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		if (!empty($_POST['remonth']) && !empty($_POST['reday']) && !empty($_POST['reyear']))
-		$sel_date=dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$sel_date=dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		else
 		$sel_date=$paiement->date;
 		$html->select_date($sel_date,'','','','',"addpaiement");

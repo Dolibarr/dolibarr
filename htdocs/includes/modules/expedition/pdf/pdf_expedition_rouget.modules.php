@@ -377,7 +377,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("SendingSheet");
-		$pdf->MultiCell(100, 4, $title, '' , 'R');
+		$pdf->MultiCell(100, 4, $title, '', 'R');
         $posy+=1;
 
 		$pdf->SetFont('','', $default_font_size + 1);

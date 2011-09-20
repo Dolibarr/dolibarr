@@ -769,7 +769,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SupplierInvoice")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SupplierInvoice")." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		$pdf->SetFont('','', $default_font_size + 2);
 
 		$posy+=6;

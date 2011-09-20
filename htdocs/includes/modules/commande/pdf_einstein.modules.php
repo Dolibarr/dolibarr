@@ -881,7 +881,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("Order");
-		$pdf->MultiCell(100, 4, $title, '' , 'R');
+		$pdf->MultiCell(100, 4, $title, '', 'R');
 
 		$pdf->SetFont('','B', $default_font_size + 2);
 

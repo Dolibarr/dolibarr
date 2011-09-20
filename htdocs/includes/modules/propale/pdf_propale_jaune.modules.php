@@ -909,7 +909,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("CommercialProposal");
-		$pdf->MultiCell(100, 4, $title, '' , 'R');
+		$pdf->MultiCell(100, 4, $title, '', 'R');
 
 		$pdf->SetFont('','B',$default_font_size + 2);
 

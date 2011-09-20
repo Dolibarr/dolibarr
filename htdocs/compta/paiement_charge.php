@@ -54,7 +54,7 @@ if ($_POST["action"] == 'add_payment')
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
 	if (! $_POST["paiementtype"] > 0)
 	{
@@ -205,7 +205,7 @@ if ($_GET["action"] == 'create')
 	print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
 	$html->select_date($datepayment,'','','','',"add_payment",1,1);
 	print "</td>";

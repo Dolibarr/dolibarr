@@ -176,7 +176,7 @@ if ($action == 'create' || $action == 'add_paiement')
     $facture = new FactureFournisseur($db);
     $facture->fetch($facid);
 
-    $datefacture=dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+    $datefacture=dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
 
     $sql = 'SELECT s.nom, s.rowid as socid,';

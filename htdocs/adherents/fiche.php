@@ -350,7 +350,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
 	$datecotisation='';
 	if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
     {
-		$datecotisation=dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$datecotisation=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	}
 
     $typeid=$_POST["typeid"];

@@ -469,7 +469,7 @@ if ($_GET['action'] == 'addline')
 
             $type = $product->type;
 
-            $result=$facfou->addline($label, $product->fourn_pu, $tvatx, $localtax2tx, $localtax2tx ,$_POST['qty'], $idprod);
+            $result=$facfou->addline($label, $product->fourn_pu, $tvatx, $localtax2tx, $localtax2tx, $_POST['qty'], $idprod);
         }
         if ($idprod == -1)
         {

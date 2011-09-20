@@ -516,7 +516,7 @@ if ($action == 'add' && $user->rights->facture->creer)
     // Replacement invoice
     if ($_POST['type'] == 1)
     {
-        $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+        $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
             $error++;
@@ -565,7 +565,7 @@ if ($action == 'add' && $user->rights->facture->creer)
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("CorrectInvoice")).'</div>';
         }
 
-        $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+        $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
             $error++;
@@ -575,7 +575,7 @@ if ($action == 'add' && $user->rights->facture->creer)
         if (! $error)
         {
             // Si facture avoir
-            $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+            $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
             //$result=$object->fetch($_POST['fac_avoir']);
 
@@ -606,8 +606,8 @@ if ($action == 'add' && $user->rights->facture->creer)
                 {
                     $product=new Product($db);
                     $product->fetch($_POST['idprod'.$i]);
-                    $startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
-                    $endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
+                    $startday=dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
+                    $endday=dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
                     $result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
                 }
             }
@@ -617,7 +617,7 @@ if ($action == 'add' && $user->rights->facture->creer)
     // Standard invoice or Deposit invoice created from a Predefined invoice
     if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0)
     {
-        $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+        $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
             $error++;
@@ -646,7 +646,7 @@ if ($action == 'add' && $user->rights->facture->creer)
     // Standard or deposit or proforma invoice
     if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0)
     {
-        $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+        $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
             $error++;
@@ -830,8 +830,8 @@ if ($action == 'add' && $user->rights->facture->creer)
                     {
                         $product=new Product($db);
                         $product->fetch($_POST['idprod'.$i]);
-                        $startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
-                        $endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
+                        $startday=dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
+                        $endday=dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
                         $result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
                     }
                 }

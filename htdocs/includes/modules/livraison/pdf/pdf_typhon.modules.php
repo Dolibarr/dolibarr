@@ -508,7 +508,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetFont('','B', $default_font_size + 2);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
 
 		$pdf->SetFont('','',$default_font_size + 2);
 

@@ -1878,7 +1878,7 @@ class Societe extends CommonObject
             $mod = new $var;
 
             dol_syslog("Societe::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
-            $result = $mod->verif($this->db, $this->code_fournisseur, $this ,1);
+            $result = $mod->verif($this->db, $this->code_fournisseur, $this, 1);
             return $result;
         }
         else
@@ -2083,7 +2083,7 @@ class Societe extends CommonObject
 
                 if ($ps > 9)
                 {
-                    $ps = substr($ps, 0,1) + substr($ps, 1 ,1);
+                    $ps = substr($ps, 0,1) + substr($ps, 1, 1);
                 }
                 $sum = $sum + $ps;
             }

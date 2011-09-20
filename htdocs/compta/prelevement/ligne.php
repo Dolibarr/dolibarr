@@ -50,7 +50,7 @@ if ($action == 'confirm_rejet')
 {
 	if ( GETPOST("confirm") == 'yes')
 	{
-		$daterej = mktime(2, 0 , 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+		$daterej = mktime(2, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 
 		$lipre = new LignePrelevement($db, $user);
 

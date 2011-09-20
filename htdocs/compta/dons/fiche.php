@@ -38,7 +38,7 @@ $mesg="";
 $mesgs=array();
 
 $don = new Don($db);
-$donation_date=dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+$donation_date=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
 
 /*

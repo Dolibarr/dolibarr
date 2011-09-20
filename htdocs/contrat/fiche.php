@@ -947,8 +947,8 @@ else
 			 */
 			if ($_REQUEST["action"] == 'active' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $object->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
-				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+				$dateactstart = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+				$dateactend   = dol_mktime(12, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$comment      = $_POST["comment"];
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
 				print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
@@ -959,8 +959,8 @@ else
 			 */
 			if ($_REQUEST["action"] == 'closeline' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $object->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
-				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+				$dateactstart = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+				$dateactend   = dol_mktime(12, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$comment      = $_POST["comment"];
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
 				print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
@@ -1033,11 +1033,11 @@ else
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_debut;
-				if ($_POST["remonth"]) $dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+				if ($_POST["remonth"]) $dateactstart = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				elseif (! $dateactstart) $dateactstart = time();
 
 				$dateactend = $objp->date_fin;
-				if ($_POST["endmonth"]) $dateactend = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+				if ($_POST["endmonth"]) $dateactend = dol_mktime(12, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				elseif (! $dateactend)
 				{
 					if ($objp->fk_product > 0)
@@ -1082,11 +1082,11 @@ else
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_debut_reelle;
-				if ($_POST["remonth"]) $dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+				if ($_POST["remonth"]) $dateactstart = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				elseif (! $dateactstart) $dateactstart = time();
 
 				$dateactend = $objp->date_fin_reelle;
-				if ($_POST["endmonth"]) $dateactend = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+				if ($_POST["endmonth"]) $dateactend = dol_mktime(12, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				elseif (! $dateactend)
 				{
 					if ($objp->fk_product > 0)

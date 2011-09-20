@@ -215,7 +215,7 @@ class Notify
                         $sendto = htmlentities($sendto);
 
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
-                        $sql.= " VALUES (".$this->db->idate(mktime()).", ".$actiondefid." ,".$obj->cid." , '".$objet_type."', ".$objet_id.", '".$this->db->escape($obj->email)."')";
+                        $sql.= " VALUES (".$this->db->idate(mktime()).", ".$actiondefid.", ".$obj->cid.", '".$objet_type."', ".$objet_id.", '".$this->db->escape($obj->email)."')";
                         dol_syslog("Notify::send sql=".$sql);
                         if (! $this->db->query($sql) )
                         {

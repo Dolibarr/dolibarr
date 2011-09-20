@@ -694,7 +694,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("SupplierOrder");
-		$pdf->MultiCell(100, 4, $title, '' , 'R');
+		$pdf->MultiCell(100, 4, $title, '', 'R');
 
 		$posy+=6;
 		$pdf->SetFont('','B',$default_font_size + 2);
