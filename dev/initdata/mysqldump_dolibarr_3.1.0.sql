@@ -1724,8 +1724,7 @@ CREATE TABLE `llx_cabinetmed_cons` (
   `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`rowid`),
   KEY `idx_cabinetmed_cons_fk_soc` (`fk_soc`),
-  KEY `idx_cabinetmed_cons_datecons` (`datecons`),
-  CONSTRAINT `fk_cabinetmed_cons_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`)
+  KEY `idx_cabinetmed_cons_datecons` (`datecons`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
