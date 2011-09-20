@@ -51,41 +51,41 @@ $result = restrictedArea($user, 'projet', $projectid);
 
 if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 {
-	$task = new Task($db);
-	
-	$timespent_duration=0;
-	
-	foreach($_POST as $key => $time)
- 	{
-		if(intval($time)>0)
-		{
-			// Hours or minutes
-			if(preg_match("/([0-9]+)(hour|min)/",$key,$matches))
-			{
-				$id = $matches[1];
-				
-				// We store HOURS in seconds
-				if($matches[2]=='hour') $timespent_duration += $time*60*60;
+    $task = new Task($db);
 
-				// We store MINUTES in seconds
-				if($matches[2]=='min') $timespent_duration += $time*60;
-			}
- 		}
-	}
-	
-	if ($timespent_duration > 0)
-	{
-		$task->fetch($id);
-		$task->timespent_duration = $timespent_duration;
-		$task->timespent_fk_user = $user->id;
-		$task->timespent_date = dol_mktime(12,0,0,$_POST["{$id}month"],$_POST["{$id}day"],$_POST["{$id}year"]);
-		$task->addTimeSpent($user);
-	}
-	else
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorTimeSpentIsEmpty").'</div>';
-	}
- }
+    $timespent_duration=0;
+
+    foreach($_POST as $key => $time)
+    {
+        if(intval($time)>0)
+        {
+            // Hours or minutes
+            if(preg_match("/([0-9]+)(hour|min)/",$key,$matches))
+            {
+                $id = $matches[1];
+
+                // We store HOURS in seconds
+                if($matches[2]=='hour') $timespent_duration += $time*60*60;
+
+                // We store MINUTES in seconds
+                if($matches[2]=='min') $timespent_duration += $time*60;
+            }
+        }
+    }
+
+    if ($timespent_duration > 0)
+    {
+        $task->fetch($id);
+        $task->timespent_duration = $timespent_duration;
+        $task->timespent_fk_user = $user->id;
+        $task->timespent_date = dol_mktime(12,0,0,$_POST["{$id}month"],$_POST["{$id}day"],$_POST["{$id}year"]);
+        $task->addTimeSpent($user);
+    }
+    else
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorTimeSpentIsEmpty").'</div>';
+    }
+}
 
 /*
  * View
@@ -107,8 +107,8 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // R
 
 if ($_GET["id"])
 {
-	$project->fetch($_GET["id"]);
-	$project->societe->fetch($project->societe->id);
+    $project->fetch($_GET["id"]);
+    $project->societe->fetch($project->societe->id);
 }
 
 $tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0);    // We want to see all task of project i am allowed to see, not only mine. Later only mine will be editable later.
