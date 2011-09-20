@@ -42,6 +42,9 @@ accessforbidden();
 
 $langs->load("companies");
 
+$mode=GETPOST("mode");
+$modesearch=GETPOST("mode_search");
+
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -75,7 +78,7 @@ if ($action == 'note')
 }
 
 if ($mode == 'search') {
-	if ($mode-search == 'soc') {
+	if ($modesearch == 'soc') {
 		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
 		$sql.= " WHERE lower(s.nom) like '%".$db->escape(strtolower($socname))."%'";
 		$sql.= " AND s.entity = ".$conf->entity;

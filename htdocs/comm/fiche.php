@@ -53,6 +53,9 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 
+$mode=GETPOST("mode");
+$modesearch=GETPOST("mode_search");
+
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -138,7 +141,7 @@ $form = new Form($db);
 
 if ($mode == 'search')
 {
-	if ($mode-search == 'soc')
+	if ($modesearch == 'soc')
 	{
 		$sql = "SELECT s.rowid";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";

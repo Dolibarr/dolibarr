@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Eric Seigne			<erics@rycks.com>
+ * Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +113,7 @@ if (trim($_GET["search_societe"]))
 
 if ($_GET["contactname"]) // acces a partir du module de recherche
 {
-  $sql.= " AND ( p.name like '%".strtolower($_GET[contactname])."%' OR lower(p.firstname) like '%".strtolower($_GET[contactname])."%') ";
+  $sql.= " AND ( p.name like '%".strtolower($_GET["contactname"])."%' OR lower(p.firstname) like '%".strtolower($_GET["contactname"])."%') ";
   $sortfield = "p.name";
   $sortorder = "ASC";
 }

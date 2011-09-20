@@ -48,7 +48,7 @@ $search_idprof4=trim(GETPOST('search_idprof4'));
 $search_sale=trim(GETPOST("search_sale"));
 $search_categ=trim(GETPOST("search_categ"));
 $mode=GETPOST("mode");
-$modesearch=GETPOST("mode-search");
+$modesearch=GETPOST("mode_search");
 
 $sortfield=GETPOST("sortfield");
 $sortorder=GETPOST("sortorder");
