@@ -1245,7 +1245,8 @@ SupposedToBeInvoiceDate=Data de factura utilitzada
 Buy=Compra
 Sell=Venda
 InvoiceDateUsed=Data utilitzada de factura
-YourCompanyDoesNotUseVAT=La seva empresa està configurada com no subjecta a l'IVA (Inici - Configuració - Empresa / Institució), per la qual cosa no hi ha opció per a la parametrització de l'IVA.
+YourCompanyDoesNotUseVAT=La seva empresa està configurada com no subjecta a l'IVA (Inici - Configuració - Empresa/Institució), per la qual cosa no hi ha opció per a la parametrització de l'IVA.
+AccountancyCode=Codi comptable
 ##### Agenda #####
 AgendaSetup=Mòdul configuració d'accions i agenda
 PasswordTogetVCalExport=Clau d'autorització vCal export link
