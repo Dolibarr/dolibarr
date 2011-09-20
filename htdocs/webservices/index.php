@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,21 +52,21 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 // WSDL
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
 $url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php?wsdl';
-print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 if ($conf->societe->enabled)
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php?wsdl';
-	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
 if ($conf->facture->enabled)
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php?wsdl';
-	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
 if ($conf->fournisseur->enabled)
 {
     $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php?wsdl';
-    print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+    print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
 print '<br>';
 
@@ -73,26 +74,26 @@ print '<br>';
 // Endpoint
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
 $url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php';
-print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 if ($conf->societe->enabled)
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
-	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
 if ($conf->facture->enabled)
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
-	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
 if ($conf->fournisseur->enabled)
 {
     $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php';
-    print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+    print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
 print '<br>';
 
 print '<br>';
-print 'NUSoap library path used by Dolibarr: '.NUSOAP_PATH.'<br>';
+print 'NUSoap library path used by Dolibarr: ' . NUSOAP_PATH . '<br>';
 print '<br>';
 
 $db->close();

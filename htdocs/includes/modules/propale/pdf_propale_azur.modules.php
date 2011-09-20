@@ -102,14 +102,15 @@ class pdf_propale_azur extends ModelePDFPropales
 
 	/**
      *  Function to build pdf onto disk
-     *
-     *  @param      object          Id of object to generate
-     *  @param      outputlangs     Lang output object
-     *  @param      srctemplatepath Full path of source filename for generator using a template file
-     *  @param      hidedetails     Do not show line details
-     *  @param      hidedesc        Do not show desc
-     *  @param      hideref         Do not show ref
-     *  @return     int             1=OK, 0=KO
+     *  
+     *  @param		int		$object				Id of object to generate
+     *  @param		object	$outputlangs		Lang output object
+     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int		$hidedetails		Do not show line details
+     *  @param		int		$hidedesc			Do not show desc
+     *  @param		int		$hideref			Do not show ref
+     *  @param		object	$hookmanager		Hookmanager object
+     *  @return     int             			1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{

@@ -231,13 +231,13 @@ if ($canreadperms)
 			}
 			print "</td>";
 			if (! empty($conf->multicompany->enabled))
-	        {
+			{
 	        	$mc = new ActionsMulticompany($db);
 	        	$mc->getInfo($obj->entity);
 	        	print '<td>';
 	        	print $mc->label;
 	        	print '</td>';
-	        }
+			}
 			print '<td nowrap="nowrap" align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
 			print "</tr>";
 			$i++;

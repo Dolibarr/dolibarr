@@ -153,7 +153,7 @@ foreach($modulesdir as $dir)
 	$handle=opendir($dir);
     if (is_resource($handle))
     {
-        while (($file = readdir($handle))!==false)
+    	while (($file = readdir($handle))!==false)
     	{
     	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
     	    {
