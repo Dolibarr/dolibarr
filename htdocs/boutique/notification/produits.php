@@ -53,7 +53,7 @@ $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREF
 $sql .= " WHERE p.products_id=n.products_id";
 $sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID;
 $sql .= " GROUP BY p.products_name, p.products_id";
-$sql .= $dbosc->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit($limit ,$offset);
 
 $resql=$dbosc->query($sql);
 if ($resql)

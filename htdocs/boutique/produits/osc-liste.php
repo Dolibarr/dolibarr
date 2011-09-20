@@ -58,7 +58,7 @@ if ($reqstock=='epuise')
 }
 
 //$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit($limit ,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print '<TR class="liste_titre">';

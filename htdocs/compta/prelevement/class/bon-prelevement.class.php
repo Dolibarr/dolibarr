@@ -999,7 +999,7 @@ class BonPrelevement extends CommonObject
                     //Build file
                     $bonprev->generate();
                 }
-                dol_syslog( $filebonprev ) ;
+                dol_syslog($filebonprev);
                 dol_syslog("Fin prelevement");
             }
 

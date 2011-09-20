@@ -1639,7 +1639,7 @@ class CommandeFournisseur extends Commande
             $sql.= " WHERE rowid = ".$rowid;
 
             dol_syslog("CommandeFournisseur::updateline sql=".$sql);
-            $result = $this->db->query( $sql);
+            $result = $this->db->query($sql);
             if ($result > 0)
             {
                 // Mise a jour info denormalisees au niveau facture

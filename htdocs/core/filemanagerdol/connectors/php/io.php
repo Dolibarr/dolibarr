@@ -311,7 +311,7 @@ function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
   $rpl = array( '\\' => '\\\\', '"' => '\\"' ) ;
 
   echo 'window.parent.CKEDITOR.tools.callFunction("'. $callback. '","'.
-    strtr($sFileUrl, $rpl). '", "'. strtr( $customMsg, $rpl). '");' ;
+    strtr($sFileUrl, $rpl). '", "'. strtr($customMsg, $rpl). '");' ;
 
   echo '</script>';
 }

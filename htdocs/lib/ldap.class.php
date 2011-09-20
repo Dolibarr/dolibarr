@@ -168,7 +168,7 @@ class Ldap
 				else
 				{
 					// Connected, now try binding anonymously
-					$this->result=@ldap_bind( $this->connection);
+					$this->result=@ldap_bind($this->connection);
 				}
 				return true;
 			}
@@ -837,8 +837,8 @@ class Ldap
 		// Get values
 		if (! $values = ldap_get_attributes( $this->connection, $entry))
 		{
-			$this->ldapErrorCode = ldap_errno( $this->connection);
-			$this->ldapErrorText = ldap_error( $this->connection);
+			$this->ldapErrorCode = ldap_errno($this->connection);
+			$this->ldapErrorText = ldap_error($this->connection);
 			return false; // No matching attributes
 		}
 
@@ -872,8 +872,8 @@ class Ldap
 		// Get values
 		if (! $values = @ldap_get_values( $this->connection, $entry, $attribute))
 		{
-			$this->ldapErrorCode = ldap_errno( $this->connection);
-			$this->ldapErrorText = ldap_error( $this->connection);
+			$this->ldapErrorCode = ldap_errno($this->connection);
+			$this->ldapErrorText = ldap_error($this->connection);
 			return false; // No matching attributes
 		}
 

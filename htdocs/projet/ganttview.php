@@ -55,9 +55,7 @@ $langs->load("projects");
  * View
  */
 
-$arrayofcss=array(
-'/includes/jsgantt/jsgantt.css'
-);
+$arrayofcss=array('/includes/jsgantt/jsgantt.css');
 
 if (! empty($conf->use_javascript_ajax))
 {

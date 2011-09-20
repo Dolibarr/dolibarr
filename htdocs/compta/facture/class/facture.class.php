@@ -1303,7 +1303,7 @@ class Facture extends CommonObject
         /* Definition de la date limite */
 
         // 1 : ajout du nombre de jours
-        $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
+        $datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
         // 2 : application de la regle "fin de mois"
         if ($cdr_fdm)
@@ -1325,7 +1325,7 @@ class Facture extends CommonObject
         }
 
         // 3 : application du decalage
-        $datelim += ( $cdr_decalage * 3600 * 24);
+        $datelim += ($cdr_decalage * 3600 * 24);
 
         return $datelim;
     }

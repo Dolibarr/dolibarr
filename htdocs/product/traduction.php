@@ -202,7 +202,7 @@ else
 		print '<tr><td width="15%">'.$langs->trans('Note').'</td><td>'.$product->multilangs[$key]["note"].'</td></tr>';
 		print '</table>';
 	}
-	if ( !$cnt_trans ) print '<br>'. $langs->trans('NoTranslation');
+	if (!$cnt_trans ) print '<br>'. $langs->trans('NoTranslation');
 }
 
 print "</div>\n";

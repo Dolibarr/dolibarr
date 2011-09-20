@@ -1485,7 +1485,7 @@ abstract class CommonObject
             $sql.= " WHERE fk_object = ".$rowid;
 
             dol_syslog(get_class($this)."::fetch_optionals sql=".$sql, LOG_DEBUG);
-            $resql=$this->db->query( $sql);
+            $resql=$this->db->query($sql);
             if ($resql)
             {
                 if ($this->db->num_rows($resql))

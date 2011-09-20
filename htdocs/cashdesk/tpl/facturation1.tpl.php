@@ -124,7 +124,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				<input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled="disabled" />
 				</td>
 				<!-- Affichage du prix unitaire -->
-				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num( $obj_facturation->prix(), 'MU'); ?>" disabled="disabled" /></td>
+				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" disabled="disabled" /></td>
 				<td><?php echo $conf->monnaie; ?></td>
     			<!-- Choix de la remise -->
     			<td><input class="texte1" type="text" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/></td>

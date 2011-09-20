@@ -510,7 +510,7 @@ class DolGraph
 
 				$plot->barBorder->setColor($colorgrey);
 				//$plot->setBarColor($color);
-				$plot->setBarGradient( new LinearGradient($colorbis, $color, 90) );
+				$plot->setBarGradient(new LinearGradient($colorbis, $color, 90));
 
 				if ($this->mode == 'side')  $plot->setBarPadding(0.1, 0.1);
 				if ($this->mode == 'depth') $plot->setBarPadding(0.1, 0.4);
@@ -543,7 +543,7 @@ class DolGraph
 				$plot->setThickness(1);
 
 				// Set line background gradient
-				$plot->setFillGradient( new LinearGradient($colorter, $colorbis, 90) );
+				$plot->setFillGradient(new LinearGradient($colorter, $colorbis, 90));
 
 				$plot->xAxis->setLabelText($legends);
 

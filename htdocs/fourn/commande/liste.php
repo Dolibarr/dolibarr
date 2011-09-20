@@ -35,8 +35,8 @@ $suser=isset($_GET['search_user'])?$_GET['search_user']:$_POST['search_user'];
 $sttc=isset($_GET['search_ttc'])?$_GET['search_ttc']:$_POST['search_ttc'];
 $sall=isset($_GET['search_all'])?$_GET['search_all']:$_POST['search_all'];
 
-$page  = ( is_numeric($_GET["page"]) ?  $_GET["page"] : 0 );
-$socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
+$page  = (is_numeric($_GET["page"]) ?  $_GET["page"] : 0);
+$socid = (is_numeric($_GET["socid"]) ? $_GET["socid"] : 0);
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 

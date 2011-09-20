@@ -202,7 +202,7 @@ if ($_POST["action"] == 'add' && $canadduser)
         $edituser->note			= $_POST["note"];
         $edituser->ldap_sid		= $_POST["ldap_sid"];
         // If multicompany is off, admin users must all be on entity 0.
-        $edituser->entity		= ( ! empty($_POST["admin"]) && (! empty($_POST["superadmin"]) || empty($_POST["entity"]) || empty($conf->multicompany->enabled)) ? 0 : $_POST["entity"]);
+        $edituser->entity		= (! empty($_POST["admin"]) && (! empty($_POST["superadmin"]) || empty($_POST["entity"]) || empty($conf->multicompany->enabled)) ? 0 : $_POST["entity"]);
 
         $db->begin();
 
@@ -298,7 +298,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $edituser->webcal_login	= $_POST["webcal_login"];
             $edituser->phenix_login	= $_POST["phenix_login"];
             $edituser->phenix_pass	= $_POST["phenix_pass"];
-            $edituser->entity		= ( (! empty($_POST["superadmin"]) && ! empty($_POST["admin"]) || empty($_POST["entity"])) ? 0 : $_POST["entity"]);
+            $edituser->entity		= ((! empty($_POST["superadmin"]) && ! empty($_POST["admin"]) || empty($_POST["entity"])) ? 0 : $_POST["entity"]);
             if (GETPOST('deletephoto')) $edituser->photo='';
             if (! empty($_FILES['photo']['name'])) $edituser->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 

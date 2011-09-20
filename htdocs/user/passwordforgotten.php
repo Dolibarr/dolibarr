@@ -46,7 +46,7 @@ if (! $mode) $mode='http';
 
 $username 		= GETPOST('username');
 $passwordmd5	= GETPOST('passwordmd5');
-$conf->entity 	= ( GETPOST('entity') ? GETPOST('entity') : 1 );
+$conf->entity 	= (GETPOST('entity') ? GETPOST('entity') : 1);
 
 
 /**

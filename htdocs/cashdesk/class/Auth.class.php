@@ -35,7 +35,7 @@ class Auth {
 	function Auth ($DB) {
 
 		$this->db = $DB;
-		$this->reponse (null);
+		$this->reponse(null);
 
 	}
 

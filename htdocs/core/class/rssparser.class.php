@@ -145,11 +145,11 @@ class RssParser
             $xmlparser=xml_parser_create('');
             if (!is_resource($xmlparser)) { $this->error="ErrorFailedToCreateParser"; return -1; }
 
-            xml_set_object( $xmlparser, $this );
+            xml_set_object($xmlparser, $this);
             xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element' );
-            xml_set_character_data_handler( $xmlparser, 'feed_cdata' );
-            $status = xml_parse( $xmlparser, $str );
-            xml_parser_free( $xmlparser );
+            xml_set_character_data_handler($xmlparser, 'feed_cdata');
+            $status = xml_parse($xmlparser, $str);
+            xml_parser_free($xmlparser);
             $rss=$this;
             //var_dump($rss->_format);exit;
         }
@@ -341,7 +341,7 @@ class RssParser
         // check for a namespace, and split if found
         $ns = false;
         if ( strpos( $element, ':' ) ) {
-            list($ns, $el) = explode( ':', $element, 2);
+            list($ns, $el) = explode(':', $element, 2);
         }
         if ( $ns and $ns != 'rdf' ) {
             $this->current_namespace = $ns;
@@ -418,9 +418,9 @@ class RssParser
                     array_keys($attrs),
                     array_values($attrs) ) );
 
-            $this->append_content( "<$element $attrs_str>"  );
+            $this->append_content("<$element $attrs_str>" );
 
-            array_unshift( $this->stack, $el );
+            array_unshift($this->stack, $el);
         }
 
         // Atom support many links per containging element.
@@ -456,7 +456,7 @@ class RssParser
     {
         if ($this->_format == 'atom' and $this->incontent)
         {
-            $this->append_content( $text );
+            $this->append_content($text);
         }
         else {
             $current_el = join('_', array_reverse($this->stack));
@@ -507,10 +507,10 @@ class RssParser
                 $this->append_content("<$el />");
             }
 
-            array_shift( $this->stack );
+            array_shift($this->stack);
         }
         else {
-            array_shift( $this->stack );
+            array_shift($this->stack);
         }
 
         $this->current_namespace = false;
@@ -536,10 +536,10 @@ class RssParser
     function append_content($text)
     {
         if ( $this->initem ) {
-            $this->concat( $this->current_item[ $this->incontent ], $text );
+            $this->concat($this->current_item[ $this->incontent ], $text);
         }
         elseif ( $this->inchannel ) {
-            $this->concat( $this->channel[ $this->incontent ], $text );
+            $this->concat($this->channel[ $this->incontent ], $text);
         }
     }
 
@@ -554,38 +554,30 @@ class RssParser
         if ( $this->current_namespace )
         {
             if ( $this->initem ) {
-                $this->concat(
-                    $this->current_item[ $this->current_namespace ][ $el ], $text);
+                $this->concat(                    $this->current_item[ $this->current_namespace ][ $el ], $text);
             }
             elseif ($this->inchannel) {
-                $this->concat(
-                    $this->channel[ $this->current_namespace][ $el ], $text );
+                $this->concat(                   $this->channel[ $this->current_namespace][ $el ], $text);
             }
             elseif ($this->intextinput) {
-                $this->concat(
-                    $this->textinput[ $this->current_namespace][ $el ], $text );
+                $this->concat(                   $this->textinput[ $this->current_namespace][ $el ], $text);
             }
             elseif ($this->inimage) {
-                $this->concat(
-                    $this->image[ $this->current_namespace ][ $el ], $text );
+                $this->concat(                   $this->image[ $this->current_namespace ][ $el ], $text);
             }
         }
         else {
             if ( $this->initem ) {
-                $this->concat(
-                    $this->current_item[ $el ], $text);
+                $this->concat(                    $this->current_item[ $el ], $text);
             }
             elseif ($this->intextinput) {
-                $this->concat(
-                    $this->textinput[ $el ], $text );
+                $this->concat(                   $this->textinput[ $el ], $text);
             }
             elseif ($this->inimage) {
-                $this->concat(
-                    $this->image[ $el ], $text );
+                $this->concat(                   $this->image[ $el ], $text);
             }
             elseif ($this->inchannel) {
-                $this->concat(
-                    $this->channel[ $el ], $text );
+                $this->concat(                   $this->channel[ $el ], $text);
             }
 
         }

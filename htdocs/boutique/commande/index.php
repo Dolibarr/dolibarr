@@ -50,7 +50,7 @@ print_barre_liste("Liste des commandes", $page, "commande.php");
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 $sql .= " WHERE o.orders_id = t.orders_id AND t.class = 'ot_total'";
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit($limit ,$offset);
 
 $resql=$dbosc->query($sql);
 if ($resql)

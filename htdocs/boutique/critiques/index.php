@@ -51,7 +51,7 @@ $sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name F
 $sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";
 $sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID. " AND d.languages_id=".$conf->global->OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit($limit ,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print '<TR class="liste_titre">';

@@ -82,7 +82,7 @@ if ($socid) {
     $sql .= " AND s.rowid = ".$socid;
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($limit, $offset);
 
 $result = $db->query($sql);
 if ($result)

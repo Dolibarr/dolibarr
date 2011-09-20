@@ -193,12 +193,12 @@ class langAutoParser {
 
 	private function getLineKey($line){
 		$arraykey = explode('=',$line,2);
-		return trim( $arraykey[0] );
+		return trim($arraykey[0]);
 	}
 
 	private function getLineValue($line){
 		$arraykey = explode('=',$line,2);
-		return trim( $arraykey[1] );
+		return trim($arraykey[1]);
 	}
 
 	private function getTranslationFilesArray($lang){

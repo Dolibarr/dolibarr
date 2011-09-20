@@ -298,9 +298,7 @@ print '<br>';
 /*
  * Edition info modele document
  */
-$constantes=array(
-	'ADHERENT_ETIQUETTE_TYPE'
-);
+$constantes=array('ADHERENT_ETIQUETTE_TYPE');
 
 print_fiche_titre($langs->trans("MembersTickets"),'','');
 

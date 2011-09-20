@@ -299,7 +299,7 @@ class SMTPs
 
         if ( (! is_ip($host)) && ((gethostbyname ( $host )) == $host) )
         {
-            $this->_setErr ( 99, $host . ' is either offline or is an invalid host name.' );
+            $this->_setErr (99, $host . ' is either offline or is an invalid host name.');
             $_retVal = false;
         }
         else
@@ -326,7 +326,7 @@ class SMTPs
             {
                 // DOL_CHANGE LDR
                 if (empty($this->errstr)) $this->errstr='Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
-                $this->_setErr ( $this->errno, $this->errstr );
+                $this->_setErr ($this->errno, $this->errstr);
                 $_retVal = false;
             }
         }
@@ -359,11 +359,11 @@ class SMTPs
             // The error here just means the ID/password combo doesn't work.
             // There is not a method to determine which is the problem, ID or password
             if ( ! $_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235') )
-            $this->_setErr ( 130, 'Invalid Authentication Credentials.' );
+            $this->_setErr (130, 'Invalid Authentication Credentials.');
         }
         else
         {
-            $this->_setErr ( 126, '"' . $host . '" does not support authenticated connections.' );
+            $this->_setErr (126, '"' . $host . '" does not support authenticated connections.');
         }
 
         return $_retVal;
@@ -410,7 +410,7 @@ class SMTPs
                 // From this point onward most server response codes should be 250
                 // Specify who the mail is from....
                 // This has to be the raw email address, strip the "name" off
-                $this->socket_send_str('MAIL FROM: ' . $this->getFrom( 'addr' ), '250');
+                $this->socket_send_str('MAIL FROM: ' . $this->getFrom('addr' ), '250');
 
                 // 'RCPT TO:' must be given a single address, so this has to loop
                 // through the list of addresses, regardless of TO, CC or BCC
@@ -491,7 +491,7 @@ class SMTPs
             // it will simply return FALSE.
             if ( ! @include ( $_strConfigPath ) )
             {
-                $this->_setErr ( 110, '"' . $_strConfigPath . '" is not a valid path.' );
+                $this->_setErr (110, '"' . $_strConfigPath . '" is not a valid path.');
                 $_retVal = false;
             }
         }
@@ -502,13 +502,13 @@ class SMTPs
             // Set these properties ONLY if they are set in the php.ini file.
             // Otherwise the default values will be used.
             if ( $_host = ini_get ('SMTPs') )
-            $this->setHost ( $_host );
+            $this->setHost($_host);
 
             if ( $_port = ini_get ('smtp_port') )
-            $this->setPort ( $_port );
+            $this->setPort($_port);
 
             if ( $_from = ini_get ('sendmail_from') )
-            $this->setFrom ( $_from );
+            $this->setFrom($_from);
         }
 
         // Send back what we have
@@ -751,7 +751,7 @@ class SMTPs
     function setFrom($_strFrom)
     {
         if ( $_strFrom )
-        $this->_msgFrom = $this->_strip_email ( $_strFrom );
+        $this->_msgFrom = $this->_strip_email ($_strFrom);
     }
 
     /**
@@ -799,7 +799,7 @@ class SMTPs
                 // This could be a COMMA delimited string
                 if ( strstr ($_addrList, ',') )
                 // "explode "list" into an array
-                $_addrList = explode ( ',', $_addrList );
+                $_addrList = explode (',', $_addrList);
 
                 // Stick it in an array
                 else
@@ -810,28 +810,28 @@ class SMTPs
             foreach ( $_addrList as $_strAddr )
             {
                 // Strip off the end '>'
-                $_strAddr = str_replace ( '>', '', $_strAddr );
+                $_strAddr = str_replace ('>', '', $_strAddr);
 
                 // Seperate "Real Name" from eMail address
                 $_tmpaddr = null;
-                $_tmpaddr = explode ( '<', $_strAddr );
+                $_tmpaddr = explode ('<', $_strAddr);
 
                 // We have a "Real Name" and eMail address
                 if ( count ($_tmpaddr) == 2 )
                 {
-                    $_tmpHost = explode ( '@', $_tmpaddr[1] );
-                    $_tmpaddr[0] = trim ( $_tmpaddr[0], ' ">' );
+                    $_tmpHost = explode ('@', $_tmpaddr[1]);
+                    $_tmpaddr[0] = trim ($_tmpaddr[0], ' ">');
                     $aryHost[$_tmpHost[1]][$_type][$_tmpHost[0]] = $_tmpaddr[0];
                 }
                 // We only have an eMail address
                 else
                 {
                     // Strip off the beggining '<'
-                    $_strAddr = str_replace ( '<', '', $_strAddr );
+                    $_strAddr = str_replace ('<', '', $_strAddr);
 
-                    $_tmpHost = explode ( '@', $_strAddr );
-                    $_tmpHost[0] = trim ( $_tmpHost[0] );
-                    $_tmpHost[1] = trim ( $_tmpHost[1] );
+                    $_tmpHost = explode ('@', $_strAddr);
+                    $_tmpHost[0] = trim ($_tmpHost[0]);
+                    $_tmpHost[1] = trim ($_tmpHost[1]);
 
                     $aryHost[$_tmpHost[1]][$_type][$_tmpHost[0]] = '';
                 }
@@ -863,20 +863,20 @@ class SMTPs
         $_aryEmail['org'] = $_strAddr;
 
         // Set entire string to Lower Case
-        $_strAddr = strtolower ( $_strAddr );
+        $_strAddr = strtolower ($_strAddr);
 
         // Drop "stuff' off the end
-        $_strAddr = trim ( $_strAddr, ' ">' );
+        $_strAddr = trim ($_strAddr, ' ">');
 
         // Seperate "Real Name" from eMail address, if we have one
-        $_tmpAry = explode ( '<', $_strAddr );
+        $_tmpAry = explode ('<', $_strAddr);
 
         // Do we have a "Real name"
         if ( count ($_tmpAry) == 2 )
         {
             // We may not really have a "Real Name"
             if ( $_tmpAry[0])
-            $_aryEmail['real'] = trim ( $_tmpAry[0], ' ">' );
+            $_aryEmail['real'] = trim ($_tmpAry[0], ' ">');
 
             $_aryEmail['addr'] = $_tmpAry[1];
         }
@@ -884,7 +884,7 @@ class SMTPs
         $_aryEmail['addr'] = $_tmpAry[0];
 
         // Pull User Name and Host.tld apart
-        list($_aryEmail['user'], $_aryEmail['host'] ) = explode ( '@', $_aryEmail['addr'] );
+        list($_aryEmail['user'], $_aryEmail['host'] ) = explode ('@', $_aryEmail['addr']);
 
         // Put the brackets back around the address
         $_aryEmail['addr'] = '<' . $_aryEmail['addr'] . '>';
@@ -904,7 +904,7 @@ class SMTPs
         /**
          * An array of bares addresses for use with 'RCPT TO:'
          */
-        unset ( $_RCPT_list );
+        unset ($_RCPT_list);
 
         // walk down Recipients array and pull just email addresses
         foreach ( $this->_msgRecipients as $_host => $_list )
@@ -961,13 +961,13 @@ class SMTPs
             }
             else
             {
-                $this->_setErr ( 101, 'No eMail Address for message to be sent to.' );
+                $this->_setErr (101, 'No eMail Address for message to be sent to.');
                 return false;
             }
         }
         else
         {
-            $this->_setErr ( 102, 'eMail type not defined.' );
+            $this->_setErr (102, 'eMail type not defined.');
             return false;
         }
 
@@ -982,7 +982,7 @@ class SMTPs
     function setTO($_addrTo)
     {
         if ( $_addrTo )
-        $this->_buildAddrList( 'to', $_addrTo );
+        $this->_buildAddrList('to', $_addrTo);
     }
 
     /**
@@ -992,7 +992,7 @@ class SMTPs
      */
     function getTo()
     {
-        return $this->get_email_list( 'to' );
+        return $this->get_email_list('to');
     }
 
     /**
@@ -1004,7 +1004,7 @@ class SMTPs
     function setCC($_strCC)
     {
         if ( $_strCC )
-        $this->_buildAddrList( 'cc', $_strCC );
+        $this->_buildAddrList('cc', $_strCC);
     }
 
     /**
@@ -1014,7 +1014,7 @@ class SMTPs
      */
     function getCC()
     {
-        return $this->get_email_list( 'cc' );
+        return $this->get_email_list('cc');
     }
 
     /**
@@ -1026,7 +1026,7 @@ class SMTPs
     function setBCC($_strBCC)
     {
         if ( $_strBCC )
-        $this->_buildAddrList( 'bcc', $_strBCC );
+        $this->_buildAddrList('bcc', $_strBCC);
     }
 
     /**
@@ -1036,7 +1036,7 @@ class SMTPs
      */
     function getBCC()
     {
-        return $this->get_email_list( 'bcc' );
+        return $this->get_email_list('bcc');
     }
 
     /**
@@ -1149,14 +1149,14 @@ class SMTPs
         $this->_setBoundary();
 
         // What type[s] of content do we have
-        $_types = array_keys ( $this->_msgContent );
+        $_types = array_keys ($this->_msgContent);
 
         // How many content types do we have
-        $keyCount = count ( $_types );
+        $keyCount = count ($_types);
 
         // If we have ZERO, we have a problem
         if( $keyCount === 0 )
-        die ( "Sorry, no content" );
+        die ("Sorry, no content");
 
         // If we have ONE, we can use the simple format
         else if( $keyCount === 1 )
@@ -1252,7 +1252,7 @@ class SMTPs
                     //                    $content .= ( $type == 'html') ? '; name="HTML Part"' : '';
                     $content .=  "\r\n";
                     //                    $content .= 'Content-Transfer-Encoding: ';
-                    //                    $content .= ( $type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
+                    //                    $content .= ($type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
                     //                    $content .=  "\r\n"
                     //                             . 'Content-Disposition: inline'  . "\r\n"
                     //                             . 'Content-Description: ' . $type . ' message' . "\r\n";
@@ -1486,14 +1486,14 @@ class SMTPs
         {
             if( !( $server_response = fgets($socket, 256) ) )
             {
-                $this->_setErr ( 121, "Couldn't get mail server response codes" );
+                $this->_setErr (121, "Couldn't get mail server response codes");
                 $_retVal = false;
             }
         }
 
         if( !( substr($server_response, 0, 3) == $response ) )
         {
-            $this->_setErr ( 120, "Ran into problems sending Mail.\r\nResponse: $server_response" );
+            $this->_setErr (120, "Ran into problems sending Mail.\r\nResponse: $server_response");
             $_retVal = false;
         }
 

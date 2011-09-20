@@ -130,10 +130,10 @@ function printBoxesArea($user,$areacode)
             ';
             print "\n";
             print 'function updateOrder(){'."\n";
-		    print 'var left_list = cleanSerialize(jQuery("#left").sortable( "serialize" ));'."\n";
-		    print 'var right_list = cleanSerialize(jQuery("#right").sortable( "serialize" ));'."\n";
+		    print 'var left_list = cleanSerialize(jQuery("#left").sortable("serialize" ));'."\n";
+		    print 'var right_list = cleanSerialize(jQuery("#right").sortable("serialize" ));'."\n";
 		    print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
-		    //print 'alert( \'boxorder=\' + boxorder );';
+		    //print 'alert(\'boxorder=\' + boxorder);';
 		    print 'var userid = \''.$user->id.'\';'."\n";
 		    print 'jQuery.get(\'core/ajaxbox.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');'."\n";
 		  	print '}'."\n";

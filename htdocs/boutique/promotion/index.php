@@ -61,7 +61,7 @@ $sql.= " expires_date as fin";
 $sql.= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."specials as s,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as pd,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products as p";
 $sql.= " WHERE s.products_id = pd.products_id AND pd.products_id = p.products_id AND pd.language_id = ".$conf->global->OSC_LANGUAGE_ID;
 $sql.= " ORDER BY $sortfield $sortorder ";
-$sql.= $dbosc->plimit( $limit ,$offset);
+$sql.= $dbosc->plimit($limit ,$offset);
 
 $resql=$dbosc->query($sql);
 if ($resql)
@@ -79,7 +79,7 @@ if ($resql)
   $var=True;
   while ($i < $num)
     {
-      $objp = $dbosc->fetch_object( $i);
+      $objp = $dbosc->fetch_object($i);
       $var=!$var;
 
       print "<tr $bc[$var]>";

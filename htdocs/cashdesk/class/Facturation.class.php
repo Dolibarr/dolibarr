@@ -221,14 +221,14 @@ class Facturation {
 	 */
 	public function raz ()
 	{
-		$this->id ('RESET');
-		$this->ref ('RESET');
-		$this->qte ('RESET');
-		$this->stock ('RESET');
+		$this->id('RESET');
+		$this->ref('RESET');
+		$this->qte('RESET');
+		$this->stock('RESET');
 		$this->remise_percent ('RESET');
 		$this->montant_remise ('RESET');
-		$this->prix ('RESET');
-		$this->tva ('RESET');
+		$this->prix('RESET');
+		$this->tva('RESET');
 
 	}
 

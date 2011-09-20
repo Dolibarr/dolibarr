@@ -101,7 +101,7 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 
 			if ($id > 0)
 			{
-				Header ( "Location: fiche.php?id=".$id);
+				Header ("Location: fiche.php?id=".$id);
 				exit;
 			}
 			else
@@ -117,7 +117,7 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 	}
 	else
 	{
-		Header ( "Location: index.php");
+		Header ("Location: index.php");
 		exit;
 	}
 }

@@ -72,7 +72,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2,
 						return jQuery( "<li></li>" )
 						.data( "item.autocomplete", item )
 						.append( \'<a href="#"><span class="tag">\' + item.label + "</span></a>" )
-						.appendTo( ul );
+						.appendTo(ul);
 					};
   				});';
 	$script.= '</script>';
@@ -186,7 +186,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 	        modal: true,
 	        buttons: {
 	        	Ok: function() {
-					jQuery( this ).dialog(\'close\');
+					jQuery(this ).dialog(\'close\');
 				}
 	        }
 	    });
@@ -208,7 +208,7 @@ function ajax_combobox($htmlname)
 {
 	$msg.= '<script type="text/javascript">
     $(function() {
-    	$( "#'.$htmlname.'" ).combobox();
+    	$("#'.$htmlname.'" ).combobox();
     });
 	</script>';
 
@@ -239,15 +239,15 @@ function ajax_constantonoff($code,$input=array())
 					name: \''.$code.'\'
 				},
 				function() {
-					$( "#set_'.$code.'" ).hide();
-					$( "#del_'.$code.'" ).show();
+					$("#set_'.$code.'" ).hide();
+					$("#del_'.$code.'" ).show();
 					// Enable another object
 					if (input.length > 0) {
 						$.each(input, function(key,value) {
-							$( "#" + value).removeAttr("disabled");
+							$("#" + value).removeAttr("disabled");
 							if ( $( "#" + value).hasClass("butActionRefused") == true ) {
-								$( "#" + value).removeClass("butActionRefused");
-								$( "#" + value).addClass("butAction");
+								$("#" + value).removeClass("butActionRefused");
+								$("#" + value).addClass("butAction");
 							}
 						});
 					}
@@ -261,15 +261,15 @@ function ajax_constantonoff($code,$input=array())
 					name: \''.$code.'\'
 				},
 				function() {
-					$( "#del_'.$code.'" ).hide();
-					$( "#set_'.$code.'" ).show();
+					$("#del_'.$code.'" ).hide();
+					$("#set_'.$code.'" ).show();
 					// Disable another object
 					if (input.length > 0) {
 						$.each(input, function(key,value) {
-							$( "#" + value).attr("disabled", true);
+							$("#" + value).attr("disabled", true);
 							if ( $( "#" + value).hasClass("butAction") == true ) {
-								$( "#" + value).removeClass("butAction");
-								$( "#" + value).addClass("butActionRefused");
+								$("#" + value).removeClass("butAction");
+								$("#" + value).addClass("butActionRefused");
 							}
 						});
 					}

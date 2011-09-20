@@ -368,13 +368,13 @@ if (! $error && $db->connected && $action == "set")
 	}
 
 	// Force https
-	$main_force_https = ( (GETPOST("main_force_https") && ( GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1) ) ? '1' : '0');
+	$main_force_https = ((GETPOST("main_force_https") && ( GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1) ) ? '1' : '0');
 
 	// Use alternative directory
-	$main_use_alt_dir = ( (GETPOST("main_use_alt_dir") && ( GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1) ) ? '' : '#');
+	$main_use_alt_dir = ((GETPOST("main_use_alt_dir") && ( GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1) ) ? '' : '#');
 
 	// Alternative root directory name
-	$main_alt_dir_name = ( (GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
+	$main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
 
 	// Write conf file on disk
 	if (! $error)

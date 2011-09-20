@@ -680,7 +680,7 @@ class Adherent extends CommonObject
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
             dol_syslog(get_class($this)."::delete sql=".$sql);
-            $resql=$this->db->query( $sql);
+            $resql=$this->db->query($sql);
             if ($resql)
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
@@ -925,7 +925,7 @@ class Adherent extends CommonObject
         $sql.= " WHERE login='".$login."'";
         $sql.= " AND entity = ".$conf->entity;
 
-        $resql=$this->db->query( $sql);
+        $resql=$this->db->query($sql);
 
         if ($resql)
         {

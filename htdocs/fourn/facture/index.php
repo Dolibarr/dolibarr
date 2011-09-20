@@ -159,7 +159,7 @@ if ($_GET["search_montant_ttc"])
 }
 
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit( $limit+1, $offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)

@@ -1098,7 +1098,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		{
 			print '<script type="text/javascript">
 				jQuery(document).ready(function () {
-					jQuery("body").layout( layoutSettings );
+					jQuery("body").layout(layoutSettings);
 				});
 				var layoutSettings = {
 					name: "mainlayout",

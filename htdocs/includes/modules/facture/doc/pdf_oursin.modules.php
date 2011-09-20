@@ -723,8 +723,8 @@ class pdf_oursin extends ModelePDFFactures
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$pdf->line( $this->marges['g'], $tab_top+8, 210-$this->marges['d'], $tab_top+8 );
-		$pdf->line( $this->marges['g'], $tab_top + $tab_height, 210-$this->marges['d'], $tab_top + $tab_height );
+		$pdf->line($this->marges['g'], $tab_top+8, 210-$this->marges['d'], $tab_top+8);
+		$pdf->line($this->marges['g'], $tab_top + $tab_height, 210-$this->marges['d'], $tab_top + $tab_height);
 
 		$pdf->SetFont('','', $default_font_size - 1);
 

@@ -2156,7 +2156,7 @@ class Form
 			             			var inputvalue = $("#" + this).val();
 			             			options += \'&\' + inputname + \'=\' + inputvalue;
 			             		});
-			             		//alert( options );
+			             		//alert(options);
 			             	}
 			             	location.href=\''.$pageyes.'\' + options;
 			             }
@@ -2176,7 +2176,7 @@ class Form
 
 			    if (button.length > 0) {
 			    	$( "#" + button ).click(function() {
-			    		$( "#" + dialogconfirm ).dialog( \'open\' );
+			    		$("#" + dialogconfirm ).dialog(\'open\');
 			    	});
 			    }
 			});

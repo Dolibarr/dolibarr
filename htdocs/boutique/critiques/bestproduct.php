@@ -55,7 +55,7 @@ $sql .= " WHERE r.products_id = p.products_id";
 $sql .= " GROUP BY r.products_id, p.products_model, p.products_quantity, p.products_status";
 
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit( $limit ,$offset);
+$sql .= $dbosc->plimit($limit ,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<TR class=\"liste_titre\"><td>".$langs->trans("Ref");

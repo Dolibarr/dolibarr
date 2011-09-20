@@ -86,11 +86,11 @@ switch ( $_GET['action'] )
 					}
 					/** end add Ditto */
 
-					$obj_facturation->id( $ret['rowid'] );
-					$obj_facturation->ref( $ret['ref'] );
-					$obj_facturation->stock( $ret['reel'] );
-					$obj_facturation->prix( $ret['price'] );
-					$obj_facturation->tva( $ret['tva_tx'] );
+					$obj_facturation->id($ret['rowid']);
+					$obj_facturation->ref($ret['ref']);
+					$obj_facturation->stock($ret['reel']);
+					$obj_facturation->prix($ret['price']);
+					$obj_facturation->tva($ret['tva_tx']);
 
 					// Definition du filtre pour n'afficher que le produit concerne
 					if ( $_POST['hdnSource'] == 'LISTE' )

@@ -136,7 +136,7 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
             {
                 if ($sDay >= $lengthOfWeek)
                 {
-                    $sWeek = (int) ( ( $sDay - $sDay % $lengthOfWeek ) / $lengthOfWeek );
+                    $sWeek = (int) (($sDay - $sDay % $lengthOfWeek ) / $lengthOfWeek);
                     $sDay = $sDay % $lengthOfWeek;
                     $weekTranslate = $langs->trans("DurationWeek");
                     if ($sWeek >= 2) $weekTranslate = $langs->trans("DurationWeeks");

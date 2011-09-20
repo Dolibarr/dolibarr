@@ -1049,7 +1049,7 @@ class Societe extends CommonObject
         global $conf;
 
         $sql = "SELECT nom as name FROM ".MAIN_DB_PREFIX."societe WHERE rowid = '".$this->id."'";
-        $resql=$this->db->query( $sql);
+        $resql=$this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
@@ -1116,7 +1116,7 @@ class Societe extends CommonObject
             $sql.= " WHERE prefix_comm = '".$prefix."'";
             $sql.= " AND entity = ".$conf->entity;
 
-            $resql=$this->db->query( $sql);
+            $resql=$this->db->query($sql);
             if ($resql)
             {
                 $obj=$this->db->fetch_object($resql);

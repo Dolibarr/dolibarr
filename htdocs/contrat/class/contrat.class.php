@@ -896,7 +896,7 @@ class Contrat extends CommonObject
 			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
-			$sql.= " ".price2num($price).",".price2num( $remise);	// TODO A virer
+			$sql.= " ".price2num($price).",".price2num($remise);	// TODO A virer
 			if ($date_start > 0) { $sql.= ",".$this->db->idate($date_start); }
 			if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
 			$sql.= ")";

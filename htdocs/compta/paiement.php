@@ -634,7 +634,7 @@ if (! GETPOST('action'))
     }
 
     $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
-    $sql .= $db->plimit( $limit +1 ,$offset);
+    $sql .= $db->plimit($limit +1 ,$offset);
     $resql = $db->query($sql);
 
     if ($resql)

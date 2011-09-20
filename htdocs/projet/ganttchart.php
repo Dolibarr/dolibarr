@@ -156,7 +156,7 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
 }
 
 function findChildGanttLine($tarr,$parent,$project_dependencies,$level) {
-	$n=count( $tarr );
+	$n=count($tarr);
 	for ($x=0; $x < $n; $x++) {
 		if($tarr[$x]["task_parent"] == $parent && $tarr[$x]["task_parent"] != $tarr[$x]["task_id"])
 		{

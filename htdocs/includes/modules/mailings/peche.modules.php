@@ -76,7 +76,7 @@ class mailing_peche extends MailingTargets
 	{
 		global $langs;
 		return $langs->trans('LineInFile',$id);
-		//' - '.$langs->trans("File").' '.dol_trunc( ,12);
+		//' - '.$langs->trans("File").' '.dol_trunc(,12);
 	}
 
 

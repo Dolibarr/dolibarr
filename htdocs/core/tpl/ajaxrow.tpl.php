@@ -59,8 +59,7 @@ jQuery(document).ready(function(){
 		onDragClass: "dragClass",
 		dragHandle: "tdlineupdown"
 	});
-    jQuery(".tdlineupdown").hover(
-    	function() { jQuery(this).addClass('showDragHandle'); },
+    jQuery(".tdlineupdown").hover(    	function() { jQuery(this).addClass('showDragHandle'); },
     	function() { jQuery(this).removeClass('showDragHandle'); }
     );
 });
