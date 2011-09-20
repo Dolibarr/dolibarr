@@ -50,9 +50,9 @@ class Skeleton_Class // extends CommonObject
 
 
     /**
-     *      Constructor
+     *  Constructor
      *
-     *      @param      DoliDb		$DB      Database handler
+     *  @param      DoliDb		$DB      Database handler
      */
     function Skeleton_Class($DB)
     {
@@ -62,11 +62,11 @@ class Skeleton_Class // extends CommonObject
 
 
     /**
-     *      Create object into database
+     *  Create object into database
      *
-     *      @param      User	$user        User that create
-     *      @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-     *      @return     int      		   	 <0 if KO, Id of created object if OK
+     *  @param      User	$user        User that create
+     *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
+     *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
     function create($user, $notrigger=0)
     {
@@ -136,10 +136,10 @@ class Skeleton_Class // extends CommonObject
 
 
     /**
-     *    Load object in memory from database
+     *  Load object in memory from database
      *
-     *    @param      int	$id    Id object
-     *    @return     int          <0 if KO, >0 if OK
+     *  @param      int	$id    Id object
+     *  @return     int          <0 if KO, >0 if OK
      */
     function fetch($id)
     {
@@ -179,11 +179,11 @@ class Skeleton_Class // extends CommonObject
 
 
     /**
-     *      Update object into database
+     *  Update object into database
      *
-     *      @param      User	$user        User that modify
-     *      @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *      @return     int     		   	 <0 if KO, >0 if OK
+     *  @param      User	$user        User that modify
+     *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
+     *  @return     int     		   	 <0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -247,11 +247,11 @@ class Skeleton_Class // extends CommonObject
 
 
  	/**
-	 *   Delete object in database
+	 *  Delete object in database
 	 *
-     *	 @param     User	$user        User that delete
-     *   @param     int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *   @return	int					 <0 if KO, >0 if OK
+     *	@param     User	$user        User that delete
+     *  @param     int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
@@ -304,10 +304,10 @@ class Skeleton_Class // extends CommonObject
 
 
 	/**
-	 *		Load an object from its id and create a new one in database
+	 *	Load an object from its id and create a new one in database
 	 *
-	 *		@param      int		$fromid     Id of object to clone
-	 * 	 	@return		int					New id of clone
+	 *	@param      int		$fromid     Id of object to clone
+	 * 	@return		int					New id of clone
 	 */
 	function createFromClone($fromid)
 	{
@@ -359,10 +359,10 @@ class Skeleton_Class // extends CommonObject
 
 
 	/**
-	 *		Initialisz object with example values
-	 *		Id must be 0 if object instance is a specimen
+	 *	Initialise object with example values
+	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *		@return	none
+	 *	@return	void
 	 */
 	function initAsSpecimen()
 	{
