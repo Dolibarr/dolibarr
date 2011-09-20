@@ -4023,14 +4023,14 @@ function utf8_check($str)
     // We must use here a binary strlen function (so not dol_strlen)
     for ($i=0; $i<strlen($str); $i++)
     {
-        if (ord($str[$i]) < 0x80) continue; # 0bbbbbbb
-        elseif ((ord($str[$i]) & 0xE0) == 0xC0) $n=1; # 110bbbbb
-        elseif ((ord($str[$i]) & 0xF0) == 0xE0) $n=2; # 1110bbbb
-        elseif ((ord($str[$i]) & 0xF8) == 0xF0) $n=3; # 11110bbb
-        elseif ((ord($str[$i]) & 0xFC) == 0xF8) $n=4; # 111110bb
-        elseif ((ord($str[$i]) & 0xFE) == 0xFC) $n=5; # 1111110b
-        else return false; # Does not match any model
-        for ($j=0; $j<$n; $j++) { # n bytes matching 10bbbbbb follow ?
+        if (ord($str[$i]) < 0x80) continue; // 0bbbbbbb
+        elseif ((ord($str[$i]) & 0xE0) == 0xC0) $n=1; // 110bbbbb
+        elseif ((ord($str[$i]) & 0xF0) == 0xE0) $n=2; // 1110bbbb
+        elseif ((ord($str[$i]) & 0xF8) == 0xF0) $n=3; // 11110bbb
+        elseif ((ord($str[$i]) & 0xFC) == 0xF8) $n=4; // 111110bb
+        elseif ((ord($str[$i]) & 0xFE) == 0xFC) $n=5; // 1111110b
+        else return false; // Does not match any model
+        for ($j=0; $j<$n; $j++) { // n bytes matching 10bbbbbb follow ?
             if ((++$i == strlen($str)) || ((ord($str[$i]) & 0xC0) != 0x80))
             return false;
         }

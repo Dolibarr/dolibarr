@@ -169,7 +169,7 @@ class mailing_framboise extends MailingTargets
 		$s='';
 		$s.='<select name="filter" class="flat">';
 
-		# Show categories
+		// Show categories
 		$sql = "SELECT rowid, label, type, visible";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE type = 3";	// We keep only categories for members

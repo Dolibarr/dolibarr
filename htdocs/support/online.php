@@ -56,7 +56,7 @@ print '<br><br>';
 $limit=4;
 $arrayofwidgets=array(
 // Widget for Laurent Destailleur
-array('name'=>'Laurent Destailleur',	# id user 4702
+array('name'=>'Laurent Destailleur',	// id user 4702
 		'sort'=>1,
 		'logo'=>'logoUrl='.urlencode('http://www.nltechno.com/images/logo_nltechno_long.jpg'), // Put your own logo
 		'id'=>'4256,4255',	// Put of list of sparkangels widget id (for each language)

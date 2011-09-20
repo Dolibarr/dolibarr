@@ -138,7 +138,7 @@ if ($action == 'update')
 	}
 }
 
-# Suppression attribut
+// Suppression attribut
 if ($action == 'delete')
 {
 	if(isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_GET["attrname"]))

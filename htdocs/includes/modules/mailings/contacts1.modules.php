@@ -107,7 +107,7 @@ class mailing_contacts1 extends MailingTargets
 
 		$s='';
 		$s.='<select name="filter" class="flat">';
-		# Add prospect of a particular level
+		// Add prospect of a particular level
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql.= " WHERE active > 0";
@@ -160,7 +160,7 @@ class mailing_contacts1 extends MailingTargets
 
 		$cibles = array();
 
-		# List prospects levels
+		// List prospects levels
 		$prospectlevel=array();
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";

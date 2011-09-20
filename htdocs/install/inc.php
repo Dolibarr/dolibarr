@@ -77,14 +77,14 @@ else
 $includeconferror='';
 
 
-# Define vars
+// Define vars
 $conffiletoshowshort = "conf.php";
-# Define localization of conf file
+// Define localization of conf file
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
-# For debian/redhat like systems
-#$conffile = "/etc/dolibarr/conf.php";
-#$conffiletoshow = "/etc/dolibarr/conf.php";
+// For debian/redhat like systems
+//$conffile = "/etc/dolibarr/conf.php";
+//$conffiletoshow = "/etc/dolibarr/conf.php";
 
 
 if (! defined('DONOTLOADCONF') && file_exists($conffile))

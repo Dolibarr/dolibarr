@@ -395,13 +395,13 @@ if ($step == 2 && $datatoexport)
     // Select request if all fields are selected
     $sqlmaxforexport=$objexport->build_sql(0,array());
 
-#    $this->array_export_module[0]=$module;
-#    $this->array_export_code[0]=$module->export_code[$r];
-#    $this->array_export_label[0]=$module->export_label[$r];
-#    $this->array_export_sql[0]=$module->export_sql[$r];
-#    $this->array_export_fields[0]=$module->export_fields_array[$r];
-#    $this->array_export_entities[0]=$module->export_fields_entities[$r];
-#    $this->array_export_alias[0]=$module->export_fields_alias[$r];
+//    $this->array_export_module[0]=$module;
+//    $this->array_export_code[0]=$module->export_code[$r];
+//    $this->array_export_label[0]=$module->export_label[$r];
+//    $this->array_export_sql[0]=$module->export_sql[$r];
+//    $this->array_export_fields[0]=$module->export_fields_array[$r];
+//    $this->array_export_entities[0]=$module->export_fields_entities[$r];
+//    $this->array_export_alias[0]=$module->export_fields_alias[$r];
 
     $var=true;
     $i = 0;

@@ -292,7 +292,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 		$from='^'.$versionfrom;
 		$to=$versionto.'\.sql$';
 
-		# Recupere list fichier
+		// Get files list
 		$filesindir=array();
 		$handle=opendir($dir);
 		if (is_resource($handle))
@@ -308,7 +308,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$dir).'</div>';
 		}
 
-		# Define which file to run
+		// Define which file to run
 		foreach($filesindir as $file)
 		{
 			if (preg_match('/'.$from.'/i',$file))
@@ -321,7 +321,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			}
 		}
 
-		# Boucle sur chaque fichier
+		// Boucle sur chaque fichier
 		foreach($filelist as $file)
 		{
 			print '<tr><td nowrap>';

@@ -79,11 +79,11 @@ if ($action == 'setvalue' && $user->admin)
  *	View
  */
 
-$IBS_SITE="1999888";    # Site test
+$IBS_SITE="1999888";    // Site test
 if (empty($conf->global->PAYBOX_IBS_SITE)) $conf->global->PAYBOX_IBS_SITE=$IBS_SITE;
-$IBS_RANG="99";         # Rang test
+$IBS_RANG="99";         // Rang test
 if (empty($conf->global->PAYBOX_IBS_RANG)) $conf->global->PAYBOX_IBS_RANG=$IBS_RANG;
-$IBS_DEVISE="978";      # Euro
+$IBS_DEVISE="978";      // Euro
 if (empty($conf->global->PAYBOX_IBS_DEVISE)) $conf->global->PAYBOX_IBS_DEVISE=$IBS_DEVISE;
 
 llxHeader();

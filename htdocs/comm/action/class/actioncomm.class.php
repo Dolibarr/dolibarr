@@ -125,7 +125,7 @@ class ActionComm extends CommonObject
 
 		if (! $this->type_id && $this->type_code)
 		{
-			# Get id from code
+			// Get id from code
 			$cactioncomm=new CActionComm($this->db);
 			$result=$cactioncomm->fetch($this->type_code);
 			if ($result)

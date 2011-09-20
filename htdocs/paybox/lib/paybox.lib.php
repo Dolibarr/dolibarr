@@ -75,13 +75,13 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 	dol_syslog("Paybox.lib::print_paybox_redirect", LOG_DEBUG);
 
 	// Clean parameters
-	$PBX_IDENTIFIANT="2";	# Identifiant pour v2 test
+	$PBX_IDENTIFIANT="2";	// Identifiant pour v2 test
 	if ($conf->global->PAYBOX_PBX_IDENTIFIANT) $PBX_IDENTIFIANT=$conf->global->PAYBOX_PBX_IDENTIFIANT;
-	$IBS_SITE="1999888";    # Site test
+	$IBS_SITE="1999888";    // Site test
 	if ($conf->global->PAYBOX_IBS_SITE) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
-	$IBS_RANG="99";         # Rang test
+	$IBS_RANG="99";         // Rang test
 	if ($conf->global->PAYBOX_IBS_RANG) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
-	$IBS_DEVISE="840";			# Currency (Dollar US by default)
+	$IBS_DEVISE="840";		// Currency (Dollar US by default)
 	if ($CURRENCY == 'EUR') $IBS_DEVISE="978";
 	if ($CURRENCY == 'USD') $IBS_DEVISE="840";
 
@@ -112,10 +112,10 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 
 	// Definition des parametres vente produit pour paybox
     $IBS_CMD=$TAG;
-    $IBS_TOTAL=$PRICE*100;     	# En centimes
-    $IBS_MODE=1;            	# Mode formulaire
+    $IBS_TOTAL=$PRICE*100;     	// En centimes
+    $IBS_MODE=1;            	// Mode formulaire
     $IBS_PORTEUR=$EMAIL;
-	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   # Format des parametres du get de validation en reponse (url a definir sous paybox)
+	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   // Format des parametres du get de validation en reponse (url a definir sous paybox)
     //$IBS_TXT="<center><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></center>";
     $IBS_TXT=' ';	// Use a space
     $IBS_BOUTPI=$langs->trans("Wait");

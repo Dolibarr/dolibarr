@@ -349,8 +349,8 @@ class Conf
         if (! isset($this->global->FCKEDITOR_EDITORNAME)) $this->global->FCKEDITOR_EDITORNAME='ckeditor';  // fckeditor to switch
 
         // Format for date (used by default when not found or searched in lang)
-        $this->format_date_short="%d/%m/%Y";            # Format of day with PHP/C tags (strftime functions)
-        $this->format_date_short_java="dd/MM/yyyy";     # Format of day with Java tags
+        $this->format_date_short="%d/%m/%Y";            // Format of day with PHP/C tags (strftime functions)
+        $this->format_date_short_java="dd/MM/yyyy";     // Format of day with Java tags
         $this->format_hour_short="%H:%M";
         $this->format_hour_short_duration="%H:%M";
         $this->format_date_text_short="%d %b %Y";

@@ -184,15 +184,15 @@ else
 	dolibarr_install_syslog("we try to create conf file '$conffile'");
 	$confexists=0;
 
-	# First we try by copying example
+	// First we try by copying example
 	if (@copy($conffile.".example", $conffile))
 	{
-		# Success
+		// Success
 		dolibarr_install_syslog("copied file ".$conffile.".example into ".$conffile." done successfully.");
 	}
 	else
 	{
-		# If failed, we try to create an empty file
+		// If failed, we try to create an empty file
 		dolibarr_install_syslog("failed to copy file ".$conffile.".example into ".$conffile.". We try to create it.", LOG_WARNING);
 
 		$fp = @fopen($conffile, "w");
@@ -298,7 +298,7 @@ else
 			}
 		}
 
-		# If a database access is available, we set more variable
+		// If a database access is available, we set more variable
 		if ($ok)
 		{
 			if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
@@ -313,7 +313,7 @@ else
 			$dolibarrversiontoinstallarray=versiondolibarrarray();
 		}
 
-		# Show title
+		// Show title
 		if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ! empty($conf->global->MAIN_VERSION_LAST_INSTALL))
 		{
 			print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.(empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE).'</font></b><br>';
@@ -334,7 +334,7 @@ else
 		// Array of install choices
 		print '<table width="100%" border="1" cellpadding="2">';
 
-		# Show first install line
+		// Show first install line
 		print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
 		print '</td>';
 		print '<td>';
@@ -362,7 +362,7 @@ else
 		print '</tr>'."\n";
 
 
-		# Show upgrade lines
+		// Show upgrade lines
 		$allowupgrade=true;
 		if (empty($dolibarr_main_db_host))	// This means install process was not run
 		{

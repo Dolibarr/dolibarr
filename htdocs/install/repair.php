@@ -158,7 +158,7 @@ if ($ok)
 	$from='^'.$versionfrom;
 	$to=$versionto.'\.sql$';
 
-	# Recupere list fichier
+	// Recupere list fichier
 	$filesindir=array();
 	$handle=opendir($dir);
     if (is_resource($handle))
@@ -178,7 +178,7 @@ if ($ok)
 		}
 	}
 
-	# Boucle sur chaque fichier
+	// Boucle sur chaque fichier
 	foreach($filelist as $file)
 	{
 		print '<tr><td nowrap>';

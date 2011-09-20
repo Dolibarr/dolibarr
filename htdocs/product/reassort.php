@@ -109,7 +109,7 @@ if ($sall)
 {
 	$sql.= " AND (p.ref like '%".$db->escape($sall)."%' OR p.label like '%".$db->escape($sall)."%' OR p.description like '%".$db->escape($sall)."%' OR p.note like '%".$db->escape($sall)."%')";
 }
-# if the type is not 1, we show all products (type = 0,2,3)
+// if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
 {
     if ($type==1) {

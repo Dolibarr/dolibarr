@@ -181,15 +181,15 @@ if (! empty($force_install_message))
 if (! empty($main_url)) $dolibarr_main_url_root=$main_url;
 if (empty($dolibarr_main_url_root))
 {
-    # If defined (Ie: Apache with Linux)
+    // If defined (Ie: Apache with Linux)
     if (isset($_SERVER["SCRIPT_URI"])) {
         $dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
     }
-    # If defined (Ie: Apache with Caudium)
+    // If defined (Ie: Apache with Caudium)
     elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
         $dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
     }
-    # If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
+    // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
     else
     {
         $proto='http';
@@ -197,11 +197,11 @@ if (empty($dolibarr_main_url_root))
         else $serverport=$_SERVER["SERVER_NAME"];
         $dolibarr_main_url_root=$proto."://".$serverport.$_SERVER["SCRIPT_NAME"];
     }
-    # Clean proposed URL
-    $dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);    # Remove the /fileconf.php
-    $dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);             # Remove the /
-    $dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);       # Remove the /index.php
-    $dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);      # Remove the /install
+    // Clean proposed URL
+    $dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);	// Remove the /fileconf.php
+    $dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);					// Remove the /
+    $dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);		// Remove the /index.php
+    $dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);			// Remove the /install
 }
 ?>
 	<tr>

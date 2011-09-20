@@ -262,7 +262,7 @@ if (empty($reshook))
                         }
                     }
 
-                    ### Gestion du logo de la société
+                    // Gestion du logo de la société
                     $dir     = $conf->societe->dir_output."/".$object->id."/logos/";
                     $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                     if ($file_OK)
@@ -293,7 +293,7 @@ if (empty($reshook))
                             }
                         }
                     }
-                    ### Gestion du logo de la société
+                    // Gestion du logo de la société
                 }
                 else
                 {
@@ -338,7 +338,7 @@ if (empty($reshook))
                     $error = $object->error; $errors = $object->errors;
                 }
 
-                ### Gestion du logo de la société
+                // Gestion du logo de la société
                 $dir     = $conf->societe->dir_output."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                 if ($file_OK)
@@ -381,7 +381,7 @@ if (empty($reshook))
                         $errors[] = "ErrorBadImageFormat";
                     }
                 }
-                ### Gestion du logo de la société
+                // Gestion du logo de la société
 
                 if (! $error && ! count($errors))
                 {
@@ -594,7 +594,7 @@ else
 
         $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
-        ### Gestion du logo de la société
+        // Gestion du logo de la société
         $dir     = $conf->societe->dir_output."/".$object->id."/logos";
         $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
         if ($file_OK)

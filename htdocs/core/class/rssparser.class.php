@@ -396,7 +396,7 @@ class RssParser
             $this->inimage = true;
         }
 
-        # handle atom content constructs
+        // handle atom content constructs
         elseif ( $this->_format == 'atom' and in_array($el, $this->_CONTENT_CONSTRUCTS) )
         {
             // avoid clashing w/ RSS mod_content

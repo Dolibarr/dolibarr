@@ -163,7 +163,7 @@ class mailing_thirdparties extends MailingTargets
 		$s='';
 		$s.='<select name="filter" class="flat">';
 
-		# Show categories
+		// Show categories
 		$sql = "SELECT rowid, label, type, visible";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE type in (1,2)";	// We keep only categories for suppliers and customers/prospects

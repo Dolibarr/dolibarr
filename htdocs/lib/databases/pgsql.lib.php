@@ -154,11 +154,11 @@ class DoliDb
      */
 	function convertSQLFromMysql($line,$type='auto')
 	{
-		# Removed empty line if this is a comment line for SVN tagging
+		// Removed empty line if this is a comment line for SVN tagging
 		if (preg_match('/^--\s\$Id/i',$line)) {
 			return '';
 		}
-		# Return line if this is a comment
+		// Return line if this is a comment
 		if (preg_match('/^#/i',$line) || preg_match('/^$/i',$line) || preg_match('/^--/i',$line))
 		{
 			return $line;
@@ -176,8 +176,8 @@ class DoliDb
 		    {
                 $line=preg_replace('/\s/',' ',$line);   // Replace tabulation with space
 
-		        # we are inside create table statement so lets process datatypes
-    			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
+		        // we are inside create table statement so lets process datatypes
+    			if (preg_match('/(ISAM|innodb)/i',$line)) { // end of create table sequence
     				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
     				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
     				$line=preg_replace('/,$/','',$line);
@@ -190,51 +190,51 @@ class DoliDb
                     $line=$newline;
     			}
 
-    			# tinyint type conversion
+    			// tinyint type conversion
     			$line=str_replace('tinyint','smallint',$line);
 
-    			# nuke unsigned
+    			// nuke unsigned
     			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
 
-    			# blob -> text
+    			// blob -> text
     			$line=preg_replace('/\w*blob/i','text',$line);
 
-    			# tinytext/mediumtext -> text
+    			// tinytext/mediumtext -> text
     			$line=preg_replace('/tinytext/i','text',$line);
     			$line=preg_replace('/mediumtext/i','text',$line);
 
-    			# change not null datetime field to null valid ones
-    			# (to support remapping of "zero time" to null
+    			// change not null datetime field to null valid ones
+    			// (to support remapping of "zero time" to null
     			$line=preg_replace('/datetime not null/i','datetime',$line);
     			$line=preg_replace('/datetime/i','timestamp',$line);
 
-    			# double -> numeric
+    			// double -> numeric
     			$line=preg_replace('/^double/i','numeric',$line);
     			$line=preg_replace('/(\s*)double/i','\\1numeric',$line);
-    			# float -> numeric
+    			// float -> numeric
     			$line=preg_replace('/^float/i','numeric',$line);
     			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
 
-    			# unique index(field1,field2)
+    			// unique index(field1,field2)
     			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
     			{
     				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
     			}
 
-    			# We remove end of requests "AFTER fieldxxx"
+    			// We remove end of requests "AFTER fieldxxx"
     			$line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
 
-    			# We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
+    			// We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
     			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
 
-                # Translate order to rename fields
+                // Translate order to rename fields
                 if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
                 {
                 	$line = "-- ".$line." replaced by --\n";
                     $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
                 }
 
-                # Translate order to modify field format
+                // Translate order to modify field format
                 if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
@@ -248,24 +248,24 @@ class DoliDb
                     // TODO Add alter to set default value or null/not null if there is this in $reg[3]
                 }
 
-                # alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
-    			# ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
+                // alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
+    			// ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
     			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
     			{
     				$line = "-- ".$line." replaced by --\n";
     				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
     			}
 
-                # Translate order to drop foreign keys
-                # ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
+                // Translate order to drop foreign keys
+                // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
                 if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
                 }
 
-    			# alter table add [unique] [index] (field1, field2 ...)
-    			# ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
+    			// alter table add [unique] [index] (field1, field2 ...)
+    			// ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
     			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
     			{
     				$fieldlist=$reg[4];

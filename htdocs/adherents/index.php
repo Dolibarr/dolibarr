@@ -54,7 +54,7 @@ $AdherentsResilies=array();
 
 $AdherentType=array();
 
-# Liste les adherents
+// Liste les adherents
 $sql = "SELECT t.rowid, t.libelle, t.cotisation,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
