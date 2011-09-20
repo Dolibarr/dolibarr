@@ -234,8 +234,9 @@ class Import
 		$this->db->begin();
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'import_model (';
-		$sql.= 'label, type, field)';
-		$sql.= " VALUES ('".$this->db->escape($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
+		$sql.= 'fk_user, label, type, field';
+		$sql.= ')';
+		$sql.= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
 
 		dol_syslog("Import::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -318,15 +319,12 @@ class Import
 		{
 			if (! $notrigger)
 			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
+				// Call triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('IMPORT_DELETE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// End call triggers
 			}
 		}
 

@@ -27,8 +27,9 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 $datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
 $format=isset($_GET["format"])? $_GET["format"] : (isset($_POST["format"])?$_POST["format"]:'');
 
-// C'est un wrapper, donc header vierge
+// This file is a wrapper, so empty header
 function llxHeader() { print '<html><title>Build an import example file</title><body>'; }
+// This file is a wrapper, so empty footer
 function llxFooter() { print '</body></html>'; }
 
 require("../main.inc.php");
