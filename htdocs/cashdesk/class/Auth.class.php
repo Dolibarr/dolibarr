@@ -20,8 +20,8 @@
 /**
  * Class ot manage authentication for pos module (cashdesk)
  */
-class Auth {
-
+class Auth
+{
 	var $db;
 
 	var $login;
@@ -30,35 +30,64 @@ class Auth {
 	var $reponse;
 
 	var $sqlQuery;
-
-
-	function Auth ($DB) {
+	
+	/**
+	 * Enter description here ...
+	 * 
+	 * @param unknown_type $DB
+	 */
+	function Auth($DB)
+	{
 
 		$this->db = $DB;
 		$this->reponse(null);
 
 	}
 
-	function login ($aLogin) {
+	/**
+	 * Enter description here ...
+	 * 
+	 * @param unknown_type $aLogin
+	 */
+	function login($aLogin)
+	{
 
 		$this->login = $aLogin;
 
 	}
-
-	function passwd ($aPasswd) {
+	
+	/**
+	 * Enter description here ...
+	 * 
+	 * @param unknown_type $aPasswd
+	 */
+	function passwd($aPasswd)
+	{
 
 		$this->passwd = $aPasswd;
 
 
 	}
-
-	function reponse ($aReponse) {
+	
+	/**
+	 * Enter description here ...
+	 * 
+	 * @param unknown_type $aReponse
+	 */
+	function reponse($aReponse)
+	{
 
 		$this->reponse = $aReponse;
 
 	}
 
-	function verif ($aLogin, $aPasswd)
+	/**
+	 * Enter description here ...
+	 * 
+	 * @param unknown_type $aLogin
+	 * @param unknown_type $aPasswd
+	 */
+	function verif($aLogin, $aPasswd)
 	{
 		global $conf,$dolibarr_main_authentication,$langs;
 
