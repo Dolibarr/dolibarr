@@ -547,8 +547,7 @@ if ($step == 3 && $datatoimport)
 
 	// Search available imports
 	$dir = $conf->import->dir_temp;
-	$newdir=utf8_check($dir)?utf8_decode($dir):$dir;	// opendir need ISO
-	$handle=@opendir($newdir);
+	$handle=@opendir(dol_osencode($dir));
 	if (is_resource($handle))
 	{
 		//print '<tr><td colspan="4">';
@@ -1400,14 +1399,14 @@ if ($step == 5 && $datatoimport)
             {
                 //print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=5&action=launchsimu'.$param.'">'.$langs->trans("RunSimulateImportFile").'</a>';
 
-                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
+                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
             }
         }
         else
         {
-            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
 
-            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
         }
         print '</center>';
     }
