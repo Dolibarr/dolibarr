@@ -163,7 +163,17 @@ else {
 
 # Test if requirement is ok
 #--------------------------
+$atleastonerpm=0;
 foreach my $target (keys %CHOOSEDTARGET) {
+	if ($target =~ /RPM/i)
+	{
+		if ($atleastonerpm && ! $ENV{"DESTI"})
+		{
+			print "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell package it must create subdirs for each package.\n";
+			exit;
+		}
+		$atleastonerpm=1;			
+	} 
     foreach my $req (split(/[,\s]/,$REQUIREMENTTARGET{$target})) {
         # Test    
         print "Test requirement for target $target: Search '$req'... ";
