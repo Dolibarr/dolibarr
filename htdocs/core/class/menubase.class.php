@@ -370,7 +370,8 @@ class Menubase
         $leftmenu = $myleftmenu;
 
         //ballayage du tableau
-        for ($x = 0; $x < count($tab); $x++)
+        $num = count($tab);
+        for ($x = 0; $x < $num; $x++)
         {
             //si un element a pour pere : $pere
             if ($tab[$x][1] == $pere)

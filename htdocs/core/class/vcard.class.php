@@ -53,8 +53,10 @@ function dol_quoted_printable_encode($input, $line_max = 76)
     $linebreak = "=0D=0A";
     $escape = "=";
     $output = "";
-
-    for ($j=0;$j<count($lines);$j++) {
+    
+    $num = count($lines);
+    for ($j = 0; $j < $num; $j++)
+    {
         $line = $lines[$j];
         $linlen = strlen($line);
         $newline = "";

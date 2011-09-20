@@ -390,7 +390,9 @@ class SimpleOpenID
         );
         // Send only required parameters to confirm validity
         $arr_signed = explode(",",str_replace('sreg.','sreg_',$_GET['openid_signed']));
-        for ($i=0; $i<count($arr_signed); $i++){
+        $num = count($arr_signed);
+        for ($i = 0; $i < $num; $i++)
+        {
             $s = str_replace('sreg_','sreg.', $arr_signed[$i]);
             $c = $_GET['openid_' . $arr_signed[$i]];
             // if ($c != ""){

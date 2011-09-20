@@ -46,8 +46,9 @@ function print_auguria_menu($db,$atarget,$type_user)
 	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'], '', $type_user, 'auguria');
 
 	print_start_menu_array_auguria();
-
-	for($i=0; $i<count($newTabMenu); $i++)
+	
+	$num = count($newTabMenu);
+	for($i = 0; $i < $num; $i++)
 	{
 		if ($newTabMenu[$i]['enabled'] == true)
 		{

@@ -359,7 +359,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 								  );
 
     				// Header
-   					for($i=0;$i<count($header);$i++)
+    				$num = count($header);
+   					for($i = 0; $i < $num; $i++)
    					{
    						$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
    					}
@@ -383,8 +384,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 
 							$pdf-> SetY(40);
-
-							for($i=0;$i<count($header);$i++)
+							
+							$num = count($header);
+							for($i = 0; $i < $num; $i++)
 							{
 								$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
 							}

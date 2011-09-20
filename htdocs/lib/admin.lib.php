@@ -700,7 +700,8 @@ function Activate($value,$withdeps=1)
         if (is_array($objMod->depends) && !empty($objMod->depends))
         {
             // Activation des modules dont le module depend
-            for ($i = 0; $i < count($objMod->depends); $i++)
+            $num = count($objMod->depends);
+            for ($i = 0; $i < $num; $i++)
             {
                 if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->depends[$i].".class.php"))
                 {
@@ -712,7 +713,8 @@ function Activate($value,$withdeps=1)
         if (isset($objMod->conflictwith) && is_array($objMod->conflictwith))
         {
             // Desactivation des modules qui entrent en conflit
-            for ($i = 0; $i < count($objMod->conflictwith); $i++)
+            $num = count($objMod->conflictwith);
+            for ($i = 0; $i < $num; $i++)
             {
                 if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->conflictwith[$i].".class.php"))
                 {

@@ -441,8 +441,9 @@ function print_eldy_menu($db,$atarget,$type_user)
 	$menuArbo = new Menubase($db,'eldy','top');
 
 	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'],'',$type_user,'eldy');
-
-	for($i=0; $i<count($newTabMenu); $i++)
+	
+	$num = count($newTabMenu);
+	for($i = 0; $i < $num; $i++)
 	{
 		if ($newTabMenu[$i]['enabled'] == true)
 		{

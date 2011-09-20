@@ -83,7 +83,8 @@ class DolCookie
 		{
 			$this->cookiearray = explode("|",$_COOKIE[$this->myCookie]);
 			$this->myValue = "" ;
-			for ($f=0 ; $f<=count($this->cookiearray)-2; $f++)
+			$num = (count($this->cookiearray) - 2);
+			for ($f = 0; $f <= $num; $f++)
 			{
 				$this->myValue .= strval(chr($this->cookiearray[$f]/$this->myKey));
 			}
