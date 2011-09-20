@@ -173,9 +173,12 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 	/**
 	 *	Generate Header
-	 *	@param  pdf         Pdf object
-	 *	@param  page        Current page number
-	 *	@param  pages       Total number of pages
+	 *
+	 *	@param  PDF			&$pdf        	Pdf object
+	 *	@param  int			$page        	Current page number
+	 *	@param  int			$pages       	Total number of pages
+	 *	@param	Translate	$outputlangs	Object language for output
+	 *	@return	void
 	 */
 	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
