@@ -96,16 +96,15 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Add facture to withdrawal
-     *
-     *  @param	int		$facture_id 	id invoice to add
-     *  @param	int		$client_id  	id invoice customer
-     *  @param	string	$client_nom 	name of cliente
-     *  @param	int		$amount 		amount of invoice
-     *  @param	string	$code_banque 	code of bank withdrawal
-     *  @param	string	$code_guichet 	code of bank's office
-     *  @param	string	$number bank 	account number
-     *  @param  string	$number_key 	number key of account number
-     *	@return	int						>0 if OK, <0 if KO
+     *    @param	facture_id id invoice to add
+     *    @param	client_id  id invoice customer
+     *    @param	client_nom name of cliente
+     *    @param	amount amount of invoice
+     *    @param	code_banque code of bank withdrawal
+     *    @param	code_guichet code of bank's office
+     *    @param	number bank account number
+     *    @param  number_key number key of account number
+     *	@return	int	>0 if OK, <0 if KO
      */
     function AddFacture($facture_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key)
     {
@@ -154,16 +153,15 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Add line to withdrawal
-     *
-     *	@param	int		&$line_id 		id line to add
-     *	@param	int		$client_id  	id invoice customer
-     *	@param	string	$client_nom 	name of cliente
-     *	@param	int		$amount 		amount of invoice
-     *	@param	string	$code_banque 	code of bank withdrawal
-     *	@param	string	$code_guichet 	code of bank's office
-     *	@param	string	$number 		bank account number
-     *	@param  string	$number_key 	number key of account number
-     *	@return	int						>0 if OK, <0 if KO
+     *	@param	ligne_id id line to add
+     *	@param	client_id  id invoice customer
+     *	@param	client_nom name of cliente
+     *	@param	amount amount of invoice
+     *	@param	code_banque code of bank withdrawal
+     *	@param	code_guichet code of bank's office
+     *	@param	number bank account number
+     *	@param  number_key number key of account number
+     *	@return	int	>0 if OK, <0 if KO
      */
     function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key)
     {
@@ -236,9 +234,8 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Read errors
-     *
-     *  @param	int		$error 		id of error
-     *	@return	array 				Array of errors
+     *   @param	error id of error
+     *	@return	array of errors
      */
     function ReadError($error)
     {
@@ -251,9 +248,8 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Get object and lines from database
-     *
-     *	@param	int		$rowid		id of object to load
-     *	@return	int					>0 if OK, <0 if KO
+     *	@param	rowid	id of object to load
+     *	@return	int		>0 if OK, <0 if KO
      */
     function fetch($rowid)
     {
@@ -312,10 +308,7 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     * Set credite
-     *
-     * @deprecated
-     * @return		int		<0 if KO, >0 if OK
+     *     @deprecated
      */
     function set_credite()
     {
@@ -341,7 +334,7 @@ class BonPrelevement extends CommonObject
             {
                 $facs = array();
                 $facs = $this->_get_list_factures();
-
+                
                 $num=count($facs);
                 for ($i = 0; $i < $num; $i++)
                 {
@@ -393,10 +386,9 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Set withdrawal to creditet status
-     *
-     *	@param	User		$user		id of user
-     *	@param 	timestamp	$date		date of action
-     *	@return	int						>0 if OK, <0 if KO
+     *	@param	user	id of user
+     *	@param 	date	date of action
+     *	@return	int		>0 if OK, <0 if KO
      */
     function set_infocredit($user, $date)
     {
@@ -516,11 +508,10 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Set withdrawal to transmited status
-     *
-     *	@param	User		$user		id of user
-     *	@param 	timestamp	$date		date of action
-     *	@param	string		$method		method of transmision to bank
-     *	@return	int						>0 if OK, <0 if KO
+     *	@param	user	id of user
+     *	@param 	date	date of action
+     *	@param	method	method of transmision to bank
+     *	@return	int		>0 if OK, <0 if KO
      */
     function set_infotrans($user, $date, $method)
     {
@@ -584,7 +575,6 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Get invoice list
-     *
      *	@return	array id of invoices
      */
     function _get_list_factures()
@@ -633,8 +623,7 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Returns amount of withdrawal
-     *
-     *	@return		double	 	Total amount
+     *	@return double	 total amount
      */
     function SommeAPrelever()
     {
@@ -670,10 +659,9 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Get number of invoices to withdrawal
-     *
-     *	@param	int		$banque		bank
-     *	@param	int		$agence		agence
-     *	@return	int					<O if KO, number of invoices if OK
+     *	@param	banque	bank
+     *	@param	agence	agence
+     *	@return	int		<O if KO, number of invoices if OK
      */
     function NbFactureAPrelever($banque=0,$agence=0)
     {
@@ -714,11 +702,10 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Create a withdraw
-     *
-     *	@param 	int		$banque		code of bank
-     *	@param	int		$guichet	code of banck office
-     *	@param	string	$mode		real=do action, simu=test only
-     *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
+     *	@param 	banque	code of bank
+     *	@param	guichet	code of banck office
+     *	@param	mode	real=do action, simu=test only
+     *	@return	int		<0 if KO, nbre of invoice withdrawed if OK
      */
     function Create($banque=0, $guichet=0, $mode='real')
     {
@@ -868,6 +855,7 @@ class BonPrelevement extends CommonObject
 
             /*
              * Traitements
+             *
              */
             if (!$error)
             {
@@ -927,6 +915,7 @@ class BonPrelevement extends CommonObject
 
             /*
              * Creation process
+             *
              */
             if (!$error)
             {
@@ -949,7 +938,8 @@ class BonPrelevement extends CommonObject
                          * $fac[8] : client nom
                          * $fac[2] : client id
                          */
-                        $ri = $bonprev->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6]);
+                        $ri = $bonprev->AddFacture($fac[0], $fac[2], $fac[8], $fac[7],
+                        $fac[3], $fac[4], $fac[5], $fac[6]);
                         if ($ri <> 0)
                         {
                             $error++;
@@ -1015,6 +1005,7 @@ class BonPrelevement extends CommonObject
 
             /*
              * Update total
+             *
              */
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
@@ -1032,6 +1023,7 @@ class BonPrelevement extends CommonObject
 
             /*
              * Rollback or Commit
+             *
              */
             if (!$error)
             {
@@ -1054,10 +1046,9 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Returns clickable name (with picto)
-     *
-     *	@param	int		$withpicto	link with picto
-     *	@param	string	$option		link target
-     *	@return	string				URL of target
+     *	@param		withpicto	link with picto
+     *	@param		option		link target
+     *	@return		string		URL of target
      */
     function getNomUrl($withpicto=0,$option='')
     {
@@ -1082,9 +1073,8 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Delete a notification def by id
-     *
-     *	@param	int		$rowid		id of notification
-     *	@return	int					0 if OK, <0 if KO
+     *	@param	rowid	id of notification
+     *	@return	int		0 if OK, <0 if KO
      */
     function DeleteNotificationById($rowid)
     {
@@ -1105,10 +1095,9 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Delete a notification
-     *
-     *	@param	User	$user		notification user
-     *	@param	string	$action		notification action
-     *	@return	int					>0 if OK, <0 if KO
+     *	@param	user	notification user
+     *	@param	action	notification action
+     *	@return	int		>0 if OK, <0 if KO
      */
     function DeleteNotification($user, $action)
     {
@@ -1129,11 +1118,9 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Add a notification
-     *
-     *	@param	DoliDB	$db			database handler
-     *	@param	User	$user		notification user
-     *	@param	string	$action		notification action
-     *	@return	int					0 if OK, <0 if KO
+     *	@param	user	notification user
+     *	@param	action	notification action
+     *	@return	int		0 if OK, <0 if KO
      */
     function AddNotification($db, $user, $action)
     {
@@ -1161,13 +1148,13 @@ class BonPrelevement extends CommonObject
 
 
     /**
-     *	Generate a withdrawal file. Generation Formats:
-     *   France: CFONB
-     *   Spain:  AEB19 (if external module EsAEB is enabled)
-     *   Others: Warning message
+     *	Generate a withdrawal file
+     *   Generation Formats:
+     *   	France: CFONB
+     *       Spain:  AEB19 (if external module EsAEB is enabled)
+     *       Others: Warning message
      *	File is generated with name this->filename
-     *
-     *	@return		int			0 if OK, <0 if KO
+     *	@return	int	0 if OK, <0 if KO
      */
     //TODO: Optimize code to read lines in a single function
     function Generate()
@@ -1211,17 +1198,15 @@ class BonPrelevement extends CommonObject
                     {
                         $obj = $this->db->fetch_object($resql);
 
-                        $esaeb19->agregaRecibo(
-                            $idOrdenante,
-    	                	"idcliente".$i+1,
-                            $obj->client_nom,
-                            $obj->code_banque,
-                            $obj->code_guichet,
-                            $obj->cle_rib,
-                            $obj->number,
-                            $obj->amount,
-    	                	"Fra.".$obj->facnumber." ".$obj->amount
-                        );
+                        $esaeb19->agregaRecibo($idOrdenante,
+	                	"idcliente".$i+1,
+                        $obj->client_nom,
+                        $obj->code_banque,
+                        $obj->code_guichet,
+                        $obj->cle_rib,
+                        $obj->number,
+                        $obj->amount,
+	                	"Fra.".$obj->facnumber." ".$obj->amount);
 
                         $this->total = $this->total + $obj->amount;
 
@@ -1306,16 +1291,14 @@ class BonPrelevement extends CommonObject
                 {
                     $row = $this->db->fetch_row($resql);
 
-                    $this->EnregDestinataire(
-                        $row[0],
-                        $row[1],
-                        $row[2],
-                        $row[3],
-                        $row[4],
-                        $row[5],
-                        $row[6],
-                        $row[7]
-                    );
+                    $this->EnregDestinataire($row[0],
+                    $row[1],
+                    $row[2],
+                    $row[3],
+                    $row[4],
+                    $row[5],
+                    $row[6],
+                    $row[7]);
 
                     $this->total = $this->total + $row[5];
 
@@ -1379,16 +1362,14 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Write recipient of request (customer)
-     *
-     *	@param	int		$rowid			id of line
-     *	@param	string	$client_nom		name of customer
-     *	@param	string	$rib_banque		code of bank
-     *	@param	string	$rib_guichet 	code of bank office
-     *	@param	string	$rib_number		bank account
-     *	@param	float	$amount			amount
-     *	@param	string	$facnumber		ref of invoice
-     *	@param	int		$facid			id of invoice
-     *	@return	void
+     *	@param	rowid		id of line
+     *	@param	client_nom	name of customer
+     *	@param	rib_banque	code of bank
+     *	@param	rib_guichet code of bank office
+     *	@param	rib_number	bank account
+     *	@param	amount		amount
+     *	@param	facnumber	ref of invoice
+     *	@param	facid		id of invoice
      */
     function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount, $facnumber, $facid)
     {
@@ -1450,8 +1431,6 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Write sender of request (me)
-     *
-     *	@return	void
      */
     function EnregEmetteur()
     {
@@ -1516,9 +1495,7 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Write end
-     *
-     *	@param	int		$total	total amount
-     *	@return	void
+     *	@param	total	total amount
      */
     function EnregTotal($total)
     {
@@ -1577,9 +1554,8 @@ class BonPrelevement extends CommonObject
 
     /**
      *    Return status label of object
-     *
-     *    @param    int		$mode   0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-     * 	  @return	string     		Label
+     *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+     * 	  @return     string      Label
      */
     function getLibStatut($mode=0)
     {
@@ -1588,10 +1564,9 @@ class BonPrelevement extends CommonObject
 
     /**
      *    Return status label for a status
-     *
-     *    @param	int		$statut     id statut
-     *    @param	int		$mode   	0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-     * 	  @return	string  		    Label
+     *    @param      statut      id statut
+     *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+     * 	  @return     string      Label
      */
     function LibStatut($statut,$mode=0)
     {
