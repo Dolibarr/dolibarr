@@ -106,6 +106,12 @@ if (empty($account->socid)) $account->socid=$soc->id;
 
 if ($_GET["socid"] && $_GET["action"] != 'edit')
 {
+	// Check BBAN
+	if (! checkBanForAccount($account))
+	{
+		print '<div class="warning">'.$langs->trans("RIBControlError").'</div><br>';
+	}
+
 	print '<table class="border" width="100%">';
 
 	print '<tr><td valign="top" width="35%">'.$langs->trans("Bank").'</td>';
@@ -159,11 +165,21 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 
 	print '</table>';
 
-	// Check BBAN
-	if (! checkBanForAccount($account))
+	print '</div>';
+
+
+
+	/*
+	 * Barre d'actions
+	 */
+	print '<div class="tabsAction">';
+
+	if ($user->rights->societe->creer)
 	{
-		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
+		print '<a class="butAction" href="rib.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 	}
+
+	print '</div>';
 
 }
 
@@ -178,7 +194,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 
 	$form = new Form($db);
 
-	dol_htmloutput_mesg($message);
+	if ($message) { print "$message<br><br>\n"; }
 
 	print '<form action="rib.php?socid='.$soc->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -251,23 +267,6 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 
 
 dol_fiche_end();
-
-
-if ($_GET["socid"] && $_GET["action"] != 'edit')
-{
-	/*
-	 * Barre d'actions
-	 */
-	print '<div class="tabsAction">';
-
-	if ($user->rights->societe->creer)
-	{
-		print '<a class="butAction" href="rib.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-	}
-
-	print '</div>';
-}
-
 
 $db->close();
 
