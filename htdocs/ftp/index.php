@@ -654,7 +654,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		if ($conn_id)
 		{
 			// turn on passive mode transfers
-			//ftp_pasv ($conn_id, true) ;
+			//ftp_pasv ($conn_id, true);
 
 			if ($ftp_user)
 			{

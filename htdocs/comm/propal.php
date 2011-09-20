@@ -803,8 +803,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	$productid = $_POST['productid'] ;
 	if ($productid)
 	{
-		$product = new Product($db) ;
-		$res=$product->fetch($productid) ;
+		$product = new Product($db);
+		$res=$product->fetch($productid);
 		$price_min = $product->price_min;
 		if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)	$price_min = $product->multiprices_min[$object->client->price_level];
 	}

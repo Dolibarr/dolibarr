@@ -171,7 +171,7 @@ $sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);
 
 //print $sql;
-$result = $db->query($sql) ;
+$result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);

@@ -345,7 +345,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 
 		// Price minimum
 		print '<tr><td>' ;
-		$text=$langs->trans('MinPrice') ;
+		$text=$langs->trans('MinPrice');
 		print $html->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
 		if ($product->price_base_type == 'TTC')
 		{
@@ -436,20 +436,20 @@ if ($socid && $conf->global->PRODUIT_MULTIPRICES) $sql.= " AND p.price_level = "
 $sql.= " ORDER BY p.date_price DESC, p.price_level ASC";
 //$sql .= $db->plimit();
 
-$result = $db->query($sql) ;
+$result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
 
 	if (! $num)
 	{
-		$db->free($result) ;
+		$db->free($result);
 
 		// Il doit au moins y avoir la ligne de prix initial.
 		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
 		$product->update_price($product->id, $product->price, 'HT', $user, $newprice_min);
 
-		$result = $db->query($sql) ;
+		$result = $db->query($sql);
 		$num = $db->num_rows($result);
 	}
 

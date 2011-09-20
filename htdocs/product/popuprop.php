@@ -106,7 +106,7 @@ $sql.= " GROUP BY (p.rowid)";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit ,$offset);
 
-$result=$db->query($sql) ;
+$result=$db->query($sql);
 if ($result)
 {
   $num = $db->num_rows($result);

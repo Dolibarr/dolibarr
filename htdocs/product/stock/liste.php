@@ -59,7 +59,7 @@ if ($sall)
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit + 1 ,$offset);
 
-$result = $db->query($sql) ;
+$result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);

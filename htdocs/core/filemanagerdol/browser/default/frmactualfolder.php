@@ -66,7 +66,7 @@ require('../../../../main.inc.php'); ?>
 		{}
 
 		// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
-		d = d.replace( /.*?(?:\.|$)/, '' ) ;
+		d = d.replace( /.*?(?:\.|$)/, '' );
 
 		if ( d.length == 0 )
 			break ;		// It was not able to detect the domain.
@@ -80,7 +80,7 @@ require('../../../../main.inc.php'); ?>
 			break ;
 		}
 	}
-})() ;
+})();
 
 function SetCurrentFolder( resourceType, folderPath )
 {

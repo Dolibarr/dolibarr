@@ -141,7 +141,7 @@ if ($_GET["id"])
 		$sql .= " WHERE ue.fk_user = u.rowid ";
 		$sql .= " AND ue.fk_entrepot = ".$entrepot->id;
 
-		$resql = $db->query($sql) ;
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);

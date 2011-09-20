@@ -237,7 +237,7 @@ class Don extends CommonObject
         $this->amount = trim($this->amount);
 
         $map = range(0,9);
-        for ($i = 0; $i < dol_strlen($this->amount) ; $i++)
+        for ($i = 0; $i < dol_strlen($this->amount); $i++)
         {
             if (!isset($map[substr($this->amount, $i, 1)] ))
             {

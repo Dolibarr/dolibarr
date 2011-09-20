@@ -53,7 +53,7 @@ class Critique {
 		$sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID. " AND d.languages_id=".$conf->global->OSC_LANGUAGE_ID;
 		$sql .= " AND r.reviews_id=$id";
 
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 
 		if ( $result )
 		{

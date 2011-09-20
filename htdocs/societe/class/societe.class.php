@@ -816,7 +816,7 @@ class Societe extends CommonObject
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
         $sql .= " WHERE l.rowid = ".$id;
 
-        $result = $this->db->query($sql) ;
+        $result = $this->db->query($sql);
 
         if ( $result )
         {

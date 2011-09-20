@@ -25,26 +25,26 @@
 
 function SetXmlHeaders()
 {
-	ob_end_clean() ;
+	ob_end_clean();
 
 	// Prevent the browser from caching the result.
 	// Date in the past
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT') ;
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 	// always modified
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT') ;
+	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 	// HTTP/1.1
-	header('Cache-Control: no-store, no-cache, must-revalidate') ;
-	header('Cache-Control: post-check=0, pre-check=0', false) ;
+	header('Cache-Control: no-store, no-cache, must-revalidate');
+	header('Cache-Control: post-check=0, pre-check=0', false);
 	// HTTP/1.0
-	header('Pragma: no-cache') ;
+	header('Pragma: no-cache');
 
 	// Set the response format.
-	header( 'Content-Type: text/xml; charset=utf-8' ) ;
+	header( 'Content-Type: text/xml; charset=utf-8' );
 }
 
 function CreateXmlHeader( $command, $resourceType, $currentFolder )
 {
-	SetXmlHeaders() ;
+	SetXmlHeaders();
 
 	// Create the XML document header.
 	echo '<?xml version="1.0" encoding="utf-8" ?>' ;
@@ -66,23 +66,23 @@ function CreateXmlFooter()
 function SendError( $number, $text )
 {
 	if ( $_GET['Command'] == 'FileUpload' )
-		SendUploadResults( $number, "", "", $text ) ;
+		SendUploadResults( $number, "", "", $text );
 
 	if ( isset( $GLOBALS['HeaderSent'] ) && $GLOBALS['HeaderSent'] )
 	{
-		SendErrorNode( $number, $text ) ;
-		CreateXmlFooter() ;
+		SendErrorNode( $number, $text );
+		CreateXmlFooter();
 	}
 	else
 	{
-		SetXmlHeaders() ;
+		SetXmlHeaders();
 
 		// Create the XML document header
 		echo '<?xml version="1.0" encoding="utf-8" ?>' ;
 
 		echo '<Connector>' ;
 
-		SendErrorNode( $number, $text ) ;
+		SendErrorNode( $number, $text );
 
 		echo '</Connector>' ;
 	}

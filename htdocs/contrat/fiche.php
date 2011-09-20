@@ -290,7 +290,7 @@ if ($action == 'addline' && $user->rights->contrat->creer)
 
     	if($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
 		{
-			$object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
+			$object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie));
 			$result = -1 ;
 		}
 		else

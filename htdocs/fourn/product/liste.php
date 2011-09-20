@@ -140,7 +140,7 @@ $sql .= $db->plimit($limit + 1 ,$offset);
 
 dol_syslog("fourn/product/liste: sql=".$sql);
 
-$resql = $db->query($sql) ;
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);

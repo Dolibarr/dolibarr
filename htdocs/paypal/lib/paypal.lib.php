@@ -636,7 +636,7 @@ function hash_call($methodName,$nvpStr)
     if (curl_errno($ch))
     {
         // moving to display page to display curl errors
-        $_SESSION['curl_error_no']=curl_errno($ch) ;
+        $_SESSION['curl_error_no']=curl_errno($ch);
         $_SESSION['curl_error_msg']=curl_error($ch);
 
         //Execute the Error handling module to display errors.

@@ -25,13 +25,13 @@
 function RemoveFromStart( $sourceString, $charToRemove )
 {
 	$sPattern = '|^' . $charToRemove . '+|' ;
-	return preg_replace( $sPattern, '', $sourceString ) ;
+	return preg_replace( $sPattern, '', $sourceString );
 }
 
 function RemoveFromEnd( $sourceString, $charToRemove )
 {
 	$sPattern = '|' . $charToRemove . '+$|' ;
-	return preg_replace( $sPattern, '', $sourceString ) ;
+	return preg_replace( $sPattern, '', $sourceString );
 }
 
 function FindBadUtf8( $string )
@@ -65,16 +65,16 @@ function ConvertToXmlAttribute( $value )
 	}
 	else
 	{
-		$os = php_uname() ;
+		$os = php_uname();
 	}
 
 	if ( strtoupper( substr( $os, 0, 3 ) ) === 'WIN' || FindBadUtf8( $value ) )
 	{
-		return ( utf8_encode( htmlspecialchars( $value ) ) ) ;
+		return ( utf8_encode( htmlspecialchars( $value ) ) );
 	}
 	else
 	{
-		return ( htmlspecialchars( $value ) ) ;
+		return ( htmlspecialchars( $value ) );
 	}
 }
 
@@ -91,12 +91,12 @@ function IsHtmlExtension( $ext, $htmlExtensions )
 	{
 		return false ;
 	}
-	$lcaseHtmlExtensions = array() ;
+	$lcaseHtmlExtensions = array();
 	foreach ( $htmlExtensions as $key => $val )
 	{
-		$lcaseHtmlExtensions[$key] = strtolower( $val ) ;
+		$lcaseHtmlExtensions[$key] = strtolower( $val );
 	}
-	return in_array( $ext, $lcaseHtmlExtensions ) ;
+	return in_array( $ext, $lcaseHtmlExtensions );
 }
 
 /**
@@ -109,7 +109,7 @@ function IsHtmlExtension( $ext, $htmlExtensions )
  */
 function DetectHtml( $filePath )
 {
-	$fp = @fopen( $filePath, 'rb' ) ;
+	$fp = @fopen( $filePath, 'rb' );
 
 	//open_basedir restriction, see #1906
 	if ( $fp === false || !flock( $fp, LOCK_SH ) )
@@ -117,25 +117,25 @@ function DetectHtml( $filePath )
 		return -1 ;
 	}
 
-	$chunk = fread( $fp, 1024 ) ;
-	flock( $fp, LOCK_UN ) ;
-	fclose( $fp ) ;
+	$chunk = fread( $fp, 1024 );
+	flock( $fp, LOCK_UN );
+	fclose( $fp );
 
-	$chunk = strtolower( $chunk ) ;
+	$chunk = strtolower( $chunk );
 
 	if (!$chunk)
 	{
 		return false ;
 	}
 
-	$chunk = trim( $chunk ) ;
+	$chunk = trim( $chunk );
 
 	if ( preg_match( "/<!DOCTYPE\W*X?HTML/sim", $chunk ) )
 	{
 		return true;
 	}
 
-	$tags = array( '<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title' ) ;
+	$tags = array( '<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title' );
 
 	foreach( $tags as $tag )
 	{

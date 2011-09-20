@@ -63,48 +63,48 @@ function CreateFolder()
 
 	while ( true )
 	{
-		sFolderName = prompt( 'Type the name of the new folder:', '' ) ;
+		sFolderName = prompt( 'Type the name of the new folder:', '' );
 
 		if ( sFolderName == null )
 			return ;
 		else if ( sFolderName.length == 0 )
-			alert( 'Please type the folder name' ) ;
+			alert( 'Please type the folder name' );
 		else
 			break ;
 	}
 
-	oConnector.SendCommand( 'CreateFolder', 'NewFolderName=' + encodeURIComponent( sFolderName) , CreateFolderCallBack ) ;
+	oConnector.SendCommand( 'CreateFolder', 'NewFolderName=' + encodeURIComponent( sFolderName) , CreateFolderCallBack );
 }
 
 function CreateFolderCallBack( fckXml )
 {
 	if ( oConnector.CheckError( fckXml ) == 0 )
-		window.parent.frames['frmResourcesList'].Refresh() ;
+		window.parent.frames['frmResourcesList'].Refresh();
 
 	/*
 	// Get the current folder path.
-	var oNode = fckXml.SelectSingleNode( 'Connector/Error' ) ;
-	var iErrorNumber = parseInt( oNode.attributes.getNamedItem('number').value ) ;
+	var oNode = fckXml.SelectSingleNode( 'Connector/Error' );
+	var iErrorNumber = parseInt( oNode.attributes.getNamedItem('number').value );
 
 	switch ( iErrorNumber )
 	{
 		case 0 :
-			window.parent.frames['frmResourcesList'].Refresh() ;
+			window.parent.frames['frmResourcesList'].Refresh();
 			break ;
 		case 101 :
-			alert( 'Folder already exists' ) ;
+			alert( 'Folder already exists' );
 			break ;
 		case 102 :
-			alert( 'Invalid folder name' ) ;
+			alert( 'Invalid folder name' );
 			break ;
 		case 103 :
-			alert( 'You have no permissions to create the folder' ) ;
+			alert( 'You have no permissions to create the folder' );
 			break ;
 		case 110 :
-			alert( 'Unknown error creating folder' ) ;
+			alert( 'Unknown error creating folder' );
 			break ;
 		default :
-			alert( 'Error creating folder. Error number: ' + iErrorNumber ) ;
+			alert( 'Error creating folder. Error number: ' + iErrorNumber );
 			break ;
 	}
 	*/

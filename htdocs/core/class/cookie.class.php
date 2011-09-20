@@ -88,7 +88,7 @@ class DolCookie
 				$this->myValue .= strval(chr($this->cookiearray[$f]/$this->myKey));
 			}
 
-			return(base64_decode($this->myValue)) ;
+			return(base64_decode($this->myValue));
 		}
 		else
 		{

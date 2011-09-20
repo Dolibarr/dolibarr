@@ -57,7 +57,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofexclusion),'\.meta$|\.png','date',SORT_DESC);
 
 		// liste les fichiers
-		$files = array() ;
+		$files = array();
 		$factures_bak = $factures ;
 		foreach($_POST['toGenerate'] as $basename){
 			foreach($factures as $facture){

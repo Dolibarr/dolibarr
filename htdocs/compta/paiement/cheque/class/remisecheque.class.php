@@ -654,7 +654,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " WHERE rowid < ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
 
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if (! $result)
 		{
 			$this->errno = -1035;
@@ -667,7 +667,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " WHERE rowid > ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
 
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if (! $result)
 		{
 			$this->errno = -1035;

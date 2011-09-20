@@ -74,7 +74,7 @@ $sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql) ;
+$result = $db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);

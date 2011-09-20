@@ -330,7 +330,7 @@ class Expedition extends CommonObject
         if ($ref_int) $sql.= " AND e.ref_int='".$this->db->escape($ref_int)."'";
 
 		dol_syslog("Expedition::fetch sql=".$sql);
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			if ($this->db->num_rows($result))

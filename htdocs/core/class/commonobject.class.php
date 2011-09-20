@@ -653,7 +653,7 @@ abstract class CommonObject
 		if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.(! empty($conf->entities[$this->element]) ? $conf->entities[$this->element] : $conf->entity).')';
 
 		//print $sql."<br>";
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if (! $result)
 		{
 			$this->error=$this->db->error();
@@ -675,7 +675,7 @@ abstract class CommonObject
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
 		//print $sql."<br>";
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if (! $result)
 		{
 			$this->error=$this->db->error();

@@ -63,7 +63,7 @@ class BoutiqueCommande
 		$sql.= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders";
 		$sql.= " WHERE orders_id = ".$id;
 
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if ( $result )
 		{
 			$array = $this->db->fetch_array($result);

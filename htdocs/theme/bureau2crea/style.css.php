@@ -320,7 +320,7 @@ div.tmenu {
     padding: 0px;
     margin: 10px 0px 10px 0px;
     font-size: 13px;
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_mainNav.jpg' ?>) ;
+    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_mainNav.jpg' ?>);
     height: 22px;
     border-bottom: 2px solid #842F00;
 <?php } ?>

@@ -65,7 +65,7 @@ $sql.= " AND e.entity = ".$conf->entity;
 $sql.= " ORDER BY e.statut DESC ";
 $sql.= $db->plimit(15 ,0);
 
-$result = $db->query($sql) ;
+$result = $db->query($sql);
 
 if ($result)
 {
@@ -119,7 +119,7 @@ $sql.= $db->order("datem","DESC");
 $sql.= $db->plimit($max,0);
 
 dol_syslog("Index:list stock movements sql=".$sql, LOG_DEBUG);
-$resql = $db->query($sql) ;
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);

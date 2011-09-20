@@ -125,7 +125,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
 
 //print $sql;
-$resql = $db->query($sql) ;
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);

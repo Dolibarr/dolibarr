@@ -60,7 +60,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 $upload_dir = $conf->societe->dir_output . "/" . $socid ;
-$courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
+$courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid);
 
 $object = new Societe($db);
 

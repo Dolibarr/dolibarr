@@ -139,7 +139,7 @@ class Promotion {
 		$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."categories as c,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."categories_description as cd";
 		$sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".$conf->global->OSC_LANGUAGE_ID;
 		$sql .= " AND c.categories_id = ".$id;
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 
 		if ( $result ) {
 			$result = $this->db->fetch_array($result);

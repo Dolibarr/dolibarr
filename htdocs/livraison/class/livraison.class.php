@@ -251,7 +251,7 @@ class Livraison extends CommonObject
 		$sql.= " WHERE l.rowid = ".$id;
 
 		dol_syslog("Livraison::fetch sql=".$sql, LOG_DEBUG);
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			if ($this->db->num_rows($result))

@@ -393,7 +393,7 @@ class ProductFournisseur extends Product
         $sql.= " AND entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::fetch_fourn_data sql=".$sql);
-        $result = $this->db->query($sql) ;
+        $result = $this->db->query($sql);
         if ($result)
         {
             $result = $this->db->fetch_array($result);
@@ -425,7 +425,7 @@ class ProductFournisseur extends Product
         $sql.= " AND pf.rowid = pfp.fk_product_fournisseur";
 
         dol_syslog(get_class($this)."::fetch_product_fournisseur_price sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql) ;
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);

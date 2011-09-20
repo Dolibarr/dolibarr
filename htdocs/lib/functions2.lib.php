@@ -345,7 +345,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
     if($tableMarkup) $text = '<table '.$tableoptions.'>' ;
     foreach($data as $key => $item){
         if(is_array($item)){
-            $text.=array2tr($item,$troptions,$tdoptions) ;
+            $text.=array2tr($item,$troptions,$tdoptions);
         } else {
             $text.= '<tr '.$troptions.'>' ;
             $text.= '<td '.$tdoptions.'>'.$key.'</td>' ;

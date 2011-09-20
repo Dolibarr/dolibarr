@@ -203,7 +203,7 @@ class Contrat extends CommonObject
 		$sql.= " commentaire = '".$this->db->escape($comment)."'";
 		$sql.= " WHERE rowid = ".$line_id . " AND statut = 4";
 
-		$resql = $this->db->query($sql) ;
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			// Appel des triggers
@@ -287,7 +287,7 @@ class Contrat extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
 		$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
-		$resql = $this->db->query($sql) ;
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?1:0);
@@ -327,7 +327,7 @@ class Contrat extends CommonObject
 		else $sql.= " WHERE rowid=".$id;
 
 		dol_syslog("Contrat::fetch sql=".$sql, LOG_DEBUG);
-		$resql = $this->db->query($sql) ;
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$result = $this->db->fetch_array($resql);

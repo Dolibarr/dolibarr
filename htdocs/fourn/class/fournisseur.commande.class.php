@@ -125,7 +125,7 @@ class CommandeFournisseur extends Commande
         else $sql.= " AND c.rowid=".$id;
 
         dol_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
-        $resql = $this->db->query($sql) ;
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
@@ -1421,7 +1421,7 @@ class CommandeFournisseur extends Commande
             $sql .= " VALUES (".$idc.", '" . $this->db->escape($libelle) . "','" . $this->db->escape($comclient->lines[$i]->desc) . "'";
             $sql .= ",".$comclient->lines[$i]->fk_product.",'".price2num($comclient->lines[$i]->price)."'";
             $sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->localtax1_tx.", ".$comclient->lines[$i]->localtax2_tx.", ".$comclient->lines[$i]->remise_percent;
-            $sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."') ;";
+            $sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."');";
             if ( $this->db->query( $sql) )
             {
                 $this->update_price();

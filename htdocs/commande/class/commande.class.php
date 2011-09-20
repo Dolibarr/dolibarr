@@ -1220,7 +1220,7 @@ class Commande extends CommonObject
         if ($ref_int) $sql.= " AND c.ref_int='".$this->db->escape($ref_int)."'";
 
         dol_syslog("Commande::fetch sql=".$sql, LOG_DEBUG);
-        $result = $this->db->query($sql) ;
+        $result = $this->db->query($sql);
         if ($result)
         {
             $obj = $this->db->fetch_object($result);

@@ -59,7 +59,7 @@ class ComptaCompte
 	  $sql .= " FROM ".MAIN_DB_PREFIX."compta_compte_generaux ";
 	  $sql .= " WHERE numero = '" .trim($this->numero)."'";
 
-	  $resql = $this->db->query($sql) ;
+	  $resql = $this->db->query($sql);
 
 	  if ( $resql )
 	    {

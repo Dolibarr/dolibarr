@@ -205,7 +205,7 @@ class Deplacement extends CommonObject
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog("Deplacement::fetch sql=".$sql, LOG_DEBUG);
-		$result = $this->db->query($sql) ;
+		$result = $this->db->query($sql);
 		if ( $result )
 		{
 			$obj = $this->db->fetch_object($result);
@@ -341,7 +341,7 @@ class Deplacement extends CommonObject
         $sql.= " WHERE active = ".$active;
 
         dol_syslog("Deplacement::listOfTypes sql=".$sql, LOG_DEBUG);
-        $result = $this->db->query($sql) ;
+        $result = $this->db->query($sql);
         if ( $result )
         {
             $num = $this->db->num_rows($result);

@@ -95,7 +95,7 @@ function checkBanForAccount($account)
 
 	if ($country_code == 'FR')	// France rules
 	{
-		$coef = array(62, 34, 3) ;
+		$coef = array(62, 34, 3);
 		// Concatenation des differents codes.
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->number).trim($account->cle));
 		// On remplace les eventuelles lettres par des chiffres.
@@ -105,11 +105,11 @@ function checkBanForAccount($account)
 		// Multiplication de chaque groupe par les coef du tableau
 		for ($i=0, $s=0; $i<3; $i++)
 		{
-			$code = substr($rib, 7 * $i, 7) ;
+			$code = substr($rib, 7 * $i, 7);
 			$s += (0 + $code) * $coef[$i] ;
 		}
 		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
-		$cle_rib = 97 - ($s % 97) ;
+		$cle_rib = 97 - ($s % 97);
 		if ($cle_rib == $account->cle)
 		{
 			return true;

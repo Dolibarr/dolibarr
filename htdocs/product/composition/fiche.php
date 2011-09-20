@@ -152,7 +152,7 @@ if($action == 'search' )
 	}
 	$sql.= " ORDER BY p.ref ASC";
 
-	$resql = $db->query($sql) ;
+	$resql = $db->query($sql);
 }
 //print $sql;
 

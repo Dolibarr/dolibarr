@@ -85,7 +85,7 @@ class Fournisseur extends Societe
 		$sql.= " ".MAIN_DB_PREFIX."product_fournisseur_price as ppf";
 		$sql .= " WHERE fk_soc = ".$this->id." AND ppf.fk_product_fournisseur = pf.rowid";
 
-		$resql = $this->db->query($sql) ;
+		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
 			$row = $this->db->fetch_row($resql);

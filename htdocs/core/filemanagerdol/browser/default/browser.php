@@ -46,7 +46,7 @@ require('../../../../main.inc.php');
 		{}
 
 		// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
-		d = d.replace( /.*?(?:\.|$)/, '' ) ;
+		d = d.replace( /.*?(?:\.|$)/, '' );
 
 		if ( d.length == 0 )
 			break ;		// It was not able to detect the domain.
@@ -60,36 +60,36 @@ require('../../../../main.inc.php');
 			break ;
 		}
 	}
-})() ;
+})();
 
 function GetUrlParam( paramName )
 {
-	var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' ) ;
-	var oMatch = oRegex.exec( window.top.location.search ) ;
+	var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' );
+	var oMatch = oRegex.exec( window.top.location.search );
 
 	if ( oMatch && oMatch.length > 1 )
-		return decodeURIComponent( oMatch[1] ) ;
+		return decodeURIComponent( oMatch[1] );
 	else
 		return '' ;
 }
 
-var oConnector = new Object() ;
+var oConnector = new Object();
 oConnector.CurrentFolder	= '/' ;
 
-var sConnUrl = GetUrlParam( 'Connector' ) ;
+var sConnUrl = GetUrlParam( 'Connector' );
 
 // Gecko has some problems when using relative URLs (not starting with slash).
 if ( sConnUrl.substr(0,1) != '/' && sConnUrl.indexOf( '://' ) < 0 )
 	sConnUrl = window.location.href.replace( /browser.php.*$/, '' ) + sConnUrl ;
 
-oConnector.ConnectorUrl = sConnUrl + ( sConnUrl.indexOf('?') != -1 ? '&' : '?' ) ;
+oConnector.ConnectorUrl = sConnUrl + ( sConnUrl.indexOf('?') != -1 ? '&' : '?' );
 
-var sServerPath = GetUrlParam( 'ServerPath' ) ;
+var sServerPath = GetUrlParam( 'ServerPath' );
 if ( sServerPath.length > 0 )
 	oConnector.ConnectorUrl += 'ServerPath=' + encodeURIComponent( sServerPath ) + '&' ;
 
-oConnector.ResourceType		= GetUrlParam( 'Type' ) ;
-oConnector.ShowAllTypes		= ( oConnector.ResourceType.length == 0 ) ;
+oConnector.ResourceType		= GetUrlParam( 'Type' );
+oConnector.ShowAllTypes		= ( oConnector.ResourceType.length == 0 );
 
 if ( oConnector.ShowAllTypes )
 	oConnector.ResourceType = 'File' ;
@@ -98,19 +98,19 @@ oConnector.SendCommand = function( command, params, callBackFunction )
 {
 	var sUrl = this.ConnectorUrl + 'Command=' + command ;
 	sUrl += '&Type=' + this.ResourceType ;
-	sUrl += '&CurrentFolder=' + encodeURIComponent( this.CurrentFolder ) ;
+	sUrl += '&CurrentFolder=' + encodeURIComponent( this.CurrentFolder );
 
 	if ( params ) sUrl += '&' + params ;
 
 	// Add a random salt to avoid getting a cached version of the command execution
-	sUrl += '&uuid=' + new Date().getTime() ;
+	sUrl += '&uuid=' + new Date().getTime();
 
-	var oXML = new FCKXml() ;
+	var oXML = new FCKXml();
 
 	if ( callBackFunction )
-		oXML.LoadUrl( sUrl, callBackFunction ) ;	// Asynchronous load.
+		oXML.LoadUrl( sUrl, callBackFunction );	// Asynchronous load.
 	else
-		return oXML.LoadUrl( sUrl ) ;
+		return oXML.LoadUrl( sUrl );
 
 	return null ;
 }
@@ -118,53 +118,53 @@ oConnector.SendCommand = function( command, params, callBackFunction )
 oConnector.CheckError = function( responseXml )
 {
 	var iErrorNumber = 0 ;
-	var oErrorNode = responseXml.SelectSingleNode( 'Connector/Error' ) ;
+	var oErrorNode = responseXml.SelectSingleNode( 'Connector/Error' );
 
 	if ( oErrorNode )
 	{
-		iErrorNumber = parseInt( oErrorNode.attributes.getNamedItem('number').value, 10 ) ;
+		iErrorNumber = parseInt( oErrorNode.attributes.getNamedItem('number').value, 10 );
 
 		switch ( iErrorNumber )
 		{
 			case 0 :
 				break ;
 			case 1 :	// Custom error. Message placed in the "text" attribute.
-				alert( oErrorNode.attributes.getNamedItem('text').value ) ;
+				alert( oErrorNode.attributes.getNamedItem('text').value );
 				break ;
 			case 101 :
-				alert( 'Folder already exists' ) ;
+				alert( 'Folder already exists' );
 				break ;
 			case 102 :
-				alert( 'Invalid folder name' ) ;
+				alert( 'Invalid folder name' );
 				break ;
 			case 103 :
-				alert( 'You have no permissions to create the folder' ) ;
+				alert( 'You have no permissions to create the folder' );
 				break ;
 			case 110 :
-				alert( 'Unknown error creating folder' ) ;
+				alert( 'Unknown error creating folder' );
 				break ;
 			default :
-				alert( 'Error on your request. Error number: ' + iErrorNumber ) ;
+				alert( 'Error on your request. Error number: ' + iErrorNumber );
 				break ;
 		}
 	}
 	return iErrorNumber ;
 }
 
-var oIcons = new Object() ;
+var oIcons = new Object();
 
 oIcons.AvailableIconsArray = [
 	'ai','avi','bmp','cs','dll','doc','exe','fla','gif','htm','html','jpg','js',
 	'mdb','mp3','pdf','png','ppt','rdp','swf','swt','txt','vsd','xls','xml','zip' ] ;
 
-oIcons.AvailableIcons = new Object() ;
+oIcons.AvailableIcons = new Object();
 
 for ( var i = 0 ; i < oIcons.AvailableIconsArray.length ; i++ )
 	oIcons.AvailableIcons[ oIcons.AvailableIconsArray[i] ] = true ;
 
 oIcons.GetIcon = function( fileName )
 {
-	var sExtension = fileName.substr( fileName.lastIndexOf('.') + 1 ).toLowerCase() ;
+	var sExtension = fileName.substr( fileName.lastIndexOf('.') + 1 ).toLowerCase();
 
 	if ( this.AvailableIcons[ sExtension ] == true )
 		return sExtension ;
@@ -175,9 +175,9 @@ oIcons.GetIcon = function( fileName )
 function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 {
 	if (errorNumber == "1")
-		window.frames['frmUpload'].OnUploadCompleted( errorNumber, customMsg ) ;
+		window.frames['frmUpload'].OnUploadCompleted( errorNumber, customMsg );
 	else
-		window.frames['frmUpload'].OnUploadCompleted( errorNumber, fileName ) ;
+		window.frames['frmUpload'].OnUploadCompleted( errorNumber, fileName );
 }
 
 		</script>

@@ -101,7 +101,7 @@ $sql .= " WHERE p.fk_product_type <> 1";
 $sql .= " ORDER BY p.datec DESC ";
 $sql .= $db->plimit(15 ,0);
 
-$resql = $db->query($sql) ;
+$resql = $db->query($sql);
 
 if ($resql)
 {

@@ -355,7 +355,7 @@ else
 			$sql.= $db->order($sortfield,$sortorder);
 
 			dol_syslog('List products sql='.$sql);
-			$resql = $db->query($sql) ;
+			$resql = $db->query($sql);
 			if ($resql)
 			{
 				$num = $db->num_rows($resql);

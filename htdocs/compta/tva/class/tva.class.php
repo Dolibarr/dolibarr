@@ -335,7 +335,7 @@ class Tva extends CommonObject
         $payee = $this->tva_sum_payee($year);
         $collectee = $this->tva_sum_collectee($year);
 
-        $solde = $reglee - ($collectee - $payee) ;
+        $solde = $reglee - ($collectee - $payee);
 
         return $solde;
     }

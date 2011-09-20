@@ -49,7 +49,7 @@ class BoutiqueClient
 
         $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."customers WHERE customers_id = ".$id;
 
-        $resql = $this->db->query($sql) ;
+        $resql = $this->db->query($sql);
         if ( $resql )
         {
             $result = $this->db->fetch_array($resql);
