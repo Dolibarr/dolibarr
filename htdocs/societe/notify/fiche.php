@@ -86,7 +86,11 @@ if ($action == 'add')
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
             $sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
 
-            if (! $db->query($sql))
+            if ($db->query($sql))
+            {
+
+            }
+            else
             {
                 $error++;
                 dol_print_error($db);
@@ -111,7 +115,7 @@ if ($action == 'add')
 // Remove a notification
 if ($action == 'delete')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"];
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
     $db->query($sql);
 }
 
