@@ -33,7 +33,7 @@
 
 /**
  *  This function output memory used by PHP and exit everything. Used for debugging purpose.
- *  
+ *
  *  @return	void
  */
 function dol_stopwithmem()
@@ -45,7 +45,7 @@ function dol_stopwithmem()
 
 /**
  *  Function called at end of web php process
- *  
+ *
  *  @return	void
  */
 function dol_shutdown()
@@ -306,7 +306,7 @@ function dol_string_unaccent($str)
  * 	@param	string	$newstr			String to replace forbidden chars with
  *  @param  array	$badchars       List of forbidden characters
  * 	@return string          		Cleaned string
- * 
+ *
  * 	@see    		dol_sanitizeFilename, dol_string_unaccent
  */
 function dol_string_nospecial($str,$newstr='_',$badchars='')
@@ -558,7 +558,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
  *  Show tab footer of a card
  *
  *  @param	int		$notab       0=Add tab footer, 1=no tab footer
- *  @return	void	
+ *  @return	void
  */
 function dol_fiche_end($notab=0)
 {
@@ -569,7 +569,7 @@ function dol_fiche_end($notab=0)
  *	Return tab footer of a card
  *
  *	@param  int		$notab		0=Add tab footer, 1=no tab footer
- *  @return	void	
+ *  @return	void
  */
 function dol_get_fiche_end($notab=0)
 {
@@ -2052,7 +2052,7 @@ function info_admin($text,$infoonimgalt=0)
  *	@param      feature2		Feature to check, second level of permission (optionnal)
  *  @param      dbt_keyfield    Field name for socid foreign key if not fk_soc (optionnal)
  *  @param      dbt_select      Field name for select if not rowid (optionnal)
- *  @param		objcanvas		Object canvas	
+ *  @param		objcanvas		Object canvas
  * 	@return		int				Always 1, die process if not allowed
  */
 function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
@@ -2063,13 +2063,13 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
     //print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
     //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
     //print ", perm: ".$features."->".$feature2."=".$user->rights->$features->$feature2->lire."<br>";
-    
+
     // If we use canvas, we try to use function that overlod restrictarea if provided with canvas
     if (is_object($objcanvas))
     {
 	    if (method_exists($objcanvas->control,'restrictedArea')) return $objcanvas->control->restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
     }
-    
+
     if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
     // More features to check
@@ -4043,11 +4043,13 @@ function utf8_check($str)
  *      Return an UTF-8 string encoded into OS filesystem encoding. This function is used to define
  * 	    value to pass to filesystem PHP functions.
  *
- *      @param      $str        String to encode (UTF-8)
- * 		@return		string		Encoded string (UTF-8, ISO-8859-1)
+ *      @param      string	$str        String to encode (UTF-8)
+ * 		@return		string				Encoded string (UTF-8, ISO-8859-1)
  */
 function dol_osencode($str)
 {
+    global $conf;
+
     $tmp=ini_get("unicode.filesystem_encoding");						// Disponible avec PHP 6.0
     if (empty($tmp) && ! empty($_SERVER["WINDIR"])) $tmp='iso-8859-1';	// By default for windows
     if (empty($tmp)) $tmp='utf-8';										// By default for other
