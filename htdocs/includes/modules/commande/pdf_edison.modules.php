@@ -181,7 +181,7 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('','', $default_font_size - 1);
 
-				$pdf->SetXY (10, $tab_top + 10 );
+				$pdf->SetXY(10, $tab_top + 10 );
 
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
@@ -201,23 +201,23 @@ class pdf_edison extends ModelePDFCommandes
 					$nexY = $pdf->GetY();
 
 					$ref = pdf_getlineref($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY (10, $curY);
+					$pdf->SetXY(10, $curY);
 					$pdf->MultiCell(20, 3, $ref, 0, 'C');
 
 					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY (133, $curY);
+					$pdf->SetXY(133, $curY);
 					$pdf->MultiCell(12, 3, $vat_rate, 0, 'C');
 
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY (145, $curY);
+					$pdf->SetXY(145, $curY);
 					$pdf->MultiCell(10, 3, $qty, 0, 'C');
 
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY (156, $curY);
+					$pdf->SetXY(156, $curY);
 					$pdf->MultiCell(18, 3, $up_excl_tax, 0, 'R', 0);
 
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY (174, $curY);
+					$pdf->SetXY(174, $curY);
 					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
 
 					$nexY+=2;    // Passe espace entre les lignes
@@ -264,22 +264,22 @@ class pdf_edison extends ModelePDFCommandes
 
 				$pdf->SetFont('','', $default_font_size);
 
-				$pdf->SetXY (132, $tab2_top + 0);
+				$pdf->SetXY(132, $tab2_top + 0);
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalHT"), 0, 'R', 0);
 
-				$pdf->SetXY (132, $tab2_top + $tab2_lh);
+				$pdf->SetXY(132, $tab2_top + $tab2_lh);
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
 
-				$pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
+				$pdf->SetXY(132, $tab2_top + ($tab2_lh*2));
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalTTC"), 1, 'R', 1);
 
-				$pdf->SetXY (174, $tab2_top + 0);
+				$pdf->SetXY(174, $tab2_top + 0);
 				$pdf->MultiCell(26, $tab2_lh, price($object->total_ht), 0, 'R', 0);
 
-				$pdf->SetXY (174, $tab2_top + $tab2_lh);
+				$pdf->SetXY(174, $tab2_top + $tab2_lh);
 				$pdf->MultiCell(26, $tab2_lh, price($object->total_tva), 0, 'R', 0);
 
-				$pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
+				$pdf->SetXY(174, $tab2_top + ($tab2_lh*2));
 				$pdf->MultiCell(26, $tab2_lh, price($object->total_ttc), 1, 'R', 1);
 
 				// Pied de page

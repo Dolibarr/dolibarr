@@ -28,7 +28,7 @@ require_once('class/Facturation.class.php');
 if ( $_GET['id'] == 'NOUV' )
 {
 	unset($_SESSION['serObjFacturation']);
-	$db->query ('DELETE FROM '.MAIN_DB_PREFIX.'pos_tmp');
+	$db->query('DELETE FROM '.MAIN_DB_PREFIX.'pos_tmp');
 }
 
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...

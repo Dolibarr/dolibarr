@@ -211,7 +211,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 	}
 	else
 	{
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$remisecheque->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$remisecheque->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }

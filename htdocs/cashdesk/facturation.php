@@ -42,7 +42,7 @@ if ( $_GET['filtre'] ) {
 	$sql.= " ORDER BY label";
 
 	dol_syslog("facturation.php sql=".$sql);
-	$resql=$db->query ($sql);
+	$resql=$db->query($sql);
 	if ($resql)
 	{
 		while ( $tab = $db->fetch_array($resql) )
@@ -74,7 +74,7 @@ if ( $_GET['filtre'] ) {
 	$sql.= " ORDER BY p.label";
 
 	dol_syslog($sql);
-	$resql=$db->query ($sql);
+	$resql=$db->query($sql);
 	if ($resql)
 	{
 		while ( $tab = $db->fetch_array($resql) )

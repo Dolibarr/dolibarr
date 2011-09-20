@@ -186,7 +186,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					if (! empty($object->note_public))
 					{
 						$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-						$pdf->SetXY ($this->posxdesc-1, $tab_top);
+						$pdf->SetXY($this->posxdesc-1, $tab_top);
 						$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
 					}
 
@@ -222,10 +222,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
-					$pdf->SetXY ($this->posxqtyordered+5, $curY);
+					$pdf->SetXY($this->posxqtyordered+5, $curY);
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked,'','C');
 
-					$pdf->SetXY ($this->posxqtytoship+5, $curY);
+					$pdf->SetXY($this->posxqtytoship+5, $curY);
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped,'','C');
 
 					$nexY+=2;    // Passe espace entre les lignes
@@ -279,15 +279,15 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		$pdf->SetFont('','',$default_font_size - 1);
 
-		$pdf->SetXY ($this->posxdesc-1, $tab_top+1);
+		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 		$pdf->MultiCell(108, 2, $outputlangs->trans("Description"), '', 'L');
 
 		$pdf->line($this->posxqtyordered-1, $tab_top, $this->posxqtyordered-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxqtyordered-1, $tab_top+1);
+		$pdf->SetXY($this->posxqtyordered-1, $tab_top+1);
 		$pdf->MultiCell(40,2, $outputlangs->transnoentities("QtyOrdered"),'','C');
 
 		$pdf->line($this->posxqtytoship-1, $tab_top, $this->posxqtytoship-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxqtytoship-1, $tab_top+1);
+		$pdf->SetXY($this->posxqtytoship-1, $tab_top+1);
 		$pdf->MultiCell(40,2, $outputlangs->transnoentities("QtyToShip"),'','C');
 	}
 

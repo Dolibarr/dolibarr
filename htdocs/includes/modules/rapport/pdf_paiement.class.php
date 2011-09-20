@@ -227,31 +227,31 @@ class pdf_paiement
 
 		$pdf->SetFont('','',10);
 
-        $pdf->SetXY (11, 16);
+        $pdf->SetXY(11, 16);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true), 0, 'L');
 
-        $pdf->SetXY (11, 22);
+        $pdf->SetXY(11, 22);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("Page")." : ".$page, 0, 'L');
 
 		// Title line
 
-        $pdf->SetXY (11, $this->tab_top+2);
+        $pdf->SetXY(11, $this->tab_top+2);
 		$pdf->MultiCell(30, 2, 'Date');
 
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY (42, $this->tab_top+2);
+        $pdf->SetXY(42, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("PaymentMode"), 0, 'L');
 
 		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY (82, $this->tab_top+2);
+        $pdf->SetXY(82, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Invoice"), 0, 'L');
 
 		$pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY (122, $this->tab_top+2);
+        $pdf->SetXY(122, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("AmountInvoice"), 0, 'L');
 
 		$pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY (162, $this->tab_top+2);
+        $pdf->SetXY(162, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("AmountPayment"), 0, 'L');
 
 		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );
@@ -284,28 +284,28 @@ class pdf_paiement
 					$yp = 0;
 				}
 
-				$pdf->SetXY (10, $this->tab_top + 10 + $yp);
+				$pdf->SetXY(10, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'L', 1);
 
-				$pdf->SetXY (40, $this->tab_top + 10 + $yp);
+				$pdf->SetXY(40, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell(80, $this->line_height, $lines[$j][2].' '.$lines[$j][3], 0, 'L', 1);
 
-				$pdf->SetXY (120, $this->tab_top + 10 + $yp);
+				$pdf->SetXY(120, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell(40, $this->line_height, '', 0, 'R', 1);
 
-				$pdf->SetXY (160, $this->tab_top + 10 + $yp);
+				$pdf->SetXY(160, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell(40, $this->line_height, $lines[$j][4], 0, 'R', 1);
 				$yp = $yp + 5;
 			}
 
 			// Invoice number
-			$pdf->SetXY (80, $this->tab_top + 10 + $yp);
+			$pdf->SetXY(80, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'L', 0);
 
-			$pdf->SetXY (120, $this->tab_top + 10 + $yp);
+			$pdf->SetXY(120, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(40, $this->line_height, $lines[$j][5], 0, 'R', 0);
 
-			$pdf->SetXY (160, $this->tab_top + 10 + $yp);
+			$pdf->SetXY(160, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(40, $this->line_height, $lines[$j][6], 0, 'R', 0);
 			$yp = $yp + 5;
 

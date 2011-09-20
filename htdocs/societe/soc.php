@@ -452,7 +452,7 @@ if (empty($reshook))
             }
             else
             {
-                Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+                Header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                 exit;
             }
         }

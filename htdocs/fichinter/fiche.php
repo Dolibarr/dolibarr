@@ -97,7 +97,7 @@ if ($action == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
             $outputlangs->setDefaultLang($newlang);
         }
         $result=fichinter_create($db, $object, $_REQUEST['model'], $outputlangs);
-        Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
         exit;
     }
     else
@@ -126,7 +126,7 @@ if ($action == 'confirm_modify' && $_REQUEST['confirm'] == 'yes')
             $outputlangs->setDefaultLang($newlang);
         }
         $result=fichinter_create($db, $object, (empty($_REQUEST['model'])?$object->model:$_REQUEST['model']), $outputlangs);
-        Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
         exit;
     }
     else
@@ -277,7 +277,7 @@ if ($action == "addline" && $user->rights->ficheinter->creer)
             $outputlangs->setDefaultLang($newlang);
         }
         fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-        Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
         exit;
     }
 }
@@ -290,7 +290,7 @@ if ($action == 'classifybilled')
 	$result=$object->setBilled();
 	if ($result > 0)
 	{
-        Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
         exit;
 	}
 	else
@@ -353,7 +353,7 @@ if ($action == 'updateligne' && $user->rights->ficheinter->creer && $_POST["save
     unset($_POST['durationhour']);
     unset($_POST['durationmin']);
 
-    Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
     exit;
 }
 
@@ -416,7 +416,7 @@ if ($action == 'up' && $user->rights->ficheinter->creer)
         $outputlangs->setDefaultLang($newlang);
     }
     fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-    Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
 }
 
@@ -438,7 +438,7 @@ if ($action == 'down' && $user->rights->ficheinter->creer)
         $outputlangs->setDefaultLang($newlang);
     }
     fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-    Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
 }
 

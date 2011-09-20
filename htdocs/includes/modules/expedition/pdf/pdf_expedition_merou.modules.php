@@ -203,22 +203,22 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->rect(10+3, $curY+1, 3, 3);
 					$pdf->rect(20+3, $curY+1, 3, 3);
 					//Insertion de la reference du produit
-					$pdf->SetXY (30, $curY+1 );
+					$pdf->SetXY(30, $curY+1 );
 					$pdf->SetFont('','B', $default_font_size - 3);
 					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'L', 0);
 					//Insertion du libelle
 					$pdf->SetFont('','', $default_font_size - 3);
-					$pdf->SetXY (50, $curY+1 );
+					$pdf->SetXY(50, $curY+1 );
                     //$libelleproduitservice=pdf_getlinedesc($object->$origin,$i,$outputlangs);
 					$libelleproduitservice = pdf_writelinedesc($pdf,$object->$origin,$i,$outputlangs,90,3,50,$curY+1,1);
 					//$pdf->writeHTMLCell(90, 3, 50, $curY+1, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'L', 0);
 					//Insertion de la quantite commandee
 					$pdf->SetFont('','', $default_font_size - 3);
-					$pdf->SetXY (140, $curY+1 );
+					$pdf->SetXY(140, $curY+1 );
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked, 0, 'C', 0);
 					//Insertion de la quantite a envoyer
 					$pdf->SetFont('','', $default_font_size - 3);
-					$pdf->SetXY (170, $curY+1 );
+					$pdf->SetXY(170, $curY+1 );
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', 0);
 
 					//Generation de la page 2

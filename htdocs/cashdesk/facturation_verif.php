@@ -54,7 +54,7 @@ switch ( $_GET['action'] )
 			if ($result)
 			{
 				// ... et enregistrement dans l'objet
-				if ( $db->num_rows ($result) )
+				if ( $db->num_rows($result) )
 				{
 					$ret=array();
 					$tab = $db->fetch_array($result);

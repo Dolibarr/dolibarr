@@ -163,7 +163,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
 		}
 		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
 	else
@@ -345,7 +345,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			}
 			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
-			Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 			exit;
 		}
 		else
@@ -873,7 +873,7 @@ if ($action == 'builddoc' && $user->rights->propale->creer)
 	}
 	else
 	{
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -953,7 +953,7 @@ if ($action == 'up' && $user->rights->propale->creer)
 	}
 	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
+	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -975,7 +975,7 @@ if ($action == 'down' && $user->rights->propale->creer)
 	}
 	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
+	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
 

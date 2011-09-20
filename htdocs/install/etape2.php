@@ -172,7 +172,7 @@ if ($action == "set")
 			$fp = fopen($dir.$file,"r");
 			if ($fp)
 			{
-				while (!feof ($fp))
+				while (!feof($fp))
 				{
 					$buf = fgets($fp, 4096);
 					if (substr($buf, 0, 2) <> '--')
@@ -286,7 +286,7 @@ if ($action == "set")
 			$fp = fopen($dir.$file,"r");
 			if ($fp)
 			{
-				while (!feof ($fp))
+				while (!feof($fp))
 				{
 					$buf = fgets($fp, 4096);
 
@@ -407,7 +407,7 @@ if ($action == "set")
 			if ($fp)
 			{
 				$buffer='';
-				while (!feof ($fp))
+				while (!feof($fp))
 				{
 					$buf = fgets($fp, 4096);
 					if (substr($buf, 0, 2) <> '--')
@@ -513,7 +513,7 @@ if ($action == "set")
                 $sizeofgroup=1; // Grouping request to have 1 query for several requests does not works with mysql, so we use 1.
 
 			    // Load all requests
-				while (!feof ($fp))
+				while (!feof($fp))
 				{
 					$buffer = fgets($fp, 4096);
 					$buffer = trim($buffer);

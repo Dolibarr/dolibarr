@@ -344,14 +344,14 @@ class pdf_standard {
 		$this->_Metric 	= $format['metric'];
 		$this->_Avery_Name 	= $format['name'];
 		$this->_Avery_Code	= $format['code'];
-		$this->_Margin_Left	= $this->_Convert_Metric ($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Margin_Top	= $this->_Convert_Metric ($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
-		$this->_X_Space 	= $this->_Convert_Metric ($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Y_Space 	= $this->_Convert_Metric ($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Margin_Left	= $this->_Convert_Metric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Margin_Top	= $this->_Convert_Metric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
+		$this->_X_Space 	= $this->_Convert_Metric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Y_Space 	= $this->_Convert_Metric($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Number 	= $format['NX'];
 		$this->_Y_Number 	= $format['NY'];
-		$this->_Width 	= $this->_Convert_Metric ($format['width'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Height	= $this->_Convert_Metric ($format['height'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Width 	= $this->_Convert_Metric($format['width'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Height	= $this->_Convert_Metric($format['height'], $this->_Metric, $this->_Metric_Doc);
 		$this->Set_Char_Size($pdf, $format['font-size']);
 	}
 

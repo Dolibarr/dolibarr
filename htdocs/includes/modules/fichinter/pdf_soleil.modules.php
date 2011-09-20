@@ -255,7 +255,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$tab_top = 98;
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-					$pdf->SetXY ($this->posxdesc-1, $tab_top);
+					$pdf->SetXY($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fichinter->note_public), 0, 'L');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;

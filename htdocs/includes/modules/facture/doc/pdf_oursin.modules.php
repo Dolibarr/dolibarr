@@ -200,7 +200,7 @@ class pdf_oursin extends ModelePDFFactures
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetFont('','', $default_font_size - 1);
-				$pdf->SetXY ($this->marges['g'], $tab_top + $this->marges['g'] );
+				$pdf->SetXY($this->marges['g'], $tab_top + $this->marges['g'] );
 
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
@@ -223,23 +223,23 @@ class pdf_oursin extends ModelePDFFactures
 						if ($this->franchise!=1)
 						{
 							$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails, $hookmanager);
-							$pdf->SetXY ($this->marges['g']+118, $curY);
+							$pdf->SetXY($this->marges['g']+118, $curY);
 							$pdf->MultiCell(12, 3, $vat_rate, 0, 'R');
 						}
 					}
 
 					// Prix unitaire HT avant remise
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY ($this->marges['g']+132, $curY);
+					$pdf->SetXY($this->marges['g']+132, $curY);
 					$pdf->MultiCell(16, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY ($this->marges['g']+150, $curY);
+					$pdf->SetXY($this->marges['g']+150, $curY);
 					$pdf->MultiCell(10, 3, $qty, 0, 'R');
 
 					// Remise sur ligne
-					$pdf->SetXY ($this->marges['g']+160, $curY);
+					$pdf->SetXY($this->marges['g']+160, $curY);
 					if ($object->lines[$i]->remise_percent) {
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->MultiCell(14, 3, $remise_percent, 0, 'R');
@@ -247,7 +247,7 @@ class pdf_oursin extends ModelePDFFactures
 
 					// Total HT
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY ($this->marges['g']+168, $curY);
+					$pdf->SetXY($this->marges['g']+168, $curY);
 					$pdf->MultiCell(21, 3, $total_excl_tax, 0, 'R', 0);
 
 
@@ -327,19 +327,19 @@ class pdf_oursin extends ModelePDFFactures
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('','', $default_font_size - 2);
-		$pdf->SetXY ($tab3_posx, $tab3_top - 5);
+		$pdf->SetXY($tab3_posx, $tab3_top - 5);
 		$pdf->MultiCell(60, 5, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
 		$pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
 
 		$pdf->SetFont('','', $default_font_size - 4);
-		$pdf->SetXY ($tab3_posx, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx, $tab3_top-1 );
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
-		$pdf->SetXY ($tab3_posx+21, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+21, $tab3_top-1 );
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY ($tab3_posx+40, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+40, $tab3_top-1 );
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY ($tab3_posx+58, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+58, $tab3_top-1 );
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
 		$y=0;
@@ -369,13 +369,13 @@ class pdf_oursin extends ModelePDFFactures
 
 				$invoice->fetch($obj->fk_facture_source);
 
-				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
+				$pdf->SetXY($tab3_posx, $tab3_top+$y );
 				$pdf->MultiCell(20, 3, dol_print_date($obj->datef,'day',false,$outputlangs,true), 0, 'L', 0);
-				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
+				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
-				$pdf->SetXY ($tab3_posx+40, $tab3_top+$y);
+				$pdf->SetXY($tab3_posx+40, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $text, 0, 'L', 0);
-				$pdf->SetXY ($tab3_posx+58, $tab3_top+$y);
+				$pdf->SetXY($tab3_posx+58, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
@@ -406,15 +406,15 @@ class pdf_oursin extends ModelePDFFactures
                 $y+=3;
                 $row = $this->db->fetch_object($resql);
 
-                $pdf->SetXY ($tab3_posx, $tab3_top+$y );
+                $pdf->SetXY($tab3_posx, $tab3_top+$y );
                 $pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
-                $pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
+                $pdf->SetXY($tab3_posx+21, $tab3_top+$y);
                 $pdf->MultiCell(20, 3, price($row->amount), 0, 'L', 0);
-                $pdf->SetXY ($tab3_posx+40, $tab3_top+$y);
+                $pdf->SetXY($tab3_posx+40, $tab3_top+$y);
                 $oper = $outputlangs->getTradFromKey("PaymentTypeShort" . $row->code);
 
                 $pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
-                $pdf->SetXY ($tab3_posx+58, $tab3_top+$y);
+                $pdf->SetXY($tab3_posx+58, $tab3_top+$y);
                 $pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
 
                 $pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
@@ -592,15 +592,15 @@ class pdf_oursin extends ModelePDFFactures
 		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
 		$lltot = 200; $largcol2 = $lltot - $col2x;
 
-		$pdf->SetXY ($this->marges['g'], $tab2_top + 0);
+		$pdf->SetXY($this->marges['g'], $tab2_top + 0);
 
 		$useborder=0;
 		$index = 0;
 
 		// Total HT
-		$pdf->SetXY ($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 0);
-		$pdf->SetXY ($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 0);
 
 		// Show VAT by rates and total
@@ -616,7 +616,7 @@ class pdf_oursin extends ModelePDFFactures
 					$this->atleastoneratenotnull++;
 
 					$index++;
-					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 					$tvacompl='';
 					if (preg_match('/\*/',$tvakey))
 					{
@@ -626,7 +626,7 @@ class pdf_oursin extends ModelePDFFactures
 					$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
 					$totalvat.=vatrate($tvakey,1).$tvacompl;
 					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 				}
 			}
@@ -634,9 +634,9 @@ class pdf_oursin extends ModelePDFFactures
 			if (! $this->atleastoneratenotnull)	// If no vat at all
 			{
 				$index++;
-				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
-				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
 			}
 		}
@@ -645,11 +645,11 @@ class pdf_oursin extends ModelePDFFactures
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$index++;
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->SetTextColor(22,137,210);
 			$pdf->SetFont('','B', $default_font_size + 1);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), 0, 'R', 0);
 			$pdf->SetTextColor(0,0,0);
 		}
@@ -665,18 +665,18 @@ class pdf_oursin extends ModelePDFFactures
 
 			// Already paid + Deposits
 			$index++;
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPaid"), 0, 'L', 0);
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount), 0, 'R', 0);
 
 			// Credit note
 			if ($creditnoteamount)
 			{
 				$index++;
-				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("CreditNotes"), 0, 'L', 0);
-				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount), 0, 'R', 0);
 			}
 
@@ -686,9 +686,9 @@ class pdf_oursin extends ModelePDFFactures
 				$index++;
 				$pdf->SetFillColor(255,255,255);
 
-				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOffered"), $useborder, 'L', 1);
-				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount), $useborder, 'R', 1);
 
 				$resteapayer=0;
@@ -696,10 +696,10 @@ class pdf_oursin extends ModelePDFFactures
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), 0, 'L', 0);
 			$pdf->SetFillColor(224,224,224);
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), 0, 'R', 0);
 
 			// Fin

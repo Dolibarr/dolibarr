@@ -145,7 +145,7 @@ switch ($action)
 		$invoice=new Facture($db);
 
 		// Recuperation de la liste des articles du panier
-		$res=$db->query ('SELECT fk_article, qte, fk_tva, remise_percent, remise, total_ht, total_ttc
+		$res=$db->query('SELECT fk_article, qte, fk_tva, remise_percent, remise, total_ht, total_ttc
 				FROM '.MAIN_DB_PREFIX.'pos_tmp
 				WHERE 1');
 		$ret=array(); $i=0;
@@ -163,7 +163,7 @@ switch ($action)
 		for($i=0;$i < $tab_liste_size;$i++)
 		{
 			// Recuperation de l'article
-			$res = $db->query (
+			$res = $db->query(
 			'SELECT label, tva_tx, price
 					FROM '.MAIN_DB_PREFIX.'product
 					WHERE rowid = '.$tab_liste[$i]['fk_article']);
@@ -175,7 +175,7 @@ switch ($action)
 			}
 			$tab_article = $ret;
 
-			$res = $db->query (
+			$res = $db->query(
 			'SELECT taux
 					FROM '.MAIN_DB_PREFIX.'c_tva
 					WHERE rowid = '.$tab_liste[$i]['fk_tva']);

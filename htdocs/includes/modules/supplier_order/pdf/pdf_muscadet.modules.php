@@ -223,7 +223,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-					$pdf->SetXY ($this->posxdesc-1, $tab_top);
+					$pdf->SetXY($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
@@ -261,20 +261,20 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                     if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
                     {
                         $vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
-                        $pdf->SetXY ($this->posxtva, $curY);
+                        $pdf->SetXY($this->posxtva, $curY);
                         $pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
                     }
 
 					// Unit price before discount
-					$pdf->SetXY ($this->posxup, $curY);
+					$pdf->SetXY($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($object->lines[$i]->subprice), 0, 'R', 0);
 
 					// Quantity
-					$pdf->SetXY ($this->posxqty, $curY);
+					$pdf->SetXY($this->posxqty, $curY);
 					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $object->lines[$i]->qty, 0, 'R');
 
 					// Discount on line
-					$pdf->SetXY ($this->posxdiscount, $curY);
+					$pdf->SetXY($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
 						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
@@ -282,7 +282,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// Total HT line
                     $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
-					$pdf->SetXY ($this->postotalht, $curY);
+					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
@@ -404,7 +404,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$tab2_hl = 4;
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$pdf->SetXY ($this->marge_gauche, $tab2_top + 0);
+		$pdf->SetXY($this->marge_gauche, $tab2_top + 0);
 
 		// If France, show VAT mention if not applicable
 		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
@@ -417,10 +417,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
-		$pdf->SetXY ($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-		$pdf->SetXY ($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
 		// Affichage des totaux de TVA par taux (conformement a reglementation)
@@ -433,7 +433,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$this->atleastoneratenotnull++;
 
 				$index++;
-				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 				$tvacompl='';
 
@@ -447,26 +447,26 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$totalvat.=vatrate($tvakey,1).$tvacompl;
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 			}
 		}
 		if (! $this->atleastoneratenotnull) // If not vat at all
 		{
 			$index++;
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
 
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
 
 			// Total LocalTax1
 			if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on' && $object->total_localtax1>0)
 			{
 				$index++;
-				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), $useborder, 'L', 1);
-				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
 			}
 
@@ -474,9 +474,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on' && $object->total_localtax2>0)
 			{
 				$index++;
-				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), $useborder, 'L', 1);
-				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
 			}
 		}
@@ -492,7 +492,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						//$this->atleastoneratenotnull++;
 
 						$index++;
-						$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 						$tvacompl='';
 						if (preg_match('/\*/',$tvakey))
@@ -504,7 +504,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-						$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 					}
 				}
@@ -520,7 +520,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						//$this->atleastoneratenotnull++;
 
 						$index++;
-						$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 						$tvacompl='';
 						if (preg_match('/\*/',$tvakey))
@@ -532,7 +532,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-						$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 					}
 				}
@@ -542,12 +542,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$useborder=0;
 
 		$index++;
-		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFillColor(224,224,224);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
-		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
 		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetTextColor(0,0,0);
@@ -556,19 +556,19 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$index++;
 
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPaid"), 0, 'L', 0);
 
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
 			//$pdf->SetFont('','B', $default_font_size - 1);
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetTextColor(0,0,0);
@@ -604,28 +604,28 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
+		$pdf->SetXY($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 
         if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
         {
     		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-    		$pdf->SetXY ($this->posxtva-3, $tab_top+2);
+    		$pdf->SetXY($this->posxtva-3, $tab_top+2);
     		$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
         }
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxup-1, $tab_top+2);
+		$pdf->SetXY($this->posxup-1, $tab_top+2);
 		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
+		$pdf->SetXY($this->posxqty-1, $tab_top+2);
 		$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if ($this->atleastonediscount)
 		{
-			$pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
+			$pdf->SetXY($this->posxdiscount-1, $tab_top+2);
 			$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
@@ -633,7 +633,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
-		$pdf->SetXY ($this->postotalht-1, $tab_top+2);
+		$pdf->SetXY($this->postotalht-1, $tab_top+2);
 		$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 
 	}

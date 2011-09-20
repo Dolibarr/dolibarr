@@ -1165,7 +1165,7 @@ class BonPrelevement extends CommonObject
 
         dol_syslog("BonPrelevement::Generate build file ".$this->filename);
 
-        $this->file = fopen ($this->filename,"w");
+        $this->file = fopen($this->filename,"w");
 
         //Build file for Spain
         if ($mysoc->pays_code=='ES')
@@ -1219,7 +1219,7 @@ class BonPrelevement extends CommonObject
                     $result = -2;
                 }
 
-                fputs ($this->file, $esaeb19->generaRemesa());
+                fputs($this->file, $esaeb19->generaRemesa());
             }
             else
             {
@@ -1252,7 +1252,7 @@ class BonPrelevement extends CommonObject
                     $result = -2;
                 }
                 $langs->load('withdrawals');
-                fputs ($this->file, $langs->trans('WithdrawalFileNotCapable'));
+                fputs($this->file, $langs->trans('WithdrawalFileNotCapable'));
             }
 
         }
@@ -1349,7 +1349,7 @@ class BonPrelevement extends CommonObject
                 $result = -2;
             }
             $langs->load('withdrawals');
-            fputs ($this->file, $langs->trans('WithdrawalFileNotCapable'));
+            fputs($this->file, $langs->trans('WithdrawalFileNotCapable'));
         }
 
         fclose($this->file);
@@ -1373,59 +1373,59 @@ class BonPrelevement extends CommonObject
      */
     function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount, $facnumber, $facid)
     {
-        fputs ($this->file, "06");
-        fputs ($this->file, "08"); // Prelevement ordinaire
+        fputs($this->file, "06");
+        fputs($this->file, "08"); // Prelevement ordinaire
 
-        fputs ($this->file, "        "); // Zone Reservee B2
+        fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs ($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
 
         // Date d'echeance C1
 
-        fputs ($this->file, "       ");
-        fputs ($this->file, strftime("%d%m", $this->date_echeance));
-        fputs ($this->file, substr(strftime("%y", $this->date_echeance),1));
+        fputs($this->file, "       ");
+        fputs($this->file, strftime("%d%m", $this->date_echeance));
+        fputs($this->file, substr(strftime("%y", $this->date_echeance),1));
 
         // Raison Sociale Destinataire C2
 
-        fputs ($this->file, substr($client->nom. "                           ",0,24));
+        fputs($this->file, substr($client->nom. "                           ",0,24));
 
         // Domiciliation facultative D1
 
-        fputs ($this->file, substr("                                    ",0,24));
+        fputs($this->file, substr("                                    ",0,24));
 
         // Zone Reservee D2
 
-        fputs ($this->file, substr("                             ",0,8));
+        fputs($this->file, substr("                             ",0,8));
 
         // Code Guichet  D3
 
-        fputs ($this->file, $rib_guichet);
+        fputs($this->file, $rib_guichet);
 
         // Numero de compte D4
 
-        fputs ($this->file, substr("000000000000000".$rib_number, -11));
+        fputs($this->file, substr("000000000000000".$rib_number, -11));
 
         // Zone E Montant
 
         $montant = (round($amount,2) * 100);
 
-        fputs ($this->file, substr("000000000000000".$montant, -16));
+        fputs($this->file, substr("000000000000000".$montant, -16));
 
         // Libelle F
 
-        fputs ($this->file, substr("*".$this->ref.$rowid."                                   ",0,13));
-        fputs ($this->file, substr("                                        ",0,18));
+        fputs($this->file, substr("*".$this->ref.$rowid."                                   ",0,13));
+        fputs($this->file, substr("                                        ",0,18));
 
         // Code etablissement G1
 
-        fputs ($this->file, $rib_banque);
+        fputs($this->file, $rib_banque);
 
         // Zone Reservee G2
 
-        fputs ($this->file, substr("                                        ",0,5));
+        fputs($this->file, substr("                                        ",0,5));
 
-        fputs ($this->file, "\n");
+        fputs($this->file, "\n");
     }
 
 
@@ -1434,62 +1434,62 @@ class BonPrelevement extends CommonObject
      */
     function EnregEmetteur()
     {
-        fputs ($this->file, "03");
-        fputs ($this->file, "08"); // Prelevement ordinaire
+        fputs($this->file, "03");
+        fputs($this->file, "08"); // Prelevement ordinaire
 
-        fputs ($this->file, "        "); // Zone Reservee B2
+        fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs ($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
 
         // Date d'echeance C1
 
-        fputs ($this->file, "       ");
-        fputs ($this->file, strftime("%d%m", $this->date_echeance));
-        fputs ($this->file, substr(strftime("%y", $this->date_echeance),1));
+        fputs($this->file, "       ");
+        fputs($this->file, strftime("%d%m", $this->date_echeance));
+        fputs($this->file, substr(strftime("%y", $this->date_echeance),1));
 
         // Raison Sociale C2
 
-        fputs ($this->file, substr($this->raison_sociale. "                           ",0,24));
+        fputs($this->file, substr($this->raison_sociale. "                           ",0,24));
 
         // Reference de la remise creancier D1 sur 7 caracteres
 
-        fputs ($this->file, substr($this->reference_remise. "                           ",0,7));
+        fputs($this->file, substr($this->reference_remise. "                           ",0,7));
 
         // Zone Reservee D1-2
 
-        fputs ($this->file, substr("                                    ",0,17));
+        fputs($this->file, substr("                                    ",0,17));
 
         // Zone Reservee D2
 
-        fputs ($this->file, substr("                             ",0,2));
-        fputs ($this->file, "E");
-        fputs ($this->file, substr("                             ",0,5));
+        fputs($this->file, substr("                             ",0,2));
+        fputs($this->file, "E");
+        fputs($this->file, substr("                             ",0,5));
 
         // Code Guichet  D3
 
-        fputs ($this->file, $this->emetteur_code_guichet);
+        fputs($this->file, $this->emetteur_code_guichet);
 
         // Numero de compte D4
 
-        fputs ($this->file, substr("000000000000000".$this->emetteur_numero_compte, -11));
+        fputs($this->file, substr("000000000000000".$this->emetteur_numero_compte, -11));
 
         // Zone Reservee E
 
-        fputs ($this->file, substr("                                        ",0,16));
+        fputs($this->file, substr("                                        ",0,16));
 
         // Zone Reservee F
 
-        fputs ($this->file, substr("                                        ",0,31));
+        fputs($this->file, substr("                                        ",0,31));
 
         // Code etablissement
 
-        fputs ($this->file, $this->emetteur_code_banque);
+        fputs($this->file, $this->emetteur_code_banque);
 
         // Zone Reservee G
 
-        fputs ($this->file, substr("                                        ",0,5));
+        fputs($this->file, substr("                                        ",0,5));
 
-        fputs ($this->file, "\n");
+        fputs($this->file, "\n");
 
     }
 
@@ -1499,57 +1499,57 @@ class BonPrelevement extends CommonObject
      */
     function EnregTotal($total)
     {
-        fputs ($this->file, "08");
-        fputs ($this->file, "08"); // Prelevement ordinaire
+        fputs($this->file, "08");
+        fputs($this->file, "08"); // Prelevement ordinaire
 
-        fputs ($this->file, "        "); // Zone Reservee B2
+        fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs ($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
 
         // Reserve C1
 
-        fputs ($this->file, substr("                           ",0,12));
+        fputs($this->file, substr("                           ",0,12));
 
 
         // Raison Sociale C2
 
-        fputs ($this->file, substr("                           ",0,24));
+        fputs($this->file, substr("                           ",0,24));
 
         // D1
 
-        fputs ($this->file, substr("                                    ",0,24));
+        fputs($this->file, substr("                                    ",0,24));
 
         // Zone Reservee D2
 
-        fputs ($this->file, substr("                             ",0,8));
+        fputs($this->file, substr("                             ",0,8));
 
         // Code Guichet  D3
 
-        fputs ($this->file, substr("                             ",0,5));
+        fputs($this->file, substr("                             ",0,5));
 
         // Numero de compte D4
 
-        fputs ($this->file, substr("                             ",0,11));
+        fputs($this->file, substr("                             ",0,11));
 
         // Zone E Montant
 
         $montant = ($total * 100);
 
-        fputs ($this->file, substr("000000000000000".$montant, -16));
+        fputs($this->file, substr("000000000000000".$montant, -16));
 
         // Zone Reservee F
 
-        fputs ($this->file, substr("                                        ",0,31));
+        fputs($this->file, substr("                                        ",0,31));
 
         // Code etablissement
 
-        fputs ($this->file, substr("                                        ",0,5));
+        fputs($this->file, substr("                                        ",0,5));
 
         // Zone Reservee F
 
-        fputs ($this->file, substr("                                        ",0,5));
+        fputs($this->file, substr("                                        ",0,5));
 
-        fputs ($this->file, "\n");
+        fputs($this->file, "\n");
     }
 
     /**

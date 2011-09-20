@@ -540,7 +540,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " ORDER BY c.label, c.rowid";
 
 		dol_syslog("EcmDirectory::get_full_arbo sql=".$sql);
-		$resql = $this->db->query ($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$this->cats = array();

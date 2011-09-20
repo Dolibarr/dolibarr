@@ -2104,7 +2104,7 @@ class Product extends CommonObject
 		if ($res)
 		{
 			$prods = array ();
-			while ($record = $this->db->fetch_array ($res))
+			while ($record = $this->db->fetch_array($res))
 			{
 				$prods[$record['id']]['id'] =  $record['rowid'];
 				$prods[$record['id']]['label'] =  $this->db->escape($record['label']);
@@ -2138,7 +2138,7 @@ class Product extends CommonObject
 		if ($res)
 		{
 			$prods = array ();
-			while ($record = $this->db->fetch_array ($res))
+			while ($record = $this->db->fetch_array($res))
 			{
 				$prods[$this->db->escape($record['label'])] = array(0=>$record['id']);
 			}

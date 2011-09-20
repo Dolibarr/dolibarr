@@ -290,7 +290,7 @@ function facture_meta_create($db, $facid, $message="")
 				";
 			}
 		}
-		$fp = fopen ($file,"w");
+		$fp = fopen($file,"w");
 		fputs($fp,$meta);
 		fclose($fp);
 		if (! empty($conf->global->MAIN_UMASK))

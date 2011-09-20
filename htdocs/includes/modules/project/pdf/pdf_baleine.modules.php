@@ -172,7 +172,7 @@ class pdf_baleine extends ModelePDFProjects
 				if (! empty($object->note_public))
 				{
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->SetXY ($this->posxref-1, $tab_top-2);
+					$pdf->SetXY($this->posxref-1, $tab_top-2);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-($tab_top-2);
@@ -309,7 +309,7 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size);
 
-		$pdf->SetXY ($this->posxref-1, $tab_top+2);
+		$pdf->SetXY($this->posxref-1, $tab_top+2);
 		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Tasks"),'','L');
 
 	}

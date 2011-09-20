@@ -36,7 +36,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON c.fk_article = p.rowid
 			ORDER BY id';
 	dol_syslog($request);
-	$res = $db->query ($request);
+	$res = $db->query($request);
 	if (! $res)
 	{
 	    dol_print_error($db);

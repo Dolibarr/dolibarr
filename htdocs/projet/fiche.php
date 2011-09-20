@@ -194,7 +194,7 @@ if (GETPOST('action') == 'builddoc' && $user->rights->projet->creer)
     }
     else
     {
-        Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$project->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$project->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }

@@ -114,7 +114,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<?php
 
 		// Variables
-		$res = $db->query (
+		$res = $db->query(
 		'SELECT id, ref, label, qte, price, remise_percent, remise, total_ht, total_ttc, tva_tx FROM '.MAIN_DB_PREFIX.'pos_tmp as c
 			LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON c.fk_article = p.rowid
 			ORDER BY id');

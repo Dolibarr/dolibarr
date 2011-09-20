@@ -489,7 +489,7 @@ class ProductFournisseur extends Product
         {
             $prod_fourn = array();
 
-            while ($record = $this->db->fetch_array ($resql))
+            while ($record = $this->db->fetch_array($resql))
             {
                 //define base attribute
                 $prodfourn = new ProductFournisseur($this->db);
@@ -571,7 +571,7 @@ class ProductFournisseur extends Product
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $record = $this->db->fetch_array ($resql);
+            $record = $this->db->fetch_array($resql);
             $this->product_fourn_price_id = $record["product_fourn_pri_id"];
             $this->product_fourn_id       = $record["product_fourn_id"];
             $this->fourn_ref              = $record["ref_fourn"];

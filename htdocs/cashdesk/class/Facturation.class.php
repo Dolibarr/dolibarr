@@ -123,7 +123,7 @@ class Facturation {
 			$remise_percent = 0;
 		}
 		$montant_remise_ht = ($resultarray[6] - $resultarray[0]);
-		$this->montant_remise ($montant_remise_ht);
+		$this->montant_remise($montant_remise_ht);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."pos_tmp (";
 		$sql.= "fk_article";
@@ -178,7 +178,7 @@ class Facturation {
 	{
 		global $db;
 
-		$res = $db->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'pos_tmp as c
+		$res = $db->query('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'pos_tmp as c
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_tva as t ON c.fk_tva = t.rowid
 				ORDER BY id');
 
@@ -225,8 +225,8 @@ class Facturation {
 		$this->ref('RESET');
 		$this->qte('RESET');
 		$this->stock('RESET');
-		$this->remise_percent ('RESET');
-		$this->montant_remise ('RESET');
+		$this->remise_percent('RESET');
+		$this->montant_remise('RESET');
 		$this->prix('RESET');
 		$this->tva('RESET');
 
@@ -237,15 +237,15 @@ class Facturation {
 	 */
 	public function raz_pers ()
 	{
-		$this->num_facture ('RESET');
-		$this->mode_reglement ('RESET');
-		$this->montant_encaisse ('RESET');
-		$this->montant_rendu ('RESET');
-		$this->paiement_le ('RESET');
+		$this->num_facture('RESET');
+		$this->mode_reglement('RESET');
+		$this->montant_encaisse('RESET');
+		$this->montant_rendu('RESET');
+		$this->paiement_le('RESET');
 
-		$this->prix_total_ht ('RESET');
-		$this->montant_tva ('RESET');
-		$this->prix_total_ttc ('RESET');
+		$this->prix_total_ht('RESET');
+		$this->montant_tva('RESET');
+		$this->prix_total_ttc('RESET');
 
 	}
 

@@ -249,24 +249,24 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->MultiCell(40, 2, $langs->trans("Total"));
 
 		$pdf->SetFont('','B', $default_font_size);
-		$pdf->SetXY (170, $posy+1);
+		$pdf->SetXY(170, $posy+1);
 		$pdf->MultiCell(31, 2, price($this->amount), 0, 'C', 0);
 
 		// Tableau
 		$pdf->SetFont('','', $default_font_size - 2);
-		$pdf->SetXY (11, $this->tab_top+2);
+		$pdf->SetXY(11, $this->tab_top+2);
 		$pdf->MultiCell(40,2,$outputlangs->transnoentities("Num"), 0, 'L');
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
 
-		$pdf->SetXY (41, $this->tab_top+2);
+		$pdf->SetXY(41, $this->tab_top+2);
         $pdf->MultiCell(40,2,$outputlangs->transnoentities("Bank"), 0, 'L');
 		$pdf->line(100, $this->tab_top, 100, $this->tab_top + $this->tab_height + 10);
 
-        $pdf->SetXY (101, $this->tab_top+2);
+        $pdf->SetXY(101, $this->tab_top+2);
         $pdf->MultiCell(40,2,$outputlangs->transnoentities("CheckTransmitter"), 0, 'L');
 		$pdf->line(180, $this->tab_top, 180, $this->tab_top + $this->tab_height + 10);
 
-		$pdf->SetXY (180, $this->tab_top+2);
+		$pdf->SetXY(180, $this->tab_top+2);
 		$pdf->MultiCell(20,2,$outputlangs->transnoentities("Amount"), 0, 'R');
 		$pdf->line(9, $this->tab_top + 8, 201, $this->tab_top + 8);
 
@@ -293,19 +293,19 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		{
 		    $lineinpage++;
 
-			$pdf->SetXY (1, $this->tab_top + 10 + $yp);
+			$pdf->SetXY(1, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(8, $this->line_height, $j+1, 0, 'R', 0);
 
-			$pdf->SetXY (10, $this->tab_top + 10 + $yp);
+			$pdf->SetXY(10, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(30, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'L', 0);
 
-			$pdf->SetXY (40, $this->tab_top + 10 + $yp);
+			$pdf->SetXY(40, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(70, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'L', 0);
 
-			$pdf->SetXY (100, $this->tab_top + 10 + $yp);
+			$pdf->SetXY(100, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(80, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq),50), 0, 'L', 0);
 
-			$pdf->SetXY (180, $this->tab_top + 10 + $yp);
+			$pdf->SetXY(180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
 
 			$yp = $yp + $this->line_height;
