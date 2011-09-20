@@ -16,28 +16,49 @@
  *
  */
 
-class Promotion {
-	var $db ;
+/**
+ *      \file       htdocs/boutique/promotion/class/promotion.class.php
+ *      \brief      File of class to manage discounts on online shop
+ */
 
-	var $id ;
-	var $parent_id ;
-	var $oscid ;
+/**
+ *      \class      Promotion
+ *      \brief      Class to manage discounts on online shop
+ */
+class Promotion
+{
+	var $db;
+
+	var $id;
+	var $parent_id;
+	var $oscid;
 	var $ref;
 	var $titre;
 	var $description;
-	var $price ;
-	var $status ;
+	var $price;
+	var $status;
 
-	function Promotion($DB, $id=0) {
-		$this->db = $DB;
-		$this->id   = $id ;
-	}
-	/*
+	/**
+	 * 	Constructor
 	 *
-	 *
-	 *
+	 * 	@param		DoliDB	$DB		Database handler
 	 */
-	function create($user, $pid, $percent) {
+	function Promotion($DB)
+	{
+		$this->db = $DB;
+		$this->id = $id;
+	}
+
+	/**
+	 *	Create promotion
+	 *
+	 *	@param	User	$user		Object user
+	 *	@param	int		$pid		Pid
+	 *	@param	int		$percent	Percent
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
+	function create($user, $pid, $percent)
+	{
 		global $conf;
 
 		$sql = "SELECT products_price ";
@@ -51,13 +72,13 @@ class Promotion {
 			$this->price_init = $result["products_price"];
 		}
 
-		$newprice = 0.95 * $this->price_init;
+		$newprice = $percent * $this->price_init;
 
 		$date_exp = "2003-05-01";
 
 		$sql = "INSERT INTO ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."specials ";
 		$sql .= " (products_id, specials_new_products_price, specials_date_added, specials_last_modified, expires_date, date_status_change, status) ";
-		$sql .= " VALUES ($pid, $newprice, ".$this->db->idate(mktime()).", NULL, '$date_exp',NULL,1)";
+		$sql .= " VALUES ($pid, $newprice, '".$this->db->idate(mktime())."', NULL, '".$this->db->idate(mktime()+3600*24*365)."', NULL, 1)";
 
 		if ($this->db->query($sql) )
 		{
@@ -70,10 +91,13 @@ class Promotion {
 			print $this->db->error() . ' in ' . $sql;
 		}
 	}
-	/*
+
+	/**
+	 * 	Update
 	 *
-	 *
-	 *
+	 *	@param	int		$id			id
+	 *	@param	User	$user		Object user
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function update($id, $user)
 	{
@@ -89,10 +113,12 @@ class Promotion {
 			print $this->db->error() . ' in ' . $sql;
 		}
 	}
-	/*
+
+	/**
+	 * 	Set active
 	 *
-	 *
-	 *
+	 *	@param	int		$id			id
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function set_active($id)
 	{
@@ -109,8 +135,12 @@ class Promotion {
 			print $this->db->error() . ' in ' . $sql;
 		}
 	}
-	/*
+
+	/**
+	 * 	Set inactive
 	 *
+	 *	@param	int		$id			id
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function set_inactive($id)
 	{
@@ -127,12 +157,15 @@ class Promotion {
 			print $this->db->error() . ' in ' . $sql;
 		}
 	}
-	/*
+
+	/**
+	 * 	Fetch datas
 	 *
-	 *
-	 *
+	 *	@param	int		$id			id
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function fetch ($id) {
+	function fetch($id)
+	{
 		global $conf;
 
 		$sql = "SELECT c.categories_id, cd.categories_name, c.parent_id";
@@ -157,12 +190,14 @@ class Promotion {
 	}
 
 
-	/*
+	/**
+	 * 	Delete object
 	 *
-	 *
+	 *	@param	User	$user		Object user
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function delete($user) {
-
+	function delete($user)
+	{
 		global $conf;
 
 		$sql = "DELETE FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products WHERE products_id = $idosc ";

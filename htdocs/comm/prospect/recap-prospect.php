@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       htdocs/fourn/recap-fourn.php
- *		\ingroup    fournisseur
- *		\brief      Page de fiche recap fournisseur
+ *   	\file       htdocs/comm/prospect/recap-prospect.php
+ *		\ingroup    societe
+ *		\brief      Page with prospect summary
  */
 
 require("../../main.inc.php");
