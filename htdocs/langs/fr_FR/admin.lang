@@ -1247,7 +1247,8 @@ SupposedToBeInvoiceDate=Date de facture utilisée
 Buy=Achat
 Sell=Vente
 InvoiceDateUsed=Date de facture utilisée
-YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujettie à la TVA (Accueil - Configuration - Société/Institution), aussi il n'y a aucune option sur la gestion TVA à paramétrer.  
+YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujettie à la TVA (Accueil - Configuration - Société/Institution), aussi il n'y a aucune option sur la gestion TVA à paramétrer.
+AccountancyCode=Code compta  
 ##### Agenda #####
 AgendaSetup= Configuration du module actions et agenda
 PasswordTogetVCalExport= Clé pour autoriser lien export
