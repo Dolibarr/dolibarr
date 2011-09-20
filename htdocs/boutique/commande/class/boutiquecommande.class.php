@@ -32,102 +32,109 @@ include_once(DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.
  */
 class BoutiqueCommande
 {
-	var $db ;
+    var $db;
 
-	var $id ;
-	var $nom;
+    var $id;
+    var $nom;
 
-	function BoutiqueCommande($DB, $id=0)
-	{
-		$this->db = $DB;
-		$this->id = $id ;
 
-		$this->billing_adr = new Address();
-		$this->delivry_adr = new Address();
+    /**
+     * Constructor
+     *
+     * @param	DoliDB	$DB		Database handler
+     */
+    function BoutiqueCommande($DB)
+    {
+        $this->db = $DB;
+        $this->id = $id;
 
-		$this->total_ot_subtotal = 0;
-		$this->total_ot_shipping = 0;
-	}
+        $this->billing_adr = new Address();
+        $this->delivry_adr = new Address();
 
-	/**
-	 *	\brief      Get object and lines from database
-	 *	\param      rowid       id of object to load
-	 * 	\param		ref			Ref of order
-	 *	\return     int         >0 si ok, <0 si ko
-	 */
-	function fetch ($id,$ref='')
-	{
-		global $conf;
+        $this->total_ot_subtotal = 0;
+        $this->total_ot_shipping = 0;
+    }
 
-		$sql = "SELECT orders_id, customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_country, customers_telephone, customers_email_address, customers_address_format_id, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_country, delivery_address_format_id, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_country, billing_address_format_id, payment_method, cc_type, cc_owner, cc_number, cc_expires, last_modified, date_purchased, orders_status, orders_date_finished, currency, currency_value";
-		$sql.= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders";
-		$sql.= " WHERE orders_id = ".$id;
+    /**
+     *	Get object and lines from database
+     *
+     *	@param	int		$id		id of object to load
+     * 	@param	string	$ref	Ref of order
+     *	@return int 		    >0 if OK, <0 if KO
+     */
+    function fetch($id,$ref='')
+    {
+        global $conf;
 
-		$result = $this->db->query($sql);
-		if ( $result )
-		{
-			$array = $this->db->fetch_array($result);
+        $sql = "SELECT orders_id, customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_country, customers_telephone, customers_email_address, customers_address_format_id, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_country, delivery_address_format_id, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_country, billing_address_format_id, payment_method, cc_type, cc_owner, cc_number, cc_expires, last_modified, date_purchased, orders_status, orders_date_finished, currency, currency_value";
+        $sql.= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders";
+        $sql.= " WHERE orders_id = ".$id;
 
-			$this->id          = $array["orders_id"];
-			$this->client_id   = stripslashes($array["customers_id"]);
-			$this->client_name = stripslashes($array["customers_name"]);
+        $result = $this->db->query($sql);
+        if ( $result )
+        {
+            $array = $this->db->fetch_array($result);
 
-			$this->payment_method = stripslashes($array["payment_method"]);
+            $this->id          = $array["orders_id"];
+            $this->client_id   = stripslashes($array["customers_id"]);
+            $this->client_name = stripslashes($array["customers_name"]);
 
-			$this->date = $this->db->jdate($array["date_purchased"]);
+            $this->payment_method = stripslashes($array["payment_method"]);
 
-			$this->delivery_adr->name = stripslashes($array["delivery_name"]);
-			$this->delivery_adr->street = stripslashes($array["delivery_street_address"]);
-			$this->delivery_adr->cp = stripslashes($array["delivery_postcode"]);
-			$this->delivery_adr->city = stripslashes($array["delivery_city"]);
-			$this->delivery_adr->country = stripslashes($array["delivery_country"]);
+            $this->date = $this->db->jdate($array["date_purchased"]);
 
-			$this->billing_adr->name = stripslashes($array["billing_name"]);
-			$this->billing_adr->street = stripslashes($array["billing_street_address"]);
-			$this->billing_adr->cp = stripslashes($array["billing_postcode"]);
-			$this->billing_adr->city = stripslashes($array["billing_city"]);
-			$this->billing_adr->country = stripslashes($array["billing_country"]);
+            $this->delivery_adr->name = stripslashes($array["delivery_name"]);
+            $this->delivery_adr->street = stripslashes($array["delivery_street_address"]);
+            $this->delivery_adr->cp = stripslashes($array["delivery_postcode"]);
+            $this->delivery_adr->city = stripslashes($array["delivery_city"]);
+            $this->delivery_adr->country = stripslashes($array["delivery_country"]);
 
-			$this->db->free();
+            $this->billing_adr->name = stripslashes($array["billing_name"]);
+            $this->billing_adr->street = stripslashes($array["billing_street_address"]);
+            $this->billing_adr->cp = stripslashes($array["billing_postcode"]);
+            $this->billing_adr->city = stripslashes($array["billing_city"]);
+            $this->billing_adr->country = stripslashes($array["billing_country"]);
 
-			/*
-			 * Totaux
-			 */
-			$sql = "SELECT value, class ";
-			$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total WHERE orders_id = $id";
+            $this->db->free();
 
-			$result = $this->db->query($sql);
-			if ( $result )
-			{
-				$num = $this->db->num_rows($result);
+            /*
+             * Totaux
+             */
+            $sql = "SELECT value, class ";
+            $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total WHERE orders_id = $id";
 
-				while ($i < $num)
-				{
-					$array = $this->db->fetch_array($result);
-					if ($array["class"] == 'ot_total')
-					{
-						$this->total_ot_total = $array["value"];
-					}
-					if ($array["class"] == 'ot_shipping')
-					{
-						$this->total_ot_shipping = $array["value"];
-					}
-					$i++;
-				}
-			}
-			else
-			{
-				print $this->db->error();
-			}
+            $result = $this->db->query($sql);
+            if ( $result )
+            {
+                $num = $this->db->num_rows($result);
 
-		}
-		else
-		{
-			print $this->db->error();
-		}
+                while ($i < $num)
+                {
+                    $array = $this->db->fetch_array($result);
+                    if ($array["class"] == 'ot_total')
+                    {
+                        $this->total_ot_total = $array["value"];
+                    }
+                    if ($array["class"] == 'ot_shipping')
+                    {
+                        $this->total_ot_shipping = $array["value"];
+                    }
+                    $i++;
+                }
+            }
+            else
+            {
+                print $this->db->error();
+            }
 
-		return $result;
-	}
+        }
+        else
+        {
+            print $this->db->error();
+        }
+
+        return $result;
+    }
 
 }
 ?>
