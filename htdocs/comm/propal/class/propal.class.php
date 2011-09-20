@@ -1695,7 +1695,7 @@ class Propal extends CommonObject
     			}
     			$this->db->free($resql);
 
-    			$nump = sizeOf($tab_sqlobj);
+    			$nump = count($tab_sqlobj);
 
     			if ($nump)
     			{

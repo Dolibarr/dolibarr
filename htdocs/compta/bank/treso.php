@@ -240,7 +240,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			$tab_sqlobj[$key] = unserialize(trim($value, "'"));
 		}
 
-		$num = sizeOf($tab_sqlobj);
+		$num = count($tab_sqlobj);
 
 		//$num = $db->num_rows($result);
 		$i = 0;

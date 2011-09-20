@@ -611,7 +611,7 @@ RECURSIVE = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE = build dev doc documents htdocs/conf/conf.php htdocs/includes/adodbtime htdocs/includes/artichow htdocs/includes/barcode htdocs/includes/ckeditor htdocs/includes/fckeditor htdocs/includes/fpdfi htdocs/includes/geoip htdocs/includes/jquery htdocs/includes/nusoap htdocs/includes/odtphp htdocs/includes/pear htdocs/includes/phpexcel htdocs/includes/smtps htdocs/includes/tcpdf htdocs/includes/vcard htdocs/document htdocs/documents htdocs/oscommerce_ws/ws_client_demo htdocs/oscommerce_ws/ws_server scripts/addons scripts/courrier scripts/lolix scripts/energie
+EXCLUDE = build dev doc documents htdocs/conf/conf.php htdocs/core/filemanagerdol htdocs/includes/adodbtime htdocs/includes/artichow htdocs/includes/barcode htdocs/includes/ckeditor htdocs/includes/fckeditor htdocs/includes/fpdfi htdocs/includes/geoip htdocs/includes/jquery htdocs/includes/nusoap htdocs/includes/odtphp htdocs/includes/pear htdocs/includes/phpexcel htdocs/includes/smtps htdocs/includes/tcpdf htdocs/includes/vcard htdocs/document htdocs/documents htdocs/oscommerce_ws/ws_client_demo htdocs/oscommerce_ws/ws_server scripts/addons scripts/courrier scripts/lolix scripts/energie
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
