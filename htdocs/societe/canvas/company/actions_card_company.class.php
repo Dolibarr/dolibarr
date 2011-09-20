@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/company/actions_card_company.class.php
+ *	\file       htdocs/societe/canvas/default/actions_card_company.class.php
  *	\ingroup    thirdparty
- *	\brief      File of Thirdparty card controller (default canvas)
+ *	\brief      Fichier de la classe Thirdparty card controller (default canvas)
  */
 include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 
