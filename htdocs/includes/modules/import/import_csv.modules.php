@@ -169,8 +169,7 @@ class ImportCsv extends ModeleImports
 
 		ini_set('auto_detect_line_endings',1);	// For MAC compatibility
 
-		$newfile=utf8_check($file)?utf8_decode($file):$file;	// fopen need ISO file name
-		$this->handle = fopen($newfile, "r");
+		$this->handle = fopen(dol_osencode($file), "r");
 		if (! $this->handle)
 		{
 			$langs->load("errors");
