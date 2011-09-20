@@ -27,11 +27,6 @@
  */
 class DaoContactDefault extends Contact
 {
-	var $db;
-
-	//! Numero d'erreur Plage 1280-1535
-	var $errno = 0;
-
 	/**
 	 *    Constructor
 	 *
@@ -40,58 +35,6 @@ class DaoContactDefault extends Contact
 	function DaoContactDefault($DB)
 	{
 		$this->db = $DB;
-	}
-
-	/**
-     *    Create third party in database
-     *
-     *    @param      User		$user   	Object of user that ask creation
-     *    @return     int        			>= 0 if OK, < 0 if KO
-     */
-    function create($user='')
-    {
-    	$result = parent::create($user);
-
-		return $result;
-    }
-
-	/**
-     *  Update parameters of third party
-     *
-     *  @param		int		$id        					Id societe
-     *  @param      User	$user      					Utilisateur qui demande la mise a jour
-     *  @param      int		$call_trigger  				0=non, 1=oui
-     *	@param		int		$allowmodcodeclient			Inclut modif code client et code compta
-     *	@param		int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
-     *  @return     int             					<0 if KO, >=0 if OK
-     */
-    function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
-    {
-    	$result = parent::update($id, $user, $call_trigger, $allowmodcodeclient, $allowmodcodefournisseur);
-
-    	return $result;
-    }
-
-	/**
-     *  Delete third party in database
-     *
-     *  @return     int             					<0 if KO, >=0 if OK
-     */
-    function delete()
-    {
-    	$result = parent::delete();
-
-    	return $result;
-    }
-
-	/**
-	 * 	Fetch datas list
-	 */
-	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		global $conf, $langs;
-
-		$this->list_datas = array();
 	}
 
 }

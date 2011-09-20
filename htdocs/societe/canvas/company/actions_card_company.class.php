@@ -29,7 +29,6 @@ include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
  */
 class ActionsCardCompany extends ActionsCardCommon
 {
-	var $db;
     var $targetmodule;
     var $canvas;
     var $card;
@@ -96,7 +95,7 @@ class ActionsCardCompany extends ActionsCardCommon
 		$this->tpl['profid3'] 	= $this->object->ape;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
 
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) 
+		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK))
 		{
 			$js = "\n";
 	        $js.= '<script language="JavaScript" type="text/javascript">';
