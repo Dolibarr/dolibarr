@@ -54,13 +54,6 @@ $user->getrights();
 
 
 print "***** ".$script_file." (".$version.") *****\n";
-if (! isset($argv[1])) {	// Check parameters
-    print "Usage: ".$script_file." param1 param2 ...\n";
-    exit;
-}
-print '--- start'."\n";
-print 'Argument 1='.$argv[1]."\n";
-print 'Argument 2='.$argv[2]."\n";
 
 
 // Start of transaction

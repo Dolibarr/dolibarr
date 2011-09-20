@@ -34,7 +34,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='1.11';
+$version='1.7';
 $error=0;
 
 
@@ -54,61 +54,29 @@ $user->getrights();
 
 
 print "***** ".$script_file." (".$version.") *****\n";
+if (! isset($argv[1])) {	// Check parameters
+    print "Usage: ".$script_file." id_thirdparty ...\n";
+    exit;
+}
+print '--- start'."\n";
+print 'Argument id_thirdparty='.$argv[1]."\n";
 
 
 // Start of transaction
 $db->begin();
 
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 
-// Create order object
-$com = new Commande($db);
+// Create invoice object
+$obj = new Contrat($db);
+$obj->socid=$argv[1];
 
-$com->ref            = 'ABCDE';
-$com->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$com->date_commande  = mktime();
-$com->note           = 'A comment';
-$com->source         = 1;
-$com->remise_percent = 0;
+$listofcontractsforcompany=$obj->getListOfContracts('all');
 
-$orderline1=new OrderLine($db);
-$orderline1->tva_tx=10.0;
-$orderline1->remise_percent=0;
-$orderline1->qty=1;
-$com->lines[]=$orderline1;
-
-// Create order
-$idobject=$com->create($user);
-if ($idobject > 0)
-{
-	// Change status to validated
-	$result=$com->valid($user);
-	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else
-	{
-		$error++;
-		dol_print_error($db,$com->error);
-	}
-}
-else
-{
-	$error++;
-	dol_print_error($db,$com->error);
-}
+print_r($listofcontractsforcompany);
 
 
 // -------------------- END OF YOUR CODE --------------------
-
-if (! $error)
-{
-	$db->commit();
-	print '--- end ok'."\n";
-}
-else
-{
-	print '--- end error code='.$error."\n";
-	$db->rollback();
-}
 
 $db->close();
 
