@@ -17,6 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *   	\file       htdocs/compta/journal/sellsjournal.php
+ *		\ingroup    societe, facture
+ *		\brief      Page with sells journal
+ */
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");

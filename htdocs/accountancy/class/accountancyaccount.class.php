@@ -22,72 +22,73 @@
  */
 
 
-/**	\class 		AccountancyAccount
-    \brief 		Classe permettant la gestion des comptes
-*/
+/**
+ * \class 		AccountancyAccount
+ * \brief 		Classe permettant la gestion des comptes
+ */
 class AccountancyAccount
 {
-	var $db;
-	var $error;
+    var $db;
+    var $error;
 
-	var $rowid;
-	var $fk_pcg_version;
-	var $pcg_type;
-	var $pcg_subtype;
-	var $label;
-	var $account_number;
-	var $account_parent;
-
-
-	/**
-	 *  Constructor
-	 *  
-	 *  @param		$DoliDB		$DB		Database handler
-	 */
-	function AccountancyAccount($DB)
-	{
-		$this->db = $DB;
-	}
+    var $rowid;
+    var $fk_pcg_version;
+    var $pcg_type;
+    var $pcg_subtype;
+    var $label;
+    var $account_number;
+    var $account_parent;
 
 
-	/**
-	 *    Insert account into database
-	 *    
-	 *    @param  	User	$user 	User making add
-	 *    @return	int				<0 if KO, Id line added if OK
-	 */
-	function create($user)
-	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accountingaccount";
-		$sql.= " (date_creation, fk_user_author, numero,intitule)";
-		$sql.= " VALUES (".$this->db->idate(gmmktime()).",".$user->id.",'".$this->numero."','".$this->intitule."')";
+    /**
+     *  Constructor
+     *
+     *  @param		DoliDB		$DB		Database handler
+     */
+    function AccountancyAccount($DB)
+    {
+        $this->db = $DB;
+    }
 
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accountingaccount");
 
-			if ($id > 0)
-			{
-				$this->id = $id;
-				$result = $this->id;
-			}
-			else
-			{
-				$result = -2;
-				$this->error="AccountancyAccount::Create Erreur $result";
-				dol_syslog($this->error, LOG_ERR);
-			}
-		}
-		else
-		{
-			$result = -1;
-			$this->error="AccountancyAccount::Create Erreur $result";
-			dol_syslog($this->error, LOG_ERR);
-		}
+    /**
+     *    Insert account into database
+     *
+     *    @param  	User	$user 	User making add
+     *    @return	int				<0 if KO, Id line added if OK
+     */
+    function create($user)
+    {
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."accountingaccount";
+        $sql.= " (date_creation, fk_user_author, numero,intitule)";
+        $sql.= " VALUES (".$this->db->idate(gmmktime()).",".$user->id.",'".$this->numero."','".$this->intitule."')";
 
-		return $result;
-	}
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $id = $this->db->last_insert_id(MAIN_DB_PREFIX."accountingaccount");
+
+            if ($id > 0)
+            {
+                $this->id = $id;
+                $result = $this->id;
+            }
+            else
+            {
+                $result = -2;
+                $this->error="AccountancyAccount::Create Erreur $result";
+                dol_syslog($this->error, LOG_ERR);
+            }
+        }
+        else
+        {
+            $result = -1;
+            $this->error="AccountancyAccount::Create Erreur $result";
+            dol_syslog($this->error, LOG_ERR);
+        }
+
+        return $result;
+    }
 
 }
 ?>

@@ -67,7 +67,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
  *
  * @param		string		$val		Value
  * @param		string		$get		1=GET, 0=POST
- * @return		boolean					true if ther is an injection
+ * @return		boolean					true if there is an injection
  */
 function test_sql_and_script_inject($val, $get)
 {
@@ -90,7 +90,7 @@ function test_sql_and_script_inject($val, $get)
 /**
  * Security: Return true if OK, false otherwise
  *
- * @param		string		$var		Variable name
+ * @param		string		&$var		Variable name
  * @param		string		$get		1=GET, 0=POST
  * @return		boolean					true if ther is an injection
  */

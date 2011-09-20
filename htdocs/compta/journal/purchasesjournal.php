@@ -17,6 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *   	\file       htdocs/compta/journal/purchasesjournal.php
+ *		\ingroup    societe, fournisseur, facture
+ *		\brief      Page with purchases journal
+ */
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
@@ -54,8 +59,8 @@ $html=new Form($db);
 
 $year_current = strftime("%Y",dol_now());
 $pastmonth = strftime("%m",dol_now()) - 1;
-$pastmonthyear = $year_current; 
-if ($pastmonth == 0) 
+$pastmonthyear = $year_current;
+if ($pastmonth == 0)
 {
 	$pastmonth = 12;
 	$pastmonthyear--;
