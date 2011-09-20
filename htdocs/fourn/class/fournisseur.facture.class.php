@@ -1206,7 +1206,7 @@ class FactureFournisseur extends Facture
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $langs,$conf;
 
         $now = dol_now();
 
@@ -1215,7 +1215,7 @@ class FactureFournisseur extends Facture
 
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " AND entity = ".$conf->entity;
+        $sql.= " WHERE entity = ".$conf->entity;
 
         $resql = $this->db->query($sql);
         if ($resql)
