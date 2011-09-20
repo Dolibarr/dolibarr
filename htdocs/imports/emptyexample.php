@@ -86,6 +86,6 @@ foreach($fieldstarget as $code=>$label)
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);
 
-print $objimport->build_example_file($user,$format,$headerlinefields,$contentlinevalues);
+print $objimport->build_example_file($format,$headerlinefields,$contentlinevalues);
 
 ?>

@@ -62,7 +62,7 @@ class Import
 	{
 		global $langs,$conf;
 
-		dol_syslog("Import::load_arrays user=".$user->id." filter=".$filter);
+		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
         $var=true;
         $i=0;
@@ -73,99 +73,92 @@ class Import
 			$dir = $dirroot.'/includes/modules';
 
 			// Search available exports
-			$handle=@opendir($dir);
-			if (is_resource($handle))
+			$handle=@opendir(dol_osencode($dir));
+			if (! is_resource($handle)) continue;
+
+			// Search module files
+			while (($file = readdir($handle))!==false)
 			{
-				// Search module files
-				while (($file = readdir($handle))!==false)
+				if (! preg_match("/^(mod.*)\.class\.php/i",$file,$reg)) continue;
+
+				$modulename=$reg[1];
+
+				// Defined if module is enabled
+				$enabled=true;
+				$part=strtolower(preg_replace('/^mod/i','',$modulename));
+				if (empty($conf->$part->enabled)) $enabled=false;
+
+				if (empty($enabled)) continue;
+
+				// Init load class
+				$file = $dir."/".$modulename.".class.php";
+				$classname = $modulename;
+				require_once($file);
+				$module = new $classname($this->db);
+
+				if (is_array($module->import_code))
 				{
-					if (preg_match("/^(mod.*)\.class\.php/i",$file,$reg))
+					foreach($module->import_code as $r => $value)
 					{
-						$modulename=$reg[1];
+						if ($filter && ($filter != $module->import_code[$r])) continue;
 
-						// Defined if module is enabled
-						$enabled=true;
-						$part=strtolower(preg_replace('/^mod/i','',$modulename));
-						if (empty($conf->$part->enabled)) $enabled=false;
-
-						if ($enabled)
+						// Test if permissions are ok
+						/*$perm=$module->import_permission[$r][0];
+						//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
+						if ($perm[2])
 						{
-							// Chargement de la classe
-							$file = $dir."/".$modulename.".class.php";
-							$classname = $modulename;
-							require_once($file);
-							$module = new $classname($this->db);
+						$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+						}
+						else
+						{
+						$bool=$user->rights->$perm[0]->$perm[1];
+						}
+						if ($perm[0]=='user' && $user->admin) $bool=true;
+						//print $bool." $perm[0]"."<br>";
+						*/
 
-							if (is_array($module->import_code))
+						// Load lang file
+						$langtoload=$module->getLangFilesArray();
+						if (is_array($langtoload))
+						{
+							foreach($langtoload as $key)
 							{
-								foreach($module->import_code as $r => $value)
-								{
-									if ($filter && ($filter != $module->import_code[$r])) continue;
-
-									// Test if permissions are ok
-									/*$perm=$module->import_permission[$r][0];
-									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
-									if ($perm[2])
-									{
-									$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
-									}
-									else
-									{
-									$bool=$user->rights->$perm[0]->$perm[1];
-									}
-									if ($perm[0]=='user' && $user->admin) $bool=true;
-									//print $bool." $perm[0]"."<br>";
-									*/
-
-									// Permissions ok
-									//	                        if ($bool)
-									//	                        {
-									// Charge fichier lang en rapport
-									$langtoload=$module->getLangFilesArray();
-									if (is_array($langtoload))
-									{
-										foreach($langtoload as $key)
-										{
-											$langs->load($key);
-										}
-									}
-
-									// Module
-									$this->array_import_module[$i]=$module;
-									// Permission
-									$this->array_import_perms[$i]=$user->rights->import->run;
-									// Icon
-									$this->array_import_icon[$i]=(isset($module->import_icon[$r])?$module->import_icon[$r]:$module->picto);
-									// Code du dataset export
-									$this->array_import_code[$i]=$module->import_code[$r];
-									// Libelle du dataset export
-									$this->array_import_label[$i]=$module->getImportDatasetLabel($r);
-									// Array of tables to import (key=alias, value=tablename)
-									$this->array_import_tables[$i]=$module->import_tables_array[$r];
-									// Array of tables creator field to import (key=alias, value=creator field)
-									$this->array_import_tables_creator[$i]=$module->import_tables_creator_array[$r];
-									// Array of fiels to import (key=field, value=label)
-									$this->array_import_fields[$i]=$module->import_fields_array[$r];
-									// Tableau des entites a exporter (cle=champ, valeur=entite)
-									$this->array_import_entities[$i]=$module->import_entities_array[$r];
-									// Tableau des alias a exporter (cle=champ, valeur=alias)
-									$this->array_import_regex[$i]=$module->import_regex_array[$r];
-									// Tableau des alias a exporter (cle=champ, valeur=exemple)
-									$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
-									// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
-									$this->array_import_convertvalue[$i]=$module->import_convertvalue_array[$r];
-
-									dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_code[$r]));
-									$i++;
-									//	                        }
-								}
+								$langs->load($key);
 							}
 						}
+
+						// Module
+						$this->array_import_module[$i]=$module;
+						// Permission
+						$this->array_import_perms[$i]=$user->rights->import->run;
+						// Icon
+						$this->array_import_icon[$i]=(isset($module->import_icon[$r])?$module->import_icon[$r]:$module->picto);
+						// Code du dataset export
+						$this->array_import_code[$i]=$module->import_code[$r];
+						// Libelle du dataset export
+						$this->array_import_label[$i]=$module->getImportDatasetLabel($r);
+						// Array of tables to import (key=alias, value=tablename)
+						$this->array_import_tables[$i]=$module->import_tables_array[$r];
+						// Array of tables creator field to import (key=alias, value=creator field)
+						$this->array_import_tables_creator[$i]=$module->import_tables_creator_array[$r];
+						// Array of fiels to import (key=field, value=label)
+						$this->array_import_fields[$i]=$module->import_fields_array[$r];
+						// Tableau des entites a exporter (cle=champ, valeur=entite)
+						$this->array_import_entities[$i]=$module->import_entities_array[$r];
+						// Tableau des alias a exporter (cle=champ, valeur=alias)
+						$this->array_import_regex[$i]=$module->import_regex_array[$r];
+						// Tableau des alias a exporter (cle=champ, valeur=exemple)
+						$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
+						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
+						$this->array_import_convertvalue[$i]=$module->import_convertvalue_array[$r];
+
+						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_code[$r]));
+						$i++;
 					}
 				}
 			}
+	        closedir($handle);
 		}
-		closedir($handle);
 		return 1;
 	}
 
@@ -175,19 +168,18 @@ class Import
 	 *  Build an import example file.
 	 *  Arrays this->array_export_xxx are already loaded for required datatoexport
 	 *
-	 *  @param      User	$user               User qui exporte
-	 *  @param      string	$model              Modele d'export
+	 *  @param      string	$model              Name of import engine ('csv', ...)
 	 *  @param      string	$headerlinefields   Array of values for first line of example file
 	 *  @param      string	$contentlinevalues	Array of values for content line of example file
 	 *  @return		string						<0 if KO, >0 if OK
 	 */
-	function build_example_file($user, $model, $headerlinefields, $contentlinevalues)
+	function build_example_file($model, $headerlinefields, $contentlinevalues)
 	{
 		global $conf,$langs;
 
 		$indice=0;
 
-		dol_syslog("Import::build_example_file ".$model);
+		dol_syslog(get_class($this)."::build_example_file ".$model);
 
 		// Creation de la classe d'import du model Import_XXX
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
@@ -238,7 +230,7 @@ class Import
 		$sql.= ')';
 		$sql.= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
 
-		dol_syslog("Import::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -249,7 +241,7 @@ class Import
 		{
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog("Import::create error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -267,7 +259,7 @@ class Import
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
 
-		dol_syslog("Import::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
