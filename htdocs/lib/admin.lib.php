@@ -849,6 +849,7 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
         $handle=@opendir(dol_osencode($dir));
         if (is_resource($handle))
         {
+
             while (($file = readdir($handle))!==false)
             {
                 //print "$i ".$file."\n<br>";
