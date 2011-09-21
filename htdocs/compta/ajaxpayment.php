@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /* Copyright (C) 2011 Auguria <anthony.poiret@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
