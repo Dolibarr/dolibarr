@@ -26,8 +26,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $langs->load("admin");
 $langs->load("other");
@@ -37,12 +36,13 @@ $action = GETPOST("action");
 /*
  * Actions
  */
+
 if ($action== 'setlevel')
 {
 	$level = GETPOST("level");
 	$res = dolibarr_set_const($db,"SYSLOG_LEVEL",$level,'chaine',0,'',0);
 	dol_syslog("admin/syslog: level ".$level);
-	
+
 	if (! $res > 0) $error++;
 	if (! $error)
     {
@@ -56,7 +56,7 @@ if ($action== 'setlevel')
 
 if ($action == 'set')
 {
-	$optionlogoutput=GETPOST("optionlogoutput"); 
+	$optionlogoutput=GETPOST("optionlogoutput");
 	$facility=GETPOST("facility");
 	if ($optionlogoutput == "syslog")
 	{

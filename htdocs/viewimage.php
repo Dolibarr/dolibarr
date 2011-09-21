@@ -422,7 +422,7 @@ else					// Open and return file
     $original_file_osencoded=dol_osencode($original_file);
 
     // This test if file exists should be useless. We keep it to find bug more easily
-	if (! dol_is_file($original_file_osencoded))
+    if (! dol_is_file($original_file_osencoded))
     {
         $error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
         dol_print_error(0,$error);

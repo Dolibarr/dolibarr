@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* Copyright (C) 2007-2009 Regis Houssin       <regis@dolibarr.fr>
  * Copyright (C) 2008      Laurent Destailleur <eldy@users.sourceforge.net>
  *

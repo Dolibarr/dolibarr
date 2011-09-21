@@ -41,96 +41,96 @@ $upload_dir=$conf->admin->dir_temp;
 
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-	$result=create_exdir($upload_dir);	// Create dir if not exists
+    $result=create_exdir($upload_dir);	// Create dir if not exists
     if ($result >= 0)
     {
-    	$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1,0,$_FILES['userfile']['error']);
+        $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1,0,$_FILES['userfile']['error']);
 
-    	if (is_numeric($resupload) && $resupload > 0)
-		{
-			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+        if (is_numeric($resupload) && $resupload > 0)
+        {
+            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 
-			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
-			$formmail = new FormMail($db);
-			$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
-		}
-		else
-		{
-			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus.(.*)/',$resupload,$reg))	// Files infected by a virus
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus");
-				$mesg.= '<br>'.$langs->trans("Information").': '.$langs->trans($reg[1]);
-				$mesg.= '</div>';
-			}
-			else	// Known error
-			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
-			}
-		}
+            include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+            $formmail = new FormMail($db);
+            $formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+        }
+        else
+        {
+            $langs->load("errors");
+            if ($resupload < 0)	// Unknown error
+            {
+                $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+            }
+            else if (preg_match('/ErrorFileIsInfectedWithAVirus.(.*)/',$resupload,$reg))	// Files infected by a virus
+            {
+                $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus");
+                $mesg.= '<br>'.$langs->trans("Information").': '.$langs->trans($reg[1]);
+                $mesg.= '</div>';
+            }
+            else	// Known error
+            {
+                $mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+            }
+        }
     }
 }
 
 if ($_GET["action"] == 'activate_captcha')
 {
-	dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1','chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+    dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1','chaine',0,'',$conf->entity);
+    Header("Location: security_other.php");
+    exit;
 }
 else if ($_GET["action"] == 'disable_captcha')
 {
-	dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA",$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+    dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA",$conf->entity);
+    Header("Location: security_other.php");
+    exit;
 }
 
 if ($_GET["action"] == 'activate_advancedperms')
 {
-	dolibarr_set_const($db, "MAIN_USE_ADVANCED_PERMS", '1','chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+    dolibarr_set_const($db, "MAIN_USE_ADVANCED_PERMS", '1','chaine',0,'',$conf->entity);
+    Header("Location: security_other.php");
+    exit;
 }
 else if ($_GET["action"] == 'disable_advancedperms')
 {
-	dolibarr_del_const($db, "MAIN_USE_ADVANCED_PERMS",$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+    dolibarr_del_const($db, "MAIN_USE_ADVANCED_PERMS",$conf->entity);
+    Header("Location: security_other.php");
+    exit;
 }
 
 if ($_GET["action"] == 'MAIN_SESSION_TIMEOUT')
 {
-	if (! dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-	else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    if (! dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+    else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_UPLOAD_DOC')
 {
-	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-	else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+    else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_UMASK')
 {
-	if (! dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-	else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    if (! dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+    else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_ANTIVIRUS_COMMAND')
 {
-	if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-	else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+    else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_ANTIVIRUS_PARAM')
 {
-	if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-	else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+    else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 
@@ -199,20 +199,20 @@ print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td align="right">';
 if (function_exists("imagecreatefrompng"))
 {
-	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
-	{
-		print '<a href="security_other.php?action=activate_captcha">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-	}
-	if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
-	{
-		print '<a href="security_other.php?action=disable_captcha">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-	}
+    if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
+    {
+        print '<a href="security_other.php?action=activate_captcha">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+    }
+    if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
+    {
+        print '<a href="security_other.php?action=disable_captcha">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+    }
 }
 else
 {
-	$html = new Form($db);
-	$desc = $html->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
-	print $desc;
+    $html = new Form($db);
+    $desc = $html->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
+    print $desc;
 }
 print "</td>";
 
@@ -226,11 +226,11 @@ print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
 if ($conf->global->MAIN_USE_ADVANCED_PERMS == 0)
 {
-	print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+    print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 if($conf->global->MAIN_USE_ADVANCED_PERMS == 1)
 {
-	print '<a href="security_other.php?action=disable_advancedperms">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+    print '<a href="security_other.php?action=disable_advancedperms">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
 print "</td>";
 
@@ -296,14 +296,14 @@ print '</td>';
 print '<td>';
 if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 {
-	$langs->load("errors");
-	$basedir=preg_replace('/"/','',dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
-	$listdir=explode(';',ini_get('safe_mode_exec_dir'));
-	if (! in_array($basedir,$listdir))
-	{
-		print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
-		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
-	}
+    $langs->load("errors");
+    $basedir=preg_replace('/"/','',dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
+    $listdir=explode(';',ini_get('safe_mode_exec_dir'));
+    if (! in_array($basedir,$listdir))
+    {
+        print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
+        dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
+    }
 }
 print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size="72" value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND).'">';
 print "</td>";

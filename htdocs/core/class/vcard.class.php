@@ -30,7 +30,8 @@
 /**
  * Encode a string for vCard
  *
- *  @param		string		String to encode
+ * @param	string	$string		String to encode
+ * @return	string				String encoded
  */
 function encode($string)
 {
@@ -42,10 +43,11 @@ function encode($string)
  * Taken from php documentation comments
  * No more used
  *
- * @param	input		String
- * @param	line_max	Max length of lines
+ * @param	string	$input		String
+ * @param	int		$line_max	Max length of lines
+ * @return	string				Encoded string
  */
-function dol_quoted_printable_encode($input, $line_max = 76)
+function dol_quoted_printable_encode($input, $line_max=76)
 {
     $hex = array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
     $lines = preg_split("/(\?:\r\n|\r|\n)/", $input);
@@ -53,7 +55,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
     $linebreak = "=0D=0A";
     $escape = "=";
     $output = "";
-    
+
     $num = count($lines);
     for ($j = 0; $j < $num; $j++)
     {
@@ -98,10 +100,12 @@ class vCard
     /**
      *	mise en forme du numero de telephone
      *
-     *	@param	number		numero de telephone
-     *	@param	type
+     *	@param	int		$number		numero de telephone
+     *	@param	string	$type		Type
+     *	@return	void
      */
-    function setPhoneNumber($number, $type="") {
+    function setPhoneNumber($number, $type="")
+    {
         // type may be PREF | WORK | HOME | VOICE | FAX | MSG | CELL | PAGER | BBS | CAR | MODEM | ISDN | VIDEO or any senseful combination, e.g. "PREF;WORK;VOICE"
         $key = "TEL";
         if ($type!="") $key .= ";".$type;
@@ -113,32 +117,38 @@ class vCard
      *	mise en forme de la photo
      *  warning NON TESTE !
      *
-     *	@param	type
-     *	@param	photo
-     */
-    function setPhoto($type, $photo) { // $type = "GIF" | "JPEG"
+     *	@param	string	$type			Type
+     *	@param	string	$photo			Photo
+     *	@return	void
+	 */
+    function setPhoto($type, $photo)
+    { // $type = "GIF" | "JPEG"
         $this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
     }
 
     /**
      *	mise en forme du nom formate
      *
-     *	@param	name
+     *	@param	string	$name			Name
+     *	@return	void
      */
-    function setFormattedName($name) {
+    function setFormattedName($name)
+    {
         $this->properties["FN;CHARSET=".$this->encoding] = encode($name);
     }
 
     /**
      *	mise en forme du nom complet
      *
-     *	@param	family
-     *	@param	first
-     *	@param	additional
-     *	@param	prefix
-     *	@param	suffix
+     *	@param	string	$family			Family
+     *	@param	string	$first			First
+     *	@param	string	$additional		Additionnal
+     *	@param	string	$prefix			Prefix
+     *	@param	string	$suffix			Suffix
+     *	@return	void
      */
-    function setName($family="", $first="", $additional="", $prefix="", $suffix="") {
+    function setName($family="", $first="", $additional="", $prefix="", $suffix="")
+    {
         $this->properties["N;CHARSET=".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
         $this->filename = "$first%20$family.vcf";
         if ($this->properties["FN"]=="") $this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
@@ -147,32 +157,37 @@ class vCard
     /**
      *	mise en forme de l'anniversaire
      *
-     *	@param	date
+     *	@param	timestamp	$date		Date
+     *	@return	void
      */
-    function setBirthday($date) { // $date format is YYYY-MM-DD
+    function setBirthday($date)
+    { // $date format is YYYY-MM-DD
         $this->properties["BDAY"] = $date;
     }
 
     /**
      *	mise en forme de l'adresse
      *
-     *	@param	postoffice
-     *	@param	extended
-     *	@param	street
-     *	@param	city
-     *	@param	region
-     *	@param	zip
-     *	@param	country
-     *	@param	type
+     *	@param	string	$postoffice		Postoffice
+     *	@param	string	$extended		Extended
+     *	@param	string	$street			Street
+     *	@param	string	$city			City
+     *	@param	string	$region			Region
+     *	@param	string	$zip			Zip
+     *	@param	string	$country		Country
+     *	@param	string	$type			Type
+     *	@return	void
      */
-    function setAddress($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL") {
+    function setAddress($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL")
+    {
         // $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
         $key = "ADR";
         if ($type!="") $key.= ";$type";
         $key.= ";CHARSET=".$this->encoding;
         $this->properties[$key] = encode($name).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
-        if ($this->properties["LABEL;$type;CHARSET=".$this->encoding] == "") {
+        if ($this->properties["LABEL;$type;CHARSET=".$this->encoding] == "")
+        {
             //$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
         }
     }
@@ -180,14 +195,15 @@ class vCard
     /**
      *	mise en forme du label
      *
-     *	@param	postoffice
-     *	@param	extended
-     *	@param	street
-     *	@param	city
-     *	@param	region
-     *	@param	zip
-     *	@param	country
-     *	@param	type
+     *	@param	string	$postoffice		Postoffice
+     *	@param	string	$extended		Extended
+     *	@param	string	$street			Street
+     *	@param	string	$city			City
+     *	@param	string	$region			Region
+     *	@param	string	$zip			Zip
+     *	@param	string	$country		Country
+     *	@param	string	$type			Type
+     *	@return	void
      */
     function setLabel($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL") {
         $label = "";
@@ -205,28 +221,34 @@ class vCard
     /**
      *	mise en forme de l'email
      *
-     *	@param	address		EMail
-     *	@param	type		Vcard type
+     *	@param	string	$address		EMail
+     *	@param	string	$type			Vcard type
+     *	@return	void
      */
-    function setEmail($address,$type="internet,pref") {
+    function setEmail($address,$type="internet,pref")
+    {
         $this->properties["EMAIL;TYPE=".$type] = $address;
     }
 
     /**
      *	mise en forme de la note
      *
-     *	@param	note
+     *	@param	string	$note		Note
+     *	@return	void
      */
-    function setNote($note) {
+    function setNote($note)
+    {
         $this->properties["NOTE;CHARSET=".$this->encoding] = encode($note);
     }
 
     /**
      * 	mise en forme de la fonction
      *
-     *	@param	title
+     *	@param	string	$title		Title
+     *	@return	void
      */
-    function setTitle($title) {
+    function setTitle($title)
+    {
         $this->properties["TITLE;CHARSET=".$this->encoding] = encode($title);
     }
 
@@ -234,9 +256,11 @@ class vCard
     /**
      *	mise en forme de la societe
      *
-     *	@param	org
+     *	@param	string	$org		Org
+     *	@return	void
      */
-    function setOrg($org) {
+    function setOrg($org)
+    {
         $this->properties["ORG;CHARSET=".$this->encoding] = encode($org);
     }
 
@@ -244,9 +268,11 @@ class vCard
     /**
      * 	mise en forme du logiciel generateur
      *
-     *  @param	prodid
+     *  @param	string	$prodid		Prodid
+     *	@return	void
      */
-    function setProdId($prodid) {
+    function setProdId($prodid)
+    {
         $this->properties["PRODID;CHARSET=".$this->encoding] = encode($prodid);
     }
 
@@ -254,9 +280,11 @@ class vCard
     /**
      * 	mise en forme du logiciel generateur
      *
-     *  @param	uid
+     *  @param	string	$uid	Uid
+     *	@return	void
      */
-    function setUID($uid) {
+    function setUID($uid)
+    {
         $this->properties["UID;CHARSET=".$this->encoding] = encode($uid);
     }
 
@@ -264,10 +292,12 @@ class vCard
     /**
      *  mise en forme de l'url
      *
-     *	@param	url
-     *  @param	type
+     *	@param	string	$url		URL
+     *  @param	string	$type		Type
+     *	@return	void
      */
-    function setURL($url, $type="") {
+    function setURL($url, $type="")
+    {
         // $type may be WORK | HOME
         $key = "URL";
         if ($type!="") $key.= ";$type";
@@ -276,12 +306,16 @@ class vCard
 
     /**
      *  permet d'obtenir une vcard
+     *
+     *  @return	void
      */
-    function getVCard() {
+    function getVCard()
+    {
         $text = "BEGIN:VCARD\r\n";
         //$text.= "VERSION:3.0\r\n";
         $text.= "VERSION:2.1\r\n";
-        foreach($this->properties as $key => $value) {
+        foreach($this->properties as $key => $value)
+        {
             $text.= "$key:$value\r\n";
         }
         $text.= "REV:".date("Y-m-d")."T".date("H:i:s")."Z\r\n";
@@ -292,9 +326,13 @@ class vCard
 
     /**
      *  permet d'obtenir le nom de fichier
+     *
+     *  @return	string		Filename
      */
-    function getFileName() {
+    function getFileName()
+    {
         return $this->filename;
     }
+
 }
 ?>

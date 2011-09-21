@@ -95,17 +95,17 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     *	Add facture to withdrawal
+     * Add facture to withdrawal
      *
-     *  @param	int		$facture_id 	id invoice to add
-     *  @param	int		$client_id  	id invoice customer
-     *  @param	string	$client_nom 	name of cliente
-     *  @param	int		$amount 		amount of invoice
-     *  @param	string	$code_banque 	code of bank withdrawal
-     *  @param	string	$code_guichet 	code of bank's office
-     *  @param	string	$number bank 	account number
-     *  @param  string	$number_key 	number key of account number
-     *	@return	int						>0 if OK, <0 if KO
+     * @param	int		$facture_id 	id invoice to add
+     * @param	int		$client_id  	id invoice customer
+     * @param	string	$client_nom 	name of cliente
+     * @param	int		$amount 		amount of invoice
+     * @param	string	$code_banque 	code of bank withdrawal
+     * @param	string	$code_guichet 	code of bank's office
+     * @param	string	$number bank 	account number
+     * @param	string	$number_key 	number key of account number
+     * @return	int						>0 if OK, <0 if KO
      */
     function AddFacture($facture_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key)
     {
@@ -305,8 +305,7 @@ class BonPrelevement extends CommonObject
         }
         else
         {
-            dol_syslog("BonPrelevement::Fetch Erreur ");
-            dol_syslog($sql);
+            dol_syslog("BonPrelevement::Fetch Erreur sql=".$sql, LOG_ERR);
             return -2;
         }
     }
@@ -966,11 +965,8 @@ class BonPrelevement extends CommonObject
                         $sql.= " WHERE rowid = ".$fac[1];
 
                         dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
-                        if ($this->db->query($sql))
-                        {
-
-                        }
-                        else
+                        $resql=$this->db->query($sql);
+                        if (! $resql)
                         {
                             $error++;
                             dol_syslog("Erreur mise a jour des demandes");
@@ -1212,14 +1208,14 @@ class BonPrelevement extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $esaeb19->agregaRecibo(
-                            $idOrdenante,
+                        $idOrdenante,
     	                	"idcliente".$i+1,
-                            $obj->client_nom,
-                            $obj->code_banque,
-                            $obj->code_guichet,
-                            $obj->cle_rib,
-                            $obj->number,
-                            $obj->amount,
+                        $obj->client_nom,
+                        $obj->code_banque,
+                        $obj->code_guichet,
+                        $obj->cle_rib,
+                        $obj->number,
+                        $obj->amount,
     	                	"Fra.".$obj->facnumber." ".$obj->amount
                         );
 
@@ -1307,14 +1303,14 @@ class BonPrelevement extends CommonObject
                     $row = $this->db->fetch_row($resql);
 
                     $this->EnregDestinataire(
-                        $row[0],
-                        $row[1],
-                        $row[2],
-                        $row[3],
-                        $row[4],
-                        $row[5],
-                        $row[6],
-                        $row[7]
+                    $row[0],
+                    $row[1],
+                    $row[2],
+                    $row[3],
+                    $row[4],
+                    $row[5],
+                    $row[6],
+                    $row[7]
                     );
 
                     $this->total = $this->total + $row[5];

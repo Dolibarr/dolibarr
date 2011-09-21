@@ -30,9 +30,12 @@ $langs->load("admin");
 $langs->load("users");
 $langs->load("other");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
+
+/*
+ * Actions
+ */
 
 if ($_GET["action"] == 'add')
 {
@@ -79,56 +82,56 @@ $modulesdir = array();
 
 foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
-	$modulesdir[] = $dirroot . "/includes/modules/";
+    $modulesdir[] = $dirroot . "/includes/modules/";
 
-	if ($type == 'alt')
-	{
-		$handle=@opendir($dirroot);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle))!==false)
-			{
-			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-			    {
-			    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
-			    	{
-			    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
-			    	}
-			    }
-			}
-			closedir($handle);
-		}
-	}
+    if ($type == 'alt')
+    {
+        $handle=@opendir($dirroot);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+                {
+                    if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+                    {
+                        $modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+                    }
+                }
+            }
+            closedir($handle);
+        }
+    }
 }
 
 foreach ($modulesdir as $dir)
 {
-	// Load modules attributes in arrays (name, numero, orders) from dir directory
-	//print $dir."\n<br>";
-	$handle=@opendir($dir);
-	if (is_resource($handle))
-	{
-		while (($file = readdir($handle))!==false)
-		{
-		    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-		    {
-		        $modName = substr($file, 0, dol_strlen($file) - 10);
+    // Load modules attributes in arrays (name, numero, orders) from dir directory
+    //print $dir."\n<br>";
+    $handle=@opendir($dir);
+    if (is_resource($handle))
+    {
+        while (($file = readdir($handle))!==false)
+        {
+            if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
+            {
+                $modName = substr($file, 0, dol_strlen($file) - 10);
 
-		        if ($modName)
-		        {
-		            include_once($dir."/".$file);
-		            $objMod = new $modName($db);
-		            if ($objMod->rights_class) {
+                if ($modName)
+                {
+                    include_once($dir."/".$file);
+                    $objMod = new $modName($db);
+                    if ($objMod->rights_class) {
 
-		                $ret=$objMod->insert_permissions(0);
+                        $ret=$objMod->insert_permissions(0);
 
-		                $modules[$objMod->rights_class]=$objMod;
-		                //print "modules[".$objMod->rights_class."]=$objMod;";
-		            }
-		        }
-		    }
-		}
-	}
+                        $modules[$objMod->rights_class]=$objMod;
+                        //print "modules[".$objMod->rights_class."]=$objMod;";
+                    }
+                }
+            }
+        }
+    }
 }
 
 $db->commit();

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *

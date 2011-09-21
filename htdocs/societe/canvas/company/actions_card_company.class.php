@@ -51,6 +51,9 @@ class ActionsCardCompany extends ActionsCardCommon
 
     /**
      *  Return the title of card
+     *
+     *  @param	string	$action		Action code
+     *  @return	string				Title
      */
     private function getTitle($action)
     {
@@ -70,6 +73,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	 * 	Execute actions
 	 *
 	 * 	@param		int		$socid 		Id of object (may be empty for creation)
+	 * 	@return		int					<0 if KO, >0 if OK
 	 */
 	function doActions($socid)
 	{
@@ -82,6 +86,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
 	 *    @param	string	$action     Type of action
+	 *    @return	void
 	 */
 	function assign_values($action)
 	{
@@ -208,14 +213,15 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
 	 * 	If $_REQUEST['action'] defined, we also check write permission.
-	 * 	@param      user      	  	User to check
-	 * 	@param      features	    Features to check (in most cases, it's module name)
-	 * 	@param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
-	 *  @param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
-	 *  @param      feature2		Feature to check (second level of permission)
-	 *  @param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
-	 *  @param      dbt_select      Field name for select if not rowid. (optionnal)
-	 *  @return		int				1
+	 *
+	 * 	@param      User	$user      	  	User to check
+	 * 	@param      string	$features	    Features to check (in most cases, it's module name)
+	 * 	@param      int		$objectid      	Object ID if we want to check permission on a particular record (optionnal)
+	 *  @param      string	$dbtablename    Table name where object is stored. Not used if objectid is null (optionnal)
+	 *  @param      string	$feature2		Feature to check (second level of permission)
+	 *  @param      string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. (optionnal)
+	 *  @param      string	$dbt_select		Field name for select if not rowid. (optionnal)
+	 *  @return		int						1
 	 */
 	function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
 	{

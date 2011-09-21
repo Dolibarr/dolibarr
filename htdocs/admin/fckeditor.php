@@ -30,8 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 $langs->load("admin");
 $langs->load("fckeditor");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 // Constante et traduction de la description du module
 $modules = array(
@@ -67,26 +66,25 @@ $picto = array(
  *  Actions
  */
 
-
 foreach($modules as $const => $desc)
 {
-	if ($_GET["action"] == 'activate_'.strtolower($const))
-	{
-	    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1",'chaine',0,'',$conf->entity);
-	    // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
-	    if ($const == 'PRODUCTDESC' && $conf->global->PRODUIT_DESC_IN_FORM)
-	    {
-	    	dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
-	    }
-	    Header("Location: ".$_SERVER["PHP_SELF"]);
-	    exit;
-	}
-	if ($_GET["action"] == 'disable_'.strtolower($const))
-	{
-		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const,$conf->entity);
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
+    if ($_GET["action"] == 'activate_'.strtolower($const))
+    {
+        dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1",'chaine',0,'',$conf->entity);
+        // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
+        if ($const == 'PRODUCTDESC' && $conf->global->PRODUIT_DESC_IN_FORM)
+        {
+            dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
+        }
+        Header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    if ($_GET["action"] == 'disable_'.strtolower($const))
+    {
+        dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const,$conf->entity);
+        Header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
 }
 
 if ($_POST["save"])
@@ -118,34 +116,34 @@ print "</tr>\n";
 // Modules
 foreach($modules as $const => $desc)
 {
-	// Si condition non remplie, on ne propose pas l'option
-	if (! $conditions[$const]) continue;
+    // Si condition non remplie, on ne propose pas l'option
+    if (! $conditions[$const]) continue;
 
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-	print '<td width="16">'.img_object("",$picto[$const]).'</td>';
-	print '<td>'.$langs->trans($desc).'</td>';
-	print '<td align="center" width="20">';
+    $var=!$var;
+    print "<tr ".$bc[$var].">";
+    print '<td width="16">'.img_object("",$picto[$const]).'</td>';
+    print '<td>'.$langs->trans($desc).'</td>';
+    print '<td align="center" width="20">';
 
-	$constante = 'FCKEDITOR_ENABLE_'.$const;
-	$value = $conf->global->$constante;
+    $constante = 'FCKEDITOR_ENABLE_'.$const;
+    $value = $conf->global->$constante;
 
-	print $value == 1 ? img_picto($langs->trans("Active"),'tick') : '&nbsp;';
+    print $value == 1 ? img_picto($langs->trans("Active"),'tick') : '&nbsp;';
 
-	print '</td>';
-	print '<td align="center" width="100">';
+    print '</td>';
+    print '<td align="center" width="100">';
 
-	if($value == 0)
-	{
-		print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.$langs->trans("Activate").'</a>';
-	}
-	else if($value == 1)
-	{
-		print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.$langs->trans("Disable").'</a>';
-	}
+    if($value == 0)
+    {
+        print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.$langs->trans("Activate").'</a>';
+    }
+    else if($value == 1)
+    {
+        print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.$langs->trans("Disable").'</a>';
+    }
 
-	print "</td>";
-	print '</tr>';
+    print "</td>";
+    print '</tr>';
 }
 
 print '</table>'."\n";
@@ -162,11 +160,11 @@ print '<center><br><input class="button" type="submit" name="save" value="'.$lan
 print '</form>'."\n";
 
 /*
-print '<!-- Result -->';
-print $_POST["formtestfield"];
-print '<!-- Result -->';
-print $conf->global->FCKEDITOR_TEST;
-*/
+ print '<!-- Result -->';
+ print $_POST["formtestfield"];
+ print '<!-- Result -->';
+ print $conf->global->FCKEDITOR_TEST;
+ */
 
 $db->close();
 

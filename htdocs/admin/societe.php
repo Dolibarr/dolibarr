@@ -31,11 +31,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action=GETPOST("action");
-$value = GETPOST("value");
+$value=GETPOST("value");
 
 
 /*
@@ -123,7 +122,7 @@ if ($action == 'set')
 	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
 	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
 	$sql.= ")";
-	
+
 	$resql=$db->query($sql);
 	if (! $resql) dol_print_error($db);
 }
