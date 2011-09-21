@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 /**
  *      \class      Don
- *		\brief      Classe permettant la gestion des dons
+ *		\brief      Class to manage donations
  */
 class Don extends CommonObject
 {
@@ -56,8 +56,9 @@ class Don extends CommonObject
     var $projet;
 
     /**
-     *    \brief  Constructeur
-     *    \param  DB          	Handler d'acces base
+     *  Constructor
+     *
+     *  @param	DoliDB	$DB		Database handler
      */
     function Don($DB)
     {
@@ -79,9 +80,10 @@ class Don extends CommonObject
 
 
     /**
-     *    \brief      Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
-     *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *    \return     string        Libelle
+     * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+     *
+     *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *  @return string        		Libelle
      */
     function getLibStatut($mode=0)
     {
@@ -89,10 +91,11 @@ class Don extends CommonObject
     }
 
     /**
-     *    	\brief      Renvoi le libelle d'un statut donne
-     *    	\param      statut        	Id statut
-     *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    	\return     string        	Libelle du statut
+     *  Renvoi le libelle d'un statut donne
+     *
+     *  @param	int		$statut        	Id statut
+     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string 			       	Libelle du statut
      */
     function LibStatut($statut,$mode=0)
     {
@@ -195,8 +198,10 @@ class Don extends CommonObject
 
 
     /**
+     *	Check params
      *
-     *
+     *	@param	int	$minimum	Minimum
+     *	@return	int				0 if KO, >0 if OK
      */
     function check($minimum=0)
     {
@@ -238,7 +243,8 @@ class Don extends CommonObject
         $this->amount = trim($this->amount);
 
         $map = range(0,9);
-        for ($i = 0; $i < dol_strlen($this->amount); $i++)
+        $len=dol_strlen($this->amount);
+        for ($i = 0; $i < $len; $i++)
         {
             if (!isset($map[substr($this->amount, $i, 1)] ))
             {
@@ -279,10 +285,11 @@ class Don extends CommonObject
     }
 
     /**
-     *    Create donation record into database
-     *    @param      user          Objet utilisateur qui cree le don
-     *    @return     int           Id don cree si ok, <0 si ko
-     *    TODO    add numbering module for Ref
+     * Create donation record into database
+     *
+     * @param	User	$user		Objet utilisateur qui cree le don
+     * @return  int  		        Id don cree si ok, <0 si ko
+     * TODO    add numbering module for Ref
      */
     function create($user)
     {
@@ -348,9 +355,10 @@ class Don extends CommonObject
     }
 
     /**
-     *    Update a donation record
-     *    @param      user        Objet utilisateur qui met a jour le don
-     *    @return     int         >0 if OK, <0 if KO
+     *  Update a donation record
+     *
+     *  @param 		User	$user   Objet utilisateur qui met a jour le don
+     *  @return     int      		>0 if OK, <0 if KO
      */
     function update($user)
     {
@@ -390,7 +398,8 @@ class Don extends CommonObject
 
     /**
      *    Delete a donation
-     *    @param  rowid     Id of donation to delete
+     *
+     *    @param  int	$rowid     Id of donation to delete
      */
     function delete($rowid)
     {
@@ -418,9 +427,10 @@ class Don extends CommonObject
 
     /**
      *      Load donation from database
-     *      @param      rowid       Id of donation to load
-     *      @param      ref         Ref of donation to load
-     *      @return     int         <0 if KO, >0 if OK
+     *
+     *      @param      int		$rowid      Id of donation to load
+     *      @param      string	$ref        Ref of donation to load
+     *      @return     int      			<0 if KO, >0 if OK
      */
     function fetch($rowid,$ref='')
     {
@@ -481,9 +491,10 @@ class Don extends CommonObject
 
     /**
      *    Valide une promesse de don
-     *    @param  rowid   id du don a modifier
-     *    @param  userid  utilisateur qui valide la promesse
-     *    @return   int     <0 if KO, >0 if OK
+     *
+     *    @param	int		$rowid   	id du don a modifier
+     *    @param  	int		$userid  	utilisateur qui valide la promesse
+     *    @return   int     			<0 if KO, >0 if OK
      */
     function valid_promesse($rowid, $userid)
     {
@@ -512,9 +523,10 @@ class Don extends CommonObject
 
     /**
      *    Classe le don comme paye, le don a ete recu
-     *    @param    rowid           id du don a modifier
-     *    @param    modepaiementd   mode de paiement
-     *    @return   int             <0 if KO, >0 if OK
+     *
+     *    @param	int		$rowid           	id du don a modifier
+     *    @param    int		$modepaiementd   	mode de paiement
+     *    @return   int      					<0 if KO, >0 if OK
      */
     function set_paye($rowid, $modepaiement='')
     {
@@ -548,8 +560,9 @@ class Don extends CommonObject
 
     /**
      *    Classe le don comme encaisse
-     *    @param    rowid   id du don a modifier
-     *    @return   int     <0 if KO, >0 if OK
+     *
+     *    @param	int		$rowid   	id du don a modifier
+     *    @return   int     			<0 if KO, >0 if OK
      */
     function set_encaisse($rowid)
     {
@@ -578,8 +591,9 @@ class Don extends CommonObject
 
     /**
      *    Set donation sto status canceled
-     *    @param    rowid   id du don a modifier
-     *    @return   int     <0 if KO, >0 if OK
+     *
+     *    @param	int		$rowid   	id du don a modifier
+     *    @return   int     			<0 if KO, >0 if OK
      */
     function set_cancel($rowid)
     {
@@ -606,8 +620,10 @@ class Don extends CommonObject
     }
 
     /**
-     *    	\brief		Somme des dons
-     *		\param		param	1=promesses de dons validees , 2=xxx, 3=encaisses
+     *  Somme des dons
+     *
+     *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
+     *	@return	int				Summ of donations
      */
     function sum_donations($param)
     {
@@ -632,9 +648,10 @@ class Don extends CommonObject
 
 
     /**
-     *	\brief      Return clicable name (with picto eventually)
-     *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *	\return		string			Chaine avec URL
+     *	Return clicable name (with picto eventually)
+     *
+     *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@return	string					Chaine avec URL
      */
     function getNomUrl($withpicto=0)
     {
@@ -657,10 +674,11 @@ class Don extends CommonObject
 
     /**
      *      Return full name (civility+' '+name+' '+lastname)
-     *      @param      langs           Language object for translation of civility
-     *      @param      option          0=No option, 1=Add civility
-     *      @param      nameorder       -1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-     *      @return     string          String with full name
+     *
+     *      @param	Translate	$langs           Language object for translation of civility
+     *      @param  int			$option          0=No option, 1=Add civility
+     *      @param  int			$nameorder       -1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+     *      @return string				         String with full name
      */
     function getFullName($langs,$option=0,$nameorder=-1)
     {
