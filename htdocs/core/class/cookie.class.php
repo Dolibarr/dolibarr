@@ -54,14 +54,17 @@ class DolCookie
 
 
 	/**
-	 *   Encrypt en create the cookie
+	 * Encrypt en create the cookie
+	 *
+	 * @return	void
 	 */
 	function cryptCookie()
 	{
 		if (!empty($this->myKey))
 		{
 			$valuecrypt = base64_encode($this->myValue);
-			for ($f=0 ; $f<=dol_strlen($valuecrypt)-1; $f++)
+			$max=dol_strlen($valuecrypt)-1;
+			for ($f=0 ; $f <= $max; $f++)
 			{
 				$this->cookie .= intval(ord($valuecrypt[$f]))*$this->myKey."|";
 			}
@@ -75,7 +78,9 @@ class DolCookie
 	}
 
 	/**
-	 *  Decrypt the cookie
+	 * Decrypt the cookie
+	 *
+	 * @return	void
 	 */
 	function decryptCookie()
 	{
@@ -98,14 +103,15 @@ class DolCookie
 	}
 
 	/**
-	 *   Set and create the cookie
+	 * Set and create the cookie
 	 *
-	 *   @param  	string		$cookie  	Cookie name
-	 *   @param  	string		$value   	Cookie value
-	 *   @param		string		$expire		Expiration
-	 *   @param		string		$path		Path of cookie
-	 *   @param		string		$domaine	Domain name
-	 *   @param		int			$secure		0 or 1
+	 * @param  	string		$cookie  	Cookie name
+	 * @param  	string		$value   	Cookie value
+	 * @param	string		$expire		Expiration
+	 * @param	string		$path		Path of cookie
+	 * @param	string		$domaine	Domain name
+	 * @param	int			$secure		0 or 1
+	 * @return	void
 	 */
 	function _setCookie($cookie, $value, $expire=0, $path="/", $domain="", $secure=0)
 	{
