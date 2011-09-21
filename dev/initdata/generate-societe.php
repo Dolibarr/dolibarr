@@ -90,7 +90,7 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     print "Company $s\n";
     $soc = new Societe($db);
     $soc->nom = "Company num ".time()."$s";
-    $soc->ville = $villes[rand(0,sizeof($villes)-1)];
+    $soc->ville = $villes[rand(0, count($villes)-1)];
     $soc->client = rand(1,2);		// Une societe sur 2 est prospect, l'autre client
     $soc->fournisseur = rand(0,1);	// Une societe sur 2 est fournisseur
     $soc->code_client='CU'.time()."$s";
@@ -113,7 +113,7 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             $contact = new Contact($db);
             $contact->socid = $soc->id;
             $contact->name = "Lastname".$c;
-            $contact->firstname = $prenoms[rand(0,sizeof($prenoms)-1)];
+            $contact->firstname = $prenoms[rand(0, count($prenoms)-1)];
             if ( $contact->create($user) )
             {
 
