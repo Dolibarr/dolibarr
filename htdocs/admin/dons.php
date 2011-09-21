@@ -27,53 +27,53 @@ require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 $langs->load("admin");
 $langs->load("donations");
 
-if (!$user->admin)
-  accessforbidden();
-
+if (!$user->admin) accessforbidden();
 
 $typeconst=array('yesno','texte','chaine');
+
 
 /*
  * Action
  */
+
 if ($_GET["action"] == 'specimen')
 {
-	$modele=$_GET["module"];
+    $modele=$_GET["module"];
 
-	$don = new Don($db);
-	$don->initAsSpecimen();
+    $don = new Don($db);
+    $don->initAsSpecimen();
 
-	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/dons/";
-	$file = $modele.".modules.php";
-	if (file_exists($dir.$file))
-	{
-		$classname = $modele;
-		require_once($dir.$file);
+    // Charge le modele
+    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/dons/";
+    $file = $modele.".modules.php";
+    if (file_exists($dir.$file))
+    {
+        $classname = $modele;
+        require_once($dir.$file);
 
-		$obj = new $classname($db);
+        $obj = new $classname($db);
 
-		if ($obj->write_file($don,$langs) > 0)
-		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
-			return;
-		}
-		else
-		{
-			$mesg='<div class="error">'.$obj->error.'</div>';
-			dol_syslog($obj->error, LOG_ERR);
-		}
-	}
-	else
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-	}
+        if ($obj->write_file($don,$langs) > 0)
+        {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
+            return;
+        }
+        else
+        {
+            $mesg='<div class="error">'.$obj->error.'</div>';
+            dol_syslog($obj->error, LOG_ERR);
+        }
+    }
+    else
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    }
 }
 
 if ($_GET["action"] == 'setdoc')
 {
-	$db->begin();
+    $db->begin();
 
     if (dolibarr_set_const($db, "DON_ADDON_MODEL",$_GET["value"],'chaine',0,'',$conf->entity))
     {
@@ -94,17 +94,17 @@ if ($_GET["action"] == 'setdoc')
     $result2=$db->query($sql);
     if ($result1 && $result2)
     {
-		$db->commit();
+        $db->commit();
     }
     else
     {
-    	$db->rollback();
+        $db->rollback();
     }
 }
 
 if ($_GET["action"] == 'set')
 {
-	$type='donation';
+    $type='donation';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
     $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
@@ -148,18 +148,18 @@ $sql.= " WHERE type = '".$type."'";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$i = 0;
-	$num_rows=$db->num_rows($resql);
-	while ($i < $num_rows)
-	{
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
-		$i++;
-	}
+    $i = 0;
+    $num_rows=$db->num_rows($resql);
+    while ($i < $num_rows)
+    {
+        $array = $db->fetch_array($resql);
+        array_push($def, $array[0]);
+        $i++;
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 print '<table class="noborder" width=\"100%\">';
@@ -186,74 +186,74 @@ if (is_resource($handle))
             $name = substr($file, 0, dol_strlen($file) -12);
             $classname = substr($file, 0, dol_strlen($file) -12);
 
-    		require_once($dir.'/'.$file);
-    		$module=new $classname($db);
+            require_once($dir.'/'.$file);
+            $module=new $classname($db);
 
-    		// Show modules according to features level
-    	    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-    	    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+            // Show modules according to features level
+            if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-    	    if ($module->isEnabled())
-    	    {
-    	        print '<tr '.$bc[$var].'><td width=\"100\">';
-    	        echo $module->name;
-    	        print '</td>';
-    	        print '<td>';
-    	        print $module->description;
-    	        print '</td>';
+            if ($module->isEnabled())
+            {
+                print '<tr '.$bc[$var].'><td width=\"100\">';
+                echo $module->name;
+                print '</td>';
+                print '<td>';
+                print $module->description;
+                print '</td>';
 
-    			// Active
-    			if (in_array($name, $def))
-    			{
-    		        print "<td align=\"center\">\n";
-    				if ($conf->global->DON_ADDON_MODEL == $name)
-    		        {
-    		            print img_picto($langs->trans("Enabled"),'on');
-    		        }
-    		        else
-    		        {
-    		            print '&nbsp;';
-    		            print '</td><td align="center">';
-    		            print '<a href="dons.php?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-    		        }
-    		        print '</td>';
-    			}
-    			else
-    			{
-    				print "<td align=\"center\">\n";
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-    				print "</td>";
-    			}
+                // Active
+                if (in_array($name, $def))
+                {
+                    print "<td align=\"center\">\n";
+                    if ($conf->global->DON_ADDON_MODEL == $name)
+                    {
+                        print img_picto($langs->trans("Enabled"),'on');
+                    }
+                    else
+                    {
+                        print '&nbsp;';
+                        print '</td><td align="center">';
+                        print '<a href="dons.php?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+                    }
+                    print '</td>';
+                }
+                else
+                {
+                    print "<td align=\"center\">\n";
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                    print "</td>";
+                }
 
-    			// Defaut
-    			print "<td align=\"center\">";
-    			if ($conf->global->DON_ADDON_MODEL == "$name")
-    			{
-    				print img_picto($langs->trans("Default"),'on');
-    			}
-    			else
-    			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-    			}
-    			print '</td>';
+                // Defaut
+                print "<td align=\"center\">";
+                if ($conf->global->DON_ADDON_MODEL == "$name")
+                {
+                    print img_picto($langs->trans("Default"),'on');
+                }
+                else
+                {
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                }
+                print '</td>';
 
-    			// Info
-    	    	$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-    	    	$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+                // Info
+                $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+                $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
                 if ($module->type == 'pdf')
                 {
                     $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
                 }
-    	    	$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-    	    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-    	    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-    	    	$text='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
-    	    	print '<td align="center">';
-    	    	print $html->textwithpicto(' &nbsp; '.$text,$htmltooltip,-1,0);
-    	    	print '</td>';
+                $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+                $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+                $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+                $text='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
+                print '<td align="center">';
+                print $html->textwithpicto(' &nbsp; '.$text,$htmltooltip,-1,0);
+                print '</td>';
 
-    	        print "</tr>\n";
-    	    }
+                print "</tr>\n";
+            }
         }
     }
     closedir($handle);

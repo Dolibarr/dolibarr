@@ -40,7 +40,7 @@ accessforbidden();
 
 $typeconst=array('yesno','texte','chaine');
 
-$action = getpost("action");
+$action = GETPOST("action");
 
 
 // Action mise a jour ou ajout d'une constante
@@ -48,7 +48,7 @@ if ($action == 'update' || $action == 'add')
 {
 	$const=GETPOST("constname");
     $value=GETPOST("constvalue");
-    
+
     if (($const=='ADHERENT_CARD_TYPE' || $const=='ADHERENT_ETIQUETTE_TYPE')
     && $value == -1) $value='';
     if ($const=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
@@ -62,7 +62,7 @@ if ($action == 'update' || $action == 'add')
     $type=$_POST["consttype"];
     $constnote=GETPOST("constnote");
     $res=dolibarr_set_const($db,$const,$value,$typeconst[$type],0,$constnote,$conf->entity);
-	
+
     if (! $res > 0) $error++;
 
  	if (! $error)

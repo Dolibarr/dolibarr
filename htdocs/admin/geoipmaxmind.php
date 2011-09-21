@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009	Laurent Destailleur	<eldy@users.sourceforge.org>
  * Copyright (C) 2011	Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -41,20 +41,20 @@ $action = GETPOST("action");
 if ($action == 'set')
 {
 	$error=0;
-	
-	$gimcdf= getpost("GEOIPMAXMIND_COUNTRY_DATAFILE");
-	
+
+	$gimcdf= GETPOST("GEOIPMAXMIND_COUNTRY_DATAFILE");
+
 	if (! $gimcdf && ! file_exists($gimcdf))
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFileNotFound",$gimcdf).'</div>';
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$res = dolibarr_set_const($db,"GEOIPMAXMIND_COUNTRY_DATAFILE",$gimcdf,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
-		
+
 		if (! $error)
 	    {
 	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";

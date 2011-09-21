@@ -28,24 +28,24 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$action = getpost("action");
+$action = GETPOST("action");
+
 
 /*
  *	Actions
  */
 if ($action == 'setvalue' && $user->admin)
 {
-	$result=dolibarr_set_const($db, "CLICKTODIAL_URL",GETPOST("url"),'chaine',0,'',$conf->entity);
-  	if ($result >= 0)
-  	{
-  		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-  	}
-  	else
-  	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    $result=dolibarr_set_const($db, "CLICKTODIAL_URL",GETPOST("url"),'chaine',0,'',$conf->entity);
+    if ($result >= 0)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
 
@@ -87,11 +87,11 @@ print '<tr><td colspan="3" align="center"><br><input type="submit" class="button
 print '</table></form>';
 
 /*if (! empty($conf->global->CLICKTODIAL_URL))
-{
-    print $langs->trans("Test");
-    // Add a phone number to test
-}
-*/
+ {
+ print $langs->trans("Test");
+ // Add a phone number to test
+ }
+ */
 
 dol_htmloutput_mesg($mesg);
 
