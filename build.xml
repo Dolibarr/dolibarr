@@ -3,7 +3,8 @@
 
 <!-- Exclude/ignore paths -->
  <property name="ignorepaths" value="${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes/adodbtime,${basedir}/htdocs/includes/artichow,${basedir}/htdocs/includes/barcode/php-barcode,${basedir}/htdocs/includes/ckeditor,${basedir}/htdocs/includes/fpdfi,${basedir}/htdocs/includes/geoip,${basedir}/htdocs/includes/jquery,${basedir}/htdocs/includes/jsgantt,${basedir}/htdocs/includes/nusoap,${basedir}/htdocs/includes/odtphp,${basedir}/htdocs/includes/phpexcel,${basedir}/htdocs/includes/tcpdf" />
-
+ <property name="ignoreregexp" value="**/PEAR/*,**/NET/*,**/HTTP/*" />
+ 
  <target name="clean">
   <!-- Clean up -->
   <delete dir="${basedir}/hudson"/>
@@ -55,6 +56,7 @@
    				--exclude '${basedir}/htdocs/includes/odtphp'
    				--exclude '${basedir}/htdocs/includes/phpexcel'
    				--exclude '${basedir}/htdocs/includes/tcpdf'
+   				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'
    				htdocs
    				" />
   </exec>
@@ -77,6 +79,7 @@
    				--exclude '${basedir}/htdocs/includes/odtphp'
    				--exclude '${basedir}/htdocs/includes/phpexcel'
    				--exclude '${basedir}/htdocs/includes/tcpdf'
+   				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'
    				htdocs
    				" />
   </exec>
@@ -87,7 +90,7 @@
   <exec executable="phpcs" dir="${basedir}" output="${basedir}/hudson/logs/checkstyle.xml">
     <arg line=" --standard=${basedir}/dev/codesniffer/ruleset.xml
     			--report=checkstyle
-                --ignore=${ignorepaths}
+                --ignore=${ignorepaths},${ignoreregexp}
                 htdocs
                 "/>
   </exec>
