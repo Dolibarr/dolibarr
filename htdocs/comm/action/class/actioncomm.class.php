@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -91,9 +91,10 @@ class ActionComm extends CommonObject
 
     /**
      *    Add an action/event into database
-     *    @param      user      	Object user making action
- 	 *    @param      notrigger		1 = disable triggers, 0 = enable triggers
-     *    @return     int         	Id of created event, < 0 if KO
+     *    
+     *    @param	User	$user      		Object user making action
+ 	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
+     *    @return   int 		        	Id of created event, < 0 if KO
      */
     function add($user,$notrigger=0)
     {
@@ -144,7 +145,7 @@ class ActionComm extends CommonObject
 		}
 
 
-		$this->db->begin("ActionComm::add");
+		$this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
@@ -188,7 +189,7 @@ class ActionComm extends CommonObject
         $sql.= $conf->entity;
         $sql.= ")";
 
-        dol_syslog("ActionComm::add sql=".$sql);
+        dol_syslog(get_class($this)."::add sql=".$sql);
         $resql=$this->db->query($sql);
 		if ($resql)
         {
@@ -204,13 +205,13 @@ class ActionComm extends CommonObject
 	            // Fin appel triggers
 			}
 
-			$this->db->commit("ActionComm::add");
+			$this->db->commit();
             return $this->id;
         }
         else
         {
 			$this->error=$this->db->lasterror().' sql='.$sql;
-			$this->db->rollback("ActionComm::add");
+			$this->db->rollback();
             return -1;
         }
 
@@ -218,7 +219,9 @@ class ActionComm extends CommonObject
 
 	/**
 	*    Charge l'objet action depuis la base
-	*    @param      id      id de l'action a recuperer
+	*    
+	*    @param		int		$id     id de l'action a recuperer
+	*    @return	int				<0 if KO, >0 if OK
 	*/
 	function fetch($id)
 	{
@@ -246,7 +249,7 @@ class ActionComm extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 
-		dol_syslog("ActionComm::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -304,14 +307,15 @@ class ActionComm extends CommonObject
 
 	/**
 	*    Supprime l'action de la base
-	*    @return     int     <0 si ko, >0 si ok
+	*    
+	*    @return     int     <0 if KO, >0 if OK
 	*/
 	function delete()
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql.= " WHERE id=".$this->id;
 
-        dol_syslog("ActionComm::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
@@ -326,7 +330,8 @@ class ActionComm extends CommonObject
 	/**
  	 *    Met a jour l'action en base.
  	 *	  Si percentage = 100, on met a jour date 100%
- 	 *    @return     	int     <0 si ko, >0 si ok
+ 	 *
+ 	 *    @return     	int     <0 if KO, >0 if OK
 	 */
     function update($user)
     {
@@ -371,7 +376,7 @@ class ActionComm extends CommonObject
 		$sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
         $sql.= " WHERE id=".$this->id;
 
-		dol_syslog("ActionComm::update sql=".$sql);
+		dol_syslog(get_class($this)."::update sql=".$sql);
         if ($this->db->query($sql))
         {
             return 1;
@@ -379,7 +384,7 @@ class ActionComm extends CommonObject
         else
         {
         	$this->error=$this->db->error();
-			dol_syslog("ActionComm::update ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
         	return -1;
     	}
     }
@@ -406,7 +411,7 @@ class ActionComm extends CommonObject
 		}
 		if (! empty($filter)) $sql.= $filter;
 
-		dol_syslog("ActionComm::getActions sql=".$sql);
+		dol_syslog(get_class($this)."::getActions sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -475,7 +480,9 @@ class ActionComm extends CommonObject
 
 	/**
 	 *      Charge les informations d'ordre info dans l'objet facture
-	 *      @param     id       	Id de la facture a charger
+	 *      
+	 *      @param	int		$id       	Id de la facture a charger
+	 *		@return	void
 	 */
 	function info($id)
 	{
@@ -488,7 +495,7 @@ class ActionComm extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 		$sql.= ' WHERE a.id = '.$id;
 
-		dol_syslog("ActionComm::info sql=".$sql);
+		dol_syslog(get_class($this)."::info sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -523,6 +530,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *    	Return label of status
+	 *    
 	 *    	@param      mode            0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *      @param      hidenastatus    1=Show nothing if status is "Not applicable"
 	 *    	@return     string          String with status
@@ -534,6 +542,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *		Return label of action status
+	 *
 	 *    	@param      percent         Percent
 	 *    	@param      mode            0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Very short label+Picto
      *      @param      hidenastatus    1=Show nothing if status is "Not applicable"
@@ -644,6 +653,7 @@ class ActionComm extends CommonObject
 
     /**
      *		Export events from database into a cal file.
+     *
 	 *		@param		format			'vcal', 'ical/ics', 'rss'
 	 *		@param		type			'event' or 'journal'
 	 *		@param		cachedelay		Do not rebuild file if date older than cachedelay seconds
@@ -658,7 +668,7 @@ class ActionComm extends CommonObject
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 		require_once (DOL_DOCUMENT_ROOT ."/lib/date.lib.php");
 
-		dol_syslog("ActionComm::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
+		dol_syslog(get_class($this)."::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
 		// Check parameters
 		if (empty($format)) return -1;
@@ -688,7 +698,7 @@ class ActionComm extends CommonObject
             include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 			if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay))
 			{
-				dol_syslog("ActionComm::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
+				dol_syslog(get_class($this)."::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
 				$buildfile = false;
 			}
 		}
@@ -762,7 +772,7 @@ class ActionComm extends CommonObject
 			$sql.= " ORDER by datep";
 			//print $sql;exit;
 
-			dol_syslog("ActionComm::build_exportfile select events sql=".$sql);
+			dol_syslog(get_class($this)."::build_exportfile select events sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -808,7 +818,7 @@ class ActionComm extends CommonObject
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("ActionComm::build_exportfile ".$this->db->lasterror(), LOG_ERR);
+				dol_syslog(get_class($this)."::build_exportfile ".$this->db->lasterror(), LOG_ERR);
 				return -1;
 			}
 
@@ -847,14 +857,14 @@ class ActionComm extends CommonObject
 				if (rename($outputfiletmp,$outputfile)) $result=1;
 				else
 				{
-				    dol_syslog("ActionComm::build_exportfile failed to rename ".$outputfiletmp." to ".$outputfile, LOG_ERR);
+				    dol_syslog(get_class($this)."::build_exportfile failed to rename ".$outputfiletmp." to ".$outputfile, LOG_ERR);
                     dol_delete_file($outputfiletmp,0,1);
 				    $result=-1;
 				}
 			}
 			else
 			{
-                dol_syslog("ActionComm::build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
+                dol_syslog(get_class($this)."::build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
 			    dol_delete_file($outputfiletmp,0,1);
 				$langs->load("errors");
 				$this->error=$langs->trans("ErrorFailToCreateFile",$outputfile);
