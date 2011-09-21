@@ -91,9 +91,10 @@ class ActionComm extends CommonObject
 
     /**
      *    Add an action/event into database
-     *    @param      user      	Object user making action
- 	 *    @param      notrigger		1 = disable triggers, 0 = enable triggers
-     *    @return     int         	Id of created event, < 0 if KO
+     *    
+     *    @param	User	$user      		Object user making action
+ 	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
+     *    @return   int 		        	Id of created event, < 0 if KO
      */
     function add($user,$notrigger=0)
     {
@@ -144,7 +145,7 @@ class ActionComm extends CommonObject
 		}
 
 
-		$this->db->begin("ActionComm::add");
+		$this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
@@ -204,13 +205,13 @@ class ActionComm extends CommonObject
 	            // Fin appel triggers
 			}
 
-			$this->db->commit("ActionComm::add");
+			$this->db->commit();
             return $this->id;
         }
         else
         {
 			$this->error=$this->db->lasterror().' sql='.$sql;
-			$this->db->rollback("ActionComm::add");
+			$this->db->rollback();
             return -1;
         }
 

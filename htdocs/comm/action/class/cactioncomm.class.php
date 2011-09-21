@@ -53,19 +53,19 @@ class CActionComm
     }
 
     /**
-     *  Charge l'objet type d'action depuis la base
+     *  Load action type from database
      *
-     *  @param      id          id ou code du type d'action a recuperer
-     *  @return     int         1=ok, 0=aucune action, -1=erreur
+     *  @param	int		$id     id or code of action type to read
+     *  @return int 			1=ok, 0=not found, -1=error
      */
     function fetch($id)
     {
-
         $sql = "SELECT id, code, type, libelle, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
         else $sql.= " WHERE code='".$id."'";
 
+        dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -98,7 +98,7 @@ class CActionComm
     /**
      *    Return list of event types
      *
-     *    @param    int			$active     1 or 0 to filter on event state active or not ('' bu default = no filter)
+     *    @param    int			$active     1 or 0 to filter on event state active or not ('' by default = no filter)
      *    @param	string		$idorcode	'id' or 'code'
      *    @return   array       			Array of all event types if OK, <0 if KO
      */
@@ -118,7 +118,7 @@ class CActionComm
         }
         $sql.= " ORDER BY module, position";
 
-        dol_syslog("CActionComm::liste_array sql=".$sql);
+        dol_syslog(get_class($this)."::liste_array sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -160,10 +160,10 @@ class CActionComm
 
 
     /**
-     *  Renvoie le nom sous forme d'un libelle traduit d'un type d'action
+     *  Return name of action type as a label translated
      *
-     *	@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *  @return     string      	Libelle du type d'action
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
+     *  @return string			      	Label of action type
      */
     function getNomUrl($withpicto=0)
     {
