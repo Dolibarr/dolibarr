@@ -40,22 +40,34 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
         $error++;
         $errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
     }
+
+    if (! $error && ! empty($authentication['entity']) && ! is_numeric($authentication['entity']))
+    {
+        $error++;
+        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter entity must be empty (or filled with numeric id of instance if multicompany module is used).";
+    }
+
     if (! $error)
     {
         $result=$fuser->fetch('',$authentication['login'],'',0);
         if ($result <= 0) $error++;
 
-        // TODO Check password
+		// Validation of login with a third party login module method
+		if (! $error)
+		{
+		    $test=true;
+    		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
+    		{
+    			$login = getLoginMethod($authentication['login'],$authentication['password'],$authentication['entity']);
+    			if ($login) $test=false;
+    		}
+    		if ($test) $error++;
+		}
 
         if ($error)
         {
             $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
         }
-    }
-    if (! $error && ! empty($authentication['entity']) && ! is_numeric($authentication['entity']))
-    {
-        $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter entity must be empty (or a numeric with id of instance if multicompany module is used).";
     }
 
     return $fuser;
