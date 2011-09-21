@@ -52,7 +52,7 @@ class langAutoParser {
 			$fileContent = null;
 			$refPath = $this->langDir.$this->refLang.self::DIR_SEPARATOR.$file;
 			$fileContent = file($refPath,FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
-			print "Processing file " . $file . ", with ".sizeof($fileContent)." lines<br>\n";
+			print "Processing file " . $file . ", with ".count($fileContent)." lines<br>\n";
 
 			// Define target dirs
 			$targetlangs=array($this->destLang);

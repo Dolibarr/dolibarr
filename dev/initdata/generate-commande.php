@@ -165,7 +165,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
     $com = new Commande($db);
 
     $com->socid         = 4;
-    $com->date_commande  = $dates[rand(1, sizeof($dates)-1)];
+    $com->date_commande  = $dates[rand(1, count($dates)-1)];
     $com->note           = 'A comment';
     $com->source         = 1;
     $com->fk_project     = 0;
