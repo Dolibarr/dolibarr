@@ -29,8 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load('admin');
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST("action");
 
@@ -54,63 +53,63 @@ $tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 
 if ($action == 'settaxmode')
 {
-	$tax_mode = GETPOST("tax_mode");
-  	
-	$db->begin();
-	
-	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;	
-	
-	switch ($tax_mode) 
-	{
-    	case 0:
-        	$value = 'payment';
-        	break;
-    	case 1:
-        	$value = 'invoice';
-        	break;
-	}
-	
-	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $value,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	
-	if (! $error)
+    $tax_mode = GETPOST("tax_mode");
+
+    $db->begin();
+
+    $res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+
+    switch ($tax_mode)
     {
-    	$db->commit();
+        case 0:
+            $value = 'payment';
+            break;
+        case 1:
+            $value = 'invoice';
+            break;
+    }
+
+    $res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    $res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    $res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $value,'chaine',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    $res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+
+    if (! $error)
+    {
+        $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
     }
     else
     {
-    	$db->rollback();
+        $db->rollback();
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
-	
+
 
 }
 
 /*
-if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
-{
-	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
-	{
-	  	print $db->error();
-	}
-}
+ if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
+ {
+ if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
+ {
+ print $db->error();
+ }
+ }
 
-if ($_GET['action'] == 'delete')
-{
-	if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
-	{
-	  	print $db->error();
-	}
-}
-*/
+ if ($_GET['action'] == 'delete')
+ {
+ if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
+ {
+ print $db->error();
+ }
+ }
+ */
 
 
 /*
@@ -127,50 +126,50 @@ print_fiche_titre($langs->trans('TaxSetup'),$linkback,'setup');
 print '<br>';
 if (empty($mysoc->tva_assuj))
 {
-	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
+    print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
 }
 else
 {
-	print '<table class="noborder" width="100%">';
+    print '<table class="noborder" width="100%">';
 
-	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="settaxmode">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
-	print '<td align="right"><input class="button" type="submit" value="'.$langs->trans('Modify').'"></td>';
-	print "</tr>\n";
-	print '<tr '.$bc[false].'><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
-	print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
-	print "</td></tr>\n";
-	print '<tr '.$bc[true].'><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
-	print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
-	print '</form>';
+    // Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="settaxmode">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
+    print '<td align="right"><input class="button" type="submit" value="'.$langs->trans('Modify').'"></td>';
+    print "</tr>\n";
+    print '<tr '.$bc[false].'><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
+    print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
+    print "</td></tr>\n";
+    print '<tr '.$bc[true].'><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
+    print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
+    print '</form>';
 
-	print "</table>\n";
+    print "</table>\n";
 
-	print '<br><br>';
-	print_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
-	//print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
+    print '<br><br>';
+    print_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
+    //print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
-	print '<table class="border" width="100%">';
-	print '<tr><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
+    print '<table class="border" width="100%">';
+    print '<tr><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
 
-	// Products
-	print '<tr><td>'.$langs->trans("Product").'</td>';
-	print '<td>';
-	print $langs->trans("OnDelivery");
-	print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
-	print '</td>';
-	print '<td>';
-	print $langs->trans("OnDelivery");
-	print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
-	print '</td></tr>';
+    // Products
+    print '<tr><td>'.$langs->trans("Product").'</td>';
+    print '<td>';
+    print $langs->trans("OnDelivery");
+    print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
+    print '</td>';
+    print '<td>';
+    print $langs->trans("OnDelivery");
+    print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
+    print '</td></tr>';
 
-	// Services
-	print '<tr><td>'.$langs->trans("Services").'</td>';
-	print '<td>';
+    // Services
+    print '<tr><td>'.$langs->trans("Services").'</td>';
+    print '<td>';
     if ($tax_mode == 0)
     {
         print $langs->trans("OnPayment");
@@ -181,21 +180,21 @@ else
         print $langs->trans("OnInvoice");
         print ' ('.$langs->trans("InvoiceDateUsed").')';
     }
-	print '</td>';
-	print '<td>';
-	if ($tax_mode == 0)
-	{
-		print $langs->trans("OnPayment");
-		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	if ($tax_mode == 1)
-	{
-		print $langs->trans("OnInvoice");
-		print ' ('.$langs->trans("InvoiceDateUsed").')';
-	}
-	print '</td></tr>';
+    print '</td>';
+    print '<td>';
+    if ($tax_mode == 0)
+    {
+        print $langs->trans("OnPayment");
+        print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+    }
+    if ($tax_mode == 1)
+    {
+        print $langs->trans("OnInvoice");
+        print ' ('.$langs->trans("InvoiceDateUsed").')';
+    }
+    print '</td></tr>';
 
-	print '</table>';
+    print '</table>';
 }
 
 dol_htmloutput_mesg($mesg);

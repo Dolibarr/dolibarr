@@ -29,10 +29,9 @@ $langs->load("admin");
 $langs->load("stocks");
 
 // Securit check
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$action = getpost("action");
+$action = GETPOST("action");
 
 
 /*
