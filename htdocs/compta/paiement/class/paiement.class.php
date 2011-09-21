@@ -30,10 +30,8 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class Paiement extends CommonObject
 {
-    var $db;
-    var $error;
-    var $element='payment';
-    var $table_element='paiement';
+    public $element='payment';
+    public $table_element='paiement';
 
     var $id;
 	var $ref;

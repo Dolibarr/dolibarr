@@ -33,11 +33,8 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 */
 class Tva extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
-	//var $element='tva';			//!< Id that identify managed objects
-	//var $table_element='tva';	//!< Name of table without prefix where object is stored
+	//public $element='tva';			//!< Id that identify managed objects
+	//public $table_element='tva';	//!< Name of table without prefix where object is stored
 
     var $id;
     var $ref;
@@ -302,8 +299,11 @@ class Tva extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise object with example values
-	 *		\remarks	id must be 0 if object instance is a specimen.
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{
@@ -318,8 +318,6 @@ class Tva extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 

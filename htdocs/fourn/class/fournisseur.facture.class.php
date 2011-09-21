@@ -35,15 +35,11 @@ include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
  */
 class FactureFournisseur extends Facture
 {
-    var $id;
-    var $db;
-    var $error;
-
-    var $element='invoice_supplier';
-    var $table_element='facture_fourn';
-    var $table_element_line='facture_fourn_det';
-    var $fk_element='fk_facture_fourn';
-    var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $element='invoice_supplier';
+    public $table_element='facture_fourn';
+    public $table_element_line='facture_fourn_det';
+    public $fk_element='fk_facture_fourn';
+    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $ref;		 // TODO deprecated
     var $product_ref;
@@ -1201,8 +1197,11 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *		Initialise an example of instance with random values
-     *		Used to build previews or test instances
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {

@@ -65,10 +65,14 @@ class CompanyBankAccount extends Account
 
     /**
      * Create bank information record
+     *
+     * @return	int		<0 if KO, >= 0 if OK
      */
     function create()
     {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, ".$this->db->idate(mktime()).")";
+        $now=dol_now();
+
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, '".$this->db->idate($now)."')";
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -85,12 +89,13 @@ class CompanyBankAccount extends Account
     }
 
     /**
+     *	Update bank account
      *
-     *
+     *	@param	User	$user	Object user
+     *	@return	int				<=0 if KO, >0 if OK
      */
     function update($user='')
     {
-
         $sql = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."societe_rib";
         $sql .= " WHERE fk_soc = ".$this->socid;
 
@@ -135,8 +140,10 @@ class CompanyBankAccount extends Account
 
     /**
      * 	Load record from database
-     *	@param		id			Id of record
-     * 	@param		socid		Id of company
+     *
+     *	@param	int		$id			Id of record
+     * 	@param	int		$socid		Id of company
+     * 	@return	int					<0 if KO, >0 if OK
      */
     function fetch($id,$socid=0)
     {

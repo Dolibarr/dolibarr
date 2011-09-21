@@ -42,13 +42,11 @@ require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
  */
 class Propal extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element='propal';
-	var $table_element='propal';
-	var $table_element_line='propaldet';
-	var $fk_element='fk_propal';
-	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $element='propal';
+	public $table_element='propal';
+	public $table_element_line='propaldet';
+	public $fk_element='fk_propal';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
 
@@ -2128,8 +2126,11 @@ class Propal extends CommonObject
 
 
 	/**
-	 *		Initialise an example of instance with random values
-	 *		Used to build previews or test instances
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

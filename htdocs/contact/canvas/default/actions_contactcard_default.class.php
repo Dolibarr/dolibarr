@@ -93,8 +93,32 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
             $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->object,1);
 		}
+
+		if ($action == 'list')
+		{
+	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+		}
+
 	}
 
+
+	/**
+	 * 	Fetch datas list
+	 *
+	 *  @param	int		$limit		Limit number of responses
+	 *  @param	int		$offset		Offset for first response
+	 *  @param	string	$sortfield	Sort field
+	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
+	 *  @return	void
+	 */
+	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
+	{
+		global $conf, $langs;
+
+        //$this->getFieldList();
+
+        $this->list_datas = array();
+	}
 }
 
 ?>

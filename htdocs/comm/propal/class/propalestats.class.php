@@ -33,12 +33,11 @@ include_once DOL_DOCUMENT_ROOT . "/comm/propal/class/propal.class.php";
  */
 class PropaleStats extends Stats
 {
-	var $db;
+    public $table_element;
 
     var $socid;
     var $userid;
 
-    var $table_element;
     var $from;
     var $field;
     var $where;

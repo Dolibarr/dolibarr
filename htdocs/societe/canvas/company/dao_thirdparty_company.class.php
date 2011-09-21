@@ -27,79 +27,15 @@
  */
 class DaoThirdPartyCompany extends Societe
 {
-	var $db;
-
-	//! Numero d'erreur Plage 1280-1535
-	var $errno = 0;
 
 	/**
 	 *    Constructor
-	 *    
+	 *
 	 *    @param	DoliDB		$DB		Databae handler
 	 */
 	function DaoThirdPartyCompany($DB)
 	{
 		$this->db = $DB;
-	}
-
-	/**
-	 *    Lecture des donnees dans la base
-	 *    @param	id          Element id
-	 */
-	function fetch($id)
-	{
-		$result = parent::fetch($id);
-
-		return $result;
-	}
-
-	/**
-     *    Create third party in database
-     *    @param      user        Object of user that ask creation
-     *    @return     int         >= 0 if OK, < 0 if KO
-     */
-    function create($user='')
-    {
-    	$result = parent::create($user);
-
-		return $result;
-    }
-
-	/**
-     *      Update parameters of third party
-     *      @param      id              			id societe
-     *      @param      user            			Utilisateur qui demande la mise a jour
-     *      @param      call_trigger    			0=non, 1=oui
-     *		@param		allowmodcodeclient			Inclut modif code client et code compta
-     *		@param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
-     *      @return     int             			<0 si ko, >=0 si ok
-     */
-    function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
-    {
-    	$result = parent::update($id, $user, $call_trigger, $allowmodcodeclient, $allowmodcodefournisseur);
-
-    	return $result;
-    }
-
-	/**
-     *    Delete third party in database
-     *    @param      id      id de la societe a supprimer
-     */
-    function delete($id)
-    {
-    	$result = parent::delete($id);
-
-    	return $result;
-    }
-
-	/**
-	 * 	Fetch datas list
-	 */
-	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		global $conf, $langs;
-
-		$this->list_datas = array();
 	}
 
 }

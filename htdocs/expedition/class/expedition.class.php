@@ -36,11 +36,9 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/co
  */
 class Expedition extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element="shipping";
-	var $fk_element="fk_expedition";
-	var $table_element="expedition";
+	public $element="shipping";
+	public $fk_element="fk_expedition";
+	public $table_element="expedition";
 
 	var $id;
 	var $socid;
@@ -973,8 +971,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *		\brief		Initialise la facture avec valeurs fictives aleatoire
-	 *					Sert a generer une facture pour l'aperu des modeles ou dem
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

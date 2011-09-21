@@ -36,12 +36,9 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class User extends CommonObject
 {
-	var $db;
-	var $error;
-	var $errors=array();
-	var $element='user';
-	var $table_element='user';
-	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $element='user';
+	public $table_element='user';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id=0;
 	var $ldap_sid;
@@ -119,11 +116,11 @@ class User extends CommonObject
 	/**
 	 *	Load a user from database with its id or ref (login)
 	 *
-	 *	@param      id		       		Si defini, id a utiliser pour recherche
-	 * 	@param      login       		Si defini, login a utiliser pour recherche
-	 *	@param      sid					Si defini, sid a utiliser pour recherche
-	 * 	@param		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
-	 * 	@return		int					<0 if KO, 0 not found, >0 if OK
+	 *	@param	int		$id		       		Si defini, id a utiliser pour recherche
+	 * 	@param  string	$login       		Si defini, login a utiliser pour recherche
+	 *	@param  strinf	$sid				Si defini, sid a utiliser pour recherche
+	 * 	@param	int		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
+	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
 	{
@@ -270,12 +267,12 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    Ajoute un droit a l'utilisateur
+	 *  Ajoute un droit a l'utilisateur
 	 *
-	 *    @param      rid         id du droit a ajouter
-	 *    @param      allmodule   Ajouter tous les droits du module allmodule
-	 *    @param      allperms    Ajouter tous les droits du module allmodule, perms allperms
-	 *    @return     int         > 0 si ok, < 0 si erreur
+	 * 	@param	int		$rid         id du droit a ajouter
+	 *  @param  string	$allmodule   Ajouter tous les droits du module allmodule
+	 *  @param  string	$allperms    Ajouter tous les droits du module allmodule, perms allperms
+	 *  @return int   			     > 0 si ok, < 0 si erreur
 	 */
 	function addrights($rid,$allmodule='',$allperms='')
 	{
@@ -369,12 +366,12 @@ class User extends CommonObject
 
 
 	/**
-	 *    Retire un droit a l'utilisateur
+	 *  Retire un droit a l'utilisateur
 	 *
-	 *    @param      rid         id du droit a retirer
-	 *    @param      allmodule   Retirer tous les droits du module allmodule
-	 *    @param      allperms    Retirer tous les droits du module allmodule, perms allperms
-	 *    @return     int         > 0 si ok, < 0 si erreur
+	 *  @param	int		$rid        Id du droit a retirer
+	 *  @param  string	$allmodule  Retirer tous les droits du module allmodule
+	 *  @param  string	$allperms   Retirer tous les droits du module allmodule, perms allperms
+	 *  @return int 				> 0 si ok, < 0 si erreur
 	 */
 	function delrights($rid,$allmodule='',$allperms='')
 	{
@@ -465,7 +462,9 @@ class User extends CommonObject
 
 
 	/**
-	 *    Clear all permissions array of user
+	 *  Clear all permissions array of user
+	 *
+	 *  @return	void
 	 */
 	function clearrights()
 	{
@@ -479,7 +478,8 @@ class User extends CommonObject
 	/**
 	 *	Load permissions granted to user into object user
 	 *
-	 *	@param      moduletag    Limit permission for a particular module ('' by default means load all permissions)
+	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
+	 *	@return	void
 	 */
 	function getrights($moduletag='')
 	{
@@ -600,9 +600,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *      Change status of a user
+	 *  Change status of a user
 	 *
-	 *      @return     int     <0 if KO, 0 if nothing is done, >0 if OK
+	 *	@param	int		$statut		Status to set
+	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	function setstatus($statut)
 	{
@@ -709,9 +710,9 @@ class User extends CommonObject
 	/**
 	 *  Create a user into database
 	 *
-	 *  @param      user        	Objet user qui demande la creation
-	 *  @param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *  @return     int         	<0 si KO, id compte cree si OK
+	 *  @param	User	$user        	Objet user qui demande la creation
+	 *  @param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
+	 *  @return int			         	<0 si KO, id compte cree si OK
 	 */
 	function create($user,$notrigger=0)
 	{
@@ -835,12 +836,12 @@ class User extends CommonObject
 
 
 	/**
-	 *      Create a user from a contact object. User will be internal but if contact is linked to a third party, user will be external
+	 *  Create a user from a contact object. User will be internal but if contact is linked to a third party, user will be external
 	 *
-	 *      @param    contact      Object for source contact
-	 * 		@param    login        Login to force
-	 *      @param    password     Password to force
-	 *      @return   int          <0 if error, if OK returns id of created user
+	 *  @param	Contact	$contact    Object for source contact
+	 * 	@param  string	$login      Login to force
+	 *  @param  string	$password   Password to force
+	 *  @return int 				<0 if error, if OK returns id of created user
 	 */
 	function create_from_contact($contact,$login='',$password='')
 	{
@@ -903,11 +904,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 *      Create a user into database from a member object
+	 *  Create a user into database from a member object
 	 *
-	 *      @param      member	Object member source
-	 * 		@param		login	Login to force
-	 *      @return     int		<0 if KO, if OK, return id of created account
+	 *  @param	Adherent	$member		Object member source
+	 * 	@param	string		$login		Login to force
+	 *  @return int						<0 if KO, if OK, return id of created account
 	 */
 	function create_from_member($member,$login='')
 	{
@@ -1008,11 +1009,11 @@ class User extends CommonObject
 	/**
 	 *  	Update a user into databse (and also password if this->pass is defined)
 	 *
-	 *		@param		user				User qui fait la mise a jour
-	 *    	@param      notrigger			1 ne declenche pas les triggers, 0 sinon
-	 *		@param		nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
-	 *		@param		nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
-	 *    	@return     int         		<0 si KO, >=0 si OK
+	 *		@param	User	$user				User qui fait la mise a jour
+	 *    	@param  int		$notrigger			1 ne declenche pas les triggers, 0 sinon
+	 *		@param	int		$nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
+	 *		@param	int		$nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
+	 *    	@return int 		        		<0 si KO, >=0 si OK
 	 */
 	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
 	{
@@ -1201,7 +1202,7 @@ class User extends CommonObject
 		$sql.= " tms = tms";    // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog ("Update last login date for user->id=".$this->id." ".$sql, LOG_DEBUG);
+		dol_syslog("Update last login date for user->id=".$this->id." ".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1220,18 +1221,18 @@ class User extends CommonObject
 	/**
 	 *  Change password of a user
 	 *
-	 *  @param     	user             		Object user of user making change
-	 *  @param     	password         		New password in clear text (to generate if not provided)
-	 *	@param		changelater				1=Change password only after clicking on confirm email
-	 *	@param		notrigger				1=Does not launch triggers
-	 *	@param		nosyncmember	        Do not synchronize linked member
-	 *  @return    	string           		If OK return clear password, 0 if no change, < 0 if error
+	 *  @param	User	$user             		Object user of user making change
+	 *  @param  string	$password         		New password in clear text (to generate if not provided)
+	 *	@param	int		$changelater			1=Change password only after clicking on confirm email
+	 *	@param	int		$notrigger				1=Does not launch triggers
+	 *	@param	int		$nosyncmember	        Do not synchronize linked member
+	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
 	 */
 	function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
 	{
 		global $conf, $langs;
 		require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
-		
+
 		$error=0;
 
 		dol_syslog("User::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
@@ -1347,12 +1348,12 @@ class User extends CommonObject
 
 
 	/**
-	 *   Envoie mot de passe par mail
+	 *  Envoie mot de passe par mail
 	 *
-	 *   @param     	user            Object user de l'utilisateur qui fait l'envoi
-	 *   @param			password        Nouveau mot de passe
-	 *	 @param			changelater		1=Change password only after clicking on confirm email
-	 *   @return    	int             < 0 si erreur, > 0 si ok
+	 *  @param	User	$user           Object user de l'utilisateur qui fait l'envoi
+	 *  @param	string	$password       Nouveau mot de passe
+	 *	@param	int		$changelater	1=Change password only after clicking on confirm email
+	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
 	function send_password($user, $password='', $changelater=0)
 	{
@@ -1414,8 +1415,19 @@ class User extends CommonObject
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
 			dol_syslog("User::send_password url=".$url);
 		}
-		$mailfile = new CMailFile($subject,$this->email,$conf->notification->email_from,$mesg,
-		array(),array(),array(),'', '', 0, $msgishtml);
+		$mailfile = new CMailFile(
+		    $subject,
+		    $this->email,
+		    $conf->notification->email_from,
+		    $mesg,
+		    array(),
+		    array(),
+		    array(),
+		    '',
+		    '',
+		    0,
+		    $msgishtml
+		);
 
 		if ($mailfile->sendfile())
 		{
@@ -1476,7 +1488,9 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    Update clicktodial info
+	 *  Update clicktodial info
+	 *
+	 *  @return	void
 	 */
 	function update_clicktodial()
 	{
@@ -1511,12 +1525,12 @@ class User extends CommonObject
 
 
 	/**
-	 *    Add user into a group
+	 *  Add user into a group
 	 *
-	 *    @param       group       Id of group
-	 *    @param       entity      Entity
-	 *    @param       notrigger   Disable triggers
-	 *    @return      int         <0 if KO, >0 if OK
+	 *  @param	Group	$group      Id of group
+	 *  @param  int		$entity     Entity
+	 *  @param  int		$notrigger  Disable triggers
+	 *  @return int  				<0 if KO, >0 if OK
 	 */
 	function SetInGroup($group, $entity, $notrigger=0)
 	{
@@ -1572,12 +1586,12 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    Remove a user from a group
+	 *  Remove a user from a group
 	 *
-     *    @param       group       Id of group
-     *    @param       entity      Entity
-     *    @param       notrigger   Disable triggers
-     *    @return      int         <0 if KO, >0 if OK
+     *  @param	Group   $group       Id of group
+     *  @param  int		$entity      Entity
+     *  @param  int		$notrigger   Disable triggers
+     *  @return int  			     <0 if KO, >0 if OK
 	 */
 	function RemoveFromGroup($group, $entity, $notrigger=0)
 	{
@@ -1628,12 +1642,12 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	Return a link to the user card (with optionnaly the picto)
-	 * 		Use this->id,this->nom, this->prenom
+	 *  Return a link to the user card (with optionnaly the picto)
+	 * 	Use this->id,this->nom, this->prenom
 	 *
-	 *		@param		withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
-	 *		@param		option			On what the link point to
-	 *		@return		string			String with URL
+	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
+	 *	@param	string	$option			On what the link point to
+	 *	@return	string					String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
@@ -1657,11 +1671,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	Renvoie login clicable (avec eventuellement le picto)
+	 *  Renvoie login clicable (avec eventuellement le picto)
 	 *
-	 *		@param		withpicto		Inclut le picto dans le lien
-	 *		@param		option			Sur quoi pointe le lien
-	 *		@return		string			Chaine avec URL
+	 *	@param	int		$withpicto		Inclut le picto dans le lien
+	 *	@param	string	$option			Sur quoi pointe le lien
+	 *	@return	string					Chaine avec URL
 	 */
 	function getLoginUrl($withpicto=0,$option='')
 	{
@@ -1684,12 +1698,12 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	Return full name (civility+' '+name+' '+lastname)
+	 *  Return full name (civility+' '+name+' '+lastname)
 	 *
-	 *		@param		langs			Language object for translation of civility
-	 *		@param		option			0=No option, 1=Add civility
-	 * 		@param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-	 * 		@return		string			String with full name
+	 *	@param	Translate	$langs			Language object for translation of civility
+	 *	@param	int			$option			0=No option, 1=Add civility
+	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+	 * 	@return	string						String with full name
 	 */
 	function getFullName($langs,$option=0,$nameorder=-1)
 	{
@@ -1723,10 +1737,10 @@ class User extends CommonObject
 
 
 	/**
-	 *    Retourne le libelle du statut d'un user (actif, inactif)
+	 *  Retourne le libelle du statut d'un user (actif, inactif)
 	 *
-	 *    @param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *    @return     string        Label of status
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @return	string 			       Label of status
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -1734,11 +1748,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	Renvoi le libelle d'un statut donne
+	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *    	@param      statut        	Id statut
-	 *    	@param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	@return     string        	Label of status
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Label of status
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -1782,11 +1796,11 @@ class User extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param		info		Info string loaded by _load_ldap_info
-	 *	@param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *							1=
-	 *							2=Return key only (uid=qqq)
-	 *	@return		string		DN
+	 *	@param	string	$info		Info string loaded by _load_ldap_info
+	 *	@param	int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *								1=
+	 *								2=Return key only (uid=qqq)
+	 *	@return	string				DN
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
@@ -1871,7 +1885,11 @@ class User extends CommonObject
 
 
 	/**
-	 *		Initialize user with default values
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{
@@ -1904,9 +1922,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *       Load info of user object
+	 *  Load info of user object
 	 *
-	 *       @param     id     id of user to load
+	 *  @param  int		$id     Id of user to load
+	 *  @return	void
 	 */
 	function info($id)
 	{
@@ -1968,10 +1987,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    Return number of existing users
+	 *  Return number of existing users
 	 *
-	 *    @param		limitTo		limit to 'active' or 'superadmin' users
-	 *    @return       int     	Number of users
+	 *  @param	string	$limitTo	Limit to 'active' or 'superadmin' users
+	 *  @return int  				Number of users
 	 */
 	function getNbOfUsers($limitTo='')
 	{

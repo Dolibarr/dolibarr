@@ -33,12 +33,9 @@ if ($conf->ldap->enabled) require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php")
  */
 class UserGroup extends CommonObject
 {
-	var $db;			// Database handler
-	var $error;
-	var $errors=array();
-	var $element='usergroup';
-	var $table_element='usergroup';
-	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $element='usergroup';
+	public $table_element='usergroup';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;			// Group id
 	var $entity;		// Entity of group
@@ -679,9 +676,11 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *		Initialise le groupe avec valeurs fictives aleatoire
-	 *
-	 *		@return		void
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

@@ -23,12 +23,11 @@
 include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
 /**
- *	\class      ProductService
+ *	\class      ActionsCardService
  *	\brief      Class with controller methods for product canvas
  */
 class ActionsCardService extends Product
 {
-	var $db;
     var $targetmodule;
     var $canvas;
     var $card;
@@ -38,6 +37,7 @@ class ActionsCardService extends Product
 
 	// List of fiels for action=list
 	var $field_list =array();
+    public $list_datas = array();
 
 
 	/**
@@ -48,7 +48,7 @@ class ActionsCardService extends Product
      *    @param   string	$canvas         Name of canvas
      *    @param   string	$card           Name of tab (sub-canvas)
 	 */
-	function ActionsCardIndividual($DB,$targetmodule,$canvas,$card)
+	function ActionsCardService($DB,$targetmodule,$canvas,$card)
 	{
 		$this->db 				= $DB;
 		$this->targetmodule     = $targetmodule;
@@ -64,6 +64,8 @@ class ActionsCardService extends Product
 
     /**
      *  Return the title of card
+     *
+     *  @return	string		Label of card
      */
 	private function getTitle()
 	{
@@ -75,7 +77,8 @@ class ActionsCardService extends Product
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 *    @param      action     Type of action
+	 *    @param    string	$action     Type of action
+	 *    @return	void
 	 */
 	function assign_values($action)
 	{
@@ -141,7 +144,7 @@ class ActionsCardService extends Product
 			$this->tpl['accountancySellCodeKey'] = $html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
 			$this->tpl['accountancySellCodeVal'] = $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
 		}
-		
+
 		$this->tpl['finished'] = $this->object->finished;
 		$this->tpl['ref'] = $this->object->ref;
 		$this->tpl['label'] = $this->object->label;
@@ -229,6 +232,8 @@ class ActionsCardService extends Product
 
 	/**
 	 * 	Fetch field list
+	 *
+	 *  @return	void
 	 */
 	private function getFieldList()
 	{
@@ -277,7 +282,13 @@ class ActionsCardService extends Product
 	}
 
 	/**
-	 * 	\brief	Fetch datas list
+	 * 	Fetch datas list
+	 *
+	 *  @param	int		$limit		Limit number of responses
+	 *  @param	int		$offset		Offset for first response
+	 *  @param	string	$sortfield	Sort field
+	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
+	 *  @return	void
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
@@ -327,7 +338,7 @@ class ActionsCardService extends Product
 			$sql .= " AND cp.fk_categorie = ".$this->db->escape($search_categ);
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
-		$sql.= $this->db->plimit($limit + 1 ,$offset);
+		$sql.= $this->db->plimit($limit+1, $offset);
 
 		$this->list_datas = array();
 

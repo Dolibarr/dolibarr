@@ -32,10 +32,8 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class Don extends CommonObject
 {
-    var $db;
-    var $error;
-    var $element='don';
-    var $table_element='don';
+    public $element='don';
+    public $table_element='don';
 
     var $id;
     var $date;
@@ -142,8 +140,11 @@ class Don extends CommonObject
 
 
     /**
-     *		\brief		Initialise le don avec valeurs fictives alaatoire
-     *					Sert a generer un recu de don pour l'aperu des modeles ou demo
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {

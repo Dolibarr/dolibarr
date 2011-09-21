@@ -58,9 +58,9 @@ class Menubase
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
-     *  @param     	string		$menu_handler
-     *  @param     	string		$type
+	 *  @param		DoliDB		$DB 		    Database handler
+     *  @param     	string		$menu_handler	Menu handler
+     *  @param     	string		$type			Type
      */
     function Menubase($DB,$menu_handler='',$type='')
     {
@@ -167,10 +167,11 @@ class Menubase
     }
 
     /**
-     *      Update menu entry into database
-     *      @param      user        	User that modify
-     *      @param      notrigger	    0=no, 1=yes (no update trigger)
-     *      @return     int         	<0 if KO, >0 if OK
+     *  Update menu entry into database.
+     *
+     *  @param	User	$user        	User that modify
+     *  @param  int		$notrigger	    0=no, 1=yes (no update trigger)
+     *  @return int 		        	<0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -302,10 +303,11 @@ class Menubase
     }
 
 
-    /*
-     *   \brief      Delete object in database
-     *	\param      user        User that delete
-     *	\return		int			<0 if KO, >0 if OK
+    /**
+     *  Delete object in database
+     *
+     *	@param	User	$user       User that delete
+     *	@return	int					<0 if KO, >0 if OK
      */
     function delete($user)
     {
@@ -328,8 +330,11 @@ class Menubase
 
 
     /**
-     *		Initialise object with example values
-     *		Id must be 0 if object instance is a specimen.
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {
@@ -355,12 +360,13 @@ class Menubase
 
 
     /**
-     * Complete this->newmenu with menu entry found in $tab
+     *  Complete this->newmenu with menu entry found in $tab
      *
-     * @param  $tab
-     * @param  $pere
-     * @param  $rang
-     * @param  $myleftmenu     Value for left that defined leftmenu
+     *  @param  array	$tab			Tab array
+     *  @param  int		$pere			Id of parent
+     *  @param  int		$rang			Rang
+     *  @param  string	$myleftmenu     Value for left that defined leftmenu
+     *  @return	void
      */
     function recur($tab, $pere, $rang, $myleftmenu)
     {
@@ -397,12 +403,14 @@ class Menubase
     }
 
     /**
-     *		Load tabMenu array
-     * 		@param		type_user		0=Internal,1=External,2=All
-     * 		@param		mainmenu		Value for mainmenu that defined top menu
-     * 		@param		menu_handler	Name of menu_handler used (auguria, eldy...)
-     * 		@param      tabMenu         If array with menu entries already loaded, we put this array here (in most cases, it's empty)
-     * 		@return		array			Return array with menu entries for top menu
+     *	Load tabMenu array
+     *
+     * 	@param	string	$mainmenu		Value for mainmenu that defined top menu
+     * 	@param	string	$myleftmenu		Left menu name
+     * 	@param	int		$type_user		0=Internal,1=External,2=All
+     * 	@param	string	$menu_handler	Name of menu_handler used (auguria, eldy...)
+     * 	@param  array	&$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+     * 	@return	array					Return array with menu entries for top menu
      */
     function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
     {
@@ -446,14 +454,15 @@ class Menubase
     }
 
     /**
-     * Load entries found in database in a menu array
-     * @param  $newmenu        Menu array to complete
-     * @param  $mainmenu       Value for mainmenu that defined top menu of left menu
-     * @param  $myleftmenu     Value that defined leftmenu
-     * @param  $type_user      0=Internal,1=External,2=All
-     * @param  $menu_handler   Name of menu_handler used (auguria, eldy...)
-     * @param  $tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
-     * @return array           Menu array for particular mainmenu value or full tabArray
+     * 	Load entries found in database in a menu array.
+     *
+     * 	@param	array	$newmenu        Menu array to complete
+     * 	@param	string	$mainmenu       Value for mainmenu that defined top menu of left menu
+     * 	@param 	string	$myleftmenu     Value that defined leftmenu
+     * 	@param  int		$type_user		0=Internal,1=External,2=All
+     * 	@param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
+     * 	@param  array	&$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+     * 	@return array    		       	Menu array for particular mainmenu value or full tabArray
      */
     function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
     {
@@ -493,12 +502,13 @@ class Menubase
 
 
     /**
-     * Load entries found in database in a menu array
-     * @param  $myleftmenu     Value for left that defined leftmenu
-     * @param  $type_user      0=Internal,1=External,2=All
-     * @param  $menu_handler   Name of menu_handler used (auguria, eldy...)
-     * @param  $tabMenu        If array with menu entries already load, we put this array here (in most cases, it's empty)
-     * @return int             >0 if OK, <0 if KO
+     *  Load entries found in database in a menu array.
+     *
+     *  @param	string	$myleftmenu     Value for left that defined leftmenu
+     *  @param  int		$type_user      0=Internal,1=External,2=All
+     *  @param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
+     *  @param  array	&$tabMenu        If array with menu entries already load, we put this array here (in most cases, it's empty)
+     *  @return int     		        >0 if OK, <0 if KO
      */
     function menuLoad($myleftmenu, $type_user, $menu_handler, &$tabMenu=array())
     {

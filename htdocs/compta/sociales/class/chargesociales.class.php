@@ -31,11 +31,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class ChargeSociales extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element='rowid';
-    var $table='chargesociales';
-	var $table_element='chargesociales';
+	public $element='rowid';
+    public $table='chargesociales';
+	public $table_element='chargesociales';
 
 	var $id;
 	var $date_ech;
@@ -397,8 +395,11 @@ class ChargeSociales extends CommonObject
 	}
 
     /**
-     *      Initialise an example of social contribution with random values
-     *      Used to build previews or test instances
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {

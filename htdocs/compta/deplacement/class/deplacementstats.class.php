@@ -31,12 +31,11 @@ include_once DOL_DOCUMENT_ROOT . "/compta/deplacement/class/deplacement.class.ph
  */
 class DeplacementStats extends Stats
 {
-    var $db;
+    public $table_element;
 
     var $socid;
     var $userid;
 
-    var $table_element;
     var $from;
     var $field;
     var $where;

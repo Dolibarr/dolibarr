@@ -33,12 +33,11 @@ include_once DOL_DOCUMENT_ROOT . "/adherents/class/cotisation.class.php";
  */
 class AdherentStats extends Stats
 {
-	var $db;
+    public $table_element;
 
     var $socid;
     var $userid;
 
-    var $table_element;
     var $from;
     var $field;
     var $where;

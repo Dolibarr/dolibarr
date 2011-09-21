@@ -35,13 +35,12 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
  */
 class FactureRec extends Facture
 {
-	var $db ;
-	var $element='facturerec';
-	var $table_element='facture_rec';
-	var $table_element_line='facturedet_rec';
-	var $fk_element='fk_facture';
+	public $element='facturerec';
+	public $table_element='facture_rec';
+	public $table_element_line='facturedet_rec';
+	public $fk_element='fk_facture';
 
-	var $id ;
+	var $id;
 
 	//! Id customer
 	var $socid;

@@ -30,11 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class PaymentSocialContribution extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
-	var $element='paiementcharge';			//!< Id that identify managed objects
-	var $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
+	public $element='paiementcharge';			//!< Id that identify managed objects
+	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
 
 	var $id;
 	var $ref;
@@ -428,8 +425,11 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise object with example values
-	 *		\remarks	id must be 0 if object instance is a specimen.
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

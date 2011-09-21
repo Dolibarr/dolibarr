@@ -33,8 +33,6 @@ abstract class ActionsCardCommon
     var $canvas;
     var $card;
 
-	//! Numero d'erreur Plage 1280-1535
-	var $errno = 0;
 	//! Template container
 	var $tpl = array();
 	//! Object container

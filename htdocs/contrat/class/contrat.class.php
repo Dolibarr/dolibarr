@@ -37,12 +37,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/price.lib.php");
  */
 class Contrat extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element='contrat';
-	var $table_element='contrat';
-	var $table_element_line='contratdet';
-	var $fk_element='fk_contrat';
+	public $element='contrat';
+	public $table_element='contrat';
+	public $table_element_line='contratdet';
+	public $fk_element='fk_contrat';
 
 	var $id;
 	var $ref;
@@ -1424,7 +1422,11 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le membre avec valeurs fictives aleatoire
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
 	 */
 	function initAsSpecimen()
 	{

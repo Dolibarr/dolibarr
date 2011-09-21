@@ -35,16 +35,14 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
  */
 class Commande extends CommonObject
 {
-    var $db;
-    var $error;
-    var $element='commande';
-    var $table_element='commande';
-    var $table_element_line = 'commandedet';
-    var $class_element_line = 'OrderLine';
-    var $fk_element = 'fk_commande';
-    var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $element='commande';
+    public $table_element='commande';
+    public $table_element_line = 'commandedet';
+    public $class_element_line = 'OrderLine';
+    public $fk_element = 'fk_commande';
+    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $id ;
+    var $id;
 
     var $socid;		// Id client
     var $client;		// Objet societe client (a charger par fetch_client)
@@ -2325,7 +2323,7 @@ class Commande extends CommonObject
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
             $err++;
         }
- 
+
         // On efface le repertoire de pdf provisoire
         $comref = dol_sanitizeFileName($this->ref);
         if ($conf->commande->dir_output)
@@ -2598,8 +2596,11 @@ class Commande extends CommonObject
 
 
     /**
-     *		Initialise an example of instance with random values
-     *		Used to build previews or test instances
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {

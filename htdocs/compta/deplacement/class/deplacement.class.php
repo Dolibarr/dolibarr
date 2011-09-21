@@ -31,13 +31,11 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
  */
 class Deplacement extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element='deplacement';
-	var $table_element='deplacement';
-	var $table_element_line = '';
-	var $fk_element = '';
-	var $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $element='deplacement';
+	public $table_element='deplacement';
+	public $table_element_line = '';
+	public $fk_element = '';
+	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
 

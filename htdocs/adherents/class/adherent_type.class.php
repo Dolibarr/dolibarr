@@ -33,10 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class AdherentType extends CommonObject
 {
-    var $error;
-    var $errors=array();
-    var $db;
-    var $table_element = 'adherent_type';
+    public $table_element = 'adherent_type';
 
     var $id;
     var $libelle;

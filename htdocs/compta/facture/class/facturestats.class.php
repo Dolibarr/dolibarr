@@ -33,12 +33,10 @@ include_once DOL_DOCUMENT_ROOT . "/lib/date.lib.php";
  */
 class FactureStats extends Stats
 {
-	var $db;
-
     var $socid;
     var $userid;
 
-    var $table_element;
+    public $table_element;
     var $from;
     var $field;
     var $where;

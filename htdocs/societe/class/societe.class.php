@@ -1341,7 +1341,7 @@ class Societe extends CommonObject
         if ($this->id)
         {
         	$now=dol_now();
-        	
+
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
             $sql .= " SET price_level = '".$price_level."'";
             $sql .= " WHERE rowid = " . $this->id;
@@ -2481,8 +2481,11 @@ class Societe extends CommonObject
 
 
     /**
-     *      Initialise an example of company with random values
-     *      Used to build previews or test instances
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
      */
     function initAsSpecimen()
     {
