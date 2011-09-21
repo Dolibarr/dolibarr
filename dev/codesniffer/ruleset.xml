@@ -163,6 +163,9 @@
     <rule ref="PEAR.Commenting.FunctionComment.ParameterCommentsNotAligned">
         <severity>0</severity>
     </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ParameterNamesNotAligned">
+        <severity>0</severity>
+    </rule>
 
     <rule ref="PEAR.Commenting.InlineComment" />
 
