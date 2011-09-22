@@ -1,0 +1,48 @@
+[submodule "htdocs/custom/productdiscount"]
+	path = htdocs/custom/productdiscount
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/productdiscount/productdiscount.git
+[submodule "htdocs/custom/multicompany"]
+	path = htdocs/custom/multicompany
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/multicompany/multicompany.git
+[submodule "htdocs/custom/paypalplus"]
+	path = htdocs/custom/paypalplus
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/paypalplus/paypalplus.git
+[submodule "htdocs/custom/milestone"]
+	path = htdocs/custom/milestone
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/milestone/milestone.git
+[submodule "htdocs/custom/dropbox"]
+	path = htdocs/custom/dropbox
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/dropbox/dropbox.git
+[submodule "htdocs/custom/docgen"]
+	path = htdocs/custom/docgen
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/docgen/docgen.git
+[submodule "htdocs/custom/extrafields"]
+	path = htdocs/custom/extrafields
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/extrafields/extrafields.git
+[submodule "htdocs/custom/business"]
+	path = htdocs/custom/business
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/business/business.git
+[submodule "htdocs/custom/agefodd"]
+	path = htdocs/custom/agefodd
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/agefodd/agefodd.git
+[submodule "htdocs/custom/genfac"]
+	path = htdocs/custom/genfac
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/massfacturation/massfacturation.git
+[submodule "htdocs/custom/lead"]
+	path = htdocs/custom/lead
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/lead/lead.git
+[submodule "htdocs/custom/team"]
+	path = htdocs/custom/team
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/team/team.git
+[submodule "htdocs/custom/highcharts"]
+	path = htdocs/custom/highcharts
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/highcharts/highcharts.git
+[submodule "htdocs/custom/joomla"]
+	path = htdocs/custom/joomla
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/joomla/joomla.git
+[submodule "htdocs/custom/donation"]
+	path = htdocs/custom/donation
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/capnetworks/donate.git
+[submodule "htdocs/custom/fidppi"]
+	path = htdocs/custom/fidppi
+	url = git+ssh://hregis@doliforge.org/gitroot/fidppi/fidppi.git
