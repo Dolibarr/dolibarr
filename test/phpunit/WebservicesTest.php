@@ -139,7 +139,7 @@ class WebservicesTest extends PHPUnit_Framework_TestCase
             'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
             'sourceapplication'=>'DEMO',
             'login'=>'admin',
-            'password'=>'changeme',
+            'password'=>'admin',
             'entity'=>'');
 
         // Test URL
