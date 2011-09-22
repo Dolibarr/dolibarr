@@ -88,6 +88,10 @@ body {
 a:link, a:visited, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: blue; text-decoration: none; }
 a:hover { font-family: <?php print $fontlist ?>; font-weight: bold; color: #A51B00; text-decoration: none; }
 
+input:focus, textarea:focus, button:focus, select:focus {
+    box-shadow: 0 0 4px #8091BF;
+}
+
 input {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
@@ -1354,8 +1358,8 @@ tr.liste_titre {
 th.liste_titre, td.liste_titre
 {
 	padding-left: 6px;
-    padding-right: 6px;
-    /*vertical-align: text-top;*/
+	padding-right: 6px;
+    	/*vertical-align: text-top;*/
 }
 th.liste_titre_sel, td.liste_titre_sel
 {

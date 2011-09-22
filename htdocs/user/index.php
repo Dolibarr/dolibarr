@@ -130,7 +130,7 @@ if ($result)
         }
         else if (! empty($conf->multicompany->enabled))
         {
-        	if ($obj->admin && ! $obj->entity)
+        	if (! $obj->entity)
         	{
         		print $langs->trans("AllEntities");
         	}
