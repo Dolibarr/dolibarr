@@ -109,7 +109,14 @@ else
     dol_syslog("email_unpaid_invoices_to_representatives.php: Error");
 }
 
-
+/**
+ * 	Send email
+ *
+ * 	@param	string	$oldemail	Old email
+ * 	@param	string	$message	Message to send
+ * 	@param	string	$total		Total amount of unpayed invoices
+ * 	@return	int					<0 if KO, >0 if OK
+ */
 function envoi_mail($oldemail,$message,$total)
 {
     global $conf,$langs;
@@ -129,26 +136,31 @@ function envoi_mail($oldemail,$message,$total)
     $allmessage .= "\n";
     $allmessage .= $langs->trans("Total")." = ".price($total)."\n";
 
-    $mail = new CMailFile($subject,
-    $sendto,
-    $from,
-    $allmessage,
-    array(),
-    array(),
-    array(),
-    '',
-    '',
-    0,
-    $msgishtml);
+    $mail = new CMailFile(
+        $subject,
+        $sendto,
+        $from,
+        $allmessage,
+        array(),
+        array(),
+        array(),
+        '',
+        '',
+        0,
+        $msgishtml
+    );
 
     $mail->errors_to = $errorsto;
 
     $result=$mail->sendfile();
     if ($result)
     {
-
+        return 1;
     }
-
+    else
+    {
+        return -1;
+    }
 }
 
 

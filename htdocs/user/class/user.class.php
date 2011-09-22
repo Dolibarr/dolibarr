@@ -504,7 +504,7 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
-		$sql.= " AND r.entity = ".$conf->entity;
+		$sql.= " AND r.entity in (0,".(!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)?"1,":"").$conf->entity.")";
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
@@ -1992,7 +1992,7 @@ class User extends CommonObject
 	 *  @param	string	$limitTo	Limit to 'active' or 'superadmin' users
 	 *  @return int  				Number of users
 	 */
-	function getNbOfUsers($limitTo='')
+	function getNbOfUsers($limitTo='',$all=0)
 	{
 		global $conf;
 
@@ -2004,8 +2004,9 @@ class User extends CommonObject
 		}
 		else
 		{
-			$sql.= " WHERE entity = ".$conf->entity;
-			if ($limitTo == 'active') $sql.= " AND statut = 1";
+			if ($all) $sql.= " WHERE entity = is not null";
+                        else $sql.= " WHERE entity = ".$conf->entity;
+                        if ($limitTo == 'active') $sql.= " AND statut = 1";
 		}
 
 		$resql=$this->db->query($sql);

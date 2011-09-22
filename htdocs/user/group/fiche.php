@@ -94,7 +94,10 @@ if ($action == 'add')
 		if (! $message)
 		{
 			$object->nom	= trim($_POST["nom"]);
-			$object->entity	= $_POST["entity"];
+                        if($conf->multicompany->enabled && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+                            $object->entity = 0;
+                        else
+                            $object->entity = $_POST["entity"];
 			$object->note	= trim($_POST["note"]);
 
             $db->begin();
@@ -170,7 +173,10 @@ if ($action == 'update')
         $object->oldcopy=dol_clone($object);
 
 		$object->nom	= trim($_POST["group"]);
-		$object->entity	= $_POST["entity"];
+		if($conf->multicompany->enabled && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+                            $object->entity = 0;
+                        else
+                            $object->entity = $_POST["entity"];
 		$object->note	= dol_htmlcleanlastbr($_POST["note"]);
 
         $ret=$object->update();
@@ -301,7 +307,7 @@ else
 			print '<td width="75%" class="valeur">'.$object->nom;
 			if (empty($object->entity))
 			{
-				print img_redstar($langs->trans("GlobalGroup"));
+				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td></tr>\n";
 
