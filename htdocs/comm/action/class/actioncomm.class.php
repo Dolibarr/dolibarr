@@ -233,7 +233,7 @@ class ActionComm extends CommonObject
 		$sql.= " a.datec,";
         $sql.= " a.durationp,";
 		$sql.= " a.tms as datem,";
-		$sql.= " a.note, a.label, a.fk_action as type_id,";
+		$sql.= " a.note, a.label,";
 		$sql.= " a.fk_soc,";
 		$sql.= " a.fk_project,";
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
