@@ -169,7 +169,16 @@ if ($id)
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
     $sql.= " WHERE ugr.fk_id = r.id";
-    $sql.= " AND r.entity = ".(empty($conf->multicompany->enabled) ? $conf->entity : $fgroup->entity);
+    if(!empty($conf->multicompany->enabled))
+    {
+        if(empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+            $sql.= " AND r.entity = ".$conf->entity;
+        else
+            $sql.= " AND r.entity in (0,1)";
+    }
+    else 
+        $sql.= " AND r.entity = ".$fgroup->entity;
+        
     $sql.= " AND ugr.fk_usergroup = ".$fgroup->id;
 
     $result=$db->query($sql);
@@ -234,7 +243,17 @@ if ($id)
     $sql = "SELECT r.id, r.libelle, r.module";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-    $sql.= " AND r.entity = ".(empty($conf->multicompany->enabled) ? $conf->entity : $fgroup->entity);
+    //$sql.= " AND r.entity = ".(empty($conf->multicompany->enabled) ? $conf->entity : $fgroup->entity);
+    if(!empty($conf->multicompany->enabled))
+    {
+        if(empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+            $sql.= " AND r.entity = ".$conf->entity;
+        else
+            $sql.= " AND r.entity in (0,1)";
+    }
+    else 
+        $sql.= " AND r.entity = ".$fgroup->entity;
+
     if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
     $sql.= " ORDER BY r.module, r.id";
 

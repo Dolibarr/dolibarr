@@ -124,7 +124,7 @@ if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
 
         if (!empty($conf->file->main_limit_users))
         {
-            $nb = $edituser->getNbOfUsers("active");
+            $nb = $edituser->getNbOfUsers("active",1);
             if ($nb >= $conf->file->main_limit_users)
             {
                 $message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
@@ -177,7 +177,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 
     if (!empty($conf->file->main_limit_users)) // If option to limit users is set
     {
-        $nb = $edituser->getNbOfUsers("active");
+        $nb = $edituser->getNbOfUsers("active",1);
         if ($nb >= $conf->file->main_limit_users)
         {
             $message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
@@ -202,7 +202,15 @@ if ($_POST["action"] == 'add' && $canadduser)
         $edituser->note			= $_POST["note"];
         $edituser->ldap_sid		= $_POST["ldap_sid"];
         // If multicompany is off, admin users must all be on entity 0.
-        $edituser->entity		= (! empty($_POST["admin"]) && (! empty($_POST["superadmin"]) || empty($_POST["entity"]) || empty($conf->multicompany->enabled)) ? 0 : $_POST["entity"]);
+        if($conf->multicompany->enabled)
+                if($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ! empty($_POST["superadmin"]))
+                    $edituser->entity=0;
+                else
+                    $edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+        else if(! empty($_POST["admin"]))
+            $edituser->entity=0;
+        else
+            $edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
 
         $db->begin();
 
@@ -298,7 +306,16 @@ if ($action == 'update' && ! $_POST["cancel"])
             $edituser->webcal_login	= $_POST["webcal_login"];
             $edituser->phenix_login	= $_POST["phenix_login"];
             $edituser->phenix_pass	= $_POST["phenix_pass"];
-            $edituser->entity		= ((! empty($_POST["superadmin"]) && ! empty($_POST["admin"]) || empty($_POST["entity"])) ? 0 : $_POST["entity"]);
+            if($conf->multicompany->enabled)
+                if($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ! empty($_POST["superadmin"]))
+                    $edituser->entity=0;
+                else
+                    $edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+            else if(! empty($_POST["admin"]))
+                $edituser->entity=0;
+            else
+                $edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+        
             if (GETPOST('deletephoto')) $edituser->photo='';
             if (! empty($_FILES['photo']['name'])) $edituser->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
@@ -1324,7 +1341,7 @@ else
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
-                if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                if(! empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
                 	print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
                 }
@@ -1349,7 +1366,7 @@ else
                             print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
                         }
                         print '</td>';
-                        if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                        if(! empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                         {
                             $mc = new ActionsMulticompany($db);
                             $mc->getInfo($group->usergroup_entity);

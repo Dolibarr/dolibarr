@@ -2,7 +2,7 @@
 <?php
 /*
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,9 +151,20 @@ if ($resql)
             $substitutionisok=true;
 
             // Fabrication du mail
-			$mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
-			array(), array(), array(),
-            						'', '', 0, $msgishtml, $errorsto);
+			$mail = new CMailFile(
+			    $newsubject,
+			    $sendto,
+			    $from,
+			    $newmessage,
+			    array(),
+			    array(),
+			    array(),
+            	'',
+            	'',
+			    0,
+			    $msgishtml,
+			    $errorsto
+			);
 
 			if ($mail->error)
 			{
