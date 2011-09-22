@@ -55,13 +55,15 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 		// Validation of login with a third party login module method
 		if (! $error)
 		{
-		    $test=true;
     		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
     		{
     			$login = getLoginMethod($authentication['login'],$authentication['password'],$authentication['entity']);
-    			if ($login) $test=false;
+    			if (empty($login)) $error++;
     		}
-    		if ($test) $error++;
+    		else
+    		{
+    			$errorcode='BAD_LOGIN_METHOD'; $errorlabel='Bad value for login method';
+    		}
 		}
 
         if ($error)
