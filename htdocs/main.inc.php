@@ -304,7 +304,6 @@ if (! defined('NOLOGIN'))
 	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
 	// Authentication mode: forceuser
 	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
-
 	// Set authmode
 	$authmode=explode(',',$dolibarr_main_authentication);
 
@@ -365,15 +364,12 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		// Validation of login with a third party login module method
-		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
-		{
-			$login = getLoginMethod($_POST["username"],$_POST["password"],$_POST["entity"]);
-			if ($login)	$test=false;
-		}
+		$usertotest=$_POST["username"];
+		$passwordtotest=$_POST["password"];
+		$entitytotest=$_POST["entity"];
 
-		// Validation tests user / password
-		// If ok, the variable will be initialized login
+		// Validation of login/pass/entity
+		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
@@ -381,39 +377,14 @@ if (! defined('NOLOGIN'))
 
 		if ($test && $goontestloop)
 		{
-			foreach($authmode as $mode)
+			$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+			if ($login)
 			{
-				if ($test && $mode && ! $login)
-				{
-					$authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
-					$result=include_once($authfile);
-					if ($result)
-					{
-						// Call function to check user/password
-						$usertotest=$_POST["username"];
-						$passwordtotest=$_POST["password"];
-						$entitytotest=$_POST["entity"];
-						$function='check_user_password_'.$mode;
-						$login=$function($usertotest,$passwordtotest,$entitytotest);
-						if ($login)	// Login is successfull
-						{
-							$test=false;
-							$dol_authmode=$mode;	// This properties is defined only when logged to say what mode was successfully used
-							$dol_tz=$_POST["tz"];
-							$dol_dst=$_POST["dst"];
-							$dol_screenwidth=$_POST["screenwidth"];
-							$dol_screenheight=$_POST["screenheight"];
-						}
-					}
-					else
-					{
-						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-						sleep(1);
-						$langs->load('main');
-						$langs->load('other');
-						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
-					}
-				}
+				$dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
+				$dol_tz=$_POST["tz"];
+				$dol_dst=$_POST["dst"];
+				$dol_screenwidth=$_POST["screenwidth"];
+				$dol_screenheight=$_POST["screenheight"];
 			}
 
 			if (! $login)
