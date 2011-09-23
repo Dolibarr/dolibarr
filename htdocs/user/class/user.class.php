@@ -45,8 +45,8 @@ class User extends CommonObject
 	var $search_sid;
 	var $nom;		// TODO deprecated
 	var $prenom;	// TODO deprecated
-    var $lastname;
-    var $firstname;
+	var $lastname;
+	var $firstname;
 	var $note;
 	var $email;
 	var $signature;
@@ -66,7 +66,7 @@ class User extends CommonObject
 
 	var $datec;
 	var $datem;
-    //! If this is defined, it is an external user
+	//! If this is defined, it is an external user
 	var $societe_id;
 	var $fk_member;
 
@@ -130,7 +130,7 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
@@ -166,7 +166,7 @@ class User extends CommonObject
 			$sql.= " AND u.rowid = ".$id;
 		}
 
-		dol_syslog("User::Fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -194,7 +194,7 @@ class User extends CommonObject
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email = $obj->email;
-                $this->signature = $obj->signature;
+				$this->signature = $obj->signature;
 				$this->admin = $obj->admin;
 				$this->note = $obj->note;
 				$this->statut = $obj->statut;
@@ -222,7 +222,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error="USERNOTFOUND";
-				dol_syslog("User::fetch user not found", LOG_DEBUG);
+				dol_syslog(get_class($this)."::fetch user not found", LOG_DEBUG);
 
 				$this->db->free($result);
 				return 0;
@@ -231,7 +231,7 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("User::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql, LOG_ERR);
+			dol_syslog(get_class($this)."::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -258,7 +258,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql, LOG_ERR);
+				dol_syslog(get_class($this)."::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql, LOG_ERR);
 				return -2;
 			}
 		}
@@ -468,7 +468,7 @@ class User extends CommonObject
 	 */
 	function clearrights()
 	{
-		dol_syslog("User::clearrights reset user->rights");
+		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
 		$this->all_permissions_are_loaded=false;
 		$this->tab_loaded=array();
@@ -509,7 +509,7 @@ class User extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -558,7 +558,7 @@ class User extends CommonObject
 		$sql.= " AND gu.entity IN (0,".$conf->entity.")";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -623,7 +623,7 @@ class User extends CommonObject
 		$sql.= " WHERE rowid = ".$this->id;
 		$result = $this->db->query($sql);
 
-		dol_syslog("User::setstatus sql=".$sql);
+		dol_syslog(get_class($this)."::setstatus sql=".$sql);
 		if ($result)
 		{
 			// Appel des triggers
@@ -722,7 +722,7 @@ class User extends CommonObject
 		$this->login = trim($this->login);
 		if (! isset($this->entity)) $this->entity=$conf->entity;	// If not defined, we use default value
 
-		dol_syslog("User::Create login=".$this->login.", user=".(is_object($user)?$user->id:''), LOG_DEBUG);
+		dol_syslog(get_class($this)."::create login=".$this->login.", user=".(is_object($user)?$user->id:''), LOG_DEBUG);
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -751,7 +751,7 @@ class User extends CommonObject
 			if ($num)
 			{
 				$this->error = 'ErrorLoginAlreadyExists';
-				dol_syslog("User::Create ".$this->error, LOG_WARNING);
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING);
 				$this->db->rollback();
 				return -6;
 			}
@@ -761,7 +761,7 @@ class User extends CommonObject
 				$sql.= " VALUES('".$this->db->idate($now)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->entity.")";
 				$result=$this->db->query($sql);
 
-				dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 				if ($result)
 				{
 					$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."user");
@@ -811,7 +811,7 @@ class User extends CommonObject
 					else
 					{
 						$this->error=$interface->error;
-						dol_syslog("User::Create ".$this->error, LOG_ERR);
+						dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
@@ -819,7 +819,7 @@ class User extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog("User::Create ".$this->error, LOG_ERR);
+					dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -2;
 				}
@@ -828,7 +828,7 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("User::Create ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -870,7 +870,7 @@ class User extends CommonObject
 			$sql.= " WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);
 
-			dol_syslog("User::create_from_contact sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::create_from_contact sql=".$sql, LOG_DEBUG);
 			if ($resql)
 			{
 				// Appel des triggers
@@ -886,7 +886,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("User::create_from_contact ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::create_from_contact ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;
@@ -895,7 +895,7 @@ class User extends CommonObject
 		else
 		{
 			// $this->error deja positionne
-			dol_syslog("User::create_from_contact - 0");
+			dol_syslog(get_class($this)."::create_from_contact - 0");
 
 			$this->db->rollback();
 			return $result;
@@ -937,7 +937,7 @@ class User extends CommonObject
 			if ($member->fk_soc) $sql.= ", fk_societe=".$member->fk_soc;
 			$sql.= " WHERE rowid=".$this->id;
 
-			dol_syslog("User::create_from_member sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::create_from_member sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -947,7 +947,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("User::create_from_member - 1 - ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;
@@ -956,7 +956,7 @@ class User extends CommonObject
 		else
 		{
 			// $this->error deja positionne
-			dol_syslog("User::create_from_member - 2 - ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
 			return $result;
@@ -1022,7 +1022,7 @@ class User extends CommonObject
 		$nbrowsaffected=0;
 		$error=0;
 
-		dol_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
+		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
 		$this->nom          = trim($this->nom);		// TODO deprecated
@@ -1035,7 +1035,7 @@ class User extends CommonObject
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
-        $this->signature    = trim($this->signature);
+		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
 		$this->webcal_login = trim($this->webcal_login);
@@ -1066,7 +1066,7 @@ class User extends CommonObject
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
-        $sql.= ", signature = '".addslashes($this->signature)."'";
+		$sql.= ", signature = '".addslashes($this->signature)."'";
 		$sql.= ", webcal_login = '".$this->db->escape($this->webcal_login)."'";
 		$sql.= ", phenix_login = '".$this->db->escape($this->phenix_login)."'";
 		$sql.= ", phenix_pass = '".$this->db->escape($this->phenix_pass)."'";
@@ -1076,7 +1076,7 @@ class User extends CommonObject
 		$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog("User::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1097,13 +1097,13 @@ class User extends CommonObject
 			if ($this->fk_member > 0)
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->fk_member;
-				dol_syslog("User::update sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
 			}
 			// Set link to user
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member>0?$this->fk_member:'null')." where rowid = ".$this->id;
-			dol_syslog("User::update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
 
@@ -1141,7 +1141,7 @@ class User extends CommonObject
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
-							dol_syslog("User::update ".$this->error,LOG_ERR);
+							dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
 							$error++;
 						}
 					}
@@ -1202,7 +1202,7 @@ class User extends CommonObject
 		$sql.= " tms = tms";    // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Update last login date for user->id=".$this->id." ".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update_last_login_date user->id=".$this->id." ".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1212,7 +1212,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			$this->error=$this->db->lasterror().' sql='.$sql;
 			return -1;
 		}
 	}
@@ -1235,12 +1235,12 @@ class User extends CommonObject
 
 		$error=0;
 
-		dol_syslog("User::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
+		dol_syslog(get_class($this)."::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
 
-        // If new password not provided, we generate one
+		// If new password not provided, we generate one
 		if (! $password)
 		{
-	        $password=getRandomPassword('');
+			$password=getRandomPassword('');
 		}
 
 		// Crypte avec md5
@@ -1262,7 +1262,7 @@ class User extends CommonObject
 			}
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("User::setPassword sql=hidden", LOG_DEBUG);
+			dol_syslog(get_class($this)."::setPassword sql=hidden", LOG_DEBUG);
 			//dol_syslog("User::Password sql=".$sql);
 			$result = $this->db->query($sql);
 			if ($result)
@@ -1288,7 +1288,7 @@ class User extends CommonObject
 							if ($result < 0)
 							{
 								$this->error=$adh->error;
-								dol_syslog("User::setPassword ".$this->error,LOG_ERR);
+								dol_syslog(get_class($this)."::setPassword ".$this->error,LOG_ERR);
 								$error++;
 							}
 						}
@@ -1299,7 +1299,7 @@ class User extends CommonObject
 						}
 					}
 
-					dol_syslog("User::setPassword notrigger=".$notrigger." error=".$error,LOG_DEBUG);
+					dol_syslog(get_class($this)."::setPassword notrigger=".$notrigger." error=".$error,LOG_DEBUG);
 
 					if (! $error && ! $notrigger)
 					{
@@ -1332,7 +1332,7 @@ class User extends CommonObject
 			$sql.= " SET pass_temp = '".$this->db->escape($password)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("User::setPassword sql=hidden", LOG_DEBUG);	// No log
+			dol_syslog(get_class($this)."::setPassword sql=hidden", LOG_DEBUG);	// No log
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1416,17 +1416,17 @@ class User extends CommonObject
 			dol_syslog("User::send_password url=".$url);
 		}
 		$mailfile = new CMailFile(
-		    $subject,
-		    $this->email,
-		    $conf->notification->email_from,
-		    $mesg,
-		    array(),
-		    array(),
-		    array(),
+		$subject,
+		$this->email,
+		$conf->notification->email_from,
+		$mesg,
+		array(),
+		array(),
+		array(),
 		    '',
 		    '',
-		    0,
-		    $msgishtml
+		0,
+		$msgishtml
 		);
 
 		if ($mailfile->sendfile())
@@ -1435,7 +1435,7 @@ class User extends CommonObject
 		}
 		else
 		{
-		    $langs->trans("errors");
+			$langs->trans("errors");
 			$this->error=$langs->trans("ErrorFailedToSendPassword").' '.$mailfile->error;
 			return -1;
 		}
@@ -1494,7 +1494,7 @@ class User extends CommonObject
 	 */
 	function update_clicktodial()
 	{
-        $this->db->begin();
+		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
 		$sql .= " WHERE fk_user = ".$this->id;
@@ -1512,14 +1512,14 @@ class User extends CommonObject
 
 		if ($result)
 		{
-		    $this->db->commit();
-	  		return 0;
+			$this->db->commit();
+			return 0;
 		}
 		else
 		{
-		    $this->db->rollback();
-	  		$this->error=$this->db->error();
-	  		return -1;
+			$this->db->rollback();
+			$this->error=$this->db->error();
+			return -1;
 		}
 	}
 
@@ -1536,7 +1536,7 @@ class User extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-        $error=0;
+		$error=0;
 
 		$this->db->begin();
 
@@ -1571,7 +1571,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$interface->error;
-				dol_syslog("User::SetInGroup ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::SetInGroup ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -1579,7 +1579,7 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("User::SetInGroup ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::SetInGroup ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1588,20 +1588,20 @@ class User extends CommonObject
 	/**
 	 *  Remove a user from a group
 	 *
-     *  @param	Group   $group       Id of group
-     *  @param  int		$entity      Entity
-     *  @param  int		$notrigger   Disable triggers
-     *  @return int  			     <0 if KO, >0 if OK
+	 *  @param	Group   $group       Id of group
+	 *  @param  int		$entity      Entity
+	 *  @param  int		$notrigger   Disable triggers
+	 *  @return int  			     <0 if KO, >0 if OK
 	 */
 	function RemoveFromGroup($group, $entity, $notrigger=0)
 	{
 		global $conf,$langs,$user;
 
-        $error=0;
+		$error=0;
 
-        $this->db->begin();
+		$this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql.= " WHERE fk_user  = ".$this->id;
 		$sql.= " AND fk_usergroup = ".$group;
 		$sql.= " AND entity = ".$entity;
@@ -1627,7 +1627,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$interface->error;
-				dol_syslog("User::RemoveFromGroup ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::RemoveFromGroup ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -1635,7 +1635,7 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("User::RemoveFromGroup ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::RemoveFromGroup ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1665,7 +1665,7 @@ class User extends CommonObject
 		}
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin);
-        if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->getFullName($langs).$lienfin;
 		return $result;
 	}
@@ -1885,11 +1885,11 @@ class User extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	function initAsSpecimen()
 	{
@@ -2005,8 +2005,8 @@ class User extends CommonObject
 		else
 		{
 			if ($all) $sql.= " WHERE entity = is not null";
-                        else $sql.= " WHERE entity = ".$conf->entity;
-                        if ($limitTo == 'active') $sql.= " AND statut = 1";
+			else $sql.= " WHERE entity = ".$conf->entity;
+			if ($limitTo == 'active') $sql.= " AND statut = 1";
 		}
 
 		$resql=$this->db->query($sql);
