@@ -41,7 +41,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
- * When no cover is provided. We use everything.
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
