@@ -24,6 +24,7 @@
 
 /**
  *  Check authentication array and set error, errorcode, errorlabel
+ *
  *  @param      authentication      Array
  *  @param      error
  *  @param      errorcode
@@ -32,6 +33,7 @@
 function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 {
     global $db,$conf,$langs;
+    global $dolibarr_main_authentication,$dolibarr_auto_user;
 
     $fuser=new User($db);
 
@@ -50,26 +52,34 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
     if (! $error)
     {
         $result=$fuser->fetch('',$authentication['login'],'',0);
-        if ($result <= 0) $error++;
-
-		// Validation of login with a third party login module method
-		if (! $error)
-		{
-    		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
-    		{
-    			$login = getLoginMethod($authentication['login'],$authentication['password'],$authentication['entity']);
-    			if (empty($login)) $error++;
-    		}
-    		else
-    		{
-    			$errorcode='BAD_LOGIN_METHOD'; $errorlabel='Bad value for login method';
-    		}
-		}
-
-        if ($error)
+        if ($result < 0)
         {
+            $error++;
+            $errorcode='ERROR_FETCH_USER'; $errorlabel='A technical error occurs during fetch of user';
+        }
+        else if ($result == 0)
+        {
+            $error++;
             $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
         }
+
+    	// Validation of login
+		if (! $error)
+		{
+        	// Authentication mode
+        	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
+        	// Authentication mode: forceuser
+        	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+        	// Set authmode
+        	$authmode=explode(',',$dolibarr_main_authentication);
+
+			$login = checkLoginPassEntity($authentication['login'],$authentication['password'],$authentication['entity'],$authmode);
+			if (empty($login))
+			{
+			    $error++;
+                $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
+			}
+		}
     }
 
     return $fuser;

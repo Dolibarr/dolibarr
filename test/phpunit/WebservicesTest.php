@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/DateLibTest.php
+ *      \file       test/phpunit/WebservicesTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
