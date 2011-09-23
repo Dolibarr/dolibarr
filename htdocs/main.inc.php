@@ -155,6 +155,7 @@ require_once("master.inc.php");
 register_shutdown_function('dol_shutdown');
 
 // Detection browser
+// TODO rename conf->browser into user->browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
 	// If phone/smartphone, we set phone os name.
@@ -337,9 +338,10 @@ if (! defined('NOLOGIN'))
 		// Verification security graphic code
 		if (isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
-			require_once(ARTICHOW_PATH.'Artichow.cfg.php');
-			require_once(ARTICHOW.'/AntiSpam.class.php');
+			require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
+			require_once ARTICHOW."/AntiSpam.class.php";
 
+			// It creates an anti-spam object
 			$object = new AntiSpam();
 
 			// Verifie code
