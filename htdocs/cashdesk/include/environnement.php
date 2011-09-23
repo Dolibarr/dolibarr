@@ -45,8 +45,4 @@ $conf_fkaccount_cb = (! empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))?$_SESSIO
 $conf_taille_listes = (empty($conf->global->PRODUIT_LIMIT_SIZE)?500:$conf->global->PRODUIT_LIMIT_SIZE);	// Nombre max de lignes a afficher dans les listes
 $conf_nbr_car_listes = 60;	// Nombre max de caracteres par ligne dans les listes
 
-// Aurélien Imhof: Force decremente stock sur validation facture, quelque soit mode configuré
-if(!isset($conf->global->STOCK_CALCULATE_ON_BILL))
-$conf->global->STOCK_CALCULATE_ON_BILL = 1 ; 
-
 ?>
