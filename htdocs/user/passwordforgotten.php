@@ -82,10 +82,9 @@ if ($action == 'validatenewpassword' && $username && $passwordmd5)
 // Action modif mot de passe
 if ($action == 'buildnewpassword' && $username)
 {
-    require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
-    require_once ARTICHOW."/AntiSpam.class.php";
+	require_once(ARTICHOW_PATH.'Artichow.cfg.php');
+	require_once(ARTICHOW.'/AntiSpam.class.php');
 
-    // We create anti-spam object
     $object = new AntiSpam();
 
     // Verify code

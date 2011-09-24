@@ -41,7 +41,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
 
 
 /**
- * When no cover is provided. We use everything.
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled

@@ -42,7 +42,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
 
 
 /**
- * When no cover is provided. We use everything.
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
@@ -140,7 +140,7 @@ class ExportTest extends PHPUnit_Framework_TestCase
         $objexport->array_export_alias[0]=$array_alias;
 
         dol_mkdir($conf->export->dir_temp);
-        
+
         $model='csv';
 
         // Build export file
@@ -178,7 +178,7 @@ class ExportTest extends PHPUnit_Framework_TestCase
         $datatoexport='societe_1';
         $array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
         $model='csv';
-        
+
         $objexport=new Export($db);
         $result=$objexport->load_arrays($user,$datatoexport);
 

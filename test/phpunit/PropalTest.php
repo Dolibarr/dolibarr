@@ -39,9 +39,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
- *
- * @xcovers Propal
- * @xcovers PropaleLigne
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled

@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/lib/functions.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/lib/security.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -42,13 +43,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
 
 
 /**
- *
- * @xcovers DoliDb
- * @xcovers Translate
- * @xcovers Conf
- * @xcovers Interfaces
- * @xcovers CommonObject
- * @xcovers Adherent
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
@@ -109,6 +104,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__."\n";
     }
+
 	/**
 	 */
     protected function tearDown()
@@ -157,23 +153,64 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-/*    public function testAnalyseSqlAndScript()
+    public function testCheckLoginPassEntity()
     {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+        $login=checkLoginPassEntity('loginbidon','passwordbidon',1,array('dolibarr'));
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'');
 
-        $_GET["param1"]="azert";
-        $_POST["param2"]="a/b#e(pr)qq-rr\cc";
+        $login=checkLoginPassEntity('admin','passwordbidon',1,array('dolibarr'));
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'');
 
-        $result=analyse_sql_and_script($_GET);
-        print __METHOD__." result=".$result."\n";
-        $this->assertFalse($result);   // False because mail send disabled
+        $login=checkLoginPassEntity('admin','admin',1,array('dolibarr'));            // Should works because admin/admin exists
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'admin');
+
+        $login=checkLoginPassEntity('admin','admin',1,array('http','dolibarr'));    // Should work because of second authetntication method
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'admin');
+
+        $login=checkLoginPassEntity('admin','admin',1,array('forceuser'));
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'');    // Expected '' because should failed because login 'auto' does not exists
+    }
+
+    /**
+     */
+    public function testEncodeDecode()
+    {
+        $stringtotest="This is a string to test encode/decode";
+
+        $encodedstring=dol_encode($stringtotest);
+        $decodedstring=dol_decode($encodedstring);
+        print __METHOD__." encodedstring=".$encodedstring." ".base64_encode($stringtotest)."\n";
+        $this->assertEquals($stringtotest,$decodedstring);
 
         return $result;
     }
-*/
+
+    /**
+     */
+    public function testGetRandomPassword()
+    {
+        global $conf;
+
+        $genpass1=getRandomPassword(true);    // Should be a MD5 string return by dol_hash
+        print __METHOD__." genpass1=".$genpass1."\n";
+        $this->assertEquals(strlen($genpass1),32);
+
+        $conf->global->USER_PASSWORD_GENERATED='None';
+        $genpass2=getRandomPassword(false);  // Should be an empty string
+        print __METHOD__." genpass2=".$genpass2."\n";
+        $this->assertEquals($genpass2,'');
+
+        $conf->global->USER_PASSWORD_GENERATED='Standard';
+        $genpass3=getRandomPassword(false);
+        print __METHOD__." genpass3=".$genpass3."\n";
+        $this->assertEquals(strlen($genpass3),8);
+
+        return $result;
+    }
 }
 ?>

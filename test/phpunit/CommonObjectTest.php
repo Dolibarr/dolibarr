@@ -40,12 +40,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
- *
- * @xcovers DoliDb
- * @xcovers User
- * @xcovers Translate
- * @xcovers Conf
- * @xcovers CommonObject
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled

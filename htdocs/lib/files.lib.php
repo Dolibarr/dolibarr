@@ -766,10 +766,11 @@ function dol_delete_preview($object)
 /**
  * Get and save an upload file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
- * @param	upload_dir				Directory to store upload files
- * @param	allowoverwrite			1=Allow overwrite existing file
- * @param	donotupdatesession		1=Do no edit _SESSION variable
- * @return	string					Message with result of upload and store.
+ * 
+ * @param	string	$upload_dir				Directory to store upload files
+ * @param	int		$allowoverwrite			1=Allow overwrite existing file
+ * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
+ * @return	string							Message with result of upload and store.
  */
 function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0)
 {

@@ -24,13 +24,15 @@
 
 
 /**
- *       @brief		Check user and password
- *       @param		usertotest		Login
- *       @param		passwordtotest	Password
- *       @return	string			Login if ok, '' if ko.
- * 	     @remarks	If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
+ * Check validity of user/password/entity
+ * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
+ *
+ * @param	string	$usertotest		Login
+ * @param	string	$passwordtotest	Password
+ * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
+ * @return	string					Login if OK, '' if KO
  */
-function check_user_password_ldap($usertotest,$passwordtotest)
+function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 {
 	global $_POST,$db,$conf,$langs;
 	global $dolibarr_main_auth_ldap_host,$dolibarr_main_auth_ldap_port;

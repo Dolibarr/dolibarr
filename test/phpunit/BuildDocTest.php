@@ -63,40 +63,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
- *
- * @xcovers DoliDb
- * @xcovers User
- * @xcovers Translate
- * @xcovers Conf
- * @xcovers CommonObject
- * @xcovers Facture
- * @xcovers Commande
- * @xcovers Propal
- * @xcovers Expedition
- * @xcovers Fichinter
- * @xcovers Project
- *
- * @xcovers ModelePDFFactures
- * @xcovers pdf_crabe
- * @xcovers pdf_oursin
- *
- * @xcovers ModelePDFCommandes
- * @xcovers pdf_edison
- * @xcovers pdf_einstein
- *
- * @xcovers ModelePDFPropales
- * @xcovers pdf_propale_azur
- * @xcovers pdf_propale_jaune
- *
- * @xcovers ModelePDFProjects
- * @xcovers pdf_baleine
- *
- * @xcovers ModelePDFFicheinter
- * @xcovers pdf_soleil
- *
- * @xcovers ModelePDFExpedition
- * @xcovers pdf_expedition_merou
- * @xcovers pdf_expedition_rouget
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled

@@ -41,6 +41,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
 
 
 /**
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled

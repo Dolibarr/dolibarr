@@ -24,23 +24,26 @@
 
 
 /**
-        \brief		Check user and password
-        \param		usertotest		Login
-        \param		passwordtotest	Password
-        \return		string			Login if ok, '' if ko.
-*/
-function check_user_password_forceuser($usertotest,$passwordtotest)
+ * Check validity of user/password/entity
+ * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
+ *
+ * @param	string	$usertotest		Login
+ * @param	string	$passwordtotest	Password
+ * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
+ * @return	string					Login if OK, '' if KO
+ */
+function check_user_password_forceuser($usertotest,$passwordtotest,$entitytotest)
 {
 	// Variable dolibarr_auto_user must be defined in conf.php file
 	global $dolibarr_auto_user;
-	
+
 	dol_syslog("functions_forceuser::check_user_password_forceuser");
 
 	$login=$dolibarr_auto_user;
 	if (empty($login)) $login='auto';
-	
+
 	if ($_SESSION["dol_loginmesg"]) $login='';
-	
+
 	return $login;
 }
 

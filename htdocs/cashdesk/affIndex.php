@@ -43,7 +43,7 @@ $langs->load("cashdesk");
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 $arrayofjs=array();
-$arrayofcss=array(DOL_URL_ROOT.'/cashdesk/css/style.css');
+$arrayofcss=array('/cashdesk/css/style.css');
 
 top_htmlhead($head,$langs->trans("CashDesk"),0,0,$arrayofjs,$arrayofcss);
 
