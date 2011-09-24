@@ -18,6 +18,7 @@
 
 /**
  *  \file		htdocs/lib/ws.lib.php
+ *  \ingroup	webservices
  *  \brief		Set of function for manipulating web services
  */
 

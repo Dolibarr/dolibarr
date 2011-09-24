@@ -18,8 +18,11 @@
  */
 
 /**
- *  \file			htdocs/lib/security.lib.php
- *  \brief			Set of function used for dolibarr security
+ *  \file		htdocs/lib/security.lib.php
+ *  \ingroup    core
+ *  \brief		Set of function used for dolibarr security.
+ *  			Warning, this file must not depends on other library files, except function.lib.php
+ *  			because it is used at low code level.
  */
 
 
@@ -28,8 +31,8 @@
  *
  *	@param		string	$usertotest			Login value to test
  *	@param		string	$passwordtotest		Password value to test
- *	@param		string	$entitytotest		Instance to test
- *	@param		array	$authmode			Array list of selected authentication mode ('http', 'dolibarr', 'xxx'...)
+ *	@param		string	$entitytotest		Instance of data we must check
+ *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *  @return		string						Login or ''
  */
 function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode)
@@ -44,14 +47,14 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 	$login = '';
 
 	// Validation of login/pass/entity with a third party login module method
-	if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
+	if (! empty($conf->login_method_modules) && is_array($conf->login_method_modules))
 	{
     	foreach($conf->login_method_modules as $dir)
     	{
     	    $newdir=dol_osencode($dir);
 
     		// Check if directory exists
-    		if (!is_dir($newdir)) continue;
+    		if (! is_dir($newdir)) continue;
 
     		$handle=opendir($newdir);
     		if (is_resource($handle))
@@ -324,7 +327,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 }
 
 /**
- *  Fonction pour initialiser un salt pour la fonction crypt
+ *  Fonction pour initialiser un salt pour la fonction crypt.
  *
  *  @param		int		$type		2=>renvoi un salt pour cryptage DES
  *									12=>renvoi un salt pour cryptage MD5
@@ -338,7 +341,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 	{
 		case 12:	// 8 + 4
 			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
-		case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilise)
+		case 8:		// 8 (Pour compatibilite, ne devrait pas etre utilise)
 			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
 		case 2:		// 2
 		default: 	// by default, fall back on Standard DES (should work everywhere)
@@ -497,7 +500,7 @@ function dol_decode($chain)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic		Create generic password
+ * @param		boolean		$generic		true=Create generic password (a MD5 string), false=Use the configured password generation module
  * @return		string						New value for password
  */
 function getRandomPassword($generic=false)
