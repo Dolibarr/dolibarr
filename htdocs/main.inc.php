@@ -155,7 +155,6 @@ require_once("master.inc.php");
 register_shutdown_function('dol_shutdown');
 
 // Detection browser
-// TODO rename conf->browser into user->browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
 	// If phone/smartphone, we set phone os name.
