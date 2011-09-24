@@ -178,23 +178,39 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-/*    public function testAnalyseSqlAndScript()
+    public function testEncodeDecode()
     {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+        $stringtotest="This is a string to test encode/decode";
 
-        $_GET["param1"]="azert";
-        $_POST["param2"]="a/b#e(pr)qq-rr\cc";
-
-        $result=analyse_sql_and_script($_GET);
-        print __METHOD__." result=".$result."\n";
-        $this->assertFalse($result);   // False because mail send disabled
+        $encodedstring=dol_encode($stringtotest);
+        $decodedstring=dol_decode($encodedstring);
+        print __METHOD__." encodedstring=".$encodedstring." ".base64_encode($stringtotest)."\n";
+        $this->assertEquals($stringtotest,$decodedstring);
 
         return $result;
     }
-*/
+
+    /**
+     */
+    public function testGetRandomPassword()
+    {
+        global $conf;
+
+        $genpass1=getRandomPassword(true);    // Should be a MD5 string return by dol_hash
+        print __METHOD__." genpass1=".$genpass1."\n";
+        $this->assertEquals(strlen($genpass1),32);
+
+        $conf->global->USER_PASSWORD_GENERATED='None';
+        $genpass2=getRandomPassword(false);  // Should be an empty string
+        print __METHOD__." genpass2=".$genpass2."\n";
+        $this->assertEquals($genpass2,'');
+
+        $conf->global->USER_PASSWORD_GENERATED='Standard';
+        $genpass3=getRandomPassword(false);
+        print __METHOD__." genpass3=".$genpass3."\n";
+        $this->assertEquals(strlen($genpass3),8);
+
+        return $result;
+    }
 }
 ?>

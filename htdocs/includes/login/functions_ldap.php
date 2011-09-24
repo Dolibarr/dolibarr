@@ -32,7 +32,7 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_ldap($usertotest,$passwordtotest)
+function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 {
 	global $_POST,$db,$conf,$langs;
 	global $dolibarr_main_auth_ldap_host,$dolibarr_main_auth_ldap_port;
