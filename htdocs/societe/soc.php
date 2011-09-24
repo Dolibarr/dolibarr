@@ -104,6 +104,7 @@ if (empty($reshook))
         require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
         if ($action == 'update') $object->fetch($socid);
+		else $object->canvas=$canvas;
 
         if (GETPOST("private") == 1)
         {
@@ -474,9 +475,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-
-	$objcanvas->assign_values($action, $socid);	// Set value for templates
-	$objcanvas->display_canvas();				// Show template
+    if (! $objcanvas->hasActions() && $socid)
+ 	{
+	     $object = new Societe($db);
+	     $object->fetch($socid);                // For use with "pure canvas" (canvas that contains templates only)
+ 	}
+   	$objcanvas->assign_values($action, $socid);	// Set value for templates
+    $objcanvas->display_canvas();				// Show template
 }
 else
 {
