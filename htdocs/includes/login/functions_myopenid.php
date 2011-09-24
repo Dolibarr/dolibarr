@@ -32,7 +32,7 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_myopenid($usertotest,$passwordtotest)
+function check_user_password_myopenid($usertotest,$passwordtotest,$entitytotest)
 {
     global $_POST,$db,$conf,$langs;
 
