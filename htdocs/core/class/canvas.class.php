@@ -66,6 +66,7 @@ class Canvas
 	 * 	@param	string	$module		Name of target module (thirdparty, contact, ...)
 	 * 	@param	string	$card	 	Tab name of card (ex: 'card', 'info', 'contactcard', ...) or '' for a list page
 	 * 	@param	string	$canvas		Name of canvas (ex: mycanvas, default, or mycanvas@myexternalmodule)
+	 * 	@return	void
 	 */
 	function getCanvas($module, $card, $canvas)
 	{
@@ -107,8 +108,6 @@ class Canvas
 
         //print 'dimodule='.$dirmodule.' canvas='.$this->canvas.'<br>';
         //print ' => template_dir='.$this->template_dir.'<br>';
-
-		return 1;
 	}
 
 
@@ -125,7 +124,7 @@ class Canvas
 	/**
 	 * 	Shared method for canvas to execute actions
 	 *
-	 * 	@param		string		$action		Action string
+	 * 	@param		string		&$action		Action string
 	 * 	@param		int			$id			Object id
 	 * 	@return		mixed					Return return code of doActions of canvas
 	 */
@@ -141,7 +140,7 @@ class Canvas
     /**
 	 * 	Shared method for canvas to assign values for templates
 	 *
-	 * 	@param		string		$action		Action string
+	 * 	@param		string		&$action	Action string
 	 * 	@param		int			$id			Object id
 	 * 	@return		void
 	 */
