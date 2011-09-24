@@ -277,7 +277,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-
+    if (! $objcanvas->hasActions() && $id)
+ 	{
+	     $object = new Societe($db);
+	     $object->fetch($id);                   // For use with "pure canvas" (canvas that contains templates only)
+ 	}
 	$objcanvas->assign_values($action, $id);	// Set value for templates
 	$objcanvas->display_canvas();				// Show template
 }
@@ -324,6 +328,8 @@ else
             /*
              * Fiche en mode creation
              */
+            $object->canvas=$canvas;
+
             $object->fk_departement = $_POST["departement_id"];
 
             // We set pays_id, pays_code and label for the selected country
