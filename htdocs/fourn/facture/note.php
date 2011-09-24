@@ -130,7 +130,7 @@ if ($_GET["facid"])
     }
 	print "</td></tr>";
 
-	// Note priv�e
+	// Note private
 	if (! $user->societe_id)
 	{
 	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
@@ -153,11 +153,11 @@ if ($_GET["facid"])
 
     print "</table>";
 
+    dol_fiche_end();
 
     /*
     * Actions
     */
-    print '</div>';
     print '<div class="tabsAction">';
 
     if ($user->rights->fournisseur->facture->creer && $_GET["action"] <> 'edit')

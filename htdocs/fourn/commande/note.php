@@ -44,15 +44,15 @@ $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
 if ($_POST["action"] == 'updatenote' && $user->rights->fournisseur->commande->creer)
 {
-	$commande = new CommandeFournisseur($db);
-	$commande->fetch($_GET["id"]);
+    $commande = new CommandeFournisseur($db);
+    $commande->fetch($_GET["id"]);
 
-	$result = $commande->UpdateNote($user, $_POST["note"], $_POST["note_public"]);
-	if ($result >= 0)
-	{
-		Header("Location: note.php?id=".$_GET["id"]);
-		exit;
-	}
+    $result = $commande->UpdateNote($user, $_POST["note"], $_POST["note_public"]);
+    if ($result >= 0)
+    {
+        Header("Location: note.php?id=".$_GET["id"]);
+        exit;
+    }
 }
 
 
@@ -76,103 +76,105 @@ $id = $_GET['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$commande = new CommandeFournisseur($db);
-	$result=$commande->fetch($_GET["id"],$_GET['ref']);
-	if ($result >= 0)
-	{
-		$soc = new Societe($db);
-		$soc->fetch($commande->socid);
+    $commande = new CommandeFournisseur($db);
+    $result=$commande->fetch($_GET["id"],$_GET['ref']);
+    if ($result >= 0)
+    {
+        $soc = new Societe($db);
+        $soc->fetch($commande->socid);
 
-		$author = new User($db);
-		$author->fetch($commande->user_author_id);
+        $author = new User($db);
+        $author->fetch($commande->user_author_id);
 
-		$head = ordersupplier_prepare_head($commande);
+        $head = ordersupplier_prepare_head($commande);
 
-		$title=$langs->trans("SupplierOrder");
-		dol_fiche_head($head, 'note', $title, 0, 'order');
+        $title=$langs->trans("SupplierOrder");
+        dol_fiche_head($head, 'note', $title, 0, 'order');
 
 
-		/*
-		*   Commande
-		*/
-		print '<form action="note.php?id='.$commande->id.'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="updatenote">';
+        /*
+         *   Commande
+         */
+        print '<form action="note.php?id='.$commande->id.'" method="post">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="updatenote">';
 
-		print '<table class="border" width="100%">';
+        print '<table class="border" width="100%">';
 
-		// Ref
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="2">';
-		print $html->showrefnav($commande,'ref','',1,'ref','ref');
-		print '</td>';
-		print '</tr>';
+        // Ref
+        print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+        print '<td colspan="2">';
+        print $html->showrefnav($commande,'ref','',1,'ref','ref');
+        print '</td>';
+        print '</tr>';
 
-		// Fournisseur
-		print '<tr><td>'.$langs->trans("Supplier")."</td>";
-		print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
-		print '</tr>';
+        // Fournisseur
+        print '<tr><td>'.$langs->trans("Supplier")."</td>";
+        print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+        print '</tr>';
 
-		// Statut
-		print '<tr>';
-		print '<td>'.$langs->trans("Status").'</td>';
-		print '<td colspan="2">';
-		print $commande->getLibStatut(4);
-		print "</td></tr>";
+        // Statut
+        print '<tr>';
+        print '<td>'.$langs->trans("Status").'</td>';
+        print '<td colspan="2">';
+        print $commande->getLibStatut(4);
+        print "</td></tr>";
 
-		// Date
-		if ($commande->methode_commande_id > 0)
-		{
-			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
-			if ($commande->date_commande)
-			{
-				print dol_print_date($commande->date_commande,"dayhourtext")."\n";
-			}
-			print "</td></tr>";
+        // Date
+        if ($commande->methode_commande_id > 0)
+        {
+            print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
+            if ($commande->date_commande)
+            {
+                print dol_print_date($commande->date_commande,"dayhourtext")."\n";
+            }
+            print "</td></tr>";
 
-			if ($commande->methode_commande)
-			{
-				print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
-			}
-		}
+            if ($commande->methode_commande)
+            {
+                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
+            }
+        }
 
-		// Auteur
-		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
-		print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
-		print '</tr>';
+        // Auteur
+        print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
+        print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
+        print '</tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
-		print '<td colspan="2">';
-		if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_4.'" name="note_public">';
-		print $commande->note_public;
-		if ($user->rights->fournisseur->commande->creer) print '</textarea>';
-		print '</td></tr>';
+        print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+        print '<td colspan="2">';
+        if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_4.'" name="note_public">';
+        print $commande->note_public;
+        if ($user->rights->fournisseur->commande->creer) print '</textarea>';
+        print '</td></tr>';
 
-		if (! $user->societe_id)
-		{
-			print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
-			print '<td colspan="2">';
-			if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_8.'" name="note">';
-			print $commande->note;
-			if ($user->rights->fournisseur->commande->creer) print '</textarea>';
-			print '</td></tr>';
-		}
+        if (! $user->societe_id)
+        {
+            print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+            print '<td colspan="2">';
+            if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_8.'" name="note">';
+            print $commande->note;
+            if ($user->rights->fournisseur->commande->creer) print '</textarea>';
+            print '</td></tr>';
+        }
 
-		if ($user->rights->fournisseur->commande->creer)
-		{
-			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-		}
+        print "</table>";
 
-		print "</table></form>";
+        if ($user->rights->fournisseur->commande->creer)
+        {
+            print '<center><br><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+        }
 
-		print "</div>\n";
-	}
-	else
-	{
-		/* Order not found */
-		$langs->load("errors");
-	    print $langs->trans("ErrorRecordNotFound");
-	}
+        print "</form>";
+
+        dol_fiche_end();
+    }
+    else
+    {
+        /* Order not found */
+        $langs->load("errors");
+        print $langs->trans("ErrorRecordNotFound");
+    }
 }
 
 
