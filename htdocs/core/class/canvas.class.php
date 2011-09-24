@@ -32,9 +32,10 @@ class Canvas
 	var $db;
 	var $error;
 	var $errors=array();
+	
+	var $actiontype;
 
-    var $action;
-
+    var $dirmodule;			// Module directory
     var $targetmodule;      // Module concerned by canvas (ex: thirdparty, contact, ...)
     var $canvas;            // Name of canvas
     var $card;              // Tab (sub-canvas)
@@ -49,28 +50,16 @@ class Canvas
 	*   Constructor
 	*
 	*   @param     DoliDB	$DB          Database handler
-	*   @param     string	$action      Action ('create', 'view', 'edit')
 	*/
-	function Canvas($DB, $action='view')
+	function __construct($DB, $actiontype='view')
 	{
 		$this->db = $DB;
-		$this->action = $action;
-        if ($this->action == 'add')    $this->action='create';
-		if ($this->action == 'update') $this->action='edit';
-        if (empty($this->action))      $this->action='view';
+		
+		$this->actiontype = $actiontype;
+        if ($this->actiontype == 'add')    $this->actiontype='create';
+		if ($this->actiontype == 'update') $this->actiontype='edit';
+		if (empty($this->actiontype) || $this->actiontype == 'delete' || $this->actiontype == 'create_user') $this->actiontype='view';
 	}
-
-    /**
-     *    Set action type
-	 *
-     *    @deprecated       Kept for backward compatibility
-     */
-    function setAction($action='view')
-    {
-        return $this->action = $action;
-    }
-
-
 
 	/**
 	 * 	Initialize properties: ->targetmodule, ->canvas, ->card
@@ -90,17 +79,17 @@ class Canvas
         $this->targetmodule = $module;
         $this->canvas = $canvas;
         $this->card = $card;
-        $dirmodule = $module;
+        $this->dirmodule = $module;
         // Correct values if canvas is into an external module
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
             $this->canvas = $regs[1];
-		    $dirmodule = $regs[2];
+		    $this->dirmodule = $regs[2];
 		}
 		// For compatibility
-        if ($dirmodule == 'thirdparty') { $dirmodule = 'societe'; }
+        if ($this->dirmodule == 'thirdparty') { $this->dirmodule = 'societe'; }
 
-		$controlclassfile = dol_buildpath('/'.$dirmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php');
+		$controlclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php');
 		if (file_exists($controlclassfile))
 		{
             // Include actions class (controller)
@@ -109,23 +98,11 @@ class Canvas
 
             // Instantiate actions class (controller)
             $controlclassname = 'Actions'.ucfirst($this->card).ucfirst($this->canvas);
-            $this->control = new $controlclassname($this->db,$this->targetmodule,$this->canvas,$this->card);
+            $this->control = new $controlclassname($this->db, $this->dirmodule, $this->targetmodule, $this->canvas, $this->card);
 		}
 
-		// TODO Dao should be declared and used by controller or templates when required only
-        $modelclassfile = dol_buildpath('/'.$dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
-        if (file_exists($modelclassfile))
-        {
-            // Include dataservice class (model)
-            require_once($modelclassfile);
-
-            // Instantiate dataservice class (model)
-            $modelclassname = 'Dao'.ucfirst($this->targetmodule).ucfirst($this->canvas);
-            $this->control->object = new $modelclassname($this->db);
-        }
-
 		// Template dir
-		$this->template_dir = dol_buildpath('/'.$dirmodule.'/canvas/'.$this->canvas.'/tpl/');
+		$this->template_dir = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/tpl/');
         if (! is_dir($this->template_dir))
         {
             $this->template_dir='';
@@ -137,89 +114,61 @@ class Canvas
 
 		return 1;
 	}
-
-    /**
-     *  Execute actions
-	 *
-     *  @param          id      Id of object (may be empty for creation)
-     *  @deprecated     Use actions with hooks instead
-     */
-    function doActions($id)
-    {
-        $out='';
-
-        // If function to do actions is overwritten, we use new one
-        if (method_exists($this->control,'doActions'))
-        {
-            $out = $this->control->doActions($id,$this->targetmodule,$this->canvas,$this->card);
-
-            $this->errors = ($this->control->errors?$this->control->errors:$this->control->object->errors);
-            $this->error = ($this->control->error?$this->control->error:$this->control->object->error);
-        }
-
-        return $out;
-    }
-
-    /**
-     *  Get object
-	 *
-     *  @param      param1          Param1
-     *  @param      param2          Param2
-     *  @param      param3          Param3
-     *  @return     object          Object loaded
-     */
-    function getObject($param1, $param2='', $param3='')
-    {
-        if (is_object($this->control->object) && method_exists($this->control->object,'fetch'))
-        {
-            $this->control->object->fetch($param1, $param2, $param3);
-            return $this->control->object;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    /**
-	 * 	Shared method for canvas to assign values for templates
+	
+	/**
+	 * 	Shared method for canvas to execute actions
+	 * 
+	 * 	@param		string		$action		Action string
+	 * 	@param		int			$id			Object id
+	 * 	@return		void
 	 */
-	function assign_values($action)
+	function doActions(&$action='view', $id=0)
 	{
-		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action);
+		if (method_exists($this->control,'doActions')) 
+		{
+			$ret = $this->control->doActions($action, $id);
+			return $ret;
+		}
 	}
 
     /**
-     *     Return the template to display canvas (if it exists)
+	 * 	Shared method for canvas to assign values for templates
+	 * 
+	 * 	@param		string		$action		Action string
+	 * 	@param		int			$id			Object id
+	 * 	@return		void
+	 */
+	function assign_values(&$action='view', $id=0)
+	{
+		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action, $id);
+	}
+
+    /**
+     *	Return the template to display canvas (if it exists)
 	 *
-     *     @param       string		$mode       'create', ''='view', 'edit', 'list'
-     *     @return      string      			Path to display canvas file if it exists, '' otherwise.
+     *	@return		string				Path to display canvas file if it exists, '' otherwise.
      */
-    function displayCanvasExists($mode='view')
+    function displayCanvasExists()
     {
-        $newmode=$mode;
-        if (empty($newmode)) $newmode='view';
         if (empty($this->template_dir)) return 0;
-        //print $this->template_dir.($this->card?$this->card.'_':'').$newmode.'.tpl.php';
-        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$newmode.'.tpl.php')) return 1;
+        //print $this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php';
+        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php')) return 1;
         else return 0;
     }
 
 	/**
-	 * 	   Display a canvas page. This will include the template for output.
-	 *     Variables used by templates may have been defined, loaded before
-	 *     into the assign_values function.
+	 *	Display a canvas page. This will include the template for output.
+	 *	Variables used by templates may have been defined, loaded before
+	 *	into the assign_values function.
 	 *
-	 *     @param      string	$mode        'create', 'view', 'edit'
-	 *     @param      int		$id          Id of object to show
+	 *	@return		void
 	 */
-	function display_canvas($mode='view',$id=0)
+	function display_canvas()
 	{
 		global $db, $conf, $langs, $user, $canvas;
-		global $id, $form, $formfile;
+		global $form, $formfile;
 
-		//print $this->template_dir.($this->card?$this->card.'_':'').$mode.'.tpl.php';exit;
-		include($this->template_dir.($this->card?$this->card.'_':'').$mode.'.tpl.php');        // Include native PHP template
+		include($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php');        // Include native PHP template
 	}
 
 }

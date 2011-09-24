@@ -28,24 +28,27 @@ include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
  */
 class ActionsCardIndividual extends ActionsCardCommon
 {
-    var $targetmodule;
+    var $dirmodule;
+	var $targetmodule;
     var $canvas;
     var $card;
 
     /**
 	 *    Constructor
 	 *
-     *    @param   DoliDB	$DB             Handler acces base de donnees
-     *    @param   string	$targetmodule	Name of directory of module where canvas is stored
-     *    @param   string	$canvas         Name of canvas
-     *    @param   string	$card           Name of tab (sub-canvas)
+     *    @param	DoliDB	$DB				Handler acces base de donnees
+     *    @param	string	$dirmodule		Name of directory of module
+     *    @param	string	$targetmodule	Name of directory of module where canvas is stored
+     *    @param	string	$canvas			Name of canvas
+     *    @param	string	$card			Name of tab (sub-canvas)
      */
-	function ActionsCardIndividual($DB,$targetmodule,$canvas,$card)
+	function __construct($DB, $dirmodule, $targetmodule, $canvas, $card)
 	{
-		$this->db 				= $DB;
-		$this->targetmodule     = $targetmodule;
-        $this->canvas           = $canvas;
-        $this->card             = $card;
+		$this->db				= $DB;
+		$this->dirmodule		= $dirmodule;
+		$this->targetmodule		= $targetmodule;
+        $this->canvas			= $canvas;
+        $this->card				= $card;
 	}
 
 
@@ -72,12 +75,14 @@ class ActionsCardIndividual extends ActionsCardCommon
 	/**
 	 * Execute actions
 	 *
-	 * @param	int		$socid		Id of object (may be empty for creation)
-	 * @return	int					<0 if KO, >0 if OK
+	 * @param	int		$id		Id of object (may be empty for creation)
+	 * @return	int				<0 if KO, >0 if OK
 	 */
-	function doActions($socid)
+	function doActions(&$action, $id)
 	{
-		$return = parent::doActions($socid);
+		$ret = $this->getObject($id);
+		
+		$return = parent::doActions($action);
 
 		return $return;
 	}
@@ -88,12 +93,16 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 * @param	string	$action		Type of action
 	 * @return	void
 	 */
-	function assign_values($action)
+	function assign_values(&$action, $id)
 	{
 		global $conf, $langs;
 		global $form, $formcompany;
+		
+		$ret = $this->getObject($id);
 
 		parent::assign_values($action);
+		
+		$this->tpl['title'] = $this->getTitle($action);
 
 		if ($action == 'create' || $action == 'edit')
 		{
@@ -102,7 +111,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 		else
 		{
 			// Confirm delete third party
-			if ($_GET["action"] == 'delete' || $conf->use_javascript_ajax)
+			if ($action == 'delete' || $conf->use_javascript_ajax)
 			{
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,"1,action-delete");
 			}

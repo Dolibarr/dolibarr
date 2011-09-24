@@ -47,9 +47,9 @@ if ($conf->notification->enabled) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
 
-$action = GETPOST('action');
-$confirm = GETPOST('confirm');
-$socid = GETPOST("socid");
+$action		= (GETPOST('action') ? GETPOST('action') : 'view');
+$confirm	= GETPOST('confirm');
+$socid		= GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Societe($db);
@@ -61,8 +61,8 @@ $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
-    $objcanvas = new Canvas($db,$action);
-    $objcanvas->getCanvas('thirdparty','card',$canvas);
+    $objcanvas = new Canvas($db, $action);
+    $objcanvas->getCanvas('thirdparty', 'card', $canvas);
 }
 
 // Security check
@@ -75,12 +75,11 @@ $hookmanager=new HookManager($db);
 $hookmanager->callHooks(array('thirdpartycard','thirdparty_extrafields'));
 
 
-
 /*
  * Actions
  */
 
-$parameters=array('socid'=>$socid);
+$parameters=array('id'=>$socid, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
@@ -104,42 +103,33 @@ if (empty($reshook))
     {
         require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
-        if ($action == 'update')
-        {
-            $object->fetch($socid);
-        }
+        if ($action == 'update') $object->fetch($socid);
 
         if (GETPOST("private") == 1)
         {
-            $object->particulier           = GETPOST("private");
+            $object->particulier       = GETPOST("private");
 
-            $object->name                  = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
-            $object->nom                   = $object->name;     // TODO obsolete
-            $object->nom_particulier       = $_POST["nom"];
-            $object->prenom                = $_POST["prenom"];
-            $object->civilite_id           = $_POST["civilite_id"];
+            $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
+            $object->nom_particulier   = $_POST["nom"];
+            $object->prenom            = $_POST["prenom"];
+            $object->civilite_id       = $_POST["civilite_id"];
         }
         else
         {
-            $object->name                  = $_POST["nom"];
-            $object->nom                   = $object->name;     // TODO obsolete
+            $object->name              = $_POST["nom"];
         }
         $object->address               = $_POST["adresse"];
-        $object->adresse               = $_POST["adresse"]; // TODO obsolete
         $object->zip                   = $_POST["zipcode"];
-        $object->cp                    = $_POST["zipcode"]; // TODO obsolete
         $object->town                  = $_POST["town"];
-        $object->ville                 = $_POST["town"];    // TODO obsolete
-        $object->pays_id               = $_POST["pays_id"];
         $object->country_id            = $_POST["pays_id"];
         $object->state_id              = $_POST["departement_id"];
         $object->tel                   = $_POST["tel"];
         $object->fax                   = $_POST["fax"];
         $object->email                 = trim($_POST["email"]);
         $object->url                   = trim($_POST["url"]);
-        $object->siren                 = $_POST["idprof1"];
-        $object->siret                 = $_POST["idprof2"];
-        $object->ape                   = $_POST["idprof3"];
+        $object->idprof1               = $_POST["idprof1"];
+        $object->idprof2               = $_POST["idprof2"];
+        $object->idprof4               = $_POST["idprof3"];
         $object->idprof4               = $_POST["idprof4"];
         $object->prefix_comm           = $_POST["prefix_comm"];
         $object->code_client           = $_POST["code_client"];
@@ -159,11 +149,11 @@ if (empty($reshook))
         $object->effectif_id           = $_POST["effectif_id"];
         if (GETPOST("private") == 1)
         {
-            $object->typent_id             = 8; // TODO predict another method if the field "special" change of rowid
+            $object->typent_id         = 8; // TODO predict another method if the field "special" change of rowid
         }
         else
         {
-            $object->typent_id             = $_POST["typent_id"];
+            $object->typent_id         = $_POST["typent_id"];
         }
 
         $object->client                = $_POST["client"];
@@ -479,41 +469,14 @@ $formcompany = new FormCompany($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
-// TODO Mutualize this part of code (same than product/fiche.php and contact/fiche.php)
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
 {
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if ($action == 'create')
-    {
-        $objcanvas->assign_values($action);     // Set value for templates
-        $objcanvas->display_canvas($action,0);  // Show template
-    }
-    elseif ($action == 'edit')
-    {
-        $objcanvas->control->object=$objcanvas->getObject($socid);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
-        if (empty($objcanvas->control->object))
-        {
-            $object = new Societe($db);
-            $object->fetch($socid);
-            $objcanvas->control->object=$object;
-        }
-        $objcanvas->assign_values($action);     // Set value for templates
-        $objcanvas->display_canvas($action);    // Show template
-    }
-    else
-    {
-        $objcanvas->control->object=$objcanvas->getObject($socid);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
-        if (empty($objcanvas->control->object))
-        {
-            $object = new Societe($db);
-            $object->fetch($socid);
-            $objcanvas->control->object=$object;
-        }
-        $objcanvas->assign_values('view');
-        $objcanvas->display_canvas('view');  	// Show template
-    }
+
+	$objcanvas->assign_values($action, $socid);	// Set value for templates
+	$objcanvas->display_canvas();				// Show template
 }
 else
 {
@@ -551,46 +514,42 @@ else
         if ($conf->fournisseur->enabled && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
         if (GETPOST("private")==1) { $object->particulier=1; }
 
-        $object->name=$_POST["nom"];
-        $object->nom=$_POST["nom"];     // TODO obsolete
-        $object->prenom=$_POST["prenom"];
-        $object->particulier=$_REQUEST["private"];
-        $object->prefix_comm=$_POST["prefix_comm"];
-        $object->client=$_POST["client"]?$_POST["client"]:$object->client;
-        $object->code_client=$_POST["code_client"];
-        $object->fournisseur=$_POST["fournisseur"]?$_POST["fournisseur"]:$object->fournisseur;
-        $object->code_fournisseur=$_POST["code_fournisseur"];
-        $object->adresse=$_POST["adresse"]; // TODO obsolete
-        $object->address=$_POST["adresse"];
-        $object->cp=$_POST["zipcode"]; // TODO obsolete
-        $object->zip=$_POST["zipcode"];
-        $object->ville=$_POST["town"]; // TODO obsolete
-        $object->town=$_POST["town"];
-        $object->state_id=$_POST["departement_id"];
-        $object->tel=$_POST["tel"];
-        $object->fax=$_POST["fax"];
-        $object->email=$_POST["email"];
-        $object->url=$_POST["url"];
-        $object->capital=$_POST["capital"];
-        $object->gencod=$_POST["gencod"];
-        $object->siren=$_POST["idprof1"];
-        $object->siret=$_POST["idprof2"];
-        $object->ape=$_POST["idprof3"];
-        $object->idprof4=$_POST["idprof4"];
-        $object->typent_id=$_POST["typent_id"];
-        $object->effectif_id=$_POST["effectif_id"];
+        $object->name				= $_POST["nom"];
+        $object->prenom				= $_POST["prenom"];
+        $object->particulier		= $_REQUEST["private"];
+        $object->prefix_comm		= $_POST["prefix_comm"];
+        $object->client				= $_POST["client"]?$_POST["client"]:$object->client;
+        $object->code_client		= $_POST["code_client"];
+        $object->fournisseur		= $_POST["fournisseur"]?$_POST["fournisseur"]:$object->fournisseur;
+        $object->code_fournisseur	= $_POST["code_fournisseur"];
+        $object->address			= $_POST["adresse"];
+        $object->zip				= $_POST["zipcode"];
+        $object->town				= $_POST["town"];
+        $object->state_id			= $_POST["departement_id"];
+        $object->tel				= $_POST["tel"];
+        $object->fax				= $_POST["fax"];
+        $object->email				= $_POST["email"];
+        $object->url				= $_POST["url"];
+        $object->capital			= $_POST["capital"];
+        $object->gencod				= $_POST["gencod"];
+        $object->idprof1			= $_POST["idprof1"];
+        $object->idprof2			= $_POST["idprof2"];
+        $object->idprof3			= $_POST["idprof3"];
+        $object->idprof4			= $_POST["idprof4"];
+        $object->typent_id			= $_POST["typent_id"];
+        $object->effectif_id		= $_POST["effectif_id"];
 
-        $object->tva_assuj = $_POST["assujtva_value"];
-        $object->status= $_POST["status"];
+        $object->tva_assuj			= $_POST["assujtva_value"];
+        $object->status				= $_POST["status"];
 
         //Local Taxes
-        $object->localtax1_assuj       = $_POST["localtax1assuj_value"];
-        $object->localtax2_assuj       = $_POST["localtax2assuj_value"];
+        $object->localtax1_assuj	= $_POST["localtax1assuj_value"];
+        $object->localtax2_assuj	= $_POST["localtax2assuj_value"];
 
-        $object->tva_intra=$_POST["tva_intra"];
+        $object->tva_intra			= $_POST["tva_intra"];
 
-        $object->commercial_id=$_POST["commercial_id"];
-        $object->default_lang=$_POST["default_lang"];
+        $object->commercial_id		= $_POST["commercial_id"];
+        $object->default_lang		= $_POST["default_lang"];
 
         $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 

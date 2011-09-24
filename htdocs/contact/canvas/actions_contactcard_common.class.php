@@ -28,12 +28,11 @@
 abstract class ActionsContactCardCommon
 {
     var $db;
+    var $dirmodule;
     var $targetmodule;
     var $canvas;
     var $card;
 
-	//! Numero d'erreur Plage 1280-1535
-	var $errno = 0;
 	//! Template container
 	var $tpl = array();
 	//! Object container
@@ -46,19 +45,66 @@ abstract class ActionsContactCardCommon
     /**
 	 *    Constructor
 	 *
-     *    @param   DoliDB	$DB              Handler acces base de donnees
-     *    @param   string	$targetmodule    Name of directory of module where canvas is stored
-     *    @param   string	$canvas          Name of canvas
-     *    @param   streing	$card            Name of tab (sub-canvas)
+     *    @param	DoliDB	$DB				Handler acces base de donnees
+     *    @param	string	$dirmodule		Name of directory of module
+     *    @param	string	$targetmodule	Name of directory where canvas is stored
+     *    @param	string	$canvas			Name of canvas
+     *    @param	string	$card			Name of tab (sub-canvas)
 	 */
-	function ActionsContactCardCommon($DB,$targetmodule,$canvas,$card)
+	function __construct($DB, $dirmodule, $targetmodule, $canvas, $card)
 	{
-        $this->db               = $DB;
-        $this->targetmodule     = $targetmodule;
-        $this->canvas           = $canvas;
-        $this->card             = $card;
+        $this->db				= $DB;
+        $this->dirmodule		= $targetmodule;
+        $this->targetmodule		= $targetmodule;
+        $this->canvas			= $canvas;
+        $this->card				= $card;
 	}
-
+	
+	/**
+	 * 	Instantiation of DAO class
+	 * 
+	 * 	@return	void
+	 */
+	private function getInstanceDao()
+	{
+		if (! is_object($this->object))
+		{
+			$modelclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
+	        if (file_exists($modelclassfile))
+	        {
+	            // Include dataservice class (model)
+	            $ret = require_once($modelclassfile);
+	            if ($ret)
+	            {
+	            	// Instantiate dataservice class (model)
+	            	$modelclassname = 'Dao'.ucfirst($this->targetmodule).ucfirst($this->canvas);
+	            	$this->object = new $modelclassname($this->db);
+	            }
+	        }
+		}
+	}
+	
+	/**
+     *  Get object
+	 *
+     *  @param		int			Object id
+     *  @return		object		Object loaded
+     */
+    function getObject($id)
+    {
+    	$ret = $this->getInstanceDao();
+    	
+    	if (is_object($this->object) && method_exists($this->object,'fetch'))
+    	{
+    		if (! empty($id)) $this->object->fetch($id);
+    	}
+    	else
+    	{
+    		$object = new Contact($this->db);
+    		if (! empty($id)) $object->fetch($id);
+            $this->object = $object;
+    	}
+    }
 
     /**
      *  Load data control
@@ -66,12 +112,12 @@ abstract class ActionsContactCardCommon
      *	@param	int		$id		Id of object
      *	@return	void
      */
-    function doActions($id)
+    function doActions(&$action)
     {
         global $conf, $user, $langs;
 
         // Creation utilisateur depuis contact
-        if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes')
+        if ($action == 'confirm_create_user' && GETPOST("confirm") == 'yes')
         {
             // Recuperation contact actuel
             $result = $this->object->fetch($id);
@@ -110,14 +156,14 @@ abstract class ActionsContactCardCommon
         }
 
         // Creation contact
-        if ($_POST["action"] == 'add')
+        if ($action == 'add')
         {
             $this->assign_post();
 
             if (! $_POST["name"])
             {
                 array_push($this->errors,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
-                $_GET["action"] = $_POST["action"] = 'create';
+                $action = 'create';
             }
 
             if ($_POST["name"])
@@ -131,12 +177,12 @@ abstract class ActionsContactCardCommon
                 else
                 {
                     $this->errors=$this->object->errors;
-                    $_GET["action"] = $_POST["action"] = 'create';
+                    $action = 'create';
                 }
             }
         }
 
-        if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes')
+        if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
         {
             $result=$this->object->fetch($id);
 
@@ -146,7 +192,7 @@ abstract class ActionsContactCardCommon
             $result = $this->object->delete();
             if ($result > 0)
             {
-                Header("Location: index.php");
+                Header("Location: list.php");
                 exit;
             }
             else
@@ -155,12 +201,18 @@ abstract class ActionsContactCardCommon
             }
         }
 
-        if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+        if ($action == 'update')
         {
+        	if ($_POST["cancel"])
+        	{
+        		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$this->object->id);
+        		exit;
+        	}
+        	
             if (empty($_POST["name"]))
             {
                 $this->error=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
-                $_GET["action"] = $_POST["action"] = 'edit';
+                $action = 'edit';
             }
 
             if (empty($this->error))
@@ -175,34 +227,16 @@ abstract class ActionsContactCardCommon
 
                 if ($result > 0)
                 {
-                    $this->object->old_name='';
-                    $this->object->old_firstname='';
+                    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$this->object->id);
+                    exit;
                 }
                 else
                 {
                     $this->errors=$this->object->errors;
+                    $action = 'edit';
                 }
             }
         }
-    }
-
-
-    /**
-     *  Return the title of card
-     *
-     *  @param	string		$action		Type of action
-     *  @return	string					HTML output
-     */
-    function getTitle($action)
-    {
-        global $langs;
-
-        $out='';
-
-        if ($action == 'view' || $action == 'edit') $out.= $langs->trans("ContactsAddresses");
-        if ($action == 'create') $out.= $langs->trans("AddContact");
-
-        return $out;
     }
 
 	/**
@@ -211,19 +245,18 @@ abstract class ActionsContactCardCommon
      *  @param      string		$action     Type of action
      *  @return		string					HTML output
      */
-    function assign_values($action='')
+    function assign_values(&$action)
     {
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
-        if ($action == 'create' || $action == 'edit') $this->assign_post($action);
+        if ($action == 'add' || $action == 'update') $this->assign_post();
 
         foreach($this->object as $key => $value)
         {
             $this->tpl[$key] = $value;
         }
 
-        $this->tpl['title']=$this->getTitle($action);
         $this->tpl['error']=$this->error;
         $this->tpl['errors']=$this->errors;
 
@@ -289,7 +322,7 @@ abstract class ActionsContactCardCommon
             $this->tpl['select_visibility'] = $form->selectarray('priv',$selectarray,$this->object->priv,0);
         }
 
-        if ($action == 'view' || $action == 'edit')
+        if ($action == 'view' || $action == 'edit' || $action == 'delete')
         {
         	// Emailing
         	if ($conf->mailing->enabled)
@@ -339,29 +372,8 @@ abstract class ActionsContactCardCommon
 			else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
         }
 
-        if ($action == 'view')
+        if ($action == 'view' || $action == 'delete')
         {
-        	if ($_GET["action"] == 'create_user')
-        	{
-        		// Full firstname and name separated with a dot : firstname.name
-        		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
-        		$login=dol_buildlogin($this->object->nom, $this->object->prenom);
-
-        		$generated_password='';
-        		if (! $ldap_sid)
-        		{
-	        		$generated_password=getRandomPassword('');
-        		}
-        		$password=$generated_password;
-
-        		// Create a form array
-        		$formquestion=array(
-			     array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
-			     array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
-
-        		$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
-        	}
-
         	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
 
         	if ($this->object->socid > 0)
@@ -395,15 +407,35 @@ abstract class ActionsContactCardCommon
 
             $this->tpl['note'] = nl2br($this->object->note);
         }
+        
+        if ($action == 'create_user')
+        {
+        	// Full firstname and name separated with a dot : firstname.name
+        	include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+        	$login=dol_buildlogin($this->object->nom, $this->object->prenom);
+        	
+        	$generated_password='';
+        	if (! $ldap_sid)
+        	{
+        		$generated_password=getRandomPassword('');
+        	}
+        	$password=$generated_password;
+        	
+        	// Create a form array
+        	$formquestion=array(
+        	array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
+        	array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
+        	
+        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
+        }
     }
 
     /**
      *  Assign POST values into object
      *
-     *	@param		string		$action		Action string
      *  @return		string					HTML output
      */
-    private function assign_post($action)
+    private function assign_post()
     {
         global $langs, $mysoc;
 

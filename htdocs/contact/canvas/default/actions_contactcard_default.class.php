@@ -30,26 +30,44 @@ include_once(DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class
 class ActionsContactCardDefault extends ActionsContactCardCommon
 {
 	var $db;
+	var $dirmodule;
     var $targetmodule;
     var $canvas;
     var $card;
 
 	/**
-     *    Constructor
+     *	Constructor
      *
-     *    @param   DoliDB	$DB              Handler acces base de donnees
-     *    @param   string	$targetmodule    Name of directory of module where canvas is stored
-     *    @param   string	$canvas          Name of canvas
-     *    @param   string	$card            Name of tab (sub-canvas)
+     *	@param	DoliDB	$DB				Handler acces base de donnees
+     *	@param	string	$dirmodule		Name of directory of module
+     *	@param	string	$targetmodule	Name of directory of module where canvas is stored
+     *	@param	string	$canvas			Name of canvas
+     *	@param	string	$card			Name of tab (sub-canvas)
 	 */
-	function ActionsContactCardDefault($DB,$targetmodule,$canvas,$card)
+	function __construct($DB, $dirmodule, $targetmodule, $canvas, $card)
 	{
         $this->db               = $DB;
+        $this->dirmodule		= $dirmodule;
         $this->targetmodule     = $targetmodule;
         $this->canvas           = $canvas;
         $this->card             = $card;
 	}
+	
+	/**
+	 * 	Return the title of card
+	 */
+	private function getTitle($action)
+	{
+		global $langs;
 
+		$out='';
+
+		if ($action == 'view') 		$out.= $langs->trans("Contact");
+		if ($action == 'edit') 		$out.= $langs->trans("EditContact");
+		if ($action == 'create')	$out.= $langs->trans("NewContact");
+		
+		return $out;
+	}
 
 	/**
 	 *  Assign custom values for canvas
@@ -57,10 +75,12 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  @param		string		$action     Type of action
 	 *  @return		void
 	 */
-	function assign_values($action='')
+	function assign_values(&$action, $id)
 	{
 		global $conf, $db, $langs, $user;
 		global $form;
+		
+		$ret = $this->getObject($id);
 
         parent::assign_values($action);
 
@@ -77,21 +97,20 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		    $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'contact');
 		    $this->tpl['showend']=dol_get_fiche_end();
 
-			// Confirm delete contact
-        	if ($user->rights->societe->contact->supprimer)
-        	{
-        		if ($_GET["action"] == 'delete')
-        		{
-        			$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
-        		}
-        	}
-
         	$objsoc = new Societe($db);
             $objsoc->fetch($this->object->fk_soc);
 
             $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->object,1);
 
             $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->object,1);
+		}
+		else
+		{
+			// Confirm delete contact
+        	if ($action == 'delete' && $user->rights->societe->contact->supprimer)
+        	{
+        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
+        	}
 		}
 
 		if ($action == 'list')

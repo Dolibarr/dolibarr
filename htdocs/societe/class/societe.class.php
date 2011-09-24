@@ -297,8 +297,7 @@ class Societe extends CommonObject
         $this->errors=array();
 
         $result = 0;
-        $this->name=$this->name?trim($this->name):trim($this->nom);
-        $this->nom=$this->name; // For backward compatibility
+        $this->name	= trim($this->name);
 
         if (! $this->name)
         {
@@ -393,34 +392,29 @@ class Societe extends CommonObject
         $now=dol_now();
 
         // Clean parameters
-        $this->id=$id;
-        $this->name=$this->name?trim($this->name):trim($this->nom);
-        $this->nom=trim($this->nom);    // TODO obsolete
-        $this->address=$this->address?trim($this->address):trim($this->adresse);
-        $this->adresse=$this->address;  // TODO obsolete
-        $this->zip=$this->zip?trim($this->zip):trim($this->cp);
-        $this->cp=$this->zip;           // TODO obsolete
-        $this->town=$this->town?trim($this->town):trim($this->ville);
-        $this->ville=$this->town;       // TODO obsolete
-        $this->state_id=trim($this->state_id);
-        $this->pays_id=trim($this->pays_id);
-        $this->country_id=trim($this->country_id);
-        $this->tel=trim($this->tel);
-        $this->fax=trim($this->fax);
-        $this->tel = preg_replace("/\s/","",$this->tel);
-        $this->tel = preg_replace("/\./","",$this->tel);
-        $this->fax = preg_replace("/\s/","",$this->fax);
-        $this->fax = preg_replace("/\./","",$this->fax);
-        $this->email=trim($this->email);
-        $this->url=$this->url?clean_url($this->url,0):'';
-        $this->siren=trim($this->siren);
-        $this->siret=trim($this->siret);
-        $this->ape=trim($this->ape);
-        $this->idprof4=trim($this->idprof4);
-        $this->prefix_comm=trim($this->prefix_comm);
+        $this->id			= $id;
+        $this->name			= trim($this->name);
+        $this->address		= trim($this->address);
+        $this->zip			= trim($this->zip);
+        $this->town			= trim($this->town);
+        $this->state_id		= trim($this->state_id);
+        $this->country_id	= trim($this->country_id);
+        $this->tel			= trim($this->tel);
+        $this->fax			= trim($this->fax);
+        $this->tel			= preg_replace("/\s/","",$this->tel);
+        $this->tel			= preg_replace("/\./","",$this->tel);
+        $this->fax			= preg_replace("/\s/","",$this->fax);
+        $this->fax			= preg_replace("/\./","",$this->fax);
+        $this->email		= trim($this->email);
+        $this->url			= $this->url?clean_url($this->url,0):'';
+        $this->idprof1		= trim($this->idprof1);
+        $this->idprof2		= trim($this->idprof2);
+        $this->idprof3		= trim($this->idprof3);
+        $this->idprof4		= trim($this->idprof4);
+        $this->prefix_comm	= trim($this->prefix_comm);
 
-        $this->tva_assuj=trim($this->tva_assuj);
-        $this->tva_intra=dol_sanitizeFileName($this->tva_intra,'');
+        $this->tva_assuj	= trim($this->tva_assuj);
+        $this->tva_intra	= dol_sanitizeFileName($this->tva_intra,'');
         if (empty($this->status)) $this->status = 0;
 
         // Local taxes
@@ -477,9 +471,9 @@ class Societe extends CommonObject
             $sql .= ",email = ".($this->email?"'".$this->db->escape($this->email)."'":"null");
             $sql .= ",url = ".($this->url?"'".$this->db->escape($this->url)."'":"null");
 
-            $sql .= ",siren   = '". $this->db->escape($this->siren)   ."'";
-            $sql .= ",siret   = '". $this->db->escape($this->siret)   ."'";
-            $sql .= ",ape     = '". $this->db->escape($this->ape)     ."'";
+            $sql .= ",siren   = '". $this->db->escape($this->idprof1)   ."'";
+            $sql .= ",siret   = '". $this->db->escape($this->idprof2)   ."'";
+            $sql .= ",ape     = '". $this->db->escape($this->idprof3)     ."'";
             $sql .= ",idprof4 = '". $this->db->escape($this->idprof4) ."'";
 
             $sql .= ",tva_assuj = ".($this->tva_assuj!=''?"'".$this->tva_assuj."'":"null");
@@ -629,7 +623,7 @@ class Societe extends CommonObject
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
         $sql .= ', s.tel, s.fax, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
-        $sql .= ', s.siren, s.siret, s.ape, s.idprof4';
+        $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
         $sql .= ', s.fk_effectif as effectif_id';
@@ -655,9 +649,9 @@ class Societe extends CommonObject
         if ($ref)   $sql .= " WHERE s.nom = '".$this->db->escape($ref)."' AND s.entity = ".$conf->entity;
         if ($ref_ext) $sql .= " WHERE s.ref_ext = '".$this->db->escape($ref_ext)."' AND s.entity = ".$conf->entity;
         if ($ref_int) $sql .= " WHERE s.ref_int = '".$this->db->escape($ref_int)."' AND s.entity = ".$conf->entity;
-        if ($idprof1) $sql .= " WHERE s.siren = '".$this->db->escape($siren)."' AND s.entity = ".$conf->entity;
-        if ($idprof2) $sql .= " WHERE s.siret = '".$this->db->escape($siret)."' AND s.entity = ".$conf->entity;
-        if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($ape)."' AND s.entity = ".$conf->entity;
+        if ($idprof1) $sql .= " WHERE s.siren = '".$this->db->escape($idprof1)."' AND s.entity = ".$conf->entity;
+        if ($idprof2) $sql .= " WHERE s.siret = '".$this->db->escape($idprof2)."' AND s.entity = ".$conf->entity;
+        if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($idprof3)."' AND s.entity = ".$conf->entity;
         if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
@@ -680,7 +674,7 @@ class Societe extends CommonObject
 
                 $this->ref          = $obj->rowid;
                 $this->name 		= $obj->name;
-                $this->nom          = $obj->name; // TODO obsolete
+                $this->nom          = $obj->name;		// TODO obsolete
                 $this->ref_ext      = $obj->ref_ext;
                 $this->ref_int      = $obj->ref_int;
 
@@ -688,13 +682,13 @@ class Societe extends CommonObject
                 $this->date_update = $this->db->jdate($obj->date_update);
 
                 $this->address 		= $obj->address;
-                $this->adresse      = $obj->address; // TODO obsolete
+                $this->adresse      = $obj->address;	// TODO obsolete
                 $this->zip 			= $obj->zip;
-                $this->cp           = $obj->zip;    // TODO obsolete
+                $this->cp           = $obj->zip;		// TODO obsolete
                 $this->town 		= $obj->town;
-                $this->ville        = $obj->town;// TODO obsolete
+                $this->ville        = $obj->town;		// TODO obsolete
 
-                $this->pays_id 		= $obj->fk_pays;						// TODO obsolete
+                $this->pays_id 		= $obj->fk_pays;	// TODO obsolete
                 $this->country_id   = $obj->fk_pays;
                 $this->pays_code 	= $obj->fk_pays?$obj->pays_code:'';		// TODO obsolete
                 $this->country_code = $obj->fk_pays?$obj->pays_code:'';
@@ -717,11 +711,11 @@ class Societe extends CommonObject
 
                 $this->parent    = $obj->parent;
 
-                $this->siren		= $obj->siren; // TODO obsolete
+                $this->siren		= $obj->siren;	// TODO obsolete
                 $this->idprof1		= $obj->siren;
-                $this->siret		= $obj->siret; // TODO obsolete
+                $this->siret		= $obj->siret;	// TODO obsolete
                 $this->idprof2		= $obj->siret;
-                $this->ape			= $obj->ape; // TODO obsolete
+                $this->ape			= $obj->ape;	// TODO obsolete
                 $this->idprof3		= $obj->ape;
                 $this->idprof4		= $obj->idprof4;
 
