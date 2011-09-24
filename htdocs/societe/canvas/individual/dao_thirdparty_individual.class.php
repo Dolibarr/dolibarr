@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010-2011 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class DaoThirdPartyIndividual extends Societe
 	 *
 	 *    @param	DoliDB		$DB		Databae handler
 	 */
-	function DaoThirdPartyIndividual($DB)
+	function __construct($DB)
 	{
 		$this->db = $DB;
 	}

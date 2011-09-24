@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +30,18 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modBanque
- \brief      Classe de description et activation du module Banque
+/**
+ *	\class      modBanque
+ *	\brief      Classe de description et activation du module Banque
  */
 
 class modBanque extends DolibarrModules
 {
 
 	/**
-	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *	Constructor.
+	 *
+	 *	@param	DoliDB	$DB		Database handler
 	 */
 	function modBanque($DB)
 	{
@@ -166,6 +168,7 @@ class modBanque extends DolibarrModules
      *      Function called when module is enabled.
      *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      *      It also creates data directories.
+     *      
      *      @return     int             1 if OK, 0 if KO
      */
 	function init()
@@ -184,6 +187,7 @@ class modBanque extends DolibarrModules
      *      Function called when module is disabled.
      *      Remove from database constants, boxes and permissions from Dolibarr database.
      *      Data directories are not deleted.
+     *      
      *      @return     int             1 if OK, 0 if KO
      */
 	function remove()

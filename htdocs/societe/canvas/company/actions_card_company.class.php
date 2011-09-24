@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2011	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011		Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,24 +29,27 @@ include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
  */
 class ActionsCardCompany extends ActionsCardCommon
 {
-    var $targetmodule;
+    var $dirmodule;
+	var $targetmodule;
     var $canvas;
     var $card;
 
 	/**
 	 *    Constructor
 	 *
-     *    @param   DoliDB	$DB             Handler acces base de donnees
-     *    @param   string	$targetmodule	Name of directory of module where canvas is stored
-     *    @param   string	$canvas         Name of canvas
-     *    @param   string	$card           Name of tab (sub-canvas)
+     *    @param	DoliDB	$DB				Handler acces base de donnees
+     *    @param	string	$dirmodule		Name of directory of module
+     *    @param	string	$targetmodule	Name of directory of module where canvas is stored
+     *    @param	string	$canvas			Name of canvas
+     *    @param	string	$card			Name of tab (sub-canvas)
 	 */
-	function ActionsCardCompany($DB,$targetmodule,$canvas,$card)
+	function __construct($DB, $dirmodule, $targetmodule, $canvas, $card)
 	{
-        $this->db               = $DB;
-        $this->targetmodule     = $targetmodule;
-        $this->canvas           = $canvas;
-        $this->card             = $card;
+        $this->db				= $DB;
+        $this->dirmodule		= $dirmodule;
+        $this->targetmodule		= $targetmodule;
+        $this->canvas			= $canvas;
+        $this->card				= $card;
 	}
 
     /**
@@ -75,9 +78,11 @@ class ActionsCardCompany extends ActionsCardCommon
 	 * 	@param		int		$socid 		Id of object (may be empty for creation)
 	 * 	@return		int					<0 if KO, >0 if OK
 	 */
-	function doActions($socid)
+	function doActions(&$action, $id)
 	{
-		$return = parent::doActions($socid);
+		$ret = $this->getObject($id);
+		
+		$return = parent::doActions($action);
 
 		return $return;
 	}
@@ -88,12 +93,16 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *    @param	string	$action     Type of action
 	 *    @return	void
 	 */
-	function assign_values($action)
+	function assign_values(&$action, $id)
 	{
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
+		
+		$ret = $this->getObject($id);
 
 		parent::assign_values($action);
+		
+		$this->tpl['title']		= $this->getTitle($action);
 
 		$this->tpl['profid1'] 	= $this->object->siren;
 		$this->tpl['profid2'] 	= $this->object->siret;
@@ -153,7 +162,7 @@ class ActionsCardCompany extends ActionsCardCommon
 		else
 		{
 			// Confirm delete third party
-			if ($_GET["action"] == 'delete' || $conf->use_javascript_ajax)
+			if ($action == 'delete')
 			{
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"1,action-delete");
 			}
@@ -201,7 +210,7 @@ class ActionsCardCompany extends ActionsCardCommon
 				$socm = new Societe($this->db);
 				$socm->fetch($this->object->parent);
 				$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
-				$this->tpl['parent_company'].= $socm->ville?' - '.$socm->ville:'';
+				$this->tpl['parent_company'].= ($socm->town ? ' - ' . $socm->town : '');
 			}
 			else
 			{

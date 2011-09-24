@@ -39,9 +39,10 @@ $langs->load("commercial");
 
 $mesg=''; $error=0; $errors=array();
 
-$action = GETPOST('action');
-$id = GETPOST("id");
-$socid = GETPOST("socid");
+$action		= (GETPOST('action') ? GETPOST('action') : 'view');
+$confirm	= GETPOST('confirm');
+$id			= GETPOST("id");
+$socid		= GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
@@ -52,8 +53,8 @@ $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
-    $objcanvas = new Canvas($db,$action);
-    $objcanvas->getCanvas('contact','contactcard',$canvas);
+    $objcanvas = new Canvas($db, $action);
+    $objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
 // Security check
@@ -69,24 +70,8 @@ $hookmanager->callHooks(array('contactcard'));
  *	Actions
  */
 
-$parameters=array('id'=>$id);
+$parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
-
-// ---------- start deprecated. Use hook to hook actions.
-// If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
-// If canvas actions are not defined, we use standard feature.
-if (method_exists($objcanvas->control,'doActions'))
-{
-    $objcanvas->doActions($id);
-    if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && count($objcanvas->errors) > 0))
-    {
-        $error=$objcanvas->error; $errors=$objcanvas->errors;
-        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
-        if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
-    }
-}
-// ---------- end deprecated.
 
 if (empty($reshook))
 {
@@ -98,7 +83,7 @@ if (empty($reshook))
     }
 
 	// Creation utilisateur depuis contact
-    if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
+    if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer)
     {
         // Recuperation contact actuel
         $result = $object->fetch($_GET["id"]);
@@ -137,7 +122,7 @@ if (empty($reshook))
     }
 
     // Add contact
-    if (GETPOST("action") == 'add' && $user->rights->societe->contact->creer)
+    if ($action == 'add' && $user->rights->societe->contact->creer)
     {
         $db->begin();
 
@@ -196,7 +181,7 @@ if (empty($reshook))
         }
     }
 
-    if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->contact->supprimer)
+    if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->contact->supprimer)
     {
         $result=$object->fetch($_GET["id"]);
 
@@ -215,12 +200,12 @@ if (empty($reshook))
         }
     }
 
-    if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
+    if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
     {
         if (empty($_POST["name"]))
         {
             $error++; $errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
-            $_GET["action"] = $_POST["action"] = 'edit';
+            $action = 'edit';
         }
 
         if (! count($errors))
@@ -287,41 +272,14 @@ if ($socid > 0)
     $objsoc->fetch($socid);
 }
 
-// TODO Mutualize this part of code (same than societe/soc.php and product/fiche.php)
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
 {
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if ($action == 'create')
-    {
-        $objcanvas->assign_values($action);   // Set value for templates
-        $objcanvas->display_canvas($action);  // Show template
-    }
-    else if ($action == 'edit')
-    {
-        $objcanvas->control->object=$objcanvas->getObject($id);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
-        if (empty($objcanvas->control->object))
-        {
-            $object = new Contact($db);
-            $object->fetch($id,$user);
-            $objcanvas->control->object=$object;
-        }
-        $objcanvas->assign_values($action);   // Set value for templates
-        $objcanvas->display_canvas($action);  // Show template
-    }
-    else
-    {
-        $objcanvas->control->object=$objcanvas->getObject($id);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
-        if (empty($objcanvas->control->object))
-        {
-            $object = new Contact($db);
-            $object->fetch($id,$user);
-            $objcanvas->control->object=$object;
-        }
-        $objcanvas->assign_values('view');  // Assign values
-        $objcanvas->display_canvas('view'); // Show template
-    }
+
+	$objcanvas->assign_values($action, $id);	// Set value for templates
+	$objcanvas->display_canvas();				// Show template
 }
 else
 {
@@ -332,7 +290,7 @@ else
     // Confirm deleting contact
     if ($user->rights->societe->contact->supprimer)
     {
-        if ($_GET["action"] == 'delete')
+        if ($action == 'delete')
         {
             $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
             if ($ret == 'html') print '<br>';
@@ -342,7 +300,7 @@ else
     /*
      * Onglets
      */
-    if (GETPOST("id") > 0)
+    if ($id > 0)
     {
         // Si edition contact deja existant
         $object = new Contact($db);
@@ -350,7 +308,7 @@ else
         if ($return <= 0)
         {
             dol_print_error('',$object->error);
-            $_GET["id"]=0;
+            $id=0;
         }
 
         // Show tabs
@@ -361,7 +319,7 @@ else
 
     if ($user->rights->societe->contact->creer)
     {
-        if (GETPOST("action") == 'create')
+        if ($action == 'create')
         {
             /*
              * Fiche en mode creation
@@ -549,7 +507,7 @@ else
 
             print "</form>";
         }
-        elseif (GETPOST("action") == 'edit' && GETPOST("id"))
+        elseif ($action == 'edit' && ! empty($id))
         {
             /*
              * Fiche en mode edition
@@ -734,7 +692,7 @@ else
         }
     }
 
-    if (GETPOST("id") && GETPOST("action") != 'edit')
+    if (! empty($id) && $action != 'edit')
     {
         $objsoc = new Societe($db);
 
@@ -744,7 +702,7 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
-        if ($_GET["action"] == 'create_user')
+        if ($action == 'create_user')
         {
             // Full firstname and name separated with a dot : firstname.name
             include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
