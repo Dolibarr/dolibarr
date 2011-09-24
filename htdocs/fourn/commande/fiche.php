@@ -986,7 +986,7 @@ if ($id > 0 || ! empty($ref))
 			//print "$object->id, $object->socid, $object->fk_project";
 			if ($action == 'classify')
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1', $object->fk_project, 'projectid');
 			}
 			else
 			{
