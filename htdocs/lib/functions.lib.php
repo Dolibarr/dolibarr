@@ -3349,10 +3349,10 @@ function create_exdir($dir)
 }
 
 /**
- *	Creation of a directory (recursive)
+ *	Creation of a directory (this can create recursive subdir)
  *
- *	@param      $dir        Directory to create
- *	@return     int         < 0 if KO, 0 = already exists, > 0 if OK
+ *	@param	string	$dir	Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
+ *	@return int         	< 0 if KO, 0 = already exists, > 0 if OK
  */
 function dol_mkdir($dir)
 {
