@@ -32,29 +32,28 @@ class Canvas
 	var $db;
 	var $error;
 	var $errors=array();
-	
+
 	var $actiontype;
 
     var $dirmodule;			// Module directory
     var $targetmodule;      // Module concerned by canvas (ex: thirdparty, contact, ...)
-    var $canvas;            // Name of canvas
+    var $canvas;            // Name of canvas (ex: company, individual, product, service, ...)
     var $card;              // Tab (sub-canvas)
 
-    var $template_dir;		// Initialized by getCanvas with templates directory
-    var $control_file;		// Initialized by getCanvas with controller file name
-    var $control;           // Initialized by getCanvas with controller instance
-    var $object;            // Initialized by getCanvas with dao instance, filled by getObject
+    var $template_dir;			// Initialized by getCanvas with templates directory
+    var $control;           	// Initialized by getCanvas with controller instance
 
 
    /**
 	*   Constructor
 	*
-	*   @param     DoliDB	$DB          Database handler
+	*   @param     DoliDB	$DB          	Database handler
+	*   @param     string   $actiontype		Action type ('create', 'view', 'edit', 'list')
 	*/
 	function __construct($DB, $actiontype='view')
 	{
 		$this->db = $DB;
-		
+
 		$this->actiontype = $actiontype;
         if ($this->actiontype == 'add')    $this->actiontype='create';
 		if ($this->actiontype == 'update') $this->actiontype='edit';
@@ -62,18 +61,15 @@ class Canvas
 	}
 
 	/**
-	 * 	Initialize properties: ->targetmodule, ->canvas, ->card
-	 *  and MVC properties:    ->control (Controller), ->control->object (Model), ->template_dir (View)
+	 * 	Initialize properties: ->targetmodule, ->canvas, ->card, ->dirmodule, ->template_dir
 	 *
-	 * 	@param		module		Name of target module (thirdparty, contact, ...)
-	 * 	@param		card	 	Type of card (ex: 'card', 'info', 'contactcard', ...) or '' for a list page
-	 * 	@param		canvas		Name of canvas (ex: mycanvas, default, or mycanvas@myexternalmodule)
+	 * 	@param	string	$module		Name of target module (thirdparty, contact, ...)
+	 * 	@param	string	$card	 	Tab name of card (ex: 'card', 'info', 'contactcard', ...) or '' for a list page
+	 * 	@param	string	$canvas		Name of canvas (ex: mycanvas, default, or mycanvas@myexternalmodule)
 	 */
 	function getCanvas($module, $card, $canvas)
 	{
 		global $conf, $langs;
-
-		$error='';
 
 		// Set properties with value specific to dolibarr core: this->targetmodule, this->card, this->canvas
         $this->targetmodule = $module;
@@ -89,6 +85,7 @@ class Canvas
 		// For compatibility
         if ($this->dirmodule == 'thirdparty') { $this->dirmodule = 'societe'; }
 
+        // Control file
 		$controlclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php');
 		if (file_exists($controlclassfile))
 		{
@@ -110,21 +107,31 @@ class Canvas
 
         //print 'dimodule='.$dirmodule.' canvas='.$this->canvas.'<br>';
         //print ' => template_dir='.$this->template_dir.'<br>';
-        //print ' => control_file='.$this->control_file.' is_object(this->control)='.is_object($this->control).'<br>';
 
 		return 1;
 	}
-	
+
+
+	/**
+	 * 	Return if a canvas contains an action controller
+	 *
+	 * 	@return		boolean		Return if canvas contains actions (old feature. now actions should be inside hooks)
+	 */
+	function hasActions()
+	{
+        return (! is_object($this->control));
+	}
+
 	/**
 	 * 	Shared method for canvas to execute actions
-	 * 
+	 *
 	 * 	@param		string		$action		Action string
 	 * 	@param		int			$id			Object id
-	 * 	@return		void
+	 * 	@return		mixed					Return return code of doActions of canvas
 	 */
 	function doActions(&$action='view', $id=0)
 	{
-		if (method_exists($this->control,'doActions')) 
+		if (method_exists($this->control,'doActions'))
 		{
 			$ret = $this->control->doActions($action, $id);
 			return $ret;
@@ -133,7 +140,7 @@ class Canvas
 
     /**
 	 * 	Shared method for canvas to assign values for templates
-	 * 
+	 *
 	 * 	@param		string		$action		Action string
 	 * 	@param		int			$id			Object id
 	 * 	@return		void
@@ -146,7 +153,7 @@ class Canvas
     /**
      *	Return the template to display canvas (if it exists)
 	 *
-     *	@return		string				Path to display canvas file if it exists, '' otherwise.
+     *	@return		int		0=Canvas template file does not exist, 1=Canvas template file exists
      */
     function displayCanvasExists()
     {
@@ -158,8 +165,7 @@ class Canvas
 
 	/**
 	 *	Display a canvas page. This will include the template for output.
-	 *	Variables used by templates may have been defined, loaded before
-	 *	into the assign_values function.
+	 *	Variables used by templates may have been defined or loaded before into the assign_values function.
 	 *
 	 *	@return		void
 	 */
