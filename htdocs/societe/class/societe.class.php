@@ -298,7 +298,8 @@ class Societe extends CommonObject
 
         $result = 0;
         $this->name	= trim($this->name);
-
+        $this->nom=$this->name; // For backward compatibility
+        
         if (! $this->name)
         {
             $this->errors[] = 'ErrorBadThirdPartyName';
@@ -393,11 +394,16 @@ class Societe extends CommonObject
 
         // Clean parameters
         $this->id			= $id;
-        $this->name			= trim($this->name);
-        $this->address		= trim($this->address);
-        $this->zip			= trim($this->zip);
-        $this->town			= trim($this->town);
-        $this->state_id		= trim($this->state_id);
+        $this->name=$this->name?trim($this->name):trim($this->nom);
+        $this->nom=trim($this->nom);    // TODO obsolete
+        $this->address=$this->address?trim($this->address):trim($this->adresse);
+        $this->adresse=$this->address;  // TODO obsolete
+        $this->zip=$this->zip?trim($this->zip):trim($this->cp);
+        $this->cp=$this->zip;           // TODO obsolete
+        $this->town=$this->town?trim($this->town):trim($this->ville);
+        $this->ville=$this->town;       // TODO obsolete
+        $this->state_id=trim($this->state_id);
+        $this->pays_id=trim($this->pays_id);
         $this->country_id	= trim($this->country_id);
         $this->tel			= trim($this->tel);
         $this->fax			= trim($this->fax);
@@ -407,6 +413,9 @@ class Societe extends CommonObject
         $this->fax			= preg_replace("/\./","",$this->fax);
         $this->email		= trim($this->email);
         $this->url			= $this->url?clean_url($this->url,0):'';
+        $this->siren=trim($this->siren);	// TODO obsolete
+        $this->siret=trim($this->siret);	// TODO obsolete
+        $this->ape=trim($this->ape);		// TODO obsolete
         $this->idprof1		= trim($this->idprof1);
         $this->idprof2		= trim($this->idprof2);
         $this->idprof3		= trim($this->idprof3);
