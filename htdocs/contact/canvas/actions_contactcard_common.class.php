@@ -54,7 +54,7 @@ abstract class ActionsContactCardCommon
 	function __construct($DB, $dirmodule, $targetmodule, $canvas, $card)
 	{
         $this->db				= $DB;
-        $this->dirmodule		= $dirmodule;
+        $this->dirmodule		= $targetmodule;
         $this->targetmodule		= $targetmodule;
         $this->canvas			= $canvas;
         $this->card				= $card;
