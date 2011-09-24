@@ -121,13 +121,11 @@ if ($resql)
 		print_barre_liste($langs->trans("SocialContributions"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
 	}
 
-	if ($mesg)
-	{
-	    print $mesg."<br>";
-	}
+
+	dol_htmloutput_mesg($mesg);
 
 
-	if (empty($mysoc->pays_id) && empty($mysoc->pays_code))
+	if (empty($mysoc->country_id) && empty($mysoc->country_code))
 	{
 		print '<div class="error">';
 		$langs->load("errors");
