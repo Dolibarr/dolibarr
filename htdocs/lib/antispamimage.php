@@ -30,13 +30,12 @@ if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 
 require_once("../main.inc.php");
-require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
-require_once ARTICHOW."/AntiSpam.class.php";
+require_once(ARTICHOW_PATH.'Artichow.cfg.php');
+require_once(ARTICHOW.'/AntiSpam.class.php');
 
-// On cree l'objet anti-spam
 $object = new AntiSpam();
 
-// La valeur affichée sur l'image aura 5 lettres
+// Value of image will contains 5 characters
 $value=$object->setRand(5);
 $object->setSize(128,36);
 

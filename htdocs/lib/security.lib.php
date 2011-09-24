@@ -24,60 +24,112 @@
 
 
 /**
- *  Return a login if login/pass was successfull using an external login method.
+ *  Return a login if login/pass was successfull
  *
  *	@param		string	$usertotest			Login value to test
  *	@param		string	$passwordtotest		Password value to test
  *	@param		string	$entitytotest		Instance to test
+ *	@param		array	$authmode			Array list of selected authentication mode ('http', 'dolibarr', 'xxx'...)
  *  @return		string						Login or ''
  */
-function getLoginMethod($usertotest,$passwordtotest,$entitytotest=1)
+function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode)
 {
 	global $conf,$langs;
+    global $dolauthmode;    // To return authentication finally used
 
+	// Check parameetrs
+	if ($entitytotest == '') $entitytotest=1;
+
+    dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',',$authmode));
 	$login = '';
 
-	foreach($conf->login_method_modules as $dir)
+	// Validation of login/pass/entity with a third party login module method
+	if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
 	{
-		// Check if directory exists
-		if (!is_dir($dir)) continue;
+    	foreach($conf->login_method_modules as $dir)
+    	{
+    	    $newdir=dol_osencode($dir);
 
-		$handle=opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle))!==false)
-			{
-				if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
-				{
-					$authfile = $dir.'/'.$file;
-					$mode = $reg[1];
+    		// Check if directory exists
+    		if (!is_dir($newdir)) continue;
 
-					$result=include_once($authfile);
-					if ($result)
-					{
-						// Call function to check user/password
-						$function='check_user_password_'.$mode;
-						$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
-						if ($login)
-						{
-							$conf->authmode=$mode;	// This properties is defined only when logged
-						}
-					}
-					else
-					{
-						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-						sleep(1);    // To slow brut force cracking
-						$langs->load('main');
-						$langs->load('other');
-						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
-					}
-				}
-			}
-		}
-		closedir($handle);
+    		$handle=opendir($newdir);
+    		if (is_resource($handle))
+    		{
+    			while (($file = readdir($handle))!==false)
+    			{
+    				if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
+    				{
+    					$authfile = $dir.'/'.$file;
+    					$mode = $reg[1];
+
+    					$result=include_once($authfile);
+    					if ($result)
+    					{
+    						// Call function to check user/password
+    						$function='check_user_password_'.$mode;
+    						$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
+    						if ($login)
+    						{
+            					$conf->authmode=$mode;	// This properties is defined only when logged to say what mode was successfully used
+    						}
+    					}
+    					else
+    					{
+    						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+    						sleep(1);    // To slow brut force cracking
+    						$langs->load('main');
+    						$langs->load('other');
+    						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+    					}
+    				}
+    			}
+    		    closedir($handle);
+    		}
+    	}
 	}
+
+	// Validation of login/pass/entity with standard modules
+	if (empty($login))
+	{
+	    $test=true;
+    	foreach($authmode as $mode)
+    	{
+    		if ($test && $mode && ! $login)
+    		{
+    		    $mode=trim($mode);
+    			$authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
+    			$result=include_once($authfile);
+    			if ($result)
+    			{
+    				// Call function to check user/password
+    				$function='check_user_password_'.$mode;
+    				$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
+    				if ($login)	// Login is successfull
+    				{
+    					$test=false;            // To stop once at first login success
+    					$conf->authmode=$mode;	// This properties is defined only when logged to say what mode was successfully used
+    					$dol_tz=$_POST["tz"];
+    					$dol_dst=$_POST["dst"];
+    					$dol_screenwidth=$_POST["screenwidth"];
+    					$dol_screenheight=$_POST["screenheight"];
+    				}
+    			}
+    			else
+    			{
+    				dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+    				sleep(1);
+    				$langs->load('main');
+    				$langs->load('other');
+    				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+    			}
+    		}
+    	}
+	}
+
 	return $login;
 }
+
 
 /**
  *	Show Dolibarr default login page

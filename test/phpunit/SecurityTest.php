@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/lib/functions.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/lib/security.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -42,13 +43,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
 
 
 /**
- *
- * @xcovers DoliDb
- * @xcovers Translate
- * @xcovers Conf
- * @xcovers Interfaces
- * @xcovers CommonObject
- * @xcovers Adherent
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
@@ -109,6 +104,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__."\n";
     }
+
 	/**
 	 */
     protected function tearDown()
@@ -153,6 +149,31 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($result,'');
 
     	return $result;
+    }
+
+    /**
+     */
+    public function testCheckLoginPassEntity()
+    {
+        $login=checkLoginPassEntity('loginbidon','passwordbidon',1,array('dolibarr'));
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'');
+
+        $login=checkLoginPassEntity('admin','passwordbidon',1,array('dolibarr'));
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'');
+
+        $login=checkLoginPassEntity('admin','admin',1,array('dolibarr'));            // Should works because admin/admin exists
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'admin');
+
+        $login=checkLoginPassEntity('admin','admin',1,array('http','dolibarr'));    // Should work because of second authetntication method
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'admin');
+
+        $login=checkLoginPassEntity('admin','admin',1,array('forceuser'));
+        print __METHOD__." login=".$login."\n";
+        $this->assertEquals($login,'');    // Expected '' because should failed because login 'auto' does not exists
     }
 
     /**

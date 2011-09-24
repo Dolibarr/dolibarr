@@ -38,55 +38,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
- *
- * @xcovers DolibarrModules
- * @xcovers modAccounting
- * @xcovers modAdherent
- * @xcovers modAgenda
- * @xcovers modBanque
- * @xcovers modBarcode
- * @xcovers modBookmark
- * @xcovers modBoutique
- * @xcovers modCashDesk
- * @xcovers modCategorie
- * @xcovers modClickToDial
- * @xcovers modCommande
- * @xcovers modComptabilite
- * @xcovers modContrat
- * @xcovers modDeplacement
- * @xcovers modDocument
- * @xcovers modDon
- * @xcovers modECM
- * @xcovers modExpedition
- * @xcovers modExport
- * @xcovers modExternalRss
- * @xcovers modExternalSite
- * @cxovers modFacture
- * @xcovers modFckeditor
- * @xcovers modFicheinter
- * @xcovers modFournisseur
- * @xcovers modFTP
- * @xcovers modGeoIPMaxmind
- * @xcovers modGravatar
- * @xcovers modImport
- * @xcovers modLabel
- * @xcovers modLdap
- * @xcovers modMailing
- * @xcovers modMantis
- * @xcovers modNotification
- * @xcovers modPaybox
- * @xcovers modPaypal
- * @xcovers modPrelevement
- * @xcovers modProduct
- * @xcovers modProjet
- * @xcovers modPropale
- * @xcovers modService
- * @xcovers modSociete
- * @xcovers modStock
- * @xcovers modSyslog
- * @xcovers modTax
- * @xcovers modUser
- * @xcovers modWebServices
+ * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled

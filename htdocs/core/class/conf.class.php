@@ -57,7 +57,7 @@ class Conf
 	var $tabs_modules			= array();
 	var $triggers_modules		= array();
 	var $hooks_modules			= array();
-	var $login_method_modules	= array();
+	public $login_method_modules	= array();
 	var $modules				= array();
 	var $entities				= array();
 

@@ -78,7 +78,7 @@ class DolGraph
 
 
 	/**
-	 *	Constructeur
+	 * Constructor
 	 */
 	function DolGraph()
 	{
@@ -121,6 +121,10 @@ class DolGraph
 
 
 	/**
+	 * Set Y precision
+	 * 
+	 * @param 	float	$which_prec
+	 * @return 	string
 	 */
 	function SetPrecisionY($which_prec)
 	{
@@ -129,7 +133,9 @@ class DolGraph
 	}
 
 	/**
-	 *		\remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
+	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
+	 * 
+	 * @param float $xi
 	 */
 	function SetHorizTickIncrement($xi)
 	{
@@ -138,7 +144,9 @@ class DolGraph
 	}
 
 	/**
-	 *		\remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
+	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
+	 * 
+	 * @param float $xt
 	 */
 	function SetNumXTicks($xt)
 	{
@@ -147,7 +155,9 @@ class DolGraph
 	}
 
 	/**
-	 *		\brief		Set label interval to reduce number of labels
+	 * Set label interval to reduce number of labels
+	 * 
+	 * @param float $x
 	 */
 	function SetLabelInterval($x)
 	{
@@ -156,7 +166,7 @@ class DolGraph
 	}
 
 	/**
-	 * 		\brief		Hide X grid
+	 * Hide X grid
 	 */
 	function SetHideXGrid($bool)
 	{
@@ -165,7 +175,7 @@ class DolGraph
 	}
 
 	/**
-	 * 		\brief		Hide Y grid
+	 * Hide Y grid
 	 */
 	function SetHideYGrid($bool)
 	{
@@ -173,78 +183,140 @@ class DolGraph
 		return true;
 	}
 
+	/**
+	 * 
+	 * @param unknown_type $label
+	 */
 	function SetYLabel($label)
 	{
 		$this->YLabel = $label;
 	}
 
+	/**
+	 * 
+	 * @param $w
+	 */
 	function SetWidth($w)
 	{
 		$this->width = $w;
 	}
 
+	/**
+	 * 
+	 * @param $title
+	 */
 	function SetTitle($title)
 	{
 		$this->title = $title;
 	}
 
+	/**
+	 * 
+	 * @param $data
+	 */
 	function SetData($data)
 	{
 		$this->data = $data;
 	}
 
+	/**
+	 * 
+	 * @param $type
+	 */
 	function SetType($type)
 	{
 		$this->type = $type;
 	}
 
+	/**
+	 * 
+	 * @param $legend
+	 */
 	function SetLegend($legend)
 	{
 		$this->Legend = $legend;
 	}
+	
+	/**
+	 * 
+	 * @param $legendwidthmin
+	 */
 	function SetLegendWidthMin($legendwidthmin)
 	{
 		$this->LegendWidthMin = $legendwidthmin;
 	}
 
+	/**
+	 * 
+	 * @param $max
+	 */
 	function SetMaxValue($max)
 	{
 		$this->MaxValue = $max;
 	}
+	
+	/**
+	 * 
+	 */
 	function GetMaxValue()
 	{
 		return $this->MaxValue;
 	}
 
+	/**
+	 * 
+	 * @param $min
+	 */
 	function SetMinValue($min)
 	{
 		$this->MinValue = $min;
 	}
+	
+	/**
+	 * 
+	 */
 	function GetMinValue()
 	{
 		return $this->MinValue;
 	}
 
+	/**
+	 * 
+	 * @param $h
+	 */
 	function SetHeight($h)
 	{
 		$this->height = $h;
 	}
 
+	/**
+	 * 
+	 * @param $s
+	 */
 	function SetShading($s)
 	{
 		$this->SetShading = $s;
 	}
 
+	/**
+	 * 
+	 */
 	function ResetBgColor()
 	{
 		unset($this->bgcolor);
 	}
 
+	/**
+	 * 
+	 */
 	function ResetBgColorGrid()
 	{
 		unset($this->bgcolorgrid);
 	}
 
+	/**
+	 * 
+	 */
 	function isGraphKo()
 	{
 		return $this->error;
@@ -252,8 +324,10 @@ class DolGraph
 
 
 	/**
-	 *	\brief		Definie la couleur de fond de l'image complete
-	 *	\param		bg_color		array(R,G,B) ou 'onglet' ou 'default'
+	 * Definie la couleur de fond de l'image complete
+	 * 
+	 * @param	array	$bg_color		array(R,G,B) ou 'onglet' ou 'default'
+	 * @return	void
 	 */
 	function SetBgColor($bg_color = array(255,255,255))
 	{
@@ -277,8 +351,9 @@ class DolGraph
 	}
 
 	/**
-	 *	\brief		Definie la couleur de fond de la grille
-	 *	\param		bg_colorgrid		array(R,G,B) ou 'onglet' ou 'default'
+	 * Definie la couleur de fond de la grille
+	 * 
+	 * @param	array	$bg_colorgrid		array(R,G,B) ou 'onglet' ou 'default'
 	 */
 	function SetBgColorGrid($bg_colorgrid = array(255,255,255))
 	{
@@ -301,11 +376,17 @@ class DolGraph
 		}
 	}
 
+	/**
+	 * 
+	 */
 	function ResetDataColor()
 	{
 		unset($this->datacolor);
 	}
 
+	/**
+	 * 
+	 */
 	function GetMaxValueInData()
 	{
 		$k = 0;
@@ -326,6 +407,9 @@ class DolGraph
 		return $vals[0];
 	}
 
+	/**
+	 * 
+	 */
 	function GetMinValueInData()
 	{
 		$k = 0;
@@ -392,8 +476,10 @@ class DolGraph
 	}
 
 	/**
-	 *    	Build a graph onto disk
-	 *    	@param      file    Image file name on disk
+	 * Build a graph onto disk using correct library
+	 * 
+	 * @param	string	$file    Image file name on disk to generate
+	 * @return	void
 	 */
 	function draw($file)
 	{
@@ -409,12 +495,15 @@ class DolGraph
 
 
 	/**
-	 * 		Build a graph onto disk using Artichow library
-	 *    	@param      file    Image file name on disk
+	 * Build a graph onto disk using Artichow library
+	 * 
+	 * @param	string	$file    Image file name on disk to generate
+	 * @return	void
 	 */
-	function draw_artichow($file)
+	private function draw_artichow($file)
 	{
 	    global $artichow_defaultfont;
+	    
 		dol_syslog("DolGraph.class::draw_artichow this->type=".$this->type);
 
 		if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP',3);
@@ -425,7 +514,7 @@ class DolGraph
 		$classname='';
 		if ($this->type == 'bars')  $classname='BarPlot';
 		if ($this->type == 'lines') $classname='LinePlot';
-		include_once DOL_DOCUMENT_ROOT."/includes/artichow/".$classname.".class.php";
+		include_once(ARTICHOW_PATH.$classname.".class.php");
 
 		// Definition de couleurs
 		$bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);

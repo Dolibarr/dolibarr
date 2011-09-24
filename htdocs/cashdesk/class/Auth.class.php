@@ -30,10 +30,10 @@ class Auth
 	var $reponse;
 
 	var $sqlQuery;
-	
+
 	/**
 	 * Enter description here ...
-	 * 
+	 *
 	 * @param unknown_type $DB
 	 */
 	function Auth($DB)
@@ -46,7 +46,7 @@ class Auth
 
 	/**
 	 * Enter description here ...
-	 * 
+	 *
 	 * @param unknown_type $aLogin
 	 */
 	function login($aLogin)
@@ -55,10 +55,10 @@ class Auth
 		$this->login = $aLogin;
 
 	}
-	
+
 	/**
 	 * Enter description here ...
-	 * 
+	 *
 	 * @param unknown_type $aPasswd
 	 */
 	function passwd($aPasswd)
@@ -68,10 +68,10 @@ class Auth
 
 
 	}
-	
+
 	/**
 	 * Enter description here ...
-	 * 
+	 *
 	 * @param unknown_type $aReponse
 	 */
 	function reponse($aReponse)
@@ -82,24 +82,26 @@ class Auth
 	}
 
 	/**
-	 * Enter description here ...
-	 * 
-	 * @param unknown_type $aLogin
-	 * @param unknown_type $aPasswd
+	 * Validate login/pass
+	 *
+	 * @param	string	$aLogin		Login
+	 * @param	string	$aPasswd	Password
 	 */
 	function verif($aLogin, $aPasswd)
 	{
-		global $conf,$dolibarr_main_authentication,$langs;
+		global $conf,$langs;
+		global $dolibarr_main_authentication,$dolibarr_auto_user;
 
 		$ret=-1;
 
 		$login='';
 
+		$test=true;
+
         // Authentication mode
         if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
         // Authentication mode: forceuser
         if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
-
         // Set authmode
         $authmode=explode(',',$dolibarr_main_authentication);
 
@@ -111,16 +113,9 @@ class Auth
             exit;
         }
 
-
-        $test=true;
-
-        // Validation of third party module login method
-        if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
-        {
-            include_once(DOL_DOCUMENT_ROOT . "/lib/security.lib.php");
-            $login = getLoginMethod($_POST["username"],$_POST["password"],$_POST["entity"]);
-            if ($login) $test=false;
-        }
+		$usertotest=$aLogin;
+		$passwordtotest=$aPasswd;
+		$entitytotest=$conf->entity;
 
         // Validation tests user / password
         // If ok, the variable will be initialized login
@@ -131,34 +126,16 @@ class Auth
 
         if ($test && $goontestloop)
         {
-            foreach($authmode as $mode)
+			$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+            if ($login)
             {
-                if ($test && $mode && ! $login)
-                {
-                    $authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
-                    $result=include_once($authfile);
-                    if ($result)
-                    {
-                        $this->login($aLogin);
-                        $this->passwd($aPasswd);
-                        $entitytotest=$conf->entity;
-
-                        $function='check_user_password_'.$mode;
-                        $login=$function($aLogin,$aPasswd,$entitytotest);
-                        if ($login) // Login is successfull
-                        {
-                            $test=false;
-                            $dol_authmode=$mode;    // This properties is defined only when logged to say what mode was successfully used
-                            $ret=0;
-                        }
-                    }
-                    else
-                    {
-                        dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-                        sleep(1);
-                        $ret=-1;
-                    }
-                }
+                $this->login($aLogin);
+                $this->passwd($aPasswd);
+                $ret=0;
+            }
+            else
+            {
+                $ret=-1;
             }
         }
 

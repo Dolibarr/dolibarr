@@ -23,10 +23,13 @@
 
 
 /**
-        \brief		Check user and password
-        \param		usertotest		Login
-        \param		passwordtotest	Password
-        \return		string			Login if ok, '' if ko.
+ * Check validity of user/password/entity
+ * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
+ *
+ * @param	string	$usertotest		Login
+ * @param	string	$passwordtotest	Password
+ * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
+ * @return	string					Login if OK, '' if KO
 */
 function check_user_password_http($usertotest,$passwordtotest)
 {
@@ -37,7 +40,7 @@ function check_user_password_http($usertotest,$passwordtotest)
 	{
 		$login=$_SERVER["REMOTE_USER"];
 	}
-		
+
 	return $login;
 }
 
