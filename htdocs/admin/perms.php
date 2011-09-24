@@ -143,7 +143,7 @@ $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND entity in (".(!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)?"1,":"").$conf->entity.")";
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
 $sql.= " ORDER BY r.module, r.id";
 
 $result = $db->query($sql);
@@ -164,12 +164,23 @@ if ($result)
             continue;
         }
 
-        // Check if permission is inside module definition
-        // TODO If not, we remove it
-        /*foreach($objMod->rights as $key => $val)
+        // Check if permission we found is inside a module definition. If not, we discard it.
+        $found=false;
+        foreach($objMod->rights as $key => $val)
         {
-        }*/
-
+        	$rights_class=$objMod->rights_class;
+        	if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms)) 
+        	{
+        		$found=true;
+        		break;
+        	}
+        }
+		if (! $found) 
+		{
+			$i++;
+			continue;	
+		}
+		
         // Break found, it's a new module to catch
         if ($old <> $obj->module)
         {
