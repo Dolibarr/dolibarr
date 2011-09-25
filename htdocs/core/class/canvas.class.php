@@ -110,33 +110,6 @@ class Canvas
         //print ' => template_dir='.$this->template_dir.'<br>';
 	}
 
-
-	/**
-	 * 	Return if a canvas contains an action controller
-	 *
-	 * 	@return		boolean		Return if canvas contains actions (old feature. now actions should be inside hooks)
-	 */
-	function hasActions()
-	{
-        return (! is_object($this->control));
-	}
-
-	/**
-	 * 	Shared method for canvas to execute actions
-	 *
-	 * 	@param		string		&$action		Action string
-	 * 	@param		int			$id			Object id
-	 * 	@return		mixed					Return return code of doActions of canvas
-	 */
-	function doActions(&$action='view', $id=0)
-	{
-		if (method_exists($this->control,'doActions'))
-		{
-			$ret = $this->control->doActions($action, $id);
-			return $ret;
-		}
-	}
-
     /**
 	 * 	Shared method for canvas to assign values for templates
 	 *
@@ -174,6 +147,39 @@ class Canvas
 		global $form, $formfile;
 
 		include($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php');        // Include native PHP template
+	}
+
+
+	// This functions should not be used anymore because canvas should contains only templates.
+	// http://wiki.dolibarr.org/index.php/Canvas_development
+
+	/**
+	 * 	Return if a canvas contains an action controller
+	 *
+	 * 	@return		boolean		Return if canvas contains actions (old feature. now actions should be inside hooks)
+	 */
+	function hasActions()
+	{
+        return (! is_object($this->control));
+	}
+
+	/**
+	 * 	Shared method for canvas to execute actions
+	 *
+	 * 	@param		string		&$action	Action string
+	 * 	@param		int			$id			Object id
+	 * 	@return		mixed					Return return code of doActions of canvas
+	 * 	@deprecated	This function is called if you add a doActions class inside your canvas. Try to not
+	 * 				do that and add action code into a hook instead.
+	 * 	@see		http://wiki.dolibarr.org/index.php/Canvas_development
+	 */
+	function doActions(&$action='view', $id=0)
+	{
+		if (method_exists($this->control,'doActions'))
+		{
+			$ret = $this->control->doActions($action, $id);
+			return $ret;
+		}
 	}
 
 }
