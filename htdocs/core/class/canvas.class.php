@@ -160,7 +160,7 @@ class Canvas
 	 */
 	function hasActions()
 	{
-        return (! is_object($this->control));
+        return (is_object($this->control));
 	}
 
 	/**
