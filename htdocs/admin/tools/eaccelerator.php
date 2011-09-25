@@ -85,7 +85,7 @@ function compare($x, $y)
 
 /**
  * Compare revisions
- * 
+ *
  * @param 	array 	$x	Parts of version 1
  * @param 	array 	$y	Parts of version 2
  * @return	int			1 if 1<2, 0 if 1=2, -1 if 1>2
@@ -104,7 +104,7 @@ function revcompare($x, $y)
 
 /**
  * Output table
- * 
+ *
  * @param 	array	$list	Array of records
  * @return 	void
  */
@@ -179,7 +179,7 @@ function create_script_table($list)
 
 /**
  * Output table
- * 
+ *
  * @param	array	$list		Array of records
  * @return	void
  */
@@ -348,7 +348,7 @@ if (function_exists('eaccelerator_get'))
 print "<br><br>";
 print "<hr />";
 print '<table><tr><td class="center">';
-print '<strong>Eaccelerator is created by the eAccelerator team, <a href="http://eaccelerator.net">http://eaccelerator.net</a></strong><br><br>';
+print 'Eaccelerator is created by the eAccelerator team, <a href="http://eaccelerator.net">http://eaccelerator.net</a><br><br>';
 print "</td></tr></table>";
 
 
