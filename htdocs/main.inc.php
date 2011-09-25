@@ -676,7 +676,7 @@ if (! defined('NOLOGIN'))
 	{
 		// If not active, we refuse the user
 		$langs->load("other");
-		dol_syslog ("Authentification ko as login is disabled");
+		dol_syslog("Authentification ko as login is disabled");
 		accessforbidden($langs->trans("ErrorLoginDisabled"));
 		exit;
 	}
@@ -763,11 +763,13 @@ if (! function_exists("llxHeader"))
      * @param	string	$help_url			Url links to help page
 	 * 		                            	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
 	 *                                  	For other external page: http://server/url
+	 * @param	string	$target				Target to use on links
      * @param 	int    	$disablejs			More content into html header
      * @param 	int    	$disablehead		More content into html header
      * @param 	array  	$arrayofjs			Array of complementary js files
      * @param 	array  	$arrayofcss			Array of complementary css files
 	 * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+	 * @return	void
 	 */
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
@@ -781,6 +783,8 @@ if (! function_exists("llxHeader"))
 
 /**
  *  Show HTTP header
+ *
+ *  @return	void
  */
 function top_httphead()
 {
@@ -1047,6 +1051,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *	@param		array	$arrayofjs			Array of js files to add in header
  *	@param		array	$arrayofcss			Array of css files to add in header
  *  @param		string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ *  @return		void
  */
 function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 {
@@ -1275,14 +1280,16 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 /**
  *  Show left menu bar
- *  @param      menu_array_before 	       Table of menu entries to show before entries of menu handler
- *  @param      helppagename    	       Name of wiki page for help ('' by default).
- * 				                           Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- * 									                  For other external page: http://server/url
- *  @param      moresearchform             Search Form Permanent Supplemental
- *  @param      menu_array_after           Table of menu entries to show after entries of menu handler
- *  @param      leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
- *  @param      title                      Title of web page
+ *
+ *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler
+ *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
+ * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ * 									         		       For other external page: http://server/url
+ *  @param  string	$moresearchform             Search Form Permanent Supplemental
+ *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
+ *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
+ *  @param  string	$title                      Title of web page
+ *  @return	void
  */
 function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
 {
@@ -1305,30 +1312,26 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php',
-		img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
 	}
 
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php',
-		img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
 	}
 
 	if ((($conf->product->enabled && $user->rights->produit->lire) || ($conf->service->enabled && $user->rights->service->lire))
 	&& $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE)
 	{
 		$langs->load("products");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php',
-		img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
 	}
 
 	if ($conf->adherent->enabled && $conf->global->MAIN_SEARCHFORM_ADHERENT && $user->rights->adherent->lire)
 	{
 		$langs->load("members");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
-		img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
 
 	// Execute hook printSearchForm
@@ -1460,8 +1463,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if (empty($leftmenuwithoutmainarea)) main_area($title);
 }
 
+
 /**
  *  Begin main area
+ *
+ *  @param	string	$title		Title
+ *  @return	void
  */
 function main_area($title='')
 {
@@ -1499,8 +1506,10 @@ function main_area($title='')
 
 /**
  *  Return helpbaseurl, helppage and mode
- *  @param   helppagename		Page name (EN:xxx,ES:eee,FR:fff...)
- *  @param   langs				Language
+ *
+ *  @param	string		$helppagename		Page name (EN:xxx,ES:eee,FR:fff...)
+ *  @param  Translate	$langs				Language
+ *  @return	array		Array of help urls
  */
 function getHelpParamFor($helppagename,$langs)
 {
@@ -1538,13 +1547,14 @@ function getHelpParamFor($helppagename,$langs)
 /**
  *  Show a search area
  *
- *  @param   urlaction          Url post
- *  @param   urlobject          Url of the link under the search box
- *  @param   title              Title search area
- *  @param   htmlmodesearch     'search'
- *  @param   htmlinputname      Field Name input form
+ *  @param  string	$urlaction          Url post
+ *  @param  string	$urlobject          Url of the link under the search box
+ *  @param  string	$title              Title search area
+ *  @param  string	$htmlmodesearch     Value to set into parameter "mode_search" ('soc','contact','products','member',...)
+ *  @param  string	$htmlinputname      Field Name input form
+ *  @return	void
  */
-function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
+function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname)
 {
 	global $conf,$langs;
 
@@ -1567,14 +1577,16 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 }
 
 
-/**
- *		Show HTML footer
- *		Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML
- * 		@param   	foot    		A text to add in HTML generated page
- */
 if (! function_exists("llxFooter"))
 {
-	function llxFooter($foot='')
+    /**
+     * Show HTML footer
+     * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML
+     *
+     * @param	string	$foot    		A text to add in HTML generated page
+     * @return	void
+     */
+    function llxFooter($foot='')
 	{
 		global $conf, $langs, $dolibarr_auto_user, $micro_start_time;
 

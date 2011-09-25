@@ -459,8 +459,8 @@ class ProductFournisseur extends Product
     /**
      *    List all supplier prices of a product
      *
-     *    @param      rowid	         id du produit
-     *    @return     table           table de ProductFournisseur
+     *    @param    int		$rowid	    id du produit
+     *    @return	array				Array of ProductFournisseur
      */
     function fetch_product_fournisseur($prodid)
     {
