@@ -39,8 +39,9 @@ class modCommande extends DolibarrModules
 {
 
 	/**
-	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      Database handler
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$DB      Database handler
 	 */
 	function modCommande($DB)
 	{

@@ -34,8 +34,9 @@ class modSyslog extends DolibarrModules
 {
 
 	/**
-	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acces base
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$DB      Database handler
 	 */
 	function modSyslog($DB)
 	{

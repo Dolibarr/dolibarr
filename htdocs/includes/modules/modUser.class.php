@@ -35,8 +35,9 @@ class modUser extends DolibarrModules
 {
 
 	/**
-	 *   Constructeur. Definit les noms, constantes et boites
-	 *   @param      DB      handler d'acces base
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$DB      Database handler
 	 */
 	function modUser($DB)
 	{
@@ -134,7 +135,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][1] = 'Consulter ses propres permissions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'self_advance';
+		$this->rights[$r][4] = 'self_advance';        // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'readperms';
 
 		$r++;
@@ -226,6 +227,7 @@ class modUser extends DolibarrModules
      *      Function called when module is enabled.
      *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      *      It also creates data directories.
+     *
      *      @return     int             1 if OK, 0 if KO
      */
 	function init()
@@ -244,6 +246,7 @@ class modUser extends DolibarrModules
      *      Function called when module is disabled.
      *      Remove from database constants, boxes and permissions from Dolibarr database.
      *      Data directories are not deleted.
+     *
      *      @return     int             1 if OK, 0 if KO
      */
 	function remove()

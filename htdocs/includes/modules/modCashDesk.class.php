@@ -32,8 +32,9 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 class modCashDesk extends DolibarrModules
 {
 	/**
-	 *		\brief	Constructor. Define names, constants, boxes...
-	 * 		\param	DB		Database handler
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$DB      Database handler
 	 */
 	function modCashDesk ($DB)
 	{

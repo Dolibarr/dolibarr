@@ -39,8 +39,9 @@ class modFicheinter  extends DolibarrModules
 {
 
     /**
-     *   \brief      Constructeur. Definit les noms, constantes et boites
-     *   \param      DB      Database access handler
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$DB      Database handler
      */
     function modFicheinter($DB)
     {

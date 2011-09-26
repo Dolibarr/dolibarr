@@ -36,8 +36,9 @@ class modExternalSite extends DolibarrModules
 {
 
    /**
-    *   \brief      Constructor. Define names, constants, directories, boxes, permissions
-    *   \param      DB      Database handler
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$DB      Database handler
     */
 	function modExternalSite($DB)
 	{

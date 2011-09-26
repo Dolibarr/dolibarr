@@ -28,15 +28,16 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**     \class      modExport
- \brief      Classe de description et activation du module export
+ *		\brief      Classe de description et activation du module export
  */
 
 class modExport extends DolibarrModules
 {
 
 	/**
-	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acces base
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$DB      Database handler
 	 */
 	function modExport($DB)
 	{

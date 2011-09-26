@@ -30,15 +30,16 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-		\class 		modComptabilite
-        \brief      Classe de description et activation du module Comptabilite
-*/
+ *		\class 		modComptabilite
+ *      \brief      Classe de description et activation du module Comptabilite
+ */
 class modComptabilite extends DolibarrModules
 {
 
    /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acces base
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$DB      Database handler
     */
 	function modComptabilite($DB)
 	{
