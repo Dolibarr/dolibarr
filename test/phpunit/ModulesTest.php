@@ -120,7 +120,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		'CashDesk','Categorie','ClickToDial','Commande','Comptabilite','Contrat','Deplacement','Document','Don',
 		'ECM','Expedition','Export','ExternalRss','ExternalSite','FTP','Facture',
 		'Fckeditor','Ficheinter','Fournisseur','GeoIPMaxmind','Gravatar','Import','Label','Ldap','Mailing',
-		'Mantis','Notification','Paybox','Paypal','Prelevement','Product','Projet','Propale',
+		'Notification','Paybox','Paypal','Prelevement','Product','Projet','Propale',
 		'Service','Societe','Stock','Syslog','Tax','User','WebServices');
 		foreach($modulelist as $modlabel)
 		{

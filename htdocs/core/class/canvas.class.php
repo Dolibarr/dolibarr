@@ -32,7 +32,7 @@ class Canvas
 	var $db;
 	var $error;
 	var $errors=array();
-
+	
 	var $actiontype;
 
     var $dirmodule;			// Module directory
@@ -53,7 +53,6 @@ class Canvas
 	function __construct($DB, $actiontype='view')
 	{
 		$this->db = $DB;
-
 		$this->actiontype = $actiontype;
         if ($this->actiontype == 'add')    $this->actiontype='create';
 		if ($this->actiontype == 'update') $this->actiontype='edit';
@@ -109,7 +108,6 @@ class Canvas
         //print 'dimodule='.$dirmodule.' canvas='.$this->canvas.'<br>';
         //print ' => template_dir='.$this->template_dir.'<br>';
 	}
-
 
 	/**
 	 * 	Return if a canvas contains an action controller
