@@ -26,12 +26,17 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
 
+$langs->load("companies");
+
+$socid = GETPOST("socid");
+if ($user->societe_id) $socid=$user->societe_id;
+
 // Security check
 $result=restrictedArea($user,'societe',0,'','','','');
 
 $thirdparty_static = new Societe($db);
 
-$langs->load("companies");
+
 
 
 /*
@@ -77,9 +82,10 @@ $total=0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (! $user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.entity = ".$conf->entity;
-if (! $user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! $user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
 $result = $db->query($sql);
 if ($result)
@@ -145,9 +151,10 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=15;
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (! $user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.entity = ".$conf->entity;
-if (! $user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! $user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)	$sql.= " AND s.rowid = ".$socid;
 $sql.= " AND (";
 if (! empty($conf->societe->enabled)) $sql.=" s.client IN (1,2,3)";
 if (! empty($conf->fournisseur->enabled)) $sql.=" OR s.fournisseur IN (1)";
