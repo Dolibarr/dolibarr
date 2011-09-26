@@ -410,16 +410,15 @@ foreach($mainmenuusedarray as $key => $val)
 }
 
 .tmenu ul{
-	margin:0 60px 0 0;	/* t r b l */
+	margin: 0 10px 0 0;	/* t r b l */
 	padding:0;
 	list-style-type:none;
 	width:auto;	/* Having 100% instead of auto works on IE but IE fails to down main content, so we forget IE and use best value for Firefox */
-	float:left;
 }
 
 .tmenu ul li{
 	display:block;
-	float:left;
+	float: <?php print $left; ?>;
 	margin:0 1px;
 	padding-left: 0px;
 	padding-right: 0px;
@@ -427,7 +426,7 @@ foreach($mainmenuusedarray as $key => $val)
 
 .tmenu ul li a{
 	display:block;
-	float:left;
+	float: <?php print $left; ?>;
 	color:#EAF3F8;
 	text-decoration:none;
 	padding:0 0 0 8px;
@@ -437,7 +436,7 @@ foreach($mainmenuusedarray as $key => $val)
 .tmenu ul li a span{
 	padding:12px 8px 0 0;
 	height:21px;
-	float:left;
+	float: <?php print $left; ?>;
 }
 
 .tmenu ul li a:hover{

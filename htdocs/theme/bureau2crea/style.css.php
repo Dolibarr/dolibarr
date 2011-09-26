@@ -465,7 +465,7 @@ ul.tmenu {
 }
 
 li.tmenu, li.tmenusel {
-	float: left;
+	float: <?php print $left; ?>;
 	height: 22px;
 	position:relative;
 	display: block;
@@ -493,7 +493,7 @@ li.tmenu a {
     line-height: 22px;
     color: #FFF;
     font-weight: normal;
-    float: left;
+    float: <?php print $left; ?>;
     }
 
 li.tmenu a:hover {
