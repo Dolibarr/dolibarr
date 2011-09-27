@@ -19,7 +19,7 @@ License: GPLv2+
 Vendor: Dolibarr dev team
 
 URL: http://www.dolibarr.org
-Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
+Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_fedora/%{name}-%{version}.tgz
 Patch0: %{name}-forrpm.patch
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build

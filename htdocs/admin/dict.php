@@ -171,7 +171,7 @@ $tabfield[7] = "code,libelle,pays_id,pays,deductible";
 $tabfield[8] = "code,libelle";
 //$tabfield[9] = "code,code_iso,libelle,symbole";
 $tabfield[9] = "code,code_iso,libelle";
-$tabfield[10]= "pays_id,pays,taux,recuperableonly,localtax1,localtax2,note,accountancy_code";
+$tabfield[10]= "pays_id,pays,taux,recuperableonly,localtax1,localtax2,accountancy_code,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfield[13]= "code,libelle,type";
@@ -196,7 +196,7 @@ $tabfieldvalue[7] = "code,libelle,pays,deductible";
 $tabfieldvalue[8] = "code,libelle";
 //$tabfieldvalue[9] = "code,code_iso,libelle,symbole";
 $tabfieldvalue[9] = "code,code_iso,libelle";
-$tabfieldvalue[10]= "pays,taux,recuperableonly,localtax1,localtax2,note,accountancy_code";
+$tabfieldvalue[10]= "pays,taux,recuperableonly,localtax1,localtax2,accountancy_code,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldvalue[13]= "code,libelle,type";
@@ -221,7 +221,7 @@ $tabfieldinsert[7] = "code,libelle,fk_pays,deductible";
 $tabfieldinsert[8] = "code,libelle";
 //$tabfieldinsert[9] = "code,code_iso,label,symbole";
 $tabfieldinsert[9] = "code,code_iso,label";
-$tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1,localtax2,note,accountancy_code";
+$tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1,localtax2,accountancy_code,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldinsert[13]= "code,libelle,type";
@@ -568,10 +568,7 @@ if ($_GET['action'] == 'delete')
  */
 if ($_GET["id"])
 {
-    if ($msg)
-    {
-        print $msg.'<br>';
-    }
+    dol_htmloutput_mesg($msg);
 
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$_GET["id"]];
@@ -967,7 +964,7 @@ function fieldList($fieldlist,$obj='')
             print $html->selectyesno($fieldlist[$field],$obj->$fieldlist[$field],1);
             print '</td>';
         }
-        elseif ($fieldlist[$field] == 'nbjour' || $fieldlist[$field] == 'decalage' || $fieldlist[$field] == 'taux') {
+        elseif (in_array($fieldlist[$field],array('nbjour','decalage','taux','localtax1','localtax2'))) {
             print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="3" name="'.$fieldlist[$field].'"></td>';
         }
         elseif ($fieldlist[$field] == 'libelle_facture') {
