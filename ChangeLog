@@ -18,6 +18,7 @@ For users:
 - New: Make option MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT available by default.
 - New: Can build PDF in USLetter format or canada format.
 - New: Can export into Excel 2007 format.
+- New: Add hidden option CASHDESK_FORCE_STOCK_ON_BILL
 
 For developers:
 - Qual: Removed no more used external libraries.
