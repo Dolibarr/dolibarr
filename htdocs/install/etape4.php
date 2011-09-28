@@ -70,7 +70,7 @@ print '<br>'.$langs->trans("LastStepDesc").'<br><br>';
 print '<table cellspacing="0" cellpadding="2" width="100%">';
 
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
-//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+
 if ($db->ok == 1)
 {
 	print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';

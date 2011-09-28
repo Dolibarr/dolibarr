@@ -112,8 +112,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
-	//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
-	if ($db->connected == 1)
+
+    if ($db->connected == 1)
 	{
 		print '<tr><td nowrap="nowrap">';
 		print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";

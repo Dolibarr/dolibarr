@@ -80,8 +80,8 @@ if ($action == "set")
 	$error=0;
 
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
-	//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
-	if ($db->connected == 1)
+
+    if ($db->connected == 1)
 	{
 		print "<tr><td>";
 		print $langs->trans("ServerConnection")." : ".$conf->db->host."</td><td>".$langs->trans("OK")."</td></tr>";

@@ -98,7 +98,6 @@ if (! defined('NOREQUIRETRAN'))
 if (! defined('NOREQUIREDB'))
 {
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
-	//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 	if ($db->error)
 	{
