@@ -47,7 +47,7 @@ $mesg = ''; $error=0; $errors=array();
 
 $id=GETPOST('id');
 $ref=GETPOST('ref');
-$action=GETPOST('action');
+$action=(GETPOST('action') ? GETPOST('action') : 'view');
 $confirm=GETPOST('confirm');
 $socid=GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
@@ -66,8 +66,8 @@ if (! empty($canvas))
 }
 
 // Security check
-if (isset($id) || isset($ref)) $value = isset($id)?$id:(isset($ref)?$ref:'');
-$type = isset($ref)?'ref':'rowid';
+$value = $ref?$ref:$id;
+$type = $ref?'ref':'rowid';
 $result=restrictedArea($user,'produit|service',$value,'product','','',$type, $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -81,7 +81,7 @@ $hookmanager->callHooks(array('product'));
  * Actions
  */
 
-$parameters=array('socid'=>$socid);
+$parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
@@ -90,7 +90,7 @@ if (empty($reshook))
     if ($action == 'setproductaccountancycodebuy')
     {
     	$product = new Product($db);
-    	$result=$product->fetch($id);
+    	$result=$product->fetch($id,$ref);
     	$product->accountancy_code_buy=$_POST["productaccountancycodebuy"];
     	$result=$product->update($product->id,$user,1,0,1);
     	if ($result < 0)
@@ -105,7 +105,7 @@ if (empty($reshook))
     if ($action == 'setproductaccountancycodesell')
     {
     	$product = new Product($db);
-    	$result=$product->fetch($id);
+    	$result=$product->fetch($id,$ref);
     	$product->accountancy_code_sell=$_POST["productaccountancycodesell"];
     	$result=$product->update($product->id,$user,1,0,1);
     	if ($result < 0)
@@ -118,9 +118,9 @@ if (empty($reshook))
     if ($action == 'fastappro')
     {
     	$product = new Product($db);
-    	$product->fetch($id);
-    	$result = $product->fastappro($user);
-    	Header("Location: fiche.php?id=".$id);
+    	$result=$product->fetch($id,$ref);
+    	$result=$product->fastappro($user);
+    	Header("Location: fiche.php?id=".$product->id);
     	exit;
     }
 
@@ -229,7 +229,7 @@ if (empty($reshook))
     	else
     	{
     		$product=new Product($db);
-    		if ($product->fetch($id))
+    		if ($product->fetch($id,$ref))
     		{
     			$product->ref                = $ref;
     			$product->libelle            = $_POST["libelle"];
@@ -288,7 +288,7 @@ if (empty($reshook))
 
     		$product = new Product($db);
     		$originalId = $id;
-    		if ($product->fetch($id) > 0)
+    		if ($product->fetch($id,$ref) > 0)
     		{
     			$product->ref = GETPOST('clone_ref');
     			$product->status = 0;
@@ -343,7 +343,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes')
     {
     	$object = new Product($db);
-    	$object->fetch($id);
+    	$object->fetch($id,$ref);
 
     	if ( ($object->type == 0 && $user->rights->produit->supprimer)	|| ($object->type == 1 && $user->rights->service->supprimer) )
     	{
@@ -384,7 +384,7 @@ if (empty($reshook))
     	}
 
     	$prod = new Product($db);
-    	$result=$prod->fetch($id);
+    	$result=$prod->fetch($id,$ref);
     	if ($result <= 0)
     	{
     		dol_print_error($db,$prod->error);
@@ -464,7 +464,7 @@ if (empty($reshook))
     	}
 
     	$prod = new Product($db);
-    	$result=$prod->fetch($id);
+    	$result=$prod->fetch($id,$ref);
     	if ($result <= 0)
     	{
     		dol_print_error($db,$prod->error);
@@ -546,7 +546,7 @@ if (empty($reshook))
     	}
 
     	$prod = new Product($db);
-    	$result = $prod->fetch($id);
+    	$result = $prod->fetch($id,$ref);
     	if ($result <= 0)
     	{
     		dol_print_error($db,$prod->error);
@@ -635,42 +635,18 @@ llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 $html = new Form($db);
 $formproduct = new FormProduct($db);
 
-
-// TODO Mutualize this part of code (same than societe/soc.php and contact/fiche.php)
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if ($action == 'create')
-    {
-        $objcanvas->assign_values($action);     // Set value for templates
-        $objcanvas->display_canvas($action,0);  // Show template
-    }
-    elseif ($action == 'edit')
-    {
-        $objcanvas->control->object=$objcanvas->getObject($socid);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
-        if (empty($objcanvas->control->object))
-        {
-            $object = new Product($db);
-            $object->fetch($id);
-            $objcanvas->control->object=$object;
-        }
-        $objcanvas->assign_values($action);     // Set value for templates
-        $objcanvas->display_canvas($action);    // Show template
-    }
-    else
-    {
-        $objcanvas->control->object=$objcanvas->getObject($socid);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
-        if (empty($objcanvas->control->object))
-        {
-            $object = new Product($db);
-            $object->fetch($id);
-            $objcanvas->control->object=$object;
-        }
-        $objcanvas->assign_values('view');
-        $objcanvas->display_canvas('view');  	// Show template
-    }
+    if (! $objcanvas->hasActions() && ($id || $ref))
+ 	{
+	     $object = new Product($db);
+	     $object->fetch($id, $ref);                   // For use with "pure canvas" (canvas that contains templates only)
+ 	}
+   	$objcanvas->assign_values($action, $id, $ref);	// Set value for templates
+    $objcanvas->display_canvas();				// Show template
 }
 else
 {

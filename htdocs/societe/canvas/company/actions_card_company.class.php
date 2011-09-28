@@ -81,7 +81,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	function doActions(&$action, $id)
 	{
 		$ret = $this->getObject($id);
-		
+
 		$return = parent::doActions($action);
 
 		return $return;
@@ -90,18 +90,20 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 *    @param	string	$action     Type of action
+	 *    @param	string	&$action    Type of action
+	 *    @param	string	$id			Id of object
+	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id)
+	function assign_values(&$action, $id=0, $ref='')
 	{
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
-		
-		$ret = $this->getObject($id);
+
+		$ret = $this->getObject($id,$ref);
 
 		parent::assign_values($action);
-		
+
 		$this->tpl['title']		= $this->getTitle($action);
 
 		$this->tpl['profid1'] 	= $this->object->siren;

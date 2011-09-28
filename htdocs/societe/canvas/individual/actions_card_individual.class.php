@@ -81,27 +81,29 @@ class ActionsCardIndividual extends ActionsCardCommon
 	function doActions(&$action, $id)
 	{
 		$ret = $this->getObject($id);
-		
+
 		$return = parent::doActions($action);
 
 		return $return;
 	}
 
 	/**
-	 * Assign custom values for canvas (for example into this->tpl to be used by templates)
+	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 * @param	string	$action		Type of action
-	 * @return	void
+	 *    @param	string	&$action    Type of action
+	 *    @param	string	$id			Id of object
+	 *    @param	string	$ref		Ref of object
+	 *    @return	void
 	 */
-	function assign_values(&$action, $id)
+	function assign_values(&$action, $id=0, $ref='')
 	{
 		global $conf, $langs;
 		global $form, $formcompany;
-		
-		$ret = $this->getObject($id);
+
+		$ret = $this->getObject($id,$ref);
 
 		parent::assign_values($action);
-		
+
 		$this->tpl['title'] = $this->getTitle($action);
 
 		if ($action == 'create' || $action == 'edit')

@@ -60,10 +60,10 @@ abstract class ActionsCardCommon
         $this->canvas           = $canvas;
         $this->card             = $card;
 	}
-	
+
 	/**
 	 * 	Instantiation of DAO class
-	 * 
+	 *
 	 * 	@return	void
 	 */
 	private function getInstanceDao()
@@ -84,25 +84,26 @@ abstract class ActionsCardCommon
 	        }
 		}
 	}
-	
+
 	/**
-     *  Get object
+     *  Get object from id or ref and save it into this->object
 	 *
      *  @param		int			Object id
+     *  @param		ref			Object ref
      *  @return		object		Object loaded
      */
-    function getObject($id)
+    function getObject($id,$ref='')
     {
     	$ret = $this->getInstanceDao();
-    	
+
     	if (is_object($this->object) && method_exists($this->object,'fetch'))
     	{
-    		if (! empty($id)) $this->object->fetch($id);
+    		if (! empty($id) || ! empty($ref)) $this->object->fetch($id,$ref);
     	}
     	else
     	{
     		$object = new Societe($this->db);
-    		if (! empty($id)) $object->fetch($id);
+    		if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
             $this->object = $object;
     	}
     }
@@ -297,7 +298,7 @@ abstract class ActionsCardCommon
                         Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
                         exit;
                     }
-                    
+
                     $oldsoccanvas = dol_clone($this->object);
 
                     // To avoid setting code if third party is not concerned. But if it had values, we keep them.
@@ -379,12 +380,14 @@ abstract class ActionsCardCommon
     }
 
 	/**
-     *  Set content of ->tpl array, to use into template
-     *
-     *  @param      string		$action     Type of action
-     *  @return		string					HTML output
+	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
+	 *
+	 *    @param	string	&$action    Type of action
+	 *    @param	string	$id			Id of object
+	 *    @param	string	$ref		Ref of object
+	 *    @return	void
      */
-    function assign_values(&$action)
+    function assign_values(&$action, $id=0, $ref='')
     {
         global $conf, $langs, $user, $mysoc, $canvas;
         global $form, $formadmin, $formcompany;

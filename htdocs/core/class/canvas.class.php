@@ -32,7 +32,7 @@ class Canvas
 	var $db;
 	var $error;
 	var $errors=array();
-	
+
 	var $actiontype;
 
     var $dirmodule;			// Module directory
@@ -114,12 +114,13 @@ class Canvas
 	 * 	Shared method for canvas to assign values for templates
 	 *
 	 * 	@param		string		&$action	Action string
-	 * 	@param		int			$id			Object id
+	 * 	@param		int			$id			Object id (if ref not provided)
+	 * 	@param		string		$ref		Object ref (if id not provided)
 	 * 	@return		void
 	 */
-	function assign_values(&$action='view', $id=0)
+	function assign_values(&$action='view', $id=0, $ref='')
 	{
-		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action, $id);
+		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action, $id, $ref);
 	}
 
     /**

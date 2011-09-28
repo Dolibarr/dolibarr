@@ -18,7 +18,7 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->
-<?php echo $this->control->tpl['fiche_head']; ?>
+<?php echo $this->control->tpl['showhead']; ?>
 
 <?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
 
@@ -26,7 +26,7 @@
 
 <tr>
 <td width="15%"><?php echo $langs->trans("Ref"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['ref']; ?></td>
+<td colspan="2"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
 <tr>
@@ -73,5 +73,5 @@
 
 </table>
 
-<?php echo $this->control->tpl['fiche_end']; ?>
+<?php echo $this->control->tpl['showend']; ?>
 <!-- END PHP TEMPLATE -->
