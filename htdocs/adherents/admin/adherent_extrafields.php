@@ -45,119 +45,14 @@ $type2label=array(
 $action=GETPOST("action");
 $elementtype='member';
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) accessforbidden();
 
 
 /*
  * Actions
  */
 
-if ($action == 'add')
-{
-	if ($_POST["button"] != $langs->trans("Cancel"))
-	{
-	    // Check values
-        if (GETPOST('type')=='varchar' && GETPOST('size') > 255)
-        {
-            $error++;
-            $langs->load("errors");
-            $mesg=$langs->trans("ErrorSizeTooLongForVarcharType");
-            $action = 'create';
-        }
-
-	    if (! $error)
-	    {
-    		// Type et taille non encore pris en compte => varchar(255)
-    		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
-    		{
-                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$_POST['size'],$elementtype);
-    			if ($result > 0)
-    			{
-    				Header("Location: ".$_SERVER["PHP_SELF"]);
-    				exit;
-    			}
-    			else
-    			{
-                    $error++;
-    			    $mesg=$extrafields->error;
-    			}
-    		}
-    		else
-    		{
-                $error++;
-    		    $langs->load("errors");
-    			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-    			$action = 'create';
-    		}
-	    }
-	}
-}
-
-// Rename field
-if ($action == 'update')
-{
-	if ($_POST["button"] != $langs->trans("Cancel"))
-	{
-        // Check values
-        if (GETPOST('type')=='varchar' && GETPOST('size') > 255)
-        {
-            $error++;
-            $langs->load("errors");
-            $mesg=$langs->trans("ErrorSizeTooLongForVarcharType");
-            $action = 'edit';
-        }
-
-	    if (! $error)
-	    {
-            if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
-    		{
-    			$result=$extrafields->update($_POST['attrname'],$_POST['type'],$_POST['size'],$elementtype);
-    			if ($result > 0)
-    			{
-    				if (isset($_POST['label']))
-    				{
-    					$extrafields->update_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['size'],$elementtype);
-    				}
-    				Header("Location: ".$_SERVER["PHP_SELF"]);
-    				exit;
-    			}
-    			else
-    			{
-                    $error++;
-    			    $mesg=$extrafields->error;
-    			}
-    		}
-    		else
-    		{
-    		    $error++;
-    			$langs->load("errors");
-    			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-    		}
-	    }
-	}
-}
-
-// Suppression attribut
-if ($action == 'delete')
-{
-	if(isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_GET["attrname"]))
-	{
-        $result=$extrafields->delete($_GET["attrname"],$elementtype);
-        if ($result >= 0)
-        {
-            Header("Location: ".$_SERVER["PHP_SELF"]);
-            exit;
-        }
-        else $mesg=$extrafields->error;
-	}
-	else
-	{
-	    $error++;
-		$langs->load("errors");
-		$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-	}
-}
+require(DOL_DOCUMENT_ROOT."/lib/admin_extrafields.inc.php");
 
 
 
@@ -257,10 +152,12 @@ if ($action == 'create')
 	// Size
 	print '<tr><td class="fieldrequired" required>'.$langs->trans("Size").'</td><td><input type="text" name="size" size="5" value="'.(GETPOST('size')?GETPOST('size'):'255').'"></td></tr>';
 
-	print '<tr><td colspan="2" align="center"><input type="submit" name="button" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
-	print "</form>\n";
-	print "</table>\n";
+    print '</table>';
+
+    print '<center><br><input type="submit" name="button" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+    print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+
+    print "</form>\n";
 }
 
 /* ************************************************************************** */
@@ -301,9 +198,12 @@ if ($_GET["attrname"] && $action == 'edit')
 	print '</td></tr>';
     // Size
 	print '<tr><td class="fieldrequired" required>'.$langs->trans("Size").'</td><td class="valeur"><input type="text" name="size" size="5" value="'.$size.'"></td></tr>';
-	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+
 	print '</table>';
+
+	print '<center><br><input type="submit" name="button" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+    print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+
 	print "</form>";
 
 }

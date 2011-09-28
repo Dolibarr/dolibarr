@@ -28,8 +28,8 @@
 /**
  * Return array of tabs to used on pages for third parties cards.
  *
- * @param 	$object		Object company shown
- * @return 	array		Array of tabs
+ * @param 	Object	$object		Object company shown
+ * @return 	array				Array of tabs
  */
 function societe_prepare_head($object)
 {
@@ -132,7 +132,7 @@ function societe_prepare_head($object)
 /**
  * Return array of tabs to used on page
  *
- * @param 	$object
+ * @param	Object	$object		Object for tabs
  * @return
  */
 function societe_prepare_head2($object)
@@ -173,9 +173,10 @@ function societe_prepare_head2($object)
 
 
 /**
- *  Return array head with list of tabs to view object informations
- *  @param      object          Thirdparty
- *  @return     array           head
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @param	Object	$object		Thirdparty
+ *  @return	array   	        head array with tabs
  */
 function societe_admin_prepare_head($object)
 {
@@ -184,7 +185,7 @@ function societe_admin_prepare_head($object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/admin/societe.php';
+    $head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe.php';
     $head[$h][1] = $langs->trans("Miscellanous");
     $head[$h][2] = 'general';
     $h++;
@@ -195,7 +196,7 @@ function societe_admin_prepare_head($object)
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'company_admin');
 
-    $head[$h][0] = DOL_URL_ROOT.'/admin/societe_extrafields.php';
+    $head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
@@ -210,16 +211,16 @@ function societe_admin_prepare_head($object)
 /**
  *    Return country label, code or id from an id or a code
  *
- *    @param      id            Id or code of country
- *    @param      withcode      '0'=Return label,
- *    							'1'=Return code + label,
- *    							'2'=Return code from id,
- *    							'3'=Return id from code,
- *    							'all'=Return array('id'=>,'code'=>,'label'=>)
- *    @param      dbtouse       Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param      outputlangs   Langs object for output translation
- *    @param      entconv       0=Return value without entities and not converted to output charset
- *    @return     string        String with country code or translated country name
+ *    @param      int		$id            	Id or code of country
+ *    @param      int		$withcode   	'0'=Return label,
+ *    										'1'=Return code + label,
+ *    										'2'=Return code from id,
+ *    										'3'=Return id from code,
+ * 	   										'all'=Return array('id'=>,'code'=>,'label'=>)
+ *    @param      DoliDB	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param      Translate	$outputlangs	Langs object for output translation
+ *    @param      int		$entconv       	0=Return value without entities and not converted to output charset
+ *    @return     string       				String with country code or translated country name
  */
 function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
 {
@@ -263,13 +264,13 @@ function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
 /**
  *    Return state translated from an id
  *
- *    @param      id          id of state (province/departement)
- *    @param      withcode    '0'=Return label,
- *    						  '1'=Return string code + label,
- *    						  '2'=Return code,
- *    						  'all'=return array('id'=>,'code'=>,'label'=>)
- *    @param      dbtouse     Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @return     string      String with state code or translated state name
+ *    @param	int		$id         id of state (province/departement)
+ *    @param    int		$withcode   '0'=Return label,
+ *    								'1'=Return string code + label,
+ *    						  		'2'=Return code,
+ *    						  		'all'=return array('id'=>,'code'=>,'label'=>)
+ *    @param	DoliDB	$dbtouse	Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @return   string      		String with state code or translated state name
  */
 function getState($id,$withcode='',$dbtouse=0)
 {
@@ -304,9 +305,9 @@ function getState($id,$withcode='',$dbtouse=0)
 /**
  *    Retourne le nom traduit ou code+nom d'une devise
  *
- *    @param      code_iso       Code iso de la devise
- *    @param      withcode       '1'=affiche code + nom
- *    @return     string         Nom traduit de la devise
+ *    @param      string	$code_iso       Code iso de la devise
+ *    @param      int		$withcode       '1'=affiche code + nom
+ *    @return     string     			    Nom traduit de la devise
  */
 function currency_name($code_iso,$withcode='')
 {
@@ -345,8 +346,8 @@ function currency_name($code_iso,$withcode='')
 /**
  *    Retourne le nom traduit de la forme juridique
  *
- *    @param      code        Code de la forme juridique
- *    @return     string      Nom traduit du pays
+ *    @param      string	$code       Code de la forme juridique
+ *    @return     string     			Nom traduit du pays
  */
 function getFormeJuridiqueLabel($code)
 {

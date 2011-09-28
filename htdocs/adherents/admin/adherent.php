@@ -115,6 +115,9 @@ $head = member_admin_prepare_head($adh);
 dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 
+dol_htmloutput_mesg($mesg);
+
+
 print_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -337,10 +340,7 @@ dol_fiche_end();
 
 $db->close();
 
-print '<br>';
-
 llxFooter();
-
 
 
 function form_constantes($tableau)
@@ -474,11 +474,5 @@ function form_constantes($tableau)
     }
     print '</table>';
 }
-
-dol_htmloutput_mesg($mesg);
-
-$db->close();
-
-llxFooter();
 
 ?>
