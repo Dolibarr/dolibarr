@@ -63,6 +63,7 @@ abstract class ActionsCardCommon
 
 	/**
 	 * 	Instantiation of DAO class
+	 *  TODO This method is useless
 	 *
 	 * 	@return	void
 	 */
@@ -102,6 +103,7 @@ abstract class ActionsCardCommon
     	}
     	else
     	{
+    	    // TODO Keep only this part of code. Previous in this method is useless
     		$object = new Societe($this->db);
     		if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
             $this->object = $object;
@@ -714,21 +716,11 @@ abstract class ActionsCardCommon
         $this->object->localtax2_assuj		= 	$_POST["localtax2assuj_value"];
 
         // We set pays_id, and pays_code label of the chosen country
-        // TODO move in business class
-        if ($this->object->pays_id)
+        if ($this->object->country_id)
         {
-            $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->object->pays_id;
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $obj = $this->db->fetch_object($resql);
-            }
-            else
-            {
-                dol_print_error($this->db);
-            }
-            $this->object->pays_code	=	$obj->code;
-            $this->object->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+            $tmparray=getCountry($this->object->country_id,'all',$this->db,$langs,0);
+            $this->object->country_code	=	$tmparray['code'];
+            $this->object->country_label=	$tmparray['label'];
         }
     }
 
