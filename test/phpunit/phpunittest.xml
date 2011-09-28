@@ -35,6 +35,7 @@
   <whitelist>
     <directory suffix=".class.php">../../htdocs/</directory>
     <directory suffix=".lib.php">../../htdocs/</directory>
+    <directory suffix=".inc.php">../../htdocs/</directory>
     <directory suffix=".modules.php">../../htdocs/</directory>
     <file>../../htdocs/includes/modules/facture/modules_facture.php</file>
     <file>../../htdocs/includes/modules/commande/modules_commande.php</file>

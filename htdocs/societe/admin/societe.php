@@ -25,16 +25,17 @@
  *	\brief      Third party module setup page
  */
 
-require("../main.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
-
 $action=GETPOST("action");
 $value=GETPOST("value");
+
+if (!$user->admin) accessforbidden();
+
 
 
 /*
@@ -199,6 +200,8 @@ if ($action == 'setprofid')
  * 	View
  */
 
+clearstatcache();
+
 $form=new Form($db);
 
 $help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers|ES:Configuración_del_módulo_terceros';
@@ -228,57 +231,57 @@ print '  <td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '  <td align="center" width="60">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
-clearstatcache();
-
-$dir = "../includes/modules/societe/";
-$handle = opendir($dir);
-if (is_resource($handle))
+$var = true;
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$var = true;
+	$dir = $dirroot . "/includes/modules/societe/";
+    $handle = opendir($dir);
+    if (is_resource($handle))
+    {
+    	// Loop on each module find in opened directory
+    	while (($file = readdir($handle))!==false)
+    	{
+    		if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
+    		{
+    			$file = substr($file, 0, dol_strlen($file)-4);
 
-	// Loop on each module find in opened directory
-	while (($file = readdir($handle))!==false)
-	{
-		if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
-		{
-			$file = substr($file, 0, dol_strlen($file)-4);
+    			dol_include_once("/includes/modules/societe/".$file.".php");
 
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
+    			$modCodeTiers = new $file;
 
-			$modCodeTiers = new $file;
+    			// Show modules according to features level
+    			if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+    			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-			// Show modules according to features level
-			if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+    			$var = !$var;
+    			print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
+    			print $modCodeTiers->info($langs);
+    			print "</td>\n";
+    			print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
 
-			$var = !$var;
-			print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
-			print $modCodeTiers->info($langs);
-			print "</td>\n";
-			print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
+    			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
+    			{
+    				print "<td align=\"center\">\n";
+    				print img_picto($langs->trans("Activated"),'switch_on');
+    				print "</td>\n";
+    			}
+    			else
+    			{
+    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
+    				print img_picto($langs->trans("Disabled"),'switch_off');
+    				print '</a></td>';
+    			}
 
-			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
-			{
-				print "<td align=\"center\">\n";
-				print img_picto($langs->trans("Activated"),'switch_on');
-				print "</td>\n";
-			}
-			else
-			{
-				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
-				print img_picto($langs->trans("Disabled"),'switch_off');
-				print '</a></td>';
-			}
+    			print '<td align="center">';
+    			$s=$modCodeTiers->getToolTip($langs,null,-1);
+    			print $form->textwithpicto('',$s,1);
+    			print '</td>';
 
-			print '<td align="center">';
-			$s=$modCodeTiers->getToolTip($langs,null,-1);
-			print $form->textwithpicto('',$s,1);
-			print '</td>';
-
-			print '</tr>';
-		}
-	}
-	closedir($handle);
+    			print '</tr>';
+    		}
+    	}
+    	closedir($handle);
+    }
 }
 print '</table>';
 
@@ -299,50 +302,51 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">&nbsp;</td>';
 print "</tr>\n";
 
-clearstatcache();
-
-$dir = "../includes/modules/societe/";
-$handle = opendir($dir);
-if (is_resource($handle))
+$var = true;
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$var = true;
-	while (($file = readdir($handle))!==false)
-	{
-		if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
-		{
-			$file = substr($file, 0, dol_strlen($file)-4);
+	$dir = $dirroot . "/includes/modules/societe/";
+    $handle = opendir($dir);
+    if (is_resource($handle))
+    {
+    	while (($file = readdir($handle))!==false)
+    	{
+    		if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
+    		{
+    			$file = substr($file, 0, dol_strlen($file)-4);
 
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
+    			dol_include_once("/includes/modules/societe/".$file.".php");
 
-			$modCodeCompta = new $file;
-			$var = !$var;
+    			$modCodeCompta = new $file;
+    			$var = !$var;
 
-			print '<tr '.$bc[$var].'>';
-			print '<td>'.$modCodeCompta->nom."</td><td>\n";
-			print $modCodeCompta->info($langs);
-			print '</td>';
-			print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
+    			print '<tr '.$bc[$var].'>';
+    			print '<td>'.$modCodeCompta->nom."</td><td>\n";
+    			print $modCodeCompta->info($langs);
+    			print '</td>';
+    			print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
 
-			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
-			{
-				print '<td align="center">';
-				print img_picto($langs->trans("Activated"),'switch_on');
-				print '</td>';
-			}
-			else
-			{
-				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&amp;value='.$file.'">';
-				print img_picto($langs->trans("Disabled"),'switch_off');
-				print '</a></td>';
-			}
-			print '<td align="center">';
-			$s=$modCodeCompta->getToolTip($langs,null,-1);
-			print $form->textwithpicto('',$s,1);
-			print '</td>';
-			print "</tr>\n";
-		}
-	}
-	closedir($handle);
+    			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
+    			{
+    				print '<td align="center">';
+    				print img_picto($langs->trans("Activated"),'switch_on');
+    				print '</td>';
+    			}
+    			else
+    			{
+    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&amp;value='.$file.'">';
+    				print img_picto($langs->trans("Disabled"),'switch_off');
+    				print '</a></td>';
+    			}
+    			print '<td align="center">';
+    			$s=$modCodeCompta->getToolTip($langs,null,-1);
+    			print $form->textwithpicto('',$s,1);
+    			print '</td>';
+    			print "</tr>\n";
+    		}
+    	}
+    	closedir($handle);
+    }
 }
 print "</table>\n";
 
@@ -383,9 +387,6 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
-
-clearstatcache();
-
 
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
