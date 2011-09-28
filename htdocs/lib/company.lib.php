@@ -220,7 +220,7 @@ function societe_admin_prepare_head($object)
  *    @param      DoliDB	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param      Translate	$outputlangs	Langs object for output translation
  *    @param      int		$entconv       	0=Return value without entities and not converted to output charset
- *    @return     string       				String with country code or translated country name
+ *    @return     mixed       				String with country code or translated country name or Array('id','code','label')
  */
 function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
 {

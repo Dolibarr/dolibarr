@@ -60,35 +60,9 @@ class ActionsCardProduct extends Product
         $this->name 			= "product";
 		$this->definition 		= "Product canvas (défaut)";
 		$this->fieldListName    = "product_default";
-
-		$this->next_prev_filter = "canvas='default'";
+		$this->next_prev_filter = "canvas='product'";
 	}
 
-    /**
-     *  Return the title of card
-     *
-     *  @return	string		Label of card
-     */
-	private function getTitle()
-	{
-		global $langs;
-
-		return $langs->trans("Products");
-	}
-
-	/**
-     *  Get object from id or ref and save it into this->object
-	 *
-     *  @param	int		$id			Object id
-     *  @param	string	$ref		Ojbect ref
-     *  @return	Object				Object loaded
-     */
-    function getObject($id,$ref='')
-    {
-   		$object = new Product($this->db);
-   		if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
-        $this->object = $object;
-    }
 
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
@@ -103,7 +77,9 @@ class ActionsCardProduct extends Product
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $html, $formproduct;
 
-		$ret = $this->getObject($id,$ref);
+   		$tmpobject = new Product($this->db);
+   		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id,$ref);
+        $this->object = $object;
 
 		//parent::assign_values($action);
 
