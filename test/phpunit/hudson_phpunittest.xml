@@ -34,10 +34,6 @@
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
     <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
-    <file>../../htdocs/lib/databases/mssql.lib.php</file>
-    <file>../../htdocs/lib/databases/pgsql.lib.php</file>
-    <file>../../htdocs/lib/databases/mysql.lib.php</file>
-    <!--  <file>../../htdocs/lib/databases/mysqli.lib.php</file> -->
   </blacklist>
   <whitelist addUncoveredFilesFromWhitelist="true">
     <directory suffix=".class.php">../../htdocs/</directory>
@@ -71,10 +67,6 @@
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
     <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
-    <file>../../htdocs/lib/databases/mssql.lib.php</file>
-    <file>../../htdocs/lib/databases/pgsql.lib.php</file>
-    <file>../../htdocs/lib/databases/mysql.lib.php</file>
-    <!--  <file>../../htdocs/lib/databases/mysqli.lib.php</file> -->
     </exclude>
   </whitelist>
 </filter>

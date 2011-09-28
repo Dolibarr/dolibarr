@@ -29,7 +29,6 @@ if (! file_exists($conffile))
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once($conffile); if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
-require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root . '/compta/facture/class/facture.class.php');
 require_once($dolibarr_main_document_root . '/comm/propal/class/propal.class.php');
 require_once($dolibarr_main_document_root . '/contrat/class/contrat.class.php');
@@ -106,7 +105,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 	$conf->db->user = $dolibarr_main_db_user;
 	$conf->db->pass = $dolibarr_main_db_pass;
 
-	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+	//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 	if ($db->connected != 1)
 	{
 		print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase",$conf->db->name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';

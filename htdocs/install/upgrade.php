@@ -28,7 +28,6 @@ if (! file_exists($conffile))
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once($conffile); if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
-require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
 $grant_query='';
@@ -112,7 +111,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 	if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
-	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+	//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 	if ($db->connected == 1)
 	{
 		print '<tr><td nowrap="nowrap">';

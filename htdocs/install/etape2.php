@@ -23,7 +23,6 @@
  */
 
 include("./inc.php");
-require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root."/core/class/conf.class.php");
 require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
@@ -80,7 +79,8 @@ if ($action == "set")
 	print '<table cellspacing="0" cellpadding="4" border="0" width="100%">';
 	$error=0;
 
-	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+	//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 	if ($db->connected == 1)
 	{
 		print "<tr><td>";

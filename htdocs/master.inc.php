@@ -83,7 +83,6 @@ if (! empty($dolibarr_main_document_root_alt))
 if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");		// Need 500ko memory
 if (! defined('NOREQUIRETRAN')) require_once(DOL_DOCUMENT_ROOT ."/core/class/translate.class.php");
 if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
-if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
 
 /*
  * Creation objet $langs (must be before all other code)
@@ -98,7 +97,8 @@ if (! defined('NOREQUIRETRAN'))
  */
 if (! defined('NOREQUIREDB'))
 {
-	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+	//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 	if ($db->error)
 	{

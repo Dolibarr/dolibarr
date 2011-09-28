@@ -32,6 +32,27 @@
 
 
 /**
+ * Return a DoliDB instance (database handler).
+ *
+ * @param   string	$type		Type of database (mysql, pgsql...)
+ * @param	string	$host		Address of database server
+ * @param	string	$user		Nom de l'utilisateur autorise
+ * @param	string	$pass		Mot de passe
+ * @param	string	$name		Nom de la database
+ * @param	int		$port		Port of database server
+ * @return	DoliDB				A DoliDB instance
+ */
+function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
+{
+    require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$type.".class.php");
+
+    $class='DoliDB'.ucfirst($type);
+    $dolidb=new $class($type, $host, $user, $pass, $name, $port);
+    return $dolidb;
+}
+
+
+/**
  *  This function output memory used by PHP and exit everything. Used for debugging purpose.
  *
  *  @return	void

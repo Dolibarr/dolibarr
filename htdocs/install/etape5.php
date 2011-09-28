@@ -27,7 +27,6 @@
 
 include_once("./inc.php");
 if (file_exists($conffile)) include_once($conffile);
-require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root . "/lib/admin.lib.php");
 
 
@@ -137,7 +136,8 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 	$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption)?$dolibarr_main_db_encryption:'';
 	$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey)?$dolibarr_main_db_cryptkey:'';
 
-	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+	//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 	$ok = 0;
 

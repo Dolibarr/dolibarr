@@ -280,7 +280,6 @@ else
 				else
 				{
                     require_once($dolibarr_main_document_root."/lib/admin.lib.php");
-                    require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 
     				// $conf is already instancied inside inc.php
     				$conf->db->type = $dolibarr_main_db_type;
@@ -289,7 +288,7 @@ else
     				$conf->db->name = $dolibarr_main_db_name;
     				$conf->db->user = $dolibarr_main_db_user;
     				$conf->db->pass = $dolibarr_main_db_pass;
-    				$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+                    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
     				if ($db->connected == 1 && $db->database_selected == 1)
     				{
     					$ok=1;

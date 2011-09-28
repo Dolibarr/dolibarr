@@ -1400,14 +1400,16 @@ class Adherent extends CommonObject
         defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
         defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
         defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
-        ){
+        )
+        {
             $mdpass=dol_hash($this->pass);
             $htpass=crypt($this->pass,makesalt());
             $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
-            //      $mydb=new Db('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
-            $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
-            $result = $mydb->query($query);
 
+            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
+            //$mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
+
+            $result = $mydb->query($query);
             if ($result)
             {
                 $mydb->close();
@@ -1431,11 +1433,14 @@ class Adherent extends CommonObject
         defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
         defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
         defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
-        ){
+        )
+        {
             $query = "DELETE FROM spip_auteurs WHERE login='".$this->login."'";
-            $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
-            $result = $mydb->query($query);
 
+            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
+            //$mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
+
+            $result = $mydb->query($query);
             if ($result)
             {
                 $mydb->close();
@@ -1462,12 +1467,12 @@ class Adherent extends CommonObject
         defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
         defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != '')
         {
-
             $query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
-            $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
 
-            if ($mydb->ok) {
+            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
 
+            if ($mydb->ok)
+            {
                 $result = $mydb->query($query);
 
                 if ($result)
@@ -1490,7 +1495,9 @@ class Adherent extends CommonObject
                     $this->error=$mydb->error();
                     return -1;
                 }
-            } else {
+            }
+            else
+            {
                 $this->error="Echec de connexion avec les identifiants ".ADHERENT_SPIP_SERVEUR." ".ADHERENT_SPIP_USER." ".ADHERENT_SPIP_PASS." ".ADHERENT_SPIP_DB;
                 return -1;
             }

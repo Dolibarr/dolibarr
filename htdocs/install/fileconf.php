@@ -270,7 +270,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
         {
     		while (($file = readdir($handle))!==false)
     		{
-    		    if (is_readable($dir."/".$file) && preg_match('/^(.*)\.lib\.php/i',$file,$reg))
+    		    if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php/i',$file,$reg))
     		    {
     		        $type=$reg[1];
 

@@ -19,17 +19,17 @@
  */
 
 /**
- *	\file       	htdocs/lib/databases/mssql.lib.php
+ *	\file       	htdocs/lib/databases/mssql.class.php
  *	\brief			Fichier de la classe permettant de gerer une base mssql
  */
 
 
 /**
- *	\class      DoliDb
+ *	\class      DoliDbMssql
  *	\brief      Classe de gestion de la database de dolibarr
  *	\remarks	Works with PHP5 Only
  */
-class DoliDb
+class DoliDbMssql
 {
 	//! Database handler
 	var $db;
@@ -80,7 +80,7 @@ class DoliDb
 	 *	@param	    int		$port		Port of database server
 	 *	@return	    int					1 if OK, 0 if not
      */
-	function DoliDb($type='mssql', $host, $user, $pass, $name='', $port=0)
+	function DoliDbMssql($type, $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
 

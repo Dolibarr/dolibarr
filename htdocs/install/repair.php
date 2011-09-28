@@ -24,7 +24,6 @@
 
 include_once("./inc.php");
 if (file_exists($conffile)) include_once($conffile);
-require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
 
@@ -95,7 +94,8 @@ $conf->db->name = $dolibarr_main_db_name;
 $conf->db->user = $dolibarr_main_db_user;
 $conf->db->pass = $dolibarr_main_db_pass;
 
-$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+$db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 if ($db->connected == 1)
 {
 	print '<tr><td nowrap="nowrap">';

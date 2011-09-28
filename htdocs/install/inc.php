@@ -111,12 +111,8 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 		{
 			if (! empty($dolibarr_main_document_root) && ! empty($dolibarr_main_db_type))
 			{
-				$result=include_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
-				if ($result)
-				{
-					// OK
-				}
-				else
+				$result=include_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".class.php");
+				if (! $result)
 				{
 					$includeconferror='ErrorBadValueForDolibarrMainDBType';
 				}

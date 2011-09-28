@@ -23,7 +23,6 @@
  */
 
 require("../../main.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/lib/databases/".$conf->db->type.".lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $langs->load("admin");

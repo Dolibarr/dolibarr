@@ -31,8 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $langs->load("admin");
 $langs->load("oscommerce");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) accessforbidden();
 
 
 
@@ -78,10 +77,7 @@ elseif ($_POST["test"])
 	$conf->oscommerce->db->user=$_POST["oscommerce_dbuser"];
 	$conf->oscommerce->db->pass=$_POST["oscommerce_dbpass"];
 
-	$oscommercedb=new DoliDB($conf->oscommerce->db->type,$conf->oscommerce->db->host,$conf->oscommerce->db->user,$conf->oscommerce->db->pass,$conf->oscommerce->db->name,$conf->oscommerce->db->port);
-
-	//print "D ".$db." - ".$db->db."<br>\n";
-	//print "W ".$oscommercedb." - ".$oscommercedb->db."<br>\n";
+    $oscommercedb=getDoliDBInstance($conf->oscommerce->db->type,$conf->oscommerce->db->host,$conf->oscommerce->db->user,$conf->oscommerce->db->pass,$conf->oscommerce->db->name,$conf->oscommerce->db->port);
 
 	if ($oscommercedb->connected == 1 && $oscommercedb->database_selected == 1)
 	{
@@ -202,12 +198,7 @@ print "</center>";
 print "</form>\n";
 
 
-clearstatcache();
-
-if ($mesg) print "<br>$mesg<br>";
-print "<br>";
-
-
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 

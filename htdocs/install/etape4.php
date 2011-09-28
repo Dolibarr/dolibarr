@@ -26,7 +26,6 @@
 
 
 include_once("./inc.php");
-require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root."/core/class/conf.class.php");
 require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
@@ -70,7 +69,8 @@ print '<br>'.$langs->trans("LastStepDesc").'<br><br>';
 
 print '<table cellspacing="0" cellpadding="2" width="100%">';
 
-$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+$db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 if ($db->ok == 1)
 {
 	print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';

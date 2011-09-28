@@ -21,7 +21,6 @@
  */
 
 require("../../main.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/lib/databases/".$conf->db->type.".lib.php");
 include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 $langs->load("admin");

@@ -116,7 +116,7 @@ if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 // Test database connexion
 if (! $error)
 {
-	$result=@include_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
+	$result=@include_once($main_dir."/lib/databases/".$_POST["db_type"].".class.php");
 	if ($result)
 	{
 		// If we ask database or user creation we need to connect as root
@@ -157,7 +157,9 @@ if (! $error)
 				}
 			}
 			//print $_POST["db_type"].",".$_POST["db_host"].",$userroot,$passroot,$databasefortest,".$_POST["db_port"];
-			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
+
+            $db=getDoliDBInstance($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
+			//$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
 
 			dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
 			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
@@ -181,7 +183,8 @@ if (! $error)
 		// If we need simple access
 		if (! $error && (empty($_POST["db_create_database"]) && empty($_POST["db_create_user"])))
 		{
-			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"],$_POST["db_port"]);
+            $db=getDoliDBInstance($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"],$_POST["db_port"]);
+		    //$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"],$_POST["db_port"]);
 			if ($db->error)
 			{
 				print '<div class="error">'.$db->error.'</div>';
@@ -193,7 +196,7 @@ if (! $error)
 	}
 	else
 	{
-		print "<br>\nFailed to include_once(\"".$main_dir."/lib/databases/".$_POST["db_type"].".lib.php\")<br>\n";
+		print "<br>\nFailed to include_once(\"".$main_dir."/lib/databases/".$_POST["db_type"].".class.php\")<br>\n";
 		print '<div class="error">'.$langs->trans("ErrorWrongValueForParameter",$langs->transnoentities("WebPagesDirectory")).'</div>';
 		print $langs->trans("ErrorGoBackAndCorrectParameters");
 		$error++;
@@ -275,12 +278,9 @@ if (! $error && $db->connected && $action == "set")
 		}
 	}
 
-	// Load database driver
 	if (! $error)
 	{
 		dolibarr_install_syslog("etape1: Directory '".$main_dir."' exists");
-
-		require_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
 	}
 
 
@@ -433,7 +433,8 @@ if (! $error && $db->connected && $action == "set")
 
 			// Creation handler de base, verification du support et connexion
 
-			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest,$conf->db->port);
+            $db=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest,$conf->db->port);
+			//$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest,$conf->db->port);
 			if ($db->error)
 			{
 				print '<div class="error">'.$db->error.'</div>';
@@ -507,7 +508,8 @@ if (! $error && $db->connected && $action == "set")
 		if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
 		{
 			dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name, LOG_DEBUG);
-			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
+            $db=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
+			//$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
 
 			if ($db->connected)
 			{
@@ -570,7 +572,8 @@ if (! $error && $db->connected && $action == "set")
 			dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name, LOG_DEBUG);
 			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
-			$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+            $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+			//$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 			if ($db->connected == 1)
 			{
