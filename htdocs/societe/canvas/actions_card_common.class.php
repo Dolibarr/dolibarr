@@ -67,7 +67,7 @@ abstract class ActionsCardCommon
 	 *
 	 * 	@return	void
 	 */
-	private function getInstanceDao()
+	protected function getInstanceDao()
 	{
 		if (! is_object($this->object))
 		{
@@ -93,7 +93,7 @@ abstract class ActionsCardCommon
      *  @param		ref			Object ref
      *  @return		object		Object loaded
      */
-    function getObject($id,$ref='')
+    protected function getObject($id,$ref='')
     {
     	$ret = $this->getInstanceDao();
 

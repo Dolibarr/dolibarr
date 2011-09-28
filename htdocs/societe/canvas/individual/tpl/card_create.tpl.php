@@ -17,7 +17,7 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE CARD_CREATE.TPL.PHP INDIVIDUAL -->
 
 <?php
 print_fiche_titre($this->control->tpl['title']);

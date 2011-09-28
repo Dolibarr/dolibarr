@@ -20,7 +20,7 @@ $soc = $GLOBALS['objcanvas']->control->object;
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP DEFAULT -->
+<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP COMPANY -->
 <?php
 
 $head = societe_prepare_head($soc);

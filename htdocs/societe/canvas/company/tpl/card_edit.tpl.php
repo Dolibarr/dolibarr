@@ -20,7 +20,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE CARD_EDIT.TPL.PHP DEFAULT -->
+<!-- BEGIN PHP TEMPLATE CARD_EDIT.TPL.PHP COMPANY -->
 
 <?php
 print_fiche_titre($this->control->tpl['title']);
