@@ -67,10 +67,7 @@ if ($action == 'add_paiement')
 {
     $error = 0;
 
-    $datepaye = dol_mktime(12, 0 , 0,
-    $_POST['remonth'],
-    $_POST['reday'],
-    $_POST['reyear']);
+    $datepaye = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
     $paiement_id = 0;
     $total = 0;
 
@@ -149,7 +146,20 @@ if ($action == 'add_paiement')
         if (! $error)
         {
             $db->commit();
-            $loc = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement_id;
+
+            // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
+            $invoiceid=0;
+            foreach ($paiement->amounts as $key => $amount)
+            {
+                $facid = $key;
+                if (is_numeric($amount) && $amount <> 0)
+                {
+                    if ($invoiceid != 0) $invoiceid=-1; // There is more than one invoice payed by this payment
+                    else $invoiceid=$facid;
+                }
+            }
+            if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$invoiceid;
+            else $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
             Header('Location: '.$loc);
             exit;
         }
@@ -198,8 +208,8 @@ if ($action == 'create' || $action == 'add_paiement')
 
             print_fiche_titre($langs->trans('DoPayment'));
 
-            if ($mesg) print $mesg;
-            if ($errmsg) print $errmsg;
+            if ($mesg) dol_htmloutput_mesg($mesg);
+            if ($errmsg) dol_htmloutput_errors($errmsg);
 
             print '<form name="addpaiement" action="paiement.php" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -296,7 +306,7 @@ if ($action == 'create' || $action == 'add_paiement')
                         print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
                         print '<td align="center">';
                         $namef = 'amount_'.$objp->facid;
-                        print '<input type="text" size="8" name="'.$namef.'">';
+                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
                         print "</td></tr>\n";
                         $total+=$objp->total;
                         $total_ttc+=$objp->total_ttc;

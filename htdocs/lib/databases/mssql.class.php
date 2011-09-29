@@ -25,11 +25,11 @@
 
 
 /**
- *	\class      DoliDbMssql
+ *	\class      DoliDBMssql
  *	\brief      Classe de gestion de la database de dolibarr
  *	\remarks	Works with PHP5 Only
  */
-class DoliDbMssql
+class DoliDBMssql
 {
 	//! Database handler
 	var $db;
@@ -80,7 +80,7 @@ class DoliDbMssql
 	 *	@param	    int		$port		Port of database server
 	 *	@return	    int					1 if OK, 0 if not
      */
-	function DoliDbMssql($type, $host, $user, $pass, $name='', $port=0)
+	function DoliDBMssql($type, $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
 

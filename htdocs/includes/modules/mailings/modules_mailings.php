@@ -30,13 +30,26 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
  *	    \class      MailingTargets
  *		\brief      Parent class of emailing target selectors modules
  */
-abstract class MailingTargets
+class MailingTargets    // This can't be abstract as it is used for some method
 {
-    var $db='';
-    var $error='';
+    var $db;
+    var $error;
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Retourne la traduction de la cle MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouve
+
+    /**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
+	 */
+	function MailingTargets($DB)
+	{
+        $this->db = $DB;
+	}
+
+    /**
+     * Return description of email selector
+     *
+     * @return     string      Retourne la traduction de la cle MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouve
      */
     function getDesc()
     {
@@ -47,8 +60,10 @@ abstract class MailingTargets
         else return $this->desc;
     }
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
+    /**
+	 *	Return number of records for email selector
+     *
+     *  @return     string      Example
      */
     function getNbOfRecords()
     {
@@ -56,9 +71,10 @@ abstract class MailingTargets
     }
 
     /**
-     *    \brief      Retourne nombre de destinataires
-     *    \param      sql         Requete sql de comptage
-     *    \return     int         Nb de destinataires si ok, < 0 si erreur
+     * Retourne nombre de destinataires
+     *
+     * @param      string	$sql        Requete sql de comptage
+     * @return     int       			Nb de destinataires si ok, < 0 si erreur
      */
     function getNbOfRecipients($sql)
     {
@@ -76,9 +92,10 @@ abstract class MailingTargets
     }
 
     /**
-     *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
-     *                  des destinataires de mailings
-     *      \return     string      Retourne zone select
+     * Affiche formulaire de filtre qui apparait dans page de selection
+     * des destinataires de mailings
+     *
+     * @return     string      Retourne zone select
      */
     function formFilter()
     {
@@ -86,9 +103,10 @@ abstract class MailingTargets
     }
 
     /**
-     *      \brief      Met a jour nombre de destinataires
-     *      \param      mailing_id          Id du mailing concern�
-     *      \return     int                 < 0 si erreur, nb destinataires si ok
+     * Met a jour nombre de destinataires
+     *
+     * @param	int		$mailing_id          Id of emailing
+     * @return  int			                 < 0 si erreur, nb destinataires si ok
      */
     function update_nb($mailing_id)
     {
@@ -117,10 +135,11 @@ abstract class MailingTargets
     }
 
     /**
-     *    \brief      Ajoute destinataires dans table des cibles
-     *    \param      mailing_id    Id of emailing
-     *    \param      cibles        Array with targets
-     *    \return     int           < 0 si erreur, nb ajout si ok
+     * Ajoute destinataires dans table des cibles
+     *
+     * @param	int		$mailing_id    Id of emailing
+     * @param   array	$cibles        Array with targets
+     * @return  int      			   < 0 si erreur, nb ajout si ok
      */
     function add_to_target($mailing_id, $cibles)
     {
@@ -162,7 +181,7 @@ abstract class MailingTargets
             }
         }
 
-        dol_syslog("MailingTargets::add_to_target: mailing ".$j." targets added");
+        dol_syslog(get_class($this)."::add_to_target: mailing ".$j." targets added");
 
         $this->update_nb($mailing_id);
 
@@ -171,8 +190,10 @@ abstract class MailingTargets
     }
 
     /**
-     *    \brief      Supprime tous les destinataires de la table des cibles
-     *    \param      mailing_id        Id of emailing
+     *  Supprime tous les destinataires de la table des cibles
+     *
+     *	@param	int		$mailing_id        Id of emailing
+     *	@return	void
      */
     function clear_target($mailing_id)
     {
