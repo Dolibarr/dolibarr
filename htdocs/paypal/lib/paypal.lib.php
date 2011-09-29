@@ -24,7 +24,6 @@
 
 
 
-
 function llxHeaderPaypal($title, $head = "")
 {
 	global $user, $conf, $langs;
