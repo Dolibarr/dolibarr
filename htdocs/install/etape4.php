@@ -73,36 +73,36 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 
 if ($db->ok == 1)
 {
-	print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
-	print '<input name="login" value="'.(! empty($_GET["login"])?$_GET["login"]:$force_install_dolibarrlogin).'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Password").' :</td><td>';
-	print '<input type="password" name="pass"></td></tr>';
-	print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
-	print '<input type="password" name="pass_verif"></td></tr>';
-	print '</table>';
+    print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
+    print '<input name="login" value="'.(! empty($_GET["login"])?$_GET["login"]:$force_install_dolibarrlogin).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Password").' :</td><td>';
+    print '<input type="password" name="pass"></td></tr>';
+    print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
+    print '<input type="password" name="pass_verif"></td></tr>';
+    print '</table>';
 
-	if (isset($_GET["error"]) && $_GET["error"] == 1)
-	{
-		print '<br>';
-		print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
-		$err=0;	// We show button
-	}
+    if (isset($_GET["error"]) && $_GET["error"] == 1)
+    {
+        print '<br>';
+        print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
+        $err=0;	// We show button
+    }
 
-	if (isset($_GET["error"]) && $_GET["error"] == 2)
-	{
-		print '<br>';
-		print '<div class="error">';
-		print $langs->trans("PleaseTypePassword");
-		print '</div>';
-		$err=0;	// We show button
-	}
+    if (isset($_GET["error"]) && $_GET["error"] == 2)
+    {
+        print '<br>';
+        print '<div class="error">';
+        print $langs->trans("PleaseTypePassword");
+        print '</div>';
+        $err=0;	// We show button
+    }
 
-	if (isset($_GET["error"]) && $_GET["error"] == 3)
-	{
-		print '<br>';
-		print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
-		$err=0;	// We show button
-	}
+    if (isset($_GET["error"]) && $_GET["error"] == 3)
+    {
+        print '<br>';
+        print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
+        $err=0;	// We show button
+    }
 
 }
 

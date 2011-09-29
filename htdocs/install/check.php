@@ -350,7 +350,6 @@ else
 		print '<td align="center">';
 		if ($allowinstall)
 		{
-			//print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';   // To restore licence page
 			print '<a href="fileconf.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
 		}
 		else

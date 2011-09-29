@@ -80,7 +80,8 @@ if (! empty($force_install_message))
 }
 
 ?>
-<table border="0" cellpadding="1" cellspacing="0">
+<table
+	border="0" cellpadding="1" cellspacing="0">
 
 	<tr>
 		<td colspan="3" class="label" align="center">
@@ -88,46 +89,44 @@ if (! empty($force_install_message))
 		</td>
 	</tr>
 
-    <!-- Documents root $dolibarr_main_document_root -->
+	<!-- Documents root $dolibarr_main_document_root -->
 	<tr>
-    	<?php
-    	print '<td valign="top" class="label"><b>';
-    	print $langs->trans("WebPagesDirectory");
-    	print "</b></td>";
+	<?php
+	print '<td valign="top" class="label"><b>';
+	print $langs->trans("WebPagesDirectory");
+	print "</b></td>";
 
-    	if(! isset($dolibarr_main_url_root) || dol_strlen($dolibarr_main_url_root) == 0)
-    	{
-    	    //print "x".$_SERVER["SCRIPT_FILENAME"]." y".$_SERVER["DOCUMENT_ROOT"];
+	if(! isset($dolibarr_main_url_root) || dol_strlen($dolibarr_main_url_root) == 0)
+	{
+	    //print "x".$_SERVER["SCRIPT_FILENAME"]." y".$_SERVER["DOCUMENT_ROOT"];
 
-    	    // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
-    	    // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
-    	    if (preg_match('/^php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i',$_SERVER["SCRIPT_FILENAME"]))
-    	    {
-    	        $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
+	    // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
+	    // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
+	    if (preg_match('/^php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i',$_SERVER["SCRIPT_FILENAME"]))
+	    {
+	        $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
 
-    	        if (! preg_match('/[\\/]dolibarr[\\/]htdocs$/i',$dolibarr_main_document_root))
-    	        {
-    	            $dolibarr_main_document_root.="/dolibarr/htdocs";
-    	        }
-    	    }
-    	    else
-    	    {
-    	        $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,dol_strlen($_SERVER["SCRIPT_FILENAME"]) - 21);
-    	        // Nettoyage du path propose
-    	        // Gere les chemins windows avec double "\"
-    	        $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);
+	        if (! preg_match('/[\\/]dolibarr[\\/]htdocs$/i',$dolibarr_main_document_root))
+	        {
+	            $dolibarr_main_document_root.="/dolibarr/htdocs";
+	        }
+	    }
+	    else
+	    {
+	        $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,dol_strlen($_SERVER["SCRIPT_FILENAME"]) - 21);
+	        // Nettoyage du path propose
+	        // Gere les chemins windows avec double "\"
+	        $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);
 
-    	        // Supprime les slash ou antislash de fins
-    	        $dolibarr_main_document_root = preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
-    	    }
-    	}
-    	?>
-		<td class="label" valign="top">
-		<?php
+	        // Supprime les slash ou antislash de fins
+	        $dolibarr_main_document_root = preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
+	    }
+	}
+	?>
+		<td class="label" valign="top"><?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_document_root.'" name="main_dir">';
 		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_dir'.(empty($force_install_noedit)?'':'_bis').'">';
-		?>
-		</td>
+		?></td>
 		<td class="comment"><?php
 		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
 		print $langs->trans("Examples").":<br>";
@@ -139,7 +138,7 @@ if (! empty($force_install_message))
 		</td>
 	</tr>
 
-    <!-- Documents URL $dolibarr_main_data_root -->
+	<!-- Documents URL $dolibarr_main_data_root -->
 	<tr>
 		<td valign="top" class="label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
 		</td>
@@ -158,12 +157,10 @@ if (! empty($force_install_message))
 		    }
 		}
 		?>
-		<td class="label" valign="top">
-		<?php
+		<td class="label" valign="top"><?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_data_root.'" name="main_data_dir">';
 		print '<input type="text" size="60" value="'.$dolibarr_main_data_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_data_dir'.(empty($force_install_noedit)?'':'_bis').'">';
-		?>
-		</td>
+		?></td>
 		<td class="comment"><?php
 		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
 		print $langs->trans("DirectoryRecommendation")."<br>";
@@ -176,43 +173,41 @@ if (! empty($force_install_message))
 		</td>
 	</tr>
 
-    <!-- Root URL $dolibarr_main_url_root -->
-<?php
-if (! empty($main_url)) $dolibarr_main_url_root=$main_url;
-if (empty($dolibarr_main_url_root))
-{
-    // If defined (Ie: Apache with Linux)
-    if (isset($_SERVER["SCRIPT_URI"])) {
-        $dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
-    }
-    // If defined (Ie: Apache with Caudium)
-    elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
-        $dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
-    }
-    // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
-    else
-    {
-        $proto='http';
-        if (! empty($_SERVER["HTTP_HOST"])) $serverport=$_SERVER["HTTP_HOST"];
-        else $serverport=$_SERVER["SERVER_NAME"];
-        $dolibarr_main_url_root=$proto."://".$serverport.$_SERVER["SCRIPT_NAME"];
-    }
-    // Clean proposed URL
-    $dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);	// Remove the /fileconf.php
-    $dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);					// Remove the /
-    $dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);		// Remove the /index.php
-    $dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);			// Remove the /install
-}
-?>
+	<!-- Root URL $dolibarr_main_url_root -->
+	<?php
+	if (! empty($main_url)) $dolibarr_main_url_root=$main_url;
+	if (empty($dolibarr_main_url_root))
+	{
+	    // If defined (Ie: Apache with Linux)
+	    if (isset($_SERVER["SCRIPT_URI"])) {
+	        $dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
+	    }
+	    // If defined (Ie: Apache with Caudium)
+	    elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
+	        $dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
+	    }
+	    // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
+	    else
+	    {
+	        $proto='http';
+	        if (! empty($_SERVER["HTTP_HOST"])) $serverport=$_SERVER["HTTP_HOST"];
+	        else $serverport=$_SERVER["SERVER_NAME"];
+	        $dolibarr_main_url_root=$proto."://".$serverport.$_SERVER["SCRIPT_NAME"];
+	    }
+	    // Clean proposed URL
+	    $dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);	// Remove the /fileconf.php
+	    $dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);					// Remove the /
+	    $dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);		// Remove the /index.php
+	    $dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);			// Remove the /install
+	}
+	?>
 	<tr>
 		<td valign="top" class="label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
 		</td>
-		<td valign="top" class="label">
-		<?php
+		<td valign="top" class="label"><?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_url_root.'" name="main_url">';
 		print '<input type="text" size="60" value="'.$dolibarr_main_url_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_url'.(empty($force_install_noedit)?'':'_bis').'">';
-		?>
-		</td>
+		?></td>
 		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
 		<ul>
 			<li>http://localhost/</li>
@@ -221,9 +216,9 @@ if (empty($dolibarr_main_url_root))
 		</td>
 	</tr>
 
-<?php
-if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if the installation process is "https://"
-?>
+	<?php
+	if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if the installation process is "https://"
+	    ?>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?></td>
 		<td class="label" valign="top"><input type="checkbox"
@@ -233,9 +228,9 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		</td>
 
 	</tr>
-<?php
-}
-?>
+	<?php
+	}
+	?>
 
 	<!-- Dolibarr database -->
 
@@ -259,56 +254,56 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 		$defaultype=! empty($dolibarr_main_db_type)?$dolibarr_main_db_type:($force_install_type?$force_install_type:'mysqli');
 
-        $modules = array();
-        $nbok = $nbko = 0;
-        $option='';
+		$modules = array();
+		$nbok = $nbko = 0;
+		$option='';
 
-        // Scan les drivers
+		// Scan les drivers
 		$dir=DOL_DOCUMENT_ROOT.'/lib/databases';
 		$handle=opendir($dir);
-        if (is_resource($handle))
-        {
-    		while (($file = readdir($handle))!==false)
-    		{
-    		    if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php/i',$file,$reg))
-    		    {
-    		        $type=$reg[1];
+		if (is_resource($handle))
+		{
+		    while (($file = readdir($handle))!==false)
+		    {
+		        if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php/i',$file,$reg))
+		        {
+		            $type=$reg[1];
 
-    		        // Version min de la base
-    		        $versionbasemin=array();
-    		        if ($type=='mysql')  { $versionbasemin=array(3,1,0); $testfunction='mysql_connect'; }
-    		        if ($type=='mysqli') { $versionbasemin=array(4,1,0); $testfunction='mysqli_connect'; }
-    		        if ($type=='pgsql')  { $versionbasemin=array(8,4,0); $testfunction='pg_connect'; }
-    		        if ($type=='mssql')  { $versionbasemin=array(2000);  $testfunction='mssql_connect'; }
+		            // Version min de la base
+		            $versionbasemin=array();
+		            if ($type=='mysql')  { $versionbasemin=array(3,1,0); $testfunction='mysql_connect'; }
+		            if ($type=='mysqli') { $versionbasemin=array(4,1,0); $testfunction='mysqli_connect'; }
+		            if ($type=='pgsql')  { $versionbasemin=array(8,4,0); $testfunction='pg_connect'; }
+		            if ($type=='mssql')  { $versionbasemin=array(2000);  $testfunction='mssql_connect'; }
 
-    		        // Remarques
-    		        $note='';
-    		        if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
-    		        if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
-    		        if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
-    		        if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).')';
+		            // Remarques
+		            $note='';
+		            if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
+		            if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
+		            if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
+		            if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).')';
 
-    		        // Switch to mysql if mysqli is not present
-    		        if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
+		            // Switch to mysql if mysqli is not present
+		            if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
 
-    		        // Affiche ligne dans liste
-    		        $option.='<option value="'.$type.'"'.($defaultype == $type?' selected="selected"':'');
-    		        if (! function_exists($testfunction)) $option.=' disabled="disabled"';
-    		        $option.='>';
-    		        $option.=$type.'&nbsp; &nbsp;';
-    		        if ($note) $option.=' '.$note;
-    		        // Experimental
-    		        if ($type=='pgsql')     $option.=' '.$langs->trans("Experimental");
-    		        elseif ($type=='mssql') $option.=' '.$langs->trans("Experimental");
-    		        // No available
-    		        elseif (! function_exists($testfunction)) $option.=' - '.$langs->trans("FunctionNotAvailableInThisPHP");
-    		        $option.='</option>';
-    		    }
-    		}
-        }
+		            // Affiche ligne dans liste
+		            $option.='<option value="'.$type.'"'.($defaultype == $type?' selected="selected"':'');
+		            if (! function_exists($testfunction)) $option.=' disabled="disabled"';
+		            $option.='>';
+		            $option.=$type.'&nbsp; &nbsp;';
+		            if ($note) $option.=' '.$note;
+		            // Experimental
+		            if ($type=='pgsql')     $option.=' '.$langs->trans("Experimental");
+		            elseif ($type=='mssql') $option.=' '.$langs->trans("Experimental");
+		            // No available
+		            elseif (! function_exists($testfunction)) $option.=' - '.$langs->trans("FunctionNotAvailableInThisPHP");
+		            $option.='</option>';
+		        }
+		    }
+		}
 
-        if ($force_install_noedit && $force_install_type) print '<input id="db_type" type="hidden" value="'.$force_install_type.'" name="db_type">';
-        print '<select id="db_type" name="db_type'.(empty($force_install_noedit) || empty($force_install_type)?'':'_bis').'"'.($force_install_noedit && $force_install_type?' disabled="disabled"':'').'>';
+		if ($force_install_noedit && $force_install_type) print '<input id="db_type" type="hidden" value="'.$force_install_type.'" name="db_type">';
+		print '<select id="db_type" name="db_type'.(empty($force_install_noedit) || empty($force_install_type)?'':'_bis').'"'.($force_install_noedit && $force_install_type?' disabled="disabled"':'').'>';
 		print $option;
 		print '</select>';
 
@@ -320,10 +315,11 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td valign="top" class="label"><b> <?php echo $langs->trans("Server"); ?>
 		</b></td>
-		<td valign="top" class="label"><input type="text" name="db_host<?php print ($force_install_noedit==2 && $force_install_dbserver)?'_bis':''; ?>"
+		<td valign="top" class="label"><input type="text"
+			name="db_host<?php print ($force_install_noedit==2 && $force_install_dbserver)?'_bis':''; ?>"
 			<?php if ($force_install_noedit==2 && $force_install_dbserver) print ' disabled="disabled"'; ?>
 			value="<?php print (! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:(empty($force_install_dbserver)?'localhost':$force_install_dbserver); ?>">
-		<?php if ($force_install_noedit==2 && $force_install_dbserver) print '<input type="hidden" name="db_host" value="'.((! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:$force_install_dbserver).'">'; ?>
+			<?php if ($force_install_noedit==2 && $force_install_dbserver) print '<input type="hidden" name="db_host" value="'.((! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:$force_install_dbserver).'">'; ?>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerAddressDescription"); ?>
 		</td>
@@ -332,10 +328,11 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("Port"); ?></td>
-		<td valign="top" class="label"><input type="text" name="db_port<?php print ($force_install_noedit==2 && $force_install_port)?'_bis':''; ?>"
+		<td valign="top" class="label"><input type="text"
+			name="db_port<?php print ($force_install_noedit==2 && $force_install_port)?'_bis':''; ?>"
 			<?php if ($force_install_noedit==2 && $force_install_port) print ' disabled="disabled"'; ?>
 			value="<?php print (! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port; ?>">
-		<?php if ($force_install_noedit==2 && $force_install_port) print '<input type="hidden" name="db_port" value="'.((! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port).'">'; ?>
+			<?php if ($force_install_noedit==2 && $force_install_port) print '<input type="hidden" name="db_port" value="'.((! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port).'">'; ?>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerPortDescription"); ?>
 		</td>
@@ -343,9 +340,11 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	</tr>
 
 	<tr>
-		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>	</b></td>
+		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>
+		</b></td>
 
-		<td class="label" valign="top"><input type="text" id="db_name" name="db_name"
+		<td class="label" valign="top"><input type="text" id="db_name"
+			name="db_name"
 			value="<?php echo (! empty($dolibarr_main_db_name))?$dolibarr_main_db_name:($force_install_database?$force_install_database:'dolibarr'); ?>"></td>
 		<td class="comment"><?php echo $langs->trans("DatabaseName"); ?></td>
 	</tr>
@@ -364,7 +363,8 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td class="label" valign="top"><b><?php echo $langs->trans("Login"); ?></b>
 		</td>
-		<td class="label" valign="top"><input type="text" id="db_user" name="db_user"
+		<td class="label" valign="top"><input type="text" id="db_user"
+			name="db_user"
 			value="<?php print (! empty($dolibarr_main_db_user))?$dolibarr_main_db_user:$force_install_databaselogin; ?>"></td>
 		<td class="comment"><?php echo $langs->trans("AdminLogin"); ?></td>
 	</tr>
@@ -372,7 +372,8 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top"><input type="password" id="db_pass" name="db_pass"
+		<td class="label" valign="top"><input type="password" id="db_pass"
+			name="db_pass"
 			value="<?php print (! empty($dolibarr_main_db_pass))?$dolibarr_main_db_pass:$force_install_databasepass; ?>"></td>
 		<td class="comment"><?php echo $langs->trans("AdminPassword"); ?></td>
 	</tr>
@@ -381,7 +382,8 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		<td class="label" valign="top"><?php echo $langs->trans("CreateUser"); ?>
 		</td>
 
-		<td class="label" valign="top"><input type="checkbox" id="db_create_user" name="db_create_user"
+		<td class="label" valign="top"><input type="checkbox"
+			id="db_create_user" name="db_create_user"
 			<?php if (! empty($force_install_createuser)) print ' checked="on"'; ?>></td>
 		<td class="comment"><?php echo $langs->trans("CheckToCreateUser"); ?>
 		</td>
@@ -390,8 +392,8 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 	<!-- Super access -->
 	<?php
-	    $force_install_databaserootlogin=preg_replace('/__SUPERUSERLOGIN__/','root',$force_install_databaserootlogin);
-	    $force_install_databaserootpass=preg_replace('/__SUPERUSERPASSWORD__/','',$force_install_databaserootpass);
+	$force_install_databaserootlogin=preg_replace('/__SUPERUSERLOGIN__/','root',$force_install_databaserootlogin);
+	$force_install_databaserootpass=preg_replace('/__SUPERUSERPASSWORD__/','',$force_install_databaserootpass);
 	?>
 	<tr>
 		<td colspan="3" class="label" align="center"><br>
@@ -401,10 +403,10 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 	<tr>
 		<td class="label" valign="top"><?php echo $langs->trans("Login"); ?></td>
-		<td class="label" valign="top"><input type="text" id="db_user_root" name="db_user_root" class="needroot"
+		<td class="label" valign="top"><input type="text" id="db_user_root"
+			name="db_user_root" class="needroot"
 			value="<?php print (! empty($db_user_root))?$db_user_root:$force_install_databaserootlogin; ?>"></td>
-		<td class="comment">
-		<?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
+		<td class="comment"><?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
 		<!--
 		<?php echo '<br>'.$langs->trans("Examples").':<br>' ?>
 		<ul>
@@ -413,15 +415,16 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		</ul>
 		</td>
 		 -->
+
 	</tr>
 
 	<tr>
 		<td class="label" valign="top"><?php echo $langs->trans("Password"); ?>
 		</td>
-		<td class="label" valign="top"><input type="password" id="db_pass_root" name="db_pass_root" class="needroot"
+		<td class="label" valign="top"><input type="password"
+			id="db_pass_root" name="db_pass_root" class="needroot"
 			value="<?php print (! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass; ?>"></td>
-		<td class="comment">
-		<?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
+		<td class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
 		</td>
 	</tr>
 
@@ -519,9 +522,9 @@ function jscheckparam()
 }
 </script>
 
-<?php
+	<?php
 
-// $db->close();	Not database connexion yet
+	// $db->close();	Not database connexion yet
 
-pFooter($err,$setuplang,'jscheckparam');
-?>
+	pFooter($err,$setuplang,'jscheckparam');
+	?>

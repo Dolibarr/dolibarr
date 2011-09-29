@@ -76,14 +76,14 @@ $error=0;
 // If password is encoded, we decode it
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
-	require_once($dolibarr_main_document_root."/lib/security.lib.php");
-	if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
-	{
-		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
-	}
-	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+    require_once($dolibarr_main_document_root."/lib/security.lib.php");
+    if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+    {
+        $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
+        $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+        $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+    }
+    else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
 
 // $conf is already instancied inside inc.php
@@ -98,44 +98,44 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 
 if ($db->connected == 1)
 {
-	print '<tr><td nowrap="nowrap">';
-	print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
-	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
-	$ok = 1;
+    print '<tr><td nowrap="nowrap">';
+    print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+    dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
+    $ok = 1;
 }
 else
 {
-	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
-	dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
-	$ok = 0;
+    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+    dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+    $ok = 0;
 }
 
 if ($ok)
 {
-	if($db->database_selected == 1)
-	{
-		print '<tr><td nowrap="nowrap">';
-		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
-		dolibarr_install_syslog("repair: Database connection successfull : $dolibarr_main_db_name");
-		$ok=1;
-	}
-	else
-	{
-		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
-		dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
-		$ok=0;
-	}
+    if($db->database_selected == 1)
+    {
+        print '<tr><td nowrap="nowrap">';
+        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+        dolibarr_install_syslog("repair: Database connection successfull : $dolibarr_main_db_name");
+        $ok=1;
+    }
+    else
+    {
+        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+        dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+        $ok=0;
+    }
 }
 
 // Affiche version
 if ($ok)
 {
-	$version=$db->getVersion();
-	$versionarray=$db->getVersionArray();
-	print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
-	print '<td align="right">'.$version.'</td></tr>';
-	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerVersion")." : $version");
-	//print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+    $version=$db->getVersion();
+    $versionarray=$db->getVersionArray();
+    print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
+    print '<td align="right">'.$version.'</td></tr>';
+    dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerVersion")." : $version");
+    //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 }
 
 // Force l'affichage de la progression
@@ -148,47 +148,47 @@ flush();
  */
 if ($ok)
 {
-	if ($choix==1) $dir = "mysql/migration/";
-	elseif ($choix==2) $dir = "pgsql/migration/";
-	else $dir = "mssql/migration/";
+    if ($choix==1) $dir = "mysql/migration/";
+    elseif ($choix==2) $dir = "pgsql/migration/";
+    else $dir = "mssql/migration/";
 
-	$filelist=array();
-	$i = 0;
-	$ok = 0;
-	$from='^'.$versionfrom;
-	$to=$versionto.'\.sql$';
+    $filelist=array();
+    $i = 0;
+    $ok = 0;
+    $from='^'.$versionfrom;
+    $to=$versionto.'\.sql$';
 
-	// Recupere list fichier
-	$filesindir=array();
-	$handle=opendir($dir);
+    // Recupere list fichier
+    $filesindir=array();
+    $handle=opendir($dir);
     if (is_resource($handle))
     {
-    	while (($file = readdir($handle))!==false)
-    	{
-    		if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
-    	}
+        while (($file = readdir($handle))!==false)
+        {
+            if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+        }
     }
-	sort($filesindir);
+    sort($filesindir);
 
-	foreach($filesindir as $file)
-	{
-		if (preg_match('/repair/i',$file))
-		{
-			$filelist[]=$file;
-		}
-	}
+    foreach($filesindir as $file)
+    {
+        if (preg_match('/repair/i',$file))
+        {
+            $filelist[]=$file;
+        }
+    }
 
-	// Boucle sur chaque fichier
-	foreach($filelist as $file)
-	{
-		print '<tr><td nowrap>';
-		print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
+    // Boucle sur chaque fichier
+    foreach($filelist as $file)
+    {
+        print '<tr><td nowrap>';
+        print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
 
-		$name = substr($file, 0, dol_strlen($file) - 4);
+        $name = substr($file, 0, dol_strlen($file) - 4);
 
-		// Run sql script
-		$ok=run_sql($dir.$file, 0, '', 1);
-	}
+        // Run sql script
+        $ok=run_sql($dir.$file, 0, '', 1);
+    }
 }
 
 print '</table>';
