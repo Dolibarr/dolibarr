@@ -60,7 +60,7 @@ abstract class ModeleDon extends CommonDocGenerator
  *	\class 		ModeleNumRefDons
  *	\brief  	Classe mere des modeles de numerotation des references des dons
  */
-class ModeleNumRefDons
+abstract class ModeleNumRefDons
 {
     var $error='';
 

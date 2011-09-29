@@ -58,7 +58,7 @@ abstract class ModelePDFProjects extends CommonDocGenerator
  *  \class      ModeleNumRefProjects
  *  \brief      Classe mere des modeles de numerotation des references de projets
  */
-class ModeleNumRefProjects
+abstract class ModeleNumRefProjects
 {
 	var $error='';
 

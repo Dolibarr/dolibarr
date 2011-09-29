@@ -789,13 +789,14 @@ function UnActivate($value, $requiredby=1)
     }
     else
     {
-        $genericMod = new DolibarrModules($db);
-        $genericMod->name=preg_replace('/^mod/i','',$modName);
-        $genericMod->style_sheet=1;
-        $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
-        $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
-        dol_syslog("modules::UnActivate Failed to find module file, we use generic function with name ".$genericMod->name);
-        $genericMod->_remove();
+        // TODO Cannot instantiate abstract class
+    	//$genericMod = new DolibarrModul($db);
+        //$genericMod->name=preg_replace('/^mod/i','',$modName);
+        //$genericMod->style_sheet=1;
+        //$genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
+        //$genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
+        dol_syslog("modules::UnActivate Failed to find module file, we use generic function with name " . $modName);
+        //$genericMod->_remove();
     }
 
     // Desactivation des modules qui dependent de lui

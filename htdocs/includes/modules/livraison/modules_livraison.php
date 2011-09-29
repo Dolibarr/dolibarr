@@ -61,7 +61,7 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
  *	\class      ModeleNumRefDeliveryOrder
  *	\brief      Classe mere des modeles de numerotation des references de bon de livraison
  */
-class ModeleNumRefDeliveryOrder
+abstract class ModeleNumRefDeliveryOrder
 {
 	var $error='';
 
