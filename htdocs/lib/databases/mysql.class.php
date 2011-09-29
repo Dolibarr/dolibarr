@@ -26,10 +26,10 @@
 
 
 /**
- *	\class      DoliDbMysql
+ *	\class      DoliDBMysql
  *	\brief      Class to manage Dolibarr database access for a Mysql database
  */
-class DoliDbMysql
+class DoliDBMysql
 {
 	//! Database handler
 	var $db;
@@ -80,7 +80,7 @@ class DoliDbMysql
 	 *	@param	    int		$port		Port of database server
 	 *	@return	    int					1 if OK, 0 if not
 	 */
-	function DoliDb($type, $host, $user, $pass, $name='', $port=0)
+	function DoliDBMysql($type, $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
 

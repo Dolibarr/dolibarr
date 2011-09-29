@@ -27,10 +27,10 @@
 
 
 /**
- *	\class      DoliDbPgsql
+ *	\class      DoliDBPgsql
  *	\brief      Class to drive a Postgresql database for Dolibarr
  */
-class DoliDbPgsql
+class DoliDBPgsql
 {
 	var $db;                      // Database handler
 	var $type='pgsql';            // Name of manager
@@ -70,7 +70,7 @@ class DoliDbPgsql
 	 *	@param	    int		$port		Port of database server
 	 *	@return	    int					1 if OK, 0 if not
 	 */
-	function DoliDbPgsql($type, $host, $user, $pass, $name='', $port=0)
+	function DoliDBPgsql($type, $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
 
