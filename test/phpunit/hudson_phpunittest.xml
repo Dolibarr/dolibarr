@@ -52,6 +52,8 @@
     <directory suffix=".php">../../test/</directory>
     <directory suffix=".inc.php">../../htdocs/boutique/</directory>
     <directory suffix=".inc.php">../../htdocs/compta/paiement/cheque/</directory>
+    <directory suffix=".inc.php">../../htdocs/compta/bank/</directory>
+    <directory suffix=".inc.php">../../htdocs/ftp/</directory>
     <directory suffix=".php">../../htdocs/core/filemanagerdol/</directory>
     <directory suffix=".php">../../htdocs/custom/</directory>
     <directory suffix=".php">../../htdocs/products/canvas/</directory>
