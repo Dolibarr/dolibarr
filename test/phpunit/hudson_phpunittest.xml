@@ -7,9 +7,9 @@
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	colors="true"
-	processIsolation="true"
+	processIsolation="false"
 	stopOnFailure="false"
-	syntaxCheck="true">
+	syntaxCheck="false">
 <filter>
   <blacklist>
     <directory suffix=".php">../../build/</directory>
