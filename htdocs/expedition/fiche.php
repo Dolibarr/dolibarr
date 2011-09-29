@@ -783,7 +783,7 @@ if ($action == 'create')
 				// Show subproducts of product
 				if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
 				{
-					$product->get_sousproduits_arbo ();
+					$product->get_sousproduits_arbo();
 					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
 					if(count($prods_arbo) > 0)
 					{

@@ -46,16 +46,16 @@ $sql.= " GROUP BY dm DESC ";
 $resql=$db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  while ($i < $num)
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num)
     {
-      $row = $db->fetch_row($resql);
-      $nbproduct = $row[0];
-      $year = $row[1];
-      print "<tr>";
-      print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td></tr>';
-      $i++;
+        $row = $db->fetch_row($resql);
+        $nbproduct = $row[0];
+        $year = $row[1];
+        print "<tr>";
+        print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td></tr>';
+        $i++;
     }
 }
 $db->free();

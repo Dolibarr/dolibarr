@@ -74,7 +74,9 @@ class Expedition extends CommonObject
 	var $date_valid;
 
 	/**
-	 * Initialisation
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function Expedition($DB)
 	{
@@ -88,10 +90,11 @@ class Expedition extends CommonObject
 		$this->statuts[1]  = 'StatusSendingValidated';
 	}
 
-		/**
+	/**
 	 *	Return next contract ref
-	 *	@param		soc		objet society
-	 *	@return     string	free reference for contract
+	 *
+	 *	@param	Societe		$soc	Objet society
+	 *	@return string				Free reference for contract
 	 */
 	function getNextNumRef($soc)
 	{
@@ -135,9 +138,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *    \brief      Cree expedition en base
-	 *    \param      user        Objet du user qui cree
-	 *    \return     int         <0 si erreur, id expedition creee si ok
+	 *  Create expedition en base
+	 *
+	 *  @param	User	$user       Objet du user qui cree
+	 *  @return int 				<0 si erreur, id expedition creee si ok
 	 */
 	function create($user)
 	{
@@ -301,11 +305,12 @@ class Expedition extends CommonObject
 
 	/**
 	 *	Get object and lines from database
-	 *	@param      id       	Id of object to load
-	 * 	@param		ref			Ref of object
-	 * 	@param		ref_ext		External reference of object
-     * 	@param		ref_int		Internal reference of other object
-	 *	@return     int         >0 if OK, <0 if KO
+	 *
+	 *	@param	int		$id       	Id of object to load
+	 * 	@param	string	$ref		Ref of object
+	 * 	@param	string	$ref_ext	External reference of object
+     * 	@param	string	$ref_int	Internal reference of other object
+	 *	@return int			        >0 if OK, <0 if KO
 	 */
 	function fetch($id, $ref='', $ref_ext='', $ref_int='')
 	{
@@ -408,8 +413,9 @@ class Expedition extends CommonObject
 
 	/**
 	 *        Validate object and update stock if option enabled
-	 *        @param      user        Object user that validate
-	 *        @return     int
+	 *
+	 *        @param      User		$user       Object user that validate
+	 *        @return     int					<0 if OK, >0 if KO
 	 */
 	function valid($user)
 	{
@@ -579,9 +585,10 @@ class Expedition extends CommonObject
 
 
 	/**
-	 *      \brief      Cree un bon de livraison a partir de l'expedition
-	 *      \param      user        Utilisateur
-	 *      \return     int         <0 si ko, >=0 si ok
+	 *	Cree un bon de livraison a partir de l'expedition
+	 *
+	 *	@param	User	$user       Utilisateur
+	 *  @return int  				<0 if KO, >=0 if OK
 	 */
 	function create_delivery($user)
 	{
@@ -651,10 +658,11 @@ class Expedition extends CommonObject
 	}
 
     /**
-     *      \brief      Update database
-     *      \param      user        	User that modify
-     *      \param      notrigger	    0=launch triggers after, 1=disable triggers
-     *      \return     int         	<0 if KO, >0 if OK
+     *  Update database
+     *
+     *  @param	User	$user        	User that modify
+     *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *  @return int 			       	<0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -755,6 +763,8 @@ class Expedition extends CommonObject
 
     /**
 	 * 	Delete shipping
+	 *
+	 * 	@return	void
 	 */
 	function delete()
 	{
@@ -838,8 +848,9 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 *	Load lines
 	 *
-	 *
+	 *	@return	void
 	 */
 	function fetch_lines()
 	{
@@ -898,9 +909,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\return		string			Chaine avec URL
+	 * Renvoie nom clicable (avec eventuellement le picto)
+	 *
+	 * @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 * @return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
 	{
@@ -925,8 +937,9 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le libelle du statut d'une expedition
-	 *    \return     string      Libelle
+	 * Retourne le libelle du statut d'une expedition
+	 *
+	 * @return     string      Libelle
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -934,10 +947,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Return label of a status
-	 * 		\param      statut		Id statut
-	 *    	\param      mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
-	 *    	\return     string		Label of status
+	 * Return label of a status
+	 *
+	 * @param      int		$statut		Id statut
+	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+	 * @return     string				Label of status
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -1047,10 +1061,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *      \brief      Set the planned delivery date
-	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      date_livraison      Date de livraison
-	 *      \return     int         		<0 si ko, >0 si ok
+	 * Set the planned delivery date
+	 *
+	 * @param      user        			Objet utilisateur qui modifie
+	 * @param      date_livraison     	Date de livraison
+	 * @return     int         			<0 si ko, >0 si ok
 	 */
 	function set_date_livraison($user, $date_livraison)
 	{
@@ -1081,7 +1096,9 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	\brief	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
+	 * Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
+	 *
+	 * @return	void
 	 */
 	function fetch_delivery_methods()
 	{
@@ -1106,6 +1123,8 @@ class Expedition extends CommonObject
 
 	/**
 	 *	Get tracking url status
+	 *
+	 *	@return	void
 	 */
 	function GetUrlTrackingStatus($value='')
 	{
@@ -1157,8 +1176,7 @@ class Expedition extends CommonObject
 
 
 /**
- *  \class      ExpeditionLigne
- *  \brief      Classe de gestion des lignes de bons d'expedition
+ * Classe de gestion des lignes de bons d'expedition
  */
 class ExpeditionLigne
 {
