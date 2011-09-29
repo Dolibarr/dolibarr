@@ -66,7 +66,7 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
  *  \brief      Classe mere des modeles de numerotation des references de commandes
  */
 
-class ModeleNumRefCommandes
+abstract class ModeleNumRefCommandes
 {
 	var $error='';
 

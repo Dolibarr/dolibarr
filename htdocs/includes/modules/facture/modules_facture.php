@@ -61,7 +61,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
  *	\class      ModeleNumRefFactures
  *	\brief      Classe mere des modeles de numerotation des references de facture
  */
-class ModeleNumRefFactures
+abstract class ModeleNumRefFactures
 {
 	var $error='';
 

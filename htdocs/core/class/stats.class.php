@@ -32,17 +32,6 @@ abstract class Stats
 
 
 	/**
-	 *	Constructor
-	 *
-	 *	@param 		DoliDB		$DB		Database handler
-	 * 	@return 	Stats
-	 */
-	function Stats($DB)
-	{
-		$this->db = $DB;
-	}
-
-	/**
 	 * Return nb of entity by month for several years
 	 *
 	 * @param 	endyear		Start year

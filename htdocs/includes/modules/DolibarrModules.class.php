@@ -49,20 +49,7 @@ abstract class DolibarrModules
     //! Tableau des documents ???
     var $docs;
 
-    var $dbversion;
-
-
-    /**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$DB      Database handler
-     */
-    function DolibarrModules($DB)
-    {
-        $this->db = $DB ;
-        $this->dbversion = "-";
-    }
-
+    var $dbversion = "-";
 
     /**
      *      Fonction d'activation. Insere en base les constantes et boites du module

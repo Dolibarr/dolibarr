@@ -362,16 +362,16 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		$usertotest=$_POST["username"];
-		$passwordtotest=$_POST["password"];
-		$entitytotest=$_POST["entity"];
+		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : $_POST["username"]);
+		$passwordtotest	= (! empty($_COOKIE['password_dolibarr']) ? $_COOKIE['password_dolibarr'] : $_POST["password"]);
+		$entitytotest	= (! empty($_POST["entity"]) ? $_POST["entity"] : 1);
 
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
-		if (isset($_POST["username"]) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
+		if (isset($_POST["username"]) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
 		if ($test && $goontestloop)
 		{

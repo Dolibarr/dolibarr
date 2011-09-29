@@ -21,7 +21,7 @@
  *		\brief      File to manage left menu for FTP module
  */
 
-require ("../main.inc.php");
+require (realpath(dirname(__FILE__)) . "/../main.inc.php");
 
 $user->getrights('ecm');
 

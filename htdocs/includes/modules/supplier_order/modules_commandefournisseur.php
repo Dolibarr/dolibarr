@@ -65,7 +65,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
  *	\class      ModeleNumRefSuppliersOrders
  *	\brief      Classe mere des modeles de numerotation des references de commandes fournisseurs
  */
-class ModeleNumRefSuppliersOrders
+abstract class ModeleNumRefSuppliersOrders
 {
 	var $error='';
 

@@ -61,7 +61,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
  *	\class      ModeleNumRefPropales
  *	\brief      Classe mere des modeles de numerotation des references de propales
  */
-class ModeleNumRefPropales
+abstract class ModeleNumRefPropales
 {
 	var $error='';
 

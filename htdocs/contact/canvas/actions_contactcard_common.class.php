@@ -42,23 +42,6 @@ abstract class ActionsContactCardCommon
 	//! Error array
 	var $errors=array();
 
-    /**
-	 *    Constructor
-	 *
-     *    @param	DoliDB	$DB				Handler acces base de donnees
-     *    @param	string	$dirmodule		Name of directory of module
-     *    @param	string	$targetmodule	Name of directory where canvas is stored
-     *    @param	string	$canvas			Name of canvas
-     *    @param	string	$card			Name of tab (sub-canvas)
-	 */
-	function __construct($DB, $dirmodule, $targetmodule, $canvas, $card)
-	{
-        $this->db				= $DB;
-        $this->dirmodule		= $dirmodule;
-        $this->targetmodule		= $targetmodule;
-        $this->canvas			= $canvas;
-        $this->card				= $card;
-	}
 	
 	/**
 	 * 	Instantiation of DAO class

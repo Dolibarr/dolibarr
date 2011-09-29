@@ -24,7 +24,7 @@
  *		\brief  	Fichier gestionnaire du menu compta banque
  */
 
-require_once("../../main.inc.php");
+require_once(realpath(dirname(__FILE__)) . "/../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("banks");

@@ -35,11 +35,6 @@ abstract class MailingTargets
     var $db='';
     var $error='';
 
-    function MailingTargets($DB)
-    {
-        $this->db=$DB;
-    }
-
     /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Retourne la traduction de la cle MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouve
      */
