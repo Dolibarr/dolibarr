@@ -79,7 +79,7 @@ class ActionsCardProduct extends Product
 
    		$tmpobject = new Product($this->db);
    		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id,$ref);
-        $this->object = $object;
+        $this->object = $tmpobject;
 
 		//parent::assign_values($action);
 
