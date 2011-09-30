@@ -1,14 +1,12 @@
-DOLIBARR ERP/CRM
-================
+# DOLIBARR ERP/CRM
 
 
-1. INSTALL
-----------
+## INSTALL
 
 If you have no technical knowledge, use Windows and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows). 
 You can download it at:
 
-[Sourceforge] (http://www.dolibarr.org/downloads/cat_view/62-stable-versions)
+[dolibarr.org] (http://www.dolibarr.org/downloads/cat_view/62-stable-versions)
 
 If you already have installed a Web server and a Mysql database, you can install this version like this:
 
@@ -22,14 +20,14 @@ Url depends on choice made on first step:
 
 	http://localhost/dolibarr/htdocs/install/
 or
+
 	http://yourdolibarrvirtualhost/install/
    
 - Follow instructions provided by installer...
 
 
 
-2. UPGRADE
-----------
+## UPGRADE
 
 To upgrade Dolibarr from an old version to this one:
 
@@ -51,17 +49,15 @@ Note: Migrate process can be ran safely several times.
   
 
 
-3. WHAT'S NEW
--------------
+## WHAT'S NEW
 
 See ChangeLog file.
 
 
 
-4. WHAT DOLIBARR CAN DO
------------------------
+## WHAT DOLIBARR CAN DO
 
-Main modules/features:
+### Main modules/features:
 
 - Products and services catalog
 - Customers, Prospects or Suppliers directory
@@ -81,7 +77,7 @@ Main modules/features:
 - Management of foundation members
 - Donation management
 
-Other modules:
+### Other modules:
 
 - Bookmarks management
 - Can reports Dolibarr events inside Webcalendar or Phenix
@@ -91,12 +87,10 @@ Other modules:
 - ClickToDial phone numbers
 - RSS
 
-Miscellanous:
+### Miscellanous:
 
 - Mutli-user, with several permissions levels for each feature.
-- Serveral menu managers (can be used by internal users, as a back-office,
-  with a particular menu, or by external users, as a front-office, with
-  another menu and permissions).
+- Serveral menu managers (can be used by internal users, as a back-office, with a particular menu, or by external users, as a front-office, with another menu and permissions).
 - Very user friendly and easy to use.
 - Optional WYSIWYG forms, optional Ajax forms.
 - Several skins.
@@ -104,15 +98,12 @@ Miscellanous:
 - Works with Mysql 3.1 or higher, experimental support for PostgreSql.
 - Works with PHP 4.3 or higher.
 - An easy to understand and maintain code (PHP with no heavy frameworks).
-- A trigger architecture to allow you to make Dolibarr business events run
-  PHP code to update your own information system.
-- "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
-  called "Non Perçue Récupérable").
+- A trigger architecture to allow you to make Dolibarr business events run PHP code to update your own information system.
+- "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM called "Non Perçue Récupérable").
 
 
 
-5. WHAT DOLIBARR CAN'T DO YET (TODO LIST)
------------------------------------------
+## WHAT DOLIBARR CAN'T DO YET (TODO LIST)
 
 This is features that Dolibarr does not support completely yet:
 
@@ -120,7 +111,5 @@ This is features that Dolibarr does not support completely yet:
 - Dolibarr can manage only one currency.
 - Dolibarr does not support the double Canadian Tax.
 - Dolibarr does not make coffee (not yet).
-- Stock management with option increase/decrease on invoice works on
-  warehouse number one only (no way to choose warehouse).
-- Stock management with option increase/decrease on orders works on
-  warehouse number one only (no way to choose warehouse).
+- Stock management with option increase/decrease on invoice works on warehouse number one only (no way to choose warehouse).
+- Stock management with option increase/decrease on orders works on warehouse number one only (no way to choose warehouse).
