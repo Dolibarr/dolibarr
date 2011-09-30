@@ -124,6 +124,10 @@ class Product extends CommonObject
 	//! Canevas a utiliser si le produit n'est pas un produit generique
 	var $canvas;
 
+	var $import_key;
+	var $date_creation;
+	var $date_modification;
+
 	//! Id du fournisseur
 	var $product_fourn_id;
 
@@ -997,21 +1001,21 @@ class Product extends CommonObject
 	/**
 	 *  Load a product in memory from database
 	 *
-	 *  @param      id      Id of product/service to load
-	 *  @param      ref     Ref of product/service to load
-	 *  @return     int     <0 if KO, >0 if OK
+	 *  @param	int		$id      	Id of product/service to load
+	 *  @param  string	$ref     	Ref of product/service to load
+	 *  @param	string	$ref_ext	Ref ext of product/service to load
+	 *  @return int     			<0 if KO, >0 if OK
 	 */
-	function fetch($id='',$ref='')
+	function fetch($id='',$ref='',$ref_ext='')
 	{
 	    include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
 
-		global $langs;
-		global $conf;
+		global $langs, $conf;
 
-		dol_syslog("Product::fetch id=$id ref=$ref");
+		dol_syslog("Product::fetch id=$id ref=$ref ref_ext=$ref_ext");
 
 		// Check parameters
-		if (! $id && ! $ref)
+		if (! $id && ! $ref && ! $ref_ext)
 		{
 			$this->error=$langs->trans('ErrorWrongParameters');
 			dol_print_error("Product::fetch ".$this->error, LOG_ERR);
@@ -1023,10 +1027,11 @@ class Product extends CommonObject
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " import_key";
+		$sql.= " datec, tms, import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		else if ($ref) $sql.= " WHERE ref = '".$this->db->escape($ref)."'";
+		else if ($ref_ext) $sql.= " WHERE ref_ext = '".$this->db->escape($ref_ext)."'";
 
 		dol_syslog("Product::fetch sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -1083,6 +1088,8 @@ class Product extends CommonObject
 				$this->stock_reel         = $object->stock;
 				$this->pmp                = $object->pmp;
 
+				$this->date_creation      = $object->datec;
+				$this->date_modification  = $object->tms;
 				$this->import_key         = $object->import_key;
 
 				$this->db->free($resql);

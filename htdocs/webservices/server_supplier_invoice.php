@@ -52,21 +52,35 @@ $server->configureWSDL('WebServicesDolibarrSupplierInvoice',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
-// Define WSDL content
+// Define WSDL Authentication object
 $server->wsdl->addComplexType(
-        'authentication',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-	    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-	    	'login' => array('name'=>'login','type'=>'xsd:string'),
-	        'password' => array('name'=>'password','type'=>'xsd:string'),
-	        'entity' => array('name'=>'entity','type'=>'xsd:string'),
-	    ));
+    'authentication',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+    	'login' => array('name'=>'login','type'=>'xsd:string'),
+        'password' => array('name'=>'password','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+    )
+);
+// Define WSDL Return object
+$server->wsdl->addComplexType(
+    'result',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+    )
+);
 
+// Define other specific objects
 $server->wsdl->addComplexType(
     'line',
     'element',
@@ -163,16 +177,6 @@ $server->wsdl->addComplexType(
     'tns:invoice'
 );
 
-$server->wsdl->addComplexType(
-        'result',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-	        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-	    ));
 
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
@@ -183,27 +187,29 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 // Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
 
 // Register WSDL
-$server->register('getSupplierInvoice',
-// Entry values
-array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
-// Exit values
-array('result'=>'tns:result','invoice'=>'tns:invoice'),
-$ns,
-$ns.'#getSupplierInvoice',
-$styledoc,
-$styleuse,
-'WS to get SupplierInvoice'
+$server->register(
+    'getSupplierInvoice',
+    // Entry values
+    array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
+    // Exit values
+    array('result'=>'tns:result','invoice'=>'tns:invoice'),
+    $ns,
+    $ns.'#getSupplierInvoice',
+    $styledoc,
+    $styleuse,
+    'WS to get SupplierInvoice'
 );
-$server->register('getSupplierInvoicesForThirdParty',
-// Entry values
-array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string'),
-// Exit values
-array('result'=>'tns:result','invoices'=>'tns:invoices'),
-$ns,
-$ns.'#getSupplierInvoicesForThirdParty',
-$styledoc,
-$styleuse,
-'WS to get SupplierInvoicesForThirdParty'
+$server->register(
+    'getSupplierInvoicesForThirdParty',
+    // Entry values
+    array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string'),
+    // Exit values
+    array('result'=>'tns:result','invoices'=>'tns:invoices'),
+    $ns,
+    $ns.'#getSupplierInvoicesForThirdParty',
+    $styledoc,
+    $styleuse,
+    'WS to get SupplierInvoicesForThirdParty'
 );
 
 

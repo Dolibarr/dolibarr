@@ -101,6 +101,11 @@ print '<br><br>';
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
 $url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php?wsdl';
 print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+if ($conf->product->enabled || $conf->service->enabled)
+{
+	$url=DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php?wsdl';
+	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
 if ($conf->societe->enabled)
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php?wsdl';
@@ -123,6 +128,11 @@ print '<br>';
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
 $url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php';
 print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+if ($conf->product->enabled || $conf->service->enabled)
+{
+	$url=DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
+	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
 if ($conf->societe->enabled)
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';

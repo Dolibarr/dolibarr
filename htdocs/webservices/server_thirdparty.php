@@ -52,67 +52,70 @@ $server->configureWSDL('WebServicesDolibarrThirdParty',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
-// Define WSDL content
+// Define WSDL Authentication object
 $server->wsdl->addComplexType(
-        'authentication',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-	    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-	    	'login' => array('name'=>'login','type'=>'xsd:string'),
-	        'password' => array('name'=>'password','type'=>'xsd:string'),
-	        'entity' => array('name'=>'entity','type'=>'xsd:string'),
-	    ));
+    'authentication',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+    	'login' => array('name'=>'login','type'=>'xsd:string'),
+        'password' => array('name'=>'password','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+    )
+);
+// Define WSDL Return object
+$server->wsdl->addComplexType(
+    'result',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+    )
+);
 
+// Define other specific objects
 $server->wsdl->addComplexType(
-        'thirdparty',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	    	'id' => array('name'=>'id','type'=>'xsd:string'),
-	        'ref' => array('name'=>'name','type'=>'xsd:string'),
-	        'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-	        'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
-	        'date' => array('name'=>'date','type'=>'xsd:date'),
-	        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
-	        'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
-	        'note' => array('name'=>'note','type'=>'xsd:string'),
-	    	'address' => array('name'=>'address','type'=>'xsd:string'),
-	    	'zip' => array('name'=>'zip','type'=>'xsd:string'),
-	    	'town' => array('name'=>'town','type'=>'xsd:string'),
-	    	'province_id' => array('name'=>'province_id','type'=>'xsd:string'),
-	    	'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
-	    	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
-	    	'country' => array('name'=>'country','type'=>'xsd:string'),
-	        'phone' => array('name'=>'country_id','type'=>'xsd:string'),
-	    	'fax' => array('name'=>'country_id','type'=>'xsd:string'),
-	    	'email' => array('name'=>'country_id','type'=>'xsd:string'),
-	    	'url' => array('name'=>'country_id','type'=>'xsd:string'),
-	    	'profid1' => array('name'=>'profid1','type'=>'xsd:string'),
-	    	'profid2' => array('name'=>'profid2','type'=>'xsd:string'),
-	    	'profid3' => array('name'=>'profid3','type'=>'xsd:string'),
-	    	'profid4' => array('name'=>'profid4','type'=>'xsd:string'),
-	    	'prefix' => array('name'=>'prefix','type'=>'xsd:string'),
-	    	'vat_used' => array('name'=>'vat_used','type'=>'xsd:string'),
-	    	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string')
-	    )
-    );
-
-$server->wsdl->addComplexType(
-        'result',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-	        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-	    ));
+    'thirdparty',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+    	'id' => array('name'=>'id','type'=>'xsd:string'),
+        'ref' => array('name'=>'name','type'=>'xsd:string'),
+        'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+        'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
+        'date' => array('name'=>'date','type'=>'xsd:date'),
+        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
+        'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
+        'note' => array('name'=>'note','type'=>'xsd:string'),
+    	'address' => array('name'=>'address','type'=>'xsd:string'),
+    	'zip' => array('name'=>'zip','type'=>'xsd:string'),
+    	'town' => array('name'=>'town','type'=>'xsd:string'),
+    	'province_id' => array('name'=>'province_id','type'=>'xsd:string'),
+    	'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
+    	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
+    	'country' => array('name'=>'country','type'=>'xsd:string'),
+        'phone' => array('name'=>'country_id','type'=>'xsd:string'),
+    	'fax' => array('name'=>'country_id','type'=>'xsd:string'),
+    	'email' => array('name'=>'country_id','type'=>'xsd:string'),
+    	'url' => array('name'=>'country_id','type'=>'xsd:string'),
+    	'profid1' => array('name'=>'profid1','type'=>'xsd:string'),
+    	'profid2' => array('name'=>'profid2','type'=>'xsd:string'),
+    	'profid3' => array('name'=>'profid3','type'=>'xsd:string'),
+    	'profid4' => array('name'=>'profid4','type'=>'xsd:string'),
+    	'prefix' => array('name'=>'prefix','type'=>'xsd:string'),
+    	'vat_used' => array('name'=>'vat_used','type'=>'xsd:string'),
+    	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string')
+    )
+);
 
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
@@ -123,16 +126,17 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 // Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
 
 // Register WSDL
-$server->register('getThirdParty',
-// Entry values
-array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
-// Exit values
-array('result'=>'tns:result','thirdparty'=>'tns:thirdparty'),
-$ns,
-$ns.'#getVersions',
-$styledoc,
-$styleuse,
-'WS to get Versions'
+$server->register(
+    'getThirdParty',
+    // Entry values
+    array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
+    // Exit values
+    array('result'=>'tns:result','thirdparty'=>'tns:thirdparty'),
+    $ns,
+    $ns.'#getVersions',
+    $styledoc,
+    $styleuse,
+    'WS to get Versions'
 );
 
 
