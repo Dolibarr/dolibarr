@@ -5,7 +5,7 @@
 
 If you have no technical knowledge, use Windows and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows).
 
-You can download it at: [www.dolibarr.org] (http://www.dolibarr.org/downloads/cat_view/62-stable-versions)
+You can download it at: [Official Website] (http://www.dolibarr.org/downloads/cat_view/62-stable-versions)
 
 If you already have installed a Web server and a Mysql database, you can install this version like this:
 
