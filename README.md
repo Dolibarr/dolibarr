@@ -1,12 +1,11 @@
-## DOLIBARR ERP/CRM
+# DOLIBARR ERP/CRM
 
 
-# INSTALL
+## INSTALL
 
-If you have no technical knowledge, use Windows and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows). 
-You can download it at:
+If you have no technical knowledge, use Windows and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows).
 
-[dolibarr.org] (http://www.dolibarr.org/downloads/cat_view/62-stable-versions)
+You can download it at: [www.dolibarr.org] (http://www.dolibarr.org/downloads/cat_view/62-stable-versions)
 
 If you already have installed a Web server and a Mysql database, you can install this version like this:
 
@@ -20,13 +19,14 @@ Url depends on choice made on first step:
 
 	http://localhost/dolibarr/htdocs/install/
 or
+
 	http://yourdolibarrvirtualhost/install/
    
 - Follow instructions provided by installer...
 
 
 
-# UPGRADE
+## UPGRADE
 
 To upgrade Dolibarr from an old version to this one:
 
@@ -48,15 +48,15 @@ Note: Migrate process can be ran safely several times.
   
 
 
-# WHAT'S NEW
+## WHAT'S NEW
 
 See ChangeLog file.
 
 
 
-# WHAT DOLIBARR CAN DO
+## WHAT DOLIBARR CAN DO
 
-Main modules/features:
+### Main modules/features:
 
 - Products and services catalog
 - Customers, Prospects or Suppliers directory
@@ -76,7 +76,7 @@ Main modules/features:
 - Management of foundation members
 - Donation management
 
-Other modules:
+### Other modules:
 
 - Bookmarks management
 - Can reports Dolibarr events inside Webcalendar or Phenix
@@ -86,7 +86,7 @@ Other modules:
 - ClickToDial phone numbers
 - RSS
 
-Miscellanous:
+### Miscellanous:
 
 - Mutli-user, with several permissions levels for each feature.
 - Serveral menu managers (can be used by internal users, as a back-office, with a particular menu, or by external users, as a front-office, with another menu and permissions).
@@ -102,7 +102,7 @@ Miscellanous:
 
 
 
-# WHAT DOLIBARR CAN'T DO YET (TODO LIST)
+## WHAT DOLIBARR CAN'T DO YET (TODO LIST)
 
 This is features that Dolibarr does not support completely yet:
 
