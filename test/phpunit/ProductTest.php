@@ -145,10 +145,6 @@ class ProductTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-        $result=$localobject->verify();
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertEquals($result, 0);
-
     	return $localobject;
     }
 

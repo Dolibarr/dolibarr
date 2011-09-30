@@ -2912,5 +2912,30 @@ class Product extends CommonObject
 		}
 	}
 
+    /**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+        global $user,$langs,$conf,$mysoc;
+
+        $now=dol_now();
+
+        // Initialize parameters
+        $this->id=0;
+        $this->ref = 'PRODUCT_SPEC';
+        $this->libelle = 'PRODUCT SPECIMEN';
+        $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
+        $this->specimen=1;
+        $this->country_id=1;
+        $this->tosell=1;
+        $this->tobuy=1;
+        $this->type=0;
+        $this->note='This is a comment (private)';
+    }
 }
 ?>
