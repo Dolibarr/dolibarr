@@ -54,8 +54,9 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acces base de donnees
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function Paiement($DB)
 	{
@@ -64,8 +65,9 @@ class Paiement extends CommonObject
 
 	/**
 	 *    Load payment from database
-	 *    @param      id      id of payment to get
-	 *    @return     int     <0 if KO, 0 if not found, >0 if OK
+	 *
+	 *    @param	int		$id     Id of payment to get
+	 *    @return   int     		<0 if KO, 0 if not found, >0 if OK
 	 */
 	function fetch($id)
 	{
@@ -120,9 +122,10 @@ class Paiement extends CommonObject
 	/**
 	 *    Create payment of invoices into database.
 	 *    Use this->amounts to have list of invoices for the payment
-	 *    @param       user                object user
-	 *    @param       closepaidinvoices   1=Also close payed invoices to paid, 0=Do nothing more
-	 *    @return      int                 id of created payment, < 0 if error
+	 *
+	 *    @param	User	$user                	Object user
+	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *    @return   int                 			id of created payment, < 0 if error
 	 */
 	function create($user,$closepaidinvoices=0)
 	{
@@ -252,7 +255,9 @@ class Paiement extends CommonObject
 	 *      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
 	 *      Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *      Si le paiement porte sur au moins une facture a "payee", on refuse
-	 *      @return     int     <0 si ko, >0 si ok
+	 *
+	 *      @param	int		$notrigger		No trigger
+	 *      @return int     				<0 si ko, >0 si ok
 	 */
 	function delete($notrigger=0)
 	{
@@ -351,13 +356,15 @@ class Paiement extends CommonObject
     /**
      *      A record into bank for payment with links between this bank record and invoices of payment.
      *      All payment properties must have been set first like after a call to create().
-     *      @param      user                Object of user making payment
-     *      @param      mode                'payment', 'payment_supplier'
-     *      @param      label               Label to use in bank record
-     *      @param      accountid           Id of bank account to do link with
-     *      @param      emetteur_nom        Name of transmitter
-     *      @param      emetteur_banque     Name of bank
-     *      @return     int                 <0 if KO, bank_line_id if OK
+     *
+     *      @param	User	$user               Object of user making payment
+     *      @param  string	$mode               'payment', 'payment_supplier'
+     *      @param  string	$label              Label to use in bank record
+     *      @param  int		$accountid          Id of bank account to do link with
+     *      @param  string	$emetteur_nom       Name of transmitter
+     *      @param  string	$emetteur_banque    Name of bank
+     *      @param	int		$notrigger			No trigger
+     *      @return int                 		<0 if KO, bank_line_id if OK
      */
     function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque,$notrigger=0)
     {
@@ -382,15 +389,17 @@ class Paiement extends CommonObject
             if ($mode == 'payment_supplier') $totalamount=-$totalamount;
 
             // Insert payment into llx_bank
-            $bank_line_id = $acc->addline($this->datepaye,
-            $this->paiementid,  // Payment mode id or code ("CHQ or VIR for example")
-            $label,
-            $totalamount,
-            $this->num_paiement,
-            '',
-            $user,
-            $emetteur_nom,
-            $emetteur_banque);
+            $bank_line_id = $acc->addline(
+                $this->datepaye,
+                $this->paiementid,  // Payment mode id or code ("CHQ or VIR for example")
+                $label,
+                $totalamount,
+                $this->num_paiement,
+                '',
+                $user,
+                $emetteur_nom,
+                $emetteur_banque
+            );
 
             // Mise a jour fk_bank dans llx_paiement
             // On connait ainsi le paiement qui a genere l'ecriture bancaire
@@ -433,8 +442,13 @@ class Paiement extends CommonObject
                             $fac->fetch_thirdparty();
                             if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
-                                $result=$acc->add_url_line($bank_line_id, $fac->thirdparty->id,
-                                DOL_URL_ROOT.'/comm/fiche.php?socid=', $fac->thirdparty->nom, 'company');
+                                $result=$acc->add_url_line(
+                                    $bank_line_id,
+                                    $fac->thirdparty->id,
+                                    DOL_URL_ROOT.'/comm/fiche.php?socid=',
+                                    $fac->thirdparty->nom,
+                                    'company'
+                                );
                                 if ($result <= 0) dol_print_error($this->db);
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
@@ -446,8 +460,13 @@ class Paiement extends CommonObject
                             $fac->fetch_thirdparty();
                             if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
-                                $result=$acc->add_url_line($bank_line_id, $fac->thirdparty->id,
-                                DOL_URL_ROOT.'/fourn/fiche.php?socid=', $fac->thirdparty->nom, 'company');
+                                $result=$acc->add_url_line(
+                                    $bank_line_id,
+                                    $fac->thirdparty->id,
+                                    DOL_URL_ROOT.'/fourn/fiche.php?socid=',
+                                    $fac->thirdparty->nom,
+                                    'company'
+                                );
                                 if ($result <= 0) dol_print_error($this->db);
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
@@ -485,7 +504,9 @@ class Paiement extends CommonObject
 
 	/**
 	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
-	 *      @param      id_bank     Id compte bancaire
+	 *
+	 *      @param	int		$id_bank    Id compte bancaire
+	 *      @return	int					<0 if KO, >0 if OK
 	 */
 	function update_fk_bank($id_bank)
 	{
@@ -506,8 +527,72 @@ class Paiement extends CommonObject
 		}
 	}
 
+    /**
+     *	Updates the payment date
+     *
+     *  @param	timestamp	$date   New date
+     *  @return int					<0 if KO, 0 if OK
+     */
+    function update_date($date)
+    {
+        if (!empty($date) && $this->statut!=1)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " SET datep = ".$this->db->idate($date);
+            $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog(get_class($this)."::update_date sql=".$sql);
+            $result = $this->db->query($sql);
+            if ($result)
+            {
+            	$this->datepaye = $date;
+                $this->date = $date;
+                return 0;
+            }
+            else
+            {
+                $this->error='Error -1 '.$this->db->error();
+                dol_syslog(get_class($this)."::update_date ".$this->error, LOG_ERR);
+                return -2;
+            }
+        }
+        return -1; //no date given or already validated
+    }
+
+    /**
+     *  Updates the payment number
+     *
+     *  @param	string	$num		New num
+     *  @return int					<0 if KO, 0 if OK
+     */
+    function update_num($num)
+    {
+    	if(!empty($num) && $this->statut!=1)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " SET num_paiement = '".$this->db->escape($num)."'";
+            $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog(get_class($this)."::update_num sql=".$sql);
+            $result = $this->db->query($sql);
+            if ($result)
+            {
+            	$this->numero = $this->db->escape($num);
+                return 0;
+            }
+            else
+            {
+                $this->error='Error -1 '.$this->db->error();
+                dol_syslog(get_class($this)."::update_num ".$this->error, LOG_ERR);
+                return -2;
+            }
+        }
+        return -1; //no num given or already validated
+    }
+
 	/**
 	 *    Validate payment
+	 *
 	 *    @return     int     <0 if KO, >0 if OK
 	 */
 	function valide()
@@ -572,9 +657,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *      \brief      Retourne la liste des factures sur lesquels porte le paiement
-	 *      \param      filter          Critere de filtre
-	 *      \return     array           Tableau des id de factures
+	 *  Retourne la liste des factures sur lesquels porte le paiement
+	 *
+	 *  @param	string	$filter         Critere de filtre
+	 *  @return array					Tableau des id de factures
 	 */
 	function getBillsArray($filter='')
 	{
@@ -608,10 +694,11 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\return		string			Chaine avec URL
+	 *  Renvoie nom clicable (avec eventuellement le picto)
+	 *
+	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	string	$option			Sur quoi pointe le lien
+	 *	@return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
@@ -629,9 +716,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -639,14 +727,16 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      status      Statut
-	 *		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string      Libelle du statut
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
 	 */
 	function LibStatut($status,$mode=0)
 	{
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
 		$langs->load('compta');
 		if ($mode == 0)
 		{

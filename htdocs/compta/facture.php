@@ -501,7 +501,6 @@ if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->f
 }
 
 
-
 /*
  * Insert new invoice in database
  */

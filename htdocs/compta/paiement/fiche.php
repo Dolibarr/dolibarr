@@ -126,6 +126,37 @@ if ($action == 'confirm_valide' && GETPOST('confirm') == 'yes' && $user->rights-
 	}
 }
 
+if ($action == 'setnum' && !empty($_POST['num']))
+{
+	$paiement = new Paiement($db);
+	$paiement->fetch($id);
+    $res = $paiement->update_num($_POST['num']);
+	if ($res === 0)
+	{
+		$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
+	}
+	else
+	{
+		$mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
+	}
+}
+
+if ($action == 'setdate' && !empty($_POST['dateday']))
+{
+	$paiement = new Paiement($db);
+	$paiement->fetch($id);
+    $datepaye = dol_mktime(12, 0, 0, $_POST['datemonth'], $_POST['dateday'], $_POST['dateyear']);
+	$res = $paiement->update_date($datepaye);
+	if ($res === 0)
+	{
+		$mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
+	}
+	else
+	{
+		$mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
+	}
+}
+
 
 /*
  * View
@@ -185,24 +216,24 @@ dol_htmloutput_mesg($mesg);
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+print '<tr><td valign="top" width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
 
-// Date
-print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->date,'day').'</td></tr>';
+// Date payment
+print '<tr><td valign="top">'.$html->editfieldkey("Date",'date',$paiement->date,'id',$paiement->id,$user->rights->facture->paiement).'</td><td colspan="3">';
+print $html->editfieldval("Date",'date',$paiement->date,'id',$paiement->id,$user->rights->facture->paiement,'day');
+print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
 $labeltype=$langs->trans("PaymentType".$paiement->type_code)!=("PaymentType".$paiement->type_code)?$langs->trans("PaymentType".$paiement->type_code):$paiement->type_libelle;
-print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
-// Numero
-//if ($paiement->montant)
-//{
-	print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->numero.'</td></tr>';
-//}
+// Payment numero
+print '<tr><td valign="top">'.$html->editfieldkey("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+print $html->editfieldval("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
+print '</td></tr>';
 
 // Amount
 print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-
 
 // Note
 print '<tr><td valign="top">'.$html->editfieldkey("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->facture->paiement).'</td><td colspan="3">';

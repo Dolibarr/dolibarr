@@ -35,18 +35,38 @@ $langs->load('companies');
 $langs->load("suppliers");
 
 $mesg='';
+$action=GETPOST('action');
+$id=GETPOST('id');
 
 
 /*
  * Actions
  */
 
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->supprimer)
+if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
+{
+    $db->begin();
+    $paiement = new PaiementFourn($db);
+    $paiement->fetch($id);
+    $result = $paiement->update_note(GETPOST('note'));
+    if ($result > 0)
+    {
+        $db->commit();
+        $action='';
+    }
+    else
+    {
+        $mesg='<div class="error">'.$paiement->error.'</div>';
+        $db->rollback();
+    }
+}
+
+if ($action == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->supprimer)
 {
 	$db->begin();
 
 	$paiement = new PaiementFourn($db);
-	$paiement->fetch($_GET['id']);
+	$paiement->fetch($id);
 	$result = $paiement->delete();
 	if ($result > 0)
 	{
@@ -61,12 +81,12 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 	}
 }
 
-if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->valider)
+if ($action == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->valider)
 {
 	$db->begin();
 
 	$paiement = new PaiementFourn($db);
-	$paiement->id = $_GET['id'];
+	$paiement->fetch($id);
 	if ($paiement->valide() >= 0)
 	{
 		$db->commit();
@@ -77,6 +97,37 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 	{
 		$mesg='<div class="error">'.$paiement->error.'</div>';
 		$db->rollback();
+	}
+}
+
+if ($action == 'setnum' && !empty($_POST['num']))
+{
+	$paiement = new PaiementFourn($db);
+	$paiement->fetch($id);
+    $res = $paiement->update_num($_POST['num']);
+	if ($res === 0)
+	{
+		$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
+	}
+	else
+	{
+		$mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
+	}
+}
+
+if ($action == 'setdate' && !empty($_POST['dateday']))
+{
+	$paiement = new PaiementFourn($db);
+	$paiement->fetch($id);
+    $datepaye = dol_mktime(12, 0, 0, $_POST['datemonth'], $_POST['dateday'], $_POST['dateyear']);
+	$res = $paiement->update_date($datepaye);
+	if ($res === 0)
+	{
+		$mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
+	}
+	else
+	{
+		$mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
 	}
 }
 
@@ -91,12 +142,12 @@ $html = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$_GET['id'];
+$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$id;
 $head[$h][1] = $langs->trans('Card');
 $hselected = $h;
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/info.php?id='.$_GET['id'];
+$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/info.php?id='.$id;
 $head[$h][1] = $langs->trans('Info');
 $h++;
 
@@ -104,14 +155,13 @@ $h++;
 dol_fiche_head($head, $hselected, $langs->trans('SupplierPayment'), 0, 'payment');
 
 $paiement = new PaiementFourn($db);
-$result=$paiement->fetch($_GET['id']);
+$result=$paiement->fetch($id);
 if ($result > 0)
 {
-
 	/*
 	 * Confirmation de la suppression du paiement
 	 */
-	if ($_GET['action'] == 'delete')
+	if ($action == 'delete')
 	{
 		$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
 		if ($ret == 'html') print '<br>';
@@ -120,102 +170,31 @@ if ($result > 0)
 	/*
 	 * Confirmation de la validation du paiement
 	 */
-	if ($_GET['action'] == 'valide')
+	if ($action == 'valide')
 	{
 		$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
 		if ($ret == 'html') print '<br>';
 	}
-
-	if (!empty($_POST['action']) && $_POST['action'] == 'update_num' && !empty($_POST['new_num']))
-	{
-		$res = $paiement->update_num($_POST['new_num']);
-		if ($res === 0) {
-			$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
-		} else {
-			$mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
-		}
-	}
-
-	if (!empty($_POST['action']) && $_POST['action'] == 'update_date' && !empty($_POST['reday']))
-	{
-		$datepaye = dol_mktime(12, 0 , 0,
-		$_POST['remonth'],
-		$_POST['reday'],
-		$_POST['reyear']);
-		$res = $paiement->update_date($datepaye);
-		if ($res === 0) {
-			$mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
-		} else {
-			$mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
-		}
-	}
-
 
 	print '<table class="border" width="100%">';
 
 	print '<tr>';
 	print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
 
-	//switch through edition options for date (only available when statut is -not 1- (=validated))
-	if (empty($_GET['action']) || $_GET['action']!='edit_date')
-	{
-		print '<tr><td colspan="2">';
-		print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-		print $langs->trans('Date');
-		print '</td>';
-		if ($paiement->statut == 0 && $_GET['action'] != 'edit_date') print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_date">'.img_edit($langs->trans('Modify')).'</a></td>';
-		print '</tr></table>';
-		print '</td>';
-		print '<td colspan="3">'.dol_print_date($paiement->date,'day').'</td></tr>';
-	}
-	else
-	{
-		print '<tr>';
-		print '<td valign="top" colspan="2">'.$langs->trans('Date').'</td>';
-		print '<td colspan="3">';
-		print '<form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_date" />';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		if (!empty($_POST['remonth']) && !empty($_POST['reday']) && !empty($_POST['reyear']))
-		$sel_date=dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		else
-		$sel_date=$paiement->date;
-		$html->select_date($sel_date,'','','','',"addpaiement");
-		print '<input type="submit" class="button" name="submit" value="'.$langs->trans('Validate').'" />';
-		print '</form>';
-		print '</td>';
-		print '</tr>';
-	}
+	// Date payment
+    print '<tr><td valign="top" colspan="2">'.$html->editfieldkey("Date",'date',$paiement->date,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $html->editfieldval("Date",'date',$paiement->date,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
+    print '</td></tr>';
 
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('Type').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
+	// Payment mode
+	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
 
-	//switch through edition options for number (only available when statut is -not 1- (=validated))
-	if (empty($_GET['action']) || $_GET['action'] != 'edit_num')
-	{
-		print '<tr><td colspan="2">';
-		print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-		print $langs->trans('Numero');
-		print '</td>';
-		if ($paiement->statut == 0 && $_GET['action'] != 'edit_num') print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_num">'.img_edit($langs->trans('Modify')).'</a></td>';
-		print '</tr></table>';
-		print '</td>';
-		print '<td colspan="3">'.$paiement->numero.'</td></tr>';
-	}
-	else
-	{
-		print '<tr>';
-		print '<td valign="top" colspan="2">'.$langs->trans('Numero').'</td>';
-		print '<td colspan="3">';
-		print '<form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_num" />';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		if (!empty($_POST['new_num']))
-		$num = $this->db->escape($_POST['new_num']);
-		else
-		$num = $paiement->numero;
-		print '<input type="text" name="new_num" value="'.$num.'"/>';
-		print '<input type="submit" class="button" name="submit" value="'.$langs->trans('Validate').'" />';
-		print '</form></td>';
-		print '</tr>';
-	}
+	// Payment numero
+    print '<tr><td valign="top" colspan="2">'.$html->editfieldkey("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $html->editfieldval("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
+    print '</td></tr>';
+
+	// Amount
 	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
@@ -223,7 +202,10 @@ if ($result > 0)
 		print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$paiement->getLibStatut(4).'</td></tr>';
 	}
 
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
+	// Note
+    print '<tr><td valign="top"" colspan="2">'.$html->editfieldkey("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $html->editfieldval("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->fournisseur->facture->creer,'text');
+    print '</td></tr>';
 
     // Bank account
 	if ($conf->banque->enabled)
@@ -244,7 +226,7 @@ if ($result > 0)
 
 	print '</table>';
 
-	if ($mesg) print '<br>'.$mesg;
+	dol_htmloutput_mesg($mesg);
 
 	print '<br>';
 

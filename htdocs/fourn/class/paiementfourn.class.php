@@ -55,10 +55,10 @@ class PaiementFourn extends Paiement
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acces base de donnees
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
-
 	function PaiementFourn($DB)
 	{
 		$this->db = $DB ;
@@ -475,65 +475,5 @@ class PaiementFourn extends Paiement
 		if ($withpicto != 2) $result.=$lien.$text.$lienfin;
 		return $result;
 	}
-
-    /**
-     *      \brief      Updates the payment number
-     *      \param      string          New num
-     *      \return     int             -1 on error, 0 otherwise
-     */
-    function update_num($num)
-    {
-    	if(!empty($num) && $this->statut!=1)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn";
-            $sql.= " SET num_paiement = '".$this->db->escape($num)."'";
-            $sql.= " WHERE rowid = ".$this->id;
-
-            dol_syslog("PaiementFourn::update_num sql=".$sql);
-            $result = $this->db->query($sql);
-            if ($result)
-            {
-            	$this->numero = $this->db->escape($num);
-                return 0;
-            }
-            else
-            {
-                $this->error='PaiementFourn::update_num Error -1 '.$this->db->error();
-                dol_syslog('PaiementFourn::update_num error '.$this->error, LOG_ERR);
-                return -1;
-            }
-        }
-        return -1; //no num given or already validated
-    }
-    /**
-     *      \brief      Updates the payment date
-     *      \param      string          New date
-     *      \return     int             -1 on error, 0 otherwise
-     */
-    function update_date($date)
-    {
-        if(!empty($date) && $this->statut!=1)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn";
-            $sql.= " SET datep = ".$this->db->idate($date);
-            $sql.= " WHERE rowid = ".$this->id;
-
-            dol_syslog("PaiementFourn::update_date sql=".$sql);
-            $result = $this->db->query($sql);
-            if ($result)
-            {
-            	$this->datepaye = $date;
-                $this-> date = $date;
-                return 0;
-            }
-            else
-            {
-                $this->error='PaiementFourn::update_date Error -1 '.$this->db->error();
-                dol_syslog('PaiementFourn::update_date error '.$this->error, LOG_ERR);
-                return -1;
-            }
-        }
-        return -1; //no date given or already validated
-    }
 }
 ?>
