@@ -57,10 +57,10 @@ class FactureFournisseur extends Facture
 
     var $author;
     var $libelle;
-    var $datec;
-    var $tms;
-    var $date;
-    var $date_echeance;
+    var $datec;            // Creation date
+    var $tms;              // Last update date
+    var $date;             // Invoice date
+    var $date_echeance;    // Max payment date
     var $amount;
     var $remise;
     var $tva;
@@ -184,17 +184,18 @@ class FactureFournisseur extends Facture
                 {
                     $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-                    $this->updateline($idligne,
-                    $this->lines[$i]->description,
-                    $this->lines[$i]->pu_ht,
-                    $this->lines[$i]->tva_tx,
-                    $this->lines[$i]->localtax1_tx,
-                    $this->lines[$i]->localtax2_tx,
-                    $this->lines[$i]->qty,
-                    $this->lines[$i]->fk_product,
-					'HT',
-                    $this->lines[$i]->info_bits,
-                    $this->lines[$i]->product_type
+                    $this->updateline(
+                        $idligne,
+                        $this->lines[$i]->description,
+                        $this->lines[$i]->pu_ht,
+                        $this->lines[$i]->tva_tx,
+                        $this->lines[$i]->localtax1_tx,
+                        $this->lines[$i]->localtax2_tx,
+                        $this->lines[$i]->qty,
+                        $this->lines[$i]->fk_product,
+    					'HT',
+                        $this->lines[$i]->info_bits,
+                        $this->lines[$i]->product_type
                     );
                 }
             }
@@ -246,10 +247,12 @@ class FactureFournisseur extends Facture
 
     /**
      *    Load object in memory from database
-     *    @param      id          id object
-     *    @return     int         <0 if KO, >0 if OK
+     *
+     *    @param	int		$id         Id supplier invoice
+     *    @param	string	$ref		Ref supplier invoice
+     *    @return   int        			<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id='',$ref='')
     {
         global $langs;
         $sql = "SELECT";
@@ -287,7 +290,9 @@ class FactureFournisseur extends Facture
         $sql.= " t.import_key,";
         $sql.= ' s.nom as socnom, s.rowid as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t,'.MAIN_DB_PREFIX.'societe as s';
-        $sql.= ' WHERE t.rowid='.$id.' AND t.fk_soc = s.rowid';
+        if ($id)  $sql.= " WHERE t.rowid=".$id;
+        if ($ref) $sql.= " WHERE t.rowid='".$this->db->escape($ref)."'";    // ref is id (facnumber is supplier ref)
+        $sql.= ' AND t.fk_soc = s.rowid';
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -369,8 +374,9 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *	\brief      Load this->lines
-     *	\return     int         1 si ok, < 0 si erreur
+     *	Load this->lines
+     *
+     *	@return     int         1 si ok, < 0 si erreur
      */
     function fetch_lines()
     {
@@ -433,10 +439,11 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *      \brief      Update database
-     *      \param      user            User that modify
-     *      \param      notrigger       0=launch triggers after, 1=disable triggers
-     *      \return     int             <0 if KO, >0 if OK
+     *  Update database
+     *
+     *  @param	User	$user            User that modify
+     *  @param  int		$notrigger       0=launch triggers after, 1=disable triggers
+     *  @return int 			         <0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -486,7 +493,7 @@ class FactureFournisseur extends Facture
         $sql.= " fk_soc=".(isset($this->fk_soc)?$this->fk_soc:"null").",";
         $sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
         $sql.= " datef=".(dol_strlen($this->date)!=0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
-        $sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+        if (dol_strlen($this->tms) != 0) $sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
         $sql.= " libelle=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
         $sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";

@@ -432,7 +432,7 @@ class FormFile
             if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && $modulepart != 'unpaid')
             {
                 $langs->load("errors");
-                $out.= ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));
+                $out.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
             }
             $out.= '</td>';
 

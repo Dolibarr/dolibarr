@@ -19,9 +19,16 @@
 
 /**
  *	    \file       htdocs/lib/fourn.lib.php
- *		\brief      Ensemble de fonctions de base pour le module fournisseur
+ *		\brief      Functions used by supplier invoice module
+ *		\ingroup	supplier
  */
 
+/**
+ * Initialize the array of tabs for supplier invoice
+ *
+ * @param	Facture		$object		Invoice object
+ * @return	array					Array of head tabs
+ */
 function facturefourn_prepare_head($object)
 {
 	global $langs, $conf;
@@ -29,7 +36,7 @@ function facturefourn_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('Card');
+	$head[$h][1] = $langs->trans('CardBill');
 	$head[$h][2] = 'card';
 	$h++;
 

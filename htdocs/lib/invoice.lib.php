@@ -18,10 +18,16 @@
 
 /**
  *	    \file       htdocs/lib/invoice.lib.php
- *		\brief      Ensemble de fonctions de base pour le module factures
+ *		\brief      Functions used by invoice module
  * 		\ingroup	invoice
  */
 
+/**
+ * Initialize the array of tabs for customer invoice
+ *
+ * @param	Facture		$object		Invoice object
+ * @return	array					Array of head tabs
+ */
 function facture_prepare_head($object)
 {
 	global $langs, $conf;
