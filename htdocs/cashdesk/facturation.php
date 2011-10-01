@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2008-2011 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2011 Juanjo Menent			  	 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,9 +36,9 @@ if ( $_GET['filtre'] ) {
 	$sql.= " WHERE p.tosell = 1";
 	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
 	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%' ";
-	if ($conf->barcode->enabled) $sql.= " OR p.barcode='".$_GET['filtre']."')";
+	if ($conf->barcode->enabled) $sql.= " OR p.barcode LIKE '%".$_GET['filtre']."%')";
 	else $sql.= ")";
-		 
+
 	$sql.= " ORDER BY label";
 
 	dol_syslog("facturation.php sql=".$sql);

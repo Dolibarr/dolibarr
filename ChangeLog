@@ -19,6 +19,7 @@ For users:
 - New: Can build PDF in USLetter format or canada format.
 - New: Can export into Excel 2007 format.
 - New: Add hidden option CASHDESK_FORCE_STOCK_ON_BILL
+- New: Can search on part of barcode into POS module.
 
 For developers:
 - Qual: Removed no more used external libraries.
