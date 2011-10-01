@@ -89,18 +89,31 @@ $server->wsdl->addComplexType(
 	'',
     array(
 	    	'id' => array('name'=>'id','type'=>'xsd:string'),
-	        'ref' => array('name'=>'name','type'=>'xsd:string'),
+    		'ref' => array('name'=>'ref','type'=>'xsd:string'),
 	        'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-	        'label' => array('name'=>'label','type'=>'xsd:string'),
+	    	'type' => array('name'=>'type','type'=>'xsd:string'),
+    		'label' => array('name'=>'label','type'=>'xsd:string'),
 	        'description' => array('name'=>'description','type'=>'xsd:string'),
 	        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
 	        'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
 	        'note' => array('name'=>'note','type'=>'xsd:string'),
-	    	'tobuy' => array('name'=>'tobuy','type'=>'xsd:string'),
-	    	'tosell' => array('name'=>'tosell','type'=>'xsd:string'),
-	    	'type' => array('name'=>'type','type'=>'xsd:string'),
+	    	'status_tobuy' => array('name'=>'status_tobuy','type'=>'xsd:string'),
+	    	'status_tosell' => array('name'=>'status_tosell','type'=>'xsd:string'),
 	    	'barcode' => array('name'=>'barcode','type'=>'xsd:string'),
-	    	'country_id' => array('name'=>'country_id','type'=>'xsd:string')
+	    	'barcode_type' => array('name'=>'barcode_type','type'=>'xsd:string'),
+    		'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
+	    	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
+	    	'customcode' => array('name'=>'customcode','type'=>'xsd:string'),
+
+	    	'price_net' => array('name'=>'price_net','type'=>'xsd:string'),
+	    	'price' => array('name'=>'price','type'=>'xsd:string'),
+	    	'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
+
+	    	'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
+	    	'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
+	    	'stock_pmp' => array('name'=>'stock_pmp','type'=>'xsd:string'),
+    		'canvas' => array('name'=>'canvas','type'=>'xsd:string'),
+    		'import_key' => array('name'=>'import_key','type'=>'xsd:string')
     )
 );
 
@@ -113,19 +126,6 @@ $styledoc='rpc';       // rpc/document (document is an extend into SOAP 1.0 to s
 $styleuse='encoded';   // encoded/literal/literal wrapped
 // Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
 
-// Register WSDL
-$server->register(
-    'createProductOrService',
-    // Entry values
-    array('authentication'=>'tns:authentication','product'=>'tns:product'),
-    // Exit values
-    array('result'=>'tns:result','id'=>'xsd:string'),
-    $ns,
-    $ns.'#createProductOrService',
-    $styledoc,
-    $styleuse,
-    'WS to create a product or service'
-);
 
 // Register WSDL
 $server->register(
@@ -141,8 +141,26 @@ $server->register(
     'WS to get product or service'
 );
 
+// Register WSDL
+$server->register(
+    'createProductOrService',
+    // Entry values
+    array('authentication'=>'tns:authentication','product'=>'tns:product'),
+    // Exit values
+    array('result'=>'tns:result','id'=>'xsd:string'),
+    $ns,
+    $ns.'#createProductOrService',
+    $styledoc,
+    $styleuse,
+    'WS to create a product or service'
+);
 
-// Full methods code
+
+/**
+ * Get produt or service
+ *
+ * @param	array		$authentication		Array of authentication information
+ */
 function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 {
     global $db,$conf,$langs;
@@ -178,18 +196,31 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'product'=>array(
 				    	'id' => $product->id,
-			   			'ref' => $product->name,
+			   			'ref' => $product->ref,
 			   			'ref_ext' => $product->ref_ext,
 			    		'label' => $product->label,
 			    		'description' => $product->description,
 			    		'date_creation' => $product->date_creation,
 			    		'date_modification' => $product->date_modification,
 			            'note' => $product->note,
-			            'tobuy' => $product->tobuy,
-			            'tosell' => $product->tosell,
-				        'type' => $product->type,
+			            'status_tosell' => $product->status,
+			            'status_tobuy' => $product->status_buy,
+                		'type' => $product->type,
 				        'barcode' => $product->barcode,
-				        'country_id' => $product->country_id
+				        'barcode_type' => $product->barcode_type,
+                		'country_id' => $product->country_id>0?$product->country_id:'',
+				        'country_code' => $product->country_code,
+				        'custom_code' => $product->customcode,
+
+				        'price_net' => $product->price,
+                		'price' => ($product->price_ttc-$product->price),
+				        'vat_rate' => $product->tva_tx,
+                		'price_base_type' => $product->price_base_type,
+
+				        'stock_real' => $product->stock_reel,
+                		'stock_alert' => $product->seuil_stock_alerte,
+				        'pmp' => $product->pmp,
+                		'import_key' => $product->import_key
                 ));
             }
             else
@@ -213,6 +244,114 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
     return $objectresp;
 }
 
+
+/**
+ * Create an invoice
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	Product		$product			Product
+ * @return	array							Array result
+ */
+function createProductOrService($authentication,$product)
+{
+    global $db,$conf,$langs;
+
+    $now=dol_now();
+
+    dol_syslog("Function: createProductOrService login=".$authentication['login']);
+
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Check parameters
+    if ($product['price_net'] > 0) $product['price_base_type']='HT';
+    if ($product['price'] > 0)     $product['price_base_type']='TTC';
+
+    if ($product['price_net'] > 0 && $product['price'] > 0)
+    {
+        $error++; $errorcode='KO'; $errorlabel="You must choose between price or price_net to provide price.";
+    }
+
+
+    if (! $error)
+    {
+        include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
+
+        $newobject=new Product($db);
+        $newobject->ref=$product['ref'];
+        $newobject->ref_ext=$product['ref_ext'];
+        $newobject->type=$product['type'];
+        $newobject->libelle=$product['label'];    // TODO deprecated
+        $newobject->label=$product['label'];
+        $newobject->description=$product['description'];
+        $newobject->note=$product['note'];
+        $newobject->status=$product['status_tosell'];
+        $newobject->status_buy=$product['status_tobuy'];
+        $newobject->price=$product['price_net'];
+        $newobject->price_ttc=$product['price'];
+        $newobject->tva_tx=$product['vat_rate'];
+        $newobject->price_base_type=$product['price_base_type'];
+        $newobject->date_creation=$now;
+
+        $newobject->stock_reel=$product['stock_real'];
+        $newobject->pmp=$product['pmp'];
+        $newobject->seuil_stock_alert=$product['stock_alert'];
+
+        $newobject->country_id=$product['country_id'];
+        if ($product['country_code']) $newobject->country_id=getCountry($product['country_code'],3);
+        $newobject->customcode=$product['customcode'];
+
+        $newobject->canvas=$product['canvas'];
+        /*foreach($product['lines'] as $line)
+        {
+            $newline=new FactureLigne($db);
+            $newline->type=$line['type'];
+            $newline->desc=$line['desc'];
+            $newline->fk_product=$line['fk_product'];
+            $newline->total_ht=$line['total_net'];
+            $newline->total_vat=$line['total_vat'];
+            $newline->total_ttc=$line['total'];
+            $newline->vat=$line['vat_rate'];
+            $newline->qty=$line['qty'];
+            $newline->fk_product=$line['product_id'];
+        }*/
+        //var_dump($product['ref_ext']);
+        //var_dump($product['lines'][0]['type']);
+
+        $db->begin();
+
+        $result=$newobject->create($fuser,0);
+        if ($result <= 0)
+        {
+            $error++;
+        }
+
+        if (! $error)
+        {
+            $db->commit();
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
+        }
+        else
+        {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$newobject->error;
+        }
+
+    }
+
+    if ($error)
+    {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
+}
 
 
 // Return the results.

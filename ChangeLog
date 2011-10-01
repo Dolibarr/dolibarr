@@ -22,12 +22,13 @@ For users:
 - New: Can search on part of barcode into POS module.
 
 For developers:
+- New: Add webservice to get or create a prodcut or service.
 - Qual: Removed no more used external libraries.
 - Qual: Cleaned a lot of dead code.
 - Qual: Parent templates classes were moved as abstract classes.
 - Qual: Add more "hooks".
 - Qual: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
-- More OOP (usage of "abstract", "static", ...), unifformize constructors.
+- More OOP (usage of "abstract", "static", ...), uniformize constructors.
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****

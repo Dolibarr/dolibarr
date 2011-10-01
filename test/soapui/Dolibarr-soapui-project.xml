@@ -55,16 +55,16 @@
       <soap:address location="http://localhost/dolibarrnew/webservices/server_other.php"/>
     </port>
   </service>
-</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost/dolibarrnew/webservices/server_other.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getVersions" name="getVersions" bindingOperationName="getVersions" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/dolibarrnew/webservices/server_other.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_other.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getVersions" name="getVersions" bindingOperationName="getVersions" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_other.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
    <soapenv:Header/>
    <soapenv:Body>
       <ns:getVersions soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
          <authentication xsi:type="ns:authentication">
             <!--You may enter the following 5 items in any order-->
-            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <dolibarrkey xsi:type="xsd:string">dolibarrkey</dolibarrkey>
             <sourceapplication xsi:type="xsd:string">?</sourceapplication>
-            <login xsi:type="xsd:string">?</login>
-            <password xsi:type="xsd:string">?</password>
+            <login xsi:type="xsd:string">admin</login>
+            <password xsi:type="xsd:string">admin</password>
             <entity xsi:type="xsd:string"></entity>
          </authentication>
       </ns:getVersions>
@@ -341,7 +341,7 @@
       <soap:address location="http://localhost/dolibarrnew/webservices/server_invoice.php"/>
     </port>
   </service>
-</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost/dolibarrnew/webservices/server_invoice.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#createInvoice" name="createInvoice" bindingOperationName="createInvoice" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/dolibarrnew/webservices/server_invoice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_invoice.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#createInvoice" name="createInvoice" bindingOperationName="createInvoice" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_invoice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
    <soapenv:Header/>
    <soapenv:Body>
       <ns:createInvoice soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -394,13 +394,71 @@
          </invoice>
       </ns:createInvoice>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#createInvoice"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getInvoice" name="getInvoice" bindingOperationName="getInvoice" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/dolibarrnew/webservices/server_invoice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#createInvoice"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_invoice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:createInvoice soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">?</sourceapplication>
+            <login xsi:type="xsd:string">?</login>
+            <password xsi:type="xsd:string">?</password>
+            <entity xsi:type="xsd:string">?</entity>
+         </authentication>
+         <invoice xsi:type="ns:invoice">
+            <!--You may enter the following 22 items in any order-->
+            <id xsi:type="xsd:string">?</id>
+            <ref xsi:type="xsd:string">?</ref>
+            <ref_ext xsi:type="xsd:string">?</ref_ext>
+            <thirdparty_id xsi:type="xsd:int">?</thirdparty_id>
+            <fk_user_author xsi:type="xsd:string">?</fk_user_author>
+            <fk_user_valid xsi:type="xsd:string">?</fk_user_valid>
+            <date xsi:type="xsd:date">?</date>
+            <date_due xsi:type="xsd:date">?</date_due>
+            <date_creation xsi:type="xsd:dateTime">?</date_creation>
+            <date_validation xsi:type="xsd:dateTime">?</date_validation>
+            <date_modification xsi:type="xsd:dateTime">?</date_modification>
+            <type xsi:type="xsd:int">?</type>
+            <total_net xsi:type="xsd:double">?</total_net>
+            <total_vat xsi:type="xsd:double">?</total_vat>
+            <total xsi:type="xsd:double">?</total>
+            <note xsi:type="xsd:string">?</note>
+            <note_public xsi:type="xsd:string">?</note_public>
+            <status xsi:type="xsd:int">?</status>
+            <close_code xsi:type="xsd:string">?</close_code>
+            <close_note xsi:type="xsd:string">?</close_note>
+            <project_id xsi:type="xsd:string">?</project_id>
+            <lines xsi:type="ns:LinesArray2">
+               <!--Zero or more repetitions:-->
+               <line xsi:type="ns:line">
+                  <!--You may enter the following 14 items in any order-->
+                  <id xsi:type="xsd:string">?</id>
+                  <type xsi:type="xsd:int">?</type>
+                  <desc xsi:type="xsd:string">?</desc>
+                  <total_net xsi:type="xsd:double">?</total_net>
+                  <total_vat xsi:type="xsd:double">?</total_vat>
+                  <total xsi:type="xsd:double">?</total>
+                  <vat_rate xsi:type="xsd:double">?</vat_rate>
+                  <qty xsi:type="xsd:double">?</qty>
+                  <date_start xsi:type="xsd:date">?</date_start>
+                  <date_end xsi:type="xsd:date">?</date_end>
+                  <product_id xsi:type="xsd:int">?</product_id>
+                  <product_ref xsi:type="xsd:string">?</product_ref>
+                  <product_label xsi:type="xsd:string">?</product_label>
+                  <product_desc xsi:type="xsd:string">?</product_desc>
+               </line>
+            </lines>
+         </invoice>
+      </ns:createInvoice>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#createInvoice"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getInvoice" name="getInvoice" bindingOperationName="getInvoice" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_invoice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
    <soapenv:Header/>
    <soapenv:Body>
       <ns:getInvoice soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
          <authentication xsi:type="ns:authentication">
             <!--You may enter the following 5 items in any order-->
-            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <dolibarrkey xsi:type="xsd:string">dolibarrkey</dolibarrkey>
             <sourceapplication xsi:type="xsd:string">?</sourceapplication>
             <login xsi:type="xsd:string">admin</login>
             <password xsi:type="xsd:string">admin</password>
@@ -411,7 +469,7 @@
          <ref_ext xsi:type="xsd:string"></ref_ext>
       </ns:getInvoice>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getInvoice"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getInvoicesForThirdParty" name="getInvoicesForThirdParty" bindingOperationName="getInvoicesForThirdParty" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/dolibarrnew/webservices/server_invoice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getInvoice"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getInvoicesForThirdParty" name="getInvoicesForThirdParty" bindingOperationName="getInvoicesForThirdParty" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_invoice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
    <soapenv:Header/>
    <soapenv:Body>
       <ns:getInvoicesForThirdParty soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -601,4 +659,156 @@
          <idthirdparty xsi:type="xsd:string">all</idthirdparty>
       </ns:getSupplierInvoicesForThirdParty>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getSupplierInvoicesForThirdParty"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getSupplierInvoicesForThirdParty"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WebServicesDolibarrProductOrServiceBinding" type="wsdl" bindingName="{http://www.dolibarr.org/ns/}WebServicesDolibarrProductOrServiceBinding" soapVersion="1_1" anonymous="optional" definition="http://localhostdolibarr/dolibarrnew/webservices/server_productorservice.php?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhostdolibarr/dolibarrnew/webservices/server_productorservice.php?wsdl"><con:part><con:url>http://localhostdolibarr/dolibarrnew/webservices/server_productorservice.php?wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="http://www.dolibarr.org/ns/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.dolibarr.org/ns/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema targetNamespace="http://www.dolibarr.org/ns/">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+      <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+      <xsd:complexType name="authentication">
+        <xsd:all>
+          <xsd:element name="dolibarrkey" type="xsd:string"/>
+          <xsd:element name="sourceapplication" type="xsd:string"/>
+          <xsd:element name="login" type="xsd:string"/>
+          <xsd:element name="password" type="xsd:string"/>
+          <xsd:element name="entity" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="result">
+        <xsd:all>
+          <xsd:element name="result_code" type="xsd:string"/>
+          <xsd:element name="result_label" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="product">
+        <xsd:all>
+          <xsd:element name="id" type="xsd:string"/>
+          <xsd:element name="ref" type="xsd:string"/>
+          <xsd:element name="ref_ext" type="xsd:string"/>
+          <xsd:element name="type" type="xsd:string"/>
+          <xsd:element name="label" type="xsd:string"/>
+          <xsd:element name="description" type="xsd:string"/>
+          <xsd:element name="date_creation" type="xsd:dateTime"/>
+          <xsd:element name="date_modification" type="xsd:dateTime"/>
+          <xsd:element name="note" type="xsd:string"/>
+          <xsd:element name="tobuy" type="xsd:string"/>
+          <xsd:element name="tosell" type="xsd:string"/>
+          <xsd:element name="barcode" type="xsd:string"/>
+          <xsd:element name="barcode_type" type="xsd:string"/>
+          <xsd:element name="country_id" type="xsd:string"/>
+          <xsd:element name="country_code" type="xsd:string"/>
+          <xsd:element name="customcode" type="xsd:string"/>
+          <xsd:element name="price_net" type="xsd:string"/>
+          <xsd:element name="price_vat" type="xsd:string"/>
+          <xsd:element name="price" type="xsd:string"/>
+          <xsd:element name="price_base_type" type="xsd:string"/>
+          <xsd:element name="stock_alert" type="xsd:string"/>
+          <xsd:element name="stock_real" type="xsd:string"/>
+          <xsd:element name="stock_pmp" type="xsd:string"/>
+          <xsd:element name="canvas" type="xsd:string"/>
+          <xsd:element name="import_key" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+  <message name="createProductOrServiceRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="product" type="tns:product"/>
+  </message>
+  <message name="createProductOrServiceResponse">
+    <part name="result" type="tns:result"/>
+    <part name="id" type="xsd:string"/>
+  </message>
+  <message name="getProductOrServiceRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="id" type="xsd:string"/>
+    <part name="ref" type="xsd:string"/>
+    <part name="ref_ext" type="xsd:string"/>
+  </message>
+  <message name="getProductOrServiceResponse">
+    <part name="result" type="tns:result"/>
+    <part name="product" type="tns:product"/>
+  </message>
+  <portType name="WebServicesDolibarrProductOrServicePortType">
+    <operation name="createProductOrService">
+      <documentation>WS to create a product or service</documentation>
+      <input message="tns:createProductOrServiceRequest"/>
+      <output message="tns:createProductOrServiceResponse"/>
+    </operation>
+    <operation name="getProductOrService">
+      <documentation>WS to get product or service</documentation>
+      <input message="tns:getProductOrServiceRequest"/>
+      <output message="tns:getProductOrServiceResponse"/>
+    </operation>
+  </portType>
+  <binding name="WebServicesDolibarrProductOrServiceBinding" type="tns:WebServicesDolibarrProductOrServicePortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="createProductOrService">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#createProductOrService" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getProductOrService">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#getProductOrService" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="WebServicesDolibarrProductOrService">
+    <port name="WebServicesDolibarrProductOrServicePort" binding="tns:WebServicesDolibarrProductOrServiceBinding">
+      <soap:address location="http://localhostdolibarr/dolibarrnew/webservices/server_productorservice.php"/>
+    </port>
+  </service>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_productorservice.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#createProductOrService" name="createProductOrService" bindingOperationName="createProductOrService" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_productorservice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:createProductOrService soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">?</sourceapplication>
+            <login xsi:type="xsd:string">?</login>
+            <password xsi:type="xsd:string">?</password>
+            <entity xsi:type="xsd:string">?</entity>
+         </authentication>
+         <product xsi:type="ns:product">
+            <!--You may enter the following 18 items in any order-->
+            <ref xsi:type="xsd:string">PPP</ref>
+            <ref_ext xsi:type="xsd:string"></ref_ext>
+            <label xsi:type="xsd:string">PPP Label</label>
+            <description xsi:type="xsd:string">Description of PPP</description>
+            <note xsi:type="xsd:string">xxxxx</note>
+            <tobuy xsi:type="xsd:string">1</tobuy>
+            <tosell xsi:type="xsd:string">0</tosell>
+            <type xsi:type="xsd:string">1</type>
+            <barcode xsi:type="xsd:string">123456</barcode>
+            <country_code xsi:type="xsd:string">FR</country_code>
+            <stock_alert xsi:type="xsd:string">10</stock_alert>
+         </product>
+      </ns:createProductOrService>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#createProductOrService"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getProductOrService" name="getProductOrService" bindingOperationName="getProductOrService" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/dolibarrnew/webservices/server_productorservice.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:getProductOrService soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">dolibarrkey</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">?</sourceapplication>
+            <login xsi:type="xsd:string">admin</login>
+            <password xsi:type="xsd:string">admin</password>
+            <entity xsi:type="xsd:string"></entity>
+         </authentication>
+         <id xsi:type="xsd:string">1</id>
+         <ref xsi:type="xsd:string"></ref>
+         <ref_ext xsi:type="xsd:string"></ref_ext>
+      </ns:getProductOrService>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getProductOrService"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/></con:soapui-project>

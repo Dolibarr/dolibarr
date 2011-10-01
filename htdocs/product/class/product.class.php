@@ -45,7 +45,8 @@ class Product extends CommonObject
 	var $id ;
 	//! Ref
 	var $ref;
-	var $libelle;
+	var $libelle;            // TODO deprecated
+	var $label;
 	var $description;
 	//! Prix de vente
 	var $price;				// Price without tax
@@ -68,14 +69,14 @@ class Product extends CommonObject
 	var $localtax2_tx;
 	//! Type 0 for regular product, 1 for service (Advanced feature: 2 for assembly kit, 3 for stock kit)
 	var $type;
-	var $typestring;
 
 	//! Stock
 	var $stock_reel;
 	//! Average price value for product entry into stock (PMP)
 	var $pmp;
-
+    //! Stock alert
 	var $seuil_stock_alerte;
+
 	//! Duree de validite du service
 	var $duration_value;
 	//! Unite de duree
@@ -188,9 +189,9 @@ class Product extends CommonObject
 	/**
 	 *	Insert product into database
 	 *
-	 *	@param    user     		User making insert
-	 *  @param	  notrigger		Disable triggers
-	 *	@return   int     		Id of product/service if OK or number of error < 0
+	 *	@param	User	$user     		User making insert
+	 *  @param	int		$notrigger		Disable triggers
+	 *	@return int			     		Id of product/service if OK or number of error < 0
 	 */
 	function create($user,$notrigger=0)
 	{
@@ -255,6 +256,7 @@ class Product extends CommonObject
 
 		dol_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
+        $now=dol_now();
 
 		$this->db->begin();
 
@@ -287,7 +289,7 @@ class Product extends CommonObject
 				$sql.= ", canvas";
 				$sql.= ", finished";
 				$sql.= ") VALUES (";
-				$sql.= $this->db->idate(mktime());
+				$sql.= $this->db->idate($now);
 				$sql.= ", ".$conf->entity;
 				$sql.= ", '".$this->ref."'";
 				$sql.= ", ".price2num($price_min_ht);
@@ -357,7 +359,8 @@ class Product extends CommonObject
 			else
 			{
 				// Product already exists with this ref
-				$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
+				$langs->load("products");
+				$this->error = $langs->transnoentitiesnoconv("ErrorProductAlreadyExists",$this->ref);
 			}
 		}
 		else
@@ -391,9 +394,9 @@ class Product extends CommonObject
 	/**
 	 *	Update a record into database
 	 *
-	 *	@param      id          Id of product
-	 *	@param      user        Object user making update
-	 *	@return     int         1 if OK, -1 if ref already exists, -2 if other error
+	 *	@param	int		$id         Id of product
+	 *	@param  User	$user       Object user making update
+	 *	@return int         		1 if OK, -1 if ref already exists, -2 if other error
 	 */
 	function update($id, $user)
 	{
@@ -1047,6 +1050,11 @@ class Product extends CommonObject
 				$this->label				= $object->label;
 				$this->description			= $object->description;
 				$this->note					= $object->note;
+
+				$this->type					= $object->fk_product_type;
+				$this->status				= $object->tosell;
+				$this->status_buy			= $object->tobuy;
+
 	            $this->customcode			= $object->customcode;
 	            $this->country_id			= $object->fk_country;
 	            $this->country_code			= getCountry($this->country_id,2,$this->db);
@@ -1062,14 +1070,10 @@ class Product extends CommonObject
 				$this->localtax1_tx			= $object->localtax1_tx;
 				$this->localtax2_tx			= $object->localtax2_tx;
 
-				$this->type					= $object->fk_product_type;
-				$this->status				= $object->tosell;
-				$this->status_buy			= $object->tobuy;
 				$this->finished				= $object->finished;
 				$this->duration				= $object->duration;
 				$this->duration_value		= substr($object->duration,0,dol_strlen($object->duration)-1);
 				$this->duration_unit		= substr($object->duration,-1);
-				$this->seuil_stock_alerte	= $object->seuil_stock_alerte;
 				$this->canvas				= $object->canvas;
 				$this->weight				= $object->weight;
 				$this->weight_units			= $object->weight_units;
@@ -1085,6 +1089,7 @@ class Product extends CommonObject
 				$this->accountancy_code_buy = $object->accountancy_code_buy;
 				$this->accountancy_code_sell= $object->accountancy_code_sell;
 
+				$this->seuil_stock_alerte = $object->seuil_stock_alerte;
 				$this->stock_reel         = $object->stock;
 				$this->pmp                = $object->pmp;
 

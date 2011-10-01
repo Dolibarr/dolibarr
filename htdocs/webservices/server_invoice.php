@@ -246,8 +246,8 @@ $server->register(
 /**
  * Get invoice from id, ref or ref_ext
  *
- * @param	object	$authentication
- *
+ * @param	array		$authentication		Array of authentication information
+ * @return	array							Array result
  */
 function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 {
@@ -352,6 +352,9 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 
 /**
  * Get list of invoices for third party
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @return	array							Array result
  */
 function getInvoicesForThirdParty($authentication,$idthirdparty)
 {
@@ -467,7 +470,11 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 
 
 /**
- * Get list of invoices for third party
+ * Create an invoice
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	Facture		$invoice			Invoice
+ * @return	array							Array result
  */
 function createInvoice($authentication,$invoice)
 {
@@ -475,7 +482,7 @@ function createInvoice($authentication,$invoice)
 
     $now=dol_now();
 
-    dol_syslog("Function: createInvoiceForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
+    dol_syslog("Function: createInvoiceForThirdParty login=".$authentication['login']);
 
     if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -488,17 +495,17 @@ function createInvoice($authentication,$invoice)
 
     if (! $error)
     {
-        $newinvoice=new Facture($db);
-        $newinvoice->socid=$invoice['thirdparty_id'];
-        $newinvoice->type=$invoice['type'];
-        $newinvoice->ref_ext=$invoice['ref_ext'];
-        $newinvoice->date=$invoice['date'];
-        $newinvoice->date_lim_reglement=$invoice['date_due'];
-        $newinvoice->note=$invoice['note'];
-        $newinvoice->note_public=$invoice['note_public'];
-        $newinvoice->statut=$invoice['status'];
-        $newinvoice->fk_project=$invoice['project_id'];
-        $newinvoice->date_creation=$now;
+        $newobject=new Facture($db);
+        $newobject->socid=$invoice['thirdparty_id'];
+        $newobject->type=$invoice['type'];
+        $newobject->ref_ext=$invoice['ref_ext'];
+        $newobject->date=$invoice['date'];
+        $newobject->date_lim_reglement=$invoice['date_due'];
+        $newobject->note=$invoice['note'];
+        $newobject->note_public=$invoice['note_public'];
+        $newobject->statut=$invoice['status'];
+        $newobject->fk_project=$invoice['project_id'];
+        $newobject->date_creation=$now;
         foreach($invoice['lines'] as $line)
         {
             $newline=new FactureLigne($db);
@@ -517,35 +524,32 @@ function createInvoice($authentication,$invoice)
 
         $db->begin();
 
-        $result=$newinvoice->create($user,0,0);
+        $result=$newobject->create($fuser,0,0);
         if ($result < 0)
         {
             $error++;
         }
 
-        if ($newinvoice->statut == 1)   // We want invoice validated
+        if ($newobject->statut == 1)   // We want invoice validated
         {
-            $newinvoice->validate($user);
+            $result=$newobject->validate($fuser);
+            if ($result < 0)
+            {
+                $error++;
+            }
         }
-
-        $result=$newinvoice->create($user,0,0);
-        if ($result < 0)
-        {
-            $error++;
-        }
-
 
         if (! $error)
         {
             $db->commit();
-            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newinvoice->id,'ref'=>$newinvoice->ref);
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
         }
         else
         {
             $db->rollback();
             $error++;
             $errorcode='KO';
-            $errorlabel=$newinvoice->error;
+            $errorlabel=$newobject->error;
         }
 
     }
