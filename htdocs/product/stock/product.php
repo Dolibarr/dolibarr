@@ -345,9 +345,10 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</td>';
 		print '</tr>';
 
-		print '<tr><td colspan="5" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
+
+		print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 		print '</form>';
 
 	}
@@ -381,9 +382,11 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</td>';
 		print '</tr>';
 
-		print '<tr><td colspan="6" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
+
+		print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
 		print '</form>';
 
 	}
