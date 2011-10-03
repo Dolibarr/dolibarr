@@ -456,7 +456,9 @@ if ($action == 'addline')
 
     if ($_POST['idprodfournprice'])	// > 0 or -1
     {
+        $product=new Product($db);
         $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
+
         if ($idprod > 0)
         {
             $result=$product->fetch($idprod);
@@ -464,8 +466,6 @@ if ($action == 'addline')
             // cas special pour lequel on a les meme reference que le fournisseur
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->libelle;
-
-
 
             $tvatx=get_default_tva($societe,$mysoc,$product->id);
 

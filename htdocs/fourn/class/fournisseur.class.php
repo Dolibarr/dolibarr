@@ -78,12 +78,14 @@ class Fournisseur extends Societe
 		return $num;
 	}
 
+	/**
+	 * FIXME This returns number of prices, not number of products. Is it what we want ?
+	 */
 	function NbProduct()
 	{
-		$sql = "SELECT count(pf.rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as pf,";
-		$sql.= " ".MAIN_DB_PREFIX."product_fournisseur_price as ppf";
-		$sql .= " WHERE fk_soc = ".$this->id." AND ppf.fk_product_fournisseur = pf.rowid";
+		$sql = "SELECT count(pfp.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+		$sql .= " WHERE pfp.fk_soc = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ( $resql )

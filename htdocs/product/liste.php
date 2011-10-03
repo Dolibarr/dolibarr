@@ -133,8 +133,8 @@ else
     $sql.= ') ';
     //if ($fourn_id > 0)  // The DISTINCT is used to avoid duplicate from this link
     //{
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
+    	//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
     //}
     $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
     if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
@@ -156,7 +156,7 @@ else
     if (dol_strlen($canvas) > 0)                   $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
     if ($catid)        $sql.= " AND cp.fk_categorie = ".$catid;
     if ($search_categ) $sql.= " AND cp.fk_categorie = ".$search_categ;
-    if ($fourn_id > 0) $sql.= " AND pf.fk_soc = ".$fourn_id;
+    if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.tms,";
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";

@@ -34,6 +34,8 @@ $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
 
+$action=GETPOST('action');
+
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['search_fourn_id']))
 {
@@ -43,10 +45,7 @@ if (! empty($_REQUEST['search_fourn_id']))
 }
 
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
+$id = GETPOST('id')?GETPOST('id'):GETPOST('ref');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service&fournisseur',$id,'product','','',$fieldid);
@@ -74,19 +73,6 @@ if ($_GET["action"] == 'remove_pf')
 			$result=$product->remove_product_fournisseur_price($_GET["rowid"]);
 			$_GET["action"] = '';
 			$mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
-		}
-		else
-		{
-			// Deprecated. Should not occurs
-			if ($product->remove_fournisseur($_GET["socid"]) > 0)
-			{
-				$_GET["action"] = '';
-				$mesg = '<div class="ok">'.$langs->trans("SupplierRemoved").'.</div>';
-			}
-			else
-			{
-				$_GET["action"] = '';
-			}
 		}
 	}
 }
@@ -145,7 +131,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 					$supplier=new Fournisseur($db);
 					$result=$supplier->fetch($id_fourn);
 
-					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"]);
+					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn);
 					if ($ret < 0)
 					{
 						$error++;
@@ -169,6 +155,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 		{
 			$db->commit();
 			$_POST['action']='';
+			$action='';
 		}
 		else
 		{
@@ -259,16 +246,21 @@ if ($_GET["id"] || $_GET["ref"])
 			{
 				$langs->load("suppliers");
 
-				if ($_GET["rowid"]) {
+				if ($_GET["rowid"])
+				{
 					$product->fetch_product_fournisseur_price($_GET["rowid"]);
 					print_fiche_titre($langs->trans("ChangeSupplierPrice"));
-				} else {
+				}
+				else
+				{
 					print_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
-				print '<table class="border" width="100%">';
+
 				print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateprice">';
+
+				print '<table class="border" width="100%">';
 
 				print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';
 				if ($_GET["rowid"])
@@ -330,12 +322,13 @@ if ($_GET["id"] || $_GET["ref"])
                 print '</td>';
 				print '</tr>';
 
-				print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+				print '</table>';
+
+				print '<center><input class="button" type="submit" value="'.$langs->trans("Save").'">';
 				print '&nbsp; &nbsp;';
-				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
 				print '</form>';
-				print '</table>';
 			}
 
 			/* ************************************************************************** */
@@ -346,14 +339,13 @@ if ($_GET["id"] || $_GET["ref"])
 
 			print "\n<div class=\"tabsAction\">\n";
 
-			if ($_GET["action"] != 'add_price') {
-
+			if ($_GET["action"] != 'add_price' && $action != 'updateprice')
+			{
 				if ($user->rights->produit->creer || $user->rights->service->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
 					print $langs->trans("AddSupplierPrice").'</a>';
 				}
-
 			}
 
 			print "\n</div>\n";
@@ -371,16 +363,15 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<tr class="liste_titre">';
 				print_liste_field_titre($langs->trans("Suppliers"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 				print '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td>';
-				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
-					print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,"",$sortfield,$sortorder);
+				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre"></td>';
 				print "</tr>\n";
 
 				$product_fourn = new ProductFournisseur($db);
-				$product_fourn_list = $product_fourn->fetch_product_fournisseur($product->id);
+				$product_fourn_list = $product_fourn->list_product_fournisseur_price($product->id);
 
 				if (count($product_fourn_list)>0)
 				{
@@ -406,7 +397,7 @@ if ($_GET["id"] || $_GET["ref"])
 						}
 
 						// Quantity
-						print '<td align="center">';
+						print '<td align="right">';
 						print $productfourn->fourn_qty;
 						print '</td>';
 

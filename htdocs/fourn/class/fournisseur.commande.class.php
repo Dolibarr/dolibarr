@@ -1822,7 +1822,7 @@ class CommandeFournisseurLigne extends OrderLine
     var $libelle;       // Label produit
     var $product_desc;  // Description produit
 
-    // From llx_product_fournisseur
+    // From llx_product_fournisseur_price
     var $ref_fourn;     // Ref supplier
 
 

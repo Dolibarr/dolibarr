@@ -88,17 +88,15 @@ if ($fourn_id)
 }
 
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type,";
-$sql .= " pf.fk_soc, pf.ref_fourn,";
-$sql .= " ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
+$sql .= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
 $sql .= " s.rowid as socid, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid)
 {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON ppf.fk_product_fournisseur = pf.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
 
 if ($_POST["mode"] == 'search')
 {
@@ -118,7 +116,7 @@ else
 	}
 	if ($sRefSupplier)
 	{
-		$sql .= " AND pf.ref_fourn like '%".$sRefSupplier."%'";
+		$sql .= " AND ppf.ref_fourn like '%".$sRefSupplier."%'";
 	}
 	if ($snom)
 	{
@@ -128,11 +126,10 @@ else
 	{
 		$sql .= " AND cp.fk_categorie = ".$catid;
 	}
-
 }
 if ($fourn_id > 0)
 {
-	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1 ,$offset);
