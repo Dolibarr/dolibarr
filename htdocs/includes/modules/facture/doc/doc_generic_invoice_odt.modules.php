@@ -451,14 +451,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 try
                 {
                     $listlines = $odfHandler->setSegment('lines');
-                    //var_dump($object->lines);exit;
                     foreach ($object->lines as $line)
                     {
                         $tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
                         foreach($tmparray as $key => $val)
                         {
-                                try {
-                                $listlines->setVars($key, $val);
+                             try
+                             {
+                                $listlines->setVars($key, $val, true, 'UTF-8');
                              }
                              catch(OdfException $e)
                              {
