@@ -458,7 +458,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                         foreach($tmparray as $key => $val)
                         {
                                 try {
-                                $listlines->setVars($key, $val);
+                                $listlines->setVars($key, $val, true, 'UTF-8');
                              }
                              catch(OdfException $e)
                              {
