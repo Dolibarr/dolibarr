@@ -23,6 +23,7 @@ For users:
 
 For developers:
 - New: Add webservice to get or create a prodcut or service.
+- New: Log module outputs can be setup with "or" rule (not only "xor").
 - Qual: Removed no more used external libraries.
 - Qual: Cleaned a lot of dead code.
 - Qual: Parent templates classes were moved as abstract classes.

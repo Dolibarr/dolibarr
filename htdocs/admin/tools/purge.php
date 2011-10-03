@@ -25,8 +25,9 @@ include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 $langs->load("admin");
 
-if (! $user->admin)
-accessforbidden();
+$action=GETPOST('action');
+
+if (! $user->admin) accessforbidden();
 
 if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 

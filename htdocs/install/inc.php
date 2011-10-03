@@ -200,9 +200,10 @@ if (constant('DOL_DATA_ROOT') && file_exists($lockfile))
 }
 
 
-// Forcage du log pour les install et mises a jour
+// Force usage of log file for install and upgrades
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
+if (! defined('SYSLOG_FILE_ON')) define('SYSLOG_FILE_ON',1);
 if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
 {
     if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
@@ -212,10 +213,7 @@ if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant alrea
     else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
     //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
 }
-if (! defined('SYSLOG_FILE_NO_ERROR'))
-{
-    define('SYSLOG_FILE_NO_ERROR',1);
-}
+if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
 
 // Removed magic_quotes
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
@@ -285,9 +283,10 @@ function conf($dolibarr_main_document_root)
     if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
     $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
-    // Forcage du log pour les install et mises a jour
+    // Force usage of log file for install and upgrades
     $conf->syslog->enabled=1;
     $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
+    if (! defined('SYSLOG_FILE_ON')) define('SYSLOG_FILE_ON',1);
     if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
     {
         if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
@@ -297,10 +296,7 @@ function conf($dolibarr_main_document_root)
         else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
         //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
     }
-    if (! defined('SYSLOG_FILE_NO_ERROR'))
-    {
-        define('SYSLOG_FILE_NO_ERROR',1);
-    }
+    if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
 
     return 1;
 }

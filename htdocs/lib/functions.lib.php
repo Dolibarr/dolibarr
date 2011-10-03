@@ -371,20 +371,22 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
 }
 
 /**
- *	Write log message in a file or to syslog process
- *	Pour fichier:   	fichier defined by SYSLOG_FILE
- *	Pour syslog:    	facility defined by SYSLOG_FACILITY
+ *	Write log message into outputs. Possible outputs can be:
+ *	A file if SYSLOG_FILE_ON defined:   	file name is then defined by SYSLOG_FILE
+ *	Syslog if SYSLOG_SYSLOG_ON defined:    	facility is then defined by SYSLOG_FACILITY
  * 	Warning, les fonctions syslog sont buggues sous Windows et generent des
  *	fautes de protection memoire. Pour resoudre, utiliser le loggage fichier,
  *	au lieu du loggage syslog (configuration du module).
- *	Si SYSLOG_FILE_NO_ERROR defini, on ne gere pas erreur ecriture log
- *	This function works only if syslog module is enabled.
- * 	This must must not use any call to other function calling dol_syslog (avoid infinite loop).
- *	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
- *	On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *	Note: If SYSLOG_FILE_NO_ERROR defined, we never output error message when writing to log fails.
  *
- * 	@param      string		$message	  Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *	@param      int			$level        Log level
+ *	This function works only if syslog module is enabled.
+ * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
+ *
+ * 	@param  string		$message	Line to log. Ne doit pas etre traduit si level = LOG_ERR
+ *	@param  int			$level		Log level
+ *									On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
+ *									On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *	@return	void
  */
 function dol_syslog($message, $level=LOG_INFO)
 {
@@ -421,8 +423,8 @@ function dol_syslog($message, $level=LOG_INFO)
         if (is_object($user) && $user->id) $login=$user->login;
         $message=sprintf("%-8s",$login)." ".$message;
 
-        // Check if log is to a file (SYSLOG_FILE defined) or to syslog
-        if (defined("SYSLOG_FILE") && SYSLOG_FILE)
+        // Check if log is to a file (SYSLOG_FILE_ON defined)
+        if (defined("SYSLOG_FILE_ON") && constant("SYSLOG_FILE_ON"))
         {
             $filelog=SYSLOG_FILE;
             $filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
@@ -458,33 +460,26 @@ function dol_syslog($message, $level=LOG_INFO)
             }
             elseif (! defined("SYSLOG_FILE_NO_ERROR"))
             {
-                // Do not use call to functions that make call to dol_syslog, so no call to langs.
+                // Do not use here a call to functions that make call to dol_syslog so making call to langs. A simple print is enough.
                 print "Error, failed to open file ".$filelog."\n";
             }
         }
-        else
+
+        // Check if log is to syslog (SYSLOG_SYSLOG_ON defined)
+        if (defined("SYSLOG_SYSLOG_ON") && constant("SYSLOG_SYSLOG_ON"))
         {
             if (function_exists('openlog'))	// This function does not exists on some ISP (Ex: Free in France)
             {
                 $facility = LOG_USER;
-
-                if (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY)
+                if (defined("SYSLOG_FACILITY") && constant("SYSLOG_FACILITY"))
                 {
                     // Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
                     $facility = constant("SYSLOG_FACILITY");
                 }
 
                 openlog("dolibarr", LOG_PID | LOG_PERROR, (int) $facility);		// (int) is required to avoid error parameter 3 expected to be long
-
-                if (! $level)
-                {
-                    syslog(LOG_ERR, $message);
-                }
-                else
-                {
-                    syslog($level, $message);
-                }
-
+                if (! $level) syslog(LOG_ERR, $message);
+                else          syslog($level, $message);
                 closelog();
             }
         }
