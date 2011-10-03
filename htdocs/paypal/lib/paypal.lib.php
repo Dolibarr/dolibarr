@@ -23,7 +23,13 @@
  */
 
 
-
+/**
+ * Show header
+ *
+ * @param 	string	$title
+ * @param 	string	$head
+ * @return	void
+ */
 function llxHeaderPaypal($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -53,6 +59,11 @@ function llxHeaderPaypal($title, $head = "")
 	print '<body style="margin: 20px;">'."\n";
 }
 
+/**
+ * Show footer
+ *
+ * @return	void
+ */
 function llxFooterPaypal()
 {
 	print "</body>\n";
@@ -63,8 +74,9 @@ function llxFooterPaypal()
 /**
  * Show footer of company in HTML pages
  *
- * @param   $fromcompany
- * @param   $langs
+ * @param   Societe		$fromcompany	Third party
+ * @param   Translate	$langs			Output language
+ * @return	void
  */
 function html_print_paypal_footer($fromcompany,$langs)
 {
@@ -128,6 +140,7 @@ function html_print_paypal_footer($fromcompany,$langs)
 
 /**
  *  Define head array for tabs of paypal tools setup pages
+ *
  *  @return			Array of head
  */
 function paypaladmin_prepare_head()
@@ -250,12 +263,13 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
 /**
  * Send redirect to paypal to browser
  *
- * @param       $paymentAmount
- * @param       $currencyCodeType
- * @param       $paymentType
- * @param       $returnURL
- * @param       $cancelURL
- * @param       $tag
+ * @param	float	$paymentAmount		Amount
+ * @param   string	$currencyCodeType	Currency code
+ * @param	string	$paymentType		Payment type
+ * @param  	string	$returnURL			Url to use if payment is OK
+ * @param   string	$cancelURL			Url to use if payment is KO
+ * @param   string	$tag				Tag
+ * @return	void
  */
 function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$returnURL,$cancelURL,$tag)
 {
@@ -295,8 +309,24 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
     }
 
     dol_syslog("expresscheckout redirect with CallSetExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $landingPage, $solutionType, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
-    $resArray = CallSetExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage,
-        $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum);
+    $resArray = CallSetExpressCheckout(
+        $paymentAmount,
+        $currencyCodeType,
+        $paymentType,
+        $returnURL,
+        $cancelURL,
+        $tag,
+        $solutionType,
+        $landingPage,
+        $shipToName,
+        $shipToStreet,
+        $shipToCity,
+        $shipToState,
+        $shipToCountryCode,
+        $shipToZip,
+        $shipToStreet2,
+        $phoneNum
+    );
     /* For direct payment with credit card
     {
         //$resArray = DirectPayment (...);
@@ -349,8 +379,7 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  '      phoneNum:           the phoneNum  entered on the merchant's site
  '--------------------------------------------------------------------------------------------------------------------------------------------
  */
-function CallSetExpressCheckout( $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage,
-$shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum)
+function CallSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum)
 {
     //------------------------------------------------------------------------------------------------------------------------------------
     // Construct the parameter string that describes the SetExpressCheckout API call in the shortcut implementation
@@ -402,17 +431,12 @@ $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $ship
     return $resArray;
 }
 
-/*
- '-------------------------------------------------------------------------------------------
- ' Purpose:     Prepares the parameters for the GetExpressCheckoutDetails API Call.
- '
- ' Inputs:
- '      None
- ' Returns:
- '      The NVP Collection object of the GetExpressCheckoutDetails Call Response.
- '-------------------------------------------------------------------------------------------
+/**
+ * 	Prepares the parameters for the GetExpressCheckoutDetails API Call.
+ *
+ *	@return	array		The NVP Collection object of the GetExpressCheckoutDetails Call Response.
  */
-function GetDetails( $token )
+function GetDetails($token)
 {
     //'--------------------------------------------------------------
     //' At this point, the buyer has completed authorizing the payment
@@ -450,12 +474,12 @@ function GetDetails( $token )
 }
 
 
-/*
- '-------------------------------------------------------------------------------------------------------------------------------------------
- ' Purpose:     Validate payment
- '--------------------------------------------------------------------------------------------------------------------------------------------
+/**
+ *	Validate payment
+ *
+ *	@return	void
  */
-function ConfirmPayment( $token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag )
+function ConfirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag)
 {
     /* Gather the information to make the final call to
      finalize the PayPal payment.  The variable nvpstr
@@ -486,36 +510,26 @@ function ConfirmPayment( $token, $paymentType, $currencyCodeType, $payerID, $ipa
     return $resArray;
 }
 
-/*
- '-------------------------------------------------------------------------------------------------------------------------------------------
- ' Purpose:     This function makes a DoDirectPayment API call
- '
- ' Inputs:
- '      paymentType:        paymentType has to be one of the following values: Sale or Order or Authorization
- '      paymentAmount:      total value of the shopping cart
- '      currencyCode:       currency code value the PayPal API
- '      firstName:          first name as it appears on credit card
- '      lastName:           last name as it appears on credit card
- '      street:             buyer's street address line as it appears on credit card
- '      city:               buyer's city
- '      state:              buyer's state
- '      countryCode:        buyer's country code
- '      zip:                buyer's zip
- '      creditCardType:     buyer's credit card type (i.e. Visa, MasterCard ... )
- '      creditCardNumber:   buyers credit card number without any spaces, dashes or any other characters
- '      expDate:            credit card expiration date
- '      cvv2:               Card Verification Value
- '
- '-------------------------------------------------------------------------------------------
- '
- ' Returns:
- '      The NVP Collection object of the DoDirectPayment Call Response.
- '--------------------------------------------------------------------------------------------------------------------------------------------
+/**
+ *	This function makes a DoDirectPayment API call
+ *
+ *  paymentType:        paymentType has to be one of the following values: Sale or Order or Authorization
+ *  paymentAmount:      total value of the shopping cart
+ *  currencyCode:       currency code value the PayPal API
+ *  firstName:          first name as it appears on credit card
+ *  lastName:           last name as it appears on credit card
+ *  street:             buyer's street address line as it appears on credit card
+ *  city:               buyer's city
+ *  state:              buyer's state
+ *  countryCode:        buyer's country code
+ *  zip:                buyer's zip
+ *  creditCardType:     buyer's credit card type (i.e. Visa, MasterCard ... )
+ *  creditCardNumber:   buyers credit card number without any spaces, dashes or any other characters
+ *  expDate:            credit card expiration date
+ *  cvv2:               Card Verification Value
+ *	@return		array	The NVP Collection object of the DoDirectPayment Call Response.
  */
-
-function DirectPayment( $paymentType, $paymentAmount, $creditCardType, $creditCardNumber,
-$expDate, $cvv2, $firstName, $lastName, $street, $city, $state, $zip,
-$countryCode, $currencyCode, $tag )
+function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCardNumber, $expDate, $cvv2, $firstName, $lastName, $street, $city, $state, $zip, $countryCode, $currencyCode, $tag)
 {
     //declaring of global variables
     global $conf, $langs;
@@ -547,9 +561,10 @@ $countryCode, $currencyCode, $tag )
 
 /**
  * hash_call: Function to perform the API call to PayPal using API signature
- * @param	methodName 	is name of API  method.
- * @param	nvpStr 		is nvp string.
- * @return	array		returns an associtive array containing the response from the server.
+ *
+ * @param	string	$methodName 	is name of API  method.
+ * @param	string	$nvpStr 		is nvp string.
+ * @return	array					returns an associtive array containing the response from the server.
  */
 function hash_call($methodName,$nvpStr)
 {
@@ -606,8 +621,8 @@ function hash_call($methodName,$nvpStr)
     {
         dol_syslog("Paypal API hash_call set proxy to ".$PROXY_HOST. ":" . $PROXY_PORT." - ".$PROXY_USER. ":" . $PROXY_PASS);
         //curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
-        curl_setopt ($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
-        if ($PROXY_USER) curl_setopt ($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
+        curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
+        if ($PROXY_USER) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
     }
 
     //NVPRequest for submitting to server
@@ -650,7 +665,9 @@ function hash_call($methodName,$nvpStr)
 }
 
 /**
- * 	Get API errors
+ * Get API errors
+ *
+ * @return	array		Array of errors
  */
 function GetApiError()
 {
@@ -672,12 +689,13 @@ function GetApiError()
 }
 
 
-/*'----------------------------------------------------------------------------------
+/**
  * This function will take NVPString and convert it to an Associative Array and it will decode the response.
  * It is usefull to search for a particular key and displaying arrays.
- * @nvpstr is NVPString.
- * @nvpArray is Associative Array.
- ----------------------------------------------------------------------------------
+ *
+ * @param	string	$nvpstr 		NVPString
+ * @return	array					nvpArray = Associative Array
+ * ----------------------------------------------------------------------------------
  */
 function deformatNVP($nvpstr)
 {

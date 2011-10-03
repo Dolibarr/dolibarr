@@ -604,18 +604,19 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
  *	Output date in a string format according to outputlangs (or langs if not defined).
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset
  *
- *	@param	    time        	GM Timestamps date (or deprecated strings 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
- *	@param	    format      	Output date format
- *								"%d %b %Y",
- *								"%d/%m/%Y %H:%M",
- *								"%d/%m/%Y %H:%M:%S",
- *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- * 	@param		tzoutput		true=output or 'gmt' => string is for Greenwich location
- * 								false or 'tzserver' => output string is for local PHP server TZ usage
- * 								'tzuser' => output string is for local browser TZ usage
- *	@param		outputlangs		Object lang that contains language for text translation.
- *  @param      encodetooutput  false=no convert into output pagecode
- * 	@return     string      	Formated date or '' if time is null
+ *	@param	timestamp	$time        	GM Timestamps date (or deprecated strings 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
+ *	@param	string		$format      	Output date format
+ *										"%d %b %Y",
+ *										"%d/%m/%Y %H:%M",
+ *										"%d/%m/%Y %H:%M:%S",
+ *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
+ * 	@param	string		$tzoutput		true=output or 'gmt' => string is for Greenwich location
+ * 										false or 'tzserver' => output string is for local PHP server TZ usage
+ * 										'tzuser' => output string is for local browser TZ usage
+ *	@param	Tranlsate	$outputlangs	Object lang that contains language for text translation.
+ *  @param  boolean		$encodetooutput false=no convert into output pagecode
+ * 	@return string      				Formated date or '' if time is null
+ *
  *  @see        dol_mktime, dol_stringtotime, dol_getdate
  */
 function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$encodetooutput=false)
@@ -751,15 +752,16 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 /**
  *	Convert a string date into a GM Timestamps date
  *
- *	@param		string			Date in a string
- *				                YYYYMMDD
+ *	@param	string	$string		Date in a string
+ *				     	        YYYYMMDD
  *	                 			YYYYMMDDHHMMSS
  *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
  *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
  *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
  *		                		19700101020000 -> 7200
- *  @param      gm              1=Input date is GM date, 0=Input date is local date
- *  @return		date			Date
+ *  @param	int		$gm         1=Input date is GM date, 0=Input date is local date
+ *  @return	date				Date
+ *
  *  @see        dol_print_date, dol_mktime, dol_getdate
  */
 function dol_stringtotime($string, $gm=1)
@@ -803,30 +805,30 @@ function dol_stringtotime($string, $gm=1)
  *	Return an array with date info
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *
- *	@param		timestamp		Timestamp
- *	@param		fast			Fast mode
- *	@return		array			Array of informations
- *				If no fast mode:
- *				'seconds' => $secs,
- *				'minutes' => $min,
- *				'hours' => $hour,
- *				'mday' => $day,
- *				'wday' => $dow,
- *				'mon' => $month,
- *				'year' => $year,
- *				'yday' => floor($secsInYear/$_day_power),
- *				'weekday' => gmdate('l',$_day_power*(3+$dow)),
- *				'month' => gmdate('F',mktime(0,0,0,$month,2,1971)),
- *				If fast mode:
- *				'seconds' => $secs,
- *				'minutes' => $min,
- *				'hours' => $hour,
- *				'mday' => $day,
- *				'mon' => $month,
- *				'year' => $year,
- *				'yday' => floor($secsInYear/$_day_power),
- *				'leap' => $leaf,
- *				'ndays' => $ndays
+ *	@param	timestamp	$timestamp		Timestamp
+ *	@param	boolean		$fast			Fast mode
+ *	@return	array						Array of informations
+ *										If no fast mode:
+ *										'seconds' => $secs,
+ *										'minutes' => $min,
+ *										'hours' => $hour,
+ *										'mday' => $day,
+ *										'wday' => $dow,
+ *										'mon' => $month,
+ *										'year' => $year,
+ *										'yday' => floor($secsInYear/$_day_power),
+ *										'weekday' => gmdate('l',$_day_power*(3+$dow)),
+ *										'month' => gmdate('F',mktime(0,0,0,$month,2,1971)),
+ *										If fast mode:
+ *										'seconds' => $secs,
+ *										'minutes' => $min,
+ *										'hours' => $hour,
+ *										'mday' => $day,
+ *										'mon' => $month,
+ *										'year' => $year,
+ *										'yday' => floor($secsInYear/$_day_power),
+ *										'leap' => $leaf,
+ *										'ndays' => $ndays
  */
 function dol_getdate($timestamp,$fast=false)
 {
@@ -1064,13 +1066,13 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$s
 /**
  * 	Format phone numbers according to country
  *
- * 	@param 		phone 		Phone number to format
- * 	@param 		country 	Country to use for formatting
- * 	@param 		cid 		Id of contact if known
- * 	@param 		socid 		Id of third party if known
- * 	@param 		addlink		0=no link to create action
- * 	@param 		separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
- * 	@return 	string 		Formated phone number
+ * 	@param	string	$phone 		Phone number to format
+ * 	@param 	string	$country 	Country code to use for formatting
+ * 	@param 	int		$cid 		Id of contact if known
+ * 	@param 	int		$socid 		Id of third party if known
+ * 	@param 	int		$addlink	0=no link to create action
+ * 	@param 	string	$separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ * 	@return string 				Formated phone number
  */
 function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
 {
@@ -1143,9 +1145,9 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 /**
  * 	Return an IP formated to be shown on screen
  *
- * 	@param 		ip			IP
- * 	@param		mode		1=return only country/flag,2=return only IP
- * 	@return 	string 		Formated IP, with country if GeoIP module is enabled
+ * 	@param	string	$ip			IP
+ * 	@param	int		$mode		1=return only country/flag,2=return only IP
+ * 	@return string 				Formated IP, with country if GeoIP module is enabled
  */
 function dol_print_ip($ip,$mode=0)
 {
@@ -1183,7 +1185,7 @@ function dol_print_ip($ip,$mode=0)
  *  Return country code for current user.
  *  If software is used inside a local network, detection may fails (we need a public ip)
  *
- *  @return     string      country code (fr, es, it, us, ...)
+ *  @return     string      Country code (fr, es, it, us, ...)
  */
 function dol_user_country()
 {
@@ -1208,11 +1210,11 @@ function dol_user_country()
 /**
  *  Format address string
  *
- *  @param      address     Address
- *  @param      htmlid      Html ID
- *  @param      mode        thirdparty|contact|member|other
- *  @param      id          Id of object
- *  @param      address     Address string
+ *  @param	string	$address     Address
+ *  @param  int		$htmlid      Html ID
+ *  @param  int		$mode        thirdparty|contact|member|other
+ *  @param  int		$id          Id of object
+ *  @return void
  */
 function dol_print_address($address, $htmlid='gmap', $mode, $id)
 {
@@ -1303,13 +1305,13 @@ function dol_strlen($string,$stringencoding='UTF-8')
 }
 
 /**
- * Make a substring. Works even in mbstring module not enabled
+ * Make a substring. Works even in mbstring module is not enabled.
  *
- * @param   $string
- * @param   $start
- * @param   $length
- * @param   $stringencoding
- * @return  string
+ * @param	string	$string				String to scan
+ * @param	string	$start				Start position
+ * @param	int		$length				Length
+ * @param   string	$stringencoding		Page code used for input string encoding
+ * @return  string						substring
  */
 function dol_substr($string,$start,$length,$stringencoding='')
 {
@@ -2742,6 +2744,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
  *	@param	totalnboflines		Total number of records/lines for all pages (if known)
  *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
+ *	@return	void
  */
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0)
 {
@@ -2841,11 +2844,12 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 /**
  *	Fonction servant a afficher les fleches de navigation dans les pages de listes
  *
- *	@param	page				Numero of page
- *	@param	file				Lien
- *	@param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
- *	@param	nextpage	    	Faut-il une page suivante
- *	@param	betweenarrows		HTML Content to show between arrows
+ *	@param	int		$page				Numero of page
+ *	@param	string	$file				Lien
+ *	@param	string	$options         	Autres parametres d'url a propager dans les liens ("" par defaut)
+ *	@param	int		$nextpage	    	Faut-il une page suivante
+ *	@param	string	$betweenarrows		HTML Content to show between arrows
+ *	@return	void
  */
 function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrows='')
 {
@@ -2866,10 +2870,10 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
  *	Fonction qui retourne un taux de tva formate pour visualisation
  *	Utilisee dans les pdf et les pages html
  *
- *	@param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
- *  @param		addpercent		Add a percent % sign in output
- *	@param		info_bits		Miscellanous information on vat
- *  @return		string			Chaine avec montant formate (19,6 ou 19,6% ou 8.5% *)
+ *	@param	float	$rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
+ *  @param	boolean	$addpercent		Add a percent % sign in output
+ *	@param	int		$info_bits		Miscellanous information on vat
+ *  @return	string					Chaine avec montant formate (19,6 ou 19,6% ou 8.5% *)
  */
 function vatrate($rate,$addpercent=false,$info_bits=0)
 {
@@ -2895,14 +2899,15 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
  *		Fonction qui formate un montant pour visualisation
  *		Fonction utilisee dans les pdf et les pages html
  *
- *		@param	    amount			Montant a formater
- *		@param	    html			Type de formatage, html ou pas (par defaut)
- *		@param	    outlangs		Objet langs pour formatage text
- *		@param		trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
- *		@param		rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
- *		@param		forcerounding	Force the number of decimal
- *		@return		string			Chaine avec montant formate
- *		@see		price2num		Revert function of price
+ *		@param	float		$amount			Montant a formater
+ *		@param	string		$html			Type de formatage, html ou pas (par defaut)
+ *		@param	Translate	$outlangs		Objet langs pour formatage text
+ *		@param	int			$trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
+ *		@param	int			$rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
+ *		@param	int			$forcerounding	Force the number of decimal
+ *		@return	string						Chaine avec montant formate
+ *
+ *		@see	price2num					Revert function of price
  */
 function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
 {
@@ -2969,14 +2974,15 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
  *	an amount typed by a user.
  *	Function to use on each input amount before any numeric test or database insert
  *
- *	@param	    	amount			Amount to convert/clean
- *	@param	    	rounding		''=No rounding
+ *	@param	float	$amount			Amount to convert/clean
+ *	@param	string	$rounding		''=No rounding
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *									'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
- * 	@param			alreadysqlnb	Put 1 if you know that content is already universal format number
- *	@return			string			Amount with universal numeric format (Example: '99.99999')
- *	@see     		price			Opposite function of price2num
+ * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
+ *	@return	string					Amount with universal numeric format (Example: '99.99999')
+ *
+ *	@see    price					Opposite function of price2num
  */
 function price2num($amount,$rounding='',$alreadysqlnb=0)
 {
@@ -3054,10 +3060,10 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 /**
  *	Return localtaxe rate for a particular tva
  *
- * 	@param      tva			         Vat taxe
- * 	@param      local		         Local taxe to search and return
- *  @param      societe_acheteuse    Object of buying third party
- * 	@return		int			         0 if not found, localtax if found
+ * 	@param	float		$tva			        Vat taxe
+ * 	@param  int			$local		         	Local taxe to search and return
+ *  @param  Societe		$societe_acheteuse    	Object of buying third party
+ * 	@return	int				   					0 if not found, localtax if found
  */
 function get_localtax($tva, $local, $societe_acheteuse="")
 {
@@ -3076,7 +3082,7 @@ function get_localtax($tva, $local, $societe_acheteuse="")
     $sql  = "SELECT t.localtax1, t.localtax2";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
     $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
-    $sql .= " AND t.taux =".$tva." AND t.active = 1";
+    $sql .= " AND t.taux = ".$tva." AND t.active = 1";
     $sql .= " ORDER BY t.localtax1 ASC, t.localtax2 ASC";
 
     $resql=$db->query($sql);
@@ -3094,9 +3100,9 @@ function get_localtax($tva, $local, $societe_acheteuse="")
  *	Return vat rate of a product in a particular selling country or default country
  *  vat if product is unknown
  *
- *  @param      idprod          Id of product or 0 if not a predefined product
- *  @param      countrycode     Country code (FR, US, IT, ...)
- *  @return     int             <0 if KO, Vat rate if OK
+ *  @param	int		$idprod          Id of product or 0 if not a predefined product
+ *  @param  string	$countrycode     Country code (FR, US, IT, ...)
+ *  @return int				         <0 if KO, Vat rate if OK
  *	TODO May be this should be better as a method of product class
  */
 function get_product_vat_for_country($idprod, $countrycode)
@@ -3684,9 +3690,9 @@ function dol_microtime_float()
 /**
  *		Return if a text is a html content
  *
- *		@param		msg			Content to check
- *		@param		option		0=Full detection, 1=Fast check
- *		@return		boolean		true/false
+ *		@param	string	$msg		Content to check
+ *		@param	int		$option		0=Full detection, 1=Fast check
+ *		@return	boolean				true/false
  */
 function dol_textishtml($msg,$option=0)
 {
@@ -3721,9 +3727,10 @@ function dol_textishtml($msg,$option=0)
  *      There is two type of substitions:
  * 		- From $substitutionarray (oldval=>newval)
  * 		- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
- *    	@param      chaine      			Source string in which we must do substitution
- *    	@param      substitutionarray		Array with key->val to substitute
- *    	@return     string      			Output string after subsitutions
+ *
+ *    	@param	string	$chaine      			Source string in which we must do substitution
+ *    	@param  array	$substitutionarray		Array with key->val to substitute
+ *    	@return string  		    			Output string after subsitutions
  */
 function make_substitutions($chaine,$substitutionarray)
 {
@@ -3740,9 +3747,10 @@ function make_substitutions($chaine,$substitutionarray)
 /**
  *      Complete the $substitutionarray with more entries
  *
- *      @param      substitutionarray       Array substitution old value => new value value
- *      @param      outputlangs             If we want substitution from special constants, we provide a language
- *      @param      object                  If we want substitution from special constants, we provide data in a source object
+ *      @param  array		$substitutionarray       Array substitution old value => new value value
+ *      @param  Translate	$outputlangs             If we want substitution from special constants, we provide a language
+ *      @param  Object		$object                  If we want substitution from special constants, we provide data in a source object
+ *      @return	void
  */
 function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='')
 {
@@ -3780,10 +3788,11 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
  *    @param      	date_end      End date
  *    @param      	format        Output format
  *    @param		outputlangs   Output language
+ *    @return	void
  */
 function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
-    print  get_date_range($date_start,$date_end,$format,$outputlangs);
+    print get_date_range($date_start,$date_end,$format,$outputlangs);
 }
 
 /**
@@ -3793,6 +3802,7 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
  *    @param      	date_end      End date
  *    @param      	format        Output format
  *    @param		outputlangs   Output language
+ *    @return	string			String
  */
 function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
@@ -3822,11 +3832,12 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 /**
  *	Get formated messages to output (Used to show messages on html output).
  *
- *	@param		mesgstring		Message string
- *	@param		mesgarray       Messages array
- *  @param      style           Style of message output ('ok' or 'error')
- *  @param      keepembedded    Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
- *	@return		string			Return html output
+ *	@param	string		$mesgstring		Message string
+ *	@param	array		$mesgarray      Messages array
+ *  @param  string		$style          Style of message output ('ok' or 'error')
+ *  @param  int			$keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *	@return	string						Return html output
+ *
  *  @see        dol_print_error
  *  @see        dol_htmloutput_errors
  */
@@ -3919,10 +3930,11 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 /**
  *  Get formated error messages to output (Used to show messages on html output).
  *
- *  @param      mesgstring          Error message
- *  @param      mesgarray           Error messages array
- *  @param      keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
- *  @return     html                Return html output
+ *  @param	string	$mesgstring         Error message
+ *  @param  array	$mesgarray          Error messages array
+ *  @param  int		$keepembedded       Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @return string                		Return html output
+ *
  *  @see        dol_print_error
  *  @see        dol_htmloutput_mesg
  */
@@ -3934,10 +3946,12 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 /**
  *	Print formated messages to output (Used to show messages on html output).
  *
- *	@param		mesgstring		Message
- *	@param		mesgarray       Messages array
- *  @param      style           Which style to use ('ok', 'error')
- *  @param      keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
+ *	@param	string	$mesgstring		Message
+ *	@param	array	$mesgarray       Messages array
+ *  @param  string	$style           Which style to use ('ok', 'error')
+ *  @param  int		$keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
+ *  @return	void
+ *
  *  @see        dol_print_error
  *  @see        dol_htmloutput_errors
  */
@@ -3983,9 +3997,11 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 /**
  *  Print formated error messages to output (Used to show messages on html output).
  *
- *  @param      mesgstring          Error message
- *  @param      mesgarray           Error messages array
- *  @param      keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @param	string	$mesgstring          Error message
+ *  @param  array	$mesgarray           Error messages array
+ *  @param  int		$keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @return	void
+ *
  *  @see        dol_print_error
  *  @see        dol_htmloutput_mesg
  */
@@ -4031,8 +4047,8 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 /**
  *      Check if a string is in UTF8
  *
- *      @param      $str        String to check
- * 		@return		boolean		True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
+ *      @param	string	$str        String to check
+ * 		@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
  */
 function utf8_check($str)
 {
@@ -4059,8 +4075,8 @@ function utf8_check($str)
  *      Return an UTF-8 string encoded into OS filesystem encoding. This function is used to define
  * 	    value to pass to filesystem PHP functions.
  *
- *      @param      string	$str        String to encode (UTF-8)
- * 		@return		string				Encoded string (UTF-8, ISO-8859-1)
+ *      @param	string	$str        String to encode (UTF-8)
+ * 		@return	string				Encoded string (UTF-8, ISO-8859-1)
  */
 function dol_osencode($str)
 {
@@ -4079,12 +4095,12 @@ function dol_osencode($str)
 /**
  *      Return an id or code from a code or id. Store Code-Id in a cache.
  *
- * 		@param		db			Database handler
- * 		@param		key			Code to get Id
- * 		@param		tablename	Table name without prefix
- * 		@param		fieldkey	Field for code
- * 		@param		fieldid		Field for id
- *      @return     int			Id of code
+ * 		@param	DoliDB	$db			Database handler
+ * 		@param	string	$key		Code to get Id
+ * 		@param	string	$tablename	Table name without prefix
+ * 		@param	string	$fieldkey	Field for code
+ * 		@param	string	$fieldid	Field for id
+ *      @return int					Id of code
  */
 function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 {
@@ -4122,8 +4138,8 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 /**
  * Verify if condition in string is ok or not
  *
- * @param 	string 		$strRights
- * @return 	boolean		true or false
+ * @param 	string		$strRights		String with condition to check
+ * @return 	boolean						true or false
  */
 function verifCond($strRights)
 {
@@ -4151,6 +4167,7 @@ function verifCond($strRights)
  * This function is called by verifCond()
  *
  * @param 	string	$s
+ * @return	void
  */
 function dol_eval($s)
 {
@@ -4167,8 +4184,8 @@ function dol_eval($s)
 /**
  * 	Return img flag of country for a language code or country code
  *
- * 	@param		codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
- * 	@return		string		HTML img string with flag.
+ * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
+ * 	@return	string				HTML img string with flag.
  */
 function picto_from_langcode($codelang)
 {

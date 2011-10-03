@@ -21,6 +21,16 @@
  *	\ingroup		paybox
  *  \brief			Library for common paybox functions
  */
+
+
+
+/**
+ * Show header
+ *
+ * @param 	string	$title		Title of page
+ * @param 	string	$head		Head string to add int head section
+ * @return	void
+ */
 function llxHeaderPaybox($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -50,6 +60,11 @@ function llxHeaderPaybox($title, $head = "")
 	print '<body style="margin: 20px;">'."\n";
 }
 
+/**
+ * Show footer
+ *
+ * @return	void
+ */
 function llxFooterPayBox()
 {
 	print "</body>\n";
@@ -60,13 +75,13 @@ function llxFooterPayBox()
 /**
  * Create a redirect form to paybox form
  *
- * @param   $PRICE
- * @param   $CURRENCY
- * @param   $EMAIL
- * @param   $urlok
- * @param   $urlko
- * @param   $TAG
- * @return  int              1 if OK, -1 if ERROR
+ * @param	int   	$PRICE		Price
+ * @param   string	$CURRENCY	Currency
+ * @param   string	$EMAIL		EMail
+ * @param   string	$urlok		Url to go back if payment is OK
+ * @param   string	$urlko		Url to go back if payment is KO
+ * @param   string	$TAG		Tag
+ * @return  int              	1 if OK, -1 if ERROR
  */
 function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 {
@@ -231,8 +246,9 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 /**
  * Show footer of company in HTML pages
  *
- * @param   $fromcompany
- * @param   $langs
+ * @param   Societe		$fromcompany	Third party
+ * @param   Translate	$langs			Output language
+ * @return	void
  */
 function html_print_paybox_footer($fromcompany,$langs)
 {
