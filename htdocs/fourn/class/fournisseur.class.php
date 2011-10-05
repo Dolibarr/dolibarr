@@ -165,7 +165,7 @@ class Fournisseur extends Societe
 		{
 			$prod = new ProductFournisseur($this->db);
 			$prod->fetch($fk_product);
-			$prod->fetch_fourn_data($this->id);
+			//$prod->fetch_fourn_data($this->id);
 
 			$commf->fetch($idc);
 			$commf->addline("Toto",120,1,$prod->tva, $prod->id, 0, $prod->ref_fourn);

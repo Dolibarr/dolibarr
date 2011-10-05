@@ -240,7 +240,7 @@ class ProductFournisseur extends Product
      *    @param      fournid         Supplier ID
      *    @return     int             < 0 if error, > 0 if ok
      */
-    function fetch_fourn_data($fournid)
+    /*function fetch_fourn_data($fournid)
     {
         global $conf;
 
@@ -268,7 +268,7 @@ class ProductFournisseur extends Product
             dol_syslog(get_class($this)."::fetch_fourn_data error=".$this->error, LOG_ERR);
             return -1;
         }
-    }
+    }*/
 
     /**
      *    Loads the price information of a provider
@@ -325,17 +325,17 @@ class ProductFournisseur extends Product
         global $conf;
 
         // Suppliers list
-        $sql = "SELECT s.nom as supplier_name, ";
+        $sql = "SELECT s.nom as supplier_name,";
         $sql.= " s.rowid as fourn_id,";
         $sql.= " pfp.ref_fourn,";
-        $sql.= " pfp.rowid as product_fourn_pri_id, ";
+        $sql.= " pfp.rowid as product_fourn_pri_id,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.fk_availability";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
         $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " ON pfp.fk_soc = s.rowid";
         $sql.= " WHERE s.entity = ".$conf->entity;
         $sql.= " AND pfp.fk_product = ".$prodid;
-        $sql.= " ORDER BY s.nom, pfp.quantity";
+        $sql.= " ORDER BY s.nom, pfp.quantity, pfp.price";
 
         dol_syslog(get_class($this)."::list_product_fournisseur_price sql=".$sql, LOG_DEBUG);
 

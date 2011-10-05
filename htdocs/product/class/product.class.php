@@ -1760,47 +1760,78 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Add a supplier reference for the product
+	 *  Add a supplier price for the product.
+	 *  Note: Duplicate ref is accepted for different quantity only or for different companies.
 	 *
-	 *  @param      user        User that make link
-	 *  @param      id_fourn    Supplier id
-	 *  @param      ref_fourn   Supplier ref
-	 *  @return     int         < 0 if KO, 0 if link already exists for this product, > 0 if OK
+	 *  @param      User	$user       User that make link
+	 *  @param      int		$id_fourn   Supplier id
+	 *  @param      string	$ref_fourn  Supplier ref
+	 *  @param		float	$quantity	Quantity minimum for price
+	 *  @return     int         		< 0 if KO, 0 if link already exists for this product, > 0 if OK
 	 */
-	function add_fournisseur($user, $id_fourn, $ref_fourn)
+	function add_fournisseur($user, $id_fourn, $ref_fourn, $quantity)
 	{
 		global $conf;
 
 		$now=dol_now();
 
-		$sql = "SELECT rowid, fk_product";
+		if ($ref_fourn)
+		{
+    		$sql = "SELECT rowid, fk_product";
+    		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+    		$sql.= " WHERE fk_soc = ".$id_fourn;
+    		$sql.= " AND ref_fourn = '".$ref_fourn."'";
+    		$sql.= " AND fk_product != ".$this->id;
+    		$sql.= " AND entity = ".$conf->entity;
+
+    		dol_syslog(get_class($this)."::add_fournisseur sql=".$sql);
+    		$resql=$this->db->query($sql);
+    		if ($resql)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+                if ($obj)
+                {
+        			// If the supplier ref already exists but for another product (duplicate ref is accepted for different quantity only or different companies)
+                    $this->product_id_already_linked = $obj->fk_product;
+    				return -3;
+    			}
+                $this->db->free($resql);
+    		}
+		}
+
+		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_soc = ".$id_fourn;
-		$sql.= " AND ref_fourn = '".$ref_fourn."'";
+		if ($ref_fourn) $sql.= " AND ref_fourn = '".$ref_fourn."'";
+		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
+		$sql.= " AND quantity = '".$quantity."'";
+		$sql.= " AND fk_product = ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("Product::add_fournisseur sql=".$sql);
+		dol_syslog(get_class($this)."::add_fournisseur sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$obj = $this->db->fetch_object($resql);
+    		$obj = $this->db->fetch_object($resql);
 
-			// The reference supplier does not exist, we create it for this product.
+		    // The reference supplier does not exist, we create it for this product.
 			if (! $obj)
 			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price (";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
 				$sql.= "datec";
 				$sql.= ", entity";
 				$sql.= ", fk_product";
 				$sql.= ", fk_soc";
 				$sql.= ", ref_fourn";
+				$sql.= ", quantity";
 				$sql.= ", fk_user";
 				$sql.= ") VALUES (";
-				$sql.= $this->db->idate($now);
+				$sql.= "'".$this->db->idate($now)."'";
 				$sql.= ", ".$conf->entity;
 				$sql.= ", ".$this->id;
 				$sql.= ", ".$id_fourn;
 				$sql.= ", '".$ref_fourn."'";
+				$sql.= ", ".$quantity;
 				$sql.= ", ".$user->id;
 				$sql.= ")";
 
@@ -1813,21 +1844,15 @@ class Product extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog("Product::add_fournisseur ".$this->error, LOG_ERR);
+					dol_syslog(get_class($this)."::add_fournisseur ".$this->error, LOG_ERR);
 					return -1;
 				}
 			}
-			// If the supplier ref already exists for this product
-			else if ($obj->fk_product == $this->id)
+			// If the supplier price already exists for this product and quantity
+			else
 			{
 				$this->product_fourn_price_id = $obj->rowid;
 				return 0;
-			}
-			// If the supplier ref already exists but for another product
-			else
-			{
-				$this->product_id_already_linked = $obj->fk_product;
-				return -3;
 			}
 		}
 		else
