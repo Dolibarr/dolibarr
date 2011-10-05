@@ -193,7 +193,7 @@ try
     restore_include_path();
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FIREPHP_ON" '.$option.' value="1" ';
-    if (class_exists('FirePHP')) print ' disabled="disabled"';
+    if (! class_exists('FirePHP')) print ' disabled="disabled"';
     else print ($syslog_firephp_on?' checked="checked"':"");
     print '> '.$langs->trans("FirePHP").'</td>';
     print '<td width="250" nowrap="nowrap">';
