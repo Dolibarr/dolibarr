@@ -53,9 +53,9 @@ class ProductFournisseur extends Product
 	 *
 	 *  @param		DoliDB		$DB      Database handler
      */
-    function ProductFournisseur($db)
+    function ProductFournisseur($DB)
     {
-        $this->db = $db;
+        $this->db = $DB;
     }
 
 
@@ -63,8 +63,8 @@ class ProductFournisseur extends Product
     /**
      *    Remove all prices for this couple supplier-product
      *
-     *    @param    id_fourn    Supplier Id
-     *    @return   int         < 0 if error, > 0 if ok
+     *    @param	int		$id_fourn   Supplier Id
+     *    @return   int         		< 0 if error, > 0 if ok
      */
     function remove_fournisseur($id_fourn)
     {
@@ -100,8 +100,8 @@ class ProductFournisseur extends Product
     /**
      * 	Remove a price for a couple supplier-product
      *
-     * 	@param		rowid	Line id of price
-     *	@return		int		<0 if KO, >0 if OK
+     * 	@param	int		$rowid		Line id of price
+     *	@return	int					<0 if KO, >0 if OK
      */
     function remove_product_fournisseur_price($rowid)
     {
@@ -273,8 +273,8 @@ class ProductFournisseur extends Product
     /**
      *    Loads the price information of a provider
      *
-     *    @param      rowid	         line id
-     *    @return     int             < 0 if KO, 0 if OK but not found, > 0 if OK
+     *    @param	int		$rowid	        Line id
+     *    @return   int 					< 0 if KO, 0 if OK but not found, > 0 if OK
      */
     function fetch_product_fournisseur_price($rowid)
     {
@@ -317,18 +317,16 @@ class ProductFournisseur extends Product
     /**
      *    List all supplier prices of a product
      *
-     *    @param    int		$rowid	    id du produit
-     *    @return	array				Array of ProductFournisseur
+     *    @param    int		$prodid	    Id of product
+     *    @return	array				Array of Products with new properties to define supplier price
      */
     function list_product_fournisseur_price($prodid)
     {
         global $conf;
 
         // Suppliers list
-        $sql = "SELECT s.nom as supplier_name,";
-        $sql.= " s.rowid as fourn_id,";
-        $sql.= " pfp.ref_fourn,";
-        $sql.= " pfp.rowid as product_fourn_pri_id,";
+        $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
+        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.fk_availability";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
         $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -340,10 +338,9 @@ class ProductFournisseur extends Product
         dol_syslog(get_class($this)."::list_product_fournisseur_price sql=".$sql, LOG_DEBUG);
 
         $resql = $this->db->query($sql);
-
         if ($resql)
         {
-            $prod_fourn = array();
+            $retarray = array();
 
             while ($record = $this->db->fetch_array($resql))
             {
@@ -365,7 +362,7 @@ class ProductFournisseur extends Product
                 {
                     if ($prodfourn->fourn_qty!=0)
                     {
-                        $prodfourn->fourn_unitprice = $prodfourn->fourn_price/$prodfourn->fourn_qty;
+                        $prodfourn->fourn_unitprice = price2num($prodfourn->fourn_price/$prodfourn->fourn_qty,'MU');
                     }
                     else
                     {
@@ -373,11 +370,11 @@ class ProductFournisseur extends Product
                     }
                 }
 
-                $prod_fourn[]=$prodfourn;
+                $retarray[]=$prodfourn;
             }
 
             $this->db->free($resql);
-            return $prod_fourn;
+            return $retarray;
         }
         else
         {
@@ -390,8 +387,8 @@ class ProductFournisseur extends Product
     /**
      * 	Load properties for minimum price
      *
-     *  @param      rowid	        Product id
-     *  @return     int				<0 if KO, >0 if OK
+     *  @param	int		$prodid	    Product id
+     *  @return int					<0 if KO, >0 if OK
      */
     function find_min_price_product_fournisseur($prodid)
     {
@@ -407,10 +404,8 @@ class ProductFournisseur extends Product
         $this->fourn_name			  = '';
         $this->id					  = '';
 
-        $sql = "SELECT s.nom as supplier_name,";
-        $sql.= " s.rowid as fourn_id,";
-        $sql.= " pfp.ref_fourn,";
-        $sql.= " pfp.rowid as product_fourn_price_id,";
+        $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
+        $sql.= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE s.entity = ".$conf->entity;
@@ -445,7 +440,10 @@ class ProductFournisseur extends Product
     }
 
     /**
+     *	Display supplier of product
      *
+     *	@param	int		$withpicto	Add picto
+     *	@return	string				String with supplier price
      */
     function getSocNomUrl($withpicto=0)
     {
@@ -456,7 +454,9 @@ class ProductFournisseur extends Product
     }
 
     /**
+     *	Display price of product
      *
+     *	@return	string		String with supplier price
      */
     function display_price_product_fournisseur()
     {

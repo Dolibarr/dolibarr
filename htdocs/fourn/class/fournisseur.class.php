@@ -277,11 +277,12 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\param		maxlen			Longueur max libelle
-	 *		\return		string			Chaine avec URL
+     *    	Return a link on thirdparty (with picto)
+     *
+     *		@param		withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+     *		@param		option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *		@param		maxlen			Max length of text
+     *		@return		string			String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='supplier',$maxlen=0)
 	{

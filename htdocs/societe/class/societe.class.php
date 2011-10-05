@@ -299,7 +299,7 @@ class Societe extends CommonObject
         $result = 0;
         $this->name	= trim($this->name);
         $this->nom=$this->name; // For backward compatibility
-        
+
         if (! $this->name)
         {
             $this->errors[] = 'ErrorBadThirdPartyName';
@@ -1413,8 +1413,9 @@ class Societe extends CommonObject
 
     /**
      *    	Return a link on thirdparty (with picto)
-     *		@param		withpicto		Inclut le picto dans le lien (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
-     *		@param		option			Sur quoi pointe le lien ('', 'customer', 'prospect', 'supplier')
+     *
+     *		@param		withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+     *		@param		option			Target of link ('', 'customer', 'prospect', 'supplier')
      *		@param		maxlen			Max length of text
      *		@return		string			String with URL
      */
