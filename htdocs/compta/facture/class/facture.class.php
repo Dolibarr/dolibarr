@@ -2016,6 +2016,13 @@ class Facture extends CommonObject
 			$staticline=new FactureLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
+			
+			// Reorder if fk_parent_line change
+			if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
+			{
+				$rangmax = $this->line_max($fk_parent_line);
+				$this->line->rang = $rangmax + 1;
+			}
 
             $this->line->rowid				= $rowid;
             $this->line->desc				= $desc;
@@ -2044,6 +2051,9 @@ class Facture extends CommonObject
             $result=$this->line->update();
             if ($result > 0)
             {
+            	// Reorder if child line
+            	if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+            	
                 // Mise a jour info denormalisees au niveau facture
                 $this->update_price(1);
                 $this->db->commit();
@@ -3567,8 +3577,9 @@ class FactureLigne
     }
 
     /**
-     *  	Update line into database
-     *		@return		int		<0 if KO, >0 if OK
+     *	Update line into database
+     *
+     *	@return		int		<0 if KO, >0 if OK
      */
     function update()
     {
@@ -3621,10 +3632,10 @@ class FactureLigne
         $sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
         $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
+        if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog("FactureLigne::update sql=".$sql);
-
+        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -3643,7 +3654,7 @@ class FactureLigne
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("FactureLigne::update Error ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }
