@@ -487,10 +487,20 @@ function dol_syslog($message, $level=LOG_INFO)
         // Check if log is to syslog (SYSLOG_FIREPHP_ON defined)
         if (defined("SYSLOG_FIREPHP_ON") && constant("SYSLOG_FIREPHP_ON"))
         {
-            require_once(SYSLOG_FIREPHP_PATH.'FirePHPCore/FirePHP.class.php');
-            ob_start();
-            $firephp = FirePHP::getInstance(true);
-            $firephp->log($message);
+            try
+            {
+                // Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once() a constant from
+                // database or config file because we must be able to log data before database or config file read.
+                set_include_path('/usr/share/php/');
+                require_once('FirePHPCore/FirePHP.class.php');
+                restore_include_path();
+                ob_start();
+                $firephp = FirePHP::getInstance(true);
+                $firephp->log($message);
+            }
+            catch(Exception $e)
+            {
+            }
         }
     }
 }

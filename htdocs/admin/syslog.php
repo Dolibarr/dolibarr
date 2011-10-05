@@ -35,6 +35,7 @@ $error=0; $mesg='';
 $action = GETPOST("action");
 $syslog_file_on=(defined('SYSLOG_FILE_ON') && constant('SYSLOG_FILE_ON'))?1:0;
 $syslog_syslog_on=(defined('SYSLOG_SYSLOG_ON') && constant('SYSLOG_SYSLOG_ON'))?1:0;
+$syslog_firephp_on=(defined('SYSLOG_FIREPHP_ON') && constant('SYSLOG_FIREPHP_ON'))?1:0;
 
 
 /*
@@ -48,6 +49,7 @@ if ($action == 'set')
 
     $res = dolibarr_del_const($db,"SYSLOG_FILE_ON",0);
     $res = dolibarr_del_const($db,"SYSLOG_SYSLOG_ON",0);
+    $res = dolibarr_del_const($db,"SYSLOG_FIREPHP_ON",0);
 
 	if (! $error && GETPOST("filename"))
 	{
@@ -92,6 +94,12 @@ if ($action == 'set')
 		    $mesg = "<font class=\"error\">".$langs->trans("ErrorUnknownSyslogConstant",$facility)."</font>";
 		}
 	}
+
+	if (! $error && isset($_POST['SYSLOG_FIREPHP_ON']))    // If firephp no available, post is not present
+	{
+        $syslog_firephp_on=GETPOST('SYSLOG_FIREPHP_ON');
+		if (! $error) $res = dolibarr_set_const($db,"SYSLOG_FIREPHP_ON",$syslog_firephp_on,'chaine',0,'',0);
+    }
 
 	if (! $error)
 	{
@@ -165,18 +173,39 @@ print "</tr>\n";
 $var=true;
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FILE_ON" '.$option.' value="1" '.($syslog_file_on?" checked":"").'> '.$langs->trans("SyslogSimpleFile").'</td>';
+print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FILE_ON" '.$option.' value="1" '.($syslog_file_on?' checked="checked"':'').'> '.$langs->trans("SyslogSimpleFile").'</td>';
 print '<td width="250" nowrap="nowrap">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" '.$option.' size="60" value="'.$defaultsyslogfile.'">';
 print '</td>';
 print "<td align=\"left\">".$html->textwithpicto('',$langs->trans("YouCanUseDOL_DATA_ROOT"));
 print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_SYSLOG_ON" '.$option.' value="1" '.($syslog_syslog_on?" checked":"").'> '.$langs->trans("SyslogSyslog").'</td>';
+print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_SYSLOG_ON" '.$option.' value="1" '.($syslog_syslog_on?' checked="checked"':'').'> '.$langs->trans("SyslogSyslog").'</td>';
 print '<td width="250" nowrap="nowrap">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" '.$option.' value="'.$defaultsyslogfacility.'">';
 print '</td>';
 print "<td align=\"left\">".$html->textwithpicto('','Only LOG_USER supported on Windows');
 print '</td></tr>';
+
+try
+{
+    set_include_path('/usr/share/php/');
+    @require_once('FirePHPCore/FirePHP.class.php');
+    restore_include_path();
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FIREPHP_ON" '.$option.' value="1" ';
+    if (class_exists('FirePHP')) print ' disabled="disabled"';
+    else print ($syslog_firephp_on?' checked="checked"':"");
+    print '> '.$langs->trans("FirePHP").'</td>';
+    print '<td width="250" nowrap="nowrap">';
+    print '</td>';
+    print "<td align=\"left\">".$html->textwithpicto('','FirePHP must be installed onto PHP and FirePHP plugin for Firefox must also be installed');
+    print '</td></tr>';
+}
+catch(Exception $e)
+{
+    // Do nothing
+    print '<!-- FirePHP no available into PHP -->'."\n";
+}
 
 print "</table>\n";
 print "</form>\n";
