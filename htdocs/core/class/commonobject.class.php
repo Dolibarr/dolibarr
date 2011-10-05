@@ -1075,8 +1075,9 @@ abstract class CommonObject
 
 	/**
 	 *    Update public note of element
-	 *    @param      note_public	New value for note
-	 *    @return     int         	<0 if KO, >0 if OK
+	 *
+	 *    @param	string	$note_public	New value for note
+	 *    @return	int         			<0 if KO, >0 if OK
 	 */
 	function update_note_public($note_public)
 	{
@@ -1562,8 +1563,8 @@ abstract class CommonObject
         }
         else return 0;
 	}
-    
-    
+
+
     /**
      *  Function to check if an object is used by others
      *
@@ -1609,7 +1610,7 @@ abstract class CommonObject
         }
         else return 0;
     }
-    
+
 
     // --------------------
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
@@ -1619,7 +1620,7 @@ abstract class CommonObject
 	/**
 	 *
 	 * Enter description here ...
-	 * 
+	 *
 	 * @param unknown_type $objectid
 	 * @param unknown_type $objecttype
 	 * @param unknown_type $withpicto

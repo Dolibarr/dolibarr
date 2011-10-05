@@ -167,9 +167,42 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$localobject->note='New note after update';
-    	$result=$localobject->update($localobject->id,$user);
+		//$localobject->note_public='New note public after update';
+		$localobject->name='New name';
+		$localobject->address='New address';
+		$localobject->zip='New zip';
+		$localobject->town='New town';
+		$localobject->status=0;
+		$localobject->tel='New tel';
+		$localobject->fax='New fax';
+		$localobject->email='New email';
+		$localobject->url='New url';
+		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
+		$result=$localobject->update_note($localobject->note);
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+		//$result=$localobject->update_note_public($localobject->note_public);
+    	//print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	//$this->assertLessThan($result, 0);
+
+		$newobject=new Societe($this->savdb);
+    	$result=$newobject->fetch($localobject->id);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+
+    	$this->assertEquals($localobject->note, $newobject->note);
+    	//$this->assertEquals($localobject->note_public, $newobject->note_public);
+    	$this->assertEquals($localobject->name, $newobject->name);
+    	$this->assertEquals($localobject->address, $newobject->address);
+    	$this->assertEquals($localobject->zip, $newobject->zip);
+    	$this->assertEquals($localobject->town, $newobject->town);
+    	$this->assertEquals($localobject->status, $newobject->status);
+    	$this->assertEquals($localobject->tel, $newobject->tel);
+    	$this->assertEquals($localobject->fax, $newobject->fax);
+    	$this->assertEquals($localobject->email, $newobject->email);
+    	$this->assertEquals($localobject->url, $newobject->url);
 
     	return $localobject;
     }
@@ -208,7 +241,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
         $result=$localobject->getFullAddress();
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains('MyTown', $result);
+        $this->assertContains("New address\nNew zip New town", $result);
 
         $result=$localobject->isInEEC();
         print __METHOD__." id=".$localobject->id." pays_code=".$this->pays_code." result=".$result."\n";
