@@ -483,6 +483,15 @@ function dol_syslog($message, $level=LOG_INFO)
                 closelog();
             }
         }
+
+        // Check if log is to syslog (SYSLOG_FIREPHP_ON defined)
+        if (defined("SYSLOG_FIREPHP_ON") && constant("SYSLOG_FIREPHP_ON"))
+        {
+            require_once(SYSLOG_FIREPHP_PATH.'FirePHPCore/FirePHP.class.php');
+            ob_start();
+            $firephp = FirePHP::getInstance(true);
+            $firephp->log($message);
+        }
     }
 }
 
