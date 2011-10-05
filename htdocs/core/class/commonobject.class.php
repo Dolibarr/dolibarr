@@ -967,6 +967,8 @@ abstract class CommonObject
 	{
 		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE rowid ='.$rowid;
+		
+		dol_syslog(get_class($this)."::getRangOfLine sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1008,13 +1010,18 @@ abstract class CommonObject
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND fk_parent_line = '.$fk_parent_line;
+			
+			dol_syslog(get_class($this)."::line_max sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$row = $this->db->fetch_row($resql);
-				if (! empty($row[0])) {
+				if (! empty($row[0]))
+				{
 					return $row[0];
-				} else {
+				}
+				else
+				{
 					return $this->getRangOfLine($fk_parent_line);
 				}
 			}
@@ -1024,6 +1031,8 @@ abstract class CommonObject
 		{
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			
+			dol_syslog(get_class($this)."::line_max sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{

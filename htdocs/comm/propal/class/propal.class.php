@@ -495,24 +495,31 @@ class Propal extends CommonObject
 			$staticline=new PropaleLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
-
-			$this->line->rowid=$rowid;
-			$this->line->desc=$desc;
-			$this->line->qty=$qty;
-			$this->line->tva_tx=$txtva;
-			$this->line->localtax1_tx=$txlocaltax1;
-			$this->line->localtax2_tx=$txlocaltax2;
-			$this->line->remise_percent=$remise_percent;
-			$this->line->subprice=$pu;
-			$this->line->info_bits=$info_bits;
-			$this->line->total_ht=$total_ht;
-			$this->line->total_tva=$total_tva;
-			$this->line->total_localtax1=$total_localtax1;
-			$this->line->total_localtax2=$total_localtax2;
-			$this->line->total_ttc=$total_ttc;
-			$this->line->special_code=$special_code;
-			$this->line->fk_parent_line=$fk_parent_line;
-			$this->line->skip_update_total=$skip_update_total;
+			
+			// Reorder if fk_parent_line change
+			if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
+			{
+				$rangmax = $this->line_max($fk_parent_line);
+				$this->line->rang = $rangmax + 1;
+			}
+			
+			$this->line->rowid				= $rowid;
+			$this->line->desc				= $desc;
+			$this->line->qty				= $qty;
+			$this->line->tva_tx				= $txtva;
+			$this->line->localtax1_tx		= $txlocaltax1;
+			$this->line->localtax2_tx		= $txlocaltax2;
+			$this->line->remise_percent		= $remise_percent;
+			$this->line->subprice			= $pu;
+			$this->line->info_bits			= $info_bits;
+			$this->line->total_ht			= $total_ht;
+			$this->line->total_tva			= $total_tva;
+			$this->line->total_localtax1	= $total_localtax1;
+			$this->line->total_localtax2	= $total_localtax2;
+			$this->line->total_ttc			= $total_ttc;
+			$this->line->special_code		= $special_code;
+			$this->line->fk_parent_line		= $fk_parent_line;
+			$this->line->skip_update_total	= $skip_update_total;
 
 			// TODO deprecated
 			$this->line->price=$price;
@@ -521,6 +528,9 @@ class Propal extends CommonObject
 			$result=$this->line->update();
 			if ($result > 0)
 			{
+				// Reorder if child line
+				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+				
 				$this->update_price(1);
 
 				$this->fk_propal = $this->id;
@@ -2646,8 +2656,9 @@ class PropaleLigne
 	}
 
 	/**
-	 *      \brief     	Mise a jour de l'objet ligne de propale en base
-	 *		\return		int		<0 si ko, >0 si ok
+	 *	Mise a jour de l'objet ligne de propale en base
+	 *
+	 *	@return		int		<0 si ko, >0 si ok
 	 */
 	function update($notrigger=0)
 	{
@@ -2692,9 +2703,10 @@ class PropaleLigne
 		$sql.= " , info_bits=".$this->info_bits;
 		if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
 		$sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
+		if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dol_syslog("PropaleLigne::update sql=$sql");
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2714,7 +2726,7 @@ class PropaleLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("PropaleLigne::update Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
