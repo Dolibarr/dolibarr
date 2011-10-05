@@ -29,8 +29,7 @@ $langs->load("admin");
 $langs->load("user");
 $langs->load("install");
 
-if (!$user->admin)
-  accessforbidden();
+if (! $user->admin) accessforbidden();
 
 
 /*
@@ -123,6 +122,8 @@ print '<br>';
 //print "<br>\n";
 print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
-
 llxFooter();
+
+$db->close();
+
 ?>
