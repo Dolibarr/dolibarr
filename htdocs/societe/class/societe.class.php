@@ -942,24 +942,22 @@ class Societe extends CommonObject
                 }
             }
 
+            // Removed extrafields
+          	//$result=$this->deleteExtraFields($this);
+            //if ($result < 0) $error++;
+
             if (! $error)
             {
-            	// Actions on extra fields (by external module or standard code)
+            	// Additionnal action by hooks
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                 $hookmanager=new HookManager($this->db);
-                $hookmanager->callHooks(array('thirdparty_extrafields'));
+                $hookmanager->callHooks(array('thirdparty'));
                 $parameters=array(); $action='delete';
-                $reshook=$hookmanager->executeHooks('deleteExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('deleteThirdparty',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if (! empty($hookmanager->error))
                 {
                     $error++;
                     $this->error=$hookmanager->error;
-                }
-                else if (empty($reshook))
-                {
-                    // TODO
-                	//$result=$this->deleteExtraFields($this);
-                    //if ($result < 0) $error++;
                 }
             }
 

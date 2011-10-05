@@ -45,6 +45,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class AllTests
 {
+    /**
+     * Function suite to make all PHPUnit tests
+     *
+     * @return	void
+     */
 	public static function suite()
     {
 		$suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
