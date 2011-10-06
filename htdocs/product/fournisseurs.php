@@ -292,6 +292,7 @@ if ($id || $ref)
 				// Availability
 				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 				{
+					$langs->load("propal");
 					print '<tr><td>'.$langs->trans("Availability").'</td><td colspan="3">';
 					$html->select_availability($product->fk_availability,"oselDispo",1);
 					print '</td></tr>'."\n";
