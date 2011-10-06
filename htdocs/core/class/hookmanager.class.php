@@ -51,11 +51,14 @@ class HookManager
 
 	/**
 	 *	Init array this->hooks with instantiated controler
-	 *  A hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
+	 *
+	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
 	 *  with value nameofhookkey1:nameofhookkey2:...:nameofhookkeyn.
-	 *  This add into conf->hooks_module an entries ('modulename'=>nameofhookkey)
-	 *  After this, this->hooks is defined
-	 *	@param	    arraytype	    Array list of hooked tab/features. For example: thirdpartytab, ...
+	 *  This add into conf->hooks_modules an entrie ('modulename'=>nameofhookkey)
+	 *  Then, when this function is called, an array this->hooks is defined with instance of controler
+	 *  classes that support the hook called
+	 *
+	 *	@param	    arraytype	    Array list of searched hooks tab/features. For example: 'thirdpartytab', 'thirdparty',...
 	 *	@return		int				Always 1
 	 */
 	function callHooks($arraytype)

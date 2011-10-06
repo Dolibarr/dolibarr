@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -177,16 +177,16 @@ if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.client in (2, 3)";
+$sql.= " AND s.client IN (2, 3)";
 $sql.= " AND s.entity = ".$conf->entity;
 if ($user->societe_id) $sql.= " AND s.rowid = " .$user->societe_id;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
 if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
 
-if ($search_nom)   $sql .= " AND s.nom like '%".$db->escape(strtolower($search_nom))."%'";
-if ($search_ville) $sql .= " AND s.ville like '%".$db->escape(strtolower($search_ville))."%'";
-if ($search_departement) $sql .= " AND d.nom like '%".$db->escape(strtolower($search_departement))."%'";
+if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
+if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape(strtolower($search_ville))."%'";
+if ($search_departement) $sql .= " AND d.nom LIKE '%".$db->escape(strtolower($search_departement))."%'";
 if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
 // Insert levels filters
 if ($search_levels)
@@ -205,7 +205,7 @@ if ($search_categ)
 }
 if ($socname)
 {
-	$sql .= " AND s.nom like '%".$db->escape($socname)."%'";
+	$sql .= " AND s.nom LIKE '%".$db->escape($socname)."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
@@ -262,7 +262,7 @@ if ($resql)
 
 
  	// Print the search-by-sale and search-by-categ filters
- 	print '<form method="get" action="prospects.php" id="formulaire_recherche">';
+ 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'" id="formulaire_recherche">';
 
 	print '<table class="liste" width="100%">';
 
@@ -289,12 +289,12 @@ if ($resql)
 	}
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("StatusProsp"),"prospects.php","s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("State"),$_SERVER["PHP_SELF"],"s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ProspectLevelShort"),$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("StatusProsp"),$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
@@ -377,11 +377,11 @@ if ($resql)
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
 		print "<td>".$obj->ville."&nbsp;</td>";
-		print "<td align=\"center\">$obj->departement</td>";
+		print '<td align="center">'.$obj->departement.'</td>';
 		// Creation date
-		print "<td align=\"center\">".dol_print_date($db->jdate($obj->datec))."</td>";
+		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		// Level
-		print "<td align=\"center\">";
+		print '<td align="center">';
 		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
 		print "</td>";
 		// Statut
@@ -395,7 +395,7 @@ if ($resql)
 		{
 			if ($value <> $obj->fk_stcomm)
 			{
-				print '<a href="prospects.php?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:'').'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:'').'">';
 				print img_action(0,$value);
 				print '</a>&nbsp;';
 			}

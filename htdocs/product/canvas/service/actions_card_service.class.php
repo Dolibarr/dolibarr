@@ -78,7 +78,7 @@ class ActionsCardService extends Product
 
    		$tmpobject = new Product($this->db);
    		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id,$ref);
-        $this->object = $object;
+        $this->object = $tmpobject;
 
 		//parent::assign_values($action);
 
@@ -310,7 +310,7 @@ class ActionsCardService extends Product
 		if ($_GET["fourn_id"] > 0)
 		{
 			$fourn_id = $_GET["fourn_id"];
-			$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
+			$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		}
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
@@ -335,7 +335,7 @@ class ActionsCardService extends Product
 		}
 		if ($fourn_id > 0)
 		{
-			$sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+			$sql.= " AND p.rowid = pfp.fk_product AND pfp.fk_soc = ".$fourn_id;
 		}
 		// Insert categ filter
 		if ($search_categ)

@@ -299,7 +299,7 @@ class Societe extends CommonObject
         $result = 0;
         $this->name	= trim($this->name);
         $this->nom=$this->name; // For backward compatibility
-        
+
         if (! $this->name)
         {
             $this->errors[] = 'ErrorBadThirdPartyName';
@@ -942,24 +942,22 @@ class Societe extends CommonObject
                 }
             }
 
+            // Removed extrafields
+          	//$result=$this->deleteExtraFields($this);
+            //if ($result < 0) $error++;
+
             if (! $error)
             {
-            	// Actions on extra fields (by external module or standard code)
+            	// Additionnal action by hooks
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                 $hookmanager=new HookManager($this->db);
-                $hookmanager->callHooks(array('thirdparty_extrafields'));
+                $hookmanager->callHooks(array('thirdparty'));
                 $parameters=array(); $action='delete';
-                $reshook=$hookmanager->executeHooks('deleteExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('deleteThirdparty',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if (! empty($hookmanager->error))
                 {
                     $error++;
                     $this->error=$hookmanager->error;
-                }
-                else if (empty($reshook))
-                {
-                    // TODO
-                	//$result=$this->deleteExtraFields($this);
-                    //if ($result < 0) $error++;
                 }
             }
 
@@ -1413,8 +1411,9 @@ class Societe extends CommonObject
 
     /**
      *    	Return a link on thirdparty (with picto)
-     *		@param		withpicto		Inclut le picto dans le lien (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
-     *		@param		option			Sur quoi pointe le lien ('', 'customer', 'prospect', 'supplier')
+     *
+     *		@param		withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+     *		@param		option			Target of link ('', 'customer', 'prospect', 'supplier')
      *		@param		maxlen			Max length of text
      *		@return		string			String with URL
      */

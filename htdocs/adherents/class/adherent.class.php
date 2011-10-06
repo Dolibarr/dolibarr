@@ -1560,11 +1560,9 @@ class Adherent extends CommonObject
 				//curl_setopt($ch, CURLOPT_POST, 0);
 				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
 				//--- Start buffering
-				//ob_start();
 				$result=curl_exec($ch);
 				dol_syslog($result);
 				//--- End buffering and clean output
-				//ob_end_clean();
 				if (curl_error($ch) > 0)
 				{
 				    // error
@@ -1632,11 +1630,9 @@ class Adherent extends CommonObject
 				//curl_setopt($ch, CURLOPT_POST, 0);
 				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
 				//--- Start buffering
-				//ob_start();
 				$result=curl_exec($ch);
 				dol_syslog($result);
 				//--- End buffering and clean output
-				//ob_end_clean();
 				$rescode=curl_error($ch);
 				if ($rescode > 0)
 				{

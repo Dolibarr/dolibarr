@@ -151,7 +151,7 @@ if ($id > 0)
         // Login
         if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
         {
-            print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
+            print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
         }
 
         // Morphy

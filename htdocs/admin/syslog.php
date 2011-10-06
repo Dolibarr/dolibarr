@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/admin/syslog.php
  *	\ingroup    syslog
- *	\brief      Setup page for syslog module
+ *	\brief      Setup page for logs module
  */
 
 require("../main.inc.php");
@@ -31,13 +31,91 @@ if (!$user->admin) accessforbidden();
 $langs->load("admin");
 $langs->load("other");
 
+$error=0; $mesg='';
 $action = GETPOST("action");
+$syslog_file_on=(defined('SYSLOG_FILE_ON') && constant('SYSLOG_FILE_ON'))?1:0;
+$syslog_syslog_on=(defined('SYSLOG_SYSLOG_ON') && constant('SYSLOG_SYSLOG_ON'))?1:0;
+$syslog_firephp_on=(defined('SYSLOG_FIREPHP_ON') && constant('SYSLOG_FIREPHP_ON'))?1:0;
+
 
 /*
  * Actions
  */
 
-if ($action== 'setlevel')
+// Set modes
+if ($action == 'set')
+{
+	$db->begin();
+
+    $res = dolibarr_del_const($db,"SYSLOG_FILE_ON",0);
+    $res = dolibarr_del_const($db,"SYSLOG_SYSLOG_ON",0);
+    $res = dolibarr_del_const($db,"SYSLOG_FIREPHP_ON",0);
+
+	if (! $error && GETPOST("filename"))
+	{
+		$filename=GETPOST("filename");
+		$filelog=GETPOST("filename");
+		$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
+		$file=@fopen($filelog,"a+");
+		if ($file)
+		{
+			fclose($file);
+
+			dol_syslog("admin/syslog: file ".$filename);
+			$res = dolibarr_set_const($db,"SYSLOG_FILE",$filename,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+            $syslog_file_on=GETPOST('SYSLOG_FILE_ON');
+			if (! $error) $res = dolibarr_set_const($db,"SYSLOG_FILE_ON",$syslog_file_on,'chaine',0,'',0);
+		}
+		else
+		{
+		    $error++;
+		    $mesg = "<font class=\"error\">".$langs->trans("ErrorFailedToOpenFile",$filename)."</font>";
+		}
+	}
+
+	if (! $error && GETPOST("facility"))
+	{
+	    $facility=GETPOST("facility");
+	    if (defined($_POST["facility"]))
+		{
+			// Only LOG_USER supported on Windows
+			if (! empty($_SERVER["WINDIR"])) $facility='LOG_USER';
+
+			dol_syslog("admin/syslog: facility ".$facility);
+			$res = dolibarr_set_const($db,"SYSLOG_FACILITY",$facility,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+            $syslog_syslog_on=GETPOST('SYSLOG_SYSLOG_ON');
+			if (! $error) $res = dolibarr_set_const($db,"SYSLOG_SYSLOG_ON",$syslog_syslog_on,'chaine',0,'',0);
+		}
+		else
+		{
+		    $error++;
+		    $mesg = "<font class=\"error\">".$langs->trans("ErrorUnknownSyslogConstant",$facility)."</font>";
+		}
+	}
+
+	if (! $error && isset($_POST['SYSLOG_FIREPHP_ON']))    // If firephp no available, post is not present
+	{
+        $syslog_firephp_on=GETPOST('SYSLOG_FIREPHP_ON');
+		if (! $error) $res = dolibarr_set_const($db,"SYSLOG_FIREPHP_ON",$syslog_firephp_on,'chaine',0,'',0);
+    }
+
+	if (! $error)
+	{
+		$db->commit();
+		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	}
+	else
+	{
+		$db->rollback();
+		if (empty($mesg)) $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
+
+}
+
+// Set level
+if ($action == 'setlevel')
 {
 	$level = GETPOST("level");
 	$res = dolibarr_set_const($db,"SYSLOG_LEVEL",$level,'chaine',0,'',0);
@@ -53,75 +131,6 @@ if ($action== 'setlevel')
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
 	}
 }
-
-if ($action == 'set')
-{
-	$optionlogoutput=GETPOST("optionlogoutput");
-	$facility=GETPOST("facility");
-	if ($optionlogoutput == "syslog")
-	{
-		if (defined($_POST["facility"]))
-		{
-			$db->begin;
-			// Only LOG_USER supported on Windows
-			if (! empty($_SERVER["WINDIR"])) $facility='LOG_USER';
-
-			$res = dolibarr_del_const($db,"SYSLOG_FILE",0);
-			if (! $res > 0) $error++;
-			$res = dolibarr_set_const($db,"SYSLOG_FACILITY",$facility,'chaine',0,'',0);
-			if (! $res > 0) $error++;
-			dol_syslog("admin/syslog: facility ".$facility);
-			if (! $error)
-		    {
-		        $db->commit();
-		        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-		    }
-		    else
-		    {
-		        $db->rollback();
-		        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-			}
-		}
-		else
-		{
-			$mesg = "<font class=\"error\">".$langs->trans("ErrorUnknownSyslogConstant",$facility)."</font>";
-		}
-	}
-
-	if ($optionlogoutput == "file")
-	{
-		$filename=GETPOST("filename");
-		$filelog=GETPOST("filename");
-		$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
-		$file=fopen($filelog,"a+");
-		if ($file)
-		{
-			fclose($file);
-			$db->begin;
-			$res = dolibarr_del_const($db,"SYSLOG_FACILITY",0);
-			if (! $res > 0) $error++;
-			$res = dolibarr_set_const($db,"SYSLOG_FILE",$filename,'chaine',0,'',0);
-			if (! $res > 0) $error++;
-			dol_syslog("admin/syslog: file ".$filename);
-			if (! $res > 0) $error++;
-			if (! $error)
-    		{
-        		$db->commit();
-        		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    		}
-    		else
-    		{
-        		$db->rollback();
-        		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-			}
-		}
-		else
-		{
-			$mesg = "<font class=\"error\">".$langs->trans("ErrorFailedToOpenFile",$filename)."</font>";
-		}
-	}
-}
-
 
 /*
  * View
@@ -162,21 +171,48 @@ print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td align="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=true;
-$var=!$var;
-print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="radio" name="optionlogoutput" '.$option.' value="syslog" '.($syslogfacility?" checked":"").'> '.$langs->trans("SyslogSyslog").'</td>';
-print '<td colspan="3">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" '.$option.' value="'.$defaultsyslogfacility.'">';
-print ' '.img_info('Only LOG_USER supported on Windows');
-print '</td></tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="radio" name="optionlogoutput" '.$option.' value="file" '.($syslogfile?" checked":"").'> '.$langs->trans("SyslogSimpleFile").'</td>';
-print '<td width="250" nowrap>'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" '.$option.' size="60" value="'.$defaultsyslogfile.'">';
+print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FILE_ON" '.$option.' value="1" '.($syslog_file_on?' checked="checked"':'').'> '.$langs->trans("SyslogSimpleFile").'</td>';
+print '<td width="250" nowrap="nowrap">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" '.$option.' size="60" value="'.$defaultsyslogfile.'">';
 print '</td>';
 print "<td align=\"left\">".$html->textwithpicto('',$langs->trans("YouCanUseDOL_DATA_ROOT"));
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_SYSLOG_ON" '.$option.' value="1" '.($syslog_syslog_on?' checked="checked"':'').'> '.$langs->trans("SyslogSyslog").'</td>';
+print '<td width="250" nowrap="nowrap">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" '.$option.' value="'.$defaultsyslogfacility.'">';
+print '</td>';
+print "<td align=\"left\">".$html->textwithpicto('','Only LOG_USER supported on Windows');
+print '</td></tr>';
+
+try
+{
+    set_include_path('/usr/share/php/');
+    @require_once('FirePHPCore/FirePHP.class.php');
+    restore_include_path();
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FIREPHP_ON" '.$option.' value="1" ';
+    if (! class_exists('FirePHP')) print ' disabled="disabled"';
+    else print ($syslog_firephp_on?' checked="checked"':"");
+    print '> '.$langs->trans("FirePHP").'</td>';
+    print '<td width="250" nowrap="nowrap">';
+    print '</td>';
+    print "<td align=\"left\">".$html->textwithpicto('','FirePHP must be installed onto PHP and FirePHP plugin for Firefox must also be installed');
+    print '</td></tr>';
+}
+catch(Exception $e)
+{
+    // Do nothing
+    print '<!-- FirePHP no available into PHP -->'."\n";
+}
+
 print "</table>\n";
 print "</form>\n";
+
+print '<br>';
+
+print_titre($langs->trans("SyslogLevel"));
 
 // Level
 print '<form action="syslog.php" method="post">';

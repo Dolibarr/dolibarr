@@ -28,7 +28,7 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
  *	\class      modSyslog
- *	\brief      Classe de description et activation du module Syslog
+ *	\brief      Class to enable/disable module Logs
  */
 class modSyslog extends DolibarrModules
 {

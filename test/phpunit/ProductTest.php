@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/SocieteTest.php
+ *      \file       test/phpunit/ProductTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 
 if (empty($user->id))
 {
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SocieteTest extends PHPUnit_Framework_TestCase
+class ProductTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -56,9 +56,9 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return SocieteTest
+	 * @return ProductTest
 	 */
-	function SocieteTest()
+	function ProductTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -76,8 +76,6 @@ class SocieteTest extends PHPUnit_Framework_TestCase
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
-
-        if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') { print __METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(); }
 
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
@@ -112,7 +110,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testSocieteCreate()
+    public function testProductCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -120,7 +118,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Product($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -131,10 +129,10 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testSocieteCreate
+     * @depends	testProductCreate
      * The depends says test is run only if previous is ok
      */
-    public function testSocieteFetch($id)
+    public function testProductFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -142,23 +140,19 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Product($this->savdb);
     	$result=$localobject->fetch($id);
         print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-
-        $result=$localobject->verify();
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertEquals($result, 0);
 
     	return $localobject;
     }
 
     /**
-     * @depends	testSocieteFetch
+     * @depends	testProductFetch
      * The depends says test is run only if previous is ok
      */
-    public function testSocieteUpdate($localobject)
+    public function testProductUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -167,51 +161,18 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$localobject->note='New note after update';
-		//$localobject->note_public='New note public after update';
-		$localobject->name='New name';
-		$localobject->address='New address';
-		$localobject->zip='New zip';
-		$localobject->town='New town';
-		$localobject->status=0;
-		$localobject->tel='New tel';
-		$localobject->fax='New fax';
-		$localobject->email='New email';
-		$localobject->url='New url';
-		$result=$localobject->update($localobject->id,$user);
+    	$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-		$result=$localobject->update_note($localobject->note);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-		//$result=$localobject->update_note_public($localobject->note_public);
-    	//print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	//$this->assertLessThan($result, 0);
-
-		$newobject=new Societe($this->savdb);
-    	$result=$newobject->fetch($localobject->id);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-
-    	$this->assertEquals($localobject->note, $newobject->note);
-    	//$this->assertEquals($localobject->note_public, $newobject->note_public);
-    	$this->assertEquals($localobject->name, $newobject->name);
-    	$this->assertEquals($localobject->address, $newobject->address);
-    	$this->assertEquals($localobject->zip, $newobject->zip);
-    	$this->assertEquals($localobject->town, $newobject->town);
-    	$this->assertEquals($localobject->status, $newobject->status);
-    	$this->assertEquals($localobject->tel, $newobject->tel);
-    	$this->assertEquals($localobject->fax, $newobject->fax);
-    	$this->assertEquals($localobject->email, $newobject->email);
-    	$this->assertEquals($localobject->url, $newobject->url);
 
     	return $localobject;
     }
 
     /**
-     * @depends	testSocieteUpdate
+     * @depends	testProductUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testSocieteOther($localobject)
+    public function testProductOther($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -219,46 +180,15 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->factures_impayes();
-    	print __METHOD__." id=".$localobject->id." result=".join(',',$result)."\n";
-    	//$this->assertLessThan($result, 0);
-
-        $result=$localobject->set_as_client();
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-
-        $result=$localobject->set_price_level(1,$user);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-
-        $result=$localobject->set_remise_client(10,'Gift',$user);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-
-        $result=$localobject->getNomUrl(1);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertNotEquals($result, '');
-
-        $result=$localobject->getFullAddress();
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town", $result);
-
-        $result=$localobject->isInEEC();
-        print __METHOD__." id=".$localobject->id." pays_code=".$this->pays_code." result=".$result."\n";
-        $this->assertTrue(true, $result);
-
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
 
         return $localobject->id;
     }
 
     /**
-     * @depends	testSocieteOther
+     * @depends	testProductOther
      * The depends says test is run only if previous is ok
      */
-    public function testSocieteDelete($id)
+    public function testProductDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -266,7 +196,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Product($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$result=$localobject->delete($id);
@@ -299,7 +229,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testSocieteStatic()
+    public function testProductStatic()
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -307,7 +237,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new Societe($db);
+        $localobject=new Product($db);
 
 
         return;

@@ -34,6 +34,12 @@ $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
 
+$action=GETPOST('action');
+$id=GETPOST('id','int');
+$ref=GETPOST('ref');
+$socid=GETPOST('socid');
+$error=0; $mesg = '';
+
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['search_fourn_id']))
 {
@@ -43,13 +49,8 @@ if (! empty($_REQUEST['search_fourn_id']))
 }
 
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service&fournisseur',$id,'product','','',$fieldid);
+$result=restrictedArea($user, 'produit|service&fournisseur', ($id>0?$id:$ref), 'product', '', '', ($id>0?'rowid':'ref'));
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -57,69 +58,70 @@ $sortorder = GETPOST("sortorder",'alpha');
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
 
-$mesg = '';
 
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'remove_pf')
+if ($action == 'remove_pf')
 {
 	$product = new ProductFournisseur($db);
-	if ($product->fetch($_GET["id"]) > 0)
+	if ($product->fetch($id) > 0)
 	{
 		if ($_GET["rowid"])
 		{
 			$result=$product->remove_product_fournisseur_price($_GET["rowid"]);
-			$_GET["action"] = '';
+			$action = '';
 			$mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
-		}
-		else
-		{
-			// Deprecated. Should not occurs
-			if ($product->remove_fournisseur($_GET["socid"]) > 0)
-			{
-				$_GET["action"] = '';
-				$mesg = '<div class="ok">'.$langs->trans("SupplierRemoved").'.</div>';
-			}
-			else
-			{
-				$_GET["action"] = '';
-			}
 		}
 	}
 }
 
-if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($action == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $id_fourn=GETPOST("id_fourn");
     if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
     $ref_fourn=GETPOST("ref_fourn");
     if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
+    $quantity=GETPOST("qty");
+
+	if (empty($quantity))
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
+	}
+	if (empty($ref_fourn))    // TODO Why not making this optionnal ?
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")).'</div>';
+	}
+	if ($id_fourn <= 0)
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")).'</div>';
+	}
+	if ($_POST["price"] < 0 || $_POST["price"] == '')
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")).'</div>';
+	}
 
 	$product = new ProductFournisseur($db);
-	$result=$product->fetch(GETPOST("id"));
-	if ($result > 0)
+	$result=$product->fetch($id);
+	if ($result <= 0)
 	{
-		$db->begin();
+	    $error++;
+	    $mesg=$product->error;
+	}
 
-		$error=0;
-		if (! $ref_fourn)
-		{
-			$error++;
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")).'</div>';
-		}
-		if ($id_fourn <= 0)
-		{
-			//print "eee".$_POST["id_fourn"];
-			$error++;
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")).'</div>';
-		}
+	if (! $error)
+    {
+    	$db->begin();
 
 		if (! $error)
 		{
-			$ret=$product->add_fournisseur($user, $id_fourn, $ref_fourn);
+			$ret=$product->add_fournisseur($user, $id_fourn, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
 			if ($ret == -3)
 			{
 				$error++;
@@ -138,43 +140,27 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 
 		if (! $error)
 		{
-			if ($_POST["qty"])
-			{
-				if ($_POST["price"] >= 0)
-				{
-					$supplier=new Fournisseur($db);
-					$result=$supplier->fetch($id_fourn);
+			$supplier=new Fournisseur($db);
+			$result=$supplier->fetch($id_fourn);
 
-					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"]);
-					if ($ret < 0)
-					{
-						$error++;
-						$mesg='<div class="error">'.$product->error.'</div>';
-					}
-				}
-				else
-				{
-					$error++;
-					$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")).'</div>';
-				}
-			}
-			else
+			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn);
+			if ($ret < 0)
 			{
 				$error++;
-				$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
+				$mesg='<div class="error">'.$product->error.'</div>';
 			}
 		}
 
 		if (! $error)
 		{
 			$db->commit();
-			$_POST['action']='';
+			$action='';
 		}
 		else
 		{
 			$db->rollback();
 		}
-	}
+    }
 }
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
@@ -192,21 +178,19 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 
 $html = new Form($db);
 
-if ($_GET["id"] || $_GET["ref"])
+if ($id || $ref)
 {
-	if ($_GET["action"] <> 're-edit')
+	if ($action <> 're-edit')
 	{
 		$product = new ProductFournisseur($db);
-		$result = $product->fetch($_GET["id"],$_GET["ref"]);
-		$result = $product->fetch_fourn_data($_REQUEST["id_fourn"]);
-		//print 'eeeee'.$_GET["socid"];exit;
+		$result = $product->fetch($id,$ref);
+		//$result = $product->fetch_fourn_data($_REQUEST["id_fourn"]);
 		llxHeader("","",$langs->trans("CardProduct".$product->type));
 	}
 
-	if ( $result )
+	if ($result)
 	{
-
-		if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
+		if ($action <> 'edit' && $action <> 're-edit')
 		{
 			/*
 			 *  En mode visu
@@ -255,28 +239,33 @@ if ($_GET["id"] || $_GET["ref"])
 
 
 			// Form to add or update a price
-			if (($_GET["action"] == 'add_price' || $_POST["action"] == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
+			if (($action == 'add_price' || $action == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
 			{
 				$langs->load("suppliers");
 
-				if ($_GET["rowid"]) {
+				if ($_GET["rowid"])
+				{
 					$product->fetch_product_fournisseur_price($_GET["rowid"]);
 					print_fiche_titre($langs->trans("ChangeSupplierPrice"));
-				} else {
+				}
+				else
+				{
 					print_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
-				print '<table class="border" width="100%">';
+
 				print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateprice">';
 
-				print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';
+				print '<table class="border" width="100%">';
+
+				print '<tr><td class="fieldrequired">'.$langs->trans("Supplier").'</td><td colspan="3">';
 				if ($_GET["rowid"])
 				{
 					$supplier=new Fournisseur($db);
-					$supplier->fetch($_GET["socid"]);
+					$supplier->fetch($socid);
 					print $supplier->getNomUrl(1);
-					print '<input type="hidden" name="id_fourn" value="'.$_GET["socid"].'">';
+					print '<input type="hidden" name="id_fourn" value="'.$socid.'">';
 					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$_GET["rowid"].'">';
 				}
@@ -288,14 +277,14 @@ if ($_GET["id"] || $_GET["ref"])
 				print '</td></tr>';
 
 				// Ref supplier
-				print '<tr><td>'.$langs->trans("SupplierRef").'</td><td colspan="3">';
+				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td colspan="3">';
 				if ($_GET["rowid"])
 				{
 					print $product->fourn_ref;
 				}
 				else
 				{
-					print '<input class="flat" name="ref_fourn" size="12" value="'.($_POST["ref_fourn"]?$_POST["ref_fourn"]:$product->ref_fourn).'">';
+					print '<input class="flat" name="ref_fourn" size="12" value="'.($_POST["ref_fourn"]?$_POST["ref_fourn"]:'').'">';
 				}
 				print '</td>';
 				print '</tr>';
@@ -303,6 +292,7 @@ if ($_GET["id"] || $_GET["ref"])
 				// Availability
 				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 				{
+					$langs->load("propal");
 					print '<tr><td>'.$langs->trans("Availability").'</td><td colspan="3">';
 					$html->select_availability($product->fk_availability,"oselDispo",1);
 					print '</td></tr>'."\n";
@@ -310,8 +300,8 @@ if ($_GET["id"] || $_GET["ref"])
 
 				// Qty min
 				print '<tr>';
-				print '<td>'.$langs->trans("QtyMin").'</td>';
-				print '<td>';
+				print '<td class="fieldrequired" width="25%">'.$langs->trans("QtyMin").'</td>';
+				print '<td width="25%">';
 				$quantity = $_REQUEST["qty"] ? $_REQUEST["qty"] : "1";
 				if ($_GET["rowid"])
 				{
@@ -323,19 +313,20 @@ if ($_GET["id"] || $_GET["ref"])
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				print '</td>';
-				print '<td>'.$langs->trans("PriceQtyMin").'</td>';
-				print '<td><input class="flat" name="price" size="8" value="'.($_POST["price"]?$_POST["price"]:price($product->fourn_price)).'">';
+				print '<td class="fieldrequired" width="25%">'.$langs->trans("PriceQtyMin").'</td>';
+				print '<td width="25%"><input class="flat" name="price" size="8" value="'.($_POST["price"]?$_POST["price"]:(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
 				print $html->select_PriceBaseType(($_POST["price_base_type"]?$_POST["price_base_type"]:$product->price_base_type), "price_base_type");
                 print '</td>';
 				print '</tr>';
 
-				print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+				print '</table>';
+
+				print '<center><input class="button" type="submit" value="'.$langs->trans("Save").'">';
 				print '&nbsp; &nbsp;';
-				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
 				print '</form>';
-				print '</table>';
 			}
 
 			/* ************************************************************************** */
@@ -346,14 +337,13 @@ if ($_GET["id"] || $_GET["ref"])
 
 			print "\n<div class=\"tabsAction\">\n";
 
-			if ($_GET["action"] != 'add_price') {
-
+			if ($action != 'add_price' && $action != 'updateprice')
+			{
 				if ($user->rights->produit->creer || $user->rights->service->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
 					print $langs->trans("AddSupplierPrice").'</a>';
 				}
-
 			}
 
 			print "\n</div>\n";
@@ -371,16 +361,15 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<tr class="liste_titre">';
 				print_liste_field_titre($langs->trans("Suppliers"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 				print '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td>';
-				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
-					print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,"",$sortfield,$sortorder);
+				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre"></td>';
 				print "</tr>\n";
 
 				$product_fourn = new ProductFournisseur($db);
-				$product_fourn_list = $product_fourn->fetch_product_fournisseur($product->id);
+				$product_fourn_list = $product_fourn->list_product_fournisseur_price($product->id);
 
 				if (count($product_fourn_list)>0)
 				{
@@ -406,7 +395,7 @@ if ($_GET["id"] || $_GET["ref"])
 						}
 
 						// Quantity
-						print '<td align="center">';
+						print '<td align="right">';
 						print $productfourn->fourn_qty;
 						print '</td>';
 

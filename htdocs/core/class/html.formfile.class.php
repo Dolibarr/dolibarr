@@ -432,14 +432,14 @@ class FormFile
             if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && $modulepart != 'unpaid')
             {
                 $langs->load("errors");
-                $out.= ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));
+                $out.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
             }
             $out.= '</td>';
 
             $out.= '</tr>';
 
             // Execute hooks
-            $parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBALS['id']);
+            $parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBALS['id'],'modulepart'=>$modulepart);
             if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters);
         }
 

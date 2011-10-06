@@ -36,13 +36,6 @@ $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);
 
-/*
-$conf->syslog->enabled=1;
-define('SYSLOG_FILE','c:/log/dolibarr/dolibarr.log');
-require_once("../../../../../../lib/functions.lib.php");
-dol_syslog("eee".$conf->fckeditor->dir_output);
-*/
-
 // SECURITY: You must explicitly enable this "connector". (Set it to "true").
 // WARNING: don't just set "$Config['Enabled'] = true ;", you must be sure that only
 //		authenticated users can access this file or use some kind of session checking.

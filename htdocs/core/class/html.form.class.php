@@ -97,14 +97,14 @@ class Form
      * 	@param		string	$preselected	Preselected value for parameter
      * 	@param		string	$paramkey		Key of parameter (unique if there is several parameter to show)
      * 	@param		boolean	$perm			Permission to allow button to edit parameter
-     * 	@param		string	$typeofdata		Type of data ('string' by default, 'email', 'text', ...)
+     * 	@param		string	$typeofdata		Type of data ('string' by default, 'email', 'text', 'day', ...)
      * 	@param		string	$editvalue		Use this value instead $preselected
      *  @return     string   		      	HTML edit field
      *  TODO no GET or POST in class file, use a param
      */
     function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string',$editvalue='')
     {
-        global $langs;
+        global $langs,$db;
         $ret='';
         if (GETPOST('action') == 'edit'.$htmlname)
         {
@@ -123,14 +123,20 @@ class Form
             {
                 $ret.='<textarea name="'.$htmlname.'">'.($editvalue?$editvalue:$preselected).'</textarea>';
             }
+            else if ($typeofdata == 'day')
+            {
+                $html=new Form($db);
+                $ret.=$html->form_date($_SERVER['PHP_SELF'].($paramkey?'?'.$paramkey.'='.$paramvalue:''),$preselected,$htmlname);
+            }
             $ret.='</td>';
-            $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            if ($typeofdata != 'day') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             $ret.='</tr></table>'."\n";
             $ret.='</form>'."\n";
         }
         else
         {
             if ($typeofdata == 'email') $ret.=dol_print_email($preselected,0,0,0,0,1);
+            if ($typeofdata == 'day')   $ret.=dol_print_date($preselected,'day');
             else $ret.=$preselected;
         }
         return $ret;
@@ -238,7 +244,7 @@ class Form
 
     /**
      *    Return combo list of activated countries, into language of user
-     *    
+     *
      *    @param     selected         Id or Code or Label of preselected country
      *    @param     htmlname         Name of html select object
      *    @param     htmloption       Options html on select object
@@ -250,7 +256,7 @@ class Form
 
     /**
      *    Return combo list of activated countries, into language of user
-     *    
+     *
      *    @param     selected         Id or Code or Label of preselected country
      *    @param     htmlname         Name of html select object
      *    @param     htmloption       Options html on select object
@@ -320,7 +326,7 @@ class Form
 
     /**
      *    Retourne la liste des types de comptes financiers
-     *    
+     *
      *    @param      selected        Type pre-selectionne
      *    @param      htmlname        Nom champ formulaire
      */
@@ -356,7 +362,7 @@ class Form
     /**
      *		Return list of social contributions.
      * 		Use mysoc->pays_id or mysoc->pays_code so they must be defined.
-     * 
+     *
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in form
      * 		@param		useempty		Set to 1 if we want an empty value
@@ -426,7 +432,7 @@ class Form
     /**
      *		Return list of types of lines (product or service)
      * 		Example: 0=product, 1=service, 9=other (for external module)
-     * 
+     *
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in html form
      * 		@param		showempty		Add an empty field
@@ -517,7 +523,7 @@ class Form
 
     /**
      *    	Output html form to select a third party
-     *    
+     *
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in form
      *    	@param      filter          Optionnal filters criteras
@@ -532,7 +538,7 @@ class Form
 
     /**
      *    	Output html form to select a third party
-     *    
+     *
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in form
      *    	@param      filter          Optionnal filters criteras
@@ -608,7 +614,7 @@ class Form
 
     /**
      *    	Return HTML combo list of absolute discounts
-     *    
+     *
      *    	@param      selected        Id remise fixe pre-selectionnee
      *    	@param      htmlname        Nom champ formulaire
      *    	@param      filter          Criteres optionnels de filtre
@@ -674,7 +680,7 @@ class Form
 
     /**
      *    	Return list of all contacts (for a third party or all)
-     *    
+     *
      *    	@param      socid      	    Id ot third party or 0 for all
      *    	@param      selected   	    Id contact pre-selectionne
      *    	@param      htmlname  	    Name of HTML field ('none' for a not editable field)
@@ -900,15 +906,16 @@ class Form
 
     /**
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
-     *  
-     *  @param		selected				Preselected products
-     *  @param		htmlname				Name of HTML seletc field (must be unique in page)
-     *  @param		filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
-     *  @param		limit					Limit on number of returned lines
-     *  @param		price_level				Level of price to show
-     *  @param		status					-1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  @param		finished				2=all, 1=finished, 0=raw material
-     *  @param		$selected_input_value	Value of preselected input text (with ajax)
+     *
+     *  @param		int			$selected				Preselected products
+     *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
+     *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+     *  @param		int			$limit					Limit on number of returned lines
+     *  @param		int			$price_level			Level of price to show
+     *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param		int			$finished				2=all, 1=finished, 0=raw material
+     *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
+     *  @return		void
      */
     function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0)
     {
@@ -941,16 +948,16 @@ class Form
     /**
      *	Return list of products for a customer
      *
-     *	@param      selected        Preselected product
-     *	@param      htmlname        Name of select html
-     *  @param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *	@param      limit           Limite sur le nombre de lignes retournees
-     *	@param      price_level     Level of price to show
-     * 	@param      filterkey       Filter on product
-     *	@param		status          -1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  @param      finished        Filter on finished field: 2=No filter
-     *  @param      disableout      Disable print output
-     *  @return     array           Array of keys for json
+     *	@param      int		$selected       Preselected product
+     *	@param      string	$htmlname       Name of select html
+     *  @param		string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
+     *	@param      int		$limit          Limite sur le nombre de lignes retournees
+     *	@param      int		$price_level    Level of price to show
+     * 	@param      string	$filterkey      Filter on product
+     *	@param		int		$status         -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param      int		$finished       Filter on finished field: 2=No filter
+     *  @param      int		$disableout     Disable print output
+     *  @return     array    				Array of keys for json
      */
     function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$disableout=0)
     {
@@ -970,16 +977,16 @@ class Form
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
         $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
-        if($finished == 0)
+        if ($finished == 0)
         {
             $sql.= " AND p.finished = ".$finished;
         }
-        elseif($finished == 1)
+        elseif ($finished == 1)
         {
             $sql.= " AND p.finished = ".$finished;
             if ($status >= 0)  $sql.= " AND p.tosell = ".$status;
         }
-        elseif($status >= 0)
+        elseif ($status >= 0)
         {
             $sql.= " AND p.tosell = ".$status;
         }
@@ -1200,16 +1207,14 @@ class Form
         $langs->load('stocks');
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
-        $sql.= " pf.ref_fourn,";
-        $sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
+        $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
         $sql.= " s.nom";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pf.fk_soc = s.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
         $sql.= " WHERE p.entity = ".$conf->entity;
         $sql.= " AND p.tobuy = 1";
-        if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
+        if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         if (! empty($filtre)) $sql.=" ".$filtre;
         // Add criteria on ref/label
@@ -1217,14 +1222,14 @@ class Form
         {
 	        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 	        {
-	            $sql.=" AND (pf.ref_fourn LIKE '".$filterkey."%' OR p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%')";
+	            $sql.=" AND (pfp.ref_fourn LIKE '".$filterkey."%' OR p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%')";
 	        }
 	        else
 	        {
-	            $sql.=" AND (pf.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
+	            $sql.=" AND (pfp.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
 	        }
         }
-        $sql.= " ORDER BY pf.ref_fourn DESC";
+        $sql.= " ORDER BY pfp.ref_fourn DESC";
 
         // Build output string
         $outselect='';
@@ -1347,17 +1352,16 @@ class Form
         $langs->load('stocks');
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
-        $sql.= " pf.ref_fourn,";
-        $sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
+        $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
         $sql.= " s.nom";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
-        $sql.= " WHERE p.tobuy = 1";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
+        $sql.= " WHERE p.entity = ".$conf->entity;
+        $sql.= " AND p.tobuy = 1";
         $sql.= " AND s.fournisseur = 1";
         $sql.= " AND p.rowid = ".$productid;
-        $sql.= " ORDER BY s.nom, pf.ref_fourn DESC";
+        $sql.= " ORDER BY s.nom, pfp.ref_fourn DESC";
 
         dol_syslog("Form::select_product_fourn_price sql=".$sql,LOG_DEBUG);
         $result=$this->db->query($sql);
@@ -1425,7 +1429,7 @@ class Form
 
     /**
      *    Return list of delivery address
-     *    
+     *
      *    @param    string	$selected          	Id contact pre-selectionn
      *    @param    int		$socid				Id of company
      *    @param    string	$htmlname          	Name of HTML field
@@ -1477,7 +1481,7 @@ class Form
 
     /**
      *      Charge dans cache la liste des conditions de paiements possibles
-     *      
+     *
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_conditions_paiements()
@@ -1516,7 +1520,7 @@ class Form
 
     /**
      *      Charge dans cache la liste des délais de livraison possibles
-     *      
+     *
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_availability()
@@ -1555,7 +1559,7 @@ class Form
 
 	/**
      *      Retourne la liste des types de delais de livraison possibles
-     *      
+     *
      *      @param      selected        Id du type de delais pre-selectionne
      *      @param      htmlname        Nom de la zone select
      *      @param      filtertype      To add a filter
@@ -1588,7 +1592,7 @@ class Form
 
 	/**
      *      Load into cache cache_demand_reason, array of input reasons
-     *      
+     *
      *      @return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
      */
     function load_cache_demand_reason()
@@ -1632,7 +1636,7 @@ class Form
 
 	/**
      *      Return list of events that triggered an object creation
-     *      
+     *
      *      @param      selected        Id du type d'origine pre-selectionne
      *      @param      htmlname        Nom de la zone select
      *      @param      exclude         To exclude a code value (Example: SRC_PROP)
@@ -1667,7 +1671,7 @@ class Form
 
     /**
      *      Charge dans cache la liste des types de paiements possibles
-     *      
+     *
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_types_paiements()

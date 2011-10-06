@@ -5,7 +5,7 @@
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,11 +33,15 @@ require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 $langs->load("admin");
 
 // Security check
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
 $action = GETPOST("action");
 $value = GETPOST("value");
+
+
+/*
+ * Actions
+ */
 
 if ($action == 'nbprod')
 {
@@ -50,7 +54,7 @@ else if ($action == 'multiprix_num')
 if ($action == 'multiprix')
 {
 	$multiprix = GETPOST("activate_multiprix");
-	
+
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $multiprix,'chaine',0,'',$conf->entity);
 	$res =dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
 }
@@ -80,7 +84,6 @@ else if ($action == 'set')
 	$ecotaxe = GETPOST("activate_useecotaxe");
 	$res = dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $ecotaxe,'chaine',0,'',$conf->entity);
 }*/
-
 
 if($action)
 {
@@ -190,7 +193,12 @@ if (! $conf->use_javascript_ajax)
 else
 {
 	print '<td width="60" align="right">';
-	print $html->selectyesno("activate_usesearchtoselectproduct",$conf->global->PRODUIT_USE_SEARCH_TO_SELECT,1);
+	$arrval=array('0'=>$langs->trans("No"),
+	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",1).')',
+    '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
+    '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
+	);
+	print $html->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td>";

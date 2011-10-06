@@ -35,6 +35,7 @@ if ( $_SESSION['uid'] <= 0 )
 
 $langs->load("cashdesk");
 
+
 /*
  * View
  */
@@ -47,29 +48,6 @@ $arrayofcss=array('/cashdesk/css/style.css');
 
 top_htmlhead($head,$langs->trans("CashDesk"),0,0,$arrayofjs,$arrayofcss);
 
-/*
-print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-
-print '<html>'."\n";
-print '<head>'."\n";
-print '<title>'.$langs->trans("CashDesk").'</title>'."\n";
-
-print '<meta name="robots" content="none" />'."\n";
-print '<meta name="author" content="Jeremie Ollivier - jeremie.o@laposte.net" />'."\n";
-print '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'."\n";
-print '<meta http-equiv="Content-Style-Type" content="text/css" />'."\n";
-print '<link href="'.DOL_URL_ROOT.'/cashdesk/css/style.css" rel="stylesheet" type="text/css" media="screen" />'."\n";
-
-print '<!-- Import des fichiers necessaires a JsCalendar -->'."\n";
-print '<style type="text/css">'."\n";
-print '@import url(include/jscalendar/calendar-blue.css);'."\n";
-print '</style>'."\n";
-print '<script type="text/javascript" src="include/jscalendar/calendar.js"></script>'."\n";
-print '<script type="text/javascript" src="include/jscalendar/lang/calendar-fr.js"></script>'."\n";
-print '<script type="text/javascript" src="include/jscalendar/calendar-setup.js"></script>'."\n";
-print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
-print '</head>'."\n";
-*/
 print '<body>'."\n";
 
 if (!empty($error))

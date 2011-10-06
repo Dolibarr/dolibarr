@@ -967,6 +967,8 @@ abstract class CommonObject
 	{
 		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE rowid ='.$rowid;
+		
+		dol_syslog(get_class($this)."::getRangOfLine sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1008,13 +1010,18 @@ abstract class CommonObject
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND fk_parent_line = '.$fk_parent_line;
+			
+			dol_syslog(get_class($this)."::line_max sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$row = $this->db->fetch_row($resql);
-				if (! empty($row[0])) {
+				if (! empty($row[0]))
+				{
 					return $row[0];
-				} else {
+				}
+				else
+				{
 					return $this->getRangOfLine($fk_parent_line);
 				}
 			}
@@ -1024,6 +1031,8 @@ abstract class CommonObject
 		{
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			
+			dol_syslog(get_class($this)."::line_max sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1075,8 +1084,9 @@ abstract class CommonObject
 
 	/**
 	 *    Update public note of element
-	 *    @param      note_public	New value for note
-	 *    @return     int         	<0 if KO, >0 if OK
+	 *
+	 *    @param	string	$note_public	New value for note
+	 *    @return	int         			<0 if KO, >0 if OK
 	 */
 	function update_note_public($note_public)
 	{
@@ -1562,8 +1572,8 @@ abstract class CommonObject
         }
         else return 0;
 	}
-    
-    
+
+
     /**
      *  Function to check if an object is used by others
      *
@@ -1609,7 +1619,7 @@ abstract class CommonObject
         }
         else return 0;
     }
-    
+
 
     // --------------------
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
@@ -1619,7 +1629,7 @@ abstract class CommonObject
 	/**
 	 *
 	 * Enter description here ...
-	 * 
+	 *
 	 * @param unknown_type $objectid
 	 * @param unknown_type $objecttype
 	 * @param unknown_type $withpicto

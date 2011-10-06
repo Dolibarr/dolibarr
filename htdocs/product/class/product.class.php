@@ -37,7 +37,7 @@ class Product extends CommonObject
 	public $element='product';
 	public $table_element='product';
 	public $fk_element='fk_product';
-	public $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur');
+	public $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur_price');
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -45,7 +45,8 @@ class Product extends CommonObject
 	var $id ;
 	//! Ref
 	var $ref;
-	var $libelle;
+	var $libelle;            // TODO deprecated
+	var $label;
 	var $description;
 	//! Prix de vente
 	var $price;				// Price without tax
@@ -68,14 +69,14 @@ class Product extends CommonObject
 	var $localtax2_tx;
 	//! Type 0 for regular product, 1 for service (Advanced feature: 2 for assembly kit, 3 for stock kit)
 	var $type;
-	var $typestring;
 
 	//! Stock
 	var $stock_reel;
 	//! Average price value for product entry into stock (PMP)
 	var $pmp;
-
+    //! Stock alert
 	var $seuil_stock_alerte;
+
 	//! Duree de validite du service
 	var $duration_value;
 	//! Unite de duree
@@ -123,6 +124,10 @@ class Product extends CommonObject
 
 	//! Canevas a utiliser si le produit n'est pas un produit generique
 	var $canvas;
+
+	var $import_key;
+	var $date_creation;
+	var $date_modification;
 
 	//! Id du fournisseur
 	var $product_fourn_id;
@@ -184,9 +189,9 @@ class Product extends CommonObject
 	/**
 	 *	Insert product into database
 	 *
-	 *	@param    user     		User making insert
-	 *  @param	  notrigger		Disable triggers
-	 *	@return   int     		Id of product/service if OK or number of error < 0
+	 *	@param	User	$user     		User making insert
+	 *  @param	int		$notrigger		Disable triggers
+	 *	@return int			     		Id of product/service if OK or number of error < 0
 	 */
 	function create($user,$notrigger=0)
 	{
@@ -251,6 +256,7 @@ class Product extends CommonObject
 
 		dol_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
+        $now=dol_now();
 
 		$this->db->begin();
 
@@ -283,7 +289,7 @@ class Product extends CommonObject
 				$sql.= ", canvas";
 				$sql.= ", finished";
 				$sql.= ") VALUES (";
-				$sql.= $this->db->idate(mktime());
+				$sql.= $this->db->idate($now);
 				$sql.= ", ".$conf->entity;
 				$sql.= ", '".$this->ref."'";
 				$sql.= ", ".price2num($price_min_ht);
@@ -353,7 +359,8 @@ class Product extends CommonObject
 			else
 			{
 				// Product already exists with this ref
-				$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
+				$langs->load("products");
+				$this->error = $langs->transnoentitiesnoconv("ErrorProductAlreadyExists",$this->ref);
 			}
 		}
 		else
@@ -387,9 +394,9 @@ class Product extends CommonObject
 	/**
 	 *	Update a record into database
 	 *
-	 *	@param      id          Id of product
-	 *	@param      user        Object user making update
-	 *	@return     int         1 if OK, -1 if ref already exists, -2 if other error
+	 *	@param	int		$id         Id of product
+	 *	@param  User	$user       Object user making update
+	 *	@return int         		1 if OK, -1 if ref already exists, -2 if other error
 	 */
 	function update($id, $user)
 	{
@@ -512,11 +519,11 @@ class Product extends CommonObject
 			    $this->db->begin();
 
 			    // Delete supplier prices log
-                if (! $error)
+                /*if (! $error)
                 {
     			    $sql = 'DELETE pfpl';
-    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price_log as pfpl, '.MAIN_DB_PREFIX.'product_fournisseur as pf';
-    				$sql.= ' WHERE pfpl.fk_product_fournisseur = pf.rowid';
+    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price_log as pfpl, '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
+    				$sql.= ' WHERE pfpl.fk_product_fournisseur = pfp.rowid';
     				$sql.= ' AND pf.fk_product = '.$id;
                     dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
     				$result = $this->db->query($sql);
@@ -526,15 +533,14 @@ class Product extends CommonObject
     					$this->error = $this->db->lasterror();
     				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
     				}
-                }
+                }*/
 
 			    // Delete supplier prices
                 if (! $error)
                 {
     			    $sql = 'DELETE pfp';
-    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'product_fournisseur as pf';
-    				$sql.= ' WHERE pfp.fk_product_fournisseur = pf.rowid';
-    				$sql.= ' AND pf.fk_product = '.$id;
+    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
+    				$sql.= ' WHERE pfp.fk_product = '.$id;
                     dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
     				$result = $this->db->query($sql);
     				if (! $result)
@@ -564,24 +570,22 @@ class Product extends CommonObject
     				}
                 }
 
+                // Removed extrafields
+                //$result=$this->deleteExtraFields($this);
+                //if ($result < 0) $error++;
+
                 if (! $error)
                 {
                 	// Actions on extra fields (by external module or standard code)
                     include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                     $hookmanager=new HookManager($this->db);
-                    $hookmanager->callHooks(array('product_extrafields'));
+                    $hookmanager->callHooks(array('product'));
                     $parameters=array(); $action='delete';
-                    $reshook=$hookmanager->executeHooks('deleteExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('deleteProduct',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                     if (! empty($hookmanager->error))
                     {
                         $error++;
                         $this->error=$hookmanager->error;
-                    }
-                    else if (empty($reshook))
-                    {
-                        // TODO
-                    	//$result=$this->deleteExtraFields($this);
-                        //if ($result < 0) $error++;
                     }
                 }
 
@@ -812,10 +816,9 @@ class Product extends CommonObject
 	{
 		$result = 0;
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
-		$sql.= " pf.fk_product, pf.ref_fourn";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-		$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
-		$sql.= " AND pfp.rowid = ".$prodfournprice;
+		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		$sql.= " AND pfp.quantity <= ".$qty;
 
 		dol_syslog("Product::get_buyprice sql=".$sql);
@@ -834,13 +837,12 @@ class Product extends CommonObject
 			else
 			{
 				// On refait le meme select sur la ref et l'id du produit
-				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc,";
-				$sql.= " pf.fk_product, pf.ref_fourn";
-				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-				$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
-				$sql.= " AND pf.ref_fourn = '".$fourn_ref."'";
-				$sql.= " AND pf.fk_product = ".$product_id;
-				$sql.= " AND quantity <= ".$qty;
+				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
+				$sql.= " pfp.fk_product, pfp.ref_fourn";
+				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+				$sql.= " WHERE pfp.ref_fourn = '".$fourn_ref."'";
+				$sql.= " AND pfp.fk_product = ".$product_id;
+				$sql.= " AND pfp.quantity <= ".$qty;
 				$sql.= " ORDER BY pfp.quantity DESC";
 				$sql.= " LIMIT 1";
 
@@ -997,21 +999,21 @@ class Product extends CommonObject
 	/**
 	 *  Load a product in memory from database
 	 *
-	 *  @param      id      Id of product/service to load
-	 *  @param      ref     Ref of product/service to load
-	 *  @return     int     <0 if KO, >0 if OK
+	 *  @param	int		$id      	Id of product/service to load
+	 *  @param  string	$ref     	Ref of product/service to load
+	 *  @param	string	$ref_ext	Ref ext of product/service to load
+	 *  @return int     			<0 if KO, >0 if OK
 	 */
-	function fetch($id='',$ref='')
+	function fetch($id='',$ref='',$ref_ext='')
 	{
 	    include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
 
-		global $langs;
-		global $conf;
+		global $langs, $conf;
 
-		dol_syslog("Product::fetch id=$id ref=$ref");
+		dol_syslog("Product::fetch id=$id ref=$ref ref_ext=$ref_ext");
 
 		// Check parameters
-		if (! $id && ! $ref)
+		if (! $id && ! $ref && ! $ref_ext)
 		{
 			$this->error=$langs->trans('ErrorWrongParameters');
 			dol_print_error("Product::fetch ".$this->error, LOG_ERR);
@@ -1023,10 +1025,11 @@ class Product extends CommonObject
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " import_key";
+		$sql.= " datec, tms, import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		else if ($ref) $sql.= " WHERE ref = '".$this->db->escape($ref)."'";
+		else if ($ref_ext) $sql.= " WHERE ref_ext = '".$this->db->escape($ref_ext)."'";
 
 		dol_syslog("Product::fetch sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -1042,6 +1045,11 @@ class Product extends CommonObject
 				$this->label				= $object->label;
 				$this->description			= $object->description;
 				$this->note					= $object->note;
+
+				$this->type					= $object->fk_product_type;
+				$this->status				= $object->tosell;
+				$this->status_buy			= $object->tobuy;
+
 	            $this->customcode			= $object->customcode;
 	            $this->country_id			= $object->fk_country;
 	            $this->country_code			= getCountry($this->country_id,2,$this->db);
@@ -1057,14 +1065,10 @@ class Product extends CommonObject
 				$this->localtax1_tx			= $object->localtax1_tx;
 				$this->localtax2_tx			= $object->localtax2_tx;
 
-				$this->type					= $object->fk_product_type;
-				$this->status				= $object->tosell;
-				$this->status_buy			= $object->tobuy;
 				$this->finished				= $object->finished;
 				$this->duration				= $object->duration;
 				$this->duration_value		= substr($object->duration,0,dol_strlen($object->duration)-1);
 				$this->duration_unit		= substr($object->duration,-1);
-				$this->seuil_stock_alerte	= $object->seuil_stock_alerte;
 				$this->canvas				= $object->canvas;
 				$this->weight				= $object->weight;
 				$this->weight_units			= $object->weight_units;
@@ -1080,9 +1084,12 @@ class Product extends CommonObject
 				$this->accountancy_code_buy = $object->accountancy_code_buy;
 				$this->accountancy_code_sell= $object->accountancy_code_sell;
 
+				$this->seuil_stock_alerte = $object->seuil_stock_alerte;
 				$this->stock_reel         = $object->stock;
 				$this->pmp                = $object->pmp;
 
+				$this->date_creation      = $object->datec;
+				$this->date_modification  = $object->tms;
 				$this->import_key         = $object->import_key;
 
 				$this->db->free($resql);
@@ -1751,74 +1758,99 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Add a supplier reference for the product
+	 *  Add a supplier price for the product.
+	 *  Note: Duplicate ref is accepted for different quantity only or for different companies.
 	 *
-	 *  @param      user        User that make link
-	 *  @param      id_fourn    Supplier id
-	 *  @param      ref_fourn   Supplier ref
-	 *  @return     int         < 0 if KO, 0 if link already exists for this product, > 0 if OK
+	 *  @param      User	$user       User that make link
+	 *  @param      int		$id_fourn   Supplier id
+	 *  @param      string	$ref_fourn  Supplier ref
+	 *  @param		float	$quantity	Quantity minimum for price
+	 *  @return     int         		< 0 if KO, 0 if link already exists for this product, > 0 if OK
 	 */
-	function add_fournisseur($user, $id_fourn, $ref_fourn)
+	function add_fournisseur($user, $id_fourn, $ref_fourn, $quantity)
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_product";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
+		$now=dol_now();
+
+		if ($ref_fourn)
+		{
+    		$sql = "SELECT rowid, fk_product";
+    		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+    		$sql.= " WHERE fk_soc = ".$id_fourn;
+    		$sql.= " AND ref_fourn = '".$ref_fourn."'";
+    		$sql.= " AND fk_product != ".$this->id;
+    		$sql.= " AND entity = ".$conf->entity;
+
+    		dol_syslog(get_class($this)."::add_fournisseur sql=".$sql);
+    		$resql=$this->db->query($sql);
+    		if ($resql)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+                if ($obj)
+                {
+        			// If the supplier ref already exists but for another product (duplicate ref is accepted for different quantity only or different companies)
+                    $this->product_id_already_linked = $obj->fk_product;
+    				return -3;
+    			}
+                $this->db->free($resql);
+    		}
+		}
+
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_soc = ".$id_fourn;
-		$sql.= " AND ref_fourn = '".$ref_fourn."'";
+		if ($ref_fourn) $sql.= " AND ref_fourn = '".$ref_fourn."'";
+		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
+		$sql.= " AND quantity = '".$quantity."'";
+		$sql.= " AND fk_product = ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("Product::add_fournisseur sql=".$sql);
+		dol_syslog(get_class($this)."::add_fournisseur sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$obj = $this->db->fetch_object($resql);
+    		$obj = $this->db->fetch_object($resql);
 
-			// The reference supplier does not exist, we create it for this product.
+		    // The reference supplier does not exist, we create it for this product.
 			if (! $obj)
 			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur (";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
 				$sql.= "datec";
 				$sql.= ", entity";
 				$sql.= ", fk_product";
 				$sql.= ", fk_soc";
 				$sql.= ", ref_fourn";
-				$sql.= ", fk_user_author";
+				$sql.= ", quantity";
+				$sql.= ", fk_user";
 				$sql.= ") VALUES (";
-				$sql.= $this->db->idate(mktime());
+				$sql.= "'".$this->db->idate($now)."'";
 				$sql.= ", ".$conf->entity;
 				$sql.= ", ".$this->id;
 				$sql.= ", ".$id_fourn;
 				$sql.= ", '".$ref_fourn."'";
+				$sql.= ", ".$quantity;
 				$sql.= ", ".$user->id;
 				$sql.= ")";
 
 				dol_syslog("Product::add_fournisseur sql=".$sql);
 				if ($this->db->query($sql))
 				{
-					$this->product_fourn_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur");
+					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
 					return 1;
 				}
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog("Product::add_fournisseur ".$this->error, LOG_ERR);
+					dol_syslog(get_class($this)."::add_fournisseur ".$this->error, LOG_ERR);
 					return -1;
 				}
 			}
-			// If the supplier ref already exists for this product
-			else if ($obj->fk_product == $this->id)
-			{
-				$this->product_fourn_id = $obj->rowid;
-
-				return 0;
-			}
-			// If the supplier ref already exists but for another product
+			// If the supplier price already exists for this product and quantity
 			else
 			{
-				$this->product_id_already_linked = $obj->fk_product;
-
-				return -3;
+				$this->product_fourn_price_id = $obj->rowid;
+				return 0;
 			}
 		}
 		else
@@ -1840,8 +1872,8 @@ class Product extends CommonObject
 
 		$list = array();
 
-		$sql = "SELECT fk_soc";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as p";
+		$sql = "SELECT p.fk_soc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as p";
 		$sql.= " WHERE p.fk_product = ".$this->id;
 		$sql.= " AND p.entity = ".$conf->entity;
 
@@ -1913,16 +1945,16 @@ class Product extends CommonObject
 	/**
 	 *  Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
 	 *
-	 *  @param    fromId      Id produit source
-	 *  @param    toId        Id produit cible
-	 *  @return   int         < 0 si erreur, > 0 si ok
+	 *  @param    int	$fromId      Id produit source
+	 *  @param    int	$toId        Id produit cible
+	 *  @return   int    		     < 0 si erreur, > 0 si ok
 	 */
 	function clone_fournisseurs($fromId, $toId)
 	{
 		$this->db->begin();
 
 		// les fournisseurs
-		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur ("
+		/*$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur ("
 		. " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
 		. " SELECT '".$this->db->idate(mktime())."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
 		. " FROM ".MAIN_DB_PREFIX."product_fournisseur"
@@ -1932,7 +1964,7 @@ class Product extends CommonObject
 		{
 			$this->db->rollback();
 			return -1;
-		}
+		}*/
 
 		// les prix de fournisseurs.
 		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur_price ("
@@ -1941,13 +1973,17 @@ class Product extends CommonObject
 		. " FROM ".MAIN_DB_PREFIX."product_fournisseur_price"
 		. " WHERE fk_product = ".$fromId;
 
-		if ( ! $this->db->query($sql ) )
+		$resql=$this->db->query($sql);
+		if (! $resql)
 		{
 			$this->db->rollback();
 			return -1;
 		}
-		$this->db->commit();
-		return 1;
+		else
+		{
+		    $this->db->commit();
+		    return 1;
+		}
 	}
 
 	/**
@@ -2905,5 +2941,30 @@ class Product extends CommonObject
 		}
 	}
 
+    /**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+        global $user,$langs,$conf,$mysoc;
+
+        $now=dol_now();
+
+        // Initialize parameters
+        $this->id=0;
+        $this->ref = 'PRODUCT_SPEC';
+        $this->libelle = 'PRODUCT SPECIMEN';
+        $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
+        $this->specimen=1;
+        $this->country_id=1;
+        $this->tosell=1;
+        $this->tobuy=1;
+        $this->type=0;
+        $this->note='This is a comment (private)';
+    }
 }
 ?>

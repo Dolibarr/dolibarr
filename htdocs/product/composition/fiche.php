@@ -123,7 +123,7 @@ if ($cancel == $langs->trans("Cancel"))
  */
 
 // action recherche des produits par mot-cle et/ou par categorie
-if($action == 'search' )
+if ($action == 'search')
 {
 	$current_lang = $langs->getDefaultLang();
 
@@ -174,9 +174,9 @@ dol_fiche_head($head, 'subproduct', $titre, 0, $picto);
 
 if ($id || $ref)
 {
-	if ( $result )
+	if ($result)
 	{
-		if ($action <> 'edit' &&$action <> 'search' && $action <> 're-edit')
+		if ($action <> 'edit' && $action <> 'search' && $action <> 're-edit')
 		{
 			/*
 			 *  En mode visu
@@ -209,7 +209,7 @@ if ($id || $ref)
 
 			// List of subproducts
 			$prods_arbo = $product->get_arbo_each_prod();
-			if(count($prods_arbo) > 0)
+			if (count($prods_arbo) > 0)
 			{
 				print '<tr><td colspan="2">';
 				print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
@@ -236,7 +236,7 @@ if ($id || $ref)
 			// Number of parent products
 			print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.count($prodsfather).'</td>';
 
-			if(count($prodsfather) > 0)
+			if (count($prodsfather) > 0)
 			{
 				print '<tr><td colspan="2">';
 				print '<b>'.$langs->trans("ProductParentList").'</b><br>';
@@ -321,7 +321,7 @@ if ($id || $ref)
 		// Number of parent products
 		print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.count($prodsfather).'</td>';
 
-		if(count($prodsfather) > 0)
+		if (count($prodsfather) > 0)
 		{
 			print '<tr><td colspan="2">';
 			print '<b>'.$langs->trans("ProductParentList").'</b><br>';
@@ -375,7 +375,7 @@ if ($id || $ref)
 		print '</td></td></table>';
 		print '</form>';
 
-		if($action == 'search')
+		if ($action == 'search')
 		{
 			print '<br>';
 			print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
@@ -408,7 +408,7 @@ if ($id || $ref)
 						if ($prod_arbo->type==2 || $prod_arbo->type==3)
 						{
 							$is_pere=0;
-							$prod_arbo->get_sousproduits_arbo ();
+							$prod_arbo->get_sousproduits_arbo();
 							// associations sousproduits
 							$prods_arbo = $prod_arbo->get_arbo_each_prod();
 							if (count($prods_arbo) > 0)
@@ -421,7 +421,8 @@ if ($id || $ref)
 									}
 								}
 							}
-							if ($is_pere==1) {
+							if ($is_pere==1)
+							{
 								$i++;
 								continue;
 							}
@@ -498,8 +499,8 @@ if ($action == '')
 print "\n</div>\n";
 
 
+llxFooter();
 
 $db->close();
 
-llxFooter();
 ?>

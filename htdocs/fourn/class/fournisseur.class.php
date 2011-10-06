@@ -78,12 +78,14 @@ class Fournisseur extends Societe
 		return $num;
 	}
 
+	/**
+	 * FIXME This returns number of prices, not number of products. Is it what we want ?
+	 */
 	function NbProduct()
 	{
-		$sql = "SELECT count(pf.rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as pf,";
-		$sql.= " ".MAIN_DB_PREFIX."product_fournisseur_price as ppf";
-		$sql .= " WHERE fk_soc = ".$this->id." AND ppf.fk_product_fournisseur = pf.rowid";
+		$sql = "SELECT count(pfp.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+		$sql .= " WHERE pfp.fk_soc = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ( $resql )
@@ -163,7 +165,7 @@ class Fournisseur extends Societe
 		{
 			$prod = new ProductFournisseur($this->db);
 			$prod->fetch($fk_product);
-			$prod->fetch_fourn_data($this->id);
+			//$prod->fetch_fourn_data($this->id);
 
 			$commf->fetch($idc);
 			$commf->addline("Toto",120,1,$prod->tva, $prod->id, 0, $prod->ref_fourn);
@@ -275,11 +277,12 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\param		maxlen			Longueur max libelle
-	 *		\return		string			Chaine avec URL
+     *    	Return a link on thirdparty (with picto)
+     *
+     *		@param		withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+     *		@param		option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *		@param		maxlen			Max length of text
+     *		@return		string			String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='supplier',$maxlen=0)
 	{

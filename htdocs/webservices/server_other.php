@@ -52,21 +52,22 @@ $server->configureWSDL('WebServicesDolibarrOther',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
-// Define WSDL content
+// Define WSDL Authentication object
 $server->wsdl->addComplexType(
-        'authentication',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-	    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-	    	'login' => array('name'=>'login','type'=>'xsd:string'),
-	        'password' => array('name'=>'password','type'=>'xsd:string'),
-	        'entity' => array('name'=>'entity','type'=>'xsd:string'),
-	    ));
-
+    'authentication',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+    	'login' => array('name'=>'login','type'=>'xsd:string'),
+        'password' => array('name'=>'password','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+    )
+);
+// Define WSDL Return object
 $server->wsdl->addComplexType(
     'result',
     'complexType',
@@ -76,7 +77,11 @@ $server->wsdl->addComplexType(
     array(
         'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
         'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-    ));
+    )
+);
+
+// Define other specific objects
+// None
 
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped

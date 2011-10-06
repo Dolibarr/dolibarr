@@ -96,12 +96,6 @@ $sql.= ' SUM(s.reel) as stock_physique';
 $sql.= ' FROM ('.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-// We disable this because this create duplicate lines
-/*if ($_GET["fourn_id"] > 0)
-{
-	$fourn_id = $_GET["fourn_id"];
-	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
-}*/
 $sql.= ') LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
@@ -112,9 +106,12 @@ if ($sall)
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
 {
-    if ($type==1) {
+    if ($type==1)
+    {
         $sql.= " AND p.fk_product_type = '1'";
-    } else {
+    }
+    else
+    {
         $sql.= " AND p.fk_product_type <> '1'";
     }
 }

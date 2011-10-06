@@ -981,19 +981,15 @@ function dol_print_reduction($reduction=0,$langs)
 
 
 /**
- * 	Return OS version
+ * 	Return OS version.
+ *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not
+ *  necessarly OS PHP runs on.
  *
  * 	@return		string			OS version
  */
 function version_os()
 {
-    // Get version of OS
-    ob_start();
-    phpinfo();
-    $chaine = ob_get_contents();
-    ob_end_clean();
-    preg_match('/System <\/td><td class="v">([^<]*)<\/td>/i',$chaine,$reg);
-    $osversion=$reg[1];
+    $osversion=php_uname();
     return $osversion;
 }
 
