@@ -439,7 +439,7 @@ class FormFile
             $out.= '</tr>';
 
             // Execute hooks
-            $parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBALS['id']);
+            $parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBALS['id'],'modulepart'=>$modulepart);
             if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters);
         }
 
