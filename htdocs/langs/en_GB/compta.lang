@@ -1,0 +1,5 @@
+# Dolibarr language file - en_GB - main
+CHARSET=UTF-8
+NewCheckDeposit=New cheque deposit
+NoWaitingChecks=No cheques waiting for deposit.
+NbOfCheques=Nb of cheques
