@@ -1831,13 +1831,14 @@ function img_view($alt = "default", $float=0, $other='')
  *  Show delete logo
  *
  *  @param      alt         Texte sur le alt de l'image
+ *	@param     other      Add more attributes on img
  *  @return     string      Retourne tag img
  */
-function img_delete($alt = "default")
+function img_delete($alt = "default", $other='')
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Delete");
-    return img_picto($alt,'delete.png');
+    return img_picto($alt,'delete.png',$other);
 }
 
 
