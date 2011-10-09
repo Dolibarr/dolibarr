@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,8 @@ $acts[0] = "activate";
 $acts[1] = "disable";
 //$actl[0] = $langs->trans("Activate");
 //$actl[1] = $langs->trans("Disable");
-$actl[0] = img_picto($langs->trans("Disabled"),'off');
-$actl[1] = img_picto($langs->trans("Activated"),'on');
+$actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
+$actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
 $listoffset=GETPOST('listoffset');
 $listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
@@ -122,7 +122,7 @@ $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.d
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
 //$tabsql[9] = "SELECT code, code_iso, label as libelle, symbole, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
-$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active, t.accountancy_code FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active, t.accountancy_code FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
@@ -780,11 +780,67 @@ if ($_GET["id"])
                             $valuetoshow=price($valuetoshow);
                         }
                         else if ($fieldlist[$field]=='libelle_facture') {
+							$langs->load("bills");
+                            $key=$langs->trans("PaymentCondition".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "PaymentCondition".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
                             $valuetoshow=nl2br($valuetoshow);
                         }
-                        else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]=='llx_c_pays') {
+                        else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_pays') {
                             $key=$langs->trans("Country".strtoupper($obj->code));
                             $valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_availability') {
+                    		$langs->load("propal");
+                            $key=$langs->trans("AvailabilityType".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "AvailabilityType".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_actioncomm') {
+                            $key=$langs->trans("Action".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "Action".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_currencies') {
+                            $key=$langs->trans("Currency".strtoupper($obj->code_iso));
+                            $valuetoshow=($obj->code_iso && $key != "Currency".strtoupper($obj->code_iso))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_typent') {
+                            $key=$langs->trans(strtoupper($obj->code));
+                            $valuetoshow=($key != strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_prospectlevel') {
+                            $key=$langs->trans(strtoupper($obj->code));
+                            $valuetoshow=($key != strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_civilite') {
+                            $key=$langs->trans("Civility".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "Civility".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_type_contact') {
+                            $key=$langs->trans("TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_payment_term') {
+                    		$langs->load("bills");
+                            $key=$langs->trans("PaymentConditionShort".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "PaymentConditionShort".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                   		else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_paiement') {
+                    		$langs->load("bills");
+                            $key=$langs->trans("PaymentType".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "PaymentType".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_input_reason') {
+                            $key=$langs->trans("DemandReasonType".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "DemandReasonType".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_input_method') {
+                    		$langs->load("orders");
+                            $key=$langs->trans($obj->code);
+                            $valuetoshow=($obj->code && $key != $obj->code)?$key:$obj->$fieldlist[$field];
+                        }
+                    	else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_shipment_mode') {
+                    		$langs->load("sendings");
+                            $key=$langs->trans("SendingMethod".strtoupper($obj->code));
+                            $valuetoshow=($obj->code && $key != "SendingMethod".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
                         }
                         else if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
                             $showfield=0;
