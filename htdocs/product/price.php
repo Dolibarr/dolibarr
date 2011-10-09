@@ -240,7 +240,7 @@ if ($conf->global->PRODUIT_MULTIPRICES)
 else
 {
     // TVA
-    print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
+    print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx.($product->tva_npr?'*':''),true).'</td></tr>';
 
     // Price
 	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
@@ -316,7 +316,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 
         // VAT
         print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-        print $html->load_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id);
+        print $html->load_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id,$product->tva_npr);
         print '</td></tr>';
 
 		// Price base
@@ -357,10 +357,12 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 		}
 		print '</td></tr>';
 
-		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
-		print '</form>';
+
+		print '<center><br><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
+		print '<br></form>';
 	}
 	else
 	{

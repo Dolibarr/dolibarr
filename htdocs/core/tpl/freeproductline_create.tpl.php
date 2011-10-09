@@ -64,16 +64,16 @@
 	<td align="right">
 	<?php
 	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
-	else echo $html->load_tva('np_tva_tx', -1, $seller, $buyer);
+	else echo $html->load_tva('np_tva_tx', (isset($_POST["np_tva_tx"])?$_POST["np_tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
-	<td align="right"><input type="text" size="5" name="np_price"></td>
+	<td align="right"><input type="text" size="5" name="np_price" value="<?php echo (isset($_POST["np_price"])?$_POST["np_price"]:''); ?>"></td>
 	<td align="right"><input type="text" size="2" name="qty" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
 	<td align="right" nowrap><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>
 	<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
 </tr>
 
-<?php if ($conf->service->enabled && $dateSelector) {?>
+<?php if ($conf->service->enabled && $dateSelector) { ?>
 <tr <?php echo $bcnd[$var]; ?>>
 	<td colspan="9">
 	<?php

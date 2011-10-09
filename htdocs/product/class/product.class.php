@@ -48,27 +48,27 @@ class Product extends CommonObject
 	var $libelle;            // TODO deprecated
 	var $label;
 	var $description;
-	//! Prix de vente
-	var $price;				// Price without tax
+	//! Type 0 for regular product, 1 for service (Advanced feature: 2 for assembly kit, 3 for stock kit)
+	var $type;
+	//! Selling price
+	var $price;				// Price net
 	var $price_ttc;			// Price with tax
-	var $price_min;
-	var $price_min_ttc;
-	//! Base de prix (ttc ou ht)
+	var $price_min;         // Minimum price net
+	var $price_min_ttc;     // Minimum price with tax
+	//! Base price ('TTC' for price including tax or 'HT' for net price)
 	var $price_base_type;
-	//! Tableau des prix multiples
+	//! Arrays for multiprices
 	var $multiprices=array();
 	var $multiprices_ttc=array();
 	var $multiprices_base_type=array();
 	var $multiprices_tva_tx=array();
-	//! Taux de TVA
+	//! Default VAT rate of product
 	var $tva_tx;
-	//! French VAT NPR
+	//! French VAT NPR (0 or 1)
     var $tva_npr=0;
 	//! Spanish local taxes
 	var $localtax1_tx;
 	var $localtax2_tx;
-	//! Type 0 for regular product, 1 for service (Advanced feature: 2 for assembly kit, 3 for stock kit)
-	var $type;
 
 	//! Stock
 	var $stock_reel;
@@ -207,6 +207,7 @@ class Product extends CommonObject
 		$this->price_min_ttc=price2num($this->price_min_ttc);
 		$this->price_min=price2num($this->price_min);
 		if (empty($this->tva_tx))    	$this->tva_tx = 0;
+		if (empty($this->tva_npr))    	$this->tva_npr = 0;
 		//Local taxes
 		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
@@ -403,7 +404,7 @@ class Product extends CommonObject
 		global $langs, $conf;
 
 		// Verification parametres
-		if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
+		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
@@ -419,6 +420,7 @@ class Product extends CommonObject
 		$this->volume = price2num($this->volume);
 		$this->volume_units = trim($this->volume_units);
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
+		if (empty($this->tva_npr))    			$this->tva_npr = 0;
 		//Local taxes
 		if (empty($this->localtax1_tx))			$this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
@@ -433,6 +435,7 @@ class Product extends CommonObject
 		$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
 		$sql.= ",ref = '" . $this->ref ."'";
 		$sql.= ",tva_tx = " . $this->tva_tx;
+		$sql.= ",recuperableonly = " . $this->tva_npr;
 
 		//Local taxes
 		$sql.= ",localtax1_tx = " . $this->localtax1_tx;

@@ -2800,7 +2800,7 @@ class Form
      *      @param      societe_vendeuse   Objet societe vendeuse
      *      @param      societe_acheteuse  Objet societe acheteuse
      *      @param      idprod             Id product
-     *      @param      info_bits          Miscellaneous information on line
+     *      @param      info_bits          Miscellaneous information on line (1 for NPR)
      *      @param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
      *                  Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
