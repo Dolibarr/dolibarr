@@ -795,7 +795,7 @@ else
 
         print '</td></tr>';
 
-        if ($conf->fournisseur->enabled)
+        if ($conf->fournisseur->enabled && ! empty($user->rights->fournisseur->lire))
         {
             // Supplier
             print '<tr>';
@@ -1223,7 +1223,7 @@ else
             print '</td></tr>';
 
             // Supplier
-            if ($conf->fournisseur->enabled)
+            if ($conf->fournisseur->enabled && ! empty($user->rights->fournisseur->lire))
             {
                 print '<tr>';
                 print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
@@ -1566,7 +1566,7 @@ else
             print '</tr>';
         }
 
-        if ($conf->fournisseur->enabled && $object->fournisseur)
+        if ($conf->fournisseur->enabled && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
         {
             print '<tr><td>';
             print $langs->trans('SupplierCode').'</td><td colspan="'.(2+($object->logo?0:1)).'">';

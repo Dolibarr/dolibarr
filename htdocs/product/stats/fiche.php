@@ -208,10 +208,10 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 			if (! $graphfiles[$key]['file']) continue;
 
-			if ($graphfiles == 'propal' && ! $user->right->propale->lire) continue;
-			if ($graphfiles == 'order' && ! $user->right->commande->lire) continue;
-			if ($graphfiles == 'invoices' && ! $user->right->facture->lire) continue;
-			if ($graphfiles == 'invoices_suppliers' && ! $user->right->fournisseur->facture->lire) continue;
+			if ($graphfiles == 'propal' && ! $user->rights->propale->lire) continue;
+			if ($graphfiles == 'order' && ! $user->rights->commande->lire) continue;
+			if ($graphfiles == 'invoices' && ! $user->rights->facture->lire) continue;
+			if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
 
 
 			if ($i % 2 == 0) print '<tr>';
