@@ -2239,10 +2239,10 @@ class Form
     /**
      *    Show a form to select a project
      *
-     *    @param      page        Page
-     *    @param      socid       Id societe
-     *    @param      selected    Id projet pre-selectionne
-     *    @param      htmlname    Nom du formulaire select
+     *    @param	int		$page        Page
+     *    @param	int		$socid       Id third party
+     *    @param    int		$selected    Id pre-selected project
+     *    @param    string	$htmlname    Name of select field
      *    @return	void
      */
     function form_project($page, $socid, $selected='', $htmlname='projectid')
@@ -2267,12 +2267,15 @@ class Form
         }
         else
         {
-            if ($selected) {
+            if ($selected)
+            {
                 $projet = new Project($this->db);
                 $projet->fetch($selected);
                 //print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
-                print $projet->getNomUrl(0);
-            } else {
+                print $projet->getNomUrl(0,'',1);
+            }
+            else
+            {
                 print "&nbsp;";
             }
         }
