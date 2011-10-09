@@ -27,7 +27,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 Group: Productivity/Office/Management
 Requires: apache2, apache2-mod_php5, php5 >= 5.3.0, php5-gd, php5-ldap, php5-imap, php5-mysql, php5-openssl, fonts-ttf-dejavu
 Requires: mysql-community-server, mysql-community-server-client 
-BuildRequires: update-desktop-files fdupes
+#BuildRequires: update-desktop-files fdupes
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
