@@ -891,7 +891,7 @@ class Form
         	else
             {
             	$out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
-            	$out.= '<option value="">'.$langs->trans("EmptyList").'</option>';
+            	$out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
         }
@@ -3648,7 +3648,7 @@ class Form
             else
             {
             	$out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
-            	$out.= '<option value="">'.$langs->trans("EmptyList").'</option>';
+            	$out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
         }

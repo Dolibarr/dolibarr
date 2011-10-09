@@ -253,9 +253,10 @@ if ($action == 'create')
         print '</textarea>';
     }
     print "</textarea></td></tr>\n";
-
-    print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></td></tr>';
     print "</table>\n";
+
+    print '<center><br><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></center>';
+
     print "</form>";
 }
 
