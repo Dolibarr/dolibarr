@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/categories/class/categorie.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 
 if (empty($user->id))
 {
@@ -123,11 +124,50 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
+
+    	// TODO Add test on error when creating duplicate
+
+
     	return $result;
     }
 
     /**
      * @depends	testCategorieCreate
+     * The depends says test is run only if previous is ok
+     */
+    public function testCategorieProduct($id)
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobjecttmp=new Categorie($this->savdb);
+    	$localobjecttmp->initAsSpecimen();
+    	$localobjecttmp->label='Specimen Category for product';
+    	$localobjecttmp->type=0;    // product category
+    	$catid=$localobjecttmp->create($user);
+
+        print __METHOD__." catid=".$catid."\n";
+        $this->assertLessThanOrEqual($catid, 0);
+
+        // Category
+		$localobject2=new Product($this->savdb);
+    	$localobject2->initAsSpecimen();
+    	$localobject2->ref.='-CATEG';
+    	$localobject2->tva_npr=1;
+    	$localobject2->catid=$catid;
+    	$result=$localobject2->create($user);
+
+        print __METHOD__." result=".$result."\n";
+    	$this->assertLessThanOrEqual($result, 0);
+
+    	return $id;
+    }
+
+    /**
+     * @depends	testCategorieProduct
      * The depends says test is run only if previous is ok
      */
     public function testCategorieFetch($id)
