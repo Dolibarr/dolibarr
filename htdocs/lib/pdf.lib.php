@@ -894,7 +894,7 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
     }
     else
     {
-        if (empty($hidedetails) || $hidedetails > 1) return vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits);
+        if (empty($hidedetails) || $hidedetails > 1) return vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits,1);
     }
 }
 

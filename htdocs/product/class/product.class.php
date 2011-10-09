@@ -208,6 +208,7 @@ class Product extends CommonObject
 		$this->price_min_ttc=price2num($this->price_min_ttc);
 		$this->price_min=price2num($this->price_min);
 		if (empty($this->tva_tx))    	$this->tva_tx = 0;
+		if (empty($this->tva_npr))      $this->tva_npr = 0;
 		//Local taxes
 		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
@@ -420,6 +421,7 @@ class Product extends CommonObject
 		$this->volume = price2num($this->volume);
 		$this->volume_units = trim($this->volume_units);
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
+		if (empty($this->tva_npr))    			$this->tva_npr = 0;
 		//Local taxes
 		if (empty($this->localtax1_tx))			$this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
@@ -435,6 +437,7 @@ class Product extends CommonObject
 		$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
 		$sql.= ",ref = '" . $this->ref ."'";
 		$sql.= ",tva_tx = " . $this->tva_tx;
+		$sql.= ",recuperableonly = " . $this->tva_npr;
 
 		//Local taxes
 		$sql.= ",localtax1_tx = " . $this->localtax1_tx;

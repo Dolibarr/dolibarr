@@ -241,7 +241,7 @@ if ($conf->global->PRODUIT_MULTIPRICES)
 else
 {
     // TVA
-    print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
+    print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx.($product->tva_npr?'*':''),true).'</td></tr>';
 
     // Price
 	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
@@ -317,7 +317,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 
         // VAT
         print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-        print $html->load_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id);
+        print $html->load_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id,$product->tva_npr);
         print '</td></tr>';
 
 		// Price base
