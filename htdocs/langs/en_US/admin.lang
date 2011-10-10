@@ -627,6 +627,7 @@ Permission2501=Read/Download documents
 Permission2502=Download documents
 Permission2503=Submit or delete documents
 Permission2515=Setup documents directories
+Permission50001=Use Point of sales
 Permission50201= Read transactions
 Permission50202= Import transactions
 DictionnaryCompanyType=Company types
