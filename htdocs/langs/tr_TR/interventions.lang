@@ -37,7 +37,16 @@ TypeContact_fichinter_external_BILLING=Fatura müşteri temas
 TypeContact_fichinter_external_CUSTOMER=Aşağıdaki müşteri UP
 ArcticNumRefModelDesc1=Generic numarası modeli
 ArcticNumRefModelError=Başarısız etkinleştirmek
-PacificNumRefModelDesc1=Format %s yymm uyan numero-nnnn nereye yy yıl, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
+PacificNumRefModelDesc1=Format% syymm uyan numero-nnnn nereye yy yıl, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
 PacificNumRefModelError=Bir müdahale kart $ syymm başlayarak zaten var ve sıra bu model ile uyumlu değildir. Kaldırın ya da yeniden adlandırın bu modül etkinleştirin.
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+// START - Lines generated via autotranslator.php tool (2011-10-09 13:54:25).
+// Reference language: en_US -> tr_TR
+ActionsOnFicheInter=Aksiyonlar müdahale
+ClassifyBilled=&quot;Faturalı&quot; sınıflandırır
+StatusInterInvoiced=Faturalandırılmış
+RelatedInterventions=İlgili müdahaleler
+ShowIntervention=Müdahale göster
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:28).

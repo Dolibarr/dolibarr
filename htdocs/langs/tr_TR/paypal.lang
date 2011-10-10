@@ -1,0 +1,27 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-09 14:05:49
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
+// Reference language: en_US -> tr_TR
+CHARSET=UTF-8
+PaypalSetup=PayPal modülü kurulumu
+PaypalDesc=Bu modül teklif sayfaları üzerinde ödeme izin <a href="http://www.paypal.com" target="_blank">PayPal</a> müşteriler tarafından. Bu ücretsiz ödeme veya belirli bir Dolibarr nesne üzerinde bir ödeme için kullanılabilir (fatura, sipariş, ...)
+PaypalOrCBDoPayment=Kredi kartı veya PayPal ile ödeme
+PaypalDoPayment=Paypal ile ödeme
+PaypalCBDoPayment=Kredi kartı ile ödeme
+PAYPAL_API_SANDBOX=Modu testi / sanal
+PAYPAL_API_USER=API username
+PAYPAL_API_PASSWORD=API şifre
+PAYPAL_API_SIGNATURE=API imza
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Teklif ödeme &quot;ayrılmaz&quot; (Kredi kartı + Paypal) ya da &quot;Paypal&quot; sadece
+PAYPAL_CSS_URL=Ödeme sayfası CSS stil sayfasının Optionnal URL
+ThisIsTransactionId=<b>%s:</b> Bu işlem kimliği
+PAYPAL_ADD_PAYMENT_URL=Posta yoluyla bir belge gönderdiğinizde, Paypal ödeme url ekle
+PAYPAL_IPN_MAIL_ADDRESS=Anında ödeme bildirimi için e-posta adresini (NPI)
+PredefinedMailContentSendOrderWithPaypalLink=
+PredefinedMailContentSendInvoiceWithPaypalLink=
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 14:08:35).

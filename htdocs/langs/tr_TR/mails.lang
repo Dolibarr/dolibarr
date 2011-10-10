@@ -51,7 +51,7 @@ MailingStatusSentPartialy=Gönderildi kısmen
 MailingStatusSentCompletely=Gönderildi tamamen
 MailingStatusError=Hata
 MailingStatusNotSent=Gönderdik
-MailSuccessfulySent=E-posta başarıyla gönderildi (den% %s )
+MailSuccessfulySent=E-posta başarıyla gönderildi (den%% s)
 ErrorMailRecipientIsEmpty=E-posta alıcı boş
 WarningNoEMailsAdded=Yeni E-posta alıcının listesine eklemek için.
 ConfirmValidMailing=Size bu e-posta gönderme doğrulamak istediğinizden emin misiniz?
@@ -61,7 +61,7 @@ NbOfRecipients=Numara alıcı
 NbOfUniqueEMails=Nb benzersiz e-posta
 NbOfEMails=Nb e-posta
 TotalNbOfDistinctRecipients=Sayı farklı alıcıların
-NoTargetYet=No alıcıları henüz tanımlı (sekme 'Alıcılar Doğum git')
+NoTargetYet=No alıcıları henüz tanımlı (sekme &#39;Alıcılar Doğum git&#39;)
 AddRecipients=Alıcılar Ekle
 RemoveRecipient=Kaldır alıcı
 CommonSubstitutions=Ortak ikamelerini
@@ -81,11 +81,11 @@ MailingModuleDescFundationMembers=E-posta ile Vakfı üye
 MailingModuleDescEmailsFromFile=Bir metin dosyasını e-postalar (e-posta, isim, soyadı; yorum)
 MailingModuleDescContactsCategories=E-posta kategori () tarafından üçüncü partiler
 MailingModuleDescDolibarrContractsLinesExpired=Sözleşme süresi dolmuş hatları ile üçüncü kişiler
-LineInFile=Satır %s  dosyası
+LineInFile=Satır% s dosyası
 RecipientSelectionModules=Alıcıların seçimi için tanımlanmış kişi
 MailSelectedRecipients=Seçilen alıcılara
 MailingArea=EMailings alanı
-LastMailings=Son %s  emailings
+LastMailings=Son% s emailings
 TargetsStatistics=Hedefler istatistikleri
 NbOfCompaniesContacts=Şirketlerin Eşsiz rehber
 MailNoChangePossible=Alıcılar için değiştirilemez emailing onaylanmış
@@ -113,10 +113,12 @@ ListOfActiveNotifications=Liste tüm aktif e-posta bildirimi kişi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:02:24).
 // Reference language: en_US -> tr_TR
-DateSending=Tarih gönderme
-SentTo=Gönderilen <b>Ssss</b> için
-ListOfNotificationsDone=Liste tüm e-posta bildirimleri gönderildi
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:01).
+DateSending=Gönderme tarihi
+SentTo=<b>Sssss</b> için gönderilen
+MailingModuleDescContactsByCompanyCategory=Üçüncü şahısların Rehber (üçüncü şahıslara kategoriye göre)
+MailingModuleDescMembersCategories=Vakfı üyeleri (kategorilerine göre)
+MailingModuleDescContactsByFunction=Üçüncü şahısların Rehber (konumu / işlevi tarafından)
+ListOfNotificationsDone=Gönderilen tüm e-posta bildirimleri Listesi
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:02:56).

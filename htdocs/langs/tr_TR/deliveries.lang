@@ -29,3 +29,11 @@ Deliverer=Kurtarıcı:
 Sender=Gönderenin
 Recipient=Alıcı
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:02:24).
+// Reference language: en_US -> tr_TR
+DeleteDeliveryReceipt=Teslimat makbuzu sil
+DeleteDeliveryReceiptConfirm=Teslimat makbuzu <b>sssss</b> silmek istediğiniz emin misiniz ?
+DeliveryNotValidated=Teslim valide
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:03:14).

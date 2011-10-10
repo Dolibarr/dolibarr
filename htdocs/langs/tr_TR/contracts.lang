@@ -10,7 +10,7 @@
 CHARSET=UTF-8
 ContractsArea=Sözleşmeler alanı
 ListOfContracts=Sözleşmelerin Listesi
-LastContracts=Son %s özleşmeler olarak s
+LastContracts=Son% sözleşmeler olarak s
 AllContracts=Bütün sözleşmeler
 ContractCard=Sözleşme kartı
 ContractStatus=Sözleşme durumu
@@ -62,7 +62,7 @@ ListOfRunningContractsLines=Sözleşme hatları çalışan listesi
 ListOfRunningServices=Çalışan servis listesi
 NotActivatedServices=Inaktif hizmetleri (arasında) sözleşmeleri onaylanmış
 BoardNotActivatedServices=Hizmetleri arasında etkinleştirmek sözleşmeleri onaylanmış
-LastContracts=Son %s özleşmeleri
+LastContracts=Son% sözleşmeleri
 LastActivatedServices=Son% Hizmetler etkinleştirildiğinde s
 LastModifiedServices=Son% hizmetler olarak s
 EditServiceLine=Değiştir hizmet hattı
@@ -78,7 +78,7 @@ DateEndReal=Gerçek bitiş tarihi
 DateEndRealShort=Gerçek bitiş tarihi
 NbOfServices=Nb hizmetleri
 CloseService=Yakın hizmet
-ServicesNomberShort= %s  servis (ler)
+ServicesNomberShort=% s servis (ler)
 RunningServices=Çalıştırmak
 BoardRunningServices=Geçilmek çalışan servisler
 ServiceStatus=Hizmet Durumu
@@ -90,7 +90,7 @@ ConfirmDeleteContractLine=Bunu sözleşme satırı silmek istediğinizden emin m
 MoveToAnotherContract=Başka bir sözleşme içine hizmet taşıyın.
 ConfirmMoveToAnotherContract=Ben yeni hedef seçilen sözleşme ve bu sözleşmenin içine bu hizmeti taşımak istediğiniz onaylayın.
 ConfirmMoveToAnotherContractQuestion=Olan mevcut sözleşme aynı üçüncü parti (), sen bu hizmeti taşımak istediğiniz seç?
-PaymentRenewContractId=Sözleşme yenilemek satır (sayı %s )
+PaymentRenewContractId=Sözleşme yenilemek satır (sayı% s)
 ExpiredSince=Son kullanma tarihi
 TypeContact_contrat_internal_SALESREPSIGN=Satış temsilcisi sözleşme imzalama
 TypeContact_contrat_internal_SALESREPFOLL=Aşağıdaki Satış temsilcisi sözleşme kadar
@@ -100,8 +100,8 @@ TypeContact_contrat_external_SALESREPSIGN=Sözleşme imzalama müşteri temas
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 13:54:25).
 // Reference language: en_US -> tr_TR
-RelatedContracts=Ilgili sözleşmeler
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:54).
+RelatedContracts=İlgili sözleşmeler
+Error_CONTRACT_ADDON_NotDefined=Sabit CONTRACT_ADDON tanımlanmamış
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:38).

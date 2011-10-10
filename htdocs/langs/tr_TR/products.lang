@@ -19,6 +19,10 @@ ProductId=Ürün / hizmet id
 Create=Oluştur
 Reference=Referans
 NewProduct=Yeni ürün
+NewBook=Yeni Kitap
+Book=Kitap
+Books=Kitaplar
+BookList=Kitaplar listesi
 NewService=Yeni hizmet
 ProductCode=Ürün kodu
 ServiceCode=Servis kodu
@@ -36,9 +40,9 @@ ServicesNotOnSell=Eski hizmetleri
 InternalRef=Dahili referans
 LastRecorded=Son ürün / hizmet satmak üzerine kaydedilmiş
 LastRecordedProductsAndServices=Son% ürünleri kaydedilen s / hizmet
-LastModifiedProductsAndServices=Son %s  olarak ürün / hizmet
-LastRecordedProducts=Son %s  ürünleri kaydedildi
-LastRecordedServices=Son %s  hizmetleri kaydedildi
+LastModifiedProductsAndServices=Son% s olarak ürün / hizmet
+LastRecordedProducts=Son% s ürünleri kaydedildi
+LastRecordedServices=Son% s hizmetleri kaydedildi
 LastProducts=Son ürünler
 CardProduct0=Ürün kartı
 CardProduct1=Hizmet kartı
@@ -101,7 +105,7 @@ DeleteFromCat=Kaldır kategorideki
 PriceRemoved=Fiyat kaldırıldı
 BarCode=Barkod
 BarcodeType=Barkod tipi
-SetDefaultBarcodeType=Set barkod tipi
+SetDefaultBarcodeType=Barkod Tipi Oluştur
 BarcodeValue=Barkod değeri
 GenbarcodeLocation=Bar kod nesil komut satırı aracı (phpbarcode motoru tarafından bazı barkod tipleri için kullanılır)
 NoteNotVisibleOnBill=Notu (fatura, öneriler ...) görünmüyorsa
@@ -125,7 +129,7 @@ ProductAssociationList=Ilgili ürün / hizmetler: ürün ismi / listesi (adet et
 ErrorAssociationIsFatherOfThis=Seçili ürün üst mevcut ürün ile
 DeleteProduct=Silmek bir ürün / hizmet
 ConfirmDeleteProduct=Bunu silmek ürün / hizmet istediğinizden emin misiniz?
-ProductDeleted=Ürün / Hizmet " %s  veritabanından silindi.
+ProductDeleted=Ürün / Hizmet &quot;% s veritabanından silindi.
 DeletePicture=Silmek bir resim
 ConfirmDeletePicture=Bu resmi silmek istediğinizden emin misiniz?
 ExportDataset_produit_1=Ürünler
@@ -146,8 +150,8 @@ NoSupplierPriceDefinedForThisProduct=No ticaret fiyat / adet Bu ürün için tan
 RecordedProducts=Ürünler kaydedildi
 RecordedProductsAndServices=Ürün / hizmet kaydedildi
 GenerateThumb=Generate Thumb
-ProductCanvasAbility=Kullanımı özel "canvas" addons
-ServiceNb=Servis # %s 
+ProductCanvasAbility=Kullanımı özel &quot;canvas&quot; addons
+ServiceNb=Servis #% s
 ListProductByPopularity=Ürünler Listesi / hizmet popülerlik tarafından
 Finished=Işlenmiş ürün
 RowMaterial=İlk malzeme
@@ -155,25 +159,31 @@ CloneProduct=Klon ürün veya hizmet
 ConfirmCloneProduct=Sizin ürün veya <b>hizmet%</b> clone istediğinizden emin <b>misiniz?</b>
 CloneContentProduct=Ürünün Clone bütün temel bilgiler / hizmet
 ClonePricesProduct=Clone ana bilgileri ve fiyatlar
+ProductAccountancySellCode=Muhasebe Kodu (Satış)
+ProductAccountancyBuyCode=Muhasebe Kodu (Alış)
+CustomerPrices=Müşteri Fiyatları
+SuppliersPrices=Tedarikçi Fiyatları
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 13:54:25).
 // Reference language: en_US -> tr_TR
-ProductAccountancyBuyCode=Muhasebe kodu (satın alma)
-ProductAccountancySellCode=Muhasebe kodu (satmak)
 Sell=Satış
 Buy=Alımlar
-OnBuy=Satın
-ProductStatusOnBuy=Mevcut
-ProductStatusNotOnBuy=Eski
-ProductStatusOnBuyShort=Mevcut
-ProductStatusNotOnBuyShort=Eski
+OnBuy=Satın almak için
+ProductStatusOnBuy=Satın almak için
+ProductStatusNotOnBuy=Satın almak için değil
+ProductStatusOnBuyShort=Satın almak için
+ProductStatusNotOnBuyShort=Satın almak için değil
+ParentProductsNumber=Üst ürün sayısı
+ProductParentList=Bir bileşeni olarak bu ürün ile ürün / hizmet listesi
+ImportDataset_produit_1=Ürünler
+ImportDataset_service_1=Hizmetler
 ListProductServiceByPopularity=Popülerliğe göre ürün / hizmet listesi
 ListServiceByPopularity=Popülerliğe göre hizmet listesi
-ProductIsUsed=Bu ürün kullanılır
+ProductIsUsed=Bu ürün kullanılır.
 NewRefForClone=Ref. yeni ürün / hizmet
-CustomerPrices=Müşteriler fiyatları
-SuppliersPrices=Tedarikçiler fiyatları
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:38).
+CustomCode=Özel kod
+CountryOrigin=Menşei ülke
+HiddenIntoCombo=Seçim listeleri içine Gizli
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:28).

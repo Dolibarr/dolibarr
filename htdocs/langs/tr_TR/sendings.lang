@@ -16,7 +16,7 @@ SendingsArea=Gönderiler alanı
 ListOfSendings=Sendings Listesi
 SendingMethod=Nakliye yöntemi
 SendingReceipt=Nakliye makbuz
-LastSendings=Son %s  gönderiler
+LastSendings=Son% s gönderiler
 SearchASending=Gönderi ara
 StatisticsOfSendings=Gönderiler için İstatistik
 NbOfSendings=Sayı gönderilerin
@@ -55,18 +55,29 @@ StatsOnShipmentsOnlyValidated=İstatistikler gönderiler sadece onaylanmış ola
 SendingMethodCATCH=Catch müşteri tarafından
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
+NumRefModelJade=Return biçimi BLYY00001, bir referans numarası ... burada YY yıldır. Sonunda sayısı sıfır sıfırlanır asla.
 DocumentModelSirocco=Teslimat makbuzlarını için basit belge modeli
 DocumentModelTyphon=Teslimat makbuzlarını için daha fazla dokümanın modeli (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
-Shipments=Gönderiler
-StatusSendingCanceled=Iptal
-StatusSendingCanceledShort=Iptal
-DocumentModelMerou=Merou A5 model
-DateDeliveryPlanned=Teslim Planlı tarih
-DateReceived=Tarih teslim aldı
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:30).
+StatusSendingCanceledShort=Iptal edildi
+DocumentModelMerou=Mérou A5 modeli
+DateDeliveryPlanned=Teslim Rendelenmiş tarih
+DateReceived=Tarihi teslim aldı
+SendShippingByEMail=E-posta gönderim gönder
+SendShippingRef=Nakliye sssss Gönder
+ActionsOnShipping=Nakliye üzerinde Acions
+LinkToTrackYourPackage=Paketi izlemek için link
+ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyat yaratılması amacıyla kart yapılır.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Sabit EXPEDITION_ADDON_NUMBER tanımlanmamış
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:36:26).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+Shipments=Sevkiyatlar
+StatusSendingCanceled=Iptal edildi
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:11:23).

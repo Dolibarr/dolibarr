@@ -17,7 +17,7 @@ Permissions=İzinler
 EditPassword=Şifre değiştir
 SendNewPassword=Yeniden ve şifre göndermek
 ReinitPassword=Yeniden şifre
-PasswordChangedTo=Şifre değiştirildi: %s 
+PasswordChangedTo=Şifre değiştirildi:% s
 SubjectNewPassword=Dolibarr için yeni şifre
 AvailableRights=Mevcut izinleri
 OwnedRights=Owned izinleri
@@ -46,6 +46,7 @@ NewUser=Yeni kullanıcı
 CreateUser=Kullanıcı oluştur
 SearchAGroup=Arama bir grup
 SearchAUser=Bir kullanıcı ara
+ErrorFailedToSendPassword=Parola gönderilemedi
 LoginNotDefined=Giriş tanımlı değil.
 NameNotDefined=Adı tanımlı değil.
 ListOfUsers=Kullanıcı listesi
@@ -62,10 +63,10 @@ NewGroup=Yeni grup
 CreateGroup=Grup oluştur
 RemoveFromGroup=Gruptan kaldır
 PasswordChangedAndSentTo=Şifre değiştirildi <b>ve%</b> gönderilen <b>var.</b>
-PasswordChangeRequestSent=<b>Istek% gönderilen %s </b> için şifre değiştirmek için <b>var.</b>
+PasswordChangeRequestSent=<b>Istek% gönderilen% s</b> için şifre değiştirmek için <b>var.</b>
 MenuUsersAndGroups=Kullanıcılar ve Gruplar
-LastGroupsCreated=Son %s  gruplar oluşturdu
-LastUsersCreated=Son %s  kullanıcılar oluşturulmuş
+LastGroupsCreated=Son% s gruplar oluşturdu
+LastUsersCreated=Son% s kullanıcılar oluşturulmuş
 ShowGroup=Show grubu
 ShowUser=Show kullanıcı
 NonAffectedUsers=Non etkilenen kullanıcılar
@@ -92,22 +93,22 @@ GuiLanguage=Arayüz dili
 InternalUser=Dahili kullanıcı
 MyInformations=Benim veri
 ExportDataset_user_1=Dolibarr kullanıcıları ve özellikleri
-DomainUser=Etki alanı kullanıcı %s 
+DomainUser=Etki alanı kullanıcı% s
 Reactivate=Reactivate
-CreateInternalUserDesc=Bu formu bir kullanıcı şirket / kuruluş iç creat sağlar. (Müşteri, tedarikçi, ...), kullanma düğmesi 'Dolibarr kullanıcı oluştur' üçüncü parti kartviziti bir dış kullanıcı creat için.
+CreateInternalUserDesc=Bu formu bir kullanıcı şirket / kuruluş iç creat sağlar. (Müşteri, tedarikçi, ...), kullanma düğmesi &#39;Dolibarr kullanıcı oluştur&#39; üçüncü parti kartviziti bir dış kullanıcı creat için.
 InternalExternalDesc=Bir <b>dahili</b> kullanıcı Şirketinizin parçası olan bir kullanıcı / temelidir. <br> <b>Harici</b> bir kullanıcı bir müşteri, tedarikçi veya diğer bir. <br><br> Her iki durumda da, izinler Dolibarr, iç kullanıcı (Bkz: Ev - Kurulum - Ekran) farklı bir menü yöneticisi olabilir dış kullanıcı hakları tanımlar
 PermissionInheritedFromAGroup=Izin çünkü bir kullanıcı grubu miras verdi.
 IdPhoneCaller=Id arayan telefon
-UserLogged=Kullanıcı %s  bağlı
-NewUserCreated=Kullanıcı %s  oluşturuldu
-NewUserPassword= %s  için şifre değiştirme
-EventUserModified=Kullanıcı %s  olarak
+UserLogged=Kullanıcı% s bağlı
+NewUserCreated=Kullanıcı% s oluşturuldu
+NewUserPassword=% S için şifre değiştirme
+EventUserModified=Kullanıcı% s olarak
 UserDisabled=Kullanıcı% engellilere s
-UserEnabled=Aktif kullanıcı %s 
-UserDeleted=Kullanıcı %s  kaldırıldı
-NewGroupCreated=Grubu %s  oluşturuldu
-GroupModified=Grubu %s  olarak
-GroupDeleted=Grubu %s  kaldırıldı
+UserEnabled=Aktif kullanıcı% s
+UserDeleted=Kullanıcı% s kaldırıldı
+NewGroupCreated=Grubu% s oluşturuldu
+GroupModified=Grubu% s olarak
+GroupDeleted=Grubu% s kaldırıldı
 ConfirmCreateContact=Sen bu iletişim için bir Dolibarr hesabını oluştur istediğinizden emin misiniz?
 ConfirmCreateLogin=Bunu üyesi için Dolibarr hesabını oluştur istediğinizden emin misiniz?
 ConfirmCreateThirdParty=Bunu üye için bir üçüncü parti oluşturmak istediğinizden emin misiniz?
@@ -116,10 +117,20 @@ NameToCreate=Üçüncü Adı oluşturmak için
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
 // Reference language: en_US -> tr_TR
 Inherited=Miras
+UserWillBeInternalUser=Oluşturulan kullanıcı (belirli bir üçüncü parti ile bağlantılı değildir çünkü) bir dahili kullanıcı olacak
+UserWillBeExternalUser=(Belirli bir üçüncü parti ile bağlantılı çünkü) oluşturulan kullanıcı harici bir kullanıcı olacak
+UserLogoff=Kullanıcı sssss çıkış
 YourRole=Sizin rolleri
-YourQuotaOfUsersIsReached=aktif kullanıcıların Kotanız ulaşılır!
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:39).
+YourQuotaOfUsersIsReached=Aktif kullanıcı Kotanız!
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:22).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+AdministratorDesc=Yönetici varlık
+NbOfUsers=NB kullanıcıların
+DontDowngradeSuperAdmin=Sadece bir SuperAdmin downgrade bir SuperAdmin
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:40:35).

@@ -18,9 +18,9 @@ NoCategoryYet=Bu tür oluşturulan Kategori yok
 In=Içinde
 AddIn=Ekleyin
 modify=değiştirmek
-Classify=Sınıflandırmak
+Classify=Sınıflandır
 CategoriesArea=Kategoriler alanı
-ProductsCategoriesArea=Ürünler / Hizmetler 'kategorileri alanı
+ProductsCategoriesArea=Ürünler / Hizmetler &#39;kategorileri alanı
 SuppliersCategoriesArea=Tedarikçilerin kategoriler alanı
 CustomersCategoriesArea=Müşteri kategoriler alanı
 ThirdPartyCategoriesArea=Üçüncü tarafların kategoriler alanı
@@ -49,9 +49,9 @@ ErrCatAlreadyExists=Bu ad zaten kullanılıyor
 AddProductToCat=Bir kategoriye Bu ürün ekle?
 ImpossibleAddCat=Imkansız kategori eklemek
 ImpossibleAssociateCategory=Kategoriye ilişkilendirmek imkansız
-WasAddedSuccessfully=<b> %s </b> başarıyla eklendi.
+WasAddedSuccessfully=<b>% s</b> başarıyla eklendi.
 ObjectAlreadyLinkedToCategory=Eleman zaten bu kategoriye bağlıdır.
-CategorySuccessfullyCreated=Bu kategoride %s  başarı ile eklendi.
+CategorySuccessfullyCreated=Bu kategoride% s başarı ile eklendi.
 ProductIsInCategories=Ürün / hizmet sınıflandırması aşağıdaki sahibi
 SupplierIsInCategories=Üçüncü parti kategoriler tedarikçiler aşağıdaki sahibi
 CompanyIsInCustomersCategories=Bu üçüncü parti müşteri / potansiyel sınıflandırması aşağıdaki sahibi
@@ -59,7 +59,7 @@ CompanyIsInSuppliersCategories=Bu üçüncü parti kategoriler tedarikçiler aş
 ProductHasNoCategory=Bu ürün / hizmet herhangi bir kategoride değil
 SupplierHasNoCategory=Bu ticaret herhangi bir kategoride değil
 CompanyHasNoCategory=Firmanın herhangi bir kategoride değil
-ClassifyInCategory=Sınıflandırmak kategoride
+ClassifyInCategory=Kategoride Sınıflandır
 NoneCategory=Hiçbiri
 CategoryExistsAtSameLevel=Bu kategoride zaten bu Ref var
 ReturnInProduct=Geri ürün / hizmet kartı
@@ -73,7 +73,7 @@ DeleteCategory=Kategori Sil
 ConfirmDeleteCategory=Bu kategoriyi silmek istediğinizden emin misiniz?
 RemoveFromCategory=Kategoride ile Kaldır bağlantısını
 RemoveFromCategoryConfirm=Size işlem ve kategori arasındaki bağlantıyı kaldırmak istediğinizden emin misiniz?
-NoCategoriesDefined=Kategori yok tanımlı
+NoCategoriesDefined=Tanımlı kategori yok
 SuppliersCategoryShort=Tedarikçiler kategori
 CustomersCategoryShort=Müşteriler kategori
 ProductsCategoryShort=Ürün kategorisi
@@ -95,13 +95,18 @@ CatProdList=Ürün kategorileri Listesi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
-MembersCategoriesArea=Üyeler kategoriler alan
-MemberIsInCategories=Bu üye kategoriler üyeleri aşağıdaki sahibi
-MemberHasNoCategory=Bu üye herhangi bir kategoride değil
-MembersCategoryShort=Üyeler kategori
-MembersCategoriesShort=Üyeler kategoriler
-ThisCategoryHasNoMember=Bu kategoride herhangi bir üye içermez.
-CatMemberList=Üye Listesi kategoriler
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:26).
+MembersCategoryShort=Üyeler Kategori
+MembersCategoriesShort=Üye kategoriler
+ThisCategoryHasNoMember=Bu kategori, herhangi bir üye içermez.
+CatMemberList=Üyeleri kategoriler Listesi
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:17:54).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+MembersCategoriesArea=Üye kategoriler alanı
+MemberIsInCategories=Bu üye, aşağıdaki üyelerden kategorilerinde sahibi
+MemberHasNoCategory=Bu üye, herhangi bir kategoride değil.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:48:09).

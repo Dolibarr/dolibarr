@@ -48,23 +48,39 @@ DateActionDoneEnd=Gerçek bitiş tarihi
 DateActionStart=Başlangıç tarihi
 DateActionEnd=Bitiş tarihi
 AgendaUrlOptions1=Ayrıca filtre çıkış parametreler aşağıdaki ekleyebilirsiniz:
-AgendaUrlOptions2=<b>login=%</b> eylemler tarafından oluşturulan veya <b>kullanıcı%</b> tarafından yapılması için etkilenen çıkışı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions3=<b>logina=%%</b> eylemler kullanıcı tarafından oluşturulan çıktı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions4=<b>logint=%</b> eylemleri kullanıcı <b>için%</b> etkilenen çıkışı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions5=<b>logind=%</b> eylemler <b>kullanıcı%</b> tarafından yapılan çıktı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions2=<b>login =%</b> eylemler tarafından oluşturulan veya <b>kullanıcı%</b> tarafından yapılması için etkilenen çıkışı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions3=<b>logina =%%</b> eylemler kullanıcı tarafından oluşturulan çıktı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions4=<b>logint =%</b> eylemleri kullanıcı <b>için%</b> etkilenen çıkışı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions5=<b>logind =%</b> eylemler <b>kullanıcı%</b> tarafından yapılan çıktı kısıtlamak için <b>değil.</b>
 AgendaShowBirthdayEvents=Show doğum rehber
 AgendaHideBirthdayEvents=Sakla doğum rehber
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
-// Reference language: en_US
-InterventionValidatedInDolibarr=Intervensjon %s validert
-InterventionValidatedInDolibarr=Interventie sssss gevalideerd
-MenuToDoActions=Wszystkich działań niekompletne
-InterventionValidatedInDolibarr=Sssss interwencji zatwierdzone
-InterventionValidatedInDolibarr=%s Intervenção validado
-MenuToDoActions=Все действия неполным
-InterventionValidatedInDolibarr=Вмешательство %s проверки
-InterventionValidatedInDolibarr=Müdahale Ssss onaylandı
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:54).
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+InvoiceBackToDraftInDolibarr=Fatura %s taslak durumuna geri dönün
+InterventionValidatedInDolibarr=Müdahale %s valide
+ProposalSentByEMail=Email ile gönderilen Ticari teklifi %s
+OrderSentByEMail=EMail tarafından gönderilen Müşteri sipariş %s
+InvoiceSentByEMail=Email ile gönderilen Müşteri fatura %s
+SupplierOrderSentByEMail=EMail tarafından gönderilen Tedarikçi amacıyla %s
+SupplierInvoiceSentByEMail=EMail tarafından gönderilen Tedarikçi fatura %s
+ShippingSentByEMail=Email ile gönderilen Denizcilik %s
+InterventionSentByEMail=Email ile gönderilen Müdahale %s
+ExtSites=Dış takvimler
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:11:11).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+EventOnFullDay=Olay tam gün
+ViewDay=Gün görünümünde
+ViewWeek=Hafta görünümü
+AgendaExtSitesDesc=Bu sayfa dış takvimler yapılandırmanıza olanak sağlar.
+ExtSitesEnableThisTool=gündeme nasıl dış takvimler
+ExtSitesNbOfAgenda=Takvimlerin sayısı
+AgendaExtNb=Takvim nb %s
+ExtSiteUrlAgenda=. Ical dosyaya erişmek için URL
+ExtSiteNoLabel=Tanımlama yok
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:57:37).

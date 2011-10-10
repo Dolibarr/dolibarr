@@ -9,7 +9,7 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DomainPassword=Şifre etki alanı için
-YouMustChangePassNextLogon=Şifre <b>Kullanıcı %s </b> değiştirilmesi gerekiyor <b>alanı %s .</b>
+YouMustChangePassNextLogon=Şifre <b>Kullanıcı% s</b> değiştirilmesi gerekiyor <b>alanı% s.</b>
 UserMustChangePassNextLogon=Kullanım alanı% Doğum şifresini değiştirmek yapmalısınız
 LdapUacf_NORMAL_ACCOUNT=Kullanıcı hesabı
 LdapUacf_DONT_EXPIRE_PASSWORD=Şifre süresi asla
@@ -29,12 +29,11 @@ LDAPFieldFirstSubscriptionDate=İlk abonelik Tarih
 LDAPFieldFirstSubscriptionAmount=Fist abonelik miktarı
 LDAPFieldLastSubscriptionDate=Son abonelik tarih
 LDAPFieldLastSubscriptionAmount=Son abonelik miktarı
-SynchronizeDolibarr2Ldap=Senkronize kullanıcı (Dolibarr -> LDAP)
+SynchronizeDolibarr2Ldap=Senkronize kullanıcı (Dolibarr -&gt; LDAP)
 UserSynchronized=Kullanıcı senkronize
 GroupSynchronized=Grup senkronize
 MemberSynchronized=Üye senkronize
 ContactSynchronized=İletişim senkronize
-ForceSynchronize=Kuvvet senkronizasyon Dolibarr -> LDAP
+ForceSynchronize=Kuvvet senkronizasyon Dolibarr -&gt; LDAP
 ErrorFailedToReadLDAP=LDAP veritabanında okunamadı. Kontrol LDAP modülü kurulum ve veritabanı erişilebilirlik.
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
