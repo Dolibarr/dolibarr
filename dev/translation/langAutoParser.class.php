@@ -304,7 +304,7 @@ class langAutoParser {
 		}
 
 		$rep=$json['responseData']['translatedText'];
-		$rep=preg_replace('/SSSSS/','%s',$rep);
+		$rep=preg_replace('/SSSSS/i','%s',$rep);
 
 		//print "OK ".join('',$src_texts).' => '.$rep."\n";
 
