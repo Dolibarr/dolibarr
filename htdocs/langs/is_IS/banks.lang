@@ -145,3 +145,13 @@ AllAccounts=Allar banka / peninga reikninga
 BackToAccount=Til baka á reikning
 ShowAllAccounts=Sýna allra reikninga
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> is_IS
+WithdrawalPayment=Afturköllun greiðslu
+ShowCheckReceipt=Sýna athuga innborgun berst
+Graph=Grafík
+FutureTransaction=Færsla í futur. Engin leið til leitar sátta.
+SelectChequeTransactionAndGenerate=Select / sía ávísanir til fela í innborgun stöðva móttöku og smelltu á &quot;Create.&quot;
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:58:50).

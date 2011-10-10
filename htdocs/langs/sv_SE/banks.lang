@@ -145,3 +145,10 @@ AllAccounts=Alla bank / Likvida medel
 BackToAccount=Tillbaka till konto
 ShowAllAccounts=Visa för alla konton
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:51:00).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+FutureTransaction=Transaktioner i Futur. Inget sätt att blidka.
+SelectChequeTransactionAndGenerate=Välj / Filtret kontrollerar att inkludera i kontrollen insättning kvittot och klicka på &quot;Skapa&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:33:29).

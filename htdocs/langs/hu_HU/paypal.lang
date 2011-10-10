@@ -1,0 +1,22 @@
+/*
+ * Language code: hu_HU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> hu_HU
+CHARSET=UTF-8
+PaypalSetup=PayPal modul beállítása
+PaypalDesc=Ez a modul ajánlat oldalakat, hogy fizetést <a href="http://www.paypal.com" target="_blank">PayPal</a> ügyfelek. Ezt fel lehet használni a szabad fizetés vagy a fizetés egy adott Dolibarr objektum (számla, megrendelés, ...)
+PAYPAL_API_PASSWORD=API jelszó
+PAYPAL_API_SIGNATURE=API aláírás
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ajánlat fizetés &quot;szerves&quot; (hitelkártya + Paypal) vagy a &quot;Paypal&quot; csak
+PAYPAL_CSS_URL=Optionnal Url a CSS stíluslap a fizetési oldalon
+ThisIsTransactionId=Ez a tranzakció id: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Add az url a Paypal fizetési amikor a dokumentumot postán
+PAYPAL_IPN_MAIL_ADDRESS=E-mail cím az azonnali értesítést a fizetés (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=Meg fogja találni itt a sorrendben __ORDERREF__ \ n \ nA kattintson az alábbi linkre biztos, hogy a fizetés PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+PredefinedMailContentSendInvoiceWithPaypalLink=Meg fogja találni itt a számla __FACREF__ \ n \ nA kattintson az alábbi linkre biztos, hogy a fizetés PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:47:35).

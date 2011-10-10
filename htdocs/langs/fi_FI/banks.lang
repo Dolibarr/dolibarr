@@ -159,3 +159,12 @@ TransactionWithOtherAccount=Tilisiirto
 // Reference language: en_US
 BankAccountCountry=Tili maa
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:41).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fi_FI
+RIBControlError=Eheydentarkistus arvojen epäonnistuu. Tämä tarkoittaa tiedoista tilinumero eivät ole täydellisiä tai väärin (tarkista maassa, numerot ja IBAN).
+WithdrawalPayment=Irtisanominen maksu
+ShowCheckReceipt=Näytä tarkistaa Talletus kuitti
+Graph=Grafiikka
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:42:55).

@@ -10,7 +10,7 @@
 CHARSET=UTF-8
 PayBoxSetup=PayBox modülü kurulumu
 PayBoxDesc=Bu modül teklif sayfaları müşterilerimiz tarafından <a href="http://www.paybox.com" target="_blank">Paybox</a> ödeme izin vermek. Bu ücretsiz ödeme için kullanılabilir veya belirli bir Dolibarr nesne üzerinde bir ödeme (fatura, sipariş, ...)
-FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL&#39;ler bir müşteriye Dolibarr nesneler üzerinde bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
+FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL bir müşteriye Dolibarr nesneler üzerinde bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
 PaymentForm=Ödeme Formu
 WelcomeOnPaymentPage=Online ödeme servisine hoşgeldiniz
 ThisScreenAllowsYouToPay=Bu ekran% s için bir online ödeme yapmak için izin

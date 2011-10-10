@@ -1,0 +1,22 @@
+/*
+ * Language code: de_DE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+CHARSET=UTF-8
+PaypalSetup=PayPal-Modul Setup
+PaypalDesc=Dieses Modul bieten Seiten, die Zahlung ermöglichen <a href="http://www.paypal.com" target="_blank">PayPal</a> von Kunden. Dies kann für eine kostenlose Zahlung oder eine Zahlung zu einem bestimmten Dolibarr Objekt verwendet werden (Rechnung, Bestellung, ...)
+PaypalOrCBDoPayment=Bezahlen Sie mit Kreditkarte oder Paypal
+PaypalDoPayment=Bezahlen Sie mit Paypal
+PaypalCBDoPayment=Bezahlen mit Kreditkarte
+PAYPAL_CSS_URL=Optionnal URL der CSS-Stylesheet auf Zahlung Seite
+ThisIsTransactionId=Dies ist id Geschäftsart: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Fügen Sie die URL der Paypal Zahlung, wenn Sie ein Dokument per E-Mail senden
+PAYPAL_IPN_MAIL_ADDRESS=E-Mail-Adresse für die sofortige Benachrichtigung der Zahlung (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=Hier finden Sie die Reihenfolge __ORDERREF__ \n\nSie können auf der sicheren unten stehenden Link, um Ihre Zahlung via PayPal zu klicken \n\n%s \n\nSincerely \n\n
+PredefinedMailContentSendInvoiceWithPaypalLink=Hier finden Sie die Rechnung __FACREF__ \n\nSie können auf der sicheren unten stehenden Link, um Ihre Zahlung via PayPal \n\n%s \n\nSincerely \n\n machen klicken
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:42:13).

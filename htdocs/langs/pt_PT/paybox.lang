@@ -32,3 +32,9 @@ PaymentForm=Forma de pagamento
 // Reference language: en_US -> pt_PT
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma interface on-line %s pagamento de uma subscrição de membro
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:43).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pt_PT
+MessageKO=Mensagem na página de pagamento cancelado retorno
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:21:44).

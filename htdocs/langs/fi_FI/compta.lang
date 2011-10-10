@@ -143,3 +143,17 @@ VATReportBuildWithOptionDefinedInModule=Määrät kuvassa on laskettu määritte
 SocialContributionsPayments=Sosiaaliturvamaksut maksut
 ThirdPartyMustBeEditAsCustomer=Kolmannen osapuolen on määriteltävä asiakkaan
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:03).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fi_FI
+RemainingAmountPayment=Määrä maksu jäljellä:
+AmountToBeCharged=Kokonaismäärä maksaa:
+ProposalStats=Tilastot ehdotuksista
+OrderStats=Tilastot tilauksista
+InvoiceStats=Tilasto laskut
+SellsJournal=Myynti lehdessä
+PurchasesJournal=Ostot lehdessä
+RemainToDivide=Remain lähettää:
+WarningDepositsNotIncluded=Talletukset laskut eivät sisälly tähän versioon tämän kirjanpito moduulin.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:43:27).

@@ -200,3 +200,35 @@ VolumeUnitgallon=Gallone
 SizeUnitinch=Zoll
 SizeUnitfoot=Fuß
 ImageEditor=Bildbearbeitung
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+ToolsDesc=Dieser Bereich ist zur Gruppe diverse Werkzeuge nicht verfügbar in andere Menüeinträge gewidmet. <br><br> Diese Tools können aus dem Menü auf der Seite zu erreichen.
+Notify_WITHDRAW_TRANSMIT=Transmission Rückzug
+Notify_WITHDRAW_CREDIT=Kreditkarten Rückzug
+Notify_WITHDRAW_EMIT=Isue Rückzug
+Notify_ORDER_SENTBYMAIL=Kunden bestellen per Post geschickt
+Notify_COMPANY_CREATE=Dritter erstellt
+Notify_PROPAL_SENTBYMAIL=Gewerbliche Vorschlag per Post
+Notify_ORDER_SENTBYMAIL=Envío pedido por e-mail
+Notify_BILL_SUPPLIER_PAYED=Lieferantenrechnung bezahlt
+Notify_BILL_SUPPLIER_SENTBYMAIL=Lieferant Rechnung per Post geschickt
+Notify_CONTRACT_VALIDATE=Contract validiert
+Notify_FICHEINTER_VALIDATE=Intervention validiert
+Notify_SHIPPING_VALIDATE=Liefer-validierte
+Notify_SHIPPING_SENTBYMAIL=Versand per Post
+Notify_MEMBER_VALIDATE=Mitglied validiert
+Notify_MEMBER_SUBSCRIPTION=Mitglied gezeichneten
+Notify_MEMBER_RESILIATE=Mitglied resiliated
+Notify_MEMBER_DELETE=Mitglied gelöscht
+Right=Recht
+ThisIsListOfModules=Dies ist eine Liste der Module, die von dieser Demo-Profil (nur gängigsten Module sind in dieser Demo) vorgewählt. Bearbeiten, um eine personalisierte Demo haben und klicken Sie auf &quot;Start&quot;.
+ClickHere=Klicken Sie hier
+UseAdvancedPerms=Verwenden Sie die erweiterten Berechtigungen einiger Module
+FileFormat=Dateiformat
+SelectAColor=Wählen Sie eine Farbe
+AddFiles=Dateien hinzufügen
+StartUpload=Upload starten
+CancelUpload=Hochladen abbrechen
+FileIsTooBig=Dateien zu groß
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:02:54).

@@ -1,0 +1,96 @@
+/*
+ * Language code: hu_HU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> hu_HU
+CHARSET=UTF-8
+Accountancy=Könyvelés
+AccountancyCard=Számviteli kártya
+Treasury=Kincstár
+MenuFinancial=Pénzügyi
+TaxModuleSetupToModifyRules=Ugrás a <a href="%s">modul beállítási</a> módosítani számítási szabályokat
+OptionMode=Opció a nyilvántartási
+OptionModeTrue=Opció Input-Output
+OptionModeVirtual=Option Credits-terhelések
+RemainingAmountPayment=Összeg kifizetése még:
+AmountToBeCharged=Teljes fizetendő összeg:
+AccountsGeneral=Számlák
+Account=Fiók
+Accounts=Számlák
+BillsForSuppliers=Bills szállítók
+Income=Jövedelem
+Outcome=Költség
+ReportInOut=Bevétel / Kiadás
+ReportTurnover=Forgalom
+Withdrawal=Visszavonás
+Withdrawals=Kivonás
+AmountHTVATRealReceived=Net gyűjtött
+AmountHTVATRealPaid=Net fizetett
+VATToPay=ÁFA értékesít
+VATReceived=ÁFA kapott
+VATToCollect=ÁFA vásárlás
+VATSummary=ÁFA egyenleg
+VATPaid=Megfizetett HÉA
+VATCollected=Beszedett HÉA
+MenuSocialContributions=Társadalombiztosítási hozzájárulások
+MenuNewSocialContribution=Új hozzájárulás
+NewSocialContribution=Új társadalombiztosítási járulék
+ContributionsToPay=Hozzájárulás fizetni
+AccountancyTreasuryArea=Számviteli / Treasury területén
+AccountancySetup=Számviteli setup
+NewPayment=Új fizetési
+Payments=Kifizetések
+PaymentCustomerInvoice=Ügyfél számla fizetési
+PaymentSupplierInvoice=Szállító számla fizetési
+DatePayment=Fizetési határidő
+NewVATPayment=Új ÁFA-fizetési
+VATPayment=ÁFA fizetés
+VATPayments=ÁFA kifizetések
+SocialContributionsPayments=Társadalombiztosítási hozzájárulások kifizetések
+ShowVatPayment=Mutasd ÁFA fizetési
+TotalToPay=Összes fizetni
+TotalVATReceived=Teljes ÁFA kapott
+CustomerAccountancyCode=Az ügyfél számviteli kódot
+SupplierAccountancyCode=Szállító számviteli kódot
+ByUserAuthorOfInvoice=A számla szerző
+AccountancyExport=Számviteli export
+ErrorWrongAccountancyCodeForCompany=Rossz ügyfél számviteli kódot %s
+SuppliersProductsSellSalesTurnover=A forgalmat az eladások a beszállító termékeit.
+CheckReceipt=Ellenőrizze a betéti
+CheckReceiptShort=Ellenőrizze a betéti
+NewCheckReceipt=Új kedvezmény
+NewCheckDeposit=Új ellenőrizze betéti
+NewCheckDepositOn=Készítsen nyugtát letét számla: %s
+NoWaitingChecks=Nem ellenőrzi vár betét.
+ExportDataset_tax_1=Társadalombiztosítási hozzájárulások és a kifizetések
+AnnualSummaryDueDebtMode=Egyensúly a bevételek és ráfordítások, az éves összefoglaló mód <b>%sClaims-Debts%s</b> mondta <b>elkötelezettség számvitel.</b>
+AnnualSummaryInputOutputMode=Egyensúly a bevételek és ráfordítások, az éves összefoglaló mód <b>%sRevenues-Expenses%s</b> mondta <b>pénzforgalmi szemléletű elszámolás.</b>
+AnnualByCompaniesDueDebtMode=Egyenlege bevételek és kiadások, részletesen harmadik fél mód <b>%sClaims-Debts%s</b> mondta <b>elkötelezettség számvitel.</b>
+AnnualByCompaniesInputOutputMode=Egyenlege bevételek és kiadások, részletesen harmadik fél mód <b>%sRevenues-Expenses%s</b> mondta <b>pénzforgalmi szemléletű elszámolás.</b>
+SeeReportInInputOutputMode=Lásd a jelentés <b>%sIncomes-Expenses%s</b> mondta <b>pénzforgalmi szemléletű elszámolás</b> a számítás a tényleges kifizetések
+SeeReportInDueDebtMode=Lásd a jelentés <b>%sClaims-Debts%s</b> mondta <b>elkötelezettségét számviteli</b> számítás kiadott számlák
+RulesResultDue=- Összegek feltüntetett minden adókat <br> - Ez magában foglalja kiemelkedő számlákat, költségeket és az ÁFA-e fizetni vagy sem. <br> - Ez alapján az érvényességét a számlák és az ÁFA és az esedékesség napján a költségeket.
+RulesResultInOut=- Összegek feltüntetett minden adókat <br> - Ez magában foglalja az igazi kifizetéseket a számlákat, költségeket és az ÁFA. <br> - Ez alapján a fizetés időpontját, a számlák, költségek ANF ÁFA. <br>
+RulesCADue=- Ez magában foglalja az ügyfél miatt számla (kivéve a letéti számlák) függetlenül attól, hogy fizetett vagy sem. <br> - Ez alapján az érvényességét ezen számlák. <br>
+SeeVATReportInDueDebtMode=Lásd a jelentés <b>%sVAT a flow%s</b> egy számítást egy opció az áramlási
+RulesVATIn=- A szolgáltatások, a jelentés tartalmazza az ÁFA-szabályozás ténylegesen kapott vagy kibocsátott alapján a kifizetés időpontját. <br> - Az anyagi javak, tartalmazza az ÁFA számlák alapján a számla dátumot.
+RulesVATDue=- A szolgáltatások, a jelentés az ÁFA-t számlák miatt, fizetett vagy nem alapján a számla keltétől. <br> - Az anyagi javak, tartalmazza az ÁFA számlák alapján a számla keltétől.
+OptionVatInfoModuleComptabilite=Megjegyzés: A tárgyi eszközök, nem szabad használni a szállítás időpontját, hogy igazságosabb.
+PercentOfInvoice=%% / Számla
+NotUsedForGoods=Nem használt termékek
+ProposalStats=Statisztika javaslatok
+OrderStats=Statisztikák a megrendelések
+InvoiceStats=Statisztikák a számlák
+Dispatch=Teherelosztása
+DescSellsJournal=Értékesítési Journal
+DescPurchasesJournal=Vásárlások Journal
+InvoiceRef=Számla ref.
+CodeNotDef=Nem meghatározott
+AddRemind=Dispatch rendelkezésre álló összeg
+RemainToDivide=Maradj az elszállítást:
+WarningDepositsNotIncluded=Betétek számlák nem szerepelnek ebben a változatban a számviteli modul.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:57:23).

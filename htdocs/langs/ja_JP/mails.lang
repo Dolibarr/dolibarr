@@ -1,0 +1,53 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+MailTitle=説明
+MailFrom=送信者
+MailErrorsTo=エラーへ
+MailReply=に返信
+MailTo=受信者（単数または複数）
+MailCC=にコピー
+ResetMailing=電子メールで送信する再送
+DeleteMailing=電子メールで送信する削除
+DeleteAMailing=メール送信を削除します。
+PreviewMailing=電子メールで送信プレビュー
+PrepareMailing=メール送信の準備
+CreateMailing=メール送信作成
+MailingStatusSentCompletely=完全に送信
+MailingStatusError=エラーが発生
+MailingStatusNotSent=送信されません
+MailSuccessfulySent=正常に送信メール（%sへ%sから）
+ErrorMailRecipientIsEmpty=電子メールの受信者は空です
+WarningNoEMailsAdded=受信者のリストに追加するない新しい電子メール。
+CommonSubstitutions=一般的な置換
+YouCanAddYourOwnPredefindedListHere=メールセレクタモジュールを作成するには、htdocsには、/ /モジュール/郵送/ READMEを含む参照してください。
+EMailTestSubstitutionReplacedByGenericValues=テストモードを使用する場合は、置換変数は、一般的な値に置き換えられます
+MailingAddFile=このファイルを添付
+NoAttachedFiles=いいえ、添付ファイルがありません
+BadEMail=電子メール用の不正な値
+MailingModuleDescFundationMembers=メールで財団のメンバー
+MailingModuleDescEmailsFromFile=テキストフ​​ァイルから電子メール（電子メール、姓、姓、他）
+MailingModuleDescContactsCategories=第三者（カテゴリ別）
+MailingModuleDescDolibarrContractsLinesExpired=期限切れの契約のラインを持つ第三者
+MailingModuleDescContactsByCompanyCategory=サードパーティの連絡先（第三者のカテゴリ別）
+MailingModuleDescMembersCategories=財団のメンバー（種類）
+SendMailing=メール送信送信
+SendMail=メールを送る
+SentBy=によって送信され、
+MailingNeedCommand=セキュリティ上の理由で、メール送信を送信するコマンドラインから実行する必要があります。すべての受信者にメール送信を送信するには、次のコマンドを起動するには、管理者にお問い合わせください。
+MailingNeedCommand2=ただし、セッションで送信するメールの最大数の値を持つパラメータのMAILING_LIMIT_SENDBYWEBを追加することによってそれらをオンラインで送信することができます。このため、ホームに行く - セットアップ - その他を。
+ConfirmSendingEmailing=あなたはコマンドラインなしとWebモードから電子メールで送信する送信してもよろしいですか？
+NoNotificationsWillBeSent=いいえ電子メール通知は、このイベントや会社のために計画されていません
+ANotificationsWillBeSent=1通知は電子メールで送信されます。
+SomeNotificationsWillBeSent=%s通知は電子メールで送信されます。
+AddNewNotification=新しい電子メール通知の要求をアクティブにする
+ListOfActiveNotifications=すべてのアクティブな電子メール通知の要求を一覧表示します。
+ListOfNotificationsDone=送信されたすべての電子メール通知を一覧表示します。
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:48:55).

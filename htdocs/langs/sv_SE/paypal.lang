@@ -1,0 +1,22 @@
+/*
+ * Language code: sv_SE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+CHARSET=UTF-8
+PaypalSetup=PayPal-modul installation
+PaypalDesc=Denna modul erbjuder sidor för att möjliggöra betalning på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Detta kan användas för en fri betalning eller en betalning på en viss Dolibarr objekt (faktura, beställning, ...)
+PaypalOrCBDoPayment=Betala med kreditkort eller Paypal
+PaypalDoPayment=Betala med Paypal
+PaypalCBDoPayment=Betala med kreditkort
+PAYPAL_API_SANDBOX=Läge test / sandlåda
+PAYPAL_API_USER=API användarnamn
+PAYPAL_API_PASSWORD=API-lösenord
+PAYPAL_API_SIGNATURE=API signatur
+PredefinedMailContentSendOrderWithPaypalLink=Du hittar här ordern __ORDERREF__ \ n \ nDu kan klicka på den säkra länken nedan för att göra din betalning via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+PredefinedMailContentSendInvoiceWithPaypalLink=Här hittar du fakturan __FACREF__ \ n \ nDu kan klicka på den säkra länken nedan för att göra din betalning via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:01:48).

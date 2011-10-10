@@ -642,6 +642,7 @@ Permission2515= Administrer les rubriques de documents
 Permission8555= Utilisation du module
 Permission8556= Définir les sites ecommerce
 Permission8557= Importer les données
+Permission50001=Utiliser Point de vente
 Permission50201= Consulter les transactions
 Permission50202= Importer les transactions
 DictionnaryCompanyType= Types de sociétés

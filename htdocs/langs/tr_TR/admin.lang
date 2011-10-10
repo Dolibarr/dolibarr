@@ -23,16 +23,16 @@ PurgeSessions=Purge seans
 ConfirmPurgeSessions=Gerçekten tüm oturumlar tasfiye etmek istiyor musunuz? Bu, kendinize (hariç) her kullanıcı kesilir.
 NoSessionListWithThisHandler=Kazanç PHP oturum işleyicisi yapılandırılmış tüm oturumları çalışan listesine izin vermez.
 LockNewSessions=Kilit yeni bağlantılar
-ConfirmLockNewSessions=Size kendinize yeni Dolibarr bağlantı kısıtlamak istediğinizden emin misiniz. <b>S</b> sonra bağlamak edebilecektir Sadece <b>kullanıcı%.</b>
+ConfirmLockNewSessions=Size kendinize yeni Dolibarr bağlantı kısıtlamak istediğinizden emin misiniz. <b>%s</b> sonra bağlamak edebilecektir Sadece <b>kullanıcı%.</b>
 UnlockNewSessions=Kaldır bağlantı kilidi
 YourSession=Oturumunuz
 Sessions=Kullanıcı oturumu
-NoSessionFound=PHP etkin oturum listesine izin gibi görünüyor. Dizin <b>ler)</b> (Örneğin korumalı olabilir oturumları <b>(%</b> kaydetmek için kullanılan, işletim sistemi izinleri ve PHP yönergesi open_basedir tarafından).
+NoSessionFound=PHP etkin oturum listesine izin gibi görünüyor. Dizin <b>ler)</b> (Örneğin korumalı olabilir oturumları <b>%s</b> kaydetmek için kullanılan, işletim sistemi izinleri ve PHP yönergesi open_basedir tarafından).
 HTMLCharset=Charset oluşturulan HTML sayfaları için
 DBStoringCharset=Veritabanı charset veri depolamak için
 DBSortingCharset=Veritabanı charset veri sıralamak için
-WarningModuleNotActive=<b>Lar</b> etkin olmalıdır <b>Modülü%</b>
-WarningOnlyPermissionOfActivatedModules=Sadece izinleri aktif modülleri ile ilgili burada gösterilir. Anasayfadaki diğer modülleri etkinleştirebilirsiniz-&gt; Kur-&gt; Modüller sayfası.
+WarningModuleNotActive=<b>Lar</b> etkin olmalıdır <b>Modülü %s</b>
+WarningOnlyPermissionOfActivatedModules=Sadece izinleri aktif modülleri ile ilgili burada gösterilir. Anasayfadaki diğer modülleri etkinleştirebilirsiniz-> Kur-> Modüller sayfası.
 DolibarrSetup=Dolibarr kurulum
 DolibarrUser=Dolibarr kullanıcı
 InternalUser=Dahili kullanıcı
@@ -44,7 +44,7 @@ GUISetup=Göstermek
 SetupArea=Kurulum alanı
 IfModuleEnabled=Not: evet etkili olduğunu ancak <b>modülü% s</b> etkindir
 RemoveLock=Eğer güncelleme aracı izin <b>var% s</b> dosyasını kaldırın.
-RestoreLock=Bir dosya <b>yerine% s</b> okuma izni ile sadece güncelleme aracı herhangi bir kullanım devre dışı bırakmak için dosya.
+RestoreLock=Bir dosya <b>yerine %s</b> okuma izni ile sadece güncelleme aracı herhangi bir kullanım devre dışı bırakmak için dosya.
 SecuritySetup=Güvenlik ayarları
 ErrorModuleRequirePHPVersion=Hata, bu modül s veya daha yüksek PHP version% gerektirir
 ErrorModuleRequireDolibarrVersion=Hata, bu modül s veya daha yüksek Dolibarr sürümü% gerektirir
@@ -67,7 +67,7 @@ Mask=Mask
 NextValue=Sonraki değeri
 NextValueForInvoices=Sonraki değeri (faturalar)
 NextValueForCreditNotes=Sonraki değeri (kredi notları)
-MustBeLowerThanPHPLimit=Not: <b>PHP% s%</b> her dosya yükleme boyutu sınırı ne olursa olsun, bu parametrenin değeri s
+MustBeLowerThanPHPLimit=Not: <b>PHP %s</b> her dosya yükleme boyutu sınırı ne olursa olsun, bu parametrenin değeri s
 NoMaxSizeByPHPLimit=Not: Limit yok PHP yapılandırmasında ayarlanır
 MaxSizeForUploadedFiles=Yüklenen dosyalar için maksimum boyut (0) herhangi bir yükleme izin vermeyecek
 UseCaptchaCode=Giriş sayfasında kullanın grafik kodu (CAPTCHA)
@@ -1110,7 +1110,7 @@ PathToGeoIPMaxmindCountryDataFile=Yol ülke çeviri için MaxMind ip içeren dos
 NoteOnPathLocation=Sizin ip ülke verilerini PHP okuyabilir bir dizin içinde olması gerekir notu () PHP open_basedir kurulum ve dosya izinleri kontrol edin.
 YouCanDownloadFreeDatFileTo=Size% s. de MaxMind GeoIP ülke dosyasının bir <b>ücretsiz demo sürümünü indirebilirsiniz</b>
 YouCanDownloadAdvancedDatFileTo=<b>Ayrıca, güncellemeler ile,%</b> de MaxMind GeoIP ülke dosyasının s daha <b>tam sürümünü indirebilirsiniz</b>
-TestGeoIPResult=Bir dönüşüm IP Test -&gt; ülke
+TestGeoIPResult=Bir dönüşüm IP Test -> ülke
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
@@ -1120,7 +1120,7 @@ ClientOffsetWithGreenwich=İstemci / Tarayıcı ofset genişliği Greenwich (san
 DaylingSavingTime=Yaz saati (kullanıcı)
 RunCommandSummaryToLaunch=Yedekleme aşağıdaki komutu ile başlatılan olabilir
 ImportPostgreSqlDesc=Bir yedek dosyası almak için, komut satırından pg_restore komutu kullanmanız gerekir:
-ImportPostgreSqlCommand=Sssss sssss mybackupfile.sql
+ImportPostgreSqlCommand=%s %s mybackupfile.sql
 FullPathToPostgreSQLdumpCommand=Tam yol komut pg_dump
 IgnoreDuplicateRecords=Yinelenen kayıtların yanlışlarını gözardı (INSERT IGNORE)
 ModulesMarketPlaceDesc=İnternet üzerinde dış kaynaklı web siteleri indirmek için daha fazla modüller bulabilirsiniz ...
@@ -1163,7 +1163,7 @@ LDAPFieldGroupMembers=Grup üyeleri
 // Reference language: en_US -> tr_TR
 ActivityStateToSelectCompany=Aktivite thirdparties göstermek / gizlemek için bir filtre seçeneği ekleyin ya da ceased
 SearchFilter=Arama filtreler seçenekleri
-NumberOfKeyToSearch=Arama tetiklemek için karakter nbr: sssss
+NumberOfKeyToSearch=Arama tetiklemek için karakter nbr: %s
 PreviewNotAvailable=Mevcut değil Önizleme
 AntiVirusCommand=Antivirüs komuta tam yol
 CurrentSmartphoneMenuHandler=Şu akıllı menü işleyicisi
@@ -1171,12 +1171,12 @@ MAIN_MAIL_ERRORS_TO=Gönderici hatası e-postalar için kullanılan e-posta gön
 MAIN_MAIL_AUTOCOPY_TO=Sistematik gönderilen tüm e-postaların bir gizli karbon kopya gönder
 MAIN_DISABLE_ALL_SMS=SMS gönderimi (test amaçlı veya demolar için) devre dışı bırakma
 SmsTestMessage=__PHONEFROM__ __PHONETO__ Için test mesajı
-ModuleMustBeEnabledFirst=Modül <b>sssss</b> Bu özelliği kullanmadan önce ilk etkin olması gerekir.
+ModuleMustBeEnabledFirst=Modül <b>%s</b> Bu özelliği kullanmadan önce ilk etkin olması gerekir.
 SecurityToken=URL&#39;ler güvenli Anahtar
 HideAnyVATInformationOnPDF=Oluşturulan PDF KDV ile ilgili tüm bilgileri gizleyin
 UrlGenerationParameters=URL&#39;ler güvenli Parametreler
 SecurityTokenIsUnique=Her bir URL için benzersiz bir securekey parametreyi kullanın
-EnterRefToBuildUrl=Nesne sssss için referans girin
+EnterRefToBuildUrl=Nesne %s için referans girin
 GetSecuredUrl=Hesaplanmış URL alın
 Permission343=Kendi şifrenizi değiştirin
 Permission344=Kendi izinleri değiştirin
@@ -1288,3 +1288,9 @@ SuppliersCommandModel=Tedarikçi sipariş şablonu (logo. ..)
 SuppliersInvoiceModel=Tedarikçi fatura şablonu (logo. ..)
 ProjectsModelModule=Proje raporu belge, model
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:46:16).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 14:37:36).
+// Reference language: en_US -> tr_TR
+Permission50001=Satış Noktası kullanın.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 14:38:56).

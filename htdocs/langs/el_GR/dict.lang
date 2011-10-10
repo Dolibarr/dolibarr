@@ -299,3 +299,10 @@ DemandReasonTypeSRC_CAMP_FAX=Εκστρατεία Fax
 DemandReasonTypeSRC_COMM=Εμπορική επικοινωνία
 DemandReasonTypeSRC_SHOP=Shop Επικοινωνία
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:31).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> el_GR
+CurrencyUAH=Γρίβνα
+CurrencySingUAH=Γρίβνα
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:42:47).

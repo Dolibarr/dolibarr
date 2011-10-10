@@ -891,7 +891,7 @@ class Form
         	else
             {
             	$out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
-            	$out.= '<option value="">'.$langs->trans("EmptyList").'</option>';
+            	$out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
         }
@@ -2239,10 +2239,10 @@ class Form
     /**
      *    Show a form to select a project
      *
-     *    @param      page        Page
-     *    @param      socid       Id societe
-     *    @param      selected    Id projet pre-selectionne
-     *    @param      htmlname    Nom du formulaire select
+     *    @param	int		$page        Page
+     *    @param	int		$socid       Id third party
+     *    @param    int		$selected    Id pre-selected project
+     *    @param    string	$htmlname    Name of select field
      *    @return	void
      */
     function form_project($page, $socid, $selected='', $htmlname='projectid')
@@ -2267,12 +2267,15 @@ class Form
         }
         else
         {
-            if ($selected) {
+            if ($selected)
+            {
                 $projet = new Project($this->db);
                 $projet->fetch($selected);
                 //print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
-                print $projet->getNomUrl(0);
-            } else {
+                print $projet->getNomUrl(0,'',1);
+            }
+            else
+            {
                 print "&nbsp;";
             }
         }
@@ -2800,7 +2803,7 @@ class Form
      *      @param      societe_vendeuse   Objet societe vendeuse
      *      @param      societe_acheteuse  Objet societe acheteuse
      *      @param      idprod             Id product
-     *      @param      info_bits          Miscellaneous information on line
+     *      @param      info_bits          Miscellaneous information on line (1 for NPR)
      *      @param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
      *                  Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
@@ -3645,7 +3648,7 @@ class Form
             else
             {
             	$out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
-            	$out.= '<option value="">'.$langs->trans("EmptyList").'</option>';
+            	$out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
         }

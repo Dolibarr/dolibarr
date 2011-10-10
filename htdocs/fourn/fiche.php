@@ -40,9 +40,9 @@ $langs->load('companies');
 $langs->load('commercial');
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'');
+$result = restrictedArea($user, 'societe&fournisseur', $socid, '');
 
 
 /*

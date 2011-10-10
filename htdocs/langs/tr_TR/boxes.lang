@@ -9,8 +9,8 @@
 // Reference language: en_US
 CHARSET=UTF-8
 BoxLastRssInfos=Rss bilgileri
-BoxLastProducts=Son% s ürün / hizmet
-BoxLastProductsInContract=Son% ürünleri sözleşmeli s / hizmet
+BoxLastProducts=Son %s ürün / hizmet
+BoxLastProductsInContract=Son %s ürünleri sözleşmeli / hizmet
 BoxLastSupplierBills=Son tedarikçinin faturaları
 BoxLastCustomerBills=Son müşteri faturaları
 BoxOldestUnpaidCustomerBills=Eski ödenmemiş faturaların müşteri
@@ -68,16 +68,16 @@ BoxTitleLastModifiedProspects=Değiştirilen son %s potansiyel
 
 // START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
-BoxTitleLastModifiedExpenses=Son sssss giderleri modifiye
+BoxTitleLastModifiedExpenses=Son %s giderleri modifiye
 NoRecordedContracts=Kaydedilen sözleşmeleri yok
 // STOP - Lines generated via autotranslator.php tool (2011-10-09 14:27:49).
 
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
 // Reference language: en_US -> tr_TR
-BoxTitleLastModifiedCustomers=Son sssss müşterilerine modifiye
-BoxTitleLastModifiedMembers=Son sssss değiştirilmiş üyeleri
-BoxTitleLastModifiedContacts=Son sssss değiştirilmiş kişileri / adresleri
+BoxTitleLastModifiedCustomers=Son %s müşterilerine modifiye
+BoxTitleLastModifiedMembers=Son %s değiştirilmiş üyeleri
+BoxTitleLastModifiedContacts=Son %s değiştirilmiş kişileri / adresleri
 ClickToAdd=Eklemek için buraya tıklayın.
 NoRecordedContacts=Kaydedilen temas yok
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:13:44).

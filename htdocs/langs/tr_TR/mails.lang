@@ -61,7 +61,7 @@ NbOfRecipients=Numara alıcı
 NbOfUniqueEMails=Nb benzersiz e-posta
 NbOfEMails=Nb e-posta
 TotalNbOfDistinctRecipients=Sayı farklı alıcıların
-NoTargetYet=No alıcıları henüz tanımlı (sekme &#39;Alıcılar Doğum git&#39;)
+NoTargetYet=No alıcıları henüz tanımlı (sekme Alıcılar Doğum git)
 AddRecipients=Alıcılar Ekle
 RemoveRecipient=Kaldır alıcı
 CommonSubstitutions=Ortak ikamelerini
@@ -116,7 +116,7 @@ ListOfActiveNotifications=Liste tüm aktif e-posta bildirimi kişi
 // START - Lines generated via autotranslator.php tool (2011-10-09 14:02:24).
 // Reference language: en_US -> tr_TR
 DateSending=Gönderme tarihi
-SentTo=<b>Sssss</b> için gönderilen
+SentTo=<b>%s</b> için gönderilen
 MailingModuleDescContactsByCompanyCategory=Üçüncü şahısların Rehber (üçüncü şahıslara kategoriye göre)
 MailingModuleDescMembersCategories=Vakfı üyeleri (kategorilerine göre)
 MailingModuleDescContactsByFunction=Üçüncü şahısların Rehber (konumu / işlevi tarafından)

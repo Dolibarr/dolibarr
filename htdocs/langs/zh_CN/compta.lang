@@ -126,3 +126,16 @@ Dispatched=调度
 ToDispatch=派遣
 ThirdPartyMustBeEditAsCustomer=第三方必须定义为顾客
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+RemainingAmountPayment=付款金额其余：
+DescSellsJournal=销售杂志
+DescPurchasesJournal=购买杂志
+InvoiceRef=发票编号。
+CodeNotDef=没有定义
+AddRemind=调度可用金额
+RemainToDivide=保持派遣：
+WarningDepositsNotIncluded=存款发票不包括在此版本与本会计模块。
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:38:59).

@@ -38,3 +38,9 @@ PacificNumRefModelError=Det finnes allerede et intervensjonskort som starter med
 ModifyIntervention=Endre intervensjon
 DocumentModelStandard=Standard dokumentet modell for intervensjoner
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:47:07).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> nb_NO
+ActionsOnFicheInter=Handlinger om inngrep
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:26:26).

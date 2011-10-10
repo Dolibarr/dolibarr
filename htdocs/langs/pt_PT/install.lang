@@ -386,7 +386,7 @@ MigrationProjectTaskTime=Oppdater tid i sekunder
 ForceHttps=Force beveiligde verbindingen (https)
 CheckToForceHttps=Vink deze optie aan beveiligde verbindingen (https kracht). <br> Dit vereist dat de webserver is geconfigureerd met een SSL certificaat.
 KeepDefaultValuesDeb=U gebruikt de Dolibarr setup-wizard uit een Ubuntu of Debian pakket, dus hier voorgestelde waarden zijn al geoptimaliseerd. Alleen het wachtwoord van de database-eigenaar te maken moeten worden ingevuld. Wijzig andere parameters alleen als je weet wat je doet.
-CheckThatDatabasenameIsCorrect=Controleer of de database naam <b>"sssss"</b> juist is.
+CheckThatDatabasenameIsCorrect=Controleer of de database naam <b>"%s"</b> juist is.
 IfAlreadyExistsCheckOption=Als deze naam correct is en dat de database nog niet bestaat, moet u controleren optie "Create database".
 OpenBaseDir=PHP openbasedir parameter
 YouAskToCreateDatabaseSoRootRequired=U gecontroleerd het vakje "Create database". Voor dit, moet je login / wachtwoord van de root (bodem van de vorm).
@@ -396,7 +396,7 @@ MigrationCustomerOrderShipping=Migreren verzendkosten voor de klant bestellingen
 MigrationShippingDelivery=Upgrade opslag van de scheepvaart
 MigrationShippingDelivery2=Upgrade opslag van de scheepvaart 2
 MigrationFixData=Fix voor gedenormaliseerd gegevens
-MigrationRelationshipTables=Data migratie voor de relatie tabellen (sssss)
+MigrationRelationshipTables=Data migratie voor de relatie tabellen (%s)
 MigrationProjectTaskActors=Data migratie voor llx_projet_task_actors tafel
 MigrationProjectUserResp=Data migratie fk_user_resp gebied van llx_projet om llx_element_contact
 MigrationProjectTaskTime=Update tijd in seconden
@@ -408,7 +408,7 @@ MigrationShippingDelivery2=Upgrade opslag van de scheepvaart 2
 ForceHttps=Życie bezpiecznych połączeń (HTTPS)
 CheckToForceHttps=Zaznacz tę opcję, aby zmusić bezpiecznych połączeń (HTTPS). <br> Wymaga to, aby serwer WWW jest skonfigurowany z certyfikatem SSL.
 KeepDefaultValuesDeb=Państwo skorzystać z kreatora konfiguracji Dolibarr z pakietu Debiana lub Ubuntu, więc wartości proponowanego tutaj są już zoptymalizowane. Tylko hasła właściciela bazy danych do tworzenia muszą być wypełnione. Zmień inne parametry tylko jeśli wiesz co robisz.
-CheckThatDatabasenameIsCorrect=Sprawdź, czy nazwa bazy danych <b>"sssss"</b> jest poprawna.
+CheckThatDatabasenameIsCorrect=Sprawdź, czy nazwa bazy danych <b>"%s"</b> jest poprawna.
 IfAlreadyExistsCheckOption=Jeśli nazwa jest poprawna i że baza danych nie istnieje, należy sprawdzić opcję "Utwórz bazę danych".
 OpenBaseDir=parametr openbasedir PHP
 YouAskToCreateDatabaseSoRootRequired=Zaznaczono pole "Tworzenie bazy danych". W tym celu musisz podać login / hasło administratora (na dole formularza).
@@ -418,7 +418,7 @@ MigrationCustomerOrderShipping=koszty migracji do przechowywania zleceń klienta
 MigrationShippingDelivery=Upgrade pamięci żeglugi
 MigrationShippingDelivery2=Upgrade pamięci żeglugi 2
 MigrationFixData=Ustalenie dla danych nieznormalizowaną
-MigrationRelationshipTables=Migracja danych do tabel relacji (sssss)
+MigrationRelationshipTables=Migracja danych do tabel relacji (%s)
 MigrationProjectTaskActors=Migracja danych do tabeli llx_projet_task_actors
 MigrationProjectUserResp=Migracja danych fk_user_resp dziedzinie llx_projet do llx_element_contact
 MigrationProjectTaskTime=Aktualizacja czasu spędził w sekundach
@@ -448,3 +448,15 @@ MigrationProjectTaskTime=Atualização de tempo gasto em segundos
 // Reference language: en_US -> pt_PT
 MigrationNotFinished=Versão do seu banco de dados não é completamente até à data, assim você terá que executar o processo de atualização novamente.
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:34).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pt_PT
+ConfFileReload=Atualizar todas as informações do arquivo de configuração.
+WarningPHPVersionTooLow=PHP versão muito antiga. %s versão ou mais é o esperado. Esta versão deverá permitir instalar, mas não é suportado.
+KeepDefaultValuesProxmox=Você usa o assistente de configuração Dolibarr de um appliance virtual Proxmox, para valores propostos aqui já são otimizados. Alterá-los apenas se você sabe o que fazer.
+MigrateIsDoneStepByStep=A versão de destino (%s) tem uma abertura de várias versões, então assistente de instalação vai voltar a sugerir próxima migração uma vez que esta será uma final.
+MigrationFinished=Migração terminou
+LastStepDesc=<strong>Último passo:</strong> Defina aqui o login ea senha que você planeja usar para se conectar ao software. Não perca isso, pois é a conta para administrar todos os outros.
+MigrationActioncommElement=Atualizar os dados sobre as ações
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:07:36).

@@ -121,7 +121,7 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
      *  Function to build pdf onto disk
-     *  
+     *
      *  @param		int		$object				Id of object to generate
      *  @param		object	$outputlangs		Lang output object
      *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file

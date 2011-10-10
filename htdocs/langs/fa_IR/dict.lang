@@ -304,3 +304,13 @@ CurrencySingXOF=اتفاق وقف إطلاق النار الفرنك تشريع�
 CurrencyXPF=الحراجية المعتمدة الفرنك
 CurrencySingXPF=الحراجية المعتمدة الفرنك
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:07).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fa_IR
+DemandReasonTypeSRC_CAMP_EMAIL=ایمیل کمپین
+DemandReasonTypeSRC_CAMP_PHO=کمپین تلفن
+DemandReasonTypeSRC_CAMP_FAX=کمپین فاکس
+DemandReasonTypeSRC_COMM=تماس با بازرگانی
+DemandReasonTypeSRC_SHOP=تماس با ما
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:43:49).

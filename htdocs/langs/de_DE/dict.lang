@@ -290,3 +290,16 @@ CurrencySingXAF=CFA Franc BEAC
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+CurrencySingUAH=Hryvnia
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Mailing-Kampagne
+DemandReasonTypeSRC_CAMP_EMAIL=Emailing Kampagne
+DemandReasonTypeSRC_CAMP_PHO=Telefon-Kampagne
+DemandReasonTypeSRC_CAMP_FAX=Fax Kampagne
+DemandReasonTypeSRC_COMM=Kaufmännischer Ansprechpartner
+DemandReasonTypeSRC_SHOP=Shop Kontakt
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:42:29).

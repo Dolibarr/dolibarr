@@ -22,3 +22,12 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user i
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment user interface for a member subscription
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your PayBox with url <b>%s</b> to have payment created automatically when validated by paybox. 
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> hu_HU
+InformationToFindParameters=Segíts, hogy megtaláld a %s fiókadatokat
+PAYBOX_CGI_URL_V2=Url Paybox CGI modul fizetés
+VendorName=Neve eladó
+CSSUrlForPaymentForm=CSS stíluslapot url fizetési forma
+MessageOK=Üzenet érvényesített fizetési vissza oldal
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:13:58).

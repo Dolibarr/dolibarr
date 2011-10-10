@@ -134,3 +134,9 @@ Inherited=موروث
 YourRole=الأدوار الخاص
 YourQuotaOfUsersIsReached=يتم التوصل إلى حصة الخاص بك من المستخدمين النشطين!
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:57).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+DontDowngradeSuperAdmin=يمكن فقط superadmin تقليله a superadmin
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:30:07).

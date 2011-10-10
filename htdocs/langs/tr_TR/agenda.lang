@@ -54,11 +54,6 @@ AgendaUrlOptions4=<b>logint =%</b> eylemleri kullanıcı <b>için%</b> etkilenen
 AgendaUrlOptions5=<b>logind =%</b> eylemler <b>kullanıcı%</b> tarafından yapılan çıktı kısıtlamak için <b>değil.</b>
 AgendaShowBirthdayEvents=Show doğum rehber
 AgendaHideBirthdayEvents=Sakla doğum rehber
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
 InvoiceBackToDraftInDolibarr=Fatura %s taslak durumuna geri dönün
 InterventionValidatedInDolibarr=Müdahale %s valide
 ProposalSentByEMail=Email ile gönderilen Ticari teklifi %s
@@ -69,11 +64,6 @@ SupplierInvoiceSentByEMail=EMail tarafından gönderilen Tedarikçi fatura %s
 ShippingSentByEMail=Email ile gönderilen Denizcilik %s
 InterventionSentByEMail=Email ile gönderilen Müdahale %s
 ExtSites=Dış takvimler
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:11:11).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
 EventOnFullDay=Olay tam gün
 ViewDay=Gün görünümünde
 ViewWeek=Hafta görünümü

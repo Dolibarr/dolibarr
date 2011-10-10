@@ -221,3 +221,15 @@ MigrationProjectTaskTime=Päivitä aika sekunneissa
 // Reference language: en_US -> fi_FI
 MigrationNotFinished=Version tietokanta ei ole täysin ajan tasalla, joten sinun täytyy suorittaa päivityksen uudelleen.
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:24).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fi_FI
+ConfFileReload=Päivitä kaikki tiedot asetustiedosto.
+WarningPHPVersionTooLow=PHP version liian vanha. Versio %s tai enemmän odotetaan. Tämä versio pitäisi mahdollistaa asentaa mutta ei tueta.
+KeepDefaultValuesProxmox=Käytät Dolibarr ohjatun päässä Proxmox virtuaalinen laite, joten ehdotetut arvot tässä on jo optimoitu. Muuta niitä vain, jos tiedät mitä teet.
+MigrateIsDoneStepByStep=Kohdistettu versio (%s) on rako useita versioita, joten ohjatun asennuksen palaa ehdottaa ensi muuttoliikkeen kerran tämä valmistuu.
+MigrationFinished=Muuttoliike valmis
+LastStepDesc=<strong>Viimeinen askel:</strong> Määritä tässä käyttäjätunnuksen ja salasanan aiot käyttää yhteyden ohjelmisto. Älä löysä tämä on tilin hallinnoida kaikkia muita.
+MigrationActioncommElement=Päivitä tiedot toimista
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:42:43).

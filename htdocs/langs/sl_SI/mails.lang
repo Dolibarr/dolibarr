@@ -112,3 +112,11 @@ ListOfActiveNotifications=Seznam vseh aktivnih zahtev za e-poštna obvestila
 ListOfNotificationsDone=Seznam vseh poslanih e-poštnih obvestil
 
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sl_SI
+MailingModuleDescContactsByCompanyCategory=Kontakti tretjih oseb (po tretji kategoriji oseb)
+MailingModuleDescMembersCategories=Foundation člani (po kategorijah)
+MailingModuleDescContactsByFunction=Kontakti tretjih oseb (ki ga položaj / funkcija)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:02:13).

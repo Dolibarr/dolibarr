@@ -131,3 +131,17 @@ Dispatched=Send
 ToDispatch=Til að senda
 ThirdPartyMustBeEditAsCustomer=Þriðji aðili verður að vera skilgreint sem viðskiptavinur
 // STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:51).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> is_IS
+RemainingAmountPayment=Upphæð greiðslu eftir:
+AmountToBeCharged=Heildarupphæð sem greiða:
+ProposalStats=Tölur um tillögur
+DescPurchasesJournal=Kaup Journal
+InvoiceRef=Invoice tilv.
+CodeNotDef=Ekki skilgreint
+AddRemind=Senda boði fjárhæð
+RemainToDivide=Verið að senda:
+WarningDepositsNotIncluded=Innlán reikningar eru ekki með í þessari útgáfu með þessari endurskoðun áfanga.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:58:52).

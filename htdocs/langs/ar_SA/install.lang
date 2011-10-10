@@ -221,3 +221,11 @@ MigrationProjectTaskTime=تحديث الوقت الذي يقضيه في ثوان
 // Reference language: en_US -> ar_AR
 MigrationNotFinished=نسخة من قاعدة البيانات الخاصة بك لا يصل تماما حتى الآن ، لذلك سيكون لديك لتشغيل عملية الترقية مرة أخرى.
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:20).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+MigrationFinished=الانتهاء من الهجرة
+LastStepDesc=<strong>الخطوة الأخيرة</strong> : تعريف المستخدم وكلمة السر هنا كنت تخطط لاستخدامها للاتصال البرمجيات. لا تفقد هذا كما هو حساب لإدارة جميع الآخرين.
+MigrationActioncommElement=تحديث البيانات على الإجراءات
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:38:36).

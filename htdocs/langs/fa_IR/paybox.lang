@@ -38,3 +38,10 @@ SetupPayBoxToHavePaymentCreatedAutomatically=الإعداد الخاص بك مع
 // Reference language: en_US
 ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان الموقع لتقديم الدفع عبر الإنترنت %s واجهة المستخدم للاشتراك عضو
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:52).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fa_IR
+MessageOK=پیام در صفحه دارای اعتبار پرداخت بازگشت
+MessageKO=پیام در صفحه لغو پرداخت بازگشت
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:11:49).

@@ -36,3 +36,11 @@ SetupPayBoxToHavePaymentCreatedAutomatically=Opret din PayBox med <b>url %s</b> 
 // Reference language: en_US
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL til at tilbyde en %s online betaling brugergrænseflade til et medlem abonnement
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+CSSUrlForPaymentForm=CSS stylesheet url til indbetalingskort
+MessageOK=Besked på validerede betaling tilbage side
+MessageKO=Besked om annulleret betaling tilbage side
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:08:36).

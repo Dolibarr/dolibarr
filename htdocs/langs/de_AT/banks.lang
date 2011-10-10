@@ -145,3 +145,14 @@ AllAccounts=Alle Finanzkonten
 BackToAccount=Zurück zum Konto
 ShowAllAccounts=Alle Finanzkonten
 BankAccountCountry=Bankkonto Land
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_AT
+WithdrawalPayment=Widerrufsrecht Zahlung
+ShowCheckReceipt=Zeige überprüfen Einzahlungsbeleg
+Graph=Grafik
+TransactionWithOtherAccount=Kontoübertrag
+FutureTransaction=Transaction in futur. Kein Weg zu versöhnen.
+SelectChequeTransactionAndGenerate=Select / Filter prüft, in die Scheckeinreichung Erhalt gehören und klicken Sie auf &quot;Erstellen&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:40:56).

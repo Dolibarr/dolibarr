@@ -33,3 +33,12 @@ ArcticNumRefModelDesc1=Generic number model
 ArcticNumRefModelError=Failed to activate
 PacificNumRefModelDesc1=Return numero with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 PacificNumRefModelError=An intervention card starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> el_GR
+ActionsOnFicheInter=Δράσεις για την παρέμβαση
+ClassifyBilled=Ταξινομήστε &quot;Χρεώσεις&quot;
+StatusInterInvoiced=Τιμολογείται
+RelatedInterventions=Οι παρεμβάσεις που σχετίζονται
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:19:27).

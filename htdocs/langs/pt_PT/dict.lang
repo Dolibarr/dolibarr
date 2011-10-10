@@ -288,3 +288,14 @@ CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=PCP Francos
 CurrencySingXPF=Franco CFP
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:03).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pt_PT
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Campanha de mala direta
+DemandReasonTypeSRC_CAMP_EMAIL=E-mail da campanha
+DemandReasonTypeSRC_CAMP_PHO=Campanha de telefone
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 08:51:26).

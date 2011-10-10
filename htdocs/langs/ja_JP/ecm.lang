@@ -1,0 +1,44 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+MenuECM=ドキュメント
+DocsMine=マイドキュメント
+DocsGenerated=生成されたドキュメント
+DocsElements=要素を文書
+ECMNbOfDocsSmall=DOCのNb。
+ECMSection=ディレクトリ
+ECMSectionManual=手動のディレクトリ
+ECMSectionAuto=自動ディレクトリ
+ECMSectionsManual=手動ツリー
+ECMSectionsAuto=自動ツリー
+ECMSections=ディレクトリ
+ECMRoot=のルート
+ECMNewSection=新しいディレクトリ
+ECMAddSection=ディレクトリを追加します。
+ECMArea=ECMエリア
+ECMAreaDesc=ECM（電子コンテンツ管理）領域では、シェアを保存し、迅速にDolibarrの文書のすべての種類を検索することができます。
+ECMAreaDesc2=要素のカードからドキュメントを追加するときに*自動ディレクトリは自動的に入力されます。 <br> *マニュアルのディレクトリは、特定の要素にリンクされていないドキュメントを保存するために使用することができます。
+ECMSectionWasRemoved=ディレクトリの<b>%sが</b>削除されています。
+ECMDocumentsSection=ディレクトリのドキュメント
+ECMSearchByKeywords=キーワードで検索
+ECMSearchByEntity=オブジェクトで検索
+ECMSectionOfDocuments=ドキュメントのディレクトリ
+ECMTypeManual=マニュアル
+ECMTypeAuto=自動
+ECMDocsByProducts=製品にリンクされたドキュメント
+ECMNoDirecotyYet=作成されたディレクトリなし
+ShowECMSection=ディレクトリを表示する
+DeleteSection=ディレクトリを削除します。
+ConfirmDeleteSection=あなたは、ディレクトリ<b>%sを</b>削除するかどうか確認できますか？
+ECMDirectoryForFiles=ファイルの相対ディレクトリ
+CannotRemoveDirectoryContainsFiles=それはいくつかのファイルが含まれているため不可能削除
+ECMFileManager=ファイルマネージャ
+ECMSelectASection=左側のツリー上のディレクトリを選択...
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:32:31).

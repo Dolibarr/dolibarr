@@ -24,3 +24,9 @@ PAYPAL_ADD_PAYMENT_URL=Aggiungere l&#39;url di pagamento Paypal quando si invia 
 PredefinedMailContentSendOrderWithPaypalLink=Troverete qui l&#39;ordine __ORDERREF__ \ n \ nÈ possibile fare clic sul link sottostante per rendere sicuro il pagamento tramite PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 PredefinedMailContentSendInvoiceWithPaypalLink=Troverete qui la fattura __FACREF__ \ n \ nÈ possibile fare clic sul link sottostante per rendere sicuro il pagamento tramite PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:51:26).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> it_IT
+PAYPAL_IPN_MAIL_ADDRESS=Indirizzo e-mail per la notifica immediata del pagamento (IPN)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:49:26).

@@ -95,7 +95,7 @@ MyInformations=Benim veri
 ExportDataset_user_1=Dolibarr kullanıcıları ve özellikleri
 DomainUser=Etki alanı kullanıcı% s
 Reactivate=Reactivate
-CreateInternalUserDesc=Bu formu bir kullanıcı şirket / kuruluş iç creat sağlar. (Müşteri, tedarikçi, ...), kullanma düğmesi &#39;Dolibarr kullanıcı oluştur&#39; üçüncü parti kartviziti bir dış kullanıcı creat için.
+CreateInternalUserDesc=Bu formu bir kullanıcı şirket / kuruluş iç creat sağlar. (Müşteri, tedarikçi, ...), kullanma düğmesi Dolibarr kullanıcı oluştur üçüncü parti kartviziti bir dış kullanıcı creat için.
 InternalExternalDesc=Bir <b>dahili</b> kullanıcı Şirketinizin parçası olan bir kullanıcı / temelidir. <br> <b>Harici</b> bir kullanıcı bir müşteri, tedarikçi veya diğer bir. <br><br> Her iki durumda da, izinler Dolibarr, iç kullanıcı (Bkz: Ev - Kurulum - Ekran) farklı bir menü yöneticisi olabilir dış kullanıcı hakları tanımlar
 PermissionInheritedFromAGroup=Izin çünkü bir kullanıcı grubu miras verdi.
 IdPhoneCaller=Id arayan telefon
@@ -122,7 +122,7 @@ NameToCreate=Üçüncü Adı oluşturmak için
 Inherited=Miras
 UserWillBeInternalUser=Oluşturulan kullanıcı (belirli bir üçüncü parti ile bağlantılı değildir çünkü) bir dahili kullanıcı olacak
 UserWillBeExternalUser=(Belirli bir üçüncü parti ile bağlantılı çünkü) oluşturulan kullanıcı harici bir kullanıcı olacak
-UserLogoff=Kullanıcı sssss çıkış
+UserLogoff=Kullanıcı %s çıkış
 YourRole=Sizin rolleri
 YourQuotaOfUsersIsReached=Aktif kullanıcı Kotanız!
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:22).

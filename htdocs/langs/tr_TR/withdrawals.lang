@@ -29,11 +29,11 @@ NbOfInvoiceToWithdraw=Nb fatura ile talep geri
 InvoiceWaitingWithdraw=Fatura geri bekliyor
 AmountToWithdraw=Miktar geri çekme
 WithdrawsRefused=Çekilmesi reddetti
-NoInvoiceToWithdraw=Ödeme yok müşteri fatura modu &quot;çekilme&quot; bekliyor. Çekilme &#39;sekmesinde&#39; Doğum fatura kartı Hadi bir istek yapmak.
+NoInvoiceToWithdraw=Ödeme yok müşteri fatura modu &quot;çekilme&quot; bekliyor. Çekilme sekmesinde Doğum fatura kartı Hadi bir istek yapmak.
 ResponsibleUser=Sorumlu kullanıcı
 WithdrawalsSetup=Çekilme kurulum
-WithdrawStatistics=Çekilmesi &#39;istatistiklerine
-WithdrawRejectStatistics=Çekilme &#39;istatistiklerine reddetti
+WithdrawStatistics=Çekilmesi istatistiklerine
+WithdrawRejectStatistics=Çekilme istatistiklerine reddetti
 LastWithdrawalReceipt=Son% fişleri geri çekilme var
 MakeWithdrawRequest=Bir isteği geri olun
 ThirdPartyBankCode=Üçüncü taraf banka kodu
@@ -63,8 +63,8 @@ WithdrawalFileNotCapable=Ülkeniz için çekilme makbuz dosyası oluşturmak iç
 ShowWithdraw=Çekme göster
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Fatura henüz bir ödemesinin en az işlenmiş varsa Ancak, önce geri çekilmesini sağlamak için sağlamak için para gibi, ayarlanabilir olmaz.
 DoStandingOrdersBeforePayments=Bu sekmeler ayakta sipariş için talep sağlar. Bir kez bitmiş olacak, fatura kapatmak için ödeme yazabilirsiniz.
-InfoCreditSubject=Banka tarafından ayakta amacıyla sssss Ödeme
-InfoCreditMessage=Ayakta sipariş sssss banka tarafından ödenmiştir <br> Ödeme Veri: sssss
+InfoCreditSubject=Banka tarafından ayakta amacıyla %s Ödeme
+InfoCreditMessage=Ayakta sipariş %s banka tarafından ödenmiştir <br> Ödeme Veri: %s
 // STOP - Lines generated via autotranslator.php tool (2011-10-09 14:35:08).
 
 
@@ -82,7 +82,7 @@ OrderWaiting=Tedavi için bekliyorum
 NotifyTransmision=Çekilme İletim
 InfoFoot=Bu Dolibarr tarafından gönderilen otomatik mesaj
 InfoRejectSubject=Daimi amacıyla reddetti
-InfoRejectMessage=Merhaba, <br><br> fatura sssss sssss bir miktar, şirketin sssss ilgili standig amacıyla banka tarafından reddedildi. <br><br> - <br> % $
+InfoRejectMessage=Merhaba, <br><br> fatura %s %s bir miktar, şirketin %s ilgili standig amacıyla banka tarafından reddedildi. <br><br> - <br> % $
 ModeWarning=Gerçek modu için seçenek ayarlı değil, bu simülasyon sonra durdurmak
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:31:42).
 

@@ -1,0 +1,21 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> is_IS
+CHARSET=UTF-8
+PaypalSetup=PayPal mát skipulag
+PAYPAL_API_PASSWORD=API lykilorð
+PAYPAL_API_SIGNATURE=API undirskrift
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilboð greiðslu &quot;órjúfanlegur&quot; (Kreditkort + Paypal) eða &quot;Paypal&quot; aðeins
+PAYPAL_CSS_URL=Optionnal Url CSS stíll lak á bls greiðslu
+ThisIsTransactionId=Þetta er id viðskipta: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Bæta við slóð Paypal greiðslu þegar þú sendir skjal með pósti
+PAYPAL_IPN_MAIL_ADDRESS=E-mail fyrir augnablik tilkynningu um greiðslu (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=Þú vilja finna hér til __ORDERREF__ \ n \ nYou geta smellt á öruggum tengilinn hér að neðan til að greiða í gegnum PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+PredefinedMailContentSendInvoiceWithPaypalLink=Þú vilja finna hér á vörureikningi __FACREF__ \ n \ nYou geta smellt á öruggum tengilinn hér að neðan til að greiða í gegnum PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:49:20).

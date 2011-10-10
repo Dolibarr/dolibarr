@@ -37,3 +37,13 @@ SetupPayBoxToHavePaymentCreatedAutomatically=Configuraţi-vă PayBox cu <b>URL-u
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-ul pentru a oferi o plată %s interfata online pentru un abonament de membru
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:48).
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ro_RO
+YourPaymentHasBeenRecorded=Această pagină confirmă faptul că plata dvs. a fost înregistrată. Mulţumesc.
+YourPaymentHasNotBeenRecorded=Sunteţi de plată nu a fost înregistrată şi pe tranzacţie a fost anulată. Mulţumesc.
+AccountParameter=Considerare parametri
+UsageParameter=Utilizarea parametrilor
+InformationToFindParameters=Ajutor pentru a găsi informaţiile dvs. de cont %s
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:22:48).

@@ -228,3 +228,33 @@ SizeUnitinch=بوصة
 SizeUnitfoot=قدم
 ImageEditor=صورة المحرر
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:48).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fa_IR
+Notify_COMPANY_CREATE=شخص ثالث آفریده شده
+Notify_PROPAL_SENTBYMAIL=پیشنهاد تجاری فرستاده شده توسط پست الکترونیکی
+Notify_ORDER_SENTBYMAIL=Envío pedido POR پست الکترونیک
+Notify_BILL_PAYED=صورتحساب مشتری payed
+Notify_BILL_CANCEL=صورتحساب مشتری لغو شد
+Notify_BILL_SENTBYMAIL=صورتحساب مشتری از طریق پست فرستاده
+Notify_ORDER_SUPPLIER_VALIDATE=منظور تامین کننده اعتبار
+Notify_ORDER_SUPPLIER_SENTBYMAIL=منظور تامین کننده فرستاده شده توسط پست الکترونیکی
+Notify_BILL_SUPPLIER_VALIDATE=صورتحساب تامین کننده اعتبار
+Notify_BILL_SUPPLIER_PAYED=صورتحساب تامین کننده payed
+Notify_MEMBER_SUBSCRIPTION=عضو مشترک
+Notify_MEMBER_RESILIATE=عضو resiliated
+Notify_MEMBER_DELETE=اعضا حذف
+PredefinedMailContentSendSupplierInvoice=اینجا را پیدا خواهد کرد فاکتور __FACREF__ \n\n Sincerely\n\n
+PredefinedMailContentSendShipping=شما در اینجا خواهید دید حمل و نقل __SHIPPINGREF__ \n\nSincerely\n\n
+PredefinedMailContentSendFichInter=اینجا را پیدا خواهد کرد از مداخله __FICHINTERREF__ \n\nSincerely\n\n
+Top=بالا
+Bottom=پایین
+Left=چپ
+Right=حق
+AddFiles=اضافه کردن فایلها
+StartUpload=شروع آپلود
+CancelUpload=لغو بارگذاری
+FileIsTooBig=فایلها خیلی بزرگ
+Export=صادرات
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:17:05).

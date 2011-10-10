@@ -1,0 +1,21 @@
+/*
+ * Language code: fa_IR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fa_IR
+CHARSET=UTF-8
+PaypalSetup=پی پال نصب ماژول
+PaypalDesc=این ماژول صفحات پیشنهاد پرداخت در <a href="http://www.paypal.com" target="_blank">پی پال</a> توسط مشتریان اجازه می دهد. این را می توان برای پرداخت رایگان یا پرداخت بر روی یک شیء خاص Dolibarr استفاده می شود (فاکتور ، سفارش ،...)
+PaypalOrCBDoPayment=پرداخت با کارت اعتباری یا پی پال
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=پیشنهاد &quot;انتگرال&quot; پرداخت (اعتباری کارت + پی پال) و یا &quot;پی پال&quot; تنها
+PAYPAL_CSS_URL=آدرس کلیپ Optionnal شیوه نامه CSS در صفحه پرداخت
+ThisIsTransactionId=<b>%s</b> : این شناسه (شماره) معامله
+PAYPAL_ADD_PAYMENT_URL=اضافه کردن آدرس از پرداخت پی پال زمانی که شما از طریق پست ارسال یک سند
+PAYPAL_IPN_MAIL_ADDRESS=آدرس پست الکترونیکی برای آگاه شدن از طریق از طریق مسنجر پرداخت (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=شما در اینجا خواهید دید منظور __ORDERREF__ \n\n شما می توانید بر روی پیوند امن زیر را برای پرداخت خود را از طریق پی پال کلیک کنید \n\n%s \n\nSincerely\n\n
+PredefinedMailContentSendInvoiceWithPaypalLink=شما در اینجا را پیدا خواهد کرد فاکتور __FACREF__ \n\n شما می توانید با کلیک بر روی پیوند امن زیر را به پرداخت خود را از طریق پی پال \n\n%s \n\nSincerely\n\n
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:44:06).

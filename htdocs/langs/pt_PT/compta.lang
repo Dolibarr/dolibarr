@@ -127,3 +127,18 @@ VATReportBuildWithOptionDefinedInModule=Montantes apresentados aqui são calcula
 SocialContributionsPayments=contribuições de pagamentos Social
 ThirdPartyMustBeEditAsCustomer=terceiro deve ser definido como um cliente
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:50).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pt_PT
+ProposalStats=Estatísticas sobre as propostas
+OrderStats=Estatísticas sobre encomendas
+InvoiceStats=Estatísticas sobre as contas
+SellsJournal=Jornal vendas
+PurchasesJournal=Jornal compras
+DescSellsJournal=Jornal vendas
+DescPurchasesJournal=Jornal compras
+InvoiceRef=Ref fatura.
+CodeNotDef=Não definido
+AddRemind=Despacho montante disponível
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:17:49).

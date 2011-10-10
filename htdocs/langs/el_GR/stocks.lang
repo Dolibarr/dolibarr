@@ -84,7 +84,7 @@ EstimatedStockValueSell=Αξία για Πώληση
 EstimatedStockValueShort=Είσοδος αξία μετοχών
 EstimatedStockValue=Είσοδος αξία μετοχών
 DeleteAWarehouse=Διαγραφή μιας αποθήκης
-ConfirmDeleteWarehouse=Είστε σίγουροι ότι θέλετε να διαγράψετε το <b>sssss</b> αποθήκη;
-PersonalStock=Προσωπικά sssss απόθεμα
-ThisWarehouseIsPersonalStock=Αυτή η αποθήκη αποτελεί προσωπική απόθεμα sssss sssss
+ConfirmDeleteWarehouse=Είστε σίγουροι ότι θέλετε να διαγράψετε το <b>%s</b> αποθήκη;
+PersonalStock=Προσωπικά %s απόθεμα
+ThisWarehouseIsPersonalStock=Αυτή η αποθήκη αποτελεί προσωπική απόθεμα %s %s
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:40:45).

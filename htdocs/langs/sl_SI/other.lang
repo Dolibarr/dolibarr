@@ -211,3 +211,25 @@ ToExport=Za izvoz
 NewExport=Nov izvoz
 ##### External sites #####
 ExternalSites=Zunanje strani
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sl_SI
+ToolsDesc=To področje je posvečen skupini razna orodja, ki niso na voljo v druge vnosov meni. <br><br> Tisti, orodja, se lahko pride iz menija na strani.
+Notify_ORDER_SENTBYMAIL=Customer da bi poslal po pošti
+Notify_COMPANY_CREATE=Tretja stranka ustvaril
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Dobavitelj bi poslal po pošti
+Notify_BILL_SUPPLIER_VALIDATE=Dobavitelj račun potrjenih
+Notify_BILL_SUPPLIER_PAYED=Dobavitelj račun plača
+Notify_BILL_SUPPLIER_SENTBYMAIL=Dobavitelj račun pošlje po pošti
+Notify_CONTRACT_VALIDATE=Naročilo je potrjena
+Notify_FICHEINTER_VALIDATE=Intervencija potrjene
+Notify_SHIPPING_VALIDATE=Shipping potrjene
+Notify_SHIPPING_SENTBYMAIL=Dostava pošlje po pošti
+Notify_MEMBER_VALIDATE=Države potrjene
+Notify_MEMBER_SUBSCRIPTION=Države naročenih
+StartUpload=Začni upload
+CancelUpload=Prekliči upload
+FileIsTooBig=Datotek je prevelika
+Export=Export
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:03:44).

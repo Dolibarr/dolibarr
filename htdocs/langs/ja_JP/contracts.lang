@@ -1,0 +1,71 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+ContractsArea=契約面積
+ListOfContracts=契約のリスト
+LastContracts=最後%sは、契約を変更
+AllContracts=すべての契約
+ContractCard=契約のカード
+ContractStatus=契約の状況
+ContractStatusNotRunning=実行しない
+ContractStatusRunning=実行
+ContractStatusDraft=ドラフト
+ContractStatusValidated=検証
+ServiceStatusLateShort=期限切れの
+ServiceStatusClosed=閉じ
+ServicesLegend=サービス伝説
+Contracts=契約
+Contract=契約
+ContractContacts=契約担当者
+NoContracts=いいえ契約なし
+MenuServices=サービス
+MenuInactiveServices=アクティブでないサービス
+MenuRunningServices=実行中のサービス
+DeleteAContract=契約を削除する
+CloseAContract=契約を閉じます
+ConfirmDeleteAContract=あなたがこの契約書とそのすべてのサービスを削除してもよろしいですか？
+ConfirmValidateContract=あなたがこの契約を検証してもよろしいですか？
+ConfirmCloseContract=これはすべてのサービスを（アクティブかどうか）終了します。あなたがこの契約を閉じてよろしいですか？
+ConfirmCloseService=あなたは日付の<b>%s</b>でこのサービスを閉じてよろしいですか？
+ValidateAContract=契約を検証
+ActivateService=サービスをアクティブに
+ConfirmActivateService=あなたは日付の<b>%s</b>でこのサービスをアクティブにしてもよろしいですか？
+DateContract=契約日
+ListOfInactiveServices=アクティブでないサービスのリスト
+ListOfExpiredServices=期限切れのアクティブなサービスのリスト
+ListOfClosedServices=クローズドサービスのリスト
+ListOfRunningContractsLines=実行中の契約品目のリスト
+ListOfRunningServices=実行中のサービスのリスト
+NotActivatedServices=非アクティブなサービス（検証済みの契約の中で）
+BoardNotActivatedServices=検証済みの契約の中でアクティブにするサービス
+LastContracts=最後の％の契約
+LastActivatedServices=最後%s活性化サービス
+LastModifiedServices=最後%sは、サービスを変更
+DateEndPlannedShort=計画された終了日
+DateStartReal=実際の開始日
+DateStartRealShort=実際の開始日
+DateEndReal=実際の終了日
+DateEndRealShort=実際の終了日
+NbOfServices=サービスのNb
+CloseService=サービスを閉じます
+ServicesNomberShort=%sサービス（S）
+RunningServices=実行中のサービス
+BoardRunningServices=期限切れの実行中のサービス
+MoveToAnotherContract=別の契約にサービスを移動します。
+ConfirmMoveToAnotherContract=私は、新しいターゲットの契約を選びましたし、私はこの契約には、このサービスを移動することを確認します。
+ConfirmMoveToAnotherContractQuestion=既存の契約は、（同じサードパーティの）、あなたがこのサービスを移動するに選ぶのか？
+PaymentRenewContractId=契約回線（番号の%s）を​​更新
+ExpiredSince=有効期限の日付
+RelatedContracts=関連する契約
+TypeContact_contrat_internal_SALESREPSIGN=営業担当者の署名の契約
+TypeContact_contrat_internal_SALESREPFOLL=営業担当者には、次のアップ契約
+TypeContact_contrat_external_BILLING=課金顧客の連絡先
+TypeContact_contrat_external_CUSTOMER=フォローアップ顧客との接触
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:16:15).

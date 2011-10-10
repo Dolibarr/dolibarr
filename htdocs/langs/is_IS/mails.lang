@@ -114,3 +114,11 @@ AddNewNotification=Virkja nýja tilkynningu í tölvupósti beiðni
 ListOfActiveNotifications=Listi alla virka tilkynningu í tölvupósti beiðnir
 ListOfNotificationsDone=Sýna allar tilkynningar í tölvupósti sendi
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> is_IS
+MailingModuleDescContactsByCompanyCategory=Tengiliðir þriðja aðila (af þriðja aðila flokkur)
+MailingModuleDescMembersCategories=Foundation aðilum (eftir flokkum)
+MailingModuleDescContactsByFunction=Tengiliðir þriðja aðila (með því að staða / virka)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:37:19).

@@ -31,10 +31,10 @@ ErrorPHPDoesNotSupportUTF8=Din PHP-installation inte stöd för UTF8 funktioner.
 ErrorDirDoesNotExists=Nummer %s finns inte.
 ErrorGoBackAndCorrectParameters=Gå tillbaka och rätta till felaktiga parametrar.
 ErrorWrongValueForParameter=Du kan ha skrivit fel värde för parametern &quot;%s&quot;.
-ErrorFailedToCreateDatabase=Misslyckades med att skapa databasen &#39;%s &quot;.
+ErrorFailedToCreateDatabase=Misslyckades med att skapa databasen %s.
 ErrorFailedToConnectToDatabase=Det gick inte att ansluta till databasen &quot;%s&quot;.
 ErrorPHPVersionTooLow=PHP version gamla också. Version %s krävs.
-ErrorConnectedButDatabaseNotFound=Anslutning till servern framgångsrik, men databasen &quot;%s &#39;finns inte.
+ErrorConnectedButDatabaseNotFound=Anslutning till servern framgångsrik, men databasen %s finns inte.
 ErrorDatabaseAlreadyExists=Databas &quot;%s&quot; finns redan.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Om databasen inte finns, gå tillbaka och kontrollera alternativet &quot;Create database&quot;.
 IfDatabaseExistsGoBackAndCheckCreate=Om databasen redan finns, gå tillbaka och avmarkera &quot;Skapa databasen&quot; valen.
@@ -199,3 +199,12 @@ MigrationProjectTaskActors=Migrering av data för llx_projet_task_actors bord
 MigrationProjectUserResp=Data migrationsområdet fk_user_resp av llx_projet till llx_element_contact
 MigrationProjectTaskTime=Uppdatera tid i sekunder
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:14:40).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+MigrateIsDoneStepByStep=De riktade versionen (%s) har en lucka på flera versioner, så installerar guiden kommer tillbaka att föreslå nästa migration när detta kommer att vara klar.
+MigrationFinished=Migration färdiga
+LastStepDesc=<strong>Sista steget:</strong> Definiera här login och lösenord som du planerar att använda för att ansluta till programmet. Tappa inte detta eftersom det är det konto för att administrera alla andra.
+MigrationActioncommElement=Uppdatera uppgifter om åtgärder
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:33:48).

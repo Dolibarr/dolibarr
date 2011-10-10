@@ -126,3 +126,11 @@ SentTo=Trimis la <b>%s</b>
 LimitSendingEmailing=Pe linia trimiterea emailings sunt limitate pentru motive de securitate şi timeout destinatarilor <b>%s</b> prin trimiterea sesiune.
 ListOfNotificationsDone=Lista toate notificările e-mail trimis
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:51).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ro_RO
+MailingModuleDescContactsByCompanyCategory=Date de contact ale terţilor (de către părţi a treia categorie)
+MailingModuleDescMembersCategories=Membrii fundaţiei (pe categorii)
+MailingModuleDescContactsByFunction=Date de contact ale terţilor (de poziţie / funcţie)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:50:16).

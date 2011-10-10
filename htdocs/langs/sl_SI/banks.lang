@@ -139,3 +139,11 @@ BackToAccount=Nazaj na račun
 ShowAllAccounts=Prikaži vse račune
 FutureTransaction=Bodoča transakcija. Ni možna uskladitev.
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sl_SI
+WithdrawalPayment=Umik plačila
+ShowCheckReceipt=Prikaži preverjanje vlog prejme
+Graph=Graphics
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:32:49).

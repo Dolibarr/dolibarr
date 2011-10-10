@@ -138,3 +138,16 @@ VATReportBuildWithOptionDefinedInModule=المبالغ المبينة هنا ي�
 SocialContributionsPayments=المساهمات الاجتماعية المدفوعات
 ThirdPartyMustBeEditAsCustomer=ويجب تحديد الطرف الثالث كزبون
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:37).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+RemainingAmountPayment=دفع المبلغ المتبقي :
+AmountToBeCharged=المبلغ الإجمالي للدفع :
+ProposalStats=إحصاءات بشأن المقترحات
+OrderStats=إحصاءات عن أوامر
+CodeNotDef=لم يتم تعريف
+AddRemind=ارسال المبلغ المتاح
+RemainToDivide=يبقى أن يوفد :
+WarningDepositsNotIncluded=لا يتم تضمين فواتير الودائع في هذا الإصدار مع هذه الوحدة المحاسبة.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:35:22).

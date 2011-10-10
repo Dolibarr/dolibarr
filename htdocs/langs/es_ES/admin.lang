@@ -641,6 +641,7 @@ Permission2515=Configuración directorios de documentos
 Permission8555=Uso del módulo
 Permission8556=Establecer sitios e-commerce
 Permission8557=Importar datos
+Permission50001=Usar TPV
 Permission50201=Consultar las transacciones
 Permission50202=Importar las transacciones
 DictionnaryCompanyType=Tipos de empresa

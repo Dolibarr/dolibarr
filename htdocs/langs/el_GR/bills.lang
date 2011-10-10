@@ -419,7 +419,7 @@ PlutonNumRefModelDesc1=Return a customizable invoice number according to a defin
 // START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
 // Reference language: en_US -> el_GR
 BillsCustomer=Τιμολόγιο του Πελάτη
-BillsSuppliersUnpaidForCompany=Απλήρωτα τιμολόγια προμηθευτή για sssss
+BillsSuppliersUnpaidForCompany=Απλήρωτα τιμολόγια προμηθευτή για %s
 BillsLate=Η καθυστέρηση των πληρωμών
 DisabledBecauseNotErasable=Άτομα με ειδικές ανάγκες, επειδή δεν μπορούν να διαγραφούν
 NumberOfBillsByMonth=Nb των τιμολογίων ανά μήνα

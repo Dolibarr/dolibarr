@@ -37,3 +37,9 @@ ArcticNumRefModelError=Fehler beim aktivieren
 PacificNumRefModelDesc1=Liefere Nummer im Format %syymm-nnnn zurück, wobei yy das Jahr, mm das Monat und nnnn eine Zahlensequenz ohne Nullwert oder Leerzeichen ist
 PacificNumRefModelError=Eine Interventionskarte beginnend mit $syymm existiert bereits und ist nicht mir dieser Numerierungssequenz kompatibel. Bitte löschen oder umbenennen.
 ModifyIntervention=Eingriff
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_AT
+ShowIntervention=Zeige Intervention
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:18:26).

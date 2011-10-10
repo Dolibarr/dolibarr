@@ -298,8 +298,8 @@ class langAutoParser
 		curl_setopt($ch, CURLOPT_REFERER, "Mozilla");
 		$body = curl_exec($ch);
 		curl_close($ch);
-		sleep(1);	// This is to avoid to overload server
-		
+		sleep(6);	// This is to avoid to overload server. Best value is 6.
+
 		// now, process the JSON string
 		$json = json_decode($body, true);
 

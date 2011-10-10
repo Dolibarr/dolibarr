@@ -93,3 +93,9 @@ TypeContact_contrat_external_CUSTOMER=Kontakt pri kupcu za sledenje pogodbe
 TypeContact_contrat_external_SALESREPSIGN=Kontakt pri kupcu za podpis pogodbe
 
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sl_SI
+Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON ni opredeljen
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:19).

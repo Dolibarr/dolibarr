@@ -863,7 +863,6 @@ FicheinterNumberingModules=Intervention numrering moduler
 TemplatePDFInterventions=Intervention kort dokument modeller
 WatermarkOnDraftInterventionCards=Vattenstämpel handlingar intervention kortet (alla om tom)
 ClickToDialSetup=Klicka för att Dial modul setup
-ClickToDialUrlDesc=Url kallas när ett klick på telefon Picto är gjort. Dans l&#39;url, vous pouvez utiliser les baliser <br> <b>%% 1 $ s</b> qui sera remplacé par le Téléphone de l&#39;appelé <br> <b>%% 2 $ s</b> qui sera remplacé par le Téléphone de l&#39;appelant (le votre) <br> <b>%% 3 $ s</b> qui sera remplacé par votre login clicktodial (definition sur votre fiche utilisateur) <br> <b>%% 4 $ s</b> qui sera remplacé par votre MOT de passe clicktodial (definition sur votre informationsblad utilisateur).
 Bookmark4uSetup=Bookmark4u modul setup
 InterventionsSetup=Insatser modul setup
 MembersSetup=Medlemmar modul setup

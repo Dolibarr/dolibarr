@@ -209,3 +209,15 @@ MigrationProjectTaskTime=Uppfæra tími í sekúndum
 // Reference language: en_US -> is_IS
 MigrationNotFinished=Útgáfa af gagnagrunni er ekki alveg upp til dagsetning, svo þú verður að keyra uppfærslu ferlið aftur.
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:25).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> is_IS
+ConfFileReload=Reload allar upplýsingar úr skrá stillingu.
+WarningPHPVersionTooLow=PHP útgáfa of gamall. Útgáfa %s eða meira er gert ráð fyrir. Þessi útgáfa ætti að leyfa setja en er ekki studd.
+KeepDefaultValuesProxmox=Þú notar Dolibarr uppsetningarhjálpina frá Proxmox raunverulegur tæki, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
+MigrateIsDoneStepByStep=Sem miðað útgáfa (%s) hefur skarð af nokkrum útgáfum, svo setja töframaður mun koma aftur að stinga upp á næsta fólksflutningum þegar þetta verður lokið.
+MigrationFinished=Migration lokið
+LastStepDesc=<strong>Síðasta skref:</strong> Tilgreindu hér notandanafn og lykilorð sem þú ætlar að nota til að tengjast hugbúnaði. Ekki missa þetta eins og það er á reikningnum að gefa öllum öðrum.
+MigrationActioncommElement=Uppfæra upplýsingar um aðgerðir
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:44:17).

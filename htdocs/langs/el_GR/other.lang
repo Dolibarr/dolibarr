@@ -147,3 +147,61 @@ FileFormat=Μορφή αρχείου
 SelectAColor=Επιλέξτε ένα χρώμα
 Export=Εξαγωγή
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:23).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> el_GR
+ErrorForbidden3=Φαίνεται ότι Dolibarr δεν χρησιμοποιείται μέσω επικυρωμένο συνεδρία. Ρίξτε μια ματιά στην τεκμηρίωση της εγκατάστασης Dolibarr να ξέρει πώς να διαχειριστεί authentications (htaccess, mod_auth ή άλλα ...).
+ErrorNoImagickReadimage=Κατηγορία imagick δεν βρίσκεται σε αυτό το PHP. Δεν προεπισκόπηση μπορεί να είναι διαθέσιμες. Οι διαχειριστές μπορούν να απενεργοποιήσουν αυτή την καρτέλα από το πρόγραμμα Εγκατάστασης μενού - Οθόνη.
+ErrorRecordAlreadyExists=Εγγραφή υπάρχει ήδη
+ErrorCantReadFile=Αποτυχία ανάγνωσης αρχείου &quot;%s»
+ErrorCantReadDir=Αποτυχία ανάγνωσης »%s» κατάλογο
+ErrorFailedToFindEntity=Αποτυχία ανάγνωσης »%s» περιβάλλον
+ErrorBadLoginPassword=Bad αξία για σύνδεση ή τον κωδικό πρόσβασης
+ErrorLoginDisabled=Ο λογαριασμός σας έχει απενεργοποιηθεί
+ErrorFailedToRunExternalCommand=Απέτυχε να τρέξει εξωτερική εντολή. Ελέγξτε ότι είναι διαθέσιμο και εκτελέσιμη από PHP server σας. Αν η PHP <b>Safe Mode</b> είναι ενεργοποιημένη, βεβαιωθείτε ότι η εντολή είναι μέσα σε έναν κατάλογο που ορίζεται από <b>safe_mode_exec_dir</b> παράμετρο.
+ErrorLoginDoesNotExists=Χρήστης με <b>%s</b> login δεν θα μπορούσε να βρεθεί.
+Notify_BILL_PAYED=Τιμολογίου Πελατών payed
+Notify_BILL_CANCEL=Τιμολογίου Πελατών ακυρώσεις
+Notify_BILL_SENTBYMAIL=Τιμολογίου Πελατών σταλούν ταχυδρομικώς
+Notify_ORDER_SUPPLIER_VALIDATE=Για επικυρωθεί Προμηθευτής
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Για Προμηθευτής σταλούν ταχυδρομικώς
+Notify_BILL_SUPPLIER_VALIDATE=Τιμολόγιο Προμηθευτή επικυρωθεί
+Notify_BILL_SUPPLIER_PAYED=Τιμολόγιο Προμηθευτή payed
+Notify_BILL_SUPPLIER_SENTBYMAIL=Τιμολόγιο Προμηθευτή σταλούν ταχυδρομικώς
+Notify_CONTRACT_VALIDATE=Επικυρωμένη σύμβαση
+Notify_FICHEINTER_VALIDATE=Επικυρωθεί Παρέμβαση
+WarningInstallDirExists=Προειδοποίηση, κατάλογο εγκατάστασης <b>(htdocs / εγκατάσταση)</b> εξακολουθεί να υφίσταται. Αυτό είναι ένα σοβαρό κενό ασφαλείας. Θα πρέπει να καταργηθεί το συντομότερο δυνατό.
+WarningUntilDirRemoved=Όλες οι προειδοποιήσεις ασφαλείας (ορατό από το admin χρήστες μόνο) θα παραμείνει ενεργό για όσο διάστημα η ευπάθεια είναι παρούσα (ή ότι η συνεχής MAIN_REMOVE_INSTALL_WARNING προστίθεται στο Setup-&gt; Άλλες setup).
+PredefinedMailTestHtml=Αυτό είναι ένα μήνυμα <b>δοκιμής</b> (η δοκιμή λέξη πρέπει να είναι με έντονα γράμματα). <br> Οι δύο γραμμές που χωρίζονται με ένα χαρακτήρα επαναφοράς.
+DemoCompanyProductAndStocks=Διαχειριστείτε μια μικρή ή μεσαία επιχείρηση πώλησης προϊόντων
+DemoCompanyAll=Διαχειριστείτε μια μικρή ή μεσαία εταιρεία με πολλαπλές δραστηριότητες (όλες οι κύριες ενότητες)
+GoToDemo=Μετάβαση στο demo
+FeatureExperimental=Πειραματική χαρακτηριστικό. Δεν είναι σταθερή σε αυτή την έκδοση
+FeatureDevelopment=Χαρακτηριστικό Ανάπτυξης. Δεν είναι σταθερή σε αυτή την έκδοση
+FeaturesSupported=Δυνατότητες που υποστηρίζονται
+BugTracker=Tracker Bug
+SendNewPasswordDesc=Αυτή η μορφή σας επιτρέπει να ζητήσετε ένα νέο κωδικό πρόσβασης. Θα πρέπει να στείλετε στο e-mail σας. <br> Η αλλαγή θα είναι αποτελεσματική μόνο μετά κάνετε κλικ στο σύνδεσμο επιβεβαίωσης μέσα σε αυτό το email. <br> Ελέγξτε το email πρόγραμμα ανάγνωσης.
+AuthenticationDoesNotAllowSendNewPassword=Λειτουργία ελέγχου ταυτότητας είναι <b>%s.</b> <br> Σε αυτή τη λειτουργία, Dolibarr δεν μπορεί να γνωρίζει ούτε αλλαγή του κωδικού πρόσβασής σας. <br> Επικοινωνήστε με το διαχειριστή του συστήματός σας, εάν θέλετε να αλλάξετε τον κωδικό πρόσβασής σας.
+EnableGDLibraryDesc=Εγκατάσταση ή ενεργοποίηση GD βιβλιοθήκη με την PHP σας για χρήση αυτής της επιλογής.
+NumberOfCustomerOrders=Αριθμός των παραγγελιών των πελατών κατά την τελευταία 12 μήνες
+NumberOfCustomerInvoices=Αριθμός των τιμολογίων των πελατών για την τελευταία 12 μήνες
+NumberOfSupplierInvoices=Αριθμός των τιμολογίων προμηθευτή σε τελευταία 12 μήνες
+NumberOfUnitsProposals=Αριθμός μονάδων σχετικά με τις προτάσεις για την τελευταία 12 μήνες
+NumberOfUnitsCustomerOrders=Αριθμός μονάδων σχετικά με τις παραγγελίες των πελατών για την τελευταία 12 μήνες
+NumberOfUnitsCustomerInvoices=Αριθμός μονάδων στα τιμολόγια των πελατών για την τελευταία 12 μήνες
+NumberOfUnitsSupplierInvoices=Αριθμός μονάδων στα τιμολόγια προμηθευτή για την τελευταία 12 μήνες
+EMailTextInterventionValidated=Η %s παρέμβαση έχει επικυρωθεί.
+EMailTextInvoiceValidated=Το τιμολόγιο %s έχει επικυρωθεί.
+EMailTextProposalValidated=Η %s πρόταση έχει επικυρωθεί.
+ImportedWithSet=Η εισαγωγή των δεδομένων που
+ResizeDesc=Εισάγετε το νέο πλάτος <b>ή το</b> νέο ύψος. Λόγος θα διατηρηθούν κατά τη διάρκεια της αλλαγής μεγέθους ...
+DefineNewAreaToPick=Ορίστε νέα περιοχή στην εικόνα για να πάρει (αριστερό κλικ στην εικόνα στη συνέχεια σύρετε μέχρι να φτάσετε στην απέναντι γωνία)
+CurrentInformationOnImage=Το εργαλείο αυτό σχεδιάστηκε για να σας βοηθήσει να αλλάξετε το μέγεθος ή την καλλιέργεια μιας εικόνας. Πρόκειται για πληροφορίες σχετικά με τις τρέχουσες επεξεργασμένη εικόνα
+YouReceiveMailBecauseOfNotification=Αυτό το μήνυμα επειδή το email σας έχει προστεθεί στη λίστα των στόχων που πρέπει να ενημερώνεται για συγκεκριμένα γεγονότα σε %s λογισμικό της %s.
+ThisIsListOfModules=Αυτή είναι μια λίστα των modules που έχουν επιλέξει αυτό το προφίλ demo (μόνο οι περισσότερες κοινές ενότητες είναι ορατά σε αυτό το demo). Επεξεργασία αυτό να έχει μια πιο εξατομικευμένη επίδειξη και κάντε κλικ στο &quot;Start&quot;.
+UseAdvancedPerms=Χρησιμοποιήστε την προηγμένη δικαιώματα κάποιων ενοτήτων
+AddFiles=Προσθήκη αρχείων
+StartUpload=Έναρξη μεταφόρτωσης
+CancelUpload=Ακύρωση ανεβάσετε
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:12:43).

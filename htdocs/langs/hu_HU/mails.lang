@@ -59,3 +59,29 @@ RemoveRecipient=Címzett eltávolítása
 CommonSubstitutions=Általános helyettesítések
 YouCanAddYourOwnPredefindedListHere=To create your email selector module, see htdocs/includes/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=When using test mode, substitutions variables are replaced by generic values
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> hu_HU
+MailingAddFile=A fájl csatolása
+NoAttachedFiles=Nem csatolt fájlok
+BadEMail=Rossz érték EMail
+CloneEMailing=Clone küldése e-mailben
+ConfirmCloneEMailing=Biztos benne, hogy ez a klón e-mailezés?
+CloneContent=Clone üzenet
+CloneReceivers=Cloner címzettek
+MailingModuleDescContactsByCompanyCategory=Kapcsolatok harmadik fél (a harmadik felek által kategória)
+MailingModuleDescMembersCategories=Alapítvány tagjai (a kategóriák)
+MailingModuleDescContactsByFunction=Kapcsolatok harmadik fél (a pozíció / funkció)
+LineInFile=Vonal %s fájlban
+RecipientSelectionModules=Meghatározott kérelmek címzett kiválasztása
+SentBy=Által küldött
+MailingNeedCommand=Biztonsági okokból, küldjön egy e-mailezés kell végezni a parancssorból. Kérdezze meg a rendszergazdát, hogy indítsa el a következő parancsot küldeni az e-mailezés az összes címzettnek:
+MailingNeedCommand2=Ön azonban elküldheti őket az interneten hozzáadásával paraméter MAILING_LIMIT_SENDBYWEB az értéke max e-mailek száma szeretne küldeni a session. Ehhez menj a Home - telepítés - Más.
+ConfirmSendingEmailing=Biztos benne, hogy szeretné küldeni e-mailezés nélküli parancssor és a web mód?
+LimitSendingEmailing=On-line küldése emailings korlátozott biztonsági és időtúllépés miatt a <b>%s</b> címzettnek küldött ülésén.
+TargetsReset=Lista törlése
+AddNewNotification=Aktiválása egy új e-mail értesítést kérésére
+ListOfActiveNotifications=Lista az összes aktív e-mail értesítést kér
+ListOfNotificationsDone=Lista minden e-mail értesítést küldeni
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:37:00).

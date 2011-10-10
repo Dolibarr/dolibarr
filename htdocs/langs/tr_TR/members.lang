@@ -150,7 +150,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etiket biçimi
 DescADHERENT_CARD_HEADER_TEXT=Metin üye kartları üstüne basılı
 DescADHERENT_CARD_TEXT=Metin üye kartları basılır
 DescADHERENT_CARD_FOOTER_TEXT=Metin üye kartları alt yazdırılır
-ShowTypeCard=Show türü &#39;% s&#39;
+ShowTypeCard=Show türü %s
 HTPasswordExport=htpassword dosya nesil
 NoThirdPartyAssociatedToMember=Üçüncü parti üyesi ilişkili
 ThirdPartyDolibarr=Dolibarr üçüncü parti
@@ -175,7 +175,7 @@ CanEditAmount=Ziyaretçi kendi abonelik miktarını seçin / düzenleyebilirsini
 
 // START - Lines generated via autotranslator.php tool (2011-10-09 14:04:20).
 // Reference language: en_US -> tr_TR
-NewSubscriptionDesc=Bu form aboneliğinizi vakıf yeni bir üye olarak kaydetmenize olanak verir. (Zaten bir üye) abonelik yenilemek istiyorsanız, e-posta sssss tarafından yerine vakıf yönetim kuruluyla irtibata geçiniz.
+NewSubscriptionDesc=Bu form aboneliğinizi vakıf yeni bir üye olarak kaydetmenize olanak verir. (Zaten bir üye) abonelik yenilemek istiyorsanız, e-posta %s tarafından yerine vakıf yönetim kuruluyla irtibata geçiniz.
 BlankSubscriptionFormDesc=Dolibarr dış ziyaretçi vakıf abone olmak için sormak için izin vermenizi kamu URL sağlayabilir. Bir online ödeme modülü etkinse, bir ödeme formu de otomatik olarak sağlanır olacaktır.
 EnablePublicSubscriptionForm=Kamu oto-üyelik formunu etkinleştirin
 ImportDataset_member_1=Üye
@@ -193,9 +193,9 @@ MoreActions=Kayıt üzerinde Tamamlayıcı eylem
 MoreActionInvoiceOnly=Herhangi bir ödeme ile bir fatura oluşturun.
 LinkToGeneratedPages=Vizit kartlar oluşturun
 LinkToGeneratedPagesDesc=Bu ekran, tüm üyeleri ya da belirli bir üye için kartvizit ile PDF dosyaları oluşturmanıza olanak sağlar.
-DocForAllMembersCards=Tüm üyeleri <b>(sssss</b> Format çıkış aslında kurulum için) için kartvizit oluşturun
-DocForOneMemberCards=Kartvizit için belirli bir üye (çıkış aslında kurulum için Format: <b>sssss)</b> oluşturun
-DocForLabels=Adres sayfa (çıkış aslında kurulum için Format: <b>sssss)</b> oluşturun
+DocForAllMembersCards=Tüm üyeleri <b>(%s</b> Format çıkış aslında kurulum için) için kartvizit oluşturun
+DocForOneMemberCards=Kartvizit için belirli bir üye (çıkış aslında kurulum için Format: <b>%s</b>) oluşturun
+DocForLabels=Adres sayfa (çıkış aslında kurulum için Format: <b>%s</b>) oluşturun
 SubscriptionPayment=Abonelik ödeme
 LastSubscriptionDate=Son abonelik tarihi
 LastSubscriptionAmount=Son abonelik miktarı

@@ -1,0 +1,51 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+GroupCard=グループカード
+NoContactCard=接点間にカードが入っていません
+Permission=アクセス権
+Permissions=パーミッション
+EditPassword=パスワードを編集します。
+SendNewPassword=パスワードを再生成して送信する
+DisableAUser=ユーザーを無効にする
+DeleteUser=削除
+DeleteAUser=ユーザーを削除する
+DisableGroup=無効
+DisableAGroup=グループを無効にする
+ConfirmSendNewPassword=あなたはユーザー<b>%s</b>のための新しいパスワードを生成して送信してもよろしいですか？
+NewUser=新しいユーザ
+CreateUser=ユーザを作成する
+SearchAGroup=グループを検索
+SearchAUser=ユーザーを検索
+LastName=の名前
+FirstName=最初の名前
+ListOfGroups=グループのリスト
+NewGroup=新グループ
+CreateGroup=グループを作成します。
+PhotoFile=写真ファイル
+UserWithDolibarrAccess=Dolibarrアクセス​​権を持つユーザー
+ListOfUsersInGroup=このグループのユーザのリスト
+ListOfGroupsForUser=このユーザのグループのリスト
+UsersToAdd=ユーザーはこのグループに追加する
+LoginAccountDisableInLdap=アカウントがドメインで無効に。
+UsePersonalValue=個人的な値を使用
+GuiLanguage=インターフェースの言語
+InternalUser=内部ユーザ
+MyInformations=私のデータ
+UserLogoff=ユーザーの%sログアウト
+NewUserCreated=ユーザーの%s作成
+NewUserPassword=%s用パスワードの変更
+EventUserModified=ユーザーの%sは変更
+UserDisabled=ユーザーの%sが無効になって
+YourRole=あなたの役割
+YourQuotaOfUsersIsReached=アクティブなユーザーのあなたのクォータに達している！
+NbOfUsers=ユーザーのNb
+DontDowngradeSuperAdmin=唯一superadminはダウングレードは、superAdminできます
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:47:07).

@@ -129,3 +129,16 @@ TaxModuleSetupToModifyRules=Die Einstellungen zur Berechnung finden Sie in den e
 VATReportBuildWithOptionDefinedInModule=Ausgewiesenen Beträge sind hier anhand von Regeln Tax Modul Setup definiert.
 SocialContributionsPayments=Sozialbeitragszahlungen
 ThirdPartyMustBeEditAsCustomer=Partner muss als Kunde definiert werden
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+RemainingAmountPayment=Leistende Zahlung übrig:
+AmountToBeCharged=Gesamtbetrag zu zahlen:
+ProposalStats=Statistik über die Vorschläge
+OrderStats=Statistiken über Bestellungen
+InvoiceStats=Statistik auf Rechnungen
+SellsJournal=Vertrieb Journal
+PurchasesJournal=Käufe Journal
+DescSellsJournal=Vertrieb Journal
+DescPurchasesJournal=Käufe Journal
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:39:50).

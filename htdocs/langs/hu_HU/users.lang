@@ -108,3 +108,9 @@ LoginToCreate=Létrehozandó bejelentkezés
 NameToCreate=Létrehozandó harmadik fél neve
 YourRole=Szerepkörei
 YourQuotaOfUsersIsReached=Aktív felhasználói kvóta elérve!
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> hu_HU
+AdministratorDesc=Rendszergazda személy
+UserWillBeInternalUser=Létrehozta felhasználó lesz egy belső felhasználó (mivel nem kapcsolódik az adott harmadik fél)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:34:05).

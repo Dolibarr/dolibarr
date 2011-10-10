@@ -114,3 +114,9 @@ AddNewNotification=Aktivera en ny e-post meddelande begära
 ListOfActiveNotifications=Lista alla aktiva e ansökningsmeddelanden
 ListOfNotificationsDone=Lista alla e-postmeddelanden skickas
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:48:37).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+MailingModuleDescContactsByCompanyCategory=Kontakter med tredje part (av tredje part kategori)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:02:33).

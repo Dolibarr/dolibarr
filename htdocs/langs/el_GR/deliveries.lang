@@ -27,6 +27,6 @@ Recipient=Παραλήπτης
 // START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
 // Reference language: en_US -> el_GR
 DeleteDeliveryReceipt=Διαγραφή αποδεικτικό παράδοσης
-DeleteDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να διαγράψετε <b>sssss</b> παραλαβής παράδοσης;
+DeleteDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να διαγράψετε <b>%s</b> παραλαβής παράδοσης;
 DeliveryNotValidated=Η παράδοση δεν επικυρώνονται
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:25).

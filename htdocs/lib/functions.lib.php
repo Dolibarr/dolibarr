@@ -2886,15 +2886,16 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 
 
 /**
- *	Fonction qui retourne un taux de tva formate pour visualisation
- *	Utilisee dans les pdf et les pages html
+ *	Return a string with VAT rate label formated for view output
+ *	Used into pdf and HTML pages
  *
  *	@param	float	$rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
  *  @param	boolean	$addpercent		Add a percent % sign in output
- *	@param	int		$info_bits		Miscellanous information on vat
- *  @return	string					Chaine avec montant formate (19,6 ou 19,6% ou 8.5% *)
+ *	@param	int		$info_bits		Miscellanous information on vat (0=Default, 1=French NPR vat)
+ *	@param	int		$usestarfornpr	1=Use '*' for NPR vat rate intead of MAIN_LABEL_MENTION_NPR
+ *  @return	string					String with formated amounts (19,6 or 19,6% or 8.5% NPR or 8.5% *)
  */
-function vatrate($rate,$addpercent=false,$info_bits=0)
+function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 {
     // Test for compatibility
     if (preg_match('/%/',$rate))
@@ -2902,14 +2903,14 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
         $rate=str_replace('%','',$rate);
         $addpercent=true;
     }
-    if (preg_match('/\*/',$rate) || preg_match('/'.MAIN_LABEL_MENTION_NPR.'/i',$rate))
+    if (preg_match('/\*/',$rate) || preg_match('/'.constant('MAIN_LABEL_MENTION_NPR').'/i',$rate))
     {
         $rate=str_replace('*','',$rate);
         $info_bits |= 1;
     }
 
     $ret=price($rate,0,'',0,0).($addpercent?'%':'');
-    if ($info_bits & 1) $ret.=' '.MAIN_LABEL_MENTION_NPR;
+    if ($info_bits & 1) $ret.=' '.($usestarfornpr?'*':constant('MAIN_LABEL_MENTION_NPR'));
     return $ret;
 }
 
@@ -3205,10 +3206,11 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
  *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
  *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
  *	 Sinon TVA proposee par defaut=0. Fin de regle.
- *	@param      	societe_vendeuse    	Objet societe vendeuse
- *	@param      	societe_acheteuse   	Objet societe acheteuse
- *	@param      	idprod					Id product
- *	@return     	float               	Taux de tva a appliquer, -1 si ne peut etre determine
+ *
+ *	@param	Societe		$societe_vendeuse    	Objet societe vendeuse
+ *	@param  Societe		$societe_acheteuse   	Objet societe acheteuse
+ *	@param  int			$idprod					Id product
+ *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 {
@@ -3282,16 +3284,11 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 
 /**
  *	Fonction qui renvoie si tva doit etre tva percue recuperable
- *	             	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *					Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *					Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
- *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
- *					Sinon TVA proposee par defaut=0. Fin de regle.
- *	@param      	societe_vendeuse    	Objet societe vendeuse
- *	@param      	societe_acheteuse   	Objet societe acheteuse
- *  @param          idprod                  Id product
- *	@return     	float               	0 or 1
+ *
+ *	@param	Societe		$societe_vendeuse    	Objet societe vendeuse
+ *	@param  Societe		$societe_acheteuse   	Objet societe acheteuse
+ *  @param  int			$idprod                 Id product
+ *	@return float       			        	0 or 1
  */
 function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
 {
@@ -3301,11 +3298,11 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
 /**
  *	Function that return localtax of a product line (according to seller, buyer and product vat rate)
  *
- *	@param      	societe_vendeuse    	Objet societe vendeuse
- *	@param      	societe_acheteuse   	Objet societe acheteuse
- *  @param			local					Localtax to process (1 or 2)
- *	@param      	idprod					Id product
- *	@return     	float               	Taux de localtax appliquer, -1 si ne peut etre determine
+ *	@param	Societe		$societe_vendeuse    	Objet societe vendeuse
+ *	@param  Societe		$societe_acheteuse   	Objet societe acheteuse
+ *  @param	int			$local					Localtax to process (1 or 2)
+ *	@param  int			$idprod					Id product
+ *	@return float        				       	Taux de localtax appliquer, -1 si ne peut etre determine
  */
 function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $idprod=0)
 {

@@ -27,3 +27,14 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL um Ihren Kunden eine %s Online-Beza
 YouCanAddTagOnUrl=Sie können auch den URL-Parameter <b>&tag=<i>value</i></b> an eine beliebige dieser URLs anhängen (erforderlich nur bei der freien Zahlung) um einen eigenen Zahlungskommentar hinzuzufügen.
 SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie PayBox mit der URL <b>%s</b> ein, um nach Freigabe durch PayBox automatisch eine Zahlung anzulegen.
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Kunden eine %s Online-Bezahlseite für Abonnements anzubieten
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+UsageParameter=Aufruf-Parameter
+InformationToFindParameters=Helfen Sie mit Ihrer %s Kontoinformationen finden
+PAYBOX_CGI_URL_V2=URL von Paybox CGI-Modul für die Zahlung
+VendorName=Name des Herstellers
+CSSUrlForPaymentForm=CSS-Stylesheet-URL für Zahlschein
+MessageOK=Nachricht auf validierten Zahlung zurück Seite
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:10:44).

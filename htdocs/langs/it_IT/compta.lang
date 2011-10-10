@@ -150,3 +150,12 @@ CodeNotDef=Non definito
 AddRemind=Spedizione importo disponibile
 RemainToDivide=Rimanere alla spedizione:
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:20).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> it_IT
+RemainingAmountPayment=Pagamento saldo:
+AmountToBeCharged=Importo totale da pagare:
+ProposalStats=Statistiche sulle proposte
+OrderStats=Le statistiche sugli ordini
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:59:30).

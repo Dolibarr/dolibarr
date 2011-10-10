@@ -109,7 +109,7 @@ TooMuchErrors=Det finns fortfarande <b>%s</b> andra källrader med fel men BNP h
 TooMuchWarnings=Det finns fortfarande <b>%s</b> andra källrader med varningar men BNP har varit begränsade.
 EmptyLine=Tom rad (kommer att slängas)
 CorrectErrorBeforeRunningImport=Du måste först rätta alla fel innan du kör slutgiltig import.
-YouCanUseImportIdToFindRecord=Du hittar alla importerade poster i databasen genom att filtrera på fältet <b>import_key = &#39;%s &quot;.</b>
+YouCanUseImportIdToFindRecord=Du hittar alla importerade poster i databasen genom att filtrera på fältet <b>import_key = %s</b>.
 NbOfLinesOK=Antal rader utan fel och inga varningar: <b>%s.</b>
 NbOfLinesImported=Antal rader importerades: <b>%s.</b>
 DataComeFromNoWhere=Värde att infoga kommer från ingenstans i källfilen.

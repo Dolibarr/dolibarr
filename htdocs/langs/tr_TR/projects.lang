@@ -94,7 +94,7 @@ ActionsOnProject=Aksiyonlar proje üzerinde
 YouAreNotContactOfProject=Bu özel projenin bir kişi değildir
 TaskIsNotAffectedToYou=Görev size tahsis
 ErrorTimeSpentIsEmpty=Harcanan zaman boş
-ThisWillAlsoRemoveTasks=Bu eylem aynı zamanda projenin tüm görevler (şu <b>anda</b> sssss görevler) ve harcanan zaman tüm girişleri siler .
+ThisWillAlsoRemoveTasks=Bu eylem aynı zamanda projenin tüm görevler (şu <b>anda</b> %s görevler) ve harcanan zaman tüm girişleri siler .
 IfNeedToUseOhterObjectKeepEmpty=Eğer bazı nesnelerin (fatura, sipariş, ...), başka bir üçüncü tarafa ait, oluşturmak çok üçüncü şahıslara olan proje için bu boş tutmak projeye bağlı olmalıdır.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:01:55).
 

@@ -145,3 +145,16 @@ VATReportBuildWithOptionDefinedInModule=Beløb der vises her, beregnes ved hjæl
 SocialContributionsPayments=Sociale bidrag betalinger
 ThirdPartyMustBeEditAsCustomer=Tredjeparts skal defineres som kunde
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:19).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+RemainingAmountPayment=Beløb resterende indbetaling:
+AmountToBeCharged=Samlet beløb til at betale:
+ProposalStats=Statistik om forslag
+OrderStats=Statistik på ordrer
+InvoiceStats=Statistik om regninger
+SellsJournal=Salg Tidende
+RemainToDivide=Remain til afsendelse:
+WarningDepositsNotIncluded=Indskud fakturaer er ikke inkluderet i denne version med denne bogføring modul.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:36:52).

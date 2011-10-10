@@ -136,3 +136,10 @@ Inherited=Odziedziczone
 YourRole=Swoje role
 YourQuotaOfUsersIsReached=Limitu aktywnych użytkowników został osiągnięty!
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:32).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pl_PL
+NbOfUsers=Nb użytkowników
+DontDowngradeSuperAdmin=Tylko superadmin niższej wersji superadmin
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:48:29).

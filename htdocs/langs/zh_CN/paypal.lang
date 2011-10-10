@@ -1,0 +1,21 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+CHARSET=UTF-8
+PaypalSetup=贝宝模块的设置
+PaypalDesc=该模块提供的网页，允许<a href="http://www.paypal.com" target="_blank">对贝</a>宝支付客户的。这可以使用一个免费的付款或支付上一个特定的Dolibarr对象（发票，订单，... ...）
+PaypalOrCBDoPayment=与信用卡或PayPal付款
+PaypalDoPayment=用PayPal
+PaypalCBDoPayment=信用卡支付
+PAYPAL_API_SANDBOX=测试/沙箱模式
+PAYPAL_API_USER=API的用户名
+PAYPAL_API_PASSWORD=API密码
+PredefinedMailContentSendOrderWithPaypalLink=你会发现这里的顺序__ORDERREF__ \n\n您可以点击下面的安全链接，使您的​​付款
+PredefinedMailContentSendInvoiceWithPaypalLink=你会发现这里的发票__FACREF__ \n\n您可以点击安全链接，使您的​​付款通过
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:12).

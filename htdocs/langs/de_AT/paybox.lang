@@ -27,3 +27,11 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL um Ihren Kunden eine %s Online-Beza
 YouCanAddTagOnUrl=Sie können auch den URL-Parameter <b>&tag=<i>value</i></b> an eine beliebige dieser URLs anhängen (erforderlich nur bei der freien Zahlung) um einen eigenen Zahlungskommentar hinzuzufügen.
 SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie PayBox mit der URL <b>%s</b> ein, um nach Freigabe durch PayBox automatisch eine Zahlung anzulegen.
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Kunden eine %s Online-Bezahlseite für Abonnements anzubieten
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_AT
+YourPaymentHasBeenRecorded=Diese Seite wird bestätigt, dass Ihre Zahlung aufgezeichnet wurde. Danke.
+YourPaymentHasNotBeenRecorded=Sie Zahlung wurde nicht aufgezeichnet und Transaktion wurde abgebrochen. Danke.
+AccountParameter=Konto-Parameter
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:09:41).

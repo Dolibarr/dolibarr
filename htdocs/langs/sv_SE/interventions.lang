@@ -40,3 +40,11 @@ ArcticNumRefModelError=Misslyckades med att aktivera
 PacificNumRefModelDesc1=Återgå numero med format %syymm-nnnn där YY är år, mm månaden och nnnn är en sekvens utan avbrott och ingen återgång till 0
 PacificNumRefModelError=En intervention kort börjar med $ syymm finns redan och är inte förenligt med denna modell för sekvens. Ta bort den eller byta namn på den för att aktivera denna modul.
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:50:01).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+ActionsOnFicheInter=Åtgärder för ingripande
+ClassifyBilled=Klassificera &quot;Fakturerade&quot;
+StatusInterInvoiced=Fakturerade
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:32:50).

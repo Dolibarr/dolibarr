@@ -140,7 +140,7 @@ ConfirmCloneOrder=Czy na pewno chcesz klon tej <b>kolejności %s?</b>
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> pl_PL
 OrderToProcess=Aby proces
-DispatchSupplierOrder=Sssss Odbiór aby dostawca
+DispatchSupplierOrder=%s Odbiór aby dostawca
 TypeContact_commande_internal_SALESREPFOLL=Przedstawiciela w ślad za zamówienie klienta
 TypeContact_commande_internal_SHIPPING=Przedstawiciela w ślad za koszty
 TypeContact_commande_external_BILLING=kontakt faktury klienta

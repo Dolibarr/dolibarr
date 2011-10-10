@@ -1,0 +1,92 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+TaxModuleSetupToModifyRules=に移動し<a href="%s">、モジュールのセットアップ</a>計算のためのルールを変更する
+OptionMode=会計士のためのオプション
+OptionModeTrue=オプションの入出力
+OptionModeVirtual=オプションクレジット、借方
+OptionModeTrueDesc=この文脈では、売上高は、支払（支払日）に渡って計算される。数字の\ nこの妥当性は、簿記の請求書を経由してアカウントの入力/出力によって精査されている場合にのみ保証されます。
+OptionModeVirtualDesc=この文脈では、売上高は、請求書（検証の日）にわたって計算されます。ときにこれらの請求は、それらが支​​払われているか、それらはターンオーバーの出力にリストされているかどうか、によるものである。
+FeatureIsSupportedInInOutModeOnly=（会計モジュールの設定を参照してください）​​クレジット、債務の会計モードでのみ使用可能な機能
+VATReportBuildWithOptionDefinedInModule=ここに示されている金額は税モジュールの設定によって定義されたルールを使用して計算されます。
+Param=セットアップ
+RemainingAmountPayment=残りの金額の支払い：
+Outcome=費用
+ReportInOut=収益/費用
+ReportTurnover=売上高
+PaymentsNotLinkedToInvoice=任意の請求書にリンクされていない支払は、その第三者にリンクされていない
+PaymentsNotLinkedToUser=すべてのユーザーにリンクされていない支払い
+Profit=利益
+Balance=バランス
+Debit=借方
+Credit=クレジット
+Withdrawal=撤退
+VATSummary=付加価値税のバランス
+VATPaid=付加価値税は支払わ
+VATCollected=付加価値税回収した
+ToPay=支払いに
+ToGet=戻って取得するには
+TaxAndDividendsArea=税金、社会貢献と配当のエリア
+SocialContribution=社会貢献
+SocialContributions=社会貢献
+MenuTaxAndDividends=税金と配当金
+MenuSocialContributions=社会貢献
+NewPayment=新しいお支払い
+Payments=支払い
+PaymentCustomerInvoice=顧客の請求書の支払い
+PaymentSupplierInvoice=サプライヤの請求書の支払い
+PaymentSocialContribution=社会貢献の支払い
+PaymentVat=付加価値税の支払い
+ListPayment=支払いのリスト
+ListOfPayments=支払いのリスト
+ListOfCustomerPayments=顧客の支払のリスト
+ListOfSupplierPayments=サプライヤーの支払のリスト
+TotalToPay=支払いに合計
+TotalVATReceived=総付加価値税は、受信
+CustomerAccountancyCode=顧客の会計コード
+SupplierAccountancyCode=サプライヤーの会計コード
+AlreadyPaid=既に支払わ
+AccountNumberShort=口座番号
+AccountNumber=口座番号
+NewAccount=新しいアカウント
+SalesTurnover=販売額
+ByThirdParties=富栄第三者
+NewCheckReceipt=新しい割引
+NewCheckDeposit=新しいチェック預金
+NewCheckDepositOn=%s：アカウント上で預金の領収書を作成する
+NoWaitingChecks=入金を待ってはチェックしません。
+DateChequeReceived=受付の日付を確認してください
+NbOfCheques=小切手のNb
+PaySocialContribution=社会貢献を支払う
+ConfirmPaySocialContribution=あなたが支払ったとしてこの社会貢献を分類してもよろしいですか？
+DeleteSocialContribution=社会貢献を削除します。
+ConfirmDeleteSocialContribution=あなたはこの社会貢献を削除してもよろしいですか？
+SeeReportInDueDebtMode=参照レポート<b>%sClaims - Debts%s</b>発行されたインボイス上の計算のための<b>コミットメントの会計は</b>言った
+RulesResultDue=- 表示金額は税込みとしています<br> - それは彼らが支払われているかどうか未払いの請求書、経費および付加価値税が含まれています。 <br> - これは、請求書と付加価値税の検証の日にと費用の期日に基づいています。
+RulesResultInOut=- 表示金額は税込みとしています<br> - それは、請求書、経費及び付加価値税で行われた実際の支払いが含まれています。 <br> - これは、請求書、経費ANFの付加価値税の支払日に基づいています。 <br>
+RulesCADue=- それは彼らが支払われているかどうか、クライアントのために請求書を（預金の請求を除く）が含まれています。 <br> - これは、これらの請求書の検証の日付に基づいています。 <br>
+RulesCAIn=- それは、クライアントから受け取った請求書のすべての効果的な支払いが含まれています。 <br> - これは、これらの請求書の支払日に基づいている<br>
+VATReportByCustomersInInputOutputMode=収集と顧客が支払った付加価値税（VAT）によるレポート（付加価値税の領収書）
+VATReportByCustomersInDueDebtMode=顧客の付加価値税（VAT税率）に収集し、支払わによる報告
+VATReportByQuartersInInputOutputMode=収集及び支払う付加価値率（付加価値税の領収書）による報告書
+VATReportByQuartersInDueDebtMode=収集及び支払う付加価値率（付加価値税の税率）による報告書
+SeeVATReportInInputOutputMode=標準的な計算のためのレポート<b>%sVATのencasement%sを</b>参照<b>して</b>ください。
+ProposalStats=提案に関する統計
+OrderStats=注文に関する統計
+InvoiceStats=手形に関する統計
+Dispatch=ディスパッチ
+Dispatched=に送出されます
+ToDispatch=ディスパッチへ
+ThirdPartyMustBeEditAsCustomer=第三者が顧客として定義する必要があります。
+SellsJournal=セールスジャーナル
+PurchasesJournal=購入ジャーナル
+DescSellsJournal=セールスジャーナル
+WarningDepositsNotIncluded=預金請求書は、この会計モジュールでもこの​​バージョンに含まれていません。
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:13:22).

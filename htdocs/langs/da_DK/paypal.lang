@@ -1,0 +1,22 @@
+/*
+ * Language code: da_DK
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+CHARSET=UTF-8
+PaypalSetup=PayPal-modul opsætning
+PaypalDesc=Dette modul tilbyder sider til at tillade betaling på <a href="http://www.paypal.com" target="_blank">PayPal</a> af kunderne. Dette kan bruges til en gratis betaling eller til en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
+PaypalOrCBDoPayment=Betal med kreditkort eller Paypal
+PaypalDoPayment=Betal med Paypal
+PaypalCBDoPayment=Betal med kreditkort
+PAYPAL_API_SANDBOX=Mode test / sandkasse
+ThisIsTransactionId=Dette er id af transaktionen: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Tilsæt url Paypal betaling, når du sender et dokument med posten
+PAYPAL_IPN_MAIL_ADDRESS=E-mail-adresse til øjeblikkelig meddelelse om betaling (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=Du vil her finde den rækkefølge __ORDERREF__ \ n \ nDu kan klikke på den sikre linket nedenfor for at gøre din betaling via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+PredefinedMailContentSendInvoiceWithPaypalLink=Du vil her finde fakturaen __FACREF__ \ n \ nDu kan klikke på den sikre linket nedenfor for at gøre din betaling via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:38:48).

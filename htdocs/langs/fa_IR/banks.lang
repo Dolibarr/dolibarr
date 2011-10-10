@@ -158,3 +158,14 @@ TransactionWithOtherAccount=تحويل الحساب
 // Reference language: en_US
 BankAccountCountry=حساب البلاد
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:16).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fa_IR
+RIBControlError=کنترل یکپارچگی از ارزش ها با شکست مواجه. این به این معنی است که اطلاعات برای این شماره حساب کامل و یا غلط نیست (بررسی کشور ، اعداد و IBAN).
+WithdrawalPayment=پرداخت برداشت
+ShowCheckReceipt=نمایش بررسی رسید سپرده.
+Graph=گرافیک
+FutureTransaction=معامله در futur. هیچ راهی برای ساکت کردن.
+SelectChequeTransactionAndGenerate=انتخاب / فیلتر چک به وصول چک سپرده باشد و بر روی &quot;ایجاد&quot; را کلیک کنید.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:42:16).

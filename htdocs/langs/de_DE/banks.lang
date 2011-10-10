@@ -145,3 +145,9 @@ AllAccounts=Alle Finanzkonten
 BackToAccount=Zurück zum Konto
 ShowAllAccounts=Alle Finanzkonten
 BankAccountCountry=Bankkonto Land
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+WithdrawalPayment=Widerrufsrecht Zahlung
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:41:37).

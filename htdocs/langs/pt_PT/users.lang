@@ -119,3 +119,11 @@ Inherited=Herdado
 YourRole=Seus papéis
 YourQuotaOfUsersIsReached=Seu contingente de usuários ativos é atingida!
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:34).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pt_PT
+AdministratorDesc=Entidade administrador
+UserWillBeInternalUser=Usuário será criado um usuário interno (porque não ligada a um determinado partido terceiros)
+UserWillBeExternalUser=Usuário será criado um usuário externo (porque ligado a um terceiro determinado)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:49:10).

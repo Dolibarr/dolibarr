@@ -50,11 +50,6 @@ WarningInstallDirExists=Varning, installera katalog <b>(htdocs / install)</b> fo
 WarningUntilDirRemoved=Alla säkerhetsvarningar (synlig av admin-användare) förblir aktiv så länge sårbarheten är närvarande (eller att konstant MAIN_REMOVE_INSTALL_WARNING läggs i Start-&gt; Other Setup).
 PredefinedMailTest=Detta är en test post. \ NDet två linjerna är åtskilda av en vagnretur.
 PredefinedMailTestHtml=Detta är en <b>test</b> post (ordet Provningen skall i fetstil). <br> De två linjerna är åtskilda av en vagnretur.
-PredefinedMailContentSendInvoice=Här finner du en faktura __FACREF__ \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceReminder=Vi vill varna er om att fakturan __FACREF__ verkar inte betalt. Så detta är fakturan i bilagan igen, som en påminnelse. \ N \ nSincerely \ n \ n
-PredefinedMailContentSendProposal=Här finner du den kommersiella propoal n __PROPREF__ \ \ nSincerely \ n \ n
-PredefinedMailContentSendOrder=Hittar du här ordern __ORDERREF__ \ n \ nSincerely \ n \ n
-PredefinedMailContentSendSupplierOrder=Här hittar du vårt syfte __ORDERREF__ \ n \ nSincerely \ n \ n
 DemoDesc=Dolibarr är en kompakt ERP / CRM består av flera funktionella moduler. En demo som inkluderar alla moduler inte betyder något som detta inträffar aldrig. Så, flera demo profiler finns tillgängliga.
 ChooseYourDemoProfil=Välj demo profil som matchar din aktivitet ...
 DemoFundation=Hantera medlemmar av en stiftelse
@@ -200,3 +195,34 @@ ToExport=Export
 NewExport=Nya exportmöjligheter
 ExternalSites=Externa webbplatser
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:13:55).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+ToolsDesc=Detta område är avsedd för gruppen diverse verktyg som inte finns i andra menyposter. <br><br> Dessa verktyg kan nås från menyn på sidan.
+Notify_WITHDRAW_TRANSMIT=Överföring tillbakadragande
+Notify_WITHDRAW_CREDIT=Credit tillbakadragande
+Notify_WITHDRAW_EMIT=Isue tillbakadragande
+Notify_ORDER_SENTBYMAIL=Kundorder skickas per post
+Notify_COMPANY_CREATE=Tredje part som skapats
+Notify_ORDER_SUPPLIER_VALIDATE=Leverantör för validerade
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Leverantör beställning skickas per post
+Notify_BILL_SUPPLIER_VALIDATE=Leverantörsfaktura validerade
+Notify_BILL_SUPPLIER_PAYED=Leverantörsfaktura betalas
+Notify_BILL_SUPPLIER_SENTBYMAIL=Leverantör faktura skickas per post
+Notify_CONTRACT_VALIDATE=Kontrakt validerade
+Notify_FICHEINTER_VALIDATE=Intervention validerade
+Notify_SHIPPING_VALIDATE=Frakt validerade
+Notify_SHIPPING_SENTBYMAIL=Leverans skickas per post
+Notify_MEMBER_VALIDATE=Medlem validerade
+Top=Topp
+Bottom=Botten
+Left=Vänster
+Right=Höger
+ThisIsListOfModules=Detta är en lista över moduler förvalda genom denna demo profil (endast vanligaste modulerna är synas i denna demo). Redigera den här att ha en mer personlig demo och klicka på &quot;Start&quot;.
+ClickHere=Klicka här
+UseAdvancedPerms=Använd den avancerade behörigheter för vissa moduler
+FileFormat=Filformat
+SelectAColor=Välj en färg
+AddFiles=Lägg till filer
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:08:05).

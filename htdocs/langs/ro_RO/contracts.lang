@@ -111,3 +111,9 @@ ExpiredSince=Data expirării
 // Reference language: en_US
 RelatedContracts=contracte conexe
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:11).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ro_RO
+Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON constanta nu a fost definit
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:16:44).
