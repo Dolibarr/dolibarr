@@ -1,66 +1,70 @@
-# Dolibarr language file - nl_NL - sendings
-CHARSET=UTF-8
-RefSending=Referentie verzending
-Sending=Verzending
-Sendings=Verzendingen
-Receivings=Ontvangsten
-SendingsArea=Verzendingen gedeelte
-ListOfSendings=Verzendlijst
-SendingMethod=Verzendmethode
-SendingReceipt=Pakbon
-LastSendings=Laatste %s verzendingen
-SearchASending=Zoek een zending
-StatisticsOfSendings=Statistieken van verzendingen
-NbOfSendings=Aantal zendingen
-SendingCard=Verzendbon
-NewSending=Nieuwe verzending
-CreateASending=Maak een verzending
-CreateSending=Maak verzending
-QtyOrdered=Aantal bestellingen
-QtyShipped=Aantal verzonden
-QtyToShip=Aantal Verzendklaar
-QtyReceived=Aantal ontvangen
-KeepToShip=Houd verzendklaar
-OtherSendingsForSameOrder=Andere verzendingen voor deze bestelling
-DateSending=Datum versturing bestelling
-DateSendingShort=Datum versturing bestelling
-SendingsForSameOrder=Verzendingen voor deze bestelling
-SendingsAndReceivingForSameOrder=Verzendingen en ontvangsten voor deze bestelling
-SendingsToValidate=Valideer verzending
-StatusSendingCanceled=Geannuleerd
-StatusSendingDraft=Ontwerp
-StatusSendingValidated=Gevalideerd (producten te versturen of reeds verzonden)
-StatusSendingCanceledShort=Geannuleerd
-StatusSendingDraftShort=Ontwerp
-StatusSendingValidatedShort=Gevalideerd
-SendingSheet=Verzendbrief
-Carriers=Vervoerders
-Carrier=Vervoerder
-CarriersArea=Vervoerders gebied
-NewCarrier=Nieuwe vervoerder
-ConfirmDeleteSending=Weet u zeker dat u deze zending wilt verwijderen?
-ConfirmValidateSending=Weet u zeker dat u deze zending wilt valideren?
-ConfirmCancelSending=Weet u zeker dat u wilt annuleren dit sturen?
-GenericTransport=Generiek vervoer
-Enlevement=Afhalen door klant
-DocumentModelSimple=Eenvoudig document model
-WarningNoQtyLeftToSend=Waarschuwing, geen producten in afwachting van de levering.
-StatsOnShipmentsOnlyValidated=Statistieken uitgevoerd alleen betreffende de gevalideerde versturing
+# Dolibarr language file - nl_NL - sendings = 
+CHARSET = UTF-8
+RefSending = Referentie verzending
+Sending = Verzending
+Sendings = Verzendingen
+Shipments = Verzendingen
+Receivings = Ontvangsten
+SendingsArea = Zendingenoverzicht
+ListOfSendings = Verzendlijst
+SendingMethod = Verzendwijze
+SendingReceipt = Pakbon
+LastSendings = Laatste %s verzendingen
+SearchASending = Zoek een zending
+StatisticsOfSendings = Verzendingsstatistieken
+NbOfSendings = Aantal zendingen
+SendingCard = Verzendbon
+NewSending = Nieuwe verzending
+CreateASending = Creëer een verzending
+CreateSending = Creëer verzending
+QtyOrdered = Hoeveelheid besteld
+QtyShipped = Hoeveelheid verzonden
+QtyToShip = Hoeveelheid te verzenden
+QtyReceived = Hoeveelheid ontvangen
+KeepToShip = Houd verzendklaar
+OtherSendingsForSameOrder = Andere verzendingen voor deze opdracht
+DateSending = Datum versturing opdracht
+DateSendingShort = Datum versturing opdracht
+SendingsForSameOrder = Verzendingen voor deze opdracht
+SendingsAndReceivingForSameOrder = Verzendingen en ontvangsten voor deze opdracht
+SendingsToValidate = Te valideren verzendingen
+StatusSendingCanceled = Geannuleerd
+StatusSendingDraft = Concept
+StatusSendingValidated = Gevalideerd (producten te verzenden of reeds verzonden)
+StatusSendingCanceledShort = Geannuleerd
+StatusSendingDraftShort = Concept
+StatusSendingValidatedShort = Gevalideerd
+SendingSheet = Verzendbrief
+Carriers = Vervoerders
+Carrier = Vervoerder
+CarriersArea = verzendersoverzicht
+NewCarrier = Nieuwe vervoerder
+ConfirmDeleteSending = Weet u zeker dat u deze zending wilt verwijderen?
+ConfirmValidateSending = Weet u zeker dat u deze zending wilt valideren?
+ConfirmCancelSending = Weet u zeker dat u deze verzending wilt annuleren?
+GenericTransport = Generiek vervoer
+Enlevement = Afhalen door afnemer
+DocumentModelSimple = Eenvoudig documentmodel
+DocumentModelMerou = Merou A5 model
+WarningNoQtyLeftToSend = Waarschuwing, geen producten die op verzending wachten.
+StatsOnShipmentsOnlyValidated = Statistieken enkel uitgevoerd op gevalideerde verzendingen
+DateDeliveryPlanned = Geplande leveringsdatum
+DateReceived = Datum leveringsonvangst
+# Sending methods = undefined
+SendingMethodCATCH = Afhalen door de afnemer
+SendingMethodTRANS = Vervoerder
+SendingMethodCOLSUI = Colissimo
+# ModelDocument = undefined
+DocumentModelSirocco = Eenvoudig leveringsbewijs documentmodel
+DocumentModelTyphon = Completer leveringsbewijs documentmodel (logo, etc)
 
-# Sending methods
-SendingMethodCATCH=Verwijdering door de klant
-SendingMethodTRANS=Vervoerder
-SendingMethodCOLSUI=Colissimo
 
-# ModelDocument
-DocumentModelSirocco=Voorbeeld voor eenvoudige ontvangstbewijs
-DocumentModelTyphon=Model ontvangstbewijs volledige levering (logo...)
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:02:42).
 // Reference language: en_US -> nl_NL
-Shipments=Zendingen
-DocumentModelMerou=Merou A5 model
-DateDeliveryPlanned=Geschaafd datum van levering
-DateReceived=Datum van aflevering ontvangen
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:25).
+ShipmentCreationIsDoneFromOrder=Op dit moment, is oprichting van een nieuwe zending gedaan van de volgorde kaart.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER niet gedefinieerd
+SendShippingByEMail=Stuur verzending per e-mail
+SendShippingRef=Stuur scheepvaart sssss
+ActionsOnShipping=Acions op verzendkosten
+LinkToTrackYourPackage=Link naar uw pakket
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:38:39).

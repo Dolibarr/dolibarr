@@ -1,75 +1,105 @@
 # Dolibarr language file - nl_NL - errors
-CHARSET=UTF-8
-MenuManager=Menu manager
-Error=Fout
-Errors=Fouten
-ErrorBadEMail=Ongeldige e-mail %s
-ErrorBadUrl=Ongeldige Url %s
-ErrorLoginAlreadyExists=Inlog %s bestaat reeds.
-ErrorGroupAlreadyExists=Groep %s bestaat reeds.
-ErrorRecordNotFound=Record niet gevonden.
-ErrorFailToCreateFile=Mislukt om het bestand '<b>%s</b>' te maken.
-ErrorFailToDeleteFile=Bestand '<b>%s</b>' mislukt te verwijderen.
-ErrorFailToRenameDir=Mislukt om de map '<b>%s</b>' en '<b>%s</b>' te hernoemen.
-ErrorFailToCreateDir=CreÃ«ren van de map '<b>%s</b>' mislukt.
-ErrorFailToDeleteDir=Verwijderen van de map '<b>%s</b>' mislukt.
-ErrorFailedToDeleteJoinedFiles=Kan entiteit niet verwijderen want er zijn bijlagen. Eerst de bijlagen verwijderen.
-ErrorThisContactIsAlreadyDefinedAsThisType=Dit contact is al omschreven als een contactpersoon voor dit type.
-ErrorCashAccountAcceptsOnlyCashMoney=Deze bankrekening is als contant geld en accepteert alleen de wijze van betaling van deze soorten
-ErrorFromToAccountsMustDiffers=De bron en de bestemmings rekening moet verschillend zijn.
-ErrorBadThirdPartyName=Onjuiste waarde voor derden naam
-ErrorBadCustomerCodeSyntax=Verkeerde syntaxis voor klantcode
-ErrorCustomerCodeRequired=Klantcode nodig
-ErrorCustomerCodeAlreadyUsed=Klantcode al gebruikt
-ErrorPrefixRequired=Prefix nodig
-ErrorUrlNotValid=Het adres van de website is onjuist
-ErrorBadSupplierCodeSyntax=verkeerde syntaxis voor Leverancier code
-ErrorSupplierCodeRequired=Leverancierscode nodig
-ErrorSupplierCodeAlreadyUsed=Leverancierscode al gebruikt
-ErrorBadParameters=Verkeerde parameters
-ErrorFailedToWriteInDir=Schrijven in de map %s mislukt
-ErrorFoundBadEmailInFile=Onjuist e-syntax gevonen voor %s-regels in het bestand (bijvoorbeeld regel %s met email=%s)
-ErrorUserCannotBeDelete=Gebruiker kan niet worden verwijderd. Misschien is het gekoppeld aan Dolibarr entiteiten.
-ErrorFieldsRequired=Enkele verplichte velden zijn niet ingevuld.
-ErrorFailedToCreateDir=CreÃ«ren van een map mislukt. Controleer of de Web server gebruiker toestemming heeft om te schrijven in Dolibarr documentenmap (dolibarrdata). Als de parameter <b>safe_mode</b> is ingeschakeld, controleren dat de Dolibarr php bestands eigenaar de web server gebruiker (of groep) is.
-ErrorNoMailDefinedForThisUser=Geen mail gedefinieerd voor deze gebruiker
-ErrorFeatureNeedJavascript=Voor deze functie moet javascript geactiveerd zijn. Verander dit in het setup - scherm.
-ErrorTopMenuMustHaveAParentWithId0=Een menu van het type 'Top' kan niet beschikken over een ouder menu. Leg 0 bij de ouders menu of kiezen uit een menu van het type 'Left'.
-ErrorLeftMenuMustHaveAParentId=Een menu van het type 'Left' moeten een ouder id hebben.
-ErrorFileNotFound=Bestand niet gevonden (Verkeerd pad, verkeerde permissies of toegang geweigerd door openbasedir parameter)
-ErrorDirNotFound=Map <b>%s</b> niet gevonden (Verkeerd pad, te weinig rechten of toegang gewijgerd door PHP openbasedir of safe_mode parameter)
-ErrorFunctionNotAvailableInPHP=<b>Functie %s</b> is vereist voor deze functie, maar is niet beschikbaar in deze versie / setup van PHP.
-ErrorDirAlreadyExists=Een map met deze naam al bestaat.
-ErrorFieldCanNotContainSpecialCharacters=<b>Veld %s</b> mag geen speciale tekens bevat.
-WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> moet ingesteld zijn op <b>aan</b> in het <b>php.ini</b> bestand, voordat deze module volledig werkt. U moet dit bestand handmatig te wijzigen.
-WarningBuildScriptNotRunned=Het <b>Script %s</b> is nog niet is ingevoerd om grafieken te genereren, of er kunnen geen gegevens worden tonen.
-WarningBookmarkAlreadyExists=Een weblink met deze titel of deze doelgroep (URL) bestaat al.
-WarningPassIsEmpty=Waarschuwing, het database wachtwoord is leeg. Dit is een lek in de beveiliging. U moeteen wachtwoord voor uw database gebruiken en uw conf.php bestand gebruikt dit.
-ErrorNoAccountancyModuleLoaded=Nr. Boekhoudingsmodule geactiveerd
-ErrorExportDuplicateProfil=Deze profiel naam bestaat al voor deze export zending.
-ErrorLDAPSetupNotComplete=Dolibarr LDAP-setup is niet compleet.
-ErrorLDAPMakeManualTest=Een .Ldif bestand is gegenereerd in de map %s. Probeert dit handmatig te laden vanuit een opdrachtregel om meer informatie over fouten te verkrijgen.
-ErrorCantSaveADoneUserWithZeroPercentage=Kan status van een actie niet opslaan als een gebruiker nog niet ermee is begonnen.
-ErrorRefAlreadyExists=De referentie gebruikt voor het maken bestaat al
-ErrorPleaseTypeBankTransactionReportName=Vul de naam van een bankafschrift waarop de transactie wordt gemeld (Formaat YYYYMM of JJJJMMDD)
-ErrorRecordHasChildren=Verwijderen records mislukt, omdat er nog onderliggende records zijn.
-WarningConfFileMustBeReadOnly=Pas op, uw configuratie bestand (</b>htdocs/conf/conf.php</b>) is schrijfbaar voor de webserver. Dit vormt een ernstig veiligheidslek. Wijzig de permissies naar alleen-lezen voor de account van de webserver. <br> Als u Windows draait op een harde schijf met een FAT-formaat, dient u zich ervan bewust te zijn dat dit bestandssysteem geen bescherming aan bestanden en biedt daarom geen oplossing voor vermindering van de risico's van het omgaan met dit dossier.
-ErrorModuleRequireJavascript=Javascript niet moet voor deze functie ingeschakeld zijn. Schakel dit in uw browser in.
-ErrorPasswordsMustMatch=De twee ingevoerde wachtwoorden komen niet overeen.
-ErrorContactEMail=Er is een techinische fout opgetreden. Gelieve de administrator te waarschuwen via e-mail <b>%s</b> en vermeld de volgende foutcode <b>%s</b> of voeg een schermafbeelding van de pagina toe.
-ErrorWrongValueForField=Slecht voor het aantal <b>%s</b> (waarde <b>%s</b> voldoet niet aan de regel <b>%s</b>)
-ErrorsOnXLines=Fouten op bronregel <b>%s</b>
-WarningsOnXLines=Waarschuwing op bronregel <b>%s</b>
-ErrorFileIsInfectedWithAVirus=Het antivirus kon dit bestand niet valideren (het waarschijnlijk is geÃ¯nfecteerd door een virus)!
-ErrorSpecialCharNotAllowedForField=Speciale tekens zijn niet teogestaan voor het " %s " gebied 
-WarningNoDocumentModelActivated=Geen model, voor het maken van het document, is geactiveerd. Een model wordt gekozen tot standaard worden, totdat de module configuratie is gecontroleert.
-ErrorFileAlreadyExists=Een bestand met deze naam bestaat reeds.
-ErrorPartialFile=Het bestand is niet volledig ontvangen door de server.
-ErrorNoTmpDir=Tijdelijke directy sssss bestaat niet.
-ErrorUploadBlockedByAddon=Upload geblokkeerd door een PHP / Apache-plugin.
-ErrorFileSizeTooLarge=Bestand is te groot.
-WarningSafeModeOnCheckExecDir=Waarschuwing, optie PHP <b>safe_mode</b> is op zo-opdracht moet worden opgeslagen in een directory verklaard door php parameter <b>safe_mode_exec_dir.</b>
-ErrorDatabaseParameterWrong=Database Setup parameter <b>&#39;sssss&#39;</b> heeft een waarde van niet compatibel is met het gebruik Dolibarr (waarde moet hebben <b>sssss</b> &#39;).
-ErrorNumRefModel=Een verwijzing in de database bestaat (sssss) en is niet compatibel met deze regel nummering. Verwijder record of een andere naam een verwijzing naar het activeren van deze module.
-ErrorQtyTooLowForThisSupplier=Hoeveelheid te laag voor deze leverancier of geen prijs die over dit product voor deze leverancier
-ErrorFailedToSendPassword=Wachtwoord verzenden mislukt
+CHARSET = UTF-8
+MenuManager = Menubeheer
+Error = Fout
+Errors = Fouten
+ErrorBadEMail = Ongeldige e-mail %s
+ErrorBadUrl = Ongeldige Url %s
+ErrorLoginAlreadyExists = Inlog %s bestaat reeds.
+ErrorGroupAlreadyExists = Groep %s bestaat reeds.
+ErrorRecordNotFound = Tabelregel niet gevonden.
+ErrorDuplicateTrigger = Een bestand van de categorie '<b>%s</b>' bestaat meerdere keren. Verwijder dit dubbele bestand uit de map '<b>%s</b>'.
+ErrorFailToRenameFile = Kon het bestand '<b>%s</b>' niet hernoemen naar '<b>%s</b>'.
+ErrorFailToCreateFile = Creëren van het bestand '<b>%s</b>' mislukt.
+ErrorFailToDeleteFile = Kon het bestand '<b>%s</b>' niet verwijderen.
+ErrorFailToRenameDir = De map '<b>%s</b>' kon niet hernoemd worden naar '<b>%s</b>'.
+ErrorFailToCreateDir = Creëren van de map '<b>%s</b>' mislukt.
+ErrorFailToDeleteDir = Verwijderen van de map '<b>%s</b>' mislukt.
+ErrorFailedToDeleteJoinedFiles = Kan de entiteit niet verwijderen want er zijn bijlagen. Verwijderen eerst de bijlagen.
+ErrorThisContactIsAlreadyDefinedAsThisType = Deze contactpersoon is al ingesteld als een contactpersoon voor dit type.
+ErrorCashAccountAcceptsOnlyCashMoney = Dit is een kasrekening, dus deze accepteert alleen betalingen van het type kas.
+ErrorFromToAccountsMustDiffers = De bron- en doelrekening mogen niet dezelfde zijn.
+ErrorBadThirdPartyName = Onjuiste waarde voor naam derde partij
+ErrorBadCustomerCodeSyntax = Verkeerde syntaxis voor afnemerscode
+ErrorCustomerCodeRequired = Afnemerscode nodig
+ErrorCustomerCodeAlreadyUsed = Afnemerscode al gebruikt
+ErrorPrefixRequired = Voorvoegsel vereist
+ErrorUrlNotValid = Het websiteadres is onjuist
+ErrorBadSupplierCodeSyntax = verkeerde syntaxis voor Leverancierscode
+ErrorSupplierCodeRequired = Leverancierscode vereist
+ErrorSupplierCodeAlreadyUsed = Leverancierscode al gebruikt
+ErrorBadParameters = Verkeerde parameters
+ErrorFailedToWriteInDir = Schrijven in de map %s mislukt
+ErrorFoundBadEmailInFile = Onjuist e-mail syntax gevonden voor %s regels in het bestand (bijvoorbeeld regel %s met email=%s)
+ErrorUserCannotBeDelete = Gebruiker kan niet worden verwijderd. Misschien is het gekoppeld aan Dolibarr entiteiten.
+ErrorFieldsRequired = Enkele verplichte velden zijn niet ingevuld.
+ErrorFailedToCreateDir = Creëren van een map mislukt. Controleer of de Webservergebruiker toestemming heeft om te schrijven in Dolibarr documentenmap. Wanneer de parameter <b>safe_mode</b> is ingeschakeld in PHP, controleer dan dat de Dolibarr php bestanden eigendom zijn van de de webserve gebruiker (of groep).
+ErrorNoMailDefinedForThisUser = Geen e-mailadres ingesteld voor deze gebruiker
+ErrorFeatureNeedJavascript = Voor deze functie moet Javascript geactiveerd zijn. Verander dit in het Instellingen - scherm.
+ErrorTopMenuMustHaveAParentWithId0 = Een menu van het type 'Top' kan niet beschikken over een bovenliggend menu. Stel 0 in in het 'Top' menu of kies een menu van het type  'Left'.
+ErrorLeftMenuMustHaveAParentId = Een menu van het type 'Left' moeten een id van een bovenliggend menu hebben.
+ErrorFileNotFound = Bestand <b>%s</b> niet gevonden (Verkeerd pad, onvoldoende rechten of toegang geweigerd door de PHP openbasedir of safe_mode instellingen)
+ErrorDirNotFound = Map <b>%s</b> niet gevonden (Verkeerd pad, te weinig rechten of toegang geweigerd door de PHP openbasedir of safe_mode instellingen)
+ErrorFunctionNotAvailableInPHP = Functie <b>%s</b> is vereist voor deze functionaliteit, maar is niet beschikbaar in deze versie / installatie van PHP.
+ErrorDirAlreadyExists = Er bestaat al een map met deze naam.
+ErrorFileAlreadyExists = Er bestaat al een bestand met deze naam.
+ErrorPartialFile = Het bestand is niet volledig ontvangen door de server.
+ErrorNoTmpDir = Tijdelijke map %s bestaat niet.
+ErrorUploadBlockedByAddon = Upload geblokkeerd door een PHP- en / of Apache-plugin.
+ErrorFileSizeTooLarge = Bestand is te groot.
+ErrorFieldCanNotContainSpecialCharacters = Veld <b>%s</b> mag geen speciale tekens bevat.
+WarningSafeModeOnCheckExecDir = Waarschuwing, de instelling <b>safe_mode</b> van PHP staat aan daarom moet het commando opgeslagen worden in een map die gedeclareerd is door de PHP instelling <b>safe_mode_exec_dir.</b>
+WarningAllowUrlFopenMustBeOn = De PHP-instelling <b>allow_url_fopen</b> moet ingesteld zijn op <b>aan</b> in het <b>php.ini</b> bestand, voordat deze module volledig werkt. U dient dit bestand handmatig wijzigen.
+WarningBuildScriptNotRunned = Het script <b>%s</b> is nog niet uitgevoerd om grafieken te genereren, of er zijn geen gegevens om te tonen.
+WarningBookmarkAlreadyExists = Een weblink met deze titel of dit doel (URL) bestaat al.
+WarningPassIsEmpty = Waarschuwing, het databasewachtwoord is leeg. Dit is een lek in de beveiliging. U dient een wachtwoord aan uw database toe te voegen en deze wijziging in uw conf.php te verwerken.
+ErrorNoAccountancyModuleLoaded = Geen boekhoudingsmodule geactiveerd
+ErrorExportDuplicateProfil = Deze profielnaam bestaat al voor deze exportgroep.
+ErrorLDAPSetupNotComplete = De Dolibarr-LDAP installatie is niet compleet.
+ErrorLDAPMakeManualTest = Een .ldif bestand is gegenereerd in de map %s. Probeer het handmatig te laden vanuit een opdrachtregel om meer informatie over fouten te verkrijgen.
+ErrorCantSaveADoneUserWithZeroPercentage = Kan een actie met de status "Nog niet gestart" niet opslaan als het veld "door" niet ook gevuld is.
+ErrorRefAlreadyExists = De referentie gebruikt voor het maken bestaat al
+ErrorPleaseTypeBankTransactionReportName = Vul a.u.b. de naam in van een bankafschrift waarop de transactie wordt gemeld (Formaat YYYYMM of JJJJMMDD)
+ErrorRecordHasChildren = Verwijderen van tabelregels mislukt, omdat er nog onderliggende tabelregels zijn.
+WarningConfFileMustBeReadOnly = Pas op, uw configuratiebestand (</b>htdocs/conf/conf.php</b>) is schrijfbaar voor de webserver. Dit vormt een ernstig veiligheidslek. Wijzig de rechten naar alleen-lezen voor de account van de webserver. Als u Windows draait op een harde schijf met een FAT-formaat, dient u zich ervan bewust te zijn dat dit bestandssysteem geen rechten van bestanden kan toevoegen en daarom niet compleet veilig kan zijn.
+ErrorModuleRequireJavascript = Javascript dient niet uitgeschakeld te zijn voor deze functionaliteit. Om Javascript aan of uit te zetten gaat u naar het menu Home->instellingen->Scherm
+ErrorPasswordsMustMatch = De twee ingevoerde wachtwoorden komen niet overeen.
+ErrorContactEMail = Er is een technische fout opgetreden. Neemt u alstublieft contact op met de beheerder via het e-mailadres <b>%s</b> en vermeld de volgende foutcode <b>%s</b> in uw bericht, of nog beter voeg een schermafbeelding van de pagina toe.
+ErrorWrongValueForField = Foutiefe waarde voor het veld nummer <b>%s</b> (waarde <b>%s</b> voldoet niet aan de reguliere expressieregel <b>%s</b>)
+ErrorFieldValueNotIn = Verkeerde waarde voor het veld nummer <b>%s</b> (Waarde '<b>%s</b>' is geen waarde beschikbaar in het veld <b>%s</b> van de tabel <b>%s</b>)
+ErrorsOnXLines = Fouten op bronregels <b>%s</b>
+WarningsOnXLines = Waarschuwing op bronregels <b>%s</b>
+ErrorFileIsInfectedWithAVirus = Het antivirusprogramma kon dit bestand niet valideren (het zou met een virus geïnfecteerd kunnen zijn)
+ErrorSpecialCharNotAllowedForField = Speciale tekens zijn niet toegestaan in het veld " %s"
+WarningNoDocumentModelActivated = Er is geen model geactiveerd voor het maken van documenten. Er wordt een standaard model gekozen totdat u uw module instellingen heeft gecontroleerd / aangepast.
+ErrorDatabaseParameterWrong = Database instelling <b>%s</b> heeft een waarde die niet compatibel is met het gebruik Dolibarr (moet de waarde '<b>%s</b>' hebben).
+ErrorNumRefModel = Er bestaat een verwijzing in de database (%s) en deze is niet compatibel met deze nummeringsregel. Verwijder de tabelregel of hernoem de verwijzing om deze module te activeren.
+ErrorQtyTooLowForThisSupplier = Hoeveelheid te laag voor deze leverancier of geen prijs ingesteld voor dit product voor deze leverancier
+ErrorModuleSetupNotComplete = De installatie van de module lijkt incompleet te zijn. Ga naar Home->instellingen->moduleinstellingen om de intallatie te voltooien.
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 01:37:25).
+// Reference language: en_US -> nl_NL
+ErrorBadValueForParameter=Verkeerde waarde &#39;sssss&#39; voor parameter incorrect &#39;sssss&#39;
+ErrorBadImageFormat=Image-bestand heeft niet een ondersteund formaat
+ErrorBadDateFormat=Waarde &#39;sssss&#39; heeft verkeerde datum formaat
+ErrorBadMask=Fout bij het masker
+ErrorBadMaskFailedToLocatePosOfSequence=Fout, masker zonder het volgnummer
+ErrorBadMaskBadRazMonth=Fout, slechte resetwaarde
+ErrorSelectAtLeastOne=Fout. Kies ten minste een item.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 01:41:58).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 01:44:21).
+// Reference language: en_US -> nl_NL
+ErrorProductWithRefNotExist=Product met referentie <i>&#39;sssss&#39;</i> bestaan ​​niet
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 01:45:28).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
+// Reference language: en_US -> nl_NL
+ErrorDeleteNotPossibleLineIsConsolidated=Verwijderen niet mogelijk, omdat record is gekoppeld aan een bank transation dat is verzoend
+ErrorProdIdAlreadyExist=Sssss is toegewezen aan een derde
+ErrorFailedToSendPassword=Mislukt om het wachtwoord te sturen
+ErrorFailedToLoadRSSFile=Niet in slaagt om RSS feed. Probeer een constante MAIN_SIMPLEXMLLOAD_DEBUG toe te voegen als foutmeldingen niet voldoende informatie.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 01:47:10).
