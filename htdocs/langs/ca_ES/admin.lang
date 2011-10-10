@@ -635,6 +635,7 @@ Permission2515=Configuració carpetes de documents
 Permission8555=Ús del mòdul
 Permission8556=Establir llocs ecommerce
 Permission8557=Importar dades
+Permission50001=Utilitzar TPV
 Permission50201=Consultar les transaccions
 Permission50202=Importar les transaccions
 DictionnaryCompanyType=Tipus d'empresa
