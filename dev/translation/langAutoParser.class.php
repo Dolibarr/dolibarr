@@ -256,7 +256,7 @@ class langAutoParser {
 		curl_setopt($ch, CURLOPT_REFERER, "http://www.YOURWEBSITE.com");
 		$body = curl_exec($ch);
 		curl_close($ch);
-
+sleep(6);
 		// now, process the JSON string
 		$json = json_decode($body, true);
 

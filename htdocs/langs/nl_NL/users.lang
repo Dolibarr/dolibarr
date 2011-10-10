@@ -1,4 +1,4 @@
-# Dolibarr language file - nl_NL - users = 
+# Dolibarr language file - nl_NL - users
 CHARSET = UTF-8
 UserCard = Gebruikersdetails
 ContactCard = Contactdetails
