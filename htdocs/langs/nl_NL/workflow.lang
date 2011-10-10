@@ -1,0 +1,17 @@
+/*
+ * Language code: nl_NL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 01:37:25
+ */
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 01:37:25).
+// Reference language: en_US -> nl_NL
+CHARSET=UTF-8
+WorkflowSetup=Workflow module setup
+WorkflowDesc=Deze module is desinged om het gedrag van automatische acties die passen in de applicatie. Is standaard workflow geopend (je ding in volgorde die u wilt). Je kan ingeschakeld automatische acties die u interessant inch
+ThereIsNoWorkflowToModify=Er is geen workflow die u kunt aanpassen aan je module hebt geactiveerd.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatisch een bestelling van de klant na een commerciële voorstel is ondertekend
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatisch een factuur klant na een commerciële voorstel is ondertekend
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatisch een factuur nadat de klant een contract is gevalideerd
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatisch een factuur klant na een bestelling van de klant wordt gesloten
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:04:05).

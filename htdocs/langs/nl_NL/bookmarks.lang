@@ -1,5 +1,5 @@
 # Dolibarr language file - nl_NL - marque pages
 CHARSET=UTF-8
-Bookm=Weblinks
-NewBookmark=Nieuwe weblink
-AddThisPageToBookmarks=Voeg deze webpagina toe aan de weblinks
+Bookm=internetfavorieten
+NewBookmark=Nieuwe internetfavoriet
+AddThisPageToBookmarks=Voeg deze webpagina toe aan de internetfavorieten
