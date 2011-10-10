@@ -19,8 +19,14 @@ PAYPAL_API_PASSWORD=API κωδικό πρόσβασης
 PAYPAL_API_SIGNATURE=API υπογραφή
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Προσφορά πληρωμής &quot;αναπόσπαστο&quot; (Πιστωτική κάρτα + Paypal) ή &quot;Paypal&quot; μόνο
 PAYPAL_CSS_URL=Optionnal url του φύλλου στυλ CSS στη σελίδα πληρωμής
-ThisIsTransactionId=Αυτό είναι id της συναλλαγής: <b>sssss</b>
+ThisIsTransactionId=Αυτό είναι id της συναλλαγής: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Προσθέστε το url του Paypal πληρωμής όταν στέλνετε ένα έγγραφο με το ταχυδρομείο
 PredefinedMailContentSendOrderWithPaypalLink=Θα βρείτε εδώ τη σειρά __ORDERREF__ \ n \ nΜπορείτε να κάνετε κλικ στο ασφαλές παρακάτω σύνδεσμο για να κάνετε την πληρωμή σας μέσω PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 PredefinedMailContentSendInvoiceWithPaypalLink=Θα βρείτε εδώ το τιμολόγιο __FACREF__ \ n \ nΜπορείτε να κάνετε κλικ στο ασφαλές παρακάτω σύνδεσμο για να κάνετε την πληρωμή σας μέσω PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:35:33).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> el_GR
+PAYPAL_IPN_MAIL_ADDRESS=Διεύθυνση ηλεκτρονικού ταχυδρομείου για την άμεση κοινοποίηση της πληρωμής (IPN)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:42:19).

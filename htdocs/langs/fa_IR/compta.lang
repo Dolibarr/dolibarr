@@ -138,3 +138,16 @@ VATReportBuildWithOptionDefinedInModule=المبالغ المبينة هنا ي�
 SocialContributionsPayments=المساهمات الاجتماعية المدفوعات
 ThirdPartyMustBeEditAsCustomer=ويجب تحديد الطرف الثالث كزبون
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:37).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fa_IR
+RemainingAmountPayment=پرداخت مبلغ باقیمانده :
+AmountToBeCharged=کل مبلغ پرداخت :
+ProposalStats=آمار در مورد پیشنهادها
+OrderStats=آمار به دستور
+InvoiceStats=آمار در صورتحساب
+AddRemind=اعزام مقدار موجود
+RemainToDivide=باقی مانده اند که اعزام :
+WarningDepositsNotIncluded=پول واریز کردن فاکتورها در این نسخه با این ماژول حسابداری گنجانده شده است.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:41:58).

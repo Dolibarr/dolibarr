@@ -197,3 +197,11 @@ MigrationProjectTaskActors=Datenmigration für llx_projet_task_actors Tabelle
 MigrationProjectUserResp=Datenmigration des Feldes fk_user_resp von llx_projet nach llx_element_contact
 MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
 MigrationNotFinished=Ihre Datenbankversion ist nicht auf dem neuesten Stand, bitte wiederholen Sie den Aktualisierungsvorgang.
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_AT
+MigrationFinished=Migration abgeschlossen
+LastStepDesc=<strong>Letzter Schritt:</strong> Legen Sie hier Benutzernamen und Passwort, die Sie verwenden möchten, um Software zu verbinden. Verlieren Sie ihn nicht, wie es das Konto für alle anderen zu verwalten ist.
+MigrationActioncommElement=Update-Daten über die Maßnahmen
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:40:16).

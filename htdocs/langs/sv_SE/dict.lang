@@ -292,3 +292,12 @@ CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=Fiskeripolitiken franc
 CurrencySingXPF=CFP-franc
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:55:04).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
+DemandReasonTypeSRC_COMM=Kommersiella kontakt
+DemandReasonTypeSRC_SHOP=Handla kontakt
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:25:09).

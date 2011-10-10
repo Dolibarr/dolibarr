@@ -50,10 +50,6 @@ WarningInstallDirExists=Aðvörun, setja í embætti skrá <b>(htdocs / setja í
 WarningUntilDirRemoved=Öll öryggi viðvaranir (sýnileg notendum admin eingöngu) verða áfram virkur eins lengi og varnarleysi er til staðar (eða þessi fasti MAIN_REMOVE_INSTALL_WARNING er bætt í Uppsetning-> Annað skipulag).
 PredefinedMailTest=Þetta er prófun póst. \ NThe tvær línur eru aðskilin með vagn til baka.
 PredefinedMailTestHtml=Þetta er <b>prófun</b> póstur (orðið próf verður feitletruð). <br> Þessar tvær línur eru aðskilin með vagn til baka.
-PredefinedMailContentSendInvoice=Þú vilja finna hér á kvittuninni __FACREF__ \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceReminder=Við viljum vara þig við því að reikningur __FACREF__ virðist ekki vera borgað. Þannig að þetta er reikningur í viðhengi aftur, eins og áminning. \ N \ nSincerely \ n \ n
-PredefinedMailContentSendProposal=Þú vilja finna hér auglýsing propoal __PROPREF__ \ n \ nSincerely \ n \ n
-PredefinedMailContentSendOrder=Þú vilja finna hér til __ORDERREF__ \ n \ nSincerely \ n \ n
 DemoDesc=Dolibarr er samningur ERP / CRM samanstendur af nokkrum hagnýtur mát. A kynningu sem inniheldur allar einingar þýðir ekki neitt eins og það gerist aldrei. Svo eru nokkrir snið kynningu í boði.
 ChooseYourDemoProfil=Veldu kynningu profil sem passa við starfsemi þína ...
 DemoFundation=Manage meðlimum úr grunni
@@ -215,3 +211,33 @@ SizeUnitinch=tomma
 SizeUnitfoot=fótur
 ImageEditor=Image ritstjóri
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:57).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> is_IS
+ToolsDesc=Þetta svæði er tileinkað hópi ýmissa verkfærum er ekki í boði í öðrum færslum valmyndinni. <br><br> Þeir verkfæri geta verið náð úr valmyndinni til hliðar.
+Notify_WITHDRAW_TRANSMIT=Gírskipting afturköllun
+Notify_WITHDRAW_CREDIT=Credit afturköllun
+Notify_WITHDRAW_EMIT=Isue afturköllun
+Notify_ORDER_SENTBYMAIL=Viðskiptavinur röð send með pósti
+Notify_ORDER_SUPPLIER_VALIDATE=Birgir röð fullgilt
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Birgir röð send með pósti
+Notify_BILL_SUPPLIER_VALIDATE=Birgir reikning fullgilt
+Notify_BILL_SUPPLIER_PAYED=Birgir reikning borgað
+Notify_BILL_SUPPLIER_SENTBYMAIL=Birgir reikningi send með pósti
+Notify_CONTRACT_VALIDATE=Samningur fullgilt
+Notify_FICHEINTER_VALIDATE=Afskipti fullgilt
+Notify_SHIPPING_VALIDATE=Shipping fullgilt
+Notify_SHIPPING_SENTBYMAIL=Shipping send með pósti
+Notify_MEMBER_VALIDATE=Member fullgilt
+PredefinedMailContentSendFichInter=Þú vilja finna hér á afskiptum __FICHINTERREF__ \ n \ nSincerely \ n \ n
+Top=Top
+Bottom=Bottom
+Left=Vinstri
+Right=Hægri
+ThisIsListOfModules=Þetta er listi yfir einingar forvalinn þessi kynningu uppsetningu (aðeins algengustu einingar eru sýnilegar í þessari kynningu). Breyta þessari að hafa meira einstaklingsmiðuð kynningu og smelltu á &quot;Start&quot;.
+ClickHere=Smelltu hér
+UseAdvancedPerms=Notaðu háþróaður heimildir sum mát
+FileFormat=Skráarsnið
+SelectAColor=Veldu lit
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:49:52).

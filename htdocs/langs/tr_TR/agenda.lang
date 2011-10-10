@@ -60,9 +60,9 @@ AgendaHideBirthdayEvents=Sakla doğum rehber
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
 // Reference language: en_US
 InterventionValidatedInDolibarr=Intervensjon %s validert
-InterventionValidatedInDolibarr=Interventie sssss gevalideerd
+InterventionValidatedInDolibarr=Interventie %s gevalideerd
 MenuToDoActions=Wszystkich działań niekompletne
-InterventionValidatedInDolibarr=Sssss interwencji zatwierdzone
+InterventionValidatedInDolibarr=%s interwencji zatwierdzone
 InterventionValidatedInDolibarr=%s Intervenção validado
 MenuToDoActions=Все действия неполным
 InterventionValidatedInDolibarr=Вмешательство %s проверки

@@ -1,0 +1,21 @@
+/*
+ * Language code: ar_SA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+CHARSET=UTF-8
+PaypalSetup=بايبال حدة الإعداد
+PaypalDesc=صفحات تقدم هذه الوحدة للسماح للدفع على <a href="http://www.paypal.com" target="_blank">بال</a> من قبل العملاء. ويمكن استخدام هذا لدفع مجانا أو مقابل دفع Dolibarr على كائن معين (الفاتورة ، والنظام ،...)
+PaypalOrCBDoPayment=الدفع بواسطة بطاقة الائتمان او باي بال
+PaypalDoPayment=مع دفع بايبال
+PaypalCBDoPayment=تدفع بواسطة بطاقة ائتمان
+PAYPAL_API_SANDBOX=وضع الاختبار / رمل
+PAYPAL_ADD_PAYMENT_URL=إضافة رابط الدفع باي بال عند إرسال مستند عبر البريد
+PAYPAL_IPN_MAIL_ADDRESS=عنوان البريد الإلكتروني للإخطار لحظة الدفع (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=سوف تجد هنا ترتيب __ORDERREF__ \ ن \ n يمكنك النقر على الرابط أدناه لتأمين تسديد الخاص بك عن طريق باي بال \ ن \ n%s \ ن \ nSincerely \ ن \ ن
+PredefinedMailContentSendInvoiceWithPaypalLink=ستجد هنا الفاتورة __FACREF__ \ ن \ n يمكنك يمكن النقر على الرابط أدناه لتأمين تسديد الخاص بك عن طريق \ ن بال \ n%s \ ن \ nSincerely \ ن \ ن
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:37:06).

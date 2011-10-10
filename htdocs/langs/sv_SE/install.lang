@@ -199,3 +199,12 @@ MigrationProjectTaskActors=Migrering av data för llx_projet_task_actors bord
 MigrationProjectUserResp=Data migrationsområdet fk_user_resp av llx_projet till llx_element_contact
 MigrationProjectTaskTime=Uppdatera tid i sekunder
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:14:40).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+MigrateIsDoneStepByStep=De riktade versionen (%s) har en lucka på flera versioner, så installerar guiden kommer tillbaka att föreslå nästa migration när detta kommer att vara klar.
+MigrationFinished=Migration färdiga
+LastStepDesc=<strong>Sista steget:</strong> Definiera här login och lösenord som du planerar att använda för att ansluta till programmet. Tappa inte detta eftersom det är det konto för att administrera alla andra.
+MigrationActioncommElement=Uppdatera uppgifter om åtgärder
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:33:48).

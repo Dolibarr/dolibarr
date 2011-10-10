@@ -120,10 +120,6 @@ ExportableDatas					     =Dati Esportabili
 // START - Lines generated via parser
 // Reference language: en_US
 DateToBirth=Data di nascita
-PredefinedMailContentSendInvoice=In allegato alla presente trovate la fattura __FACREF__ \ n \ nDistinti saluti \ n \ n
-PredefinedMailContentSendInvoiceReminder=Vi ricordiamo che la fattura __FACREF__ non risulta ancora pagata. <ve la ritrasmettiamo in allegato. \ N \ nDistinti saluti \ n \ n
-PredefinedMailContentSendProposal=In allegato alla presente potete trovare la proposta commerciale __PROPREF__ \ n \ nDistinti saluti \ n \ n
-PredefinedMailContentSendOrder=In allegato alla presente potete trovare l'ordine __ORDERREF__ \ n \ nDistinti saluti \ n \ n
 ChooseYourDemoProfil=Scegli il profilo demo che corrisponde alla tua attività ...
 DemoFundation=Gestisci membri di una Fondazione
 DemoFundation2=Gestisci membri e un conto bancario di una Fondazione
@@ -239,3 +235,27 @@ FileFormat=Formato di file
 SelectAColor=Scegli un colore
 Export=Esportazione
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:03).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> it_IT
+Notify_ORDER_SENTBYMAIL=Clienti ordine inviato per posta
+Notify_COMPANY_CREATE=Terze parti creati
+Notify_PROPAL_SENTBYMAIL=Proposta commerciale inviato per posta
+Notify_ORDER_SENTBYMAIL=Envío pedido por e-mail
+Notify_BILL_PAYED=Fattura cliente pagato
+Notify_BILL_CANCEL=Fattura cliente annullato
+Notify_BILL_SENTBYMAIL=Cliente fattura inviata per posta
+Notify_ORDER_SUPPLIER_VALIDATE=Fornitore ordine convalidato
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Fornitore ordine inviato per posta
+Notify_BILL_SUPPLIER_VALIDATE=Fattura fornitore convalidato
+Notify_MEMBER_VALIDATE=Iscritto convalidato
+Notify_MEMBER_SUBSCRIPTION=Iscritto sottoscritto
+Notify_MEMBER_RESILIATE=Iscritto resiliated
+Notify_MEMBER_DELETE=Membro eliminato
+PredefinedMailContentSendFichInter=Troverete qui l&#39;intervento __FICHINTERREF__ \ n \ nSincerely \ n \ n
+AddFiles=Aggiungi file
+StartUpload=Avviare il caricamento
+CancelUpload=Cancella il caricamento
+FileIsTooBig=File è troppo grande
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:52:35).

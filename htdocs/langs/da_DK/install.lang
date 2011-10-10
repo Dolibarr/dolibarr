@@ -223,3 +223,15 @@ MigrationProjectTaskTime=Update tid i sekunder
 // Reference language: en_US -> da_DA
 MigrationNotFinished=Version af din database er ikke helt up to date, så du bliver nødt til at køre opgraderingen igen.
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:21).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+ConfFileReload=Genindlæs alle oplysninger fra konfigurationsfilen.
+WarningPHPVersionTooLow=PHP version for gammel. Version %s eller mere er forventet. Denne version skulle gøre det muligt installere, men er ikke understøttet.
+KeepDefaultValuesProxmox=Du bruger Dolibarr opsætningsguiden fra en Proxmox virtual appliance, så værdier, der foreslås her, allerede er optimeret. Skift dem kun hvis du ved hvad du gør.
+MigrateIsDoneStepByStep=De målrettede version (%s) har et efterslæb på flere versioner, så installere guiden vil komme tilbage, der tyder på næste migration, når denne ene vil være færdig.
+MigrationFinished=Migration er færdig
+LastStepDesc=<strong>Sidste trin:</strong> Definer her login og adgangskode, du planlægger at bruge til at oprette forbindelse til software. Må ikke løse dette, da det er den konto, at administrere alle andre.
+MigrationActioncommElement=Opdatere data om tiltag
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:39:22).

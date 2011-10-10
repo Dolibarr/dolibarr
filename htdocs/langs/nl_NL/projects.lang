@@ -98,6 +98,6 @@ DocumentModelBaleine = Een compleet projectrapportagemodel (logo, etc)
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:25:14).
 // Reference language: en_US -> nl_NL
 TimesSpent=Bestede tijd
-ThisWillAlsoRemoveTasks=Deze actie zal ook alle taken van het project <b>(sssss</b> taken op het moment) en alle ingangen van de tijd doorgebracht.
+ThisWillAlsoRemoveTasks=Deze actie zal ook alle taken van het project <b>(%s</b> taken op het moment) en alle ingangen van de tijd doorgebracht.
 IfNeedToUseOhterObjectKeepEmpty=Als sommige objecten (factuur, order, ...), die behoren tot een andere derde, moet worden gekoppeld aan het project te maken, houden deze leeg naar het project dat met meerdere derden.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:38:06).

@@ -292,3 +292,12 @@ CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> is_IS
+DemandReasonTypeSRC_CAMP_PHO=Sími herferð
+DemandReasonTypeSRC_CAMP_FAX=Fax herferð
+DemandReasonTypeSRC_COMM=Commercial samband
+DemandReasonTypeSRC_SHOP=Versla Hafið samband
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 08:16:59).

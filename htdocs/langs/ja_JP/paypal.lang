@@ -1,0 +1,21 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+PAYPAL_API_SANDBOX=モード試験/サンドボックス
+PAYPAL_API_USER=API名
+PAYPAL_API_PASSWORD=APIパスワード
+PAYPAL_API_SIGNATURE=APIの署名
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=オファー支払い&quot;インテグラル&quot;（クレジットカード+ペイパル）または&quot;ペイパル&quot;のみ
+PAYPAL_CSS_URL=決済ページのCSSスタイルシートのOptionnal URLを
+ThisIsTransactionId=<b>%s：</b>これは、トランザクションのIDです。
+PAYPAL_ADD_PAYMENT_URL=郵送で文書を送信するときにPayPalの支払いのURLを追加します。
+PAYPAL_IPN_MAIL_ADDRESS=支払いの即時通知の電子メールアドレス（IPN）
+PredefinedMailContentSendOrderWithPaypalLink=あなたがここに\ nを\ n削除するとPayPal経由で支払い\ nを\ n%s \ nを\ nSincerely \ nの\ nのようにするには、以下のセキュリティで保護されたリンクをクリックできる__ORDERREF__順序を見つける
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:51:12).

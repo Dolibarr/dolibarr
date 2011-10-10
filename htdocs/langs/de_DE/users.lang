@@ -116,3 +116,12 @@ PermissionInheritedFromAGroup=Berechtigung durch eine Gruppenzugehörigkeit gere
 Inherited=Geerbt
 YourRole=Ihre Rolle
 YourQuotaOfUsersIsReached=Ihr Kontingent aktiver Benutzer ist erreicht
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+UserWillBeExternalUser=Erstellt Anwender einen externen Benutzer werden (weil zu einem bestimmten Dritten verbunden)
+UserLogoff=Benutzer %s logout
+NbOfUsers=Nb von Benutzern
+DontDowngradeSuperAdmin=Nur ein Superadmin kann ein Downgrade superadmin
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:32:05).

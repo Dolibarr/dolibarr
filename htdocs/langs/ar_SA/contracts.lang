@@ -106,3 +106,9 @@ TypeContact_contrat_external_SALESREPSIGN=توقيع عقد خدمات العم�
 // Reference language: en_US
 RelatedContracts=العقود ذات الصلة
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:18).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+Error_CONTRACT_ADDON_NotDefined=لم يتم تعريف ثابت CONTRACT_ADDON
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:19).

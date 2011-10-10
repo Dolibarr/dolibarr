@@ -47,3 +47,12 @@ CHARSET=UTF-8
 ModifyIntervention=Modificare intervento
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
 FreeLegalTextOnInterventions=Testo libero su interventi 
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> it_IT
+ActionsOnFicheInter=Azioni di intervento
+ClassifyBilled=Classificare &quot;Fatturato&quot;
+StatusInterInvoiced=Fatturato
+RelatedInterventions=Interventi relativi
+ShowIntervention=Mostra intervento
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:22:05).

@@ -158,3 +158,11 @@ TransactionWithOtherAccount=تحويل الحساب
 // Reference language: en_US
 BankAccountCountry=حساب البلاد
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:16).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+RIBControlError=التحقق من تكامل القيم يفشل. وهذا يعني حصول على معلومات عن هذا رقم الحساب ليست كاملة أو خاطئة (ارجع البلد والأرقام وIBAN).
+WithdrawalPayment=انسحاب الدفع
+ShowCheckReceipt=الاختيار إظهار تلقي الودائع
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:39:39).

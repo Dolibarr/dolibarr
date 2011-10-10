@@ -1,0 +1,21 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ro_RO
+CHARSET=UTF-8
+PaypalDoPayment=Plata cu Paypal
+PaypalCBDoPayment=Plata cu card de credit
+PAYPAL_API_SANDBOX=Mod de încercare / sandbox
+PAYPAL_API_USER=API numele de utilizator
+PAYPAL_API_PASSWORD=API parola
+PAYPAL_API_SIGNATURE=API semnătura
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de plată integral (carte de credit + Paypal) sau Paypal numai
+PAYPAL_CSS_URL=Url-ul Optionnal de foaie de stil CSS pe pagina de plată
+ThisIsTransactionId=Acesta este ID-ul de tranzacţie: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Adăugaţi URL-ul de plată Paypal atunci când trimiteţi un document prin e-mail
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:58:00).

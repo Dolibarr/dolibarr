@@ -161,3 +161,11 @@ TransactionWithOtherAccount=Konto overførsel
 // Reference language: en_US
 BankAccountCountry=Account land
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:57).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+Graph=Grafik
+FutureTransaction=Transaktion i futur. Ingen måde at forene.
+SelectChequeTransactionAndGenerate=Vælg / filter, at kontrollen skal omfatte ind checken depositum modtaget og klikke på &quot;Opret&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:40:18).

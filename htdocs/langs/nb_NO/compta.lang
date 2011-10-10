@@ -126,3 +126,17 @@ Dispatched=Sendt ut
 ToDispatch=Å sende
 ThirdPartyMustBeEditAsCustomer=Tredjepart må være definert som kunde
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:00).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> nb_NO
+RemainingAmountPayment=Beløp betalingen som gjenstår:
+AmountToBeCharged=Totalt beløp å betale:
+ProposalStats=Statistikk over forslag
+OrderStats=Statistikk på ordre
+InvoiceStats=Statistikk over regninger
+SellsJournal=Salg Journal
+PurchasesJournal=Kjøp Journal
+DescSellsJournal=Salg Journal
+DescPurchasesJournal=Kjøp Journal
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:14:51).

@@ -199,3 +199,15 @@ MigrationProjectTaskActors=Data migrering for llx_projet_task_actors bord
 MigrationProjectUserResp=Data migrering feltet fk_user_resp av llx_projet å llx_element_contact
 MigrationProjectTaskTime=Oppdater tid i sekunder
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:41:11).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> nb_NO
+ConfFileReload=Reload all informasjon fra konfigurasjonsfilen.
+WarningPHPVersionTooLow=PHP-versjonen for gammel. Versjon %s eller mer er ventet. Denne versjonen bør tillate installere, men er ikke støttet.
+KeepDefaultValuesProxmox=Du bruker Dolibarr setup wizard fra en Proxmox Virtual Appliance, så verdiene foreslått her, er allerede optimalisert. Bytt dem bare hvis du vet hva du gjør.
+MigrateIsDoneStepByStep=Den målrettede versjonen (%s) har et gap på flere versjoner, så installasjonsveiviseren vil komme tilbake til å foreslå neste migrasjon når denne vil bli ferdig.
+MigrationFinished=Migrasjon ferdig
+LastStepDesc=<strong>Siste trinn:</strong> Definer her login og passord du har tenkt å bruke til å koble til programvare. Ikke mist dette som det er kontoen for å administrere alle andre.
+MigrationActioncommElement=Oppdatering data på handlinger
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:05:59).

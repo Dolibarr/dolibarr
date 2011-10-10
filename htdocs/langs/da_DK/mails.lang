@@ -133,3 +133,11 @@ SentTo=Sendt til <b>%s</b>
 LimitSendingEmailing=På linje afsendelse af emailings er begrænset til sikkerhed og timeout grunde til at <b>%s</b> modtagere ved at sende session.
 ListOfNotificationsDone=List alle e-mail meddelelser
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:42).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+MailingModuleDescContactsByCompanyCategory=Kontakter af tredjemand (fra tredjemand kategori)
+MailingModuleDescMembersCategories=Foundation medlemmer (efter kategorier)
+MailingModuleDescContactsByFunction=Kontakter af tredjeparter (ved position / funktion)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:30:16).

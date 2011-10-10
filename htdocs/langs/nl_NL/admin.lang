@@ -1281,7 +1281,7 @@ ThemeDir=Skins directory
 ConnectionTimeout=Connexion time-out
 ResponseTimeout=Time-out antwoord
 SmsTestMessage=Testbericht van __PHONEFROM__ naar __PHONETO__
-ModuleMustBeEnabledFirst=Module <b>sssss</b> moet eerst worden ingeschakeld voordat u deze functie gebruikt.
+ModuleMustBeEnabledFirst=Module <b>%s</b> moet eerst worden ingeschakeld voordat u deze functie gebruikt.
 SecurityToken=Sleutel tot URL&#39;s beveiligen
 NoSmsEngine=Geen SMS afzender manager beschikbaar. SMS afzender manager zijn niet geïnstalleerd met de standaard distributie (omdat ze afhankelijk is van een externe leverancier), maar u kunt vinden op een aantal http://www.dolistore.com
 PDF=PDF
@@ -1294,7 +1294,7 @@ MAIN_PROXY_HOST=Naam / adres van de proxy server
 MAIN_PROXY_PORT=Poort van de proxy server
 MAIN_PROXY_USER=Inloggen op de proxyserver te gebruiken
 MAIN_PROXY_PASS=Wachtwoord voor de proxy-server te gebruiken
-DefineHereComplementaryAttributes=Definieer hier alle attributen, niet reeds standaard beschikbaar, en dat je wilt worden ondersteund voor sssss.
+DefineHereComplementaryAttributes=Definieer hier alle attributen, niet reeds standaard beschikbaar, en dat je wilt worden ondersteund voor %s.
 ExtraFields=Aanvullende attributen
 SendingMailSetup=Instellen van verzendingen via e-mail
 SendmailOptionNotComplete=Waarschuwing, op sommige Linux-systemen, e-mail verzenden vanaf uw e-mail, sendmail uitvoering setup moet conatins optie-ba (parameter mail.force_extra_parameters in uw php.ini-bestand). Als sommige ontvangers nooit e-mails ontvangen, probeer dit PHP parameter bewerken met mail.force_extra_parameters =-ba).
@@ -1316,6 +1316,6 @@ ThisForceAlsoTheme=Met behulp van dit menu manager zal ook gebruik maken van een
 HideAnyVATInformationOnPDF=Verberg alle informatie met betrekking tot de BTW op gegenereerde PDF
 UrlGenerationParameters=Parameters om URL&#39;s beveiligen
 SecurityTokenIsUnique=Gebruik een unieke securekey parameter voor elke URL
-EnterRefToBuildUrl=Geef referentie voor object sssss
+EnterRefToBuildUrl=Geef referentie voor object %s
 GetSecuredUrl=Get berekend URL
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:31:08).

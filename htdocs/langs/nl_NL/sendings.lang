@@ -64,7 +64,7 @@ DocumentModelTyphon = Completer leveringsbewijs documentmodel (logo, etc)
 ShipmentCreationIsDoneFromOrder=Op dit moment, is oprichting van een nieuwe zending gedaan van de volgorde kaart.
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER niet gedefinieerd
 SendShippingByEMail=Stuur verzending per e-mail
-SendShippingRef=Stuur scheepvaart sssss
+SendShippingRef=Stuur scheepvaart %s
 ActionsOnShipping=Acions op verzendkosten
 LinkToTrackYourPackage=Link naar uw pakket
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:38:39).

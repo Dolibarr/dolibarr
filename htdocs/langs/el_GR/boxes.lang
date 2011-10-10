@@ -66,8 +66,8 @@ NoRecordedContracts=Δεν υπάρχουν καταχωρημένα συμβό�
 // Reference language: en_US -> el_GR
 BoxLastContacts=Derniers επαφές / διευθύνσεις
 BoxLastMembers=Τελευταία μέλη
-BoxTitleLastModifiedMembers=Τελευταία sssss τροποποίηση των μελών
-BoxTitleLastModifiedContacts=Τελευταία sssss τροποποίηση επαφές / διευθύνσεις
+BoxTitleLastModifiedMembers=Τελευταία %s τροποποίηση των μελών
+BoxTitleLastModifiedContacts=Τελευταία %s τροποποίηση επαφές / διευθύνσεις
 ClickToAdd=Πατήστε εδώ για προσθήκη.
 NoRecordedContacts=Δεν καταγράφονται επαφές
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:52).

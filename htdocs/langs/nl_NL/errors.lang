@@ -80,9 +80,9 @@ ErrorModuleSetupNotComplete = De installatie van de module lijkt incompleet te z
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:37:25).
 // Reference language: en_US -> nl_NL
-ErrorBadValueForParameter=Verkeerde waarde &#39;sssss&#39; voor parameter incorrect &#39;sssss&#39;
+ErrorBadValueForParameter=Verkeerde waarde &#39;%s&#39; voor parameter incorrect &#39;%s&#39;
 ErrorBadImageFormat=Image-bestand heeft niet een ondersteund formaat
-ErrorBadDateFormat=Waarde &#39;sssss&#39; heeft verkeerde datum formaat
+ErrorBadDateFormat=Waarde &#39;%s&#39; heeft verkeerde datum formaat
 ErrorBadMask=Fout bij het masker
 ErrorBadMaskFailedToLocatePosOfSequence=Fout, masker zonder het volgnummer
 ErrorBadMaskBadRazMonth=Fout, slechte resetwaarde
@@ -92,14 +92,14 @@ ErrorSelectAtLeastOne=Fout. Kies ten minste een item.
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:44:21).
 // Reference language: en_US -> nl_NL
-ErrorProductWithRefNotExist=Product met referentie <i>&#39;sssss&#39;</i> bestaan ​​niet
+ErrorProductWithRefNotExist=Product met referentie <i>&#39;%s&#39;</i> bestaan ​​niet
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:45:28).
 
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
 // Reference language: en_US -> nl_NL
 ErrorDeleteNotPossibleLineIsConsolidated=Verwijderen niet mogelijk, omdat record is gekoppeld aan een bank transation dat is verzoend
-ErrorProdIdAlreadyExist=Sssss is toegewezen aan een derde
+ErrorProdIdAlreadyExist=%s is toegewezen aan een derde
 ErrorFailedToSendPassword=Mislukt om het wachtwoord te sturen
 ErrorFailedToLoadRSSFile=Niet in slaagt om RSS feed. Probeer een constante MAIN_SIMPLEXMLLOAD_DEBUG toe te voegen als foutmeldingen niet voldoende informatie.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:47:10).

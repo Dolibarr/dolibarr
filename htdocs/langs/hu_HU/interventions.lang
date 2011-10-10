@@ -33,3 +33,12 @@ ArcticNumRefModelDesc1=Általános szám modell
 ArcticNumRefModelError=Sikertelen aktiválás
 PacificNumRefModelDesc1=Számot ad a következő formában: %syymm-nnnn ahol yy az év, mm a hónap és nnnn 4 szám 0-tól indúlva
 PacificNumRefModelError=Egy intervenciós kártya $syymm kezdéssel már létezik és nem kompatibilies ezzel a szekvencia modellel. Távolítsa el vagy nevezze át hogy aktiválhassa a modult.
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> hu_HU
+ActionsOnFicheInter=Műveletek az intervenciós
+ClassifyBilled=Classify &quot;számlázott&quot;
+StatusInterInvoiced=Számlázott
+RelatedInterventions=Kapcsolódó beavatkozások
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:21:02).

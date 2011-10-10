@@ -204,3 +204,12 @@ MigrationProjectTaskTime=更新时间花费在几秒钟内
 // Reference language: en_US -> zh_CN
 MigrationNotFinished=您的数据库的版本是不完全最新的，所以你必须再次运行升级过程。
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:24:09).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+MigrateIsDoneStepByStep=目标版本（%s）有好几个版本的差距，因此，安装向导会回来一次将完成这一个建议未来的迁移。
+MigrationFinished=迁移完成
+LastStepDesc=<strong>最后一步</strong> ：此处定义的登录名和密码，您打算使用连接到软件。不松，因为它是帐户管理所有其他。
+MigrationActioncommElement=在行动上的更新数据
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:35:24).

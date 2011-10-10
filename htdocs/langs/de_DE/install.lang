@@ -197,3 +197,15 @@ MigrationProjectTaskActors=Datenmigration für llx_projet_task_actors Tabelle
 MigrationProjectUserResp=Datenmigration des Feldes fk_user_resp von llx_projet nach llx_element_contact
 MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
 MigrationNotFinished=Ihre Datenbankversion ist nicht auf dem neuesten Stand, bitte wiederholen Sie den Aktualisierungsvorgang.
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+ConfFileReload=Seite neu laden alle Informationen aus der Konfigurationsdatei.
+WarningPHPVersionTooLow=PHP-Version zu alt ist. Version %s oder mehr erwartet. Diese Version sollte es installieren, aber wird nicht unterstützt.
+ChoosedMigrateScript=Wählen Sie Migrationsskript
+KeepDefaultValuesProxmox=Sie verwenden die Dolibarr Setup-Assistenten von einem Proxmox Virtual Appliance, so vorgeschlagenen Werte hier sind bereits optimiert. Ändern Sie sie nur, wenn Sie wissen was Sie tun.
+MigrateIsDoneStepByStep=Die gezielte Version (%s) hat eine Lücke von mehreren Versionen, so Installationsassistent wird wieder zum nächsten Migration legen nahe, einmal diese fertig sein wird.
+MigrationFinished=Migration abgeschlossen
+LastStepDesc=<strong>Letzter Schritt:</strong> Legen Sie hier Benutzernamen und Passwort, die Sie verwenden möchten, um Software zu verbinden. Verlieren Sie ihn nicht, wie es das Konto für alle anderen zu verwalten ist.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:41:08).

@@ -46,10 +46,6 @@ Miscellanous=Miscellaneous
 NbOfActiveNotifications=Antal anmeldelser
 WarningInstallDirExists=Advarsel, installere directory ( %s) eksisterer stadig. Dette er en alvorlig sikkerheds-hul. Du bør fjernes så hurtigt som muligt.
 WarningUntilDirRemoved=Denne advarsel vil forblive aktiv, så længe denne mappe er til stede (vises kun til admin-brugere).
-PredefinedMailContentSendInvoice=Veuillez trouver ci-joint la fremstilling __FACREF__ \ n \ nCordialement \ n \ n
-PredefinedMailContentSendInvoiceReminder=Nous apportons votre connaissance que la fremstilling __FACREF__ ne semble pas avoir t rgle. La voici donc, hæld rappel, da pice jointe. \ N \ nCordialement \ n \ n
-PredefinedMailContentSendProposal=Veuillez trouver ci-joint la proposition commerciale __PROPREF__ \ n \ nCordialement \ n \ n
-PredefinedMailContentSendOrder=Veuillez trouver ci-joint la commande __ORDERREF__ \ n \ nCordialement \ n \ n
 ChooseYourDemoProfil=Vælg den demo profil, der passer til din virksomhed ...
 DemoCompanyShopWithCashDesk=Administrer en butik med et kontant desk
 DemoCompanyProductAndStocks=Administrer en lille eller mellemstor virksomhed, der sælger produkter
@@ -225,3 +221,49 @@ SizeUnitinch=tomme
 SizeUnitfoot=mund
 ImageEditor=Image editor
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:50).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+ToolsDesc=Dette område er dedikeret til gruppen diverse værktøjer ikke er tilgængelige til andre menupunkter. <br><br> Disse værktøjer kan nås fra menuen på siden.
+Notify_WITHDRAW_TRANSMIT=Transmission tilbagetrækning
+Notify_WITHDRAW_CREDIT=Credit tilbagetrækning
+Notify_WITHDRAW_EMIT=Isue tilbagetrækning
+Notify_ORDER_SENTBYMAIL=Kundens ordre sendes med posten
+Notify_COMPANY_CREATE=Tredjeparts oprettet
+Notify_PROPAL_SENTBYMAIL=Kommercielle forslaget, som sendes med posten
+Notify_ORDER_SENTBYMAIL=Forsendelse pedido por e-mail
+Notify_BILL_PAYED=Kundens faktura betales
+Notify_BILL_CANCEL=Kundefaktura aflyst
+Notify_BILL_SENTBYMAIL=Kundens faktura sendes med posten
+Notify_ORDER_SUPPLIER_VALIDATE=Leverandør valideret orden
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Leverandør orden sendt med posten
+Notify_BILL_SUPPLIER_VALIDATE=Leverandør faktura valideret
+Notify_BILL_SUPPLIER_PAYED=Leverandør faktura betales
+Notify_BILL_SUPPLIER_SENTBYMAIL=Leverandør faktura tilsendt med posten
+Notify_CONTRACT_VALIDATE=Kontrakt valideret
+Notify_FICHEINTER_VALIDATE=Intervention valideret
+Notify_SHIPPING_VALIDATE=Forsendelse valideret
+Notify_SHIPPING_SENTBYMAIL=Shipping sendes med posten
+Notify_MEMBER_VALIDATE=Medlem valideret
+Notify_MEMBER_SUBSCRIPTION=Medlem abonnerer
+Notify_MEMBER_RESILIATE=Medlem resiliated
+Notify_MEMBER_DELETE=Medlem slettet
+PredefinedMailContentSendSupplierInvoice=Du vil her finde fakturaen __FACREF__ \n\nSincerely \n\n
+PredefinedMailContentSendShipping=Du vil her finde shipping __SHIPPINGREF__ \n\nSincerely \n\n
+PredefinedMailContentSendFichInter=Du vil her finde interventionen __FICHINTERREF__ \n\nSincerely \n\n
+Top=Top
+Bottom=Bund
+Left=Venstre
+Right=Højre
+ThisIsListOfModules=Dette er en liste over moduler, på forhånd har udvalgt denne demo profil (kun de mest almindelige moduler er synlige i denne demo). Redigere den for at have en mere personlig demo og klik på &quot;Start&quot;.
+ClickHere=Klik her
+UseAdvancedPerms=Brug den avancerede tilladelser af nogle moduler
+FileFormat=Filformat
+SelectAColor=Vælg en farve
+AddFiles=Tilføj filer
+StartUpload=Start upload
+CancelUpload=Annuller upload
+FileIsTooBig=Filer er for store
+Export=Eksport
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:54:05).

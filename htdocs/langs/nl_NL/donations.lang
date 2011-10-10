@@ -27,6 +27,6 @@ DonationsModels = Documentenmodellen voor donatieontvangsten
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
 // Reference language: en_US -> nl_NL
-LastModifiedDonations=Laatst gewijzigd sssss donaties
+LastModifiedDonations=Laatst gewijzigd %s donaties
 SearchADonation=Zoek een donatie
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:00:11).

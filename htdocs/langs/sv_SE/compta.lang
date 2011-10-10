@@ -131,3 +131,18 @@ Dispatched=Sänds
 ToDispatch=Avsändandet
 ThirdPartyMustBeEditAsCustomer=Tredje part skall definieras som en kund
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:37).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sv_SE
+InvoiceStats=Statistik över räkningar
+SellsJournal=Försäljning Journal
+PurchasesJournal=Inköp Journal
+DescSellsJournal=Försäljning Journal
+DescPurchasesJournal=Inköp Journal
+InvoiceRef=Faktura ref.
+CodeNotDef=Inte definierad
+AddRemind=Dispatch tillgängliga beloppet
+RemainToDivide=Återstår att sända:
+WarningDepositsNotIncluded=Insättningar fakturor ingår inte i denna version med denna redovisning modul.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:36:00).

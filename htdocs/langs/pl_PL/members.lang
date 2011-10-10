@@ -179,7 +179,7 @@ MoreActionBankViaInvoice=Tworzenie faktury i wpłaty na rachunek
 MoreActionInvoiceOnly=Tworzenie faktury bez zapłaty
 LinkToGeneratedPages=Generowanie wizytówki
 LinkToGeneratedPagesDesc=Ekran ten umożliwia generowanie plików PDF z wizytówek dla wszystkich członków lub członka szczególności.
-DocForAllMembersCards=Generowanie wizytówek dla wszystkich członków (Format wyjściowy rzeczywiście setup: <b>sssss)</b>
-DocForOneMemberCards=Generowanie wizytówki dla danego użytkownika (Format wyjściowy rzeczywiście setup: <b>sssss)</b>
-DocForLabels=Generowanie arkuszy adres (Format wyjściowy rzeczywiście setup: <b>sssss)</b>
+DocForAllMembersCards=Generowanie wizytówek dla wszystkich członków (Format wyjściowy rzeczywiście setup: <b>%s)</b>
+DocForOneMemberCards=Generowanie wizytówki dla danego użytkownika (Format wyjściowy rzeczywiście setup: <b>%s)</b>
+DocForLabels=Generowanie arkuszy adres (Format wyjściowy rzeczywiście setup: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:25).

@@ -32,3 +32,13 @@ ToOfferALinkForOnlinePaymentOnMemberSubscription=网址为会员提供订阅%s�
 YouCanAddTagOnUrl=您还可以添加<b>标签=</b> url参数<b>及<i>价值</i></b>的任何网址（只需要支付免费）添加自己的注释标记付款。
 SetupPayBoxToHavePaymentCreatedAutomatically=设置您的<b>%s</b> PayBox与网址有paybox付款时自动创建的验证。
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:57).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+YourPaymentHasBeenRecorded=本页面确认您的付款已记录。谢谢。
+YourPaymentHasNotBeenRecorded=您的付款并没有被记录和交易已取消。谢谢。
+AccountParameter=帐户参数
+UsageParameter=使用参数
+InformationToFindParameters=帮助，找到你的%s帐户信息
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:29:27).

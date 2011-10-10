@@ -146,3 +146,18 @@ RulesVATDue=Dla usług, raport zawiera faktur VAT należny, zapłacone czy nie, 
 OptionVatInfoModuleComptabilite=Uwaga: W przypadku dóbr materialnych, należy użyć daty dostawy do bardziej sprawiedliwego.
 ThirdPartyMustBeEditAsCustomer=Osoby trzecie muszą być określone jako klient
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:49).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pl_PL
+AmountToBeCharged=Łączna kwota do zapłaty:
+ProposalStats=Statystyki na temat propozycji
+OrderStats=Statystyki dotyczące zamówień
+InvoiceStats=Statystyki na rachunkach
+SellsJournal=Dziennik sprzedaży
+PurchasesJournal=Dziennik zakupów
+DescSellsJournal=Dziennik sprzedaży
+DescPurchasesJournal=Dziennik zakupów
+InvoiceRef=Faktura ref.
+CodeNotDef=Nie zdefiniowane
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:16:21).

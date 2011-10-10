@@ -306,3 +306,12 @@ CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=FFP franc
 CurrencySingXPF=FFP Franc
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:26).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_SHOP=Shoppe Kontakt
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:40:01).

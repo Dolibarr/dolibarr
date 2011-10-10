@@ -210,3 +210,37 @@ SizeUnitinch=tommers
 SizeUnitfoot=foten
 ImageEditor=Image Editor
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:02).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> nb_NO
+ToolsDesc=Dette området er dedikert til gruppen diverse verktøy ikke er tilgjengelig i andre menyen oppføringer. <br><br> Disse verktøyene kan nås fra menyen på siden.
+Notify_WITHDRAW_TRANSMIT=Transmission tilbaketrekning
+Notify_WITHDRAW_CREDIT=Credit tilbaketrekning
+Notify_WITHDRAW_EMIT=Isue tilbaketrekning
+Notify_ORDER_SENTBYMAIL=Kundeordre sendt i posten
+Notify_COMPANY_CREATE=Tredjeparts opprettet
+Notify_PROPAL_SENTBYMAIL=Kommersiell forslaget sendes med post
+Notify_ORDER_SENTBYMAIL=Envío pedido por e-post
+Notify_BILL_PAYED=Kunden faktura betales
+Notify_BILL_SUPPLIER_PAYED=Leverandør faktura betales
+Notify_BILL_SUPPLIER_SENTBYMAIL=Leverandør faktura sendt i posten
+Notify_CONTRACT_VALIDATE=Kontrakt validert
+Notify_FICHEINTER_VALIDATE=Intervention validert
+Notify_SHIPPING_VALIDATE=Shipping validert
+Notify_SHIPPING_SENTBYMAIL=Shipping sendt i posten
+Notify_MEMBER_VALIDATE=Medlem validert
+Notify_MEMBER_SUBSCRIPTION=Medlem abonnerer
+Notify_MEMBER_RESILIATE=Medlem resiliated
+Notify_MEMBER_DELETE=Medlem slettet
+Left=Venstre
+Right=Høyre
+ThisIsListOfModules=Dette er en liste over moduler forhåndsvalgt av denne demoen profilen (bare de vanligste modulene er synlige i denne demoen). Rediger denne å ha en mer personlig demo og klikk på &quot;Start&quot;.
+ClickHere=Klikk her
+UseAdvancedPerms=Bruk den avanserte tillatelser av noen moduler
+FileFormat=Filformat
+SelectAColor=Velg en farge
+AddFiles=Legg til filer
+StartUpload=Starte opplasting
+CancelUpload=Avbryt opplasting
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 04:21:12).

@@ -49,3 +49,11 @@ PacificNumRefModelError=En intervention kortet begynder med $ syymm allerede eks
 // Reference language: en_US
 ModifyIntervention=Modify intervention
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+ActionsOnFicheInter=Handlinger om intervention
+ClassifyBilled=Klassificere &quot;Billed&quot;
+StatusInterInvoiced=Billed
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:17:53).

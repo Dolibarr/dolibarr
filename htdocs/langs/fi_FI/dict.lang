@@ -304,3 +304,13 @@ CurrencySingXOF=CFA: n frangin BCEAO
 CurrencyXPF=YKP Francs
 CurrencySingXPF=CFP-frangi
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:15).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fi_FI
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Tietoa kampanjasta
+DemandReasonTypeSRC_CAMP_EMAIL=Sähköpostitse kampanja
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:44:51).

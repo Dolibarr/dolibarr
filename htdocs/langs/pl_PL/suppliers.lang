@@ -56,5 +56,5 @@ NoneOrBatchFileNeverRan=Brak lub <b>partii %s</b> nie prowadził niedawno
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> pl_PL
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=To dostawca odniesienia jest już powiązany z odniesieniem: sssss
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=To dostawca odniesienia jest już powiązany z odniesieniem: %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:33).

@@ -125,3 +125,14 @@ InvoiceRef=Referenca računa
 CodeNotDef=Ni definirano
 
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sl_SI
+RemainingAmountPayment=Znesek preostalih sredstev:
+AmountToBeCharged=Skupni znesek za plačilo:
+ProposalStats=Statistični podatki o predlogih
+OrderStats=Statistični podatki o nalogi
+InvoiceStats=Statistični podatki o računih
+AddRemind=Dispatch na voljo znesek
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:34:31).

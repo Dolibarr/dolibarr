@@ -136,3 +136,13 @@ Inherited=Arvelige
 YourRole=Din roller
 YourQuotaOfUsersIsReached=Din kvote af aktive brugere er nået!
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:44).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> da_DK
+AdministratorDesc=Administrators virksomhed
+UserWillBeInternalUser=Oprettet brugeren vil blive en intern bruger (fordi der ikke er knyttet til en bestemt tredjepart)
+UserWillBeExternalUser=Oprettet bruger vil være en ekstern bruger (fordi knyttet til en bestemt tredjepart)
+UserLogoff=Bruger %s logout
+NbOfUsers=Nb af brugere
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:30:46).

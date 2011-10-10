@@ -1,0 +1,21 @@
+/*
+ * Language code: nb_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> nb_NO
+CHARSET=UTF-8
+PaypalCBDoPayment=Betal med kredittkort
+PAYPAL_API_SANDBOX=Mode test / sandkasse
+PAYPAL_API_USER=API brukernavn
+PAYPAL_API_PASSWORD=API passord
+PAYPAL_API_SIGNATURE=API signatur
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer betaling &quot;integrert&quot; (Kredittkort + Paypal) eller &quot;Paypal&quot; bare
+PAYPAL_CSS_URL=Optionnal Url av CSS-stilark på betaling side
+ThisIsTransactionId=Dette er id av transaksjonen: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Legg til url av Paypal betaling når du sender et dokument i posten
+PAYPAL_IPN_MAIL_ADDRESS=E-post adressen for øyeblikkelig varsling av betaling (IPN)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:52:55).

@@ -60,13 +60,13 @@ AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των προσώπ
 ViewDay=Προβολή ημέρας
 ViewWeek=Προβολή εβδομάδας
 AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυθμίσετε εξωτερικά ημερολόγια.
-InvoiceBackToDraftInDolibarr=Τιμολόγιο sssss να επιστρέψετε στην κατάσταση του σχεδίου
-ShippingSentByEMail=Αποστολές sssss αποστέλλονται με ηλεκτρονικό ταχυδρομείο
+InvoiceBackToDraftInDolibarr=Τιμολόγιο %s να επιστρέψετε στην κατάσταση του σχεδίου
+ShippingSentByEMail=Αποστολές %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
 ExtSites=Εξωτερικές ημερολόγια
 ExtSites=Εξωτερικές Ημερολόγια
 ExtSitesEnableThisTool=πώς εξωτερικά ημερολόγια σε ημερήσια διάταξη
 ExtSitesNbOfAgenda=Αριθμός των ημερολογίων
-AgendaExtNb=Ημερολόγιο nb sssss
+AgendaExtNb=Ημερολόγιο nb %s
 ExtSiteUrlAgenda=URL για να αποκτήσετε πρόσβαση. ICal αρχείο
 ExtSiteNoLabel=Χωρίς Περιγραφή
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:34).

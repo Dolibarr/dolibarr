@@ -1,0 +1,35 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+Intervention=介入
+Interventions=介入
+InterventionCard=介入のカード
+NewIntervention=新しい介入
+AddIntervention=介入を追加
+CustomerDoesNotHavePrefix=顧客は、接頭辞を持っていない
+InterventionContact=介入の接点
+DeleteIntervention=介入を削除します。
+ValidateIntervention=介入を検証
+ModifyIntervention=介入を変更します。
+DeleteInterventionLine=介入の行を削除
+ConfirmDeleteIntervention=あなたはこの介入を削除してもよろしいですか？
+ConfirmValidateIntervention=あなたはこの介入を検証してもよろしいですか？
+ConfirmModifyIntervention=あなたはこの介入を変更してもよろしいですか？
+ConfirmDeleteInterventionLine=あなたはこの介入の行を削除してもよろしいですか？
+ShowIntervention=介入を示す
+TypeContact_fichinter_internal_INTERREPFOLL=代表的なフォローアップ介入
+TypeContact_fichinter_internal_INTERVENING=間にある
+TypeContact_fichinter_external_BILLING=課金顧客の連絡先
+TypeContact_fichinter_external_CUSTOMER=フォローアップ顧客との接触
+ArcticNumRefModelDesc1=一般的な数値モデル
+ArcticNumRefModelError=アクティブ化に失敗
+PacificNumRefModelDesc1=yyは年である%syymm - nnnnの形式でニュメロを返す、mmは月ですと、nnnnはなく休憩と0〜ノーリターンでシーケンスです。
+PacificNumRefModelError=$ syymmで始まる介入のカードは、すでに存在し、シーケンスのこのモデルと互換性がありません。それを削除するか、このモジュールをアクティブにするには、その名前を変更。
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:25:53).

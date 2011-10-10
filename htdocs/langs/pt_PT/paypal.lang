@@ -1,0 +1,21 @@
+/*
+ * Language code: pt_PT
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pt_PT
+CHARSET=UTF-8
+PaypalDoPayment=Pague com Paypal
+PaypalCBDoPayment=Pagar com cartão de crédito
+PAYPAL_API_SANDBOX=Modo de teste / sandbox
+PAYPAL_API_USER=API nome de usuário
+PAYPAL_API_PASSWORD=API senha
+PAYPAL_API_SIGNATURE=Assinatura API
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pagamento &quot;integral&quot; (cartão de crédito + Paypal) ou &quot;Paypal&quot; apenas
+PAYPAL_CSS_URL=Url Optionnal de folhas de estilo CSS na página de pagamento
+ThisIsTransactionId=Este é id da transação: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Adicione o url de pagamento Paypal quando você enviar um documento por correio
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:56:19).

@@ -289,3 +289,16 @@ CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
 
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sl_SI
+CurrencySingUAH=Grivna
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Mailing akcije
+DemandReasonTypeSRC_CAMP_EMAIL=Emailing kampanjo
+DemandReasonTypeSRC_CAMP_PHO=Telefon kampanjo
+DemandReasonTypeSRC_CAMP_FAX=Fax kampanjo
+DemandReasonTypeSRC_COMM=Poslovni stik
+DemandReasonTypeSRC_SHOP=Shop kontakt
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:24:06).

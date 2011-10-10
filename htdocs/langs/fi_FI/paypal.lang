@@ -1,0 +1,22 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fi_FI
+CHARSET=UTF-8
+PaypalSetup=PayPal moduuli setup
+PaypalDesc=Tämä moduuli tarjoaa sivuja, jotta maksua <a href="http://www.paypal.com" target="_blank">PayPal</a> asiakkaat. Tätä voidaan käyttää ilmaiseksi maksua tai maksun tietystä Dolibarr esine (lasku, tilaus, ...)
+PaypalOrCBDoPayment=Maksaa luottokortilla tai Paypal
+PAYPAL_API_SIGNATURE=API allekirjoitus
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Voit maksaa &quot;kiinteä&quot; (luottokortti + Paypal) tai &quot;PayPal&quot; vain
+PAYPAL_CSS_URL=Optionnal Url CSS-tyylisivun maksamisesta sivu
+ThisIsTransactionId=Tämä on id liiketoimen: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Lisää URL Paypal-maksujärjestelmää, kun lähetät asiakirjan postitse
+PAYPAL_IPN_MAIL_ADDRESS=Sähköpostiosoite varten instant tiedon maksusta (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=Löydät tässä järjestyksessä __ORDERREF__ \ n \ nVoit klikata suojatun linkin alla voit tehdä PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+PredefinedMailContentSendInvoiceWithPaypalLink=Löydät täältä laskun __FACREF__ \ n \ nVoit klikata suojatun linkin alla voit tehdä PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:45:52).

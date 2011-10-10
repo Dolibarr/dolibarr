@@ -95,7 +95,7 @@ OrderStatusNotReadyToDispatch=Zamówienie nie jest jeszcze lub nie więcej statu
 NoPredefinedProductToDispatch=Nie gotowych produktów dla tego obiektu. Więc nie w czas wysyłki jest wymagane.
 DispatchVerb=Wysyłka
 DeleteAWarehouse=Usuń magazyn
-ConfirmDeleteWarehouse=Czy na pewno chcesz usunąć <b>sssss</b> magazynie?
-PersonalStock=Osobowych sssss czas
-ThisWarehouseIsPersonalStock=Tym składzie przedstawia osobiste zasobów sssss sssss
+ConfirmDeleteWarehouse=Czy na pewno chcesz usunąć <b>%s</b> magazynie?
+PersonalStock=Osobowych %s czas
+ThisWarehouseIsPersonalStock=Tym składzie przedstawia osobiste zasobów %s %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:51).

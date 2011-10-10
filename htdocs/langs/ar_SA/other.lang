@@ -228,3 +228,49 @@ SizeUnitinch=بوصة
 SizeUnitfoot=قدم
 ImageEditor=صورة المحرر
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:48).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+ToolsDesc=ويكرس هذا المجال لمجموعة الأدوات المتنوعة التي لم تتوفر في إدخالات القوائم الأخرى. <br><br> ويمكن الوصول إلى هذه الأدوات من القائمة على الجانب.
+Notify_WITHDRAW_TRANSMIT=انتقال انسحاب
+Notify_WITHDRAW_CREDIT=انسحاب الائتمان
+Notify_WITHDRAW_EMIT=Isue انسحاب
+Notify_ORDER_SENTBYMAIL=النظام العميل ترسل عن طريق البريد
+Notify_COMPANY_CREATE=طرف ثالث خلق
+Notify_PROPAL_SENTBYMAIL=اقتراح التجارية المرسلة عن طريق البريد
+Notify_ORDER_SENTBYMAIL=Envío pedido POR البريد الإلكتروني
+Notify_BILL_PAYED=دفعت فاتورة العميل
+Notify_BILL_CANCEL=فاتورة الزبون إلغاء
+Notify_BILL_SENTBYMAIL=فاتورة الزبون إرسالها عن طريق البريد
+Notify_ORDER_SUPPLIER_VALIDATE=أجل التحقق من صحة المورد
+Notify_ORDER_SUPPLIER_SENTBYMAIL=النظام مزود ترسل عن طريق البريد
+Notify_BILL_SUPPLIER_VALIDATE=فاتورة المورد المصادق
+Notify_BILL_SUPPLIER_PAYED=دفعت فاتورة المورد
+Notify_BILL_SUPPLIER_SENTBYMAIL=فاتورة المورد ترسل عن طريق البريد
+Notify_CONTRACT_VALIDATE=التحقق من صحة العقد
+Notify_FICHEINTER_VALIDATE=التحقق من التدخل
+Notify_SHIPPING_VALIDATE=التحقق من صحة الشحن
+Notify_SHIPPING_SENTBYMAIL=الشحن ترسل عن طريق البريد
+Notify_MEMBER_VALIDATE=عضو مصدق
+Notify_MEMBER_SUBSCRIPTION=عضو المكتتب
+Notify_MEMBER_RESILIATE=عضو resiliated
+Notify_MEMBER_DELETE=عضو حذف
+PredefinedMailContentSendSupplierInvoice=ستجد هنا الفاتورة __FACREF__ \n\nSincerely \n\n
+PredefinedMailContentSendShipping=ستجد هنا الشحن __SHIPPINGREF__ \n\nSincerely \n\n
+PredefinedMailContentSendFichInter=ستجد هنا تدخل __FICHINTERREF__ \n\nSincerely \n\n
+Top=أعلى
+Bottom=أسفل
+Left=اليسار
+Right=حق
+ThisIsListOfModules=هذه هي قائمة من وحدات انتقاؤه من قبل هذا الملف التجريبي (وحدات فقط الأكثر شيوعا هي واضحة في هذا العرض). تعديل هذه لديها أكثر تخصيصا التجريبي وانقر على &quot;ابدأ&quot;.
+ClickHere=اضغط هنا
+UseAdvancedPerms=استخدام أذونات متقدمة من بعض الوحدات
+FileFormat=تنسيق الملف
+SelectAColor=اختيار لون
+AddFiles=إضافة الملفات
+StartUpload=بدء التحميل
+CancelUpload=إلغاء التحميل
+FileIsTooBig=ملفات كبيرة جدا
+Export=تصدير
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:49:49).

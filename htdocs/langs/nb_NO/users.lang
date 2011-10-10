@@ -113,3 +113,9 @@ NameToCreate=Navn på tredjepart til å lage
 YourRole=Din roller
 YourQuotaOfUsersIsReached=Din kvote på aktive brukere er nådd!
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:22).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> nb_NO
+AdministratorDesc=Administrator er enhet
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:47:47).

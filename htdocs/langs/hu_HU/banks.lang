@@ -1,0 +1,101 @@
+/*
+ * Language code: hu_HU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> hu_HU
+CHARSET=UTF-8
+MenuSetupBank=Bank / Készpénz setup
+BankName=Bank neve
+FinancialAccount=Fiók
+FinancialAccounts=Számlák
+BankAccount=Bankszámla
+BankAccounts=Bankszámlák
+AccountRef=Pénzügyi mérleg ref
+AccountLabel=Pénzügyi mérleg címke
+CashAccount=Készpénz számla
+CashAccounts=Pénztárak
+BankBalance=Egyensúly
+BalanceMinimalAllowed=Minimális megengedett egyensúly
+BalanceMinimalDesired=Minimum a kívánt egyensúlyt
+InitialBankBalance=Kezdeti mérleg
+EndBankBalance=Vége egyensúly
+CurrentBalance=Aktuális egyenleg
+FutureBalance=Jövő egyensúly
+ShowAllTimeBalance=Mutasd egyensúly elejétől
+Reconciliation=Egyeztetés
+RIB=Bankszámla száma
+AccountStatement=Számlakivonat
+AccountStatementShort=Nyilatkozat
+AccountStatements=Számlakivonatok
+LastAccountStatements=Utolsó számlakivonatok
+Rapprochement=Reconciliate
+IOMonthlyReporting=Havi jelentés
+BankAccountDomiciliation=Számla-cím
+BankAccountCountry=Veszik az országspecifikus
+BankAccountOwner=Számlatulajdonos nevét
+BankAccountOwnerAddress=Számlatulajdonos címe
+NewCurrentAccount=Új folyó fizetési mérleg
+NewSavingAccount=Új megtakarítási számla
+NewCashAccount=Új pénzszámlájának
+EditFinancialAccount=Fiók szerkesztése
+AccountSetup=Pénzügyi számlák beállítása
+SearchBankMovement=Keresés a bank mozgás
+Debts=Tartozások
+LabelBankCashAccount=Bank vagy készpénz címke
+AccountType=Számla típusa
+BankType0=Takarékszámla
+ConfirmDeleteAccount=Biztos benne, hogy törli ezt a fiókot?
+Account=Fiók
+ByCategories=Kategóriák szerint
+ByRubriques=Kategóriák szerint
+BankTransactionByCategories=Bank ügyletek kategóriákba
+BankTransactionForCategory=Banki tranzakciók kategória <b>%s</b>
+RemoveFromRubrique=Vegye kapcsolatot kategóriában
+RemoveFromRubriqueConfirm=Biztosan el akarja távolítani közötti kapcsolat a tranzakciót és a kategória?
+ListBankTransactions=Lista a banki tranzakciók
+IdTransaction=Transaction ID
+Conciliate=Összeegyeztetni
+Conciliation=Egyeztetés
+ConciliationForAccount=Összeegyeztetni ezt a számlát
+IncludeClosedAccount=Közé zárt fiókok
+OnlyOpenedAccount=Csak számlát nyitott
+AccountToCredit=Számla a hitelhez
+AccountToDebit=Számla terhére
+DisableConciliation=Letiltása összehangolási funkció erre a számlára
+ConciliationDisabled=Megbékélés funkció tiltva
+StatusAccountOpened=Megnyitotta
+ConciliatedBy=Egyeztetni a
+DateConciliating=Összeegyeztetni dátum
+BankLineConciliated=Tranzakció egyeztetni
+CustomerInvoicePayment=Ügyfél fizetési
+SupplierInvoicePayment=Szállító kifizetése
+WithdrawalPayment=Élelmezés-egészségügyi várakozási fizetés
+SocialContributionPayment=Társadalombiztosítási járulék fizetési
+FinancialAccountJournal=Pénzügyi mérleg folyóirat
+BankTransfer=Banki átutalás
+BankTransfers=Banki átutalás
+TransferTo=A
+TransferFromToDone=A transzfer <b>%s</b> a <b>%s</b> a <b>%s</b> %s lett felvéve.
+CheckTransmitter=Adó
+ValidateCheckReceipt=Érvényesítése ezt az ellenőrzést átvételét?
+ConfirmValidateCheckReceipt=Biztos benne, hogy szeretné érvényesíteni ezt az ellenőrzést átvételét, semminemű változás nem lehetséges, ha ez megtörténik?
+DeleteCheckReceipt=Törölje a négyzet számlát?
+ConfirmDeleteCheckReceipt=Biztosan törölni szeretné ezt az ellenőrzést átvételét?
+BankChecks=Bank ellenőrzése
+BankChecksToReceipt=Ellenőrzi vár betét
+ShowCheckReceipt=Mutasd ellenőrizze betét kézhezvételétől
+PlannedTransactions=Tervezett műveletek
+Graph=Grafika
+ExportDataset_banque_1=Banki tranzakciók és a számlakivonat
+TransactionOnTheOtherAccount=Tranzakció a másik számlára
+TransactionWithOtherAccount=Számla transzfer
+PaymentNumberUpdateSucceeded=Fizetési száma frissített sikeres
+PaymentNumberUpdateFailed=Fizetési száma nem lehet frissíteni
+PaymentDateUpdateSucceeded=Fizetési határidő frissítés sikeres
+PaymentDateUpdateFailed=Fizetési határidő nem lehet frissíteni
+BankTransactionLine=Bank tranzakció
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:58:12).

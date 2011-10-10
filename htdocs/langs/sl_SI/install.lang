@@ -225,3 +225,12 @@ MigrationProjectUserResp=Prenos podatkov polja fk_user_resp tabele llx_projet v 
 MigrationProjectTaskTime=Posodobitev porabljenega časa v sekundah
 
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sl_SI
+ConfFileReload=Osveži vse podatke iz datoteke konfiguracije.
+WarningPHPVersionTooLow=PHP verzija prestar. Version %s ali več, je bilo pričakovano. Ta različica bi morala omogočiti namestitev, vendar pa je ne podpira.
+KeepDefaultValuesProxmox=Uporabite čarovnika za namestitev Dolibarr iz aparata Proxmox virtualno, tako da vrednosti predlagala tukaj že optimizirana. Jih spremeniti le, če veste kaj počnete.
+MigrateIsDoneStepByStep=Usmerjena različica (%s) je razlika več različic, tako da namestite čarovnik bo prišel nazaj, da predlagajo naslednji migracije, ko se bo končal ta.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:33:00).

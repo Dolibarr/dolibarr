@@ -31,3 +31,9 @@ ToOfferALinkForOnlinePaymentOnMemberSubscription=URL að bjóða upp á %s inni 
 YouCanAddTagOnUrl=Þú getur einnig bætt við url stika <b>& tag = <i>gildi</i></b> til allir af þessir URL (einungis fyrir frjáls greiðslu) til að bæta tag þína eigin greiðslu athugasemd.
 SetupPayBoxToHavePaymentCreatedAutomatically=Skipulag PayBox með url <b>%s</b> að hafa greiðslu búinn til sjálfkrafa þegar staðfest með því að paybox.
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:29:20).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> is_IS
+MessageKO=Skilaboð á niður greiðslu aftur síðu
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:15:03).

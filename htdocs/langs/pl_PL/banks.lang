@@ -156,3 +156,14 @@ ShowAllAccounts=Pokaż wszystkich rachunków
 // Reference language: en_US -> pl_PL
 BankAccountCountry=Konto kraju
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:37).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pl_PL
+RIBControlError=Sprawdza integralność wartości się nie powiedzie. Oznacza to, że informacje na ten numer konta nie są kompletne lub błędne (sprawdź liczbowe, IBAN).
+WithdrawalPayment=Wycofanie płatności
+ShowCheckReceipt=Pokaż sprawdzić otrzymania wpłaty
+Graph=Grafika
+FutureTransaction=Transakcja w futur. Nie da się pogodzić.
+SelectChequeTransactionAndGenerate=Wybierz / filtr sprawdza, to do otrzymania depozytu wyboru i kliknij przycisk &quot;Utwórz&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:15:41).

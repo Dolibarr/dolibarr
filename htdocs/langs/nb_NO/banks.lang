@@ -144,3 +144,9 @@ AllAccounts=Alle bank / cash kontoer
 BackToAccount=Tilbake til kontoen
 ShowAllAccounts=Vis for alle kontoer
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:15).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> nb_NO
+SelectChequeTransactionAndGenerate=Velg / filter sjekker for å inkludere inn sjekken innskudd kvitteringen og klikk på &quot;Create&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:15:02).

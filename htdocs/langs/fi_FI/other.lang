@@ -44,10 +44,6 @@ Miscellanous=Miscellaneous
 NbOfActiveNotifications=Ilmoitusten lukumäärä
 WarningInstallDirExists=Varoitus, asentaa hakemistoon ( %s) on yhä olemassa. Tämä on vakava turvallisuuteen reikään. Sinun tulisi poistaa niin pian kuin mahdollista.
 WarningUntilDirRemoved=Tämä varoitus pysyy aktiivisena niin kauan kuin tähän hakemistoon on läsnä (Näkyy vain admin-käyttäjät).
-PredefinedMailContentSendInvoice=Veuillez trouver ci-yhteinen la seen __FACREF__ \ n \ nCordialement \ n \ n
-PredefinedMailContentSendInvoiceReminder=Nous apportons votre connaissance que la seen __FACREF__ ne semble pas avoir t rgle. La voici siis, pour rappel, en pice jointe. \ N \ nCordialement \ n \ n
-PredefinedMailContentSendProposal=Veuillez trouver ci-yhteinen la proposition commerciale __PROPREF__ \ n \ nCordialement \ n \ n
-PredefinedMailContentSendOrder=Veuillez trouver ci-yhteinen la commande __ORDERREF__ \ n \ nCordialement \ n \ n
 ChooseYourDemoProfil=Valitse demo profil jotka vastaavat aktiviisuutesi ...
 DemoCompanyShopWithCashDesk=Hallinnoi liikkeen kanssa kassa
 DemoCompanyProductAndStocks=Hallitse pieni tai keskisuuri yritys myy tuotteitaan
@@ -223,3 +219,33 @@ SizeUnitinch=tuuma
 SizeUnitfoot=jalka
 ImageEditor=Kuvankäsittelyohjelmassa
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:55).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fi_FI
+ToolsDesc=Tämä alue on omistettu ryhmä sekalaisia ​​työkaluja ole saatavilla muihin valikot. <br><br> Näitä työkaluja pääsee valikosta puolella.
+Notify_WITHDRAW_TRANSMIT=Vaihteisto peruuttaminen
+Notify_WITHDRAW_CREDIT=Luotto peruuttaminen
+Notify_WITHDRAW_EMIT=Isue peruuttaminen
+Notify_ORDER_SENTBYMAIL=Asiakas tilaa postitse
+Notify_ORDER_SUPPLIER_VALIDATE=Toimittaja jotta validoitu
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Toimittaja jotta postitse
+Notify_BILL_SUPPLIER_VALIDATE=Toimittaja laskun validoitu
+Notify_BILL_SUPPLIER_PAYED=Toimittaja laskun maksanut
+Notify_BILL_SUPPLIER_SENTBYMAIL=Toimittaja lasku lähetetään postitse
+Notify_CONTRACT_VALIDATE=Sopimus validoitu
+Notify_FICHEINTER_VALIDATE=Intervention validoitu
+Notify_SHIPPING_VALIDATE=Toimitus validoitu
+Notify_SHIPPING_SENTBYMAIL=Toimitus postitse
+Notify_MEMBER_VALIDATE=Jäsen validoitu
+Top=Top
+Bottom=Pohja
+Left=Vasen
+Right=Oikeus
+ThisIsListOfModules=Tämä on luettelo moduuleista Esivalittujen tämän demon profiilia (vain yleisimmät moduulit näkyvät tässä Demo). Muokkaa tätä on enemmän henkilökohtaista demo ja klikkaa &quot;Start&quot;.
+ClickHere=Klikkaa tästä
+UseAdvancedPerms=Käytä Lisäkäyttöoikeudet joidenkin moduulien
+FileFormat=Tiedostomuoto
+SelectAColor=Valitse väri
+AddFiles=Lisää tiedostoja
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:21:28).

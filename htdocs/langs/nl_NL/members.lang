@@ -185,7 +185,7 @@ LastMemberDate=Laatste lid datum
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:02:42).
 // Reference language: en_US -> nl_NL
-NewSubscriptionDesc=Met dit formulier kunt u uw abonnement te nemen als nieuw lid van de stichting. Wilt u uw abonnement te verlengen (indien reeds lid is), dan kunt u in plaats daarvan contact op met stichtingsbestuur via e-mail sssss.
+NewSubscriptionDesc=Met dit formulier kunt u uw abonnement te nemen als nieuw lid van de stichting. Wilt u uw abonnement te verlengen (indien reeds lid is), dan kunt u in plaats daarvan contact op met stichtingsbestuur via e-mail %s.
 BlankSubscriptionFormDesc=Dolibarr kan u een openbare URL, zodat externe bezoekers te vragen in te schrijven op de stichting. Als een online betaling module is ingeschakeld, wordt een betalingsformulier ook automatisch worden verstrekt.
 EnablePublicSubscriptionForm=Schakel de openbare auto-inschrijfformulier
 MembersStatisticsByCountries=Leden statistieken per land

@@ -99,3 +99,9 @@ TypeContact_contrat_external_BILLING=结算客户联系
 TypeContact_contrat_external_CUSTOMER=后续的客户联系
 TypeContact_contrat_external_SALESREPSIGN=签约客户的联系
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+Error_CONTRACT_ADDON_NotDefined=恒CONTRACT_ADDON没有定义
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:39).

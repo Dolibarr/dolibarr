@@ -38,3 +38,13 @@ SetupPayBoxToHavePaymentCreatedAutomatically=الإعداد الخاص بك مع
 // Reference language: en_US
 ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان الموقع لتقديم الدفع عبر الإنترنت %s واجهة المستخدم للاشتراك عضو
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:52).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+YourPaymentHasBeenRecorded=هذه الصفحة يؤكد أنه قد تم تسجيلها دفعتك. شكرا لك.
+PAYBOX_CGI_URL_V2=عزيزي من وحدة لدفع CGI Paybox
+VendorName=اسم البائع
+CSSUrlForPaymentForm=عزيزي ورقة النمط المغلق للنموذج الدفع
+MessageOK=رسالة على الصفحة التحقق من صحة الدفع عودة
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:07:32).

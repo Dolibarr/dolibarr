@@ -47,3 +47,13 @@ PacificNumRefModelError=Interventiokynnyksen kortin alkaen $ syymm jo olemassa, 
 // Reference language: en_US
 ModifyIntervention=Muokka interventioelimen
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> fi_FI
+ActionsOnFicheInter=Toimia interventio
+ClassifyBilled=Luokitella &quot;Laskutetaan&quot;
+StatusInterInvoiced=Laskutetaan
+RelatedInterventions=Liittyvissä toimissa
+ShowIntervention=Näytä interventio
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:20:30).

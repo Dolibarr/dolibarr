@@ -12,3 +12,9 @@ PAYPAL_API_SIGNATURE=API podpis
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponujeno plačilo "integral" (kreditna kartica+Paypal) ali samo "Paypal"
 PAYPAL_CSS_URL=Opcijski Url ali list CSS oblike na plačilni strani
 ThisIsTransactionId=To je ID transakcije: <b>%s</b>
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> sl_SI
+PredefinedMailContentSendInvoiceWithPaypalLink=Tukaj boste našli račun __FACREF__ \ n \ nV lahko s klikom na spodnjo povezavo varne, da bo vaše plačilo preko PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:00:07).

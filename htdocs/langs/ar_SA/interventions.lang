@@ -42,3 +42,13 @@ PacificNumRefModelDesc1=عودة número مع الشكل nnnn - ٪ syymm فيه�
 PacificNumRefModelError=تدخل البطاقة ابتداء من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ar_SA
+ActionsOnFicheInter=إجراءات على التدخل
+ClassifyBilled=تصنيف &quot;وصفت&quot;
+StatusInterInvoiced=فواتير
+RelatedInterventions=التدخلات المتعلقة
+ShowIntervention=عرض التدخل
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:17:21).

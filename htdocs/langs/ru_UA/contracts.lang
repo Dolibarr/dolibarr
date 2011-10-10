@@ -1,0 +1,54 @@
+/*
+ * Language code: ru_UA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ru_UA
+CHARSET=UTF-8
+ContractsArea=Контракты области
+ListOfContracts=Список контрактов
+LastContracts=Последнее изменение %s контрактов
+AllContracts=Все контракты
+ContractCard=Договор карты
+ContractStatus=Договор статус
+ContractStatusNotRunning=Не работает
+ContractStatusRunning=Работающий
+ContractStatusDraft=Проект
+ServiceStatusLate=Бег, истек
+ServiceStatusLateShort=Истекший
+ServiceStatusClosed=Закрыто
+ServicesLegend=Услуги легенда
+Contracts=Контракты
+Contract=Контракт
+ContractContacts=Договор контакты
+NoContracts=Нет контрактов
+MenuServices=Услуги
+MenuInactiveServices=Услуги, не активный
+DeleteAContract=Удалить контракт
+CloseAContract=Заключать договор
+ConfirmDeleteAContract=Вы действительно хотите удалить этот договор и все его услуги?
+ConfirmValidateContract=Вы действительно хотите проверить этот контракт?
+ConfirmCloseContract=Это позволит закрыть все услуги (активный или нет). Вы уверены, что хотите закрыть этот контракт?
+ListOfServices=Перечень услуг
+ListOfInactiveServices=Список услуг не активны
+ListOfExpiredServices=Список истек активные службы
+ListOfClosedServices=Список закрытых услуг
+ListOfRunningContractsLines=Список бегущие строки контракта
+ListOfRunningServices=Список запущенных служб
+DateEndPlanned=Планируемая дата окончания
+DateEndPlannedShort=Планируемая дата окончания
+DateStartReal=Реальная дата начала
+DateStartRealShort=Реальная дата начала
+DateEndReal=Реальная дата окончания
+DateEndRealShort=Реальная дата окончания
+NbOfServices=Кол-услуг
+DeleteContractLine=Удалить контракт линии
+ConfirmDeleteContractLine=Вы действительно хотите удалить этот контракт линии?
+MoveToAnotherContract=Перемещение службы в другой контракт.
+ConfirmMoveToAnotherContract=Я выбрал новый контракт цели и подтвердить Я хочу, чтобы переместить эту услугу в этом договоре.
+ConfirmMoveToAnotherContractQuestion=Выберите в каком существующего контракта (в той же третьей стороны), необходимо переместить эту услугу?
+PaymentRenewContractId=Обновление линейки контрактов (число %s)
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:26:27).

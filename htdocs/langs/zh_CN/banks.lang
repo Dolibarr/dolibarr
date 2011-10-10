@@ -150,3 +150,10 @@ ShowAllAccounts=显示所有帐户
 // Reference language: en_US -> zh_CN
 BankAccountCountry=到国家
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:43).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+RIBControlError=值的完整性检查失败。这意味着此帐号的信息不完整或错误（检查国家，数字和IBAN）。
+WithdrawalPayment=提款支付
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:34:47).

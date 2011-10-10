@@ -115,7 +115,7 @@ YourQuotaOfUsersIsReached=Your quota of active users is reached !
 AdministratorDesc=Οντότητα Διαχειριστή
 UserWillBeInternalUser=Δημιουργήθηκε χρήστη θα είναι ένας εσωτερικός χρήστης (επειδή δεν συνδέεται με ένα συγκεκριμένο τρίτο μέρος)
 UserWillBeExternalUser=Δημιουργήθηκε χρήστης θα είναι μια εξωτερική χρήστη (επειδή συνδέονται με μια συγκεκριμένη τρίτο μέρος)
-UserLogoff=Sssss χρήστη logout
+UserLogoff=%s χρήστη logout
 NbOfUsers=Nb των χρηστών
 DontDowngradeSuperAdmin=Μόνο μια superadmin μπορεί να προβεί στην ανακατάταξη ενός superadmin
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:40:47).

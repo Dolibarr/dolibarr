@@ -88,7 +88,7 @@ NoRecordedProspects=Ingen registrert utsikter
 NoContractedProducts=Ingen produkter / tjenester innleide
 NoRecordedContracts=Ingen registrert kontrakter
 BoxLastContracts=Laatste contracten
-BoxTitleLastContracts=Laatste sssss contracten
+BoxTitleLastContracts=Laatste %s contracten
 NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
 NoRecordedContracts=Geen geregistreerde overeenkomsten
 BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
@@ -96,16 +96,16 @@ BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
 BoxLastContracts=Laatste contracten
 BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
 BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
-BoxTitleOldestUnpaidCustomerBills=Oudste sssss onbetaalde facturen klant
-BoxTitleOldestUnpaidSupplierBills=Oudste sssss onbetaalde facturen van de leverancier
+BoxTitleOldestUnpaidCustomerBills=Oudste %s onbetaalde facturen klant
+BoxTitleOldestUnpaidSupplierBills=Oudste %s onbetaalde facturen van de leverancier
 BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
 BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
-BoxTitleLastContracts=Laatste sssss contracten
+BoxTitleLastContracts=Laatste %s contracten
 NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
 NoRecordedContracts=Geen geregistreerde overeenkomsten
 BoxLastContracts=Ostatnie zamówienia
-BoxTitleLastProductsInContract=Ostatnie sssss produktów / usług w umowie
-BoxTitleLastContracts=Ostatnie sssss umów
+BoxTitleLastProductsInContract=Ostatnie %s produktów / usług w umowie
+BoxTitleLastContracts=Ostatnie %s umów
 NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
 NoRecordedContracts=Umów nie zarejestrowanych
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:23).
@@ -113,7 +113,7 @@ NoRecordedContracts=Umów nie zarejestrowanych
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> pl_PL
-BoxTitleLastModifiedSuppliers=Sssss ostatnio zmodyfikowano dostawców
-BoxTitleLastModifiedCustomers=Sssss ostatnio zmodyfikowano klientów
-BoxTitleLastModifiedProspects=Ostatnio zmodyfikowano perspektywy sssss
+BoxTitleLastModifiedSuppliers=%s ostatnio zmodyfikowano dostawców
+BoxTitleLastModifiedCustomers=%s ostatnio zmodyfikowano klientów
+BoxTitleLastModifiedProspects=Ostatnio zmodyfikowano perspektywy %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:38).

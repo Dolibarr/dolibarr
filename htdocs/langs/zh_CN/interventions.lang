@@ -40,3 +40,13 @@ ArcticNumRefModelError=无法启动
 PacificNumRefModelDesc1=返回格式％syymm，其中yy是二○○一年numero，MM是月，nnnn是一个没有休息，没有返回0序列
 PacificNumRefModelError=干预卡$ syymm起已经存在，而不是与此序列模型兼容。删除或重新命名它激活该模块。
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+ActionsOnFicheInter=干预的行动
+ClassifyBilled=分类“帐单”
+StatusInterInvoiced=帐单
+RelatedInterventions=相关的干预措施
+ShowIntervention=展干预
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:33:53).

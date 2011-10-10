@@ -144,3 +144,18 @@ OptionVatInfoModuleComptabilite=Notă: Pentru bunuri materiale, ar trebui să ut
 ThirdPartyMustBeEditAsCustomer=A treia parte trebuie să fie definit ca un client
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:42).
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ro_RO
+InvoiceStats=Statistici privind facturile
+SellsJournal=Jurnalul de vânzări
+PurchasesJournal=Cumparari Jurnalul
+DescSellsJournal=Jurnalul de vânzări
+DescPurchasesJournal=Cumparari Jurnalul
+InvoiceRef=Factură ref.
+CodeNotDef=Nu a fost definit
+AddRemind=Expedierea Suma disponibilă
+RemainToDivide=Ramaneti la expediere:
+WarningDepositsNotIncluded=Depozitele facturile nu sunt incluse in aceasta versiune cu acest modul de contabilitate.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:19:18).

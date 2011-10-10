@@ -159,3 +159,11 @@ TransactionWithOtherAccount=Contul de transfer
 // Reference language: en_US
 BankAccountCountry=Contul ţară
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:09).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ro_RO
+Graph=Grafică
+FutureTransaction=Tranzacţie în futur. In nici un caz pentru a concilia.
+SelectChequeTransactionAndGenerate=Select / filtru controale pentru a include în primirea de depozit verifica şi faceţi clic pe &quot;Create&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:16:58).

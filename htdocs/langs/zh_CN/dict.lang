@@ -297,3 +297,14 @@ CurrencySingXPF=太平洋法郎
 CurrencyINR=印度卢比
 CurrencySingINR=印度卢比
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:19).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+DemandReasonTypeSRC_CAMP_MAIL=邮寄活动
+DemandReasonTypeSRC_CAMP_EMAIL=通过电子邮件发送运动
+DemandReasonTypeSRC_CAMP_PHO=电话运动
+DemandReasonTypeSRC_CAMP_FAX=传真运动
+DemandReasonTypeSRC_COMM=商业联系
+DemandReasonTypeSRC_SHOP=商店联系
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:27:11).

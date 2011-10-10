@@ -216,7 +216,7 @@ MigrationProjectTaskTime = Verstreken tijd van de update in seconden
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:37:25).
 // Reference language: en_US -> nl_NL
 ConfFileReload=Reload alle informatie van configuratiebestand.
-MigrateIsDoneStepByStep=De beoogde versie (sssss) heeft een gat van meerdere versies, zodat installatie wizard zal terug komen naar de volgende migratie stellen zodra dit een zal worden afgewerkt.
+MigrateIsDoneStepByStep=De beoogde versie (%s) heeft een gat van meerdere versies, zodat installatie wizard zal terug komen naar de volgende migratie stellen zodra dit een zal worden afgewerkt.
 LastStepDesc=<strong>Laatste stap:</strong> Definieer hier de login en het wachtwoord die u wilt gebruiken om verbinding te maken software. Niet los dit als het is de rekening voor alle anderen te beheren.
 MigrationActioncommElement=Bijwerken van gegevens over acties
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:40:07).

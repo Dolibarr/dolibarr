@@ -130,3 +130,13 @@ CodeNotDef=Δεν προσδιορίζεται
 AddRemind=Αποστολή διαθέσιμο ποσό
 RemainToDivide=Παραμείνετε από την αποστολή:
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:22).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> el_GR
+AmountToBeCharged=Συνολικό ποσό για να πληρώσει:
+ProposalStats=Στατιστικά στοιχεία σχετικά με τις προτάσεις
+OrderStats=Στατιστικά στοιχεία για τις παραγγελίες
+InvoiceStats=Στατιστικά στοιχεία για τους λογαριασμούς
+WarningDepositsNotIncluded=Καταθέσεις τιμολόγια δεν περιλαμβάνονται σε αυτή την έκδοση με αυτή την ενότητα λογιστικής.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:40:28).

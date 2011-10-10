@@ -304,3 +304,16 @@ CurrencySingXOF=CFA franc BCEAO
 CurrencyXPF=PCP franci
 CurrencySingXPF=PCP franc
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:44).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> ro_RO
+CurrencySingUAH=Grivna
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Mailing campanie
+DemandReasonTypeSRC_CAMP_EMAIL=Corespondenţei campanie
+DemandReasonTypeSRC_CAMP_PHO=Telefon de campanie
+DemandReasonTypeSRC_CAMP_FAX=Fax campanie
+DemandReasonTypeSRC_COMM=Comercială de contact
+DemandReasonTypeSRC_SHOP=Magazin de contact
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 08:52:27).

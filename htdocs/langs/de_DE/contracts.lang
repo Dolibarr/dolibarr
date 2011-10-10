@@ -97,3 +97,8 @@ ConfirmDeleteContractLine=Möchten Sie diese Vertragsposition wirklich löschen?
 PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
 ExpiredSince=Abgelaufen seit
 RelatedContracts=Verknüpfte Verträge
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> de_DE
+Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON nicht definiert
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:39).

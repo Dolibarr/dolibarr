@@ -9,11 +9,11 @@
 // Reference language: en_US -> el_GR
 CHARSET=UTF-8
 DomainPassword=Κωδικός πρόσβασης για τον τομέα
-YouMustChangePassNextLogon=Κωδικός πρόσβασης για <b>sssss</b> χρήστη στο <b>sssss</b> τομέα πρέπει να αλλάξει.
-UserMustChangePassNextLogon=Ο χρήστης πρέπει να αλλάξετε τον κωδικό πρόσβασης για το sssss τομέα
+YouMustChangePassNextLogon=Κωδικός πρόσβασης για <b>%s</b> χρήστη στο <b>%s</b> τομέα πρέπει να αλλάξει.
+UserMustChangePassNextLogon=Ο χρήστης πρέπει να αλλάξετε τον κωδικό πρόσβασης για το %s τομέα
 LdapUacf_NORMAL_ACCOUNT=Λογαριασμός χρήστη
 LdapUacf_DONT_EXPIRE_PASSWORD=Κωδικός πρόσβασης δεν λήγει ποτέ
-LdapUacf_ACCOUNTDISABLE=Ο λογαριασμός είναι απενεργοποιημένη στον τομέα sssss
+LdapUacf_ACCOUNTDISABLE=Ο λογαριασμός είναι απενεργοποιημένη στον τομέα %s
 LDAPInformationsForThisContact=Πληροφορίες στο LDAP βάση δεδομένων για αυτήν την επαφή
 LDAPInformationsForThisUser=Πληροφορίες στη βάση δεδομένων LDAP για αυτό το χρήστη
 LDAPInformationsForThisGroup=Πληροφορίες στο LDAP βάση δεδομένων για αυτή την ομάδα

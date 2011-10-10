@@ -34,5 +34,16 @@ SetupPayBoxToHavePaymentCreatedAutomatically=Skonfiguruj PayBox url <b>z %s</b> 
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> pl_PL
-ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL do zaoferowania płatności online sssss interfejs użytkownika jest członkiem subskrypcji
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL do zaoferowania płatności online %s interfejs użytkownika jest członkiem subskrypcji
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:42).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> pl_PL
+UsageParameter=Parametry serwera
+InformationToFindParameters=Pomoc znaleźć %s informacje o koncie
+PAYBOX_CGI_URL_V2=Url Paybox moduł CGI płatności
+VendorName=Nazwa dostawcy
+CSSUrlForPaymentForm=CSS url arkusz dla formy płatności
+MessageOK=Wiadomość na zatwierdzonych strony powrót płatności
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:20:39).
