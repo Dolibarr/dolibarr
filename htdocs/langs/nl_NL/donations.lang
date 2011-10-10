@@ -1,35 +1,32 @@
-# Dolibarr language file - nl_NL - donations
-CHARSET=UTF-8
-Donation=Donatie
-Donationss=Donaties
-Donor=Donor
-Donors=Donoren
-AddDonation=Een donatie toevoegen
-NewDonation=Nieuwe donatie
-DonationPromise=Donatie toezegging
-PromisesNotValid=Niet gevalideerd toezegging
-PromisesValid=Gevalideerde toezegging
-DonationsPayed=Donaties betaald
-DonationsReceived=Donaties ontvangen
-PublicDonation=Openbare donatie
-DonationsNumber=Donatienummer
-DonationsArea=Donaties gebied
-DonationStatusPromiseNotValidated=Voorlopige toezegging
-DonationStatusPromiseValidated=Gevalideerde toezegging
-DonationStatusPayed=Donatie ontvangen
-DonationStatusPromiseNotValidatedShort=Voorlopig
-DonationStatusPromiseValidatedShort=Gevalideerd
-DonationStatusPayedShort=Ontvangen
-ValidPromise=Valideer toezegging
-BuildDonationReceipt=Creëer donatie ontvangstbewijs
-DonationsModels=Documenten modellen voor donatie ontvangsten
+# Dolibarr language file - nl_NL - donations = 
+CHARSET = UTF-8
+Donation = Donatie
+Donations = Donaties
+Donor = Donor
+Donors = Donoren
+AddDonation = Een donatie toevoegen
+NewDonation = Nieuwe donatie
+DonationPromise = Donatie toezegging
+PromisesNotValid = Niet gevalideerde toezegging
+PromisesValid = Gevalideerde toezegging
+DonationsPaid = Betaalde donaties
+DonationsReceived = Ontvangen donaties
+PublicDonation = Openbare donatie
+DonationsNumber = Donatienummer
+DonationsArea = Donatiesoverzicht
+DonationStatusPromiseNotValidated = Voorlopige toezegging
+DonationStatusPromiseValidated = Gevalideerde toezegging
+DonationStatusPaid = Donatie ontvangen
+DonationStatusPromiseNotValidatedShort = Voorlopig
+DonationStatusPromiseValidatedShort = Gevalideerd
+DonationStatusPaidShort = Ontvangen
+ValidPromess = Bevestig de toezegging
+BuildDonationReceipt = Creëer donatieontvangstbewijs
+DonationsModels = Documentenmodellen voor donatieontvangsten
 
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
 // Reference language: en_US -> nl_NL
-Donations=Giften
-DonationsPaid=Giften betaald
-DonationStatusPaid=Donatie ontvangen
-DonationStatusPaidShort=Ontvangen
-ValidPromess=Bevestig de belofte
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:13).
+LastModifiedDonations=Laatst gewijzigd sssss donaties
+SearchADonation=Zoek een donatie
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:00:11).

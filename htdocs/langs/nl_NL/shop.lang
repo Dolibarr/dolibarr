@@ -1,11 +1,11 @@
-# Dolibarr language file - nl_NL - shop
-CHARSET=UTF-8
-Shop=Winkel
-ShopWeb=Webwinkel
-LastOrders=Laatste orders
-OnStandBy=Op stand-by
-TreatmentInProgress=Behandeling in uitvoering
-LastCustomers=Laatste klanten
-OSCommerceShop=OSCommerce shop
-OSCommerce=OSCommerce
-AddProd=Verkopen online
+# Dolibarr language file - nl_NL - shop = 
+CHARSET = UTF-8
+Shop = Winkel
+ShopWeb = Webwinkel
+LastOrders = Laatste orders
+OnStandBy = Op stand-by
+TreatmentInProgress = Behandeling in uitvoering
+LastCustomers = Laatste afnemers
+OSCommerceShop = OSCommerce winkel
+OSCommerce = OSCommerce
+AddProd = Verkopen online
