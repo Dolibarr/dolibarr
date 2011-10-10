@@ -1798,6 +1798,7 @@ llxFooter();
 
 /**
  * Return if var element is ok
+ * 
  * @param   string      $element    Variable to check
  * @return  boolean                 Return true of variable is not empty
  */

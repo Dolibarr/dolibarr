@@ -1416,17 +1416,17 @@ class User extends CommonObject
 			dol_syslog("User::send_password url=".$url);
 		}
 		$mailfile = new CMailFile(
-		$subject,
-		$this->email,
-		$conf->notification->email_from,
-		$mesg,
-		array(),
-		array(),
-		array(),
+			$subject,
+			$this->email,
+			$conf->notification->email_from,
+			$mesg,
+			array(),
+			array(),
+			array(),
 		    '',
 		    '',
-		0,
-		$msgishtml
+			0,
+			$msgishtml
 		);
 
 		if ($mailfile->sendfile())
@@ -1990,6 +1990,7 @@ class User extends CommonObject
 	 *  Return number of existing users
 	 *
 	 *  @param	string	$limitTo	Limit to 'active' or 'superadmin' users
+	 *  @param	int		$all		Return for all entities
 	 *  @return int  				Number of users
 	 */
 	function getNbOfUsers($limitTo='',$all=0)
