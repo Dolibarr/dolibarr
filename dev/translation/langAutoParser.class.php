@@ -11,6 +11,9 @@
  * http://code.google.com/intl/fr/apis/ajaxlanguage/documentation/#SupportedPairs
  */
 
+/**
+ * Class to parse language files and translate them
+ */
 class langAutoParser {
 
 	private $translatedFiles = array();
@@ -24,6 +27,7 @@ class langAutoParser {
 	//private $outputpagecode = 'ISO-8859-1';
 	const DIR_SEPARATOR = '/';
 
+	
 	function __construct($destLang,$refLang,$langDir,$limittofile){
 
 		// Set enviorment variables
@@ -40,6 +44,11 @@ class langAutoParser {
 
 	}
 
+	/**
+	 * 	Parse file
+	 * 
+	 * 	@return	void
+	 */
 	private function parseRefLangTranslationFiles()
 	{
 
@@ -115,7 +124,13 @@ class langAutoParser {
 		}
 	}
 
-
+	/**
+	 * Update file with new translations
+	 * 
+	 * @param unknown_type $destPath
+	 * @param unknown_type $file
+	 * @param unknown_type $mydestLang
+	 */
 	private function updateTranslationFile($destPath,$file,$mydestLang)
 	{
 		$this->time_end = date('Y-m-d H:i:s');
@@ -136,7 +151,14 @@ class langAutoParser {
 		return;
 	}
 
-	private function createTranslationFile($path,$mydestlang){
+	/**
+	 * Create a new translation file
+	 * 
+	 * @param unknown_type $path
+	 * @param unknown_type $mydestlang
+	 */
+	private function createTranslationFile($path,$mydestlang)
+	{
 		$fp = fopen($path, 'w+');
 		fwrite($fp, "/*\r\n");
 		fwrite($fp, " * Language code: {$mydestlang}\r\n");
@@ -190,18 +212,32 @@ class langAutoParser {
 		return 1;
 	}
 
-
-	private function getLineKey($line){
+	/**
+	 * 
+	 * @param unknown_type $line
+	 */
+	private function getLineKey($line)
+	{
 		$arraykey = explode('=',$line,2);
 		return trim($arraykey[0]);
 	}
 
-	private function getLineValue($line){
+	/**
+	 * 
+	 * @param unknown_type $line
+	 */
+	private function getLineValue($line)
+	{
 		$arraykey = explode('=',$line,2);
 		return trim($arraykey[1]);
 	}
 
-	private function getTranslationFilesArray($lang){
+	/**
+	 * 
+	 * @param unknown_type $lang
+	 */
+	private function getTranslationFilesArray($lang)
+	{
 		$dir = new DirectoryIterator($this->langDir.$lang);
 		while($dir->valid()) {
 			if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./',$dir->getFilename())) {
@@ -220,8 +256,8 @@ class langAutoParser {
 	 * @param 	$dest_lang
 	 * @return 	string			Value translated
 	 */
-	private function translateTexts($src_texts = array(), $src_lang, $dest_lang){
-
+	private function translateTexts($src_texts = array(), $src_lang, $dest_lang)
+	{
 		$tmp=explode('_',$src_lang);
 		if ($tmp[0] == $tmp[1]) $src_lang=$tmp[0];
 
@@ -253,14 +289,16 @@ class langAutoParser {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_REFERER, "http://www.YOURWEBSITE.com");
+		curl_setopt($ch, CURLOPT_REFERER, "Mozilla");
 		$body = curl_exec($ch);
 		curl_close($ch);
-
+		sleep(1);	// This is to avoid to overload server
+		
 		// now, process the JSON string
 		$json = json_decode($body, true);
 
-		if ($json['responseStatus'] != 200){
+		if ($json['responseStatus'] != 200)
+		{
 			print "Error: ".$json['responseStatus']." ".$url."\n";
 			return false;
 		}
