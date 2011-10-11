@@ -87,7 +87,7 @@ class modCashDesk extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 50101;
-		$this->rights[$r][1] = 'Use cashdesk';
+		$this->rights[$r][1] = 'Use point of sale';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'use';
