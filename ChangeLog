@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.2 compared to 3.1 *****
 
 For users:
+- New: Print ticket show invoice ref into POS module.
 - New: Can edit customer discounts from invoice create and edit card.
 - New: task #11243: Show quantity into stocks for each sub-products into the sub-product tab.
 - New: task #10500: Option to choose if professional id are unique.

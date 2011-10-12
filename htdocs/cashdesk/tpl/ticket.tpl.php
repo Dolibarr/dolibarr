@@ -1,22 +1,29 @@
 <?php
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+
 $langs->load("main");
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+$facid=GETPOST('facid');
+$object=new Facture($db);
+$object->fetch($facid);
+
 ?>
-<!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
--->
 <html>
 <head>
 <title>Print ticket</title>
@@ -97,16 +104,21 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	</div>
 	<div class="infos">
 		<p class="address"><?php echo $mysoc->name; ?><br>
-		<?php echo $mysoc->address; ?><br>
-		<?php echo $mysoc->zip.' '.$mysoc->town; ?></p>
+		<?php print dol_nl2br(dol_format_address($langs,$mysoc)); ?><br>
+		</p>
 
+		<p class="date_heure">
 		<?php
 			// Recuperation et affichage de la date et de l'heure
 			$now = dol_now();
-			print '<p class="date_heure">'.dol_print_date($now,'dayhourtext').'</p>';
+			print dol_print_date($now,'dayhourtext').'<br>';
+            print $object->ref;
 		?>
+		</p>
 	</div>
 </div>
+
+<br>
 
 <table class="liste_articles">
 	<tr class="titres"><th><?php print $langs->trans("Code"); ?></th><th><?php print $langs->trans("Label"); ?></th><th><?php print $langs->trans("Qty"); ?></th><th><?php print $langs->trans("Discount").' (%)'; ?></th><th><?php print $langs->trans("TotalHT"); ?></th></tr>
@@ -119,12 +131,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON c.fk_article = p.rowid
 			ORDER BY id');
 
-		if ( $db->num_rows($res) ) {
-
+		if ($db->num_rows($res))
+		{
 			$ret=array(); $i=0;
-			while ( $tab = $db->fetch_array($res) )
+			while ($tab = $db->fetch_array($res))
 			{
-				foreach ( $tab as $cle => $valeur )
+				foreach ($tab as $cle => $valeur)
 				{
 					$ret[$i][$cle] = $valeur;
 				}
@@ -133,17 +145,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			$tab = $ret;
 
 			$tab_size=count($tab);
-			for($i=0;$i < $tab_size;$i++) {
-
+			for($i=0;$i < $tab_size;$i++)
+			{
 				$remise = $tab[$i]['remise'];
 				echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.price2num($tab[$i]['total_ht'],'MT').' '.$conf->monnaie.'</td></tr>'."\n");
-
 			}
 
-		} else {
-
+		}
+		else
+		{
 			echo ('<p>Erreur : aucun article</p>'."\n");
-
 		}
 
 	?>
@@ -158,11 +169,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 </table>
 
 <script type="text/javascript">
-
 	window.print();
-
 </script>
 
-<a class="lien" href="#" onclick="javascript: window.close(); return(false);">Fermer cette fenetre</a>
+<a class="lien" href="#" onclick="javascript: window.close(); return(false);"><?php echo $langs->trans("Close"); ?></a>
 
 </body>

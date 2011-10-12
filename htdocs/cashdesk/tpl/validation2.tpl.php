@@ -22,13 +22,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 <script type="text/javascript">
 
-	function popupTicket () {
-
+	function popupTicket()
+	{
 		largeur = 600;
 		hauteur = 500
 		opt = 'width='+largeur+', height='+hauteur+', left='+(screen.width - largeur)/2+', top='+(screen.height-hauteur)/2+'';
-		window.open ('validation_ticket.php', 'Impression du ticket', opt);
-
+		window.open('validation_ticket.php?facid=<?php echo $_GET['facid']; ?>', 'Print ticket', opt);
 	}
 
 	popupTicket();

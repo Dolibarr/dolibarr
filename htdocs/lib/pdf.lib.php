@@ -164,44 +164,6 @@ function pdf_getPDFFontSize($outputlangs)
 
 
 /**
- *      Return a formated address (part address/zip/town/state) according to country rules
- *
- *      @param      outputlangs     Output langs object
- *      @param      object          A company or contact object
- *      @return     string          Formated string
- */
-function pdf_format_address($outputlangs,$object)
-{
-	$ret='';
-	$countriesusingstate=array('US','IN');
-
-	// Address
-	$ret .= $outputlangs->convToOutputCharset($object->address);
-	// Zip/Town/State
-	if (in_array($object->pays_code,array('US')))   // US: town, state, zip
-	{
-		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->town);
-		if ($object->departement && in_array($object->pays_code,$countriesusingstate))
-		{
-			$ret.=", ".$outputlangs->convToOutputCharset($object->departement);
-		}
-		if ($object->cp) $ret .= ', '.$outputlangs->convToOutputCharset($object->zip);
-	}
-	else                                        // Other: zip town, state
-	{
-		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->zip);
-		$ret .= ' '.$outputlangs->convToOutputCharset($object->town);
-		if ($object->departement && in_array($object->pays_code,$countriesusingstate))
-		{
-			$ret.=", ".$outputlangs->convToOutputCharset($object->departement);
-		}
-	}
-
-	return $ret;
-}
-
-
-/**
  *   	Return a string with full address formated
  *
  * 		@param		outputlangs		Output langs object
@@ -228,7 +190,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'source')
 	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).pdf_format_address($outputlangs,$sourcecompany)."\n";
+		$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$sourcecompany)."\n";
 
 		// Tel
 		if ($sourcecompany->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);
@@ -245,13 +207,13 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		if ($usecontact)
 		{
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1));
-			$stringaddress .= ($stringaddress ? "\n" : '' ).pdf_format_address($outputlangs,$targetcontact)."\n";
+			$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$targetcontact)."\n";
 			// Country
 			if ($targetcontact->pays_code && $targetcontact->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
 		}
 		else
 		{
-			$stringaddress .= ($stringaddress ? "\n" : '' ).pdf_format_address($outputlangs,$targetcompany)."\n";
+			$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$targetcompany)."\n";
 			// Country
 			if ($targetcompany->pays_code && $targetcompany->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
 		}
@@ -288,7 +250,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'delivery')	// for a delivery address (address + phone/fax)
 	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).pdf_format_address($outputlangs,$deliverycompany)."\n";
+		$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$deliverycompany)."\n";
 
 		// Tel
 		if ($deliverycompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($deliverycompany->phone);

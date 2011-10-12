@@ -619,6 +619,45 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
     return dol_print_date($time,$format,$to_gmt,$outputlangs,$encodetooutput);
 }
 
+
+/**
+ *      Return a formated address (part address/zip/town/state) according to country rules
+ *
+ *      @param      outputlangs     Output langs object
+ *      @param      object          A company or contact object
+ *      @return     string          Formated string
+ */
+function dol_format_address($outputlangs,$object)
+{
+	$ret='';
+	$countriesusingstate=array('US','IN');
+
+	// Address
+	$ret .= $outputlangs->convToOutputCharset($object->address);
+	// Zip/Town/State
+	if (in_array($object->country_code,array('US')))   // US: town, state, zip
+	{
+		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->town);
+		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		{
+			$ret.=", ".$outputlangs->convToOutputCharset($object->departement);
+		}
+		if ($object->zip) $ret .= ', '.$outputlangs->convToOutputCharset($object->zip);
+	}
+	else                                        // Other: zip town, state
+	{
+		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->zip);
+		$ret .= ' '.$outputlangs->convToOutputCharset($object->town);
+		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		{
+			$ret.=", ".$outputlangs->convToOutputCharset($object->state);
+		}
+	}
+
+	return $ret;
+}
+
+
 /**
  *	Output date in a string format according to outputlangs (or langs if not defined).
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset
