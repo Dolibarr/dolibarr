@@ -152,7 +152,8 @@ MigrationShippingDelivery=Mise à jour stockage des expéditions
 MigrationShippingDelivery2=Mise à jour stockage des expéditions 2 
 MigrationFinished=Migration terminée
 LastStepDesc=<strong>Dernière étape</strong>: Définissez ici le compte et mot de passe du premier utilisateur que vous allez utiliser pour vous connecter à l'application. Ne perdez pas ces identifiants, il s'agit du compte permettant d'administrer les autres.
- 
+ActivateModule=Activation du module %s
+
 
 #########
 # upgrade

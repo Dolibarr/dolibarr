@@ -151,6 +151,7 @@ MigrationShippingDelivery=Upgrade storage of shipping
 MigrationShippingDelivery2=Upgrade storage of shipping 2 
 MigrationFinished=Migration finished
 LastStepDesc=<strong>Last step</strong>: Define here login and password you plan to use to connect to software. Do not loose this as it is the account to administer all others.
+ActivateModule=Activate module %s
 
 #########
 # upgrade

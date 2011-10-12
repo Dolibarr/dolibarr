@@ -223,6 +223,8 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
                     foreach ($tmparray as $modtoactivate)
                     {
                         $modtoactivatenew=preg_replace('/\.class\.php$/i','',$modtoactivate);
+                        print $langs->trans("ActivateModule",$modtoactivatenew).'<br>';
+
                         $file=$modtoactivatenew.'.class.php';
                         dolibarr_install_syslog('install/etape5.php Activate module file='.$file);
                         $res=dol_include_once("/includes/modules/".$file);
