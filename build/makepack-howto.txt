@@ -18,7 +18,7 @@ beta version of Dolibarr, step by step.
 - Update version number with x.x.x-y in htdocs/support/inc.php
 - Update version number with x.x.x-y in htdocs/build/rpm/*.spec
 - Commit all changes.
-- Add a CVS Tag (DOLIBARR_x_y_BETA)
+- Add a Tag (DOLIBARR_x_y_BETA)
 - Create a branch (DOLIBARR_x_y_BRANCH).
 
 - Run makepack-dolibarr.pl to generate all packages.
@@ -42,7 +42,7 @@ complete release of Dolibarr, step by step.
 - Update version number with x.x.x-y in htdocs/build/rpm/*.spec
 - Update PAD and DOAP files.
 - Commit all changes.
-- Add a CVS Tag (DOLIBARR_x_y)
+- Add a Tag (DOLIBARR_x_y)
 
 - Build Dolibarr and DoliWamp packages with makepack-dolibarr.pl
 - Check content of built packages.
