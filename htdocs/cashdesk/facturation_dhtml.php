@@ -41,7 +41,7 @@ require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 // Search from criteria
-if ( dol_strlen ($_GET["code"]) >= 0 )	// If search criteria is on char length at least
+if (dol_strlen($_GET["code"]) >= 0)	// If search criteria is on char length at least
 {
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";

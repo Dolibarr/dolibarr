@@ -51,7 +51,7 @@ switch ($action)
 
 		$obj_facturation->num_facture($num);
 
-		$obj_facturation->mode_reglement ($_POST['hdnChoix']);
+		$obj_facturation->mode_reglement($_POST['hdnChoix']);
 
 		// Si paiement autre qu'en especes, montant encaisse = prix total
 		$mode_reglement = $obj_facturation->mode_reglement();
@@ -65,7 +65,7 @@ switch ($action)
 			$obj_facturation->montant_encaisse($montant);
 
 			//Determination de la somme rendue
-			$total = $obj_facturation->prix_total_ttc ();
+			$total = $obj_facturation->prix_total_ttc();
 			$encaisse = $obj_facturation->montant_encaisse();
 
 			$obj_facturation->montant_rendu($encaisse - $total);
@@ -283,7 +283,7 @@ switch ($action)
 
 
 
-$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
+$_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
-header ('Location: '.$redirection);
+header('Location: '.$redirection);
 ?>

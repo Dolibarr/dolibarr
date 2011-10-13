@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 J�r�mie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-	// Affichage des templates
-	require ('tpl/validation1.tpl.php');
+// Affichage des templates
+require ('tpl/validation1.tpl.php');
 
 ?>

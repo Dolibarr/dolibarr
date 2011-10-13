@@ -19,14 +19,14 @@ require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
 
-$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
-unset ($_SESSION['serObjFacturation']);
+$obj_facturation = unserialize($_SESSION['serObjFacturation']);
+unset($_SESSION['serObjFacturation']);
 
 
 require ('tpl/ticket.tpl.php');
 
 
-$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
+$_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
 ?>
 

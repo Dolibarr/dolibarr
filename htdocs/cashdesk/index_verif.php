@@ -37,14 +37,14 @@ $warehouseid = (GETPOST("warehouseid")!='')?GETPOST("warehouseid"):$conf->global
 if (empty($username))
 {
 	$retour=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login"));
-	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
+	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
 	exit;
 }
 // Check third party id
 if (! ($thirdpartyid > 0))
 {
     $retour=$langs->trans("ErrorFieldRequired",$langs->transnoentities("CashDeskThirdPartyForSell"));
-    header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
+    header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
     exit;
 }
 
@@ -52,7 +52,7 @@ if (! ($thirdpartyid > 0))
 if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL &&  ! ($warehouseid > 0))
 {
 	$retour=$langs->trans("CashDeskSetupStock");
-	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
+	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
 	exit;
 }
 
@@ -60,7 +60,7 @@ if (! empty($_POST['txtUsername']) && $conf->banque->enabled && (empty($conf_fka
 {
 	$langs->load("errors");
 	$retour=$langs->trans("ErrorModuleSetupNotComplete");
-    header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
+    header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
     exit;
 }
 
@@ -68,7 +68,7 @@ if (! empty($_POST['txtUsername']) && $conf->banque->enabled && (empty($conf_fka
 
 // Check password
 $auth = new Auth($db);
-$retour = $auth->verif ($username, $password);
+$retour = $auth->verif($username, $password);
 
 if ( $retour >= 0 )
 {
@@ -97,7 +97,7 @@ if ( $retour >= 0 )
         $_SESSION['CASHDESK_ID_WAREHOUSE'] = $warehouseid;
 		//var_dump($_SESSION);exit;
 
-		header ('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&id=NOUV');
+		header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&id=NOUV');
 		exit;
 	}
 	else
@@ -111,7 +111,7 @@ else
 	$langs->load("errors");
     $langs->load("other");
 	$retour=$langs->trans("ErrorBadLoginPassword");
-	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
+	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
 	exit;
 }
 

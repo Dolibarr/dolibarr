@@ -25,7 +25,7 @@ require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 /** end add Ditto */
 
-$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
+$obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
 
@@ -156,9 +156,9 @@ switch ( $_GET['action'] )
 }
 
 
-$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
+$_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
-header ('Location: '.$redirection);
+header('Location: '.$redirection);
 exit;
 
 ?>

@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 // Test if already logged
 if ( $_SESSION['uid'] <= 0 )
 {
-	header ('Location: index.php');
+	header('Location: index.php');
 	exit;
 }
 

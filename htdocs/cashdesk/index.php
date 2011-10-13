@@ -34,7 +34,7 @@ $langs->load("cashdesk");
 // Test if user logged
 if ( $_SESSION['uid'] > 0 )
 {
-	header ('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php');
+	header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php');
 	exit;
 }
 
@@ -129,7 +129,7 @@ if ($_GET['err'] < 0) {
 ?></div>
 </div>
 
-<?php include ('affPied.php'); ?></div>
+<?php include('affPied.php'); ?></div>
 </div>
 </div>
 </body>

@@ -44,7 +44,12 @@ else
 }
 
 print '<div class="liste_articles">';
-include('liste_articles.php');
+
+require ('tpl/liste_articles.tpl.php');
+
+$obj_facturation->prix_total_ht($lst_total_ht);
+$obj_facturation->prix_total_ttc($lst_total_ttc);
+
 print '</div>';
 
 print '<div class="principal">';
@@ -55,11 +60,11 @@ if ( $_GET['menu'] )
 }
 else
 {
-	include ('facturation.php');
+	include('facturation.php');
 }
 
 print '</div>';
 
-$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
+$_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
 ?>

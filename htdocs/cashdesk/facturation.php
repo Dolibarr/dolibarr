@@ -93,28 +93,27 @@ if ( $_GET['filtre'] ) {
 	$tab_designations=$ret;
 }
 
-$nbr_enreg = count ($tab_designations);
+$nbr_enreg = count($tab_designations);
 
-if ( $nbr_enreg > 1 ) {
-
-	if ( $nbr_enreg > $conf_taille_listes ) {
-
+if ( $nbr_enreg > 1 )
+{
+	if ( $nbr_enreg > $conf_taille_listes )
+	{
 		$top_liste_produits = '----- '.$conf_taille_listes.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
-
-	} else {
-
+	}
+	else
+	{
 		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
-
 	}
 
-} else if ( $nbr_enreg == 1 ) {
-
+}
+else if ( $nbr_enreg == 1 )
+{
 	$top_liste_produits = '----- 1 '.$langs->transnoentitiesnoconv("ProductFound"). ' -----';
-
-} else {
-
+}
+else
+{
 	$top_liste_produits = '----- '.$langs->transnoentitiesnoconv("NoProductFound"). ' -----';
-
 }
 
 
@@ -152,10 +151,10 @@ $tab_tva = $ret;
 
 
 // Reinitialisation du mode de paiement, en cas de retour aux achats apres validation
-$obj_facturation->mode_reglement ('RESET');
-$obj_facturation->montant_encaisse ('RESET');
-$obj_facturation->montant_rendu ('RESET');
-$obj_facturation->paiement_le ('RESET');
+$obj_facturation->mode_reglement('RESET');
+$obj_facturation->montant_encaisse('RESET');
+$obj_facturation->montant_rendu('RESET');
+$obj_facturation->paiement_le('RESET');
 
 
 // Affichage des templates

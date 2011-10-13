@@ -26,7 +26,7 @@ require_once("../main.inc.php");
 // This destroy tag that say "Point of Sale session is on".
 unset($_SESSION['uid']);
 
-header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php');
+header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php');
 exit;
 
 ?>
