@@ -8,8 +8,8 @@
 
 // in [-]HH:MM format...
 // won't yet work with non-even tzs
-function fetchTimezone() {
-	// FIXME: work around Safari bug
+function fetchTimezone() 
+{
 	var localclock = new Date();
 	// returns negative offset from GMT in minutes
 	var tzRaw = localclock.getTimezoneOffset();

@@ -28,14 +28,14 @@ require_once('class/Facturation.class.php');
 if ( $_GET['id'] == 'NOUV' )
 {
 	unset($_SESSION['serObjFacturation']);
-	$db->query('DELETE FROM '.MAIN_DB_PREFIX.'pos_tmp');
+	unset($_SESSION['poscart']);
 }
 
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
-if ( isset ($_SESSION['serObjFacturation']) )
+if (isset($_SESSION['serObjFacturation']))
 {
 	$obj_facturation = unserialize($_SESSION['serObjFacturation']);
-	unset ($_SESSION['serObjFacturation']);
+	unset($_SESSION['serObjFacturation']);
 }
 else
 {
