@@ -1,0 +1,5 @@
+# Dolibarr language file - fr_FR - customfields user defined labels
+# Vous pouvez ici définir les libellés de vos propres champs personnalisés et leurs valeurs (après les avoir créés dans l'interface admin)
+
+# Format:
+# cf_fieldname=label

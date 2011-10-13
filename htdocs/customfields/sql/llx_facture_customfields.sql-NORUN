@@ -1,0 +1,31 @@
+-- ========================================================================
+-- Copyright (C) 2011 Stephen LARROQUE <lrq3000@gmail.com>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id: llx_facture_customfields.sql,v 0.1 2011/01/01
+--
+-- Facture Custom Fields
+-- ========================================================================
+
+create table llx_facture_customfields
+(
+  rowid                int(11) NOT NULL AUTO_INCREMENT,
+  fk_facture       int(11) NOT NULL, -- id of the associated invoice
+  somefield        varchar(256) DEFAULT NULL, -- a dummy custom field
+
+  PRIMARY KEY (rowid),
+  KEY fk_facture (fk_facture)
+) ENGINE=InnoDB AUTO_INCREMENT=1 ;

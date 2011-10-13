@@ -85,7 +85,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
 
-
     /**
      * Define array with couple substitution key => substitution value
      *
@@ -103,7 +102,17 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		}
 		$alreadypayed=price($object->getSommePaiement(),'MT');
 
-        return array(
+	$subarr = array(); // initiating the substitution array
+
+	// Generically add each property of the $object into the substitution array
+	foreach ($object as $key=>$value) {
+		if (!is_object($value) and !is_resource($value)) {
+			$subarr['object_'.$key] = $value;
+		}
+	}
+
+	// Defining specific values
+        $subarr = array(
             'object_id'=>$object->id,
             'object_ref'=>$object->ref,
             'object_ref_ext'=>$object->ref_ext,
@@ -127,6 +136,33 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_already_payed'=>$alreadypayed,
             'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,'MT')
         );
+
+	// Adding customfields properties of the $object
+	// CustomFields
+	if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+		include_once(DOL_DOCUMENT_ROOT.'/customfields/class/customfields.class.php');
+		$customfields = new CustomFields($this->db, '');
+		foreach ($object->customfields as $field) {
+			$name = $customfields->varprefix.$field->column_name; // name of the property (this is one customfield)
+			$translatedname = $customfields->findLabelPDF($field->column_name, $outputlangs); // label of the customfield
+			$value = $customfields->printFieldPDF($field, $object->$name, $outputlangs); // value (cleaned and properly formatted) of the customfield
+			$subarr[$name] = $value; // adding this value to an odt variable (format: {cf_customfield} by default if varprefix is default)
+
+			// if the customfield has a constraint, we fetch all the datas from this constraint in the referenced table
+			if (!empty($field->referenced_table_name)) {
+				$record = $customfields->fetchAny('*', $field->referenced_table_name, $field->referenced_column_name."='".$object->$name."'"); // we fetch the record in the referencd table
+
+				if (!empty($record)) {
+					foreach ($record as $column_name => $value) { // for each record, we add the value to an odt variable
+						$subarr[$name.'_'.$column_name] = $value;
+					}
+				}
+			}
+		}
+	}
+
+	// Return the substitution array
+	return $subarr;
     }
 
     /**
@@ -477,6 +513,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     dol_syslog($this->error, LOG_WARNING);
                     return -1;
                 }
+
+				$odfHandler->phpEval(); // Eval the php codes in the template
 
                 // Write new file
 				//$result=$odfHandler->exportAsAttachedFile('toto');
