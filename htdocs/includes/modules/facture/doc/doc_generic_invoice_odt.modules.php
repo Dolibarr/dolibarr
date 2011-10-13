@@ -150,10 +150,12 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 			// if the customfield has a constraint, we fetch all the datas from this constraint in the referenced table
 			if (!empty($field->referenced_table_name)) {
-				$record = $customfields->fetchAny('*', $field->referenced_table_name, $field->referenced_column_name.'='.$object->$name); // we fetch the record in the referencd table
+				$record = $customfields->fetchAny('*', $field->referenced_table_name, $field->referenced_column_name."='".$object->$name."'"); // we fetch the record in the referencd table
 
-				foreach ($record as $column_name => $value) { // for each record, we add the value to an odt variable
-					$subarr[$name.'_'.$column_name] = $value;
+				if (!empty($record)) {
+					foreach ($record as $column_name => $value) { // for each record, we add the value to an odt variable
+						$subarr[$name.'_'.$column_name] = $value;
+					}
 				}
 			}
 		}
@@ -511,6 +513,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     dol_syslog($this->error, LOG_WARNING);
                     return -1;
                 }
+
+				$odfHandler->phpEval(); // Eval the php codes in the template
 
                 // Write new file
 				//$result=$odfHandler->exportAsAttachedFile('toto');
