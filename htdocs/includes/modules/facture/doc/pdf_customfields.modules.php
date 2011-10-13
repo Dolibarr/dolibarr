@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2011 Regis Houssin          <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent		  <jmenent@2byte.es>
+ * Copyright (C) 2011 Larroque Stephen		  <lrq3000@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +21,11 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/facture/doc/pdf_crabe.modules.php
+ *	\file       htdocs/includes/modules/facture/doc/pdf_customfields.modules.php
  *	\ingroup    facture
- *	\brief      File of class to generate invoices from crab model
- *	\author	    Laurent Destailleur
- *	\version    $Id: pdf_crabe.modules.php,v 1.12 2011/07/31 23:28:15 eldy Exp $
+ *	\brief      File of class to generate invoices from crab model with added customfields
+ *	\author	    Larroque Stephen
+ *	\version    $Id: pdf_customfields.modules.php,v 1.1.0
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
@@ -39,7 +40,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
  *	\brief      Classe permettant de generer les factures au modele Crabe
  */
 
-class pdf_crabe extends ModelePDFFactures
+class pdf_customfields extends ModelePDFFactures
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -51,7 +52,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *		Constructor
 	 *		@param		db		Database access handler
 	 */
-	function pdf_crabe($db)
+	function pdf_customfields($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -59,8 +60,8 @@ class pdf_crabe extends ModelePDFFactures
 		$langs->load("bills");
 
 		$this->db = $db;
-		$this->name = "crabe";
-		$this->description = $langs->trans('PDFCrabeDescription');
+		$this->name = "customfields";
+		$this->description = $langs->trans('PDFCustomFieldsDescription');
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -421,10 +422,16 @@ class pdf_crabe extends ModelePDFFactures
 					}
 				}
 
-				// Close the pdf edition
+				// CustomFields
+				if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+					// Add a page with the customfields
+					$pdf->AddPage();
+					$this->_pagecustomfields($pdf,$object,$outputlangs);
+					$pagenb++;
+				}
+
 				$pdf->Close();
 
-				// Save the pdf
 				$pdf->Output($file,'F');
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -1225,6 +1232,41 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetXY($posx+2,$posy+8);
 			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
+	}
+
+	/**
+	 *   	\brief      Show the customfields in a new page
+	 *   	\param      pdf     		PDF factory
+	 * 		\param		object			Object invoice
+	 *      \param      outputlangs		Object lang for output
+	 */
+	function _pagecustomfields(&$pdf,$object,$outputlangs)
+	{
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
+		// Init and main vars
+		include_once(DOL_DOCUMENT_ROOT.'/customfields/class/customfields.class.php');
+		$customfields = new CustomFields($this->db, '');
+
+		// Fetching the list of fields columns
+		//$fields = $customfields->fetchAllCustomFields();
+
+		// Setting the starting position of the text cursor
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $pdf->GetY()+4);
+		$pdf->SetY($pdf->GetY()+1);
+
+		// Printing the customfields
+		foreach ($object->customfields as $field) {
+			$name = $customfields->varprefix.$field->column_name; // name of the property (this is one customfield)
+			$translatedname = $customfields->findLabelPDF($field->column_name, $outputlangs); // label of the customfield
+			$value = $customfields->printFieldPDF($field, $object->$name, $outputlangs); // value (cleaned and properly formatted) of the customfield
+
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell(0,3, $translatedname.': '.$value, 0, 'L'); // printing the customfield
+			$pdf->SetY($pdf->GetY()+1); // line return for the next printing
+		}
+
+		return 1;
 	}
 
 	/**

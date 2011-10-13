@@ -532,6 +532,10 @@ if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->f
  */
 if ($action == 'add' && $user->rights->facture->creer)
 {
+    foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields)
+	$object->$key = $value;
+    }
+
     $object->socid=GETPOST('socid');
 
     $db->begin();
@@ -1752,6 +1756,14 @@ if ($action == 'create')
         print '</td></tr>';
     }
 
+    // CustomFields : print fields at creation
+    if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+	$currentmodule = 'facture'; // EDIT THIS: var to edit for each module
+
+	include_once(DOL_DOCUMENT_ROOT.'/customfields/lib/customfields.lib.php');
+	customfields_print_creation_form($currentmodule);
+    }
+
     // Modele PDF
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td>';
@@ -2613,6 +2625,16 @@ else
 
             print '</table><br>';
 
+
+	    // CUSTOMFIELDS : Main form printing and editing functions
+	    if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+		$currentmodule = 'facture'; // EDIT ME: var to edit for each module
+		$idvar = 'id'; // EDIT ME: the name of the POST or GET variable that contains the id of the object (look at the URL for something like module.php?modid=3&...)
+
+		include_once(DOL_DOCUMENT_ROOT.'/customfields/lib/customfields.lib.php');
+		customfields_print_main_form($currentmodule, $object, $action, $user, $idvar);
+
+	    }
 
             /*
              * Lines
