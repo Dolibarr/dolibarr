@@ -40,13 +40,13 @@ complete release of Dolibarr, step by step.
 - Update version number with x.x.x-y in htdocs/install/inc.php
 - Update version number with x.x.x-y in htdocs/support/inc.php
 - Update version number with x.x.x-y in htdocs/build/rpm/*.spec
-- Update PAD and DOAP files.
+- Update PAD files.
 - Commit all changes.
 - Add a Tag (DOLIBARR_x_y)
 
 - Build Dolibarr and DoliWamp packages with makepack-dolibarr.pl
 - Check content of built packages.
-- Move build files (tgz+exe+deb+rpm...), ChangeLog and PAD/DOAP files
+- Move build files (tgz+exe+deb+rpm...), ChangeLog and PAD files
   into www.dolibarr.org web site (/home/dolibarr/wwwroot/files).
 - Edit symbolic links in directory "/home/dolibarr/wwwroot/files" on server to
   point to new files (used by PAD descriptor).
