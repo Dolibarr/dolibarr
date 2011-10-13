@@ -9,7 +9,7 @@ If you have no technical knowledge, and you are looking for an autoinstaller to 
 
 DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensue, Mandriva or Mageia).
 
-You can download this at: [Sourceforge downloads area] (https://sourceforge.net/projects/dolibarr/files/)
+You can download this at: [Official website] (http://www.dolibarr.org/downloads/)
 
 If you already have installed a Web server and a Mysql database, you can install this version like this:
 
