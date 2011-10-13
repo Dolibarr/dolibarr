@@ -214,6 +214,139 @@ if ($what == 'mysql')
 	// Fin execution commande
 }
 
+// MYSQL NO BINARIES (only php)
+/**	Backup the db OR just a table without mysqldump binary (does not require any exec permission)
+ *	Author: David Walsh (http://davidwalsh.name/backup-mysql-database-php)
+ *	Updated and enhanced by Stephen Larroque (lrq3000) and by the many commentators from the blog
+ *	there's a mysqli version if needed on this page
+ */
+function backup_tables($outputfile,$host='localhost',$port=3306,$user='root',$pass='',$name='',$tables = '*')
+{
+
+  if (!($port > 0)) $port = 3306;
+  $link = mysql_connect($host.':'.$port,$user,$pass);
+  mysql_select_db($name,$link);
+
+  // Set to UTF-8
+  mysql_query('SET NAMES utf8');
+  mysql_query('SET CHARACTER SET utf8');
+
+  //get all of the tables
+  if ($tables == '*') {
+    $tables = array();
+    $result = mysql_query('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'');
+    while($row = mysql_fetch_row($result)) {
+      $tables[] = $row[0];
+    }
+  } else {
+    $tables = is_array($tables) ? $tables : explode(',',$tables);
+  }
+
+  //cycle through
+  $handle = fopen($outputfile, 'w+');
+  if (fwrite($handle, '') === FALSE) {
+    global $langs, $errormsg;
+    $langs->load("errors");
+    dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
+    $errormsg=$langs->trans("ErrorFailedToWriteInDir");
+    return -1;
+  }
+  foreach($tables as $table) {
+    $result = mysql_query('SELECT * FROM '.$table);
+    $num_fields = mysql_num_fields($result);
+
+    fwrite($handle,'DROP TABLE IF EXISTS '.$table.';');
+    $row2 = mysql_fetch_row(mysql_query('SHOW CREATE TABLE '.$table));
+    fwrite($handle,"\n\n".$row2[1].";\n\n");
+
+    while($row = mysql_fetch_row($result)) {
+      fwrite($handle,'INSERT INTO '.$table.' VALUES(');
+      $columns = count($row);
+      for($j=0; $j<$columns; $j++) {
+	$row[$j] = addslashes($row[$j]);
+	$row[$j] = preg_replace("#\n#", "\\n", $row[$j]);
+	if (isset($row[$j])) { fwrite($handle,'"'.$row[$j].'"'); } else { fwrite($handle,'""'); }
+	if (isset($row[$j])) {
+	  if ($row[$j] == null) {
+	      fwrite($handle,'"null"');
+	  } else {
+	      fwrite($handle,'"'.$row[$j].'"');
+	  }
+	} else {
+	  fwrite($handle,'""');
+	}
+	if ($j<($num_fields-1)) { fwrite($handle,','); }
+      }
+      fwrite($handle,");\n");
+    }
+    fwrite($handle,"\n\n\n");
+  }
+
+  //———— /* Backup Procedure structure*/
+    $result = mysql_query('SHOW PROCEDURE STATUS');
+    if (mysql_num_rows($result) > 0) {
+	while($row = mysql_fetch_row($result)) { $procedures[] = $row[1]; }
+	foreach($procedures as $proc)
+	{
+	fwrite($handle,"DELIMITER $$\n\n");
+	fwrite($handle,"DROP PROCEDURE IF EXISTS '$name'.'$proc'$$\n");
+	$row2 = mysql_fetch_row(mysql_query("SHOW CREATE PROCEDURE '$proc'"));
+	fwrite($handle,"\n".$row2[2]."$$\n\n");
+	fwrite($handle,"DELIMITER ;\n\n");
+	}
+    }
+    //———— /* Backup Procedure structure*/
+
+  //save file
+  //$handle = fopen('db-backup-'.time().'-'.(md5(implode(',',$tables))).'.sql','w+');
+  //fwrite($handle,$return);
+  fclose($handle);
+
+//Header(“Content-type: application/octet-stream”);
+//Header(“Content-Disposition: attachment; filename=$filename”);
+//echo $return;
+}
+
+function compress_gzip($inputfile, $outputfile, $mode="gz") {
+    try {
+	$data = implode("", file($inputfile));
+	if ($mode == 'gz') {
+	    $compressdata = gzencode($data, 9);
+	} elseif ($mode == 'bz') {
+	    $compressdata = bzcompress($data, 9);
+	}
+	$fp = fopen($outputfile, "w");
+	fwrite($fp, $compressdata);
+	fclose($fp);
+    } catch (Exception $e) {
+	global $langs, $errormsg;
+	$langs->load("errors");
+	dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
+	$errormsg=$langs->trans("ErrorFailedToWriteInDir");
+	return -1;
+    }
+}
+
+if ($what == 'mysqlnobin') {
+    $outputdir  = $conf->admin->dir_output.'/backup';
+    $outputfile = $outputdir.'/'.$file;
+    $outputfiletemp = $outputfile.'-TMP.sql';
+    // for compression format, we add extension
+    $compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
+    if ($compression == 'gz') $outputfile.='.gz';
+    if ($compression == 'bz') $outputfile.='.bz2';
+    $outputerror = $outputfile.'.err';
+    dol_mkdir($conf->admin->dir_output.'/backup');
+
+    if ($compression == 'gz' or $compression == 'bz') {
+	backup_tables($outputfiletemp,$dolibarr_main_db_host,$dolibarr_main_db_port,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name);
+	compress_gzip($outputfiletemp, $outputfile, $compression);
+	unlink($outputfiletemp);
+    } else {
+	backup_tables($outputfile,$dolibarr_main_db_host,$dolibarr_main_db_port,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name);
+    }
+}
+
 // POSTGRESQL
 if ($what == 'postgresql')
 {
