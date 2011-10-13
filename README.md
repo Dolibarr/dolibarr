@@ -5,9 +5,7 @@ Dolibarr ERP/CRM is a modern software to manage your company or foundation activ
 
 ## INSTALL
 
-If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), 
-
-DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensue, Mandriva or Mageia).
+If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensue, Mandriva or Mageia).
 
 You can download this at: [Official website] (http://www.dolibarr.org/downloads/)
 
@@ -98,8 +96,8 @@ See ChangeLog file.
 - Optional WYSIWYG forms, optional Ajax forms.
 - Several skins.
 - Code is highly customizable (a lot of use of modules and submodules).
-- Works with Mysql 3.1 or higher, experimental support for PostgreSql.
-- Works with PHP 4.3 or higher.
+- Works with Mysql 4.1 or higher, or PostgreSql 8.14 or higher.
+- Works with PHP 5.0 or higher.
 - An easy to understand and maintain code (PHP with no heavy frameworks).
 - A trigger architecture to allow you to make Dolibarr business events run PHP code to update your own information system.
 - "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM called "Non Perçue Récupérable").

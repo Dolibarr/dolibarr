@@ -110,8 +110,8 @@ Miscellanous:
 - Very user friendly and easy to use.
 - Several skins.
 - Code is highly customizable (a lot of use of modules).
-- Works with Mysql 3.1 or higher, experimental support for PostgreSql.
-- Works with PHP 4.3 or higher.
+- Works with Mysql 4.1 or higher, or PostgreSql 8.14 or higher.
+- Works with PHP 5.0 or higher.
 
 
 V - CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
