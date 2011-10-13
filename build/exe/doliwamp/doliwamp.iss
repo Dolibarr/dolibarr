@@ -10,7 +10,6 @@
 ; only the root user with no password, stop server and catch
 ; files user.MY* to put them in the Dolibarr build/exe/doliwamp/mysql directory.
 ;
-; Version: $Id: doliwamp.iss,v 1.85 2011/08/07 16:37:45 eldy Exp $
 ;----------------------------------------------------------------------------------------
 
 
@@ -23,7 +22,7 @@ AppVerName=DoliWamp-3.1.0
 OutputBaseFilename=DoliWamp-3.1.0
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
-SourceDir=C:\Mes Developpements\dolibarr
+SourceDir=c:\Documents and Settings\ldestail\git\dolibarr
 ; ----- End of change
 ;OutputManifestFile=build\doliwampbuild.log
 AppId=doliwamp
