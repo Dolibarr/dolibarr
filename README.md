@@ -5,9 +5,11 @@ Dolibarr ERP/CRM is a modern software to manage your company or foundation activ
 
 ## INSTALL
 
-If you have no technical knowledge, use Windows and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows).
+If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), 
 
-You can download it at: [Official Website] (http://www.dolibarr.org/downloads/cat_view/62-stable-versions)
+DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensue, Mandriva or Mageia).
+
+You can download this at: [Sourceforge downloads area] (https://sourceforge.net/projects/dolibarr/files/)
 
 If you already have installed a Web server and a Mysql database, you can install this version like this:
 
