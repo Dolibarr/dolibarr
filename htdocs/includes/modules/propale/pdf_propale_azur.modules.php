@@ -275,8 +275,8 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					// Total HT ligne
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY ($this->postotalht, $curY);
-					$pdf->MultiCell(26, 4, $total_excl_tax, 0, 'R', 0);
+					$pdf->SetXY ($this->postotalht-2, $curY);
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
@@ -632,7 +632,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY ($col1x, $tab2_top + 0);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
+		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht,2, $outputlangs->transnoentities("TotalHT"),'','C');
 
 		$pdf->SetXY ($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
