@@ -1,0 +1,77 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-09 14:05:49
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
+// Reference language: en_US -> tr_TR
+CHARSET=UTF-8
+CreateSms=Sms oluşturun
+SmsResult=SMS gönderimi Sonucu
+TestSms=Testi Sms
+ValidSms=Sms Doğrula
+ApproveSms=Sms Onayla
+SmsStatusDraft=Taslak
+SmsStatusValidated=Onaylı
+SmsStatusApproved=Onaylı
+SmsStatusSent=Gönderilmiş
+SmsStatusSentPartialy=Kısmen Gönderilmiş
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:30:33).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
+// Reference language: en_US -> tr_TR
+Sms=Sms
+SmsSetup=Sms kurulum
+SmsTo=Hedef
+SmsTopic=SMS Konu
+SmsText=Mesaj
+SmsMessage=SMS Mesaj
+ShowSms=Göster Sms
+PrepareSms=Sms hazırlayın
+SmsStatusSentCompletely=Tamamen Gönderilmiş
+SmsStatusError=Hata
+SmsStatusNotSent=Gönderilmez
+NbOfSms=Fon numaraları, Nbre
+ThisIsATestMessage=Bu bir test mesajı
+SendSms=SMS gönder
+SmsInfoCharRemain=Nb kalan karakterleri
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:20:30).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+SmsDesc=Bu sayfa, SMS özellikleri globals seçenekleri belirlemenize olanak tanır.
+SmsCard=SMS Kart
+AllSms=Tüm SMS kampanyaları
+SmsTargets=Hedefler
+SmsRecipients=Hedefler
+EditSms=Düzen Sms
+ResetSms=Yeni gönderme
+DeleteSms=Sil Sms Kampanyası
+DeleteASms=Sms kampanyası çıkarın
+PreviewSms=Previuw Sms
+SmsSuccessfulySent=Sms doğru (%s %s için) gönderdi
+ErrorSmsRecipientIsEmpty=Hedef sayısı boş
+WarningNoSmsAdded=Hedef listesine eklemek için herhangi bir yeni bir telefon numarası
+ConfirmValidSms=Bu kampanya doğrulama onaylıyor musun?
+ConfirmResetMailing=Uyarı, Sms kampanya <b>%s</b> reinit yaparsanız, bir kitle onu ikinci kez gönderme yapmak için izin verecek. Ne yapmanız wan gerçekten var mı?
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:02:49).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+SmsRecipient=Hedef
+SmsTitle=Tanım
+SmsFrom=Gönderici
+ListOfSms=Listesi SMS kampanyaları
+NewSms=Yeni SMS kampanyası
+ConfirmDeleteMailing=Kampanya kaldırarak onaylıyor musun?
+NbOfRecipients=Hedeflerin sayısı
+NbOfUniqueSms=Nb dof benzersiz telefon numaraları
+SmsInfoNumero=(Format uluslararası yani: 33899701761)
+DelayBeforeSending=(Dakika) göndermeden önce Gecikme
+SmsNoPossibleRecipientFound=Hedef yok. SMS sağlayıcı kurulumu kontrol edin.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:55:36).

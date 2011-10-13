@@ -28,13 +28,13 @@ ValidateProp=Validate ticari önerisi
 AddProp=Öneri ekle
 ConfirmDeleteProp=Bunu ticari öneriyi silmek istediğinizden emin misiniz?
 ConfirmValidateProp=Bunu ticari önerisini doğrulamak istediğinizden emin misiniz?
-LastPropals=Son %s  önerileri
-LastClosedProposals=Son %s  kapalı teklif
+LastPropals=Son% s önerileri
+LastClosedProposals=Son% s kapalı teklif
 LastModifiedProposals=Son% önerileri olarak s
 AllPropals=Tüm önerileri
 LastProposals=Son öneriler
 SearchAProposal=Bir öneri Arama
-ProposalsStatistics=Ticari öneriler 'istatistiklerine
+ProposalsStatistics=Ticari öneriler istatistiklerine
 NumberOfProposalsByMonth=Numarasını aya göre
 AmountOfProposalsByMonthHT=Miktarı ayına göre (vergi net)
 NbOfProposals=Sayıda ticari öneriler
@@ -91,13 +91,37 @@ ProposalsAndProposalsLines=Ticari önerisi ve hatları
 ProposalLine=Önerisi doğrultusunda
 DocModelAzurDescription=Tam bir öneri modeli (logo. ..)
 DocModelJauneDescription=Jaune modeli önerisi
+MarbreNumRefModelDesc=Format% syymm uyan numero-teklif nnnn nereye YY yılı, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
-TypeContact_propal_internal_SALESREPFOLL=Temsilci aşağıdaki-up öneri
-TypeContact_propal_external_BILLING=Müşteri fatura temas
-TypeContact_propal_external_CUSTOMER=Müşteri aşağıdaki-up öneri
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:31).
+ProposalCard=Teklif kartı
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:31:56).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
+// Reference language: en_US -> tr_TR
+AvailabilityTypeAV_1W=1 hafta
+AvailabilityTypeAV_2W=2 hafta
+AvailabilityTypeAV_3W=3 hafta
+AvailabilityTypeAV_1M=1 ay
+TypeContact_propal_internal_SALESREPFOLL=Temsilci şu kadar öneri
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:23:47).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+AvailabilityPeriod=Durumu gecikme
+SetAvailability=Set kullanılabilirlik gecikme
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:04:19).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+AfterOrder=siparişini verdikten sonra
+AvailabilityTypeAV_NOW=Acil
+TypeContact_propal_external_BILLING=Müşteri faturasında temas
+TypeContact_propal_external_CUSTOMER=Müşteri iletişim takibi teklifi
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:56:03).

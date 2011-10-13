@@ -51,11 +51,11 @@ QtyDispatched=Miktar gönderdi
 OrderDispatch=Stok sevketme
 RuleForStockManagementDecrease=Stok yönetimi azaltmak için Kural
 RuleForStockManagementIncrease=Stok yönetimi artış Kural
-DeStockOnBill=Faturaların gerçek stokları azaltın / kredi notları doğrulama (uyarı, bu sürümde, bu hisse senedi olarak bir depo sayısı 1 sadece)'s
-DeStockOnValidateOrder=Emir notları doğrulama (uyarısı, bu sürüm gerçek stokları azaltın, bu hisse senedi olarak bir depo sayısı 1 sadece)'s
+DeStockOnBill=Faturaların gerçek stokları azaltın / kredi notları doğrulama (uyarı, bu sürümde, bu hisse senedi olarak bir depo sayısı 1 sadece)
+DeStockOnValidateOrder=Emir notları doğrulama (uyarısı, bu sürüm gerçek stokları azaltın, bu hisse senedi olarak bir depo sayısı 1 sadece)
 DeStockOnShipment=Gönderi doğrulama gerçek stokları azaltın (önerilir)
-ReStockOnBill=Faturaların gerçek hisse arttır / kredi notları doğrulama (uyarı, bu sürümde, bu hisse senedi olarak bir depo sayısı 1 sadece)'s
-ReStockOnValidateOrder=Emir notları doğrulama (uyarısı, bu sürüm gerçek stokları artış, bu hisse senedi olarak bir depo sayısı 1 sadece)'s
+ReStockOnBill=Faturaların gerçek hisse arttır / kredi notları doğrulama (uyarı, bu sürümde, bu hisse senedi olarak bir depo sayısı 1 sadece)
+ReStockOnValidateOrder=Emir notları doğrulama (uyarısı, bu sürüm gerçek stokları artış, bu hisse senedi olarak bir depo sayısı 1 sadece)
 StockDiffPhysicTeoric=Nedenle fark stok fiziksel ve teorik için
 StockLimitShort=Limit
 StockLimit=Için borsa sınırı uyarıları
@@ -78,16 +78,18 @@ EstimatedStockValue=Stokunun Tahmini değeri
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:02:24).
 // Reference language: en_US -> tr_TR
-WarehouseEdit=Değiştirmek depo
-ReStockOnDispatchOrder=manuel depo içine, tedarikçi sipariş aldıktan sonra sevk gerçek stokları artırın
-OrderStatusNotReadyToDispatch=stok depolarda ürün gönderilmesi sağlar Sipariş sahip değil henüz ya da artık bir durum.
-NoPredefinedProductToDispatch=Bu nesne yok önceden tanımlanmış ürünleri. hiç stok sevkiyat yüzden gereklidir.
+WarehouseEdit=Değiştir depo
+ReStockOnDispatchOrder=Tedarikçi siparişi aldıktan sonra, el depolar içine sevk gerçek stokları artırın
+OrderStatusNotReadyToDispatch=Sipariş henüz veya daha fazla stok depolarda ürün sevk sağlayan bir durum var.
+NoPredefinedProductToDispatch=Bu nesne için önceden tanımlanmış ürünler yok. Yani stokta sevk hiçbir gereklidir.
 DispatchVerb=Sevk
-DeleteAWarehouse=Sil bir depo
-ConfirmDeleteWarehouse=Sen <b>Ssss</b> emin depo silmek istediğiniz için?
-PersonalStock=Kişisel stok Ssss
-ThisWarehouseIsPersonalStock=Bu depo Ssss Ssss kişisel stok temsil
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:04).
+SellPriceMin=Satış Birim Fiyatı
+EstimatedStockValueSellShort=Satmak için değer
+EstimatedStockValueSell=Satmak için değer
+DeleteAWarehouse=Bir depo sil
+ConfirmDeleteWarehouse=Depo <b>%s</b> silmek istediğiniz emin misiniz ?
+PersonalStock=Kişisel stok %s
+ThisWarehouseIsPersonalStock=Bu depo %s %s kişisel stok temsil eder
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:03:11).

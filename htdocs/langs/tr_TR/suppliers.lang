@@ -29,7 +29,7 @@ NoRecordedSuppliers=No tedarikçiler kaydedildi
 SupplierPayment=Tedarikçi ödeme
 SuppliersArea=Tedarikçiler alanı
 RefSupplierShort=Ref. tedarikçi
-ExportDataset_fournisseur_1=Tedarikçi faturaları listesi ve faturalar 'hattı
+ExportDataset_fournisseur_1=Tedarikçi faturaları listesi ve faturalar hattı
 ExportDataset_fournisseur_2=Tedarikçi fatura ve ödemeler
 ApproveThisOrder=Bu siparişi onayla
 ConfirmApproveThisOrder=Bunu sipariş onaylamak istediğinizden emin misiniz?
@@ -40,12 +40,15 @@ AddCustomerOrder=Müşteri siparişi yarat
 AddCustomerInvoice=Müşteri fatura oluşturma
 AddSupplierOrder=Ticaret düzeni oluşturun
 AddSupplierInvoice=Tedarikçi faturası oluşturun
-ListOfSupplierProductForSupplier=Ürünler ve fiyatlar tedarikçi listesi <b>için %s </b>
+ListOfSupplierProductForSupplier=Ürünler ve fiyatlar tedarikçi listesi <b>için% s</b>
 NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>iş%</b> son koştu <b>değil</b>
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 13:54:25).
 // Reference language: en_US -> tr_TR
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Bu referans tedarikçi zaten bir referans ile ilişkili: Ssss
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:34).
+BuyingPriceMin=Asgari alım fiyatı
+BuyingPriceMinShort=Min satın alma fiyatı
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Bu referans tedarikçisi zaten bir referans ile ilişkili: %s
+Availability=Durumu
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:29).

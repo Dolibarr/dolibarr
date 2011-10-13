@@ -28,7 +28,7 @@ PercentDone=Yüzde tamamlamak
 ActionOnCompany=Görev firma hakkında
 ActionOnContact=Görev İletişim
 TaskRDV=Toplantılar
-TaskRDVWith= %s  ile Toplantı
+TaskRDVWith=% S ile Toplantı
 ShowTask=Show görev
 ShowAction=Show eylem
 ActionsReport=Eylem raporu
@@ -52,8 +52,8 @@ DoneActions=Tamamlanan eylemler
 DoneActionsFor=% Için Tamamlanan eylemler var
 ToDoActions=Tamamlanmamış eylemler
 ToDoActionsFor=% Için eksik eylemler var
-SendPropalRef=Göndermek ticari önerisi %s 
-SendOrderRef=Göndermek amacıyla %s 
+SendPropalRef=Göndermek ticari önerisi% s
+SendOrderRef=Göndermek amacıyla% s
 StatusActionToDo=Yapmak için
 StatusActionDone=Tamamlamak
 MyActionsAsked=Ben kaydettik Eylemler
@@ -72,7 +72,7 @@ ActionAskedBy=Eylem tarafından sorulan
 ActionAffectedTo=Eyleme etkilenen
 ActionDoneBy=Eylem tarafından yapılan
 ActionUserAsk=Seslendiren
-ErrorStatusCantBeZeroIfStarted=Eğer alan <b>'Tarih' done</b> doldurulur, (veya) bitmiş, böylece alan <b>'Durum'</b> 0%% edilemez başlatılır eylem.
+ErrorStatusCantBeZeroIfStarted=Eğer alan <b>Tarih done</b> doldurulur, (veya) bitmiş, böylece alan <b>&#39;Durum&#39;</b> 0%% edilemez başlatılır eylem.
 ActionAC_TEL=Telefon
 ActionAC_FAX=Faks gönderme
 ActionAC_PROP=Öneri gönder
@@ -86,9 +86,29 @@ ActionAC_COM=Posta tarafindan gönder
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
-ActionAC_SUP_ORD=posta ile gönder tedarikçi sipariş
-ActionAC_SUP_INV=posta ile gönder tedarikçi faturası
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:02).
+SearchPropal=Ticari bir öneri ara
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:32:47).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
+// Reference language: en_US -> tr_TR
+StatusProsp=Prospect durumu
+DraftPropals=Taslak ticari önerileri
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:26:28).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+StatusNotApplicable=Uygulanamaz
+ActionAC_SHIP=Nakliye posta ile gönder
+ActionAC_SUP_ORD=Posta yoluyla tedarikçisi amacıyla gönder
+ActionAC_SUP_INV=Tedarikçi fatura posta ile gönderme
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:05:40).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+ActionAC_OTH=Diğer
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:56:22).

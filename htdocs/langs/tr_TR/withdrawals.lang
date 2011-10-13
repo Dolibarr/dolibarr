@@ -29,11 +29,11 @@ NbOfInvoiceToWithdraw=Nb fatura ile talep geri
 InvoiceWaitingWithdraw=Fatura geri bekliyor
 AmountToWithdraw=Miktar geri çekme
 WithdrawsRefused=Çekilmesi reddetti
-NoInvoiceToWithdraw=Ödeme yok müşteri fatura modu "çekilme" bekliyor. Çekilme 'sekmesinde' Doğum fatura kartı Hadi bir istek yapmak.
+NoInvoiceToWithdraw=Ödeme yok müşteri fatura modu &quot;çekilme&quot; bekliyor. Çekilme sekmesinde Doğum fatura kartı Hadi bir istek yapmak.
 ResponsibleUser=Sorumlu kullanıcı
 WithdrawalsSetup=Çekilme kurulum
-WithdrawStatistics=Çekilmesi 'istatistiklerine
-WithdrawRejectStatistics=Çekilme 'istatistiklerine reddetti
+WithdrawStatistics=Çekilmesi istatistiklerine
+WithdrawRejectStatistics=Çekilme istatistiklerine reddetti
 LastWithdrawalReceipt=Son% fişleri geri çekilme var
 MakeWithdrawRequest=Bir isteği geri olun
 ThirdPartyBankCode=Üçüncü taraf banka kodu
@@ -44,42 +44,77 @@ ClassCreditedConfirm=Size banka hesabına alacak olarak çekilmesi makbuz sını
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
-StandingOrderToProcess=işlemek için
+StandingOrderToProcess=Işlemek için
 StandingOrderProcessed=İşlenmiş
-TransData=Tarih İletim
+NbOfInvoiceToWithdrawWithInfo=Fatura Nb tanımlanmış banka hesap bilgileri müşteriler için geri çekme talebi
+TransData=Tarihi İletim
 TransMetod=Yöntem İletim
 Send=Göndermek
-Lines=Hatları
-StandingOrderReject=Sorun bir reddetme
-WithdrawalRefused=Para Çekme Refuseds
-WithdrawalRefusedConfirm=Are sen toplum için bir çekilme ret girmek istediğinizden emin
-RefusedData=Tarih ret
-RefusedReason=Nedeni reddetme
-RefusedInvoicing=Fatura ret
-NoInvoiceRefused=ret şarj etmeyin
-InvoiceRefused=müşteriye ret Charge
-Status=Durum
-StatusUnknown=Bilinmeyen
-StatusWaiting=Bekleme
+Lines=Çizgiler
+StandingOrderReject=Reddetmek Sayı.
+InvoiceRefused=Fatura reddetti
+WithBankUsingRIB=RIB kullanarak banka hesapları için
+WithBankUsingBANBIC=IBAN / BIC / SWIFT kullanarak banka hesapları için
+BankToReceiveWithdraw=Banka hesap çekilmesi almak için
+CreditDate=Kredi
+WithdrawalFileNotCapable=Ülkeniz için çekilme makbuz dosyası oluşturmak için açılamıyor
+ShowWithdraw=Çekme göster
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Fatura henüz bir ödemesinin en az işlenmiş varsa Ancak, önce geri çekilmesini sağlamak için sağlamak için para gibi, ayarlanabilir olmaz.
+DoStandingOrdersBeforePayments=Bu sekmeler ayakta sipariş için talep sağlar. Bir kez bitmiş olacak, fatura kapatmak için ödeme yazabilirsiniz.
+InfoCreditSubject=Banka tarafından ayakta amacıyla %s Ödeme
+InfoCreditMessage=Ayakta sipariş %s banka tarafından ödenmiştir <br> Ödeme Veri: %s
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:35:08).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
+// Reference language: en_US -> tr_TR
+WithdrawalRefused=Çekilme Reddedildi
+WithdrawalRefusedConfirm=Bu, toplum için bir geri çekilme ret girmek istiyorum emin
 StatusCredited=Kredili
 StatusRefused=Reddedildi
 StatusMotif0=Belirtilmemiş
 StatusMotif1=Karşılık insuffisante
-StatusMotif2=Tirage conteste
-StatusMotif3=No Çekilme sipariş
-StatusMotif4=Müşteri Sipariş
-StatusMotif5=RIB inexploitable
-StatusMotif6=Hesap bakiyesi olmadan
-StatusMotif7=Yargı Kararı
-StatusMotif8=Başka bir nedenle
-CreateAll=Geri tüm
 CreateGuichet=Sadece ofis
 CreateBanque=Sadece banka
-OrderWaiting=tedavi bekliyorum
+OrderWaiting=Tedavi için bekliyorum
 NotifyTransmision=Çekilme İletim
+InfoFoot=Bu Dolibarr tarafından gönderilen otomatik mesaj
+InfoRejectSubject=Daimi amacıyla reddetti
+InfoRejectMessage=Merhaba, <br><br> fatura %s %s bir miktar, şirketin %s ilgili standig amacıyla banka tarafından reddedildi. <br><br> - <br> % $
+ModeWarning=Gerçek modu için seçenek ayarlı değil, bu simülasyon sonra durdurmak
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:31:42).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+RefusedReason=İtiraz nedeni
+RefusedInvoicing=Ret Fatura
+NoInvoiceRefused=Ret şarj etmeyin
+Status=Durum
+StatusUnknown=Bilinmeyen
+StatusWaiting=Bekleme
+StatusTrans=Bulaşan
+StatusMotif2=Tirage conteste
+StatusMotif3=Yok Çekilme emri
+StatusMotif4=Müşteri Sipariş
+StatusMotif5=Inexploitable RIB
+StatusMotif6=Denge olmadan Hesap
+StatusMotif7=Mahkeme kararıyla
+StatusMotif8=Başka bir nedenle
+CreateAll=Tüm Çekme
 NotifyEmision=Çekilme Emisyon
 NotifyCredit=Çekilme Kredi
-NumeroNationalEmetter=Milli Verici Sayısı
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:28).
+NumeroNationalEmetter=Ulusal Verici Numarası
+PleaseSelectCustomerBankBANToWithdraw=Çekmek için müşteri banka hesabı hakkında bilgi seçin
+InfoTransSubject=Banka, sürekli emir %s iletimi
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:09:03).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+RefusedData=İtiraz Tarihi
+InfoTransMessage=Ayakta sipariş %s %s %s tarafından bankaya aktarılması olmuştur. <br><br>
+InfoTransData=Miktarı: %s <br> Metode: %s <br> Tarih: %s
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:56:41).

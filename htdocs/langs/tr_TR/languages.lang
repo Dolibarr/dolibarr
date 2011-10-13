@@ -41,3 +41,30 @@ Language_sv_SV=İsveç
 Language_zh_CN=Çin
 Language_is_IS=İzlanda
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:31).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
+// Reference language: en_US -> tr_TR
+Language_es_HN=İspanyolca (Honduras)
+Language_es_MX=İspanyolca (Meksika)
+Language_es_PR=İspanyolca (Porto Riko)
+Language_fa_IR=Farsça
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:25:28).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+Language_de_AT=Almanca (Avusturya)
+Language_el_GR=Yunan
+Language_en_NZ=İngilizce (Yeni Zelanda)
+Language_hu_HU=Macar
+Language_ru_UA=Rus (Ukrayna)
+Language_sv_SE=İsveç
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:05:09).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+Language_ar_SA=Arapça
+Language_da_DK=Danimarkalı
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:56:15).

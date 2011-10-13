@@ -24,7 +24,7 @@ ErrorMemberTypeNotDefined=Üye tipi tanımlanmamış
 ListOfPublicMembers=Kamu üyelerinin listesi
 ListOfValidatedPublicMembers=List of kamu doğrulanmış üye
 ErrorThisMemberIsNotPublic=Bu üye kamu değil
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Başka bir üye <b>(ad:% giriş: %s )</b> zaten bir üçüncü <b>parti%</b> bağlantılı <b>değil.</b> Çünkü üçüncü parti sadece bir üyesi (ve tersi) bağlı olamaz bu bağlantıyı ilk kaldırın.
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Başka bir üye <b>(ad:% giriş:% s)</b> zaten bir üçüncü <b>parti%</b> bağlantılı <b>değil.</b> Çünkü üçüncü parti sadece bir üyesi (ve tersi) bağlı olamaz bu bağlantıyı ilk kaldırın.
 ErrorUserPermissionAllowsToLinksToItselfOnly=Güvenlik nedeniyle, tüm kullanıcılar düzenlemek için senin olmayan bir kullanıcı için üye bağlantı yapabilmek için gerekli izinlerin atanması gerekir.
 ThisIsContentOfYourCard=Bu kartınızın bilgilerini olduğunu
 CardContent=Senin üye kartı içeriği
@@ -121,10 +121,10 @@ PublicMemberList=Kamu üye listesi
 BlankSubscriptionForm=Abone Formu
 MemberPublicLinks=Kamu bağlantılar / sayfaları
 ExportDataset_member_1=Üyeleri ve abonelikleri
-LastMembers=Son %s üye
-LastMembersModified=Son %s üye olarak
+LastMembers=Son% s üye
+LastMembersModified=Son% s üye olarak
 AttributeName=Özellik adı
-FieldEdition=Alan baskı %s
+FieldEdition=% Alan baskı
 AlphaNumOnlyCharsAndNoSpace=boşluk olmadan sadece alphanumericals karakter
 String=String
 Text=Metin
@@ -150,7 +150,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etiket biçimi
 DescADHERENT_CARD_HEADER_TEXT=Metin üye kartları üstüne basılı
 DescADHERENT_CARD_TEXT=Metin üye kartları basılır
 DescADHERENT_CARD_FOOTER_TEXT=Metin üye kartları alt yazdırılır
-ShowTypeCard=Show türü ' %s '
+ShowTypeCard=Show türü %s
 HTPasswordExport=htpassword dosya nesil
 NoThirdPartyAssociatedToMember=Üçüncü parti üyesi ilişkili
 ThirdPartyDolibarr=Dolibarr üçüncü parti
@@ -158,19 +158,81 @@ MembersAndSubscriptions=Üyeleri ve Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 13:55:19).
 // Reference language: en_US -> tr_TR
-DescADHERENT_CARD_TYPE=Format kartların sayfası
-DescADHERENT_CARD_TEXT_RIGHT=Metin üye kartları (sağ üstünde align) basılı
-DescADHERENT_MAILMAN_LISTS=yeni üye (virgülle ayrılmış otomatik insription için List (s))
-MoreActions=kayıt üzerinde Tamamlayıcı eylem
-MoreActionBankDirect=Oluşturmak doğrudan işlem kayıt hesabına
-MoreActionBankViaInvoice=Yaratmak bir fatura ve ödeme hesap
-MoreActionInvoiceOnly=Create hiçbir ödeme ile bir fatura
-LinkToGeneratedPages=Oluşturmak ziyaret kartları
-LinkToGeneratedPagesDesc=Bu ekran, tüm üye veya belirli bir üye için kartvizit ile PDF dosyaları oluşturmasına olanak sağlar.
-DocForAllMembersCards=Kurulum: <b>Ssss</b> aslında (Biçim için çıkış üye kartları oluşturun iş için tüm)
-DocForOneMemberCards=Kurulum: <b>Ssss</b> aslında üye (Biçim için çıktı özel kartlar oluşturun işletme için)
-DocForLabels=çıktı aslında kurulum: <b>Ssss</b> için yaprak oluşturun adresiniz (Format)
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:42).
+Public=Bilgileri ortak (yok = Özel)
+Exports=İhracat
+NewMemberbyWeb=Yeni üye eklendi. Onay bekliyor
+NewMemberForm=Yeni üye formu
+SubscriptionsStatistics=Abonelikleri İstatistikleri
+NbOfSubscriptions=Abonelik sayısı
+AmountOfSubscriptions=Abonelik Miktarı
+TurnoverOrBudget=Ciro (bir şirket) veya Bütçe (vakıf)
+DefaultAmount=Abonelik Standart miktarı
+CanEditAmount=Ziyaretçi kendi abonelik miktarını seçin / düzenleyebilirsiniz
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:56:10).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:04:20).
+// Reference language: en_US -> tr_TR
+NewSubscriptionDesc=Bu form aboneliğinizi vakıf yeni bir üye olarak kaydetmenize olanak verir. (Zaten bir üye) abonelik yenilemek istiyorsanız, e-posta %s tarafından yerine vakıf yönetim kuruluyla irtibata geçiniz.
+BlankSubscriptionFormDesc=Dolibarr dış ziyaretçi vakıf abone olmak için sormak için izin vermenizi kamu URL sağlayabilir. Bir online ödeme modülü etkinse, bir ödeme formu de otomatik olarak sağlanır olacaktır.
+EnablePublicSubscriptionForm=Kamu oto-üyelik formunu etkinleştirin
+ImportDataset_member_1=Üye
+DescADHERENT_CARD_TYPE=Format kartları sayfa
+DescADHERENT_CARD_TEXT_RIGHT=Üye kartları üzerinde yazılı Metin (sağda hizalamak)
+DescADHERENT_MAILMAN_LISTS=Yeni üyelerin otomatik insription Listesi (ler) (virgül ile ayrılmış)
+GlobalConfigUsedIfNotDefined=Burada tanımlanan değilse Temel modülü kurulum tanımlanan metin olacak
+MayBeOverwrited=Bu metin üyenin türü için tanımlanan değeri ile overwrited olabilir
+MoreActions=Kayıt üzerinde Tamamlayıcı eylem
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:05:24).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
+// Reference language: en_US -> tr_TR
+MoreActionInvoiceOnly=Herhangi bir ödeme ile bir fatura oluşturun.
+LinkToGeneratedPages=Vizit kartlar oluşturun
+LinkToGeneratedPagesDesc=Bu ekran, tüm üyeleri ya da belirli bir üye için kartvizit ile PDF dosyaları oluşturmanıza olanak sağlar.
+DocForAllMembersCards=Tüm üyeleri <b>(%s</b> Format çıkış aslında kurulum için) için kartvizit oluşturun
+DocForOneMemberCards=Kartvizit için belirli bir üye (çıkış aslında kurulum için Format: <b>%s</b>) oluşturun
+DocForLabels=Adres sayfa (çıkış aslında kurulum için Format: <b>%s</b>) oluşturun
+SubscriptionPayment=Abonelik ödeme
+LastSubscriptionDate=Son abonelik tarihi
+LastSubscriptionAmount=Son abonelik miktarı
+MembersStatisticsByCountries=Üyeler ülkeye göre istatistikleri
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:07:12).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
+// Reference language: en_US -> tr_TR
+MoreActionBankDirect=Hesap üzerinde doğrudan işlem kaydı oluşturun
+MoreActionBankViaInvoice=Bir fatura ve ödeme hesap oluşturun
+MembersStatisticsByState=Üyeler devlet / il istatistikleri
+MembersStatisticsByTowne=Üyeler kasaba tarafından istatistikleri
+NbOfMembers=Üye sayısı
+Nature=Doğa
+MEMBER_NEWFORM_PAYONLINE=Entegre online ödeme sayfasında atla
+Associations=Temeller
+Collectivités=Organizasyonlar
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:22:09).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:32:33).
+// Reference language: en_US -> tr_TR
+MembersByCountryDesc=Bu ekran ülkeler tarafından üyelerine ilişkin istatistikleri gösteriyor. Grafik Ancak Google çevrimiçi grafik hizmeti bağlıdır ve bir internet bağlantısı çalışıyor olması durumunda kullanılabilir.
+MembersByStateDesc=Bu ekran devlet / il / kanton tarafından üyelerine ilişkin istatistikleri gösteriyor.
+MembersByTownDesc=Bu ekran kasaba ile üyelerine ilişkin istatistikleri gösteriyor.
+MembersStatisticsDesc=Okumak istediğiniz istatistikleri seçin ...
+MenuMembersStats=Istatistik
+LastMemberDate=Son üyesi tarihi
+Particuliers=Kişisel
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:33:20).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+MembersWithSubscriptionToReceive=Üyeler aboneliği ile almak
+NoValidatedMemberYet=Hiçbir geçerliliği üyeleri bulundu
+Entreprises=Şirketler
+DOLIBARRFOUNDATION_PAYMENT_FORM=, Banka havalesi ile abonelik ödeme yapmak için, <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">sayfa</a> http://wiki.dolibarr.org/index.php/Subscribe . <br> Kredi Kartı veya Paypal ile ödeme yapmak için, bu sayfanın alt kısmında düğmesini tıklatın. <br>
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:35:12).

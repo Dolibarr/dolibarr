@@ -24,21 +24,21 @@ InvoiceStandardDesc=Fatura Bu tür ortak faturam.
 InvoiceDeposit=Depozito fatura
 InvoiceDepositAsk=Depozito fatura
 InvoiceDepositDesc=Fatura Bu tür bir depozito ulaştığını yapılır.
-InvoiceProForma=Proforma fatura
-InvoiceProFormaAsk=Proforma fatura
-InvoiceProFormaDesc=<b>Proforma faturanın</b> gerçek bir faturanın bir görüntü ama hiçbir muhasebe değeri yoktur.
-InvoiceReplacement=Değiştirme fatura
+InvoiceProFormat=Proformat fatura
+InvoiceProFormatAsk=Proformat fatura
+InvoiceProFormatDesc=<b>Proformat faturanın</b> gerçek bir faturanın bir görüntü ama hiçbir muhasebe değeri yoktur.
+InvoiceReplacement=Değiştirme fatura. Referans ile fatura değiştirmeniz gerekir
 InvoiceReplacementAsk=Fatura için fatura Değiştirme
-InvoiceReplacementDesc=<b>Yedek fatura</b> iptal etmek ve hiçbir ödeme ile tamamen bir fatura Alınmış yerine kullanılır. <br><br> Not: Sadece bu değiştirilebilir hiçbir ödeme ile fatura. Eğer kapalı değil, otomatik olarak 'terk' kapalı olacaktır.
+InvoiceReplacementDesc=<b>Yedek fatura</b> iptal etmek ve hiçbir ödeme ile tamamen bir fatura Alınmış yerine kullanılır. <br><br> Not: Sadece bu değiştirilebilir hiçbir ödeme ile fatura. Eğer kapalı değil, otomatik olarak &#39;terk&#39; kapalı olacaktır.
 InvoiceAvoir=Kredi notu
 InvoiceAvoirAsk=Kredi notu fatura düzeltmek için
 InvoiceAvoirDesc=Beri örneğin bazı ürünleri iade <b>kredi notunu</b> negatif fatura bir fatura bu miktarın gerçekte ödenen daha farklı bir tutar aslında çözmek için kullanılan çünkü müşteri ödenen (çok fazla hata tarafından, ya da tamamen ödenmiş olacak değil) olduğunu.
-ReplaceInvoice=Yerine fatura %s 
+ReplaceInvoice=Yerine fatura% s
 ReplacementInvoice=Yedek fatura
 ReplacedByInvoice=Fatura% tarafından değiştirildi s
 ReplacementByInvoice=Fatura tarafından Değişti
-CorrectInvoice=Doğru fatura %s 
-CorrectInvoice=Doğru fatura %s 
+CorrectInvoice=Doğru fatura% s
+CorrectInvoice=Doğru fatura% s
 CorrectionInvoice=Düzeltme fatura
 UsedByInvoice=% Fatura ödemek için kullanılır
 ConsumedBy=Tarafından tüketilen
@@ -81,10 +81,10 @@ PaymentConditionsShort=Vade
 PaymentAmount=Ödeme tutarı
 PaymentHigherThanReminderToPay=Ödeme hatırlatma daha yüksek ödeme
 HelpPaymentHigherThanReminderToPay=Dikkat, bir veya daha fazla fatura ödeme miktarı ödemeyi geri kalanından daha yüksektir. <br> , Aksi takdirde ve onaylamak için giriş Düzenle hakkında her fazladan ödeme faturalar için alınan aşırı bir kredi notu oluşturma düşünüyorum.
-ClassifyPaid=Sınıflandırmak 'Ödenmiş
-ClassifyPaidPartially=Sınıflandırmak 'Ücretli kısmen "
-ClassifyCanceled=Sınıflandırmak 'Terk'
-ClassifyClosed=Sınıflandırmak 'Kapalı "
+ClassifyPaid=Sınıflandırmak Ödenmiş
+ClassifyPaidPartially=Sınıflandırmak Ücretli kısmen
+ClassifyCanceled=Sınıflandırmak Terk
+ClassifyClosed=Sınıflandırmak Kapalı
 CreateBill=Fatura oluşturma
 AddBill=Fatura ya da kredi notu ekle
 DeleteBill=Sil fatura
@@ -126,8 +126,8 @@ PaymentStatusToValidShort=Doğrulamak için
 ErrorVATIntraNotConfigured=Intracommunautary KDV numarası henüz tanımlı
 ErrorNoPaiementModeConfigured=No varsayılan ödeme modu tanımlanır. Bunu düzeltmek için modül kurulum Fatura gidin.
 ErrorCreateBankAccount=Ödeme modları tanımlamak Fatura modülü panel Kur gidin, daha sonra bir banka hesabı oluşturun
-ErrorBillNotFound=Fatura %s  mevcut değil
-ErrorInvoiceAlreadyReplaced=Hata, fatura %s  yerine bir fatura doğrulamaya çalışır Ama bu zaten faturanın %s  ile değiştirildi
+ErrorBillNotFound=Fatura% s mevcut değil
+ErrorInvoiceAlreadyReplaced=Hata, fatura% s yerine bir fatura doğrulamaya çalışır Ama bu zaten faturanın% s ile değiştirildi
 ErrorDiscountAlreadyUsed=Hata, indirim zaten kullanılıyor
 ErrorInvoiceAvoirMustBeNegative=Hata, doğru fatura negatif bir miktar olmalıdır
 ErrorInvoiceOfThisTypeMustBePositive=Hata, fatura bu tür olumlu bir miktar olmalıdır
@@ -151,12 +151,12 @@ ConfirmDeleteBill=Siz bu faturayı silmek istediğinizden emin misiniz?
 ConfirmValidateBill=Size <b>referans%</b> bu faturayı doğrulamak için istediğiniz emin <b>misiniz?</b>
 ConfirmClassifyPaidBill=Size <b>fatura%</b> değiştirmek istediğinizden emin misiniz durum <b>s</b> ödenmiş?
 ConfirmCancelBill=Size <b>fatura%</b> iptal etmek istediğinizden emin <b>misiniz?</b>
-ConfirmCancelBillQuestion=Neden bu fatura 'sınıflandırmak istiyorsun' terk?
+ConfirmCancelBillQuestion=Neden bu fatura &#39;sınıflandırmak istiyorsun&#39; terk?
 ConfirmClassifyPaidPartially=Size <b>fatura%</b> değiştirmek istediğinizden emin misiniz durum <b>s</b> ödenmiş?
 ConfirmClassifyPaidPartiallyQuestion=Bu faturanın tamamen ödenmiş değil. Ne bu faturayı kapatmak için nedenleri nelerdir?
-ConfirmClassifyPaidPartiallyReasonAvoir=Çünkü vade önce yapıldı <b>Kalan %s )</b> indirim verilir <b>(%</b> ödemek. Ben bir kredi notu ile KDV regularise.
-ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Çünkü vade önce yapıldı <b>Kalan %s )</b> indirim verilir <b>(%</b> ödemek. Bu indirim Doğum KDV kaybetmeyi kabul edin.
-ConfirmClassifyPaidPartiallyReasonDiscountVat=Çünkü vade önce yapıldı <b>Kalan %s )</b> indirim verilir <b>(%</b> ödemek. Bu indirim bir kredi notu olmadan KDV kurtarabilirsiniz.
+ConfirmClassifyPaidPartiallyReasonAvoir=Çünkü vade önce yapıldı <b>Kalan% s)</b> indirim verilir <b>(%</b> ödemek. Ben bir kredi notu ile KDV regularise.
+ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Çünkü vade önce yapıldı <b>Kalan% s)</b> indirim verilir <b>(%</b> ödemek. Bu indirim Doğum KDV kaybetmeyi kabul edin.
+ConfirmClassifyPaidPartiallyReasonDiscountVat=Çünkü vade önce yapıldı <b>Kalan% s)</b> indirim verilir <b>(%</b> ödemek. Bu indirim bir kredi notu olmadan KDV kurtarabilirsiniz.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=Kötü müşteri
 ConfirmClassifyPaidPartiallyReasonProductReturned=Ürünleri kısmen iade
 ConfirmClassifyPaidPartiallyReasonOther=Miktarı bir nedenle terk
@@ -192,7 +192,7 @@ AmountExpected=Miktarı iddia
 ExcessReceived=Fazla alınan
 EscompteOffered=Terim önce indirim teklif (ödeme)
 CreateDraft=Taslak oluşturma
-SendBillRef=Fatura göndermek %s 
+SendBillRef=Fatura göndermek% s
 SendReminderBillRef=Fatura% Gönder (hatırlatma) s
 StandingOrders=Siparişler var
 StandingOrder=Ödeme emri
@@ -210,10 +210,9 @@ DateEcheance=Son tarih sınırı
 DateInvoice=Fatura tarihinden
 NoInvoice=No fatura
 ClassifyBill=Sınıflandırmak fatura
-NoSupplierBillsUnpaid=No tedarikçi faturalar ödenmemiş
-SupplierBillsToPay=Tedarikçiler faturaları ödemek
-CustomerBillsUnpaid=Ödenmemiş faturalar müşterilerin
-DispenseMontantLettres=Les de l'Arrete tr Lettres sont dispensées mécanographiques rédigées par procédés factures
+NoSupplierBillsUnpaid=Ödenmemiş alım faturası yok
+SupplierBillsToPay=Ödeme bekleyen alım faturaları
+CustomerBillsUnpaid=Ödenmemiş müşteri faturaları
 DispenseMontantLettres=Mecanographic prosedürleri harflerle tarafindan kalmaması sağlanmaktadır aracılığıyla yazılı faturaları
 NonPercuRecuperable=Non-geri kazanılabilir
 SetConditions=Set ödeme koşulları
@@ -227,9 +226,9 @@ Repeatables=Önceden tanımlı
 ChangeIntoRepeatableInvoice=Convert içine önceden tanımlı
 CreateRepeatableInvoice=Ön oluşturun fatura tanımlı
 CreateFromRepeatableInvoice=Önceden oluşturma fatura tanımlı
-CustomersInvoicesAndInvoiceLines=Müşteri faturalar ve fatura 'hattı
+CustomersInvoicesAndInvoiceLines=Müşteri faturalar ve fatura hattı
 CustomersInvoicesAndPayments=Müşteri fatura ve ödemeler
-ExportDataset_invoice_1=Faturaların müşteri listesi ve faturalar 'hattı
+ExportDataset_invoice_1=Faturaların müşteri listesi ve faturalar hattı
 ExportDataset_invoice_2=Müşteri fatura ve ödemeler
 ProformaBill=Proforma Bill:
 Reduction=Azaltma
@@ -330,7 +329,7 @@ FullPhoneNumber=Telefon
 TeleFax=Fax
 PrettyLittleSentence=Ödemeleri çekleri ismim bir üye bir muhasebe dernek Mali İdare tarafından onaylanmış olarak yayınlanmadığı nedeniyle miktarı kabul edin.
 IntracommunityVATNumber=KDV Intracommunity numarası
-PaymentByChequeOrderedTo=Çek ödeme göndermek için %s  ödenir
+PaymentByChequeOrderedTo=Çek ödeme göndermek için% s ödenir
 PaymentByChequeOrderedToShort=Çek ödeme ödenir
 SendTo=gönderildi
 PaymentByTransferOnThisBankAccount=Aşağıdaki banka hesap havalesi ile ödeme
@@ -354,7 +353,7 @@ Cheques=Çekler
 CreditNoteConvertedIntoDiscount=Bu kredi notu veya depozito fatura% haline getirilmiştir s
 UsBillingContactAsIncoiveRecipientIfExist=Kullanım müşteri fatura temas yerine faturalar için alıcı olarak üçüncü adresi
 ShowUnpaidLateOnly=Show geç ödenmemiş fatura sadece
-PaymentInvoiceRef=Fatura ödeme %s 
+PaymentInvoiceRef=Fatura ödeme% s
 ValidateInvoice=Validate fatura
 Cash=Nakit
 Reported=Gecikmeli
@@ -366,7 +365,7 @@ PDFCrabeDescription=Fatura modeli Crabe. Tam bir fatura modeli (Destek KDV seçe
 PDFHuitreDescription=Fatura modeli Huitre
 PDFOursinDescription=Fatura modeli oursin
 PDFTourteauDescription=Fatura modeli Tourteau
-TerreNumRefModelDesc1=Format %s yymm uyan numero standart fatura ve %s yymm için nnnn kredi notları için nnnn nereye YY yılı, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
+TerreNumRefModelDesc1=Format% syymm uyan numero standart fatura ve% syymm için nnnn kredi notları için nnnn nereye YY yılı, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
 TerreNumRefModelError=Bir tasarı $ syymm başlayarak zaten var ve sıra bu model ile uyumlu değildir. Kaldırın ya da yeniden adlandırın bu modül etkinleştirin.
 OrionNumRefModelDesc1=Biçiminde FAYYNNNNN altında Dönüş numarası burada YY yıl ve nnnnn artışla 1 numaralı başlayan.
 OrionNumRefModelDesc2=Yıl 1 tarafından hazırlama OLMAKSIZIN mali yılın başında sıfıra artar.
@@ -380,20 +379,53 @@ PlutonNumRefModelDesc1=Özelleştirilebilir bir fatura numarasını tanımlı bi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
+EditGlobalDiscounts=Edit mutlak indirim
+AddCreditNote=Kredi notu
+InvoiceNotChecked=Seçilen yok fatura
 RelatedBill=İlgili fatura
-RelatedBills=Ilgili faturaların
-DisabledBecausePayments=bazı ödemeler olduğundan Mümkün değil
-CantRemovePaymentWithOneInvoicePaid=Eğer bu yana ödeme çıkarmak Can&#39;t fatura en az geçerli ödenir sınıflandırılmış
+RelatedBills=İlgili faturalar
+ShowUnpaidAll=Tüm ödenmemiş faturalar göster
+DisabledBecausePayments=Bazı ödemeler var mümkün değil bu yana
+CantRemovePaymentWithOneInvoicePaid=En az bir fatura sınıflandırılır para olmadığı için ödeme silemezsiniz
 ExpectedToPay=Beklenen ödeme
 PayedByThisPayment=Bu ödeme tarafından ödenir
-TypeContact_facture_internal_SALESREPFOLL=Temsilci aşağıdaki-up müşteriye fatura
-TypeContact_facture_external_BILLING=Müşteri fatura temas
-TypeContact_facture_external_SHIPPING=Müşteri nakliye iletişim
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:08:34).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
+// Reference language: en_US -> tr_TR
+InvoiceProForma=Proforma fatura
+InvoiceProFormaAsk=Proforma fatura
+InvoiceProFormaDesc=<b>Proforma fatura,</b> gerçek bir faturanın bir görüntü ama hiçbir muhasebe değeri vardır .
+EditRelativelDiscount=Relatvie indirim Düzenle
+ClosePaidInvoicesAutomatically=&quot;Para&quot; Tüm standart veya entierely para değiştirme faturalar sınıflandırır.
+AllCompletelyPayedInvoiceWillBeClosed=Tüm hiçbir fatura &quot;ödenir&quot; durumu otomatik olarak kapalı olacaktır ödemek zorunda kalır.
+TypeContact_facture_internal_SALESREPFOLL=Temsilci takibi müşteri fatura
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:26:06).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+TypeContact_facture_external_BILLING=Müşteri faturasında temas
+TypeContact_facture_external_SHIPPING=Müşteri nakliye temas
 TypeContact_facture_external_SERVICE=Temas kurun müşteri hizmetlerimizle
-TypeContact_facture_fourn_internal_SALESREPFOLL=Temsilci aşağıdaki-up tedarikçi faturası
-TypeContact_facture_fourn_external_BILLING=Tedarikçi faturası temas
+TypeContact_facture_fourn_internal_SALESREPFOLL=Temsilcisi takibi tedarikçi fatura
+TypeContact_facture_fourn_external_BILLING=Tedarikçi fatura temas
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:36:52).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+BillsCustomer=Müşteri faturası
+BillsSuppliersUnpaidForCompany=%s için, ödenmeyen tedarikçinin faturalar
+BillsLate=Geç ödemeler
+DisabledBecauseNotErasable=Silinemez, çünkü disable
+NumberOfBillsByMonth=Aylık faturalar, Nb
+AmountOfBillsByMonthHT=Aylık fatura miktarı (vergi sonrası net)
+AddDiscount=Indirim oluşturun
+AddRelativeDiscount=Göreceli indirim
 TypeContact_facture_fourn_external_SHIPPING=Tedarikçi nakliye temas
-TypeContact_facture_fourn_external_SERVICE=Tedarikçi servis
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:50).
+TypeContact_facture_fourn_external_SERVICE=Tedarikçi servisini çağırın.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:40:16).
