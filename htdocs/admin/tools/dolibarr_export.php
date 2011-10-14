@@ -43,13 +43,25 @@ llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
 ?>
 <script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
-	jQuery("#mysql_options").hide();
-	jQuery("#postgresql_options").hide();
+
+	function hideoptions () {
+		jQuery("#mysql_options").hide();
+		jQuery("#mysql_options_nobin").hide();
+		jQuery("#postgresql_options").hide();
+	}
+
+	hideoptions();
 
 	jQuery("#radio_dump_mysql").click(function() {
+		hideoptions();
 		jQuery("#mysql_options").show();
 	});
+	jQuery("#radio_dump_mysql_nobin").click(function() {
+		hideoptions();
+		jQuery("#mysql_options_nobin").show();
+	});
 	jQuery("#radio_dump_postgresql").click(function() {
+		hideoptions();
 		jQuery("#postgresql_options").show();
 	});
 });
@@ -79,7 +91,7 @@ if ($_GET["msg"])
 	name="token" value="<?php echo $_SESSION['newtoken']; ?>" /> <input
 	type="hidden" name="export_type" value="server" />
 
-<fieldset id="fieldsetexport"><!-- LDR -->
+<fieldset id="fieldsetexport">
 <?php print '<legend>'.$langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b></legend>'; ?>
 <table>
 	<tr>
@@ -94,7 +106,12 @@ if ($_GET["msg"])
 			<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />
 			<label for="radio_dump_mysql">MySQL	Dump (mysqldump)</label>
 			</div>
+			<?php if (! empty($conf->global->MAIN_FEATURES_LEVEL)) { ?>
+			<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />
+			<label for="radio_dump_mysql">MySQL	Dump (php) <?php print img_warning('Backup can\'t be guaranted with this method. Prefer previous one'); ?></label>
+			</div>
 			<?php
+			}
 		}
 		else if ($db->label == 'PostgreSQL')
 		{
@@ -327,7 +344,6 @@ print "\n";
 $result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'',1,0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
 //if ($result) print '<br><br>';
 
-$db->close();
-
 llxFooter();
-?>
+
+$db->close();

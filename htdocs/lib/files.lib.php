@@ -605,7 +605,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 
 /**
  *  Remove a file or several files with a mask
- *  
+ *
  *  @param      file            File to delete or mask of file to delete
  *  @param      disableglob     Disable usage of glob like *
  *  @param      nophperrors     Disable all PHP output errors
@@ -659,7 +659,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$trigg
 /**
  *  Remove a directory (not recursive, so content must be empty).
  *  If directory is not empty, return false
- *  
+ *
  *  @param      dir             Directory to delete
  *  @param      nophperrors     Disable all PHP output errors
  *  @return     boolean         True if success, false if error
@@ -714,10 +714,10 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
     return $count;
 }
 
-    
+
 /**
  *  Delete all preview files linked to object instance
- *  
+ *
  *  @param	Object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
  */
@@ -728,7 +728,7 @@ function dol_delete_preview($object)
 
     if ($object->element == 'commande') $dir = $conf->commande->dir_output;
     if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';
-    
+
 	$refsan = dol_sanitizeFileName($object->ref);
 	$dir = $dir . "/" . $refsan ;
 	$file = $dir . "/" . $refsan . ".pdf.png";
@@ -766,7 +766,7 @@ function dol_delete_preview($object)
 /**
  * Get and save an upload file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
- * 
+ *
  * @param	string	$upload_dir				Directory to store upload files
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
@@ -873,9 +873,11 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 }
 
 /**
- * 	Convert file to image
- *  @param      file        Input file name
- *  @param      ext         Extension of target file
+ * 	Convert an image file into antoher format.
+ *  This need Imagick php extension.
+ *
+ *  @param	string	$file        Input file name
+ *  @param  string	$ext         Extension of target file
  */
 function dol_convert_file($file,$ext='png')
 {
@@ -904,6 +906,36 @@ function dol_convert_file($file,$ext='png')
 	}
 
 	return 1;
+}
+
+
+/**
+ * Compress a file
+ *
+ * @param string	$inputfile		Source file name
+ * @param string	$outputfile		Target file name
+ * @param string	$mode			'gz' or 'bz'
+ */
+function dol_compress_file($inputfile, $outputfile, $mode="gz")
+{
+    try
+    {
+        $data = implode("", file($inputfile));
+        if ($mode == 'gz') $compressdata = gzencode($data, 9);
+        elseif ($mode == 'bz') $compressdata = bzcompress($data, 9);
+
+        $fp = fopen($outputfile, "w");
+        fwrite($fp, $compressdata);
+        fclose($fp);
+    }
+    catch (Exception $e)
+    {
+        global $langs, $errormsg;
+        $langs->load("errors");
+        dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
+        $errormsg=$langs->trans("ErrorFailedToWriteInDir");
+        return -1;
+    }
 }
 
 ?>
