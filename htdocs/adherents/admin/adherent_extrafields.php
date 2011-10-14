@@ -144,7 +144,7 @@ if ($action == 'create')
 	// Label
 	print '<tr><td class="fieldrequired" required>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40" value="'.GETPOST('label').'"></td></tr>';
 	// Code
-	print '<tr><td class="fieldrequired" required>'.$langs->trans("AttributeCode").' ('.$langs->trans("AlphaNumOnlyCharsAndNoSpace").')</td><td class="valeur"><input type="text" name="attrname" size="10" value"'.GETPOST('attrname').'"></td></tr>';
+	print '<tr><td class="fieldrequired" required>'.$langs->trans("AttributeCode").' ('.$langs->trans("AlphaNumOnlyCharsAndNoSpace").')</td><td class="valeur"><input type="text" name="attrname" size="10" value="'.GETPOST('attrname').'"></td></tr>';
 	// Type
 	print '<tr><td class="fieldrequired" required>'.$langs->trans("Type").'</td><td class="valeur">';
     print $form->selectarray('type',$type2label,GETPOST('type'));
