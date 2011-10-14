@@ -102,7 +102,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 	/**
      *  Function to build pdf onto disk
-     *  
+     *
      *  @param		int		$object				Id of object to generate
      *  @param		object	$outputlangs		Lang output object
      *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
@@ -279,7 +279,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					// Total HT ligne
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell(26, 4, $total_excl_tax, 0, 'R', 0);
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 4, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
