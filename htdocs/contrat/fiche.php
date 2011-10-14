@@ -297,19 +297,19 @@ if ($action == 'addline' && $user->rights->contrat->creer)
         {
             // Insert line
             $result = $object->addline(
-            $desc,
-            $pu_ht,
-            $_POST["pqty"],
-            $tva_tx,
-            $localtax1_tx,
-            $localtax2_tx,
-            $_POST["idprod"],
-            $_POST["premise"],
-            $date_start,
-            $date_end,
-            $price_base_type,
-            $pu_ttc,
-            $info_bits
+                $desc,
+                $pu_ht,
+                $_POST["pqty"],
+                $tva_tx,
+                $localtax1_tx,
+                $localtax2_tx,
+                $_POST["idprod"],
+                $_POST["premise"],
+                $date_start,
+                $date_end,
+                $price_base_type,
+                $pu_ttc,
+                $info_bits
             );
         }
 
@@ -326,7 +326,7 @@ if ($action == 'addline' && $user->rights->contrat->creer)
              $outputlangs = new Translate("",$conf);
              $outputlangs->setDefaultLang($newlang);
              }
-             contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
              */
         }
         else
@@ -1044,7 +1044,7 @@ else
                     {
                         $product=new Product($db);
                         $product->fetch($objp->fk_product);
-                        $dateactend = dol_time_plus_duree (time(), $product->duration_value, $product->duration_unit);
+                        $dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
                     }
                 }
 
@@ -1093,7 +1093,7 @@ else
                     {
                         $product=new Product($db);
                         $product->fetch($objp->fk_product);
-                        $dateactend = dol_time_plus_duree (time(), $product->duration_value, $product->duration_unit);
+                        $dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
                     }
                 }
                 $now=mktime();

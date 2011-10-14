@@ -291,20 +291,20 @@ if ($action == 'add' && $user->rights->fournisseur->facture->creer)
                         if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
                         $result = $object->addline(
-                        $desc,
-                        $lines[$i]->subprice,
-                        $lines[$i]->tva_tx,
-                        $lines[$i]->localtax1_tx,
-                        $lines[$i]->localtax2_tx,
-                        $lines[$i]->qty,
-                        $lines[$i]->fk_product,
-                        $lines[$i]->remise_percent,
-                        $date_start,
-                        $date_end,
-                        0,
-                        $lines[$i]->info_bits,
-						'HT',
-                        $product_type
+                            $desc,
+                            $lines[$i]->subprice,
+                            $lines[$i]->tva_tx,
+                            $lines[$i]->localtax1_tx,
+                            $lines[$i]->localtax2_tx,
+                            $lines[$i]->qty,
+                            $lines[$i]->fk_product,
+                            $lines[$i]->remise_percent,
+                            $date_start,
+                            $date_end,
+                            0,
+                            $lines[$i]->info_bits,
+        					'HT',
+                            $product_type
                         );
 
                         if ($result < 0)
@@ -523,7 +523,7 @@ if ($action == 'addline')
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        //supplier_invoice_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
+        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -592,7 +592,7 @@ if ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        //supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
     }
 }
 

@@ -158,7 +158,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
         }
         else
         {
@@ -260,25 +260,25 @@ if ($action == 'add' && $user->rights->commande->creer)
                     }
 
                     $result = $object->addline(
-                    $object_id,
-                    $desc,
-                    $lines[$i]->subprice,
-                    $lines[$i]->qty,
-                    $lines[$i]->tva_tx,
-                    $lines[$i]->localtax1_tx,
-                    $lines[$i]->localtax2_tx,
-                    $lines[$i]->fk_product,
-                    $lines[$i]->remise_percent,
-                    $lines[$i]->info_bits,
-                    $lines[$i]->fk_remise_except,
-                    'HT',
-                    0,
-                    $datestart,
-                    $dateend,
-                    $product_type,
-                    $lines[$i]->rang,
-                    $lines[$i]->special_code,
-                    $fk_parent_line
+                        $object_id,
+                        $desc,
+                        $lines[$i]->subprice,
+                        $lines[$i]->qty,
+                        $lines[$i]->tva_tx,
+                        $lines[$i]->localtax1_tx,
+                        $lines[$i]->localtax2_tx,
+                        $lines[$i]->fk_product,
+                        $lines[$i]->remise_percent,
+                        $lines[$i]->info_bits,
+                        $lines[$i]->fk_remise_except,
+                        'HT',
+                        0,
+                        $datestart,
+                        $dateend,
+                        $product_type,
+                        $lines[$i]->rang,
+                        $lines[$i]->special_code,
+                        $fk_parent_line
                     );
 
                     if ($result < 0)
@@ -579,25 +579,25 @@ if ($action == 'addline' && $user->rights->commande->creer)
             {
                 // Insert line
                 $result = $object->addline(
-                $id,
-                $desc,
-                $pu_ht,
-                $_POST['qty'],
-                $tva_tx,
-                $localtax1_tx,
-                $localtax2_tx,
-                $_POST['idprod'],
-                $_POST['remise_percent'],
-                $info_bits,
-                0,
-                $price_base_type,
-                $pu_ttc,
-                $date_start,
-                $date_end,
-                $type,
-                -1,
-                '',
-                $_POST['fk_parent_line']
+                    $id,
+                    $desc,
+                    $pu_ht,
+                    $_POST['qty'],
+                    $tva_tx,
+                    $localtax1_tx,
+                    $localtax2_tx,
+                    $_POST['idprod'],
+                    $_POST['remise_percent'],
+                    $info_bits,
+                    0,
+                    $price_base_type,
+                    $pu_ttc,
+                    $date_start,
+                    $date_end,
+                    $type,
+                    -1,
+                    '',
+                    $_POST['fk_parent_line']
                 );
 
                 if ($result > 0)
@@ -612,7 +612,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
                     unset($_POST['qty']);
                     unset($_POST['type']);
@@ -692,20 +692,21 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
 
     if ($result >= 0)
     {
-        $result = $object->updateline($_POST['lineid'],
-        $description,
-        $up_ht,
-        $_POST['qty'],
-        $_POST['remise_percent'],
-        $vat_rate,
-        $localtax1_rate,
-        $localtax2_rate,
-		'HT',
-        $info_bits,
-        $date_start,
-        $date_end,
-        $type,
-        $_POST['fk_parent_line']
+        $result = $object->updateline(
+            $_POST['lineid'],
+            $description,
+            $up_ht,
+            $_POST['qty'],
+            $_POST['remise_percent'],
+            $vat_rate,
+            $localtax1_rate,
+            $localtax2_rate,
+    		'HT',
+            $info_bits,
+            $date_start,
+            $date_end,
+            $type,
+            $_POST['fk_parent_line']
         );
 
         if ($result >= 0)
@@ -720,7 +721,7 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
         }
         else
         {
@@ -754,7 +755,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->command
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     }
 }
 
@@ -794,7 +795,7 @@ if ($action == 'modif' && $user->rights->commande->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     }
 }
 
@@ -819,7 +820,7 @@ if ($action == 'up' && $user->rights->commande->creer)
         $outputlangs->setDefaultLang($newlang);
     }
 
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
     Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
@@ -841,7 +842,7 @@ if ($action == 'down' && $user->rights->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
     Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;

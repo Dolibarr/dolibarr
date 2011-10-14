@@ -161,7 +161,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
 		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
@@ -191,7 +191,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->propale
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 	}
 	else
 	{
@@ -343,7 +343,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
 			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 			exit;
@@ -602,7 +602,7 @@ if ($action == 'modif' && $user->rights->propale->creer)
 		$outputlangs->setDefaultLang($newlang);
 	}
 
-	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 }
 
 if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
@@ -726,22 +726,22 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 		{
 			// Insert line
 			$result=$object->addline(
-			$_POST["id"],
-			$desc,
-			$pu_ht,
-			$_POST['qty'],
-			$tva_tx,
-			$localtax1_tx,
-			$localtax2_tx,
-			$_POST['idprod'],
-			$_POST['remise_percent'],
-			$price_base_type,
-			$pu_ttc,
-			$info_bits,
-			$type,
-			-1,
-			0,
-			$_POST['fk_parent_line']
+    			$_POST["id"],
+    			$desc,
+    			$pu_ht,
+    			$_POST['qty'],
+    			$tva_tx,
+    			$localtax1_tx,
+    			$localtax2_tx,
+    			$_POST['idprod'],
+    			$_POST['remise_percent'],
+    			$price_base_type,
+    			$pu_ttc,
+    			$info_bits,
+    			$type,
+    			-1,
+    			0,
+    			$_POST['fk_parent_line']
 			);
 
 			if ($result > 0)
@@ -756,7 +756,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 					$outputlangs = new Translate("",$conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
@@ -814,18 +814,19 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	}
 	else
 	{
-		$result = $object->updateline($_POST['lineid'],
-		$up_ht,
-		$_POST['qty'],
-		$_POST['remise_percent'],
-		$vat_rate,
-		$localtax1_rate,
-		$localtax2_rate,
-		$_POST['desc'],
-		'HT',
-		$info_bits,
-		$special_code,
-		$_POST['fk_parent_line']
+		$result = $object->updateline(
+    		$_POST['lineid'],
+    		$up_ht,
+    		$_POST['qty'],
+    		$_POST['remise_percent'],
+    		$vat_rate,
+    		$localtax1_rate,
+    		$localtax2_rate,
+    		$_POST['desc'],
+    		'HT',
+    		$info_bits,
+    		$special_code,
+    		$_POST['fk_parent_line']
 		);
 
 		// Define output language
@@ -838,7 +839,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 	}
 }
 
@@ -951,7 +952,7 @@ if ($action == 'up' && $user->rights->propale->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
 	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
@@ -973,7 +974,7 @@ if ($action == 'down' && $user->rights->propale->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
 	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
