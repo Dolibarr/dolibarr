@@ -14,5 +14,5 @@ PAYPAL_CSS_URL=Url optionnelle de la feuille de style CSS de la page de paiement
 ThisIsTransactionId=Voici l'identifiant de la transaction: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Ajouter l'url de paiement Paypal lors de l'envoi d'un document par mail
 PAYPAL_IPN_MAIL_ADDRESS=Adresse e-mail pour les notifications instantanées de paiement (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Veuillez trouver ci-joint la commande __ORDERREF__\n\nVous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement via Paypal\n\n%s\n\nCordialement\n\n
-PredefinedMailContentSendInvoiceWithPaypalLink=Veuillez trouver ci-joint la facture __FACREF__\n\nVous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement via Paypal\n\n%s\n\nCordialement\n\n
+PredefinedMailContentSendOrderWithPaypalLink=Bonjour\nVeuillez trouver ci-joint la commande __ORDERREF__\n\nVous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement via Paypal\n\n%s\n\nCordialement\n\n
+PredefinedMailContentSendInvoiceWithPaypalLink=Bonjour\nVeuillez trouver ci-joint la facture __FACREF__\n\nVous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement via Paypal\n\n%s\n\nCordialement\n\n
