@@ -117,7 +117,7 @@ if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	if (! empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=delivery_order_pdf_create($db, $delivery,$_REQUEST['model'],$outputlangs);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=delivery_order_pdf_create($db, $delivery,$_REQUEST['model'],$outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
