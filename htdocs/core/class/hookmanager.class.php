@@ -28,20 +28,20 @@
  *	\class 		HookManager
  *	\brief 		Class to manage hooks
  */
-
 class HookManager
 {
 	var $db;
 
-	var $linkedObjectBlock;
-	var $objectid;
+    // Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
+    var $contextarray=array();
 
 	// Array with instantiated classes
 	var $hooks=array();
 
 	/**
-	 *    Constructeur de la classe
-	 *    @param	DB		Handler acces base de donnees
+	 * Constructor
+	 *
+	 * @param	DoliDB	$DB		Handler acces base de donnees
 	 */
 	function HookManager($DB)
 	{
@@ -50,26 +50,29 @@ class HookManager
 
 
 	/**
-	 *	Init array this->hooks with instantiated controler
+	 *	Init array this->hooks with instantiated action controlers.
 	 *
 	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
-	 *  with value nameofhookkey1:nameofhookkey2:...:nameofhookkeyn.
-	 *  This add into conf->hooks_modules an entrie ('modulename'=>nameofhookkey)
-	 *  Then, when this function is called, an array this->hooks is defined with instance of controler
-	 *  classes that support the hook called
+	 *  with value 'nameofcontext1:nameofcontext2:...' or 'all' into $this->const of module descriptor file.
+	 *  This make conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
+	 *  When this function is called by callHooks(list_of_contexts), an array this->hooks is defined with instance of controler
+	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
+	 *  Then when a hook is executeHook('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
-	 *	@param	    arraytype	    Array list of searched hooks tab/features. For example: 'thirdpartytab', 'thirdparty',...
-	 *	@return		int				Always 1
+	 *	@param	array	$arraytype	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
+	 *	@return	int						Always 1
 	 */
 	function callHooks($arraytype)
 	{
 		global $conf;
 
-		// Test if ther is hooks to manage
+		// Test if there is hooks to manage
         if (! is_array($conf->hooks_modules) || empty($conf->hooks_modules)) return;
 
         // For backward compatibility
 		if (! is_array($arraytype)) $arraytype=array($arraytype);
+
+		$this->contextarray=array_merge($arraytype,$this->contextarray);
 
 		$i=0;
 		foreach($conf->hooks_modules as $module => $hooks)
@@ -78,7 +81,7 @@ class HookManager
 			{
 				foreach($arraytype as $type)
 				{
-					if (in_array($type,$hooks))
+					if (in_array($type,$hooks))    // We instantiate action class only if hook is required
 					{
 						$path 		= '/'.$module.'/class/';
 						$actionfile = 'actions_'.$module.'.class.php';
@@ -116,13 +119,14 @@ class HookManager
 
     /**
      * 		Execute hooks (if the were initialized) for the given method
-     * 		@param		method		Method name to hook ('doActions', 'printSearchForm', ...)
-     * 	    @param		parameters	Array of parameters
-     * 	    @param		action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     * 		@param		object		Object to use hooks on
-     * 		@param		string		For doActions,showInputField,showOutputField: Return 0 if we want to keep doing standard actions, >0 if if want to stop standard actions, >0 means KO.
-     * 								For printSearchForm,printLeftBlock:           Return HTML string.
-     * 								$this->error or this->errors are also defined with hooks errors.
+     *
+     * 		@param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
+     * 	    @param		array	$parameters		Array of parameters
+     * 		@param		Object	&$object		Object to use hooks on
+     * 	    @param		string	&$action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
+     * 		@return		mixed					For doActions,showInputField,showOutputField: Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
+     * 											For printSearchForm,printLeftBlock:           Return HTML string.
+     * 											$this->error or this->errors are also defined by class called by this function if error.
      */
 	function executeHooks($method, $parameters=false, &$object='', &$action='')
 	{
@@ -130,7 +134,8 @@ class HookManager
 
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
-        dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action);
+        $parameters['context']=join(':',$this->contextarray);
+        dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
         // Loop on each hook
         $resaction=0; $resprint='';

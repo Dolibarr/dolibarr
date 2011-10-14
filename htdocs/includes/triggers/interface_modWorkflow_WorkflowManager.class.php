@@ -85,6 +85,7 @@ class InterfaceWorkflowManager
     /**
      *      Function called when a Dolibarrr business event is done.
      *      All functions "run_trigger" are triggered if file is inside directory htdocs/includes/triggers
+     *
      *      @param      action      Event code (COMPANY_CREATE, PROPAL_VALIDATE, ...)
      *      @param      object      Object action is done on
      *      @param      user        Object user
@@ -103,15 +104,10 @@ class InterfaceWorkflowManager
             if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER))
             {
                 include_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
-                $order = new Commande($this->db);
-                
-                // Actions on extra fields (by external module or standard code)
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-                $hookmanager=new HookManager($this->db);
-                $hookmanager->callHooks(array('ordercard'));
-                
-                $ret=$order->createFromProposal($object,$hookmanager);
-                if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
+                $newobject = new Commande($this->db);
+
+                $ret=$newobject->createFromProposal($object);
+                if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
             }
         }
@@ -123,15 +119,10 @@ class InterfaceWorkflowManager
             if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE))
             {
                 include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
-                $invoice = new Facture($this->db);
-                
-                // Actions on extra fields (by external module or standard code)
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-                $hookmanager=new HookManager($this->db);
-                $hookmanager->callHooks(array('invoicecard'));
-                
-                $ret=$invoice->createFromOrder($object,$hookmanager);
-                if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
+                $newobject = new Facture($this->db);
+
+                $ret=$newobject->createFromOrder($object);
+                if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
             }
         }

@@ -859,10 +859,9 @@ class Commande extends CommonObject
      *  Load an object from a proposal and create a new order into database
      *
      *  @param      Object			$object 	        Object source
-     *	@param		HookManager		$hookmanager		Hook manager instance
      *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
      */
-    function createFromProposal($object,$hookmanager=false)
+    function createFromProposal($object)
     {
         global $conf,$user,$langs;
 
@@ -919,13 +918,14 @@ class Commande extends CommonObject
 
             if ($ret > 0)
             {
-                // Hook of thirdparty module
-                if (is_object($hookmanager))
-                {
-                    $parameters=array('objFrom'=>$object);
-                    $reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                    if ($reshook < 0) $error++;
-                }
+                // Actions hooked (by external module)
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                $hookmanager=new HookManager($this->db);
+                $hookmanager->callHooks(array('orderdao'));
+
+                $parameters=array('objFrom'=>$object);
+                $reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if ($reshook < 0) $error++;
 
                 if (! $error)
                 {
@@ -2222,7 +2222,7 @@ class Commande extends CommonObject
             $staticline=new OrderLine($this->db);
             $staticline->fetch($rowid);
             $this->line->oldline = $staticline;
-            
+
             // Reorder if fk_parent_line change
             if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
             {
@@ -2259,7 +2259,7 @@ class Commande extends CommonObject
             {
             	// Reorder if child line
             	if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
-            	
+
                 // Mise a jour info denormalisees
                 $this->update_price(1);
 

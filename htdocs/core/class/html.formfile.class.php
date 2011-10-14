@@ -177,7 +177,7 @@ class FormFile
      * 		@param		title				Title to show on top of form
      * 		@param		buttonlabel			Label on submit button
      * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
-     * 		@param		hooks				Object hook of external modules
+     * 		@param		hookmanager			Object hookmanager with instance of external modules hook classes
      * 		@return		string              Output string.
      */
     function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hookmanager=false)

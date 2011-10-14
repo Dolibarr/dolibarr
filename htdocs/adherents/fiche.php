@@ -82,7 +82,7 @@ if ($rowid)
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('member_extrafields'));
+$hookmanager->callHooks(array('membercard'));
 
 
 /*
@@ -1031,7 +1031,7 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	print '</table>';
-	
+
 	print '<br><center>';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; &nbsp; ';

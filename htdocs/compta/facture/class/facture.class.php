@@ -599,10 +599,9 @@ class Facture extends CommonObject
      *  Load an object from an order and create a new invoice into database
      *
      *  @param      Object			$object         	Object source
-	 *	@param		HookManager		$hookmanager		Hook manager instance
      *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
      */
-    function createFromOrder($object, $hookmanager=false)
+    function createFromOrder($object)
     {
         global $conf,$user,$langs;
 
@@ -660,13 +659,14 @@ class Facture extends CommonObject
 
         if ($ret > 0)
         {
-        	// Hook of thirdparty module
-			if (is_object($hookmanager))
-			{
-			    $parameters=array('objFrom'=>$object);
-				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0) $error++;
-			}
+            // Actions hooked (by external module)
+            include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+            $hookmanager=new HookManager($this->db);
+            $hookmanager->callHooks(array('invoicedao'));
+
+            $parameters=array('objFrom'=>$object);
+			$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) $error++;
 
             if (! $error)
             {
@@ -2016,7 +2016,7 @@ class Facture extends CommonObject
 			$staticline=new FactureLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
-			
+
 			// Reorder if fk_parent_line change
 			if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
 			{
@@ -2053,7 +2053,7 @@ class Facture extends CommonObject
             {
             	// Reorder if child line
             	if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
-            	
+
                 // Mise a jour info denormalisees au niveau facture
                 $this->update_price(1);
                 $this->db->commit();

@@ -967,7 +967,7 @@ abstract class CommonObject
 	{
 		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE rowid ='.$rowid;
-		
+
 		dol_syslog(get_class($this)."::getRangOfLine sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1010,7 +1010,7 @@ abstract class CommonObject
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND fk_parent_line = '.$fk_parent_line;
-			
+
 			dol_syslog(get_class($this)."::line_max sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -1031,7 +1031,7 @@ abstract class CommonObject
 		{
 			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			
+
 			dol_syslog(get_class($this)."::line_max sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -1771,6 +1771,7 @@ abstract class CommonObject
      *  TODO Move this into an output class file (htmlline.class.php)
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *
      *  @param      $action				Action code
      *  @param      $seller            	Object of seller third party
      *  @param      $buyer             	Object of buyer third party
