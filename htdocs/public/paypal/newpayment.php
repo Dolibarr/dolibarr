@@ -22,7 +22,6 @@
  *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.26 2011/07/31 23:23:20 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -32,7 +31,6 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
@@ -80,15 +78,15 @@ if (! GETPOST("action"))
 }
 
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/htdocs/public/paypal/paymentok.php?';
-$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/htdocs/public/paypal/paymentko.php?';
+$urlok=$urlwithouturlroot.DOL_DOCUMENT_ROOT.'/public/paypal/paymentok.php?';
+$urlko=$urlwithouturlroot.DOL_DOCUMENT_ROOT.'/public/paypal/paymentko.php?';
 
 // Complete urls for post treatment
 $SOURCE=GETPOST("source",'alpha');
 $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
-$SECUREKEY=GETPOST("securekey",'alpha');	// Secure key
+$SECUREKEY=GETPOST("securekey");	        // Secure key
 
 if (! empty($SOURCE))
 {
@@ -139,10 +137,35 @@ if (empty($PAYPAL_API_SIGNATURE))
     return -1;
 }
 
+// Check security token
+$valid=true;
+if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+{
+    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+    {
+	    if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
+	    else $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+    }
+    else
+    {
+        $token = $conf->global->PAYPAL_SECURITY_TOKEN;
+    }
+	if ($SECUREKEY != $token) $valid=false;
+
+	if (! $valid)
+	{
+    	print '<div class="error">Bad value for key.</div>';
+	    //print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+    	exit;
+	}
+}
+
+
 
 /*
  * Actions
  */
+
 if (GETPOST("action") == 'dopayment')
 {
 	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
@@ -238,6 +261,7 @@ print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
+print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print "\n";
 print '<!-- Form to send a Paypal payment -->'."\n";
 print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
@@ -304,16 +328,8 @@ $found=false;
 $error=0;
 $var=false;
 
-// Check security token
-$valid=true;
-if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) )
-{
-	$token = $conf->global->PAYPAL_SECURITY_TOKEN;
-	if ($SECUREKEY != $token and $SECUREKEY != dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.GETPOST("source").GETPOST("ref"), 2)) $valid=false;
-}
-
 // Free payment
-if (! GETPOST("source"))
+if (! GETPOST("source") && $valid)
 {
 	$found=true;
 	$tag=GETPOST("tag");
@@ -882,7 +898,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 
     // Shipping address
     $shipToName=$member->getFullName($langs);
-    $shipToStreet=$member->adresse;
+    $shipToStreet=$member->address;
     $shipToCity=$member->ville;
     $shipToState=$member->departement_code;
     $shipToCountryCode=$member->pays_code;
@@ -946,5 +962,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/07/31 23:23:20 $ - $Revision: 1.26 $');
+llxFooterPaypal();
 ?>
