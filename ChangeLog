@@ -111,6 +111,9 @@ For users:
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.
 - Fix: Debug and clean withdraw module.
+- Fix: Allow access permission for point of sale module.
+- Fix: Permissions issues with suppliers.
+- Fix: Admin dict data is showing with active language 
 
 For developers:
 - New: External modules can add tabs on agenda views.
