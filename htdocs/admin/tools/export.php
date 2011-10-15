@@ -1,19 +1,19 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *		\file 		htdocs/admin/tools/export.php
@@ -40,8 +40,8 @@ if ($file && ! $what)
     header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportMethod"))));
     /*
      print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ExportMethod")).'</div>';
-     print '<br>';
-     */
+    print '<br>';
+    */
     exit;
 }
 
@@ -49,7 +49,7 @@ if ($file && ! $what)
 
 /*
  * View
- */
+*/
 
 llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
 
@@ -185,6 +185,7 @@ if ($what == 'mysql')
         dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
         $errormsg=$langs->trans("ErrorFailedToWriteInDir");
     }
+
     // Get errorstring
     if ($compression == 'none') $handle = fopen($outputfile, 'r');
     if ($compression == 'gz')   $handle = gzopen($outputfile, 'r');
@@ -281,9 +282,9 @@ if ($what == 'postgresql')
     $paramclear=$param;
     /*if (! empty($dolibarr_main_db_pass))
      {
-     $paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
-     $paramclear.=" -W".$dolibarr_main_db_pass;
-     }*/
+    $paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
+    $paramclear.=" -W".$dolibarr_main_db_pass;
+    }*/
     $paramcrypted.=" -w ".$dolibarr_main_db_name;
     $paramclear.=" -w ".$dolibarr_main_db_name;
 
@@ -351,8 +352,6 @@ $db->close();
  *	@param	string	$outputfile		Output file name
  *	@param	string	$tables			Table name or '*' for all
  *	@return	int						<0 if KO, >0 if OK
- *
- *	FIXME Must add directives to have restore working even with constraints not loaded into correct order, etc...
  */
 function backup_tables($outputfile, $tables='*')
 {
@@ -387,66 +386,114 @@ function backup_tables($outputfile, $tables='*')
         $errormsg=$langs->trans("ErrorFailedToWriteInDir");
         return -1;
     }
+
+    // Print headers and global mysql config vars
+    $sqlhead = '';
+    $sqlhead .= "-- ".$db->label." dump via php
+--
+-- Host: ".$db->db->host_info."    Database: ".$db->database_name."
+-- ------------------------------------------------------
+-- Server version	".$db->db->server_info."
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+";
+    fwrite($handle, $sqlhead);
+
+    // Process each table and print their definition + their datas
     foreach($tables as $table)
     {
+        // Saving the table structure
+        fwrite($handle, "--\n-- Table structure for table `".$table."`\n--\n\n");
+
+        fwrite($handle,"DROP TABLE IF EXISTS `".$table."`;\n");
+        fwrite($handle,"/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
+        fwrite($handle,"/*!40101 SET character_set_client = utf8 */;\n");
+        $resqldrop=$db->query('SHOW CREATE TABLE '.$table);
+        $row2 = $db->fetch_row($resqldrop);
+        fwrite($handle,$row2[1].";\n");
+        fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
+
+
+        // Dumping the data (locking the table and disabling the keys check while doing the process)
+        fwrite($handle, "--\n-- Dumping data for table `".$table."`\n--\n\n");
+        fwrite($handle, "LOCK TABLES `".$table."` WRITE;\n");
+        fwrite($handle, "/*!40000 ALTER TABLE `".$table."` DISABLE KEYS */;\n");
+
         $sql='SELECT * FROM '.$table;
         $result = $db->query($sql);
         $num_fields = $db->num_rows($result);
-
-        fwrite($handle,'DROP TABLE IF EXISTS '.$table);
-        $resqldrop=$db->query('SHOW CREATE TABLE '.$table);
-        $row2 = $db->fetch_row($resqldrop);
-        fwrite($handle,"\n\n".$row2[1].";\n\n");
-
-        while($row = $db->fetch_row($result))
-        {
-            fwrite($handle,'INSERT INTO '.$table.' VALUES(');
+        while($row = $db->fetch_row($result)) {
+            // For each row of data we print a line of INSERT
+            fwrite($handle,'INSERT INTO `'.$table.'` VALUES (');
             $columns = count($row);
-            for($j=0; $j<$columns; $j++)
-            {
-                $row[$j] = addslashes($row[$j]);
-                $row[$j] = preg_replace("#\n#", "\\n", $row[$j]);
-                if (isset($row[$j])) { fwrite($handle,'"'.$row[$j].'"'); } else { fwrite($handle,'""'); }
-                if (isset($row[$j]))
-                {
-                    if ($row[$j] == null)
-                    {
-                        fwrite($handle,'"null"');
-                    }
-                    else
-                    {
-                        fwrite($handle,'"'.$row[$j].'"');
-                    }
+            $rowsarr = array();
+            for($j=0; $j<$columns; $j++) {
+                // Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)
+                if ($row[$j] == null and !is_string($row[$j])) {
+                    // IMPORTANT: if the field is NULL we set it NULL
+                    $row[$j] = 'NULL';
+                } elseif(is_string($row[$j]) and $row[$j] == '') {
+                    // if it's an empty string, we set it as an empty string
+                    $row[$j] = "''";
+                } elseif(is_numeric($row[$j])) {
+                    // if it's a number, we return it as-is
+                    $row[$j] = $row[$j];
+                } else { // else for all other cases we escape the value and put quotes around
+                    $row[$j] = addslashes($row[$j]);
+                    $row[$j] = preg_replace("#\n#", "\\n", $row[$j]);
+                    $row[$j] = "'".$row[$j]."'";
                 }
-                else
-                {
-                    fwrite($handle,'""');
-                }
-                if ($j<($num_fields-1)) { fwrite($handle,','); }
             }
-            fwrite($handle,");\n");
+            fwrite($handle,implode(',', $row).");\n");
         }
+        fwrite($handle, "/*!40000 ALTER TABLE `".$table."` ENABLE KEYS */;\n"); // Enabling back the keys/index checking
+        fwrite($handle, "UNLOCK TABLES;\n"); // Unlocking the tables
         fwrite($handle,"\n\n\n");
     }
 
     /* Backup Procedure structure*/
     /*
-    $result = $db->query('SHOW PROCEDURE STATUS');
+     $result = $db->query('SHOW PROCEDURE STATUS');
     if ($db->num_rows($result) > 0)
     {
-        while ($row = $db->fetch_row($result)) { $procedures[] = $row[1]; }
-        foreach($procedures as $proc)
-        {
-            fwrite($handle,"DELIMITER $$\n\n");
-            fwrite($handle,"DROP PROCEDURE IF EXISTS '$name'.'$proc'$$\n");
-            $resqlcreateproc=$db->query("SHOW CREATE PROCEDURE '$proc'");
-            $row2 = $db->fetch_row($resqlcreateproc);
-            fwrite($handle,"\n".$row2[2]."$$\n\n");
-            fwrite($handle,"DELIMITER ;\n\n");
-        }
+    while ($row = $db->fetch_row($result)) { $procedures[] = $row[1]; }
+    foreach($procedures as $proc)
+    {
+    fwrite($handle,"DELIMITER $$\n\n");
+    fwrite($handle,"DROP PROCEDURE IF EXISTS '$name'.'$proc'$$\n");
+    $resqlcreateproc=$db->query("SHOW CREATE PROCEDURE '$proc'");
+    $row2 = $db->fetch_row($resqlcreateproc);
+    fwrite($handle,"\n".$row2[2]."$$\n\n");
+    fwrite($handle,"DELIMITER ;\n\n");
+    }
     }
     */
     /* Backup Procedure structure*/
+
+    // Write the footer (restore the previous database settings)
+    $sqlfooter='';
+    $sqlfooter.="
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on ".date('Y-m-d G-i-s');
+    fwrite($handle, $sqlfooter);
 
     fclose($handle);
 
