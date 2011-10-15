@@ -206,6 +206,14 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 	}
 
+	// CustomFields : print fields at creation
+	if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+	    $currentmodule = 'propal'; // EDIT THIS: var to edit for each module
+
+	    include_once(DOL_DOCUMENT_ROOT.'/customfields/lib/customfields.lib.php');
+	    customfields_print_creation_form($currentmodule);
+	}
+
 	// Model
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';

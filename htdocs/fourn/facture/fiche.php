@@ -517,7 +517,7 @@ if ($_GET['action'] == 'addline')
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        //supplier_invoice_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
+        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -588,7 +588,7 @@ if ($_GET['action'] == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        //supplier_invoice_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
+        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
     }
 }
 

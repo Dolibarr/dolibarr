@@ -80,8 +80,8 @@ if (! GETPOST("action"))
 }
 
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
-$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
+$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/htdocs/public/paypal/paymentok.php?';
+$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/htdocs/public/paypal/paymentko.php?';
 
 // Complete urls for post treatment
 $SOURCE=GETPOST("source",'alpha');
@@ -309,7 +309,7 @@ $valid=true;
 if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) )
 {
 	$token = $conf->global->PAYPAL_SECURITY_TOKEN;
-	if ($SECUREKEY != $token) $valid=false;
+	if ($SECUREKEY != $token and $SECUREKEY != dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.GETPOST("source").GETPOST("ref"), 2)) $valid=false;
 }
 
 // Free payment

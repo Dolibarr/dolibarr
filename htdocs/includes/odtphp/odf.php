@@ -126,6 +126,30 @@ class Odf
 		}
 
 		/**
+		 * Evaluating php codes inside the ODT and output the buffer (print, echo) inplace of the code
+		 *
+		 */
+		public function phpEval()
+		{
+			preg_match_all('/[\{\<]\?(php)?\s+(?P<content>.+)\?[\}\>]/iU',$this->contentXml, $matches); // detecting all {?php code ?} or <?php code ? >
+			for ($i=0;$i < count($matches['content']);$i++) {
+				try {
+				$ob_output = ''; // flush the output for each code. This var will be filled in by the eval($code) and output buffering : any print or echo or output will be redirected into this variable
+				$code = $matches['content'][$i];
+				ob_start();
+				eval ($code);
+				$ob_output = ob_get_contents(); // send the content of the buffer into $ob_output
+				$this->contentXml = str_replace($matches[0][$i], $ob_output, $this->contentXml);
+				ob_end_clean();
+				} catch (Exception $e) {
+					ob_end_clean();
+					$this->contentXml = str_replace($matches[0][$i], 'ERROR: there was a problem while evaluating this portion of code, please fix it: '.$e, $this->contentXml);
+				}
+			}
+			return 0;
+		}
+
+		/**
 		 * Assign a template variable as a picture
 		 *
 		 * @param string $key name of the variable within the template

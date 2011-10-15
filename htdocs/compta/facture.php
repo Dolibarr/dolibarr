@@ -194,7 +194,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
             if ($result > 0)
             {
                 Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
@@ -355,7 +355,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->v
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
     else
     {
@@ -412,7 +412,7 @@ if ($action == 'modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $us
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -532,6 +532,10 @@ if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->f
  */
 if ($action == 'add' && $user->rights->facture->creer)
 {
+    foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields)
+	$object->$key = $value;
+    }
+
     $object->socid=GETPOST('socid');
 
     $db->begin();
@@ -1058,7 +1062,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -1156,7 +1160,7 @@ if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] 
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -1184,7 +1188,7 @@ if ($action == 'up' && $user->rights->facture->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
@@ -1206,7 +1210,7 @@ if ($action == 'down' && $user->rights->facture->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
@@ -1750,6 +1754,14 @@ if ($action == 'create')
         print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
         select_projects($soc->id, $projectid, 'projectid');
         print '</td></tr>';
+    }
+
+    // CustomFields : print fields at creation
+    if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+	$currentmodule = 'facture'; // EDIT THIS: var to edit for each module
+
+	include_once(DOL_DOCUMENT_ROOT.'/customfields/lib/customfields.lib.php');
+	customfields_print_creation_form($currentmodule);
     }
 
     // Modele PDF
@@ -2613,6 +2625,16 @@ else
 
             print '</table><br>';
 
+
+	    // CUSTOMFIELDS : Main form printing and editing functions
+	    if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+		$currentmodule = 'facture'; // EDIT ME: var to edit for each module
+		$idvar = 'id'; // EDIT ME: the name of the POST or GET variable that contains the id of the object (look at the URL for something like module.php?modid=3&...)
+
+		include_once(DOL_DOCUMENT_ROOT.'/customfields/lib/customfields.lib.php');
+		customfields_print_main_form($currentmodule, $object, $action, $user, $idvar);
+
+	    }
 
             /*
              * Lines

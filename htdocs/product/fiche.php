@@ -130,6 +130,10 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 
 	$product=new Product($db);
 
+	foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields)
+		$product->$key = $value;
+	}
+
 	$usecanvas=$_POST["canvas"];
 	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
 
@@ -768,6 +772,15 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
 		$doleditor->Create();
 
 		print "</td></tr>";
+
+		// CustomFields : print fields at creation
+		if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+		    $currentmodule = 'product';
+
+		    include_once(DOL_DOCUMENT_ROOT.'/customfields/lib/customfields.lib.php');
+		    customfields_print_creation_form($currentmodule);
+		}
+
 		print '</table>';
 
 		print '<br>';
@@ -1166,6 +1179,24 @@ if ($id || $ref)
 		{
 			$canvas->assign_values('view');
 			$canvas->display_canvas();
+		}
+
+		// CUSTOMFIELDS : Main form printing and editing functions
+		if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
+		print '<br>';
+		$currentmodule = 'product';
+		$idvar = 'id';
+
+		// We use different rights depending on the product type (product or service?)
+		// we need to supply it in the $rights var because product module has not the same name in rights property
+		if ($product->type == 0) {
+			$rights = 'produit';
+		} elseif ($product->type == 1) {
+			$rights = 'service';
+		}
+
+		include_once(DOL_DOCUMENT_ROOT.'/customfields/lib/customfields.lib.php');
+		customfields_print_main_form($currentmodule, $product, $action, $user, $idvar, $rights);
 		}
 
 		dol_fiche_end();
