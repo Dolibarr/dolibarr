@@ -25,10 +25,10 @@
 
 /**
  *  \class      Menu
- *	\brief      Classe de gestion du menu gauche
+ *	\brief      Class to manage left menus
  */
-class Menu {
-
+class Menu
+{
     var $liste;
 
     /**
@@ -40,7 +40,9 @@ class Menu {
     }
 
     /**
-     *  \brief      Vide l'objet menu de ces entrees
+     * Clear property ->liste
+     *
+     * @return	void
      */
     function clear()
     {
@@ -48,12 +50,15 @@ class Menu {
     }
 
     /**
-     *  \brief      Add a menu entry
-     *  \param      url         Url a suivre sur le clic
-     *  \param      titre       Libelle menu a afficher
-     *  \param      level       Niveau du menu a ajouter
-     *  \param      enabled     Menu actif ou non
-     *  \param      target		Target lien
+     * Add a menu entry into this->liste
+     *
+     * @param	string	$url        Url to follow on click
+     * @param   string	$titre      Label of menu to add
+     * @param   string	$level      Level of menu to add
+     * @param   int		$enabled    Menu active or not
+     * @param   string	$target		Target lien
+     * @param	string	$mainmenu	Main menu
+     * @return	void
      */
     function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='')
     {
@@ -67,7 +72,9 @@ class Menu {
     }
 
     /**
-     *  \brief   	Remove a menu entry
+     * Remove a menu entry from this->liste
+     *
+     * @return	voir
      */
     function remove_last()
     {
