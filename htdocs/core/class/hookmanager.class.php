@@ -53,7 +53,7 @@ class HookManager
 	 *	Init array this->hooks with instantiated action controlers.
 	 *
 	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
-	 *  with value 'nameofcontext1:nameofcontext2:...' or 'all' into $this->const of module descriptor file.
+	 *  with value 'nameofcontext1:nameofcontext2:...' into $this->const of module descriptor file.
 	 *  This make conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
 	 *  When this function is called by callHooks(list_of_contexts), an array this->hooks is defined with instance of controler
 	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
