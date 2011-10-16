@@ -25,9 +25,9 @@ Description: Web based software to manage a small company or foundation
  Management (CRM) but also for different other activities.
  It's a web software you can install as a standalone program or on any web
  hosting provider to use it from anywhere with any web browser.
- Dolibarr was designed to provide only features you need and be easy to use.
  .
- Only features you need are visible, depending on which module were activated.
+ Dolibarr was designed to be easy to use. Only features you need are 
+ visible, depending on which module were activated.
  Most common used modules are:
  .
  Customers, Suppliers or Prospects directory,
