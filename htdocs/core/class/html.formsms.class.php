@@ -113,7 +113,7 @@ function limitChars(textarea, limit, infodiv)
     var textlength = text.length;
     var info = document.getElementById(infodiv);
 
-    info.innerHTML = \''.$langs->trans("SmsInfoCharRemain").': \' + (limit - textlength);
+    info.innerHTML = (limit - textlength);
     return true;
 }
 </script>';
@@ -289,7 +289,7 @@ function limitChars(textarea, limit, infodiv)
             }
             else
             {
-                print '<textarea cols="40" name="message" id="message" rows="4" onkeyup="limitChars(this, 160, \'charlimitinfo\')">'.$defaultmessage.'</textarea>';
+                print '<textarea cols="40" name="message" id="message" rows="4" onkeyup="limitChars(this, 160, \'charlimitinfospan\')">'.$defaultmessage.'</textarea>';
                 print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160-dol_strlen($defaultmessage)).'</span></div></td>';
             }
             print "</td></tr>\n";
