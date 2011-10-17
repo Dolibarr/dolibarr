@@ -35,14 +35,14 @@
 					$discount->fetch($line->fk_remise_except);
 					echo ' - '.$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 				} else {
-					echo ' - '.dol_nl2br($line->description,1,true);
+					echo ' - '.dol_htmlentitiesbr($line->description,1,true);
 				}
 			}
 		} else {
 			if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
-			echo $text.' '.dol_nl2br($line->description,1,true);
+			echo $text.' '.dol_htmlentitiesbr($line->description,1,true);
 			// Show range
 			print_date_range($line->date_start,$line->date_end);
 		} ?>

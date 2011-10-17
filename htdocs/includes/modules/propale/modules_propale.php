@@ -149,6 +149,19 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	$srctemplatepath='';
 	$modelisok=0;
 
+	// Positionne le modele sur le nom du modele a utiliser
+	if (! dol_strlen($modele))
+	{
+	    if (! empty($conf->global->PROPALE_ADDON_PDF))
+	    {
+	        $modele = $conf->global->PROPALE_ADDON_PDF;
+	    }
+	    else
+	    {
+	        $modele = 'azur';
+	    }
+	}
+
 	// Positionne modele sur le nom du modele de propale a utiliser
 	$file = "pdf_propale_".$modele.".modules.php";
 
@@ -168,7 +181,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	}
 
 	// Si model pas encore bon
-	if (! $modelisok)
+	if (! $modelisok && is_array($liste))
 	{
 		$liste=ModelePDFPropales::liste_modeles($db);
 		$modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
