@@ -1173,7 +1173,8 @@ function getSoapParams()
                       'proxy_host'     => $proxyhost,
                       'proxy_port'     => $proxyport,
                       'proxy_login'    => $proxyuser,
-                      'proxy_password' => $proxypass
+                      'proxy_password' => $proxypass,
+                      'trace'		   => 1
         );
     }
     else
@@ -1184,7 +1185,8 @@ function getSoapParams()
                       'proxy_host'     => false,
                       'proxy_port'     => false,
                       'proxy_login'    => false,
-                      'proxy_password' => false
+                      'proxy_password' => false,
+                      'trace'		   => 1
         );
     }
     return $params;
