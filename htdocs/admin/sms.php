@@ -85,6 +85,12 @@ if ($action == 'send' && ! $_POST['cancel'])
 	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php');
 	$formsms = new FormSms($db);
 
+	if (! empty($formsms->error))
+	{
+	    $message='<div class="error">'.$formsms->error.'</div>';
+	    $action='test';
+	    $error++;
+	}
     if (empty($body))
     {
         $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Message")).'</div>';
@@ -151,7 +157,7 @@ print_fiche_titre($langs->trans("SmsSetup"),'','setup');
 print $langs->trans("SmsDesc")."<br>\n";
 print "<br>\n";
 
-if ($message) print $message.'<br>';
+dol_htmloutput_mesg($message);
 
 // List of sending methods
 $listofmethods=(is_array($conf->sms_engine)?$conf->sms_engine:array());
