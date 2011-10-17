@@ -99,7 +99,7 @@ Please make sure the text you entered starts with a	letter and continues with ei
 				<db:default-name>dolibarr</db:default-name>
 				<db:can-use-tables-prefix>false</db:can-use-tables-prefix>
 				<db:server-type>mysql</db:server-type>
-				<db:server-min-version>4.1.0</db:server-min-version>
+				<db:server-min-version>4.3.1</db:server-min-version>
 			</db:db>
 		</requirements>
 		<!-- Content delivery settings (step 8) -->

@@ -875,7 +875,7 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/zip`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/perl`;
 
-            $APSVERSION="1.1";
+            $APSVERSION="1.2";
             print "Create APS files $BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\n";
             open (SPECFROM,"<$BUILDROOT/$PROJECT/build/aps/APP-META-$APSVERSION.xml") || die "Error";
             open (SPECTO,">$BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml") || die "Error";

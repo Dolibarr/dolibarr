@@ -29,7 +29,7 @@ It's an OpenSource software you can install on a web server or as a
 standalone software. Dolibarr is designed to provide simplicity to end-user.
 </description>
 		<icon path="images/appicon_64.png" />
-		<screenshot path="images/dolibarr_screenshot1_640x480.jpg">
+		<screenshot path="images/dolibarr_screenshot1_640x480.png">
 			<description>Screenshot 1</description>
 		</screenshot>
 		<changelog>
@@ -97,7 +97,7 @@ Please make sure the text you entered starts with a letter and continues with ei
 				<db:default-name>dolibarr</db:default-name>
 				<db:can-use-tables-prefix>false</db:can-use-tables-prefix>
 				<db:server-type>mysql</db:server-type>
-				<db:server-min-version>4.1.0</db:server-min-version>
+				<db:server-min-version>4.3.1</db:server-min-version>
 			</db:db>
 		</requirements>
 		<!-- Content delivery settings (step 8) -->
@@ -112,8 +112,9 @@ Please make sure the text you entered starts with a letter and continues with ei
 				</mapping>
 			</url-mapping>
 			<!-- Service configuration script declaration (step 10) -->
-			<configuration-script name="configure">
+			<configuration-script name="configure.php">
 				<script-language>php</script-language>
+				<status-control/>
 			</configuration-script>
 		</provision>
 	</service>
