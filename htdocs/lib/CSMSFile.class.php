@@ -76,23 +76,13 @@ class CSMSFile
 		dol_syslog("CSMSFile::CSMSFile: deliveryreceipt=".$deliveryreceipt." deferred=".$deferred." priority=".$priority." class=".$class, LOG_DEBUG);
 
 		// Action according to choosed sending method
-		if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
-		{
-		    $this->addr_from=$from;
-		    $this->addr_to=$to;
-            $this->message=$msg;
-            $this->deliveryreceipt=$deliveryreceipt;
-            $this->deferred=$deferred;
-            $this->priority=$priority;
-            $this->class=$class;
-		}
-		else
-		{
-			// Send mail method not correctly defined
-			// --------------------------------------
-
-			return 'Bad value for MAIN_SMS_SENDMODE constant';
-		}
+	    $this->addr_from=$from;
+	    $this->addr_to=$to;
+        $this->message=$msg;
+        $this->deliveryreceipt=$deliveryreceipt;
+        $this->deferred=$deferred;
+        $this->priority=$priority;
+        $this->class=$class;
 	}
 
 
@@ -119,25 +109,22 @@ class CSMSFile
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_SMS))
 		{
-			// Action according to choosed sending method
-			if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
+		    // Action according to choosed sending method
+		    if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')    // Backward compatibility    @deprecated
 			{
 				dol_include_once('/ovh/class/ovhsms.class.php');
-				$ovhsms=new OvhSms($this->db);
-				//$ovhsms->session='';
-				//$ovhsms->account='';
-				$ovhsms->expe=$this->addr_from;
-				$ovhsms->dest=$this->addr_to;
-				$ovhsms->message=$this->message;
-				//$ovhsms->validity='';
-				$ovhsms->deferred=$this->deferred;
-				$ovhsms->priority=$this->priority;
-                $ovhsms->class=$this->class;
+				$sms=new OvhSms($this->db);
+				$sms->expe=$this->addr_from;
+				$sms->dest=$this->addr_to;
+				$sms->message=$this->message;
+				$sms->deferred=$this->deferred;
+				$sms->priority=$this->priority;
+                $sms->class=$this->class;
 
-                $res=$ovhsms->SmsSend();
+                $res=$sms->SmsSend();
 				if ($res <= 0)
 				{
-					$this->error=$ovhsms->error;
+					$this->error=$sms->error;
 					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
 				}
 				else
@@ -147,6 +134,40 @@ class CSMSFile
 					$this->dump_sms_result($res);
 				}
 			}
+		    else if (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
+		    {
+		        $tmp=explode('@',$conf->global->MAIN_SMS_SENDMODE);
+		        $classfile=$tmp[0]; $module=(empty($tmp[1])?$tmp[0]:$tmp[1]);
+		        dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
+		        try
+		        {
+		            $classname=ucfirst($classfile);
+		            $sms = new $classname($this->db);
+		            $sms->expe=$this->addr_from;
+		            $sms->dest=$this->addr_to;
+		            $sms->message=$this->message;
+		            $sms->deferred=$this->deferred;
+		            $sms->priority=$this->priority;
+		            $sms->class=$this->class;
+
+                    $res=$sms->SmsSend();
+    				if ($res <= 0)
+    				{
+    					$this->error=$sms->error;
+    					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
+    				}
+    				else
+    				{
+    					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
+    					//var_dump($res);        // 1973128
+    					$this->dump_sms_result($res);
+    				}
+		        }
+		        catch(Exception $e)
+		        {
+		            dol_print_error('','Error to get list of senders: '.$e->getMessage());
+		        }
+		    }
 			else
 			{
 				// Send mail method not correctly defined
