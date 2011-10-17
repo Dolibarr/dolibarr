@@ -78,6 +78,8 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 		$deplacement->type = $_POST["type"];
 		$deplacement->socid = $_POST["socid"];
 		$deplacement->fk_user = $_POST["fk_user"];
+		$deplacement->note = $_POST["note"];
+		$deplacement->note_public = $_POST["note_public"];
 
         if (! $deplacement->date)
         {
@@ -218,6 +220,31 @@ if ($_GET["action"] == 'create')
 	print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
 	print $html->select_societes($_POST["socid"]?$_POST["socid"]:$_GET["socid"],'socid','',1);
 	print '</td></tr>';
+
+	// Public note
+	print '<tr>';
+	print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
+	print '<td valign="top" colspan="2">';
+	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+	if (is_object($objectsrc))    // Take value from source object
+	{
+	    print $objectsrc->note_public;
+	}
+	print '</textarea></td></tr>';
+
+	// Private note
+	if (! $user->societe_id)
+	{
+	    print '<tr>';
+	    print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
+	    print '<td valign="top" colspan="2">';
+	    print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+	    if (is_object($objectsrc))    // Take value from source object
+	    {
+	        print $objectsrc->note;
+	    }
+	    print '</textarea></td></tr>';
+	}
 
     print '</table>';
 
