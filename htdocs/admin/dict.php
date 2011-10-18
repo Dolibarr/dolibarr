@@ -36,17 +36,12 @@ $langs->load("other");
 $langs->load("admin");
 $langs->load("companies");
 
-if (!$user->admin) accessforbidden();
+$action=GETPOST('action');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-$hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('dict'));
+if (!$user->admin) accessforbidden();
 
 $acts[0] = "activate";
 $acts[1] = "disable";
-//$actl[0] = $langs->trans("Activate");
-//$actl[1] = $langs->trans("Disable");
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
@@ -62,14 +57,19 @@ $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('admin'));
 
-// Cette page est une page d'edition generique des dictionnaires de donnees
-// Mettre ici tous les caracteristiques des dictionnaires
 
-// Ordres d'affichage des dictionnaires (0 pour espace)
+// Thi page is a generic page to edit dictionnaries
+// Put here delacaration of dictionnaries properties
+
+// Sort order to show dictionnary (0 is space). All other dictionnaries (added by modules) will be at end of this.
 $taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,22,20,18,21,0,15);
 
-// Nom des tables des dictionnaires
+// Name of SQL tables of dictionnaries
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
 $tabname[2] = MAIN_DB_PREFIX."c_departements";
 $tabname[3] = MAIN_DB_PREFIX."c_regions";
@@ -601,7 +601,7 @@ if ($_GET["id"])
 
     $fieldlist=explode(',',$tabfield[$_GET["id"]]);
 
-    print '<form action="dict.php" method="post">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder" width="100%">';
 
@@ -670,9 +670,10 @@ if ($_GET["id"])
 
             }
         }
-        $action = 'add';
+        
+        $action = 'create';
         $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
-        $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters, $obj, $action);    // Note that $action and $object may have been modified by some hooks
+        $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $action);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
         if (empty($reshook)) fieldList($fieldlist,$obj);
@@ -751,32 +752,34 @@ if ($_GET["id"])
                 $var=!$var;
                 //print_r($obj);
                 print "<tr ".$bc[$var].">";
-                if ($_GET["action"] == 'modify' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
+                if ($_GET["action"] == 'edit' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
                 {
                     print '<form action="dict.php" method="post">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="id" value="'.GETPOST("id").'">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
+                    
                     $action = 'edit';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
                     $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $action);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
-
+                    
                     if (empty($reshook)) fieldList($fieldlist,$obj);
+                    
                     print '<td colspan="3" align="right"><a name="'.($obj->rowid?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
                 else
                 {
-                    $action = 'display';
+                    $action = 'view';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
-                    $reshook=$hookmanager->executeHooks('displayDictionaryFieldlist',$parameters,$obj, $action);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $action);    // Note that $action and $object may have been modified by some hooks
+                    
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     if (empty($reshook))
                     {
-
                         foreach ($fieldlist as $field => $value)
                         {
                             $showfield=1;
@@ -879,25 +882,18 @@ if ($_GET["id"])
                     if (isset($obj->code) && $obj->code == 'EF0') $iserasable=0;
                     if ($obj->type && $obj->type == 'system') $iserasable=0;
 
-                    if ($iserasable) {
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-                    } else {
-                        print $langs->trans("AlwaysActive");
-                    }
+                    if ($iserasable) print '<a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                    else print $langs->trans("AlwaysActive");
                     print "</td>";
 
                     // Modify link
-                    if ($iserasable) {
-                        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
-                    } else {
-                        print '<td>&nbsp;</td>';
-                    }
+                    if ($iserasable) print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=edit#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
+                    else print '<td>&nbsp;</td>';
+                    
                     // Delete link
-                    if ($iserasable) {
-                        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
-                    } else {
-                        print '<td>&nbsp;</td>';
-                    }
+                    if ($iserasable) print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
+                    else print '<td>&nbsp;</td>';
+
                     print "</tr>\n";
                 }
                 $i++;
@@ -938,7 +934,7 @@ else
             print '<tr '.$bc[$var].'><td width="30%">';
             if (! empty($tabcond[$i]))
             {
-                print '<a href="dict.php?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
+                print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
             }
             else
             {

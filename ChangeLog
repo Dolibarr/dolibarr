@@ -24,6 +24,7 @@ For users:
 - New: Can search on part of barcode into POS module.
 
 For developers:
+- New: Add hooks to change way of showing/editing lines into dictionnaries.
 - New: Add webservice to get or create a prodcut or service.
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
