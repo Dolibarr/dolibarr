@@ -67,7 +67,13 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 }
 
 
-// Function for page HTML header
+/**
+ * Show header for new member
+ *
+ * @param 	string		$title
+ * @param 	string		$head
+ * @return	void
+ */
 function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
     global $user, $conf, $langs, $mysoc;
@@ -97,10 +103,16 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
     print '<div style="margin-left: 50px; margin-right: 50px;">';
 }
 
-// Function for page HTML footer
+/**
+ * Show footer for new member
+ *
+ * @return	void
+ */
 function llxFooterVierge()
 {
     print '</div>';
+
+    printCommonFooter('public');
 
     print "</body>\n";
     print "</html>\n";

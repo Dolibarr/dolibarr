@@ -4345,4 +4345,86 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
     }
 }
 
+/**
+ * Print common footer :
+ * 		conf->global->MAIN_HTML_FOOTER
+ * 		conf->global->MAIN_GOOGLE_AN_ID
+ * 		DOL_TUNING
+ * 		conf->logbuffer
+ *
+ * @param	string	$zone	'private' (for private pages) or 'public' (for public pages)
+ * @return	void
+ */
+function printCommonFooter($zone='private')
+{
+    global $conf;
+
+    if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
+    else print "\n".'<!-- Common footer for public page -->'."\n";
+
+    if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
+
+    // Google Analytics (need Google module)
+    if (! empty($conf->global->MAIN_GOOGLE_AN_ID))
+    {
+        print "\n";
+        print '<script type="text/javascript">'."\n";
+            print '  var _gaq = _gaq || [];'."\n";
+            print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+            print '  _gaq.push([\'_trackPageview\']);'."\n";
+            print ''."\n";
+        print '  (function() {'."\n";
+            print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+            print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+            print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+            print '  })();'."\n";
+            print '</script>'."\n";
+    }
+
+    // End of tuning
+    if (! empty($_SERVER['DOL_TUNING']))
+    {
+        $micro_end_time=dol_microtime_float(true);
+        print "\n".'<script type="text/javascript">console.log("';
+        if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
+        print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
+        print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+        if (function_exists("memory_get_usage"))
+        {
+            print ' - Mem: '.memory_get_usage();
+        }
+        if (function_exists("xdebug_memory_usage"))
+        {
+            print ' - XDebug time: '.ceil(1000*xdebug_time_index()).' ms';
+            print ' - XDebug mem: '.xdebug_memory_usage();
+            print ' - XDebug mem peak: '.xdebug_peak_memory_usage();
+        }
+        if (function_exists("zend_loader_file_encoded"))
+        {
+            print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
+        }
+        print '")</script>'."\n";
+
+        // Add Xdebug coverage of code
+        if (defined('XDEBUGCOVERAGE')) {
+            var_dump(xdebug_get_code_coverage());
+        }
+    }
+
+    // If there is some logs in buffer to show
+    if (count($conf->logbuffer))
+    {
+        print "\n";
+        print "<!-- Start of log output\n";
+        //print '<div class="hidden">'."\n";
+        foreach($conf->logbuffer as $logline)
+        {
+            print $logline."<br>\n";
+        }
+        //print '</div>'."\n";
+        print "End of log output -->\n";
+    }
+
+}
+
 ?>

@@ -337,8 +337,13 @@ if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN
 llxFooterVierge();
 
 
-
-
+/**
+ * Show header for demo
+ *
+ * @param 	string		$title
+ * @param 	string		$head
+ * @return	void
+ */
 function llxHeaderVierge($title, $head = "")
 {
     global $user, $conf, $langs;
@@ -368,9 +373,14 @@ function llxHeaderVierge($title, $head = "")
     print '<body style="margin: 20px;">'."\n";
 }
 
+/**
+ * Show footer for demo
+ *
+ * @return	void
+ */
 function llxFooterVierge()
 {
-    printCommonFooter();
+    printCommonFooter('public');
 
     print "\n";
     print "</body>\n";

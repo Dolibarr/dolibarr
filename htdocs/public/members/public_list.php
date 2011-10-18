@@ -38,6 +38,13 @@ $langs->load("companies");
 $langs->load("other");
 
 
+/**
+ * Show header for member list
+ *
+ * @param 	string		$title
+ * @param 	string		$head
+ * @return	void
+ */
 function llxHeaderVierge($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -51,9 +58,18 @@ function llxHeaderVierge($title, $head = "")
 	print "<body>\n";
 }
 
+/**
+* Show footer for member list
+*
+* @param 	string		$title
+* @param 	string		$head
+* @return	void
+*/
 function llxFooterVierge()
 {
-	print "</body>\n";
+    printCommonFooter('public');
+
+    print "</body>\n";
 	print "</html>\n";
 }
 

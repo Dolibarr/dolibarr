@@ -115,8 +115,14 @@ $db->close();
 llxFooterVierge();
 
 
-/* Functions header and footer */
 
+/**
+ * Show header for card member
+ *
+ * @param 	string		$title
+ * @param 	string		$head
+ * @return	void
+ */
 function llxHeaderVierge($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -130,8 +136,15 @@ function llxHeaderVierge($title, $head = "")
 	print "<body>\n";
 }
 
+/**
+* Show footer for card member
+*
+* @return	void
+*/
 function llxFooterVierge()
 {
+    printCommonFooter('public');
+
 	print "</body>\n";
 	print "</html>\n";
 }

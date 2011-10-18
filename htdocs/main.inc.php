@@ -1624,50 +1624,7 @@ if (! function_exists("llxFooter"))
         print "\n";
         if ($foot) print '<!-- '.$foot.' -->'."\n";
 
-        if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
-
-
-		// If there is some logs in buffer to show
-		if (count($conf->logbuffer))
-		{
-			print "\n";
-			print "<!-- Start of log output\n";
-			//print '<div class="hidden">'."\n";
-			foreach($conf->logbuffer as $logline)
-			{
-				print $logline."<br>\n";
-			}
-			//print '</div>'."\n";
-			print "End of log output -->\n";
-		}
-
-		// End of tuning
-        if (! empty($_SERVER['DOL_TUNING']))
-        {
-            $micro_end_time=dol_microtime_float(true);
-            print "\n".'<script type="text/javascript">console.log("';
-            if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
-            print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
-            print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
-            if (function_exists("memory_get_usage"))
-            {
-                print ' - Mem: '.memory_get_usage();
-            }
-            if (function_exists("xdebug_memory_usage"))
-            {
-                print ' - XDebug time: '.ceil(1000*xdebug_time_index()).' ms';
-                print ' - XDebug mem: '.xdebug_memory_usage();
-                print ' - XDebug mem peak: '.xdebug_peak_memory_usage();
-            }
-            if (function_exists("zend_loader_file_encoded"))
-            {
-                print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
-            }
-            print '")</script>'."\n";
-
-            // Add Xdebug coverage of code
-            if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
-        }
+        printCommonFooter();
 
 		print "</body>\n";
 		print "</html>\n";
