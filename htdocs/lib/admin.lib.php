@@ -901,6 +901,7 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
                                     $taborder[] = count($tabname)+1;
                                     $tabname[] = $val;
                                 }
+                                $langs->load($objMod->dictionnaries['langs']);
                                 foreach($objMod->dictionnaries['tablib'] as $val) $tablib[] = $val;
                                 foreach($objMod->dictionnaries['tabsql'] as $val) $tabsql[] = $val;
                                 foreach($objMod->dictionnaries['tabsqlsort'] as $val) $tabsqlsort[] = $val;
