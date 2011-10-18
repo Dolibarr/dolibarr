@@ -160,6 +160,10 @@ $server->register(
  * Get produt or service
  *
  * @param	array		$authentication		Array of authentication information
+ * @param	int			$id					Id of object
+ * @param	string		$ref				Ref of object
+ * @param	ref_ext		$ref_ext			Ref external of object
+ * @return	mixed
  */
 function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 {
