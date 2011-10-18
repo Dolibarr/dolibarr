@@ -81,8 +81,6 @@ class User extends CommonObject
 	var $photo;
 	var $lang;
 
-	var $userpref_limite_liste;
-
 	//! Liste des entrepots auquel a acces l'utilisateur
 	var $entrepots;
 
