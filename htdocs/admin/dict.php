@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,11 @@ $langs->load("admin");
 $langs->load("companies");
 
 if (!$user->admin) accessforbidden();
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('dict'));
 
 $acts[0] = "activate";
 $acts[1] = "disable";
@@ -663,8 +669,12 @@ if ($_GET["id"])
 
             }
         }
+        $action = 'add';
+        $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
+        $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters, $obj, $action);    // Note that $action and $object may have been modified by some hooks
+        $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-        fieldList($fieldlist,$obj);
+        if (empty($reshook)) fieldList($fieldlist,$obj);
 
         print '<td colspan="3" align="right"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
@@ -746,7 +756,12 @@ if ($_GET["id"])
                     print '<input type="hidden" name="id" value="'.GETPOST("id").'">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
-                    fieldList($fieldlist,$obj);
+                    $action = 'edit';
+                    $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
+                    $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $action);    // Note that $action and $object may have been modified by some hooks
+                    $error=$hookmanager->error; $errors=$hookmanager->errors;
+
+                    if (empty($reshook)) fieldList($fieldlist,$obj);
                     print '<td colspan="3" align="right"><a name="'.($obj->rowid?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
