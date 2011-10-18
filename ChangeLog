@@ -24,7 +24,8 @@ For users:
 - New: Can search on part of barcode into POS module.
 
 For developers:
-- New: Add webservice to get or create a prodcut or service.
+- New: Add webservice to get or create a product, service.
+- New: Add webservice to get a user.
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
 - Qual: Data structure for supplier prices is simpler.
