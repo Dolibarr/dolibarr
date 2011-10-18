@@ -234,10 +234,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 	/**
 	 *	Function to build a document on disk using the generic odt module.
-	 *	@param	    object				Object source to build document
-	 *	@param		outputlangs			Lang output object
-	 * 	@param		srctemplatepath	    Full path of source filename for generator using a template file
-	 *	@return	    int         		1 if OK, <=0 if KO
+	 *
+	 *	@param	Facture		$object					Object source to build document
+	 *	@param	Translate	$outputlangs			Lang output object
+	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *	@return	int         						1 if OK, <=0 if KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath)
 	{
@@ -274,8 +275,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 			}
 
-			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->facture->dir_output;
+			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
 
@@ -293,6 +294,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
 				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
+				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
+				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
+			    $newfiletmp=$objectref.'_'.$newfiletmp;
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				$file=$dir.'/'.$newfiletmp.'.odt';
 				//print "newdir=".$dir;
