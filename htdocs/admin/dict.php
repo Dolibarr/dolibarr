@@ -621,6 +621,7 @@ if ($_GET["id"])
             // Determine le nom du champ par rapport aux noms possibles
             // dans les dictionnaires de donnees
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+            $valuetoshow=$langs->trans($valuetoshow);   // try to translate
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
             if ($fieldlist[$field]=='taux')            { $valuetoshow=$langs->trans("Rate"); }
@@ -713,6 +714,7 @@ if ($_GET["id"])
                 // dans les dictionnaires de donnees
                 $showfield=1;							  	// Par defaut
                 $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+                $valuetoshow=$langs->trans($valuetoshow);   // try to translate
                 if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
                 if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
                 if ($fieldlist[$field]=='taux')            { $valuetoshow=$langs->trans("Rate"); }
