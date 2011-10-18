@@ -291,7 +291,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			if (file_exists($dir))
 			{
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
-				$newfile=basename($srctemplatepath);
+				$newfile=$objectref;
 				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				$file=$dir.'/'.$newfiletmp.'.odt';
