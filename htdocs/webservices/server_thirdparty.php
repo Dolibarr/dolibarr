@@ -180,8 +180,8 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 			   			'ref' => $thirdparty->name,
 			   			'ref_ext' => $thirdparty->ref_ext,
 			    		'fk_user_author' => $thirdparty->fk_user_author,
-//			    		'date_creation' => $thirdparty->
-//			    		'date_modification' => $thirdparty->
+			    		'date_creation' => dol_print_date($thirdparty->datec,'dayhourrfc'),
+			    		'date_modification' => dol_print_date($thirdparty->date_update,'dayhourrfc'),
 			            'address' => $thirdparty->address,
 				        'zip' => $thirdparty->zip,
 				        'town' => $thirdparty->town,

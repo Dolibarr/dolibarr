@@ -62,16 +62,85 @@ print 'Classname='.$argv[2]."\n";
 
 $classfile=$argv[1];
 $classname=$argv[2];
+$classmin=strtolower($classname);
 $property=array();
-$outfile='webservice_'.dol_sanitizeFileName($classfile).'.php';
 $targetcontent='';
 
-// This script must load the class, found the CRUD function and build a web service to call this functions.
-// TODO ...
+// Load the class and read properties
+require_once($classfile);
+
+$property=array();
+$class = new $classname($db);
+$values=get_class_vars($classname);
+
+unset($values['db']);
+unset($values['error']);
+unset($values['errors']);
+unset($values['element']);
+unset($values['table_element']);
+unset($values['table_element_line']);
+unset($values['fk_element']);
+unset($values['ismultientitymanaged']);
+
+$properties=array_keys($values);
+
+// Read skeleton_class.class.php file
+$skeletonfile='skeleton_webservice_server.php';
+$sourcecontent=file_get_contents($skeletonfile);
+if (! $sourcecontent)
+{
+	print "\n";
+	print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
+	print "Try to run script from skeletons directory.\n";
+	exit;
+}
+
+// Define output variables
+$outfile='out.server_'.$classmin.'.php';
+$targetcontent=$sourcecontent;
 
 
 
+// Substitute class name
+$targetcontent=preg_replace('/Skeleton/', $classname, $targetcontent);
+$targetcontent=preg_replace('/skeleton/', $classmin, $targetcontent);
 
+// Substitute declaration parameters
+$varprop="\n";
+$cleanparam='';
+$i=0;
+
+while($i<count($properties))
+{
+		$varprop.="'".$properties[$i]."' => array('name'=>'".$properties[$i]."','type'=>'xsd:string')";
+		$i++;
+
+		if ($i == count($properties))
+			$varprop.="\n";
+		else
+			$varprop.=",\n";
+}
+
+$targetcontent=preg_replace('/\'prop1\'=>\'xxx\',/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\'prop2\'=>\'xxx\',/', '', $targetcontent);
+// Substitute get method parameters
+$varprop="\n";
+$cleanparam='';
+$i=0;
+
+while($i<count($properties))
+{
+		$varprop.="'".$properties[$i]."' => $".$classmin."->".$properties[$i];
+
+		$i++;
+		if ($i == count($properties))
+			$varprop.="\n";
+		else
+			$varprop.=",\n";
+}
+
+$targetcontent=preg_replace('/\'prop1\'=>\$'.$classmin.'->prop1,/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\'prop2\'=>\$'.$classmin.'->prop2,/', '', $targetcontent);
 
 // Build file
 $fp=fopen($outfile,"w");
