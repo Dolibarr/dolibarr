@@ -147,7 +147,7 @@ class ModeleNumRefFactures
 function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	global $conf,$user,$langs;
-	
+
 	$langs->load("bills");
 
 	// Increase limit for PDF build
@@ -187,10 +187,10 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 	foreach(array('doc','pdf') as $prefix)
 	{
         $file = $prefix."_".$modele.".modules.php";
-        
+
         // On verifie l'emplacement du modele
         $file = dol_buildpath($dir.'doc/'.$file);
-	    
+
         if (file_exists($file))
 	    {
 	        $filefound=1;
@@ -210,6 +210,14 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
+
+		// Appel des triggers
+		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+		$interface=new Interfaces($db);
+		$result=$interface->run_triggers('BILL_PREBUILDDOC',$object,$user,$langs,$conf);
+		if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		// Fin appel triggers
+
 		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc) > 0)
 		{
 			// Success in building document. We build meta file.
@@ -218,14 +226,14 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 			facture_delete_preview($db, $object->id);
 
 			$outputlangs->charset_output=$sav_charset_output;
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('BILL_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 		else

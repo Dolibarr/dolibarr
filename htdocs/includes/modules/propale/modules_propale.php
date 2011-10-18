@@ -204,6 +204,14 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
+
+		// Appel des triggers
+		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+		$interface=new Interfaces($db);
+		$result=$interface->run_triggers('PROPAL_PREBUILDDOC',$object,$user,$langs,$conf);
+		if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		// Fin appel triggers
+
 		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;

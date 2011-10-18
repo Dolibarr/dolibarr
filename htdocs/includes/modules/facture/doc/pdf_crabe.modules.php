@@ -280,8 +280,8 @@ class pdf_crabe extends ModelePDFFactures
 
 					// Total HT ligne
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY ($this->postotalht, $curY);
-					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
+					$pdf->SetXY ($this->postotalht-2, $curY);
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
@@ -386,8 +386,45 @@ class pdf_crabe extends ModelePDFFactures
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
+				// Attach external pdf pages
+				$fileslist = array();
+				$attachfolderroot = DOL_DATA_ROOT.'/mycompany/attachedpdf/'; // can add a different subfolder for each module here
+				if (!is_dir($attachfolderroot)) mkdir($attachfolderroot); // if the folder does not exist, we create it
+				// we dig all the files in the specified folder and store their names in the $fileslist array (to later process only pdf files)
+				if ($handle = opendir($attachfolderroot)) {
+					/* This is the correct way to loop over the directory. */
+					while (false !== ($currfile = readdir($handle))) {
+						if ($currfile != '.' and $currfile != '..') {
+							$fileslist[] = $currfile;
+						}
+					}
+					closedir($handle);
+				}
+				sort($fileslist, SORT_LOCALE_STRING);
+				foreach ($fileslist as $filename) {
+					if ( !empty($filename) and (strpos($filename, '.pdf', strlen($filename)-4) !== false)) { // we check that it's a pdf file, not a folder or other
+						$pagecount = $pdf->setSourceFile($attachfolderroot.$filename); // loading the number of page and loading the external pdf file
+						$posy=$this->marge_haute;
+						// Special case made for tva attestations : we print them only if needed, if we have products or services with low vat
+						if ((strpos($filename, 'tva') !== false) or (strpos($filename, 'vat') !== false)) { // we search for the keyword tva or vat in the filename
+							$lowvatfound = false;
+							foreach($object->lines as $onearticle) { // for each product/service line, we test if the vat is below the normal legal value
+								if ($onearticle->tva_tx < 19.6) $lowvatfound = true;
+							}
+							if (!$lowvatfound) continue; // if now low vat found we continue the foreach loop without appending these documents, else if found we append
+						}
+						for ($n=1; $n <= $pagecount; $n++) { // we add each page to the current pdf document
+							$pdf->AddPage();
+							$tplidx = $pdf->ImportPage($n);
+							$pdf->useTemplate($tplidx, 10, 10, 190);
+						}
+					}
+				}
+
+				// Close the pdf edition
 				$pdf->Close();
 
+				// Save the pdf
 				$pdf->Output($file,'F');
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -697,7 +734,7 @@ class pdf_crabe extends ModelePDFFactures
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY ($col1x, $tab2_top + 0);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
+		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht,2, $outputlangs->transnoentities("TotalHT"),'','C');
 		$pdf->SetXY ($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
