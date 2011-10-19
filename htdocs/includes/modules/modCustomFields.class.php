@@ -90,6 +90,8 @@ class modCustomFields extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',1)
+                //
+                // IMPORTANT: do not forget to DISABLE then RENABLE the module in the admin panel to accept the now const values, because these constants are only added to the database when enabling the module
 		$this->const = array(
 				     0=>array('MAIN_MODULE_CUSTOMFIELDS_HOOKS', 'chaine', 'productcard:invoicecard:propalcard', 'Hooks list for managing printing functions of the CustomFields module', 0),
 				     );
@@ -242,7 +244,7 @@ class modCustomFields extends DolibarrModules
 
 	/**
 	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *              Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted.
 	 *      @return     int             1 if OK, 0 if KO
 	 */

@@ -45,6 +45,9 @@ $this->const = array(
 Just add the hook rootname for the module you want to hook at the third index (eg: so if our module's hook root name is "myownmodule" you will set 'productcard:invoicecard:propalcard:myownmodule').
 Note: see the next step to implement a hook (and set the hook root name, if you want to find the hook root name of an already existing module with hooks just search for the callHooks() function).
 
+IMPORTANT: Be careful: do not forget to DISABLE then RENABLE the module in the admin panel to accept the now const values, because these constants are only added to the database when enabling the module.
+And please note that the const are updated because there is the remove() function (in the same file) that tells Dolibarr to remove the constants when disabling the module, else Dolibarr would not update the constants if they were not removed first (even if the values changed).
+
 Done !
 
 Result: Now just login into the admin configuration interface of the customfields module to initialize the customfields for this module and you can already add/edit/manage your customfields!
