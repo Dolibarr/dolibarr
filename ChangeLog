@@ -26,6 +26,8 @@ For users:
 For developers:
 - New: Add webservice to get or create a product, service.
 - New: Add webservice to get a user.
+- New: Add hooks to change way of showing/editing lines into dictionnaries.
+- New: Add webservice to get or create a prodcut or service.
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
 - Qual: Data structure for supplier prices is simpler.
@@ -112,6 +114,9 @@ For users:
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.
 - Fix: Debug and clean withdraw module.
+- Fix: Allow access permission for point of sale module.
+- Fix: Permissions issues with suppliers.
+- Fix: Admin dict data is showing with active language 
 
 For developers:
 - New: External modules can add tabs on agenda views.

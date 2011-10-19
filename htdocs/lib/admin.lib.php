@@ -881,6 +881,15 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
 
                         if ($modulequalified)
                         {
+							// Load languages files of module
+                            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+                            {
+                             	foreach($objMod->langfiles as $langfile)
+                              	{
+                               		$langs->load($langfile);
+                               	}
+                           	}
+
                             $modules[$i] = $objMod;
                             $filename[$i]= $modName;
                             $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
