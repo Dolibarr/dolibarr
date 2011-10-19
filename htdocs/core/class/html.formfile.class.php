@@ -41,18 +41,17 @@ class FormFile
 	 *
 	 *  @param		DoliDB		$DB      Database handler
      */
-    function FormFile($DB)
+    function FormFile($db)
     {
-        $this->db = $DB;
-
+        $this->db = $db;
         $this->numoffiles=0;
-
         return 1;
     }
 
 
     /**
      *    	Show form to upload a new file
+	 *
      *    	@param      url				Url
      *    	@param      title			Title zone (Title or '' or 'none')
      *    	@param      addcancel		1=Add 'Cancel' button
