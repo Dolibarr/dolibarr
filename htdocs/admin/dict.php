@@ -976,7 +976,7 @@ function fieldList($fieldlist,$obj='')
         if ($fieldlist[$field] == 'pays') {
             if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }	// For region page, we do not show the country input
             print '<td>';
-            $html->select_pays($obj->pays,'pays');
+            print $html->select_country(($obj->pays_code?$obj->pays_code:$obj->pays),'pays');
             print '</td>';
         }
         elseif ($fieldlist[$field] == 'pays_id') {
