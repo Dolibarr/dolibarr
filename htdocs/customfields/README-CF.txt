@@ -71,6 +71,18 @@ If you are implementing CF for a third-party module (your own module?), then you
 
 Note: you only have to instanciate the HookManager once, then you can copy the Insert Hooks part several time in your code.
 
+Now you just have to configure the case in /htdocs/customfields/class/actions_customfields.class.php, in the customfields_print_forms() function, in the big if/elseif block, add a new elseif for your module:
+		elseif ($parameters->context == 'propalcard' or $object->table_element == 'propal') {
+                $currentmodule = 'propal'; // EDIT ME: var to edit for each module
+                $idvar = 'id'; // EDIT ME: the name of the POST or GET variable that contains the id of the object (look at the URL for something like module.php?modid=3&... when you edit a field)
+                $rights = 'propale'; // EDIT ME: try first to put it null, then if it doesn't work try to find the right name (search in the same file for something like $user->rights->modname where modname is the string you must put in $rights).
+            }
+
+Done!
+
+Result: Now you should see the custom fields in the datasheet or at the creation form, and there should be an edit button on the datasheet to be able to edit the datas.
+However, editing a custom field should not work yet. You can now directly jump to the triggers (this is what will manage the saving actions).
+
 2/ Show the fields in the creation page. DEPRECATED - FOR DOLIBARR <= 3.1.x
 Why: The goal here is to find the place where the modules print the creation form, so that we can append our own custom fields at the end (or near the end)
 
