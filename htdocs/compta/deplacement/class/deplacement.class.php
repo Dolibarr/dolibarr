@@ -172,6 +172,7 @@ class Deplacement extends CommonObject
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->type."'";
 		$sql .= " , fk_user = ".$this->fk_user;
+		$sql .= " , fk_user_modif = ".$user->id;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
 		$sql .= " , note = ".($this->note?"'".$this->db->escape($this->note)."'":"null");
 		$sql .= " , note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
@@ -354,6 +355,49 @@ class Deplacement extends CommonObject
         else dol_print_error($this->db);
 
         return $ret;
+	}
+	
+	/*
+	 *    \brief      Information sur l'objet
+	 *    \param      id      id du deplacement dont il faut afficher les infos
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT c.rowid, c.datec, c.fk_user_author, c.fk_user_modif,';
+		$sql.= ' c.tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
+		$sql.= ' WHERE c.rowid = '.$id;
+
+		dol_syslog(get_class($this).'::info sql='.$sql);
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_modif)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
 	}
 
 }
