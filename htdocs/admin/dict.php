@@ -36,7 +36,7 @@ $langs->load("other");
 $langs->load("admin");
 $langs->load("companies");
 
-$action=GETPOST('action');
+$action=GETPOST('action')?GETPOST('action'):'view';
 
 if (!$user->admin) accessforbidden();
 
@@ -61,7 +61,6 @@ $pagenext = $page + 1;
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
 $hookmanager->callHooks(array('admin'));
-
 
 // Thi page is a generic page to edit dictionnaries
 // Put here delacaration of dictionnaries properties
@@ -671,9 +670,9 @@ if ($_GET["id"])
             }
         }
         
-        $action = 'create';
+        $tmpaction = 'create';
         $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
-        $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $action);    // Note that $action and $object may have been modified by some hooks
+        $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
         if (empty($reshook)) fieldList($fieldlist,$obj);
@@ -752,7 +751,8 @@ if ($_GET["id"])
                 $var=!$var;
                 //print_r($obj);
                 print "<tr ".$bc[$var].">";
-                if ($_GET["action"] == 'edit' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
+
+                if ($action == 'edit' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
                 {
                     print '<form action="dict.php" method="post">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -760,9 +760,9 @@ if ($_GET["id"])
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
                     
-                    $action = 'edit';
+                    $tmpaction='edit';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
-                    $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $action);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
                     
                     if (empty($reshook)) fieldList($fieldlist,$obj);
@@ -772,9 +772,9 @@ if ($_GET["id"])
                 }
                 else
                 {
-                    $action = 'view';
+                    $tmpaction = 'view';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
-                    $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $action);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
@@ -989,11 +989,10 @@ function fieldList($fieldlist,$obj='')
 
     foreach ($fieldlist as $field => $value)
     {
-
-        if ($fieldlist[$field] == 'pays') {
-            if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }	// For region page, we do not show the country input
+    	if ($fieldlist[$field] == 'pays') {
+    		if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }	// For region page, we do not show the country input
             print '<td>';
-            $html->select_pays($obj->pays,'pays');
+            print $html->select_country(($obj->pays_code?$obj->pays_code:$obj->pays),'pays');
             print '</td>';
         }
         elseif ($fieldlist[$field] == 'pays_id') {
