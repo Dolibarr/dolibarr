@@ -132,6 +132,7 @@ class Facturation {
 		$sql.= ", remise_percent";
 		$sql.= ", remise";
 		$sql.= ", total_ht";
+		$sql.= ", total_tva";
 		$sql.= ", total_ttc";
 		$sql.= ") VALUES (";
 		$sql.= $this->id();
@@ -140,6 +141,7 @@ class Facturation {
 		$sql.= ", ".$remise_percent;
 		$sql.= ", ".price2num($montant_remise_ht);
 		$sql.= ", ".price2num($total_ht,'MT');
+		$sql.= ", ".price2num($total_vat,'MT');
 		$sql.= ", ".price2num($total_ttc,'MT');
 		$sql.= ")";
 
