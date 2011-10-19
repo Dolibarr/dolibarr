@@ -22,11 +22,11 @@ NotImportedFields=Alanlar kaynak ithal dosyası
 SaveExportModel=Eğer daha sonra yeniden kullanmak planı bu ihracat profili kaydet ...
 SaveImportModel=Eğer daha sonra yeniden kullanmak planı bu ithalat profili kaydet ...
 ExportModelName=Ihracat profili ismi
-ExportModelSaved=Ihracat profil <b>adı %s </b> altına kaydedilir.
+ExportModelSaved=Ihracat profil <b>adı% s</b> altına kaydedilir.
 ExportableFields=Ihraç alanları
 ExportedFields=Ihraç alanları
 ImportModelName=Ithalat profili ismi
-ImportModelSaved=Ithal profil <b>adı %s </b> altına kaydedilir.
+ImportModelSaved=Ithal profil <b>adı% s</b> altına kaydedilir.
 ImportableFields=Ithal alanları
 ImportedFields=Ithal alanları
 DatasetToExport=Veri kümesi verme
@@ -39,7 +39,7 @@ FieldsTitle=Alanlar başlığı
 FieldOrder=Alan sipariş
 FieldTitle=Alan başlık
 ChooseExportFormat=Ihracat biçimi seçin
-NowClickToGenerateToBuildExportFile=Şimdi, Üret "ihracat dosyasını oluşturmak için açılan kutu ve tıkırtı seçin dosya biçimi ...
+NowClickToGenerateToBuildExportFile=Şimdi, Üret &quot;ihracat dosyasını oluşturmak için açılan kutu ve tıkırtı seçin dosya biçimi ...
 AvailableFormats=Kullanılabilir biçimler
 LibraryShort=Kütüphane
 LibraryUsed=Kütüphane kullanılan
@@ -64,7 +64,7 @@ LineQty=Miktar hat için
 LineTotalHT=Hat için vergi miktarı net
 LineTotalTTC=Miktar çizgi için vergi ile
 LineTotalVAT=Miktar KDV hattı için
-TypeOfLineServiceOrProduct=Tipi hattı (0= ürün, 1= servisi)
+TypeOfLineServiceOrProduct=Tipi hattı (0 = ürün, 1 = servisi)
 FileWithDataToImport=Dosya verileri aktarmak
 FileToImport=Kaynak aktarmak için dosya
 FileMustHaveOneOfFollowingFormat=Gereken bir dosya biçimi aşağıdakilerden biri varsa almak
@@ -76,7 +76,7 @@ FieldsInSourceFile=Alanlar kaynak dosyası
 FieldsInTargetDatabase=Dolibarr veritabanında Hedef alanlar (*= zorunlu)
 Field=Alan
 NoFields=No alanları
-MoveField=Hareket alanı sütun numarası %s 
+MoveField=Hareket alanı sütun numarası% s
 ExampleOfImportFile=Example_of_import_file
 SaveImportProfile=Bu ithalat profili kaydet
 ErrorImportDuplicateProfil=Bu adı ile bu ithalat profil kaydedilemedi. Varolan bir profili zaten bu isimde var.
@@ -86,9 +86,9 @@ FieldsTarget=Hedefli alanları
 TableTarget=Hedefli tablo
 FieldTarget=Hedef alan
 FieldSource=Kaynak alanı
-DoNotImportFirstLine=Kaynak dosyası ilk satırı ithalat Don't
+DoNotImportFirstLine=Kaynak dosyası ilk satırı ithalat
 NbOfSourceLines=Satır sayısı kaynak dosyası
-NowClickToTestTheImport=Tanımladığınız kontrol ithalat parametreleri. Eğer onlar doğruysa, düğmesine tıklayın <b>"%</b> ithalat sürecinin bir simülasyon başlatmak için (hiçbir veri veritabanına değiştirildiğinde, sadece an için bir simülasyon)'s ... <b>s</b>
+NowClickToTestTheImport=Tanımladığınız kontrol ithalat parametreleri. Eğer onlar doğruysa, düğmesine tıklayın <b>&quot;%</b> ithalat sürecinin bir simülasyon başlatmak için (hiçbir veri veritabanına değiştirildiğinde, sadece an için bir simülasyon)&#39;s ... <b>s</b>
 RunSimulateImportFile=Ithalat simülasyon Başlat
 FieldNeedSource=Bu veritabanı dosyasını kaynaktan bir veri gerektirir hissediyor
 SomeMandatoryFieldHaveNoSource=Bazı zorunlu alanları veri kaynağı dosyasını
@@ -98,18 +98,18 @@ SelectAtLeastOneField=Alanların sütununda Switch en az bir kaynak alan ihraç
 SelectFormat=Bu ithalat dosya biçimini seçin
 RunImportFile=Launch alma dosyasında
 NowClickToRunTheImport=Ithalat simülasyon sonucu kontrol edin. Herşey yolunda mı, kesin ithalat başlatın.
-DataLoadedWithId=Tüm veriler aşağıdaki ithalat id ile <b>yüklenecek: %s </b>
+DataLoadedWithId=Tüm veriler aşağıdaki ithalat id ile <b>yüklenecek:% s</b>
 ErrorMissingMandatoryValue=Zorunlu veri <b>alanı%</b> için kaynak dosyada boş <b>var.</b>
 TooMuchErrors=<b>Hala%</b> bir hata ile diğer kaynak hatları ancak çıkış sınırlı olmuştur <b>var.</b>
 TooMuchWarnings=<b>Hala%</b> bir uyarı ile ilgili diğer kaynak hatları ancak çıkış sınırlı olmuştur <b>var.</b>
 EmptyLine=Boş satır () atılır
 CorrectErrorBeforeRunningImport=Önce kesin ithalat çalıştırmadan önce tüm hataları düzeltmek gerekir.
-YouCanUseImportIdToFindRecord=You <b>= ' %s '</b> alanında <b>import_key</b> filtreleme yoluyla veritabanındaki tüm ithal kayıtları bulabilirsiniz.
-NbOfLinesOK=Hata ve uyarı ile Satır <b>sayısı: %s .</b>
-NbOfLinesImported=Satır sayısı başarıyla <b>ithal: %s .</b>
+YouCanUseImportIdToFindRecord=You <b>%s</b> alanında <b>import_key</b> filtreleme yoluyla veritabanındaki tüm ithal kayıtları bulabilirsiniz.
+NbOfLinesOK=Hata ve uyarı ile Satır <b>sayısı: %s.</b>
+NbOfLinesImported=Satır sayısı başarıyla <b>ithal: %s.</b>
 DataComeFromNoWhere=Fiyat eklemek için hiçbir kaynak dosyada gelir.
-DataComeFromFileFieldNb=Fiyat eklemek için alan <b>numarası%</b> gelen kaynak dosyada <b>var.</b>
-DataComeFromIdFoundFromRef=Değeri alan <b>numarası%</b> gelen kaynak dosyanın <b>ler</b> kullanılacaktır üst nesnenin (Yani <b>objet%</b> bu ref sahip <b>lar</b> kullanmak için id bulmak için. Gerektiğini Dolibarr içine mevcut kaynak dosyadan).
+DataComeFromFileFieldNb=Fiyat eklemek için alan <b>numarası %s</b> gelen kaynak dosyada <b>var.</b>
+DataComeFromIdFoundFromRef=Değeri alan <b>numarası %s</b> gelen kaynak dosyanın <b>ler</b> kullanılacaktır üst nesnenin (Yani <b>objet%</b> bu ref sahip <b>lar</b> kullanmak için id bulmak için. Gerektiğini Dolibarr içine mevcut kaynak dosyadan).
 DataIsInsertedInto=Veri kaynak dosya gelen aşağıdaki alana eklenir:
 DataIDSourceIsInsertedInto=Ebeveyn id kaynak dosyadaki verileri kullanarak, aşağıdaki alana eklenecektir bulundu nesne:
 SourceRequired=Veri değeri zorunludur
@@ -117,8 +117,8 @@ SourceExample=Olası veri değeri örneği
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
 // Reference language: en_US -> tr_TR
-CSVFormatDesc=<b>Virgülle Ayrılmış Değer</b> dosya biçimi (. Csv). <br> Bu alanlar [Ssss] ayırıcı ayrılmış bir metin dosya formatıdır. ayırıcı bir alan içerik içinde bulunursa, alanın etrafında bir karakter [Ssss] tarafından yuvarlanır. Önceleme karakteri yuvarlak karakter kaçmak için [Ssss] olduğunu.
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:45).
+FileWasImported=Dosya numarası <b>%s</b> ile ithal edilmiştir.
+CSVFormatDesc=<b>Virgülle Ayrılmış</b> (csv) <b>Değer</b> dosya biçimi. <br> Bu alanlar ayırıcı ile ayrılmış bir metin dosyası biçiminde [%s]. Ayırıcı bir alan içerik içinde bulunursa, alan yuvarlak karakteri ile yuvarlanır [%s]. Yuvarlak karakteri kaçmak için karakter Kaçış [%s].
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:40:48).

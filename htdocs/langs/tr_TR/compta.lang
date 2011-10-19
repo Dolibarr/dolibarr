@@ -88,7 +88,7 @@ CheckReceipt=Kontrol mevduat
 CheckReceiptShort=Kontrol mevduat
 NewCheckReceipt=Yeni indirim
 NewCheckDeposit=Yeni bir çek ödemesi
-NewCheckDepositOn=Hesap ödeme için makbuz oluşturun: %s 
+NewCheckDepositOn=Hesap ödeme için makbuz oluşturun:% s
 NoWaitingChecks=No çekleri ödeme için bekliyor.
 DateChequeReceived=Çek resepsiyon giriş tarihi
 NbOfCheques=Nb çeki
@@ -97,12 +97,12 @@ ConfirmPaySocialContribution=Size ödenen bu sosyal katkı sınıflandırmak ist
 DeleteSocialContribution=Silmek bir sosyal katkı
 ConfirmDeleteSocialContribution=Bunu sosyal katkı silmek istediğinizden emin misiniz?
 ExportDataset_tax_1=Sosyal katkılar ve ödemeler
-AnnualSummaryDueDebtMode=Denge gelir ve harcamaları, yıllık özeti, <b>mod %s Claims-Borçlar %s  Taahhüt muhasebe</b> söyledi.
-AnnualSummaryInputOutputMode=Denge gelir ve harcamaları, yıllık özeti, <b>mod %s Revenues-Expensens %s  nakit muhasebe</b> söyledi.
-AnnualByCompaniesDueDebtMode=Denge gelir ve giderleri, üçüncü şahıslar tarafından ayrıntı <b>modu %s Claims-Borçlar %s  Taahhüt muhasebe</b> söyledi.
-AnnualByCompaniesInputOutputMode=Denge gelir ve giderleri, üçüncü şahıslar tarafından ayrıntı <b>modu %s Revenues-Giderleri %s  nakit muhasebe</b> söyledi.
-SeeReportInInputOutputMode=<b> %s Incomes raporu-Giderleri %s </b> dedi bak gerçek ödeme yapılan bir hesaplama için <b>nakit muhasebe</b>
-SeeReportInDueDebtMode=<b> %s Claims raporu-Borçlar %s </b> dedi bak Kesilen faturaların bir hesaplama için <b>taahhüt muhasebe</b>
+AnnualSummaryDueDebtMode=Denge gelir ve harcamaları, yıllık özeti, <b>mod% sClaims-Borçlar% s Taahhüt muhasebe</b> söyledi.
+AnnualSummaryInputOutputMode=Denge gelir ve harcamaları, yıllık özeti, <b>mod% sRevenues-Expensens% s nakit muhasebe</b> söyledi.
+AnnualByCompaniesDueDebtMode=Denge gelir ve giderleri, üçüncü şahıslar tarafından ayrıntı <b>modu% sClaims-Borçlar% s Taahhüt muhasebe</b> söyledi.
+AnnualByCompaniesInputOutputMode=Denge gelir ve giderleri, üçüncü şahıslar tarafından ayrıntı <b>modu% sRevenues-Giderleri% s nakit muhasebe</b> söyledi.
+SeeReportInInputOutputMode=<b>% SIncomes raporu-Giderleri% s</b> dedi bak gerçek ödeme yapılan bir hesaplama için <b>nakit muhasebe</b>
+SeeReportInDueDebtMode=<b>% SClaims raporu-Borçlar% s</b> dedi bak Kesilen faturaların bir hesaplama için <b>taahhüt muhasebe</b>
 RulesResultDue=- Tutarlar gösterilen tüm vergiler dahil olan vardır <br> - Bu olağanüstü fatura, gider ve KDV ya da değil ödenir içerir. <br> - Bu fatura ve KDV ve masraflar için son tarih üzerinde doğrulama tarihinden dayanmaktadır.
 RulesResultInOut=- Tutarlar gösterilen tüm vergiler dahil olan vardır <br> - Bu gerçek ödemeler fatura, gider ve KDV yapılan içerir. <br> - Bu faturaların ödeme tarihleri dayanan, giderleri ANF KDV. <br>
 RulesCADue=- Bu müşterilerin nedeniyle fatura ya da değil ödenir içerir. <br> - Bu, bu faturaların geçerlilik tarihinden dayanmaktadır. <br>
@@ -111,12 +111,12 @@ VATReportByCustomersInInputOutputMode=Rapor müşteri KDV toplanan ve (KDV makbu
 VATReportByCustomersInDueDebtMode=Rapor müşteri KDV toplanan ve (KDV oranı) ödenen
 VATReportByQuartersInInputOutputMode=KDV üç aylık rapor toplanan ve (KDV makbuz ödenir)
 VATReportByQuartersInDueDebtMode=KDV üç aylık rapor toplanan ve (KDV oranı) ödenen
-SeeVATReportInInputOutputMode=Bak <b>raporu %s vat encasement%</b> standart bir hesaplama için <b>s</b>
+SeeVATReportInInputOutputMode=Bak <b>raporu% Svat encasement%</b> standart bir hesaplama için <b>s</b>
 SeeVATReportInDueDebtMode=<b>Raporu% akışı% Doğum Svat</b> Bkz akışı bir seçeneği ile bir hesaplama için <b>s</b>
 RulesVATIn=Hizmetler için rapor KDV düzenlemelerine aslında alınan veya ödeme tarihinden olarak yayınlanan içerir. <br> Maddi varlıklar - için, fatura doğrulama tarih bazında KDV fatura içerir.
 RulesVATDue=Hizmetler için rapor KDV faturalar nedeniyle ödenen veya değil, bu tasarının geçerliliğinin tarihine göre içerir. <br> Maddi varlıklar - için, KDV fatura, faturanın geçerliliğinin tarihine göre içerir.
 OptionVatInfoModuleComptabilite=Not: maddi varlıklar için, daha adil olmaya teslim tarihinden kullanmalısınız.
-PercentOfInvoice=%%/fatura
+PercentOfInvoice=%% / fatura
 NotUsedForGoods=Mal değil kullanılan
 Dispatch=Sevketme
 Dispatched=Sevk
@@ -125,10 +125,33 @@ ThirdPartyMustBeEditAsCustomer=Üçüncü parti bir müşteri olarak tanımlanma
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
 // Reference language: en_US -> tr_TR
-TaxModuleSetupToModifyRules=Git <a href="%s">kurulum modülü</a> hesaplaması için kuralları değiştirme
-VATReportBuildWithOptionDefinedInModule=Tutarlar burada kurallar Vergi modülü kurulum tarafından tanımlanan kullanılarak hesaplanmıştır gösterilir.
-SocialContributionsPayments=Sosyal katkılar ödemeler
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:55).
+TaxModuleSetupToModifyRules=<a href="%s">Modülü kurulum</a> hesaplama için kuralları değiştirmek için
+VATReportBuildWithOptionDefinedInModule=Burada gösterilen tutarlar Vergi modülü kurulum tarafından tanımlı kurallar kullanılarak hesaplanır.
+DescSellsJournal=Satış Dergisi
+DescPurchasesJournal=Alımlar Dergisi
+InvoiceRef=Fatura ref.
+CodeNotDef=Tanımsız
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:12:12).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+AmountToBeCharged=Toplam ödeme miktarı:
+SocialContributionsPayments=Sosyal katkıları ödemeleri
+ProposalStats=Teklif İstatistikleri
+OrderStats=Sipariş İstatistikleri
+InvoiceStats=Faturalarında İstatistikleri
+SellsJournal=Satış Dergisi
+PurchasesJournal=Alımlar Dergisi
+AddRemind=Kullanılabilir miktar gönderimi
+RemainToDivide=Gönderme kalır:
+WarningDepositsNotIncluded=Mevduat faturalar bu muhasebe modülü ile bu sürümü dahil değildir.
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:58:52).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
+// Reference language: en_US -> tr_TR
+RemainingAmountPayment=Tutar Kalan ödeme:
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:53:50).

@@ -20,7 +20,6 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id: html.formsms.class.php,v 1.13 2011/07/31 23:45:14 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -62,7 +61,8 @@ class FormSms
 
 	/**
 	 *	Constructor
-	 *  @param     DB      handler d'acces base de donnee
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
 	function FormSms($DB)
 	{
@@ -195,7 +195,7 @@ function limitChars(textarea, limit, infodiv)
                     dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
                     $resultsender[0]->number=$this->fromsms;
                 }
-                if (sizeof($resultsender) > 0)
+                if (is_array($resultsender) && count($resultsender) > 0)
                 {
                     print '<select name="fromsms" id="valid" class="flat">';
                     foreach($resultsender as $obj)
@@ -224,7 +224,7 @@ function limitChars(textarea, limit, infodiv)
 			}
 			else
 			{
-			    print "<input size=\"16\" name=\"sendto\" value=\"".(! is_array($this->withto) && $this->withto != '1'? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto):"+")."\">";
+			    print "<input size=\"16\" id=\"sendto\" name=\"sendto\" value=\"".(! is_array($this->withto) && $this->withto != '1'? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto):"+")."\">";
 				if (! empty($this->withtosocid) && $this->withtosocid > 0)
 				{
 					$liste=array();
@@ -261,7 +261,7 @@ function limitChars(textarea, limit, infodiv)
 			else
 			{
                 print '<textarea cols="40" name="message" id="message" rows="4" onkeyup="limitChars(this, 160, \'charlimitinfo\')">'.$defaultmessage.'</textarea>';
-                print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': '.(160-dol_strlen($defaultmessage)).'</div></td>';
+                print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160-dol_strlen($defaultmessage)).'</span></div></td>';
 			}
 			print "</td></tr>\n";
 		}

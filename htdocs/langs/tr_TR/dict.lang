@@ -260,6 +260,7 @@ CivilityMLE=Ms
 CivilityMTRE=Amir
 Currencyeuros=Euro
 CurrencyAUD=AU Dolar
+CurrencySingTRL=Türk Lirası
 CurrencySingAUD=AU Dollar
 CurrencyCAD=CAN Dolar
 CurrencySingCAD=CAN Dolar
@@ -292,8 +293,27 @@ CurrencySingXPF=CFP Frangı
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
-CurrencyINR=Indian rupi
+CurrencyINR=Hint rupi
 CurrencySingINR=Hint rupisi
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:16).
+CurrencyUAH=Grivnası
+CurrencySingUAH=Grivnası
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Posta kampanya
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:18:22).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
+// Reference language: en_US -> tr_TR
+DemandReasonTypeSRC_CAMP_EMAIL=Kampanya e-postayla gönderme
+DemandReasonTypeSRC_CAMP_PHO=Telefon kampanya
+DemandReasonTypeSRC_CAMP_FAX=Faks kampanya
+DemandReasonTypeSRC_COMM=Ticari temas
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:50:10).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
+// Reference language: en_US -> tr_TR
+DemandReasonTypeSRC_SHOP=Dükkanı iletişim
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:48:18).

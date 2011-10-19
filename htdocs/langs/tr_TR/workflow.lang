@@ -1,0 +1,18 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-09 14:05:49
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
+// Reference language: en_US -> tr_TR
+CHARSET=UTF-8
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme doğrulandıktan sonra otomatik olarak bir müşteri faturası oluşturun
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri sipariş kapatıldıktan sonra otomatik olarak bir müşteri faturası oluşturun
+WorkflowSetup=İş Akışı modülü kurulumu
+WorkflowDesc=Bu modül, uygulama otomatik eylemler davranışını değiştirmek için desinged. Varsayılan olarak, iş akışı (siz istediğiniz için bir şey yapmak) açıldı. In ilginç otomatik eylemler etkin
+ThereIsNoWorkflowToModify=Hiçbir iş akışı modülü aktif hale getirilmesi için değişiklik yoktur.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Ticari bir teklifi imzalandıktan sonra otomatik olarak bir müşteri sipariş oluşturma
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Ticari bir teklifi imzalandıktan sonra otomatik olarak bir müşteri faturası oluşturun
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:00:04).

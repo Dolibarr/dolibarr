@@ -52,6 +52,7 @@ IOMonthlyReporting=Aylık raporlama
 BankAccountDomiciliation=Hesap adresi
 BankAccountOwner=Hesap sahibi adı
 BankAccountOwnerAddress=Hesap sahibi adresi
+RIBControlError=Değerler Inetgrity denetler başarısız olur. Bu, bu hesap numarası bilgi anlamına gelir tam olmayan veya yanlış (onay ülke, sayılar ve IBAN).
 CreateAccount=Hesap oluşturun
 StandingOrderToProcess=Işlemek için
 StandingOrderProcessed=İşlenmiş
@@ -80,7 +81,7 @@ Account=Hesap
 ByCategories=Categories
 ByRubriques=Categories
 BankTransactionByCategories=Kategorilere göre Banka işlemleri
-BankTransactionForCategory=<b>%s</b> Kategori için banka işlemleri <b>var</b>
+BankTransactionForCategory=<b>%</b> Kategori için banka işlemleri <b>var</b>
 RemoveFromRubrique=Kategoriyle Kaldır bağlantısını
 RemoveFromRubriqueConfirm=Size işlem ve kategori arasındaki bağlantıyı kaldırmak istediğinizden emin misiniz?
 ListBankTransactions=Banka işlemleri Listesi
@@ -119,14 +120,14 @@ BankTransfers=Banka havaleleri
 TransferDesc=Başka bir bir hesaptan aktarma, Dolibarr (aynı miktardaki kaynak hesapta bir ödeme ve hedef hesabınıza bir kredi. Aynı etiket ve tarih bu işlem için kullanılacaktır) iki kayıtları yazacaktır
 TransferFrom=-Den
 TransferTo=Kadar
-TransferFromToDone=<b>'Den% geçiş %s  %s </b> s kaydedildi% <b>s.</b>
+TransferFromToDone=Den geçiş <b>%s %s</b> kaydedildi <b>%s %s</b>.
 CheckTransmitter=Vericisi
 ValidateCheckReceipt=Doğrulamak Bu onay alınması?
 ConfirmValidateCheckReceipt=Bunu kontrol makbuz doğrulamak istiyorsanız, herhangi bir değişiklik mümkün olacaktır emin misiniz bu seferlik yapılır?
 DeleteCheckReceipt=Bu onay alındığı sil?
 ConfirmDeleteCheckReceipt=Bunu kontrol makbuz silmek istediğinizden emin misiniz?
 BankChecks=Banka çekleri
-BankChecksToReceipt=Çekler ödeme için bekliyor
+BankChecksToReceipt=Ödeme için bekleyen çekler
 NumberOfCheques=Nb çeki
 DeleteTransaction=Silme işlemi
 ConfirmDeleteTransaction=Bunu işlem silmek istediğinizden emin misiniz?
@@ -148,7 +149,12 @@ ShowAllAccounts=Tüm hesaplar için
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
 // Reference language: en_US -> tr_TR
 BankAccountCountry=Hesap ülke
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:42).
+WithdrawalPayment=Ödemesinin
+ShowCheckReceipt=Mevduat makbuzu kontrol göster
+Graph=Grafik
+FutureTransaction=İşlem Futur içinde. Hiçbir şekilde uzlaşmaya.
+SelectChequeTransactionAndGenerate=Filtre / kontroller onay mevduat makbuz içine dahil ve &quot;Create&quot; tıklayın ve seçin.
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:28:03).

@@ -14,9 +14,8 @@ FTPArea=FTP Alanı
 FTPAreaDesc=Bu ekranda bir FTP sunucusu görünümünün içeriği gösterir
 SetupOfFTPClientModuleNotComplete=Kur FTP istemcisi modülünün tam değil gibi görünüyor
 FTPFeatureNotSupportedByYourPHP=PHP FTP fonksiyonları desteklemez
-FailedToConnectToFTPServer=FTP sunucusu, port %s ) ( %s unucuya bağlanamadı
+FailedToConnectToFTPServer=FTP sunucusu, port% s) (% sunucuya bağlanamadı
 FailedToConnectToFTPServerWithCredentials=Tanımlı giriş ile FTP sunucusuna giriş yapılamadı / şifre
 FTPFailedToRemoveFile=<b>Dosya%</b> kaldırılamadı <b>var.</b>
 FTPFailedToRemoveDir=<b>Dizini%</b> kaldırılamadı (izinleri kontrol edin ve dizin boş <b>s).</b>
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-

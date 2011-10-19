@@ -13,11 +13,14 @@ Documentation démarrage rapide
 I - INSTALLER DOLIBARR
 ----------------------
 
-Si vous n'avez pas de connaissances techniques, que vous êtes sous Windows et
-que vous recherchez un programme d'installation qui install Dolibarr ERP/CRM en 
-quelques clics, vous devez vous réorienter vers DoliWamp (la version tout-en-un
-de Dolibarr pour Windows). Vous pouvez la télécharger à l'adresse: 
-http://www.dolibarr.fr/telechargements/cat_view/62-versions-stables
+Si vous n'avez pas de connaissances techniques, et que vous recherchez
+un programme d'installation qui install Dolibarr ERP/CRM en quelques clics,
+vous devez vous réorienter vers DoliWamp (la version tout-en-un
+de Dolibarr pour Windows), DoliDeb (la version tout-en-un pour Debian ou
+Ubuntu) ou DoliRpm (la version tout-en-un de Dolibarr pour Fedora, Redhat,
+OpenSuse, Mandriva ou Mageia).
+Vous pouvez les télécharger à l'adresse: 
+http://www.dolibarr.org/downloads/
 
 Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (Mysql),
 vous pouvez installer Dolibarr avec cette version de la manière suivante:

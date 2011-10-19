@@ -34,7 +34,9 @@ DonationsModels=Bağış makbuzları için Belgeler modelleri
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// START - Lines generated via autotranslator.php tool (2011-10-09 14:02:24).
 // Reference language: en_US -> tr_TR
-ValidPromess=Validate söz
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:14).
+ValidPromess=Söz Doğrula
+LastModifiedDonations=Son %s bağış modifiye
+SearchADonation=Bağış ara
+// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:02:49).

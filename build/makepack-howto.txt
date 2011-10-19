@@ -18,12 +18,11 @@ beta version of Dolibarr, step by step.
 - Update version number with x.x.x-y in htdocs/support/inc.php
 - Update version number with x.x.x-y in htdocs/build/rpm/*.spec
 - Commit all changes.
-- Add a CVS Tag (DOLIBARR_x_y_BETA)
+- Add a Tag (DOLIBARR_x_y_BETA)
 - Create a branch (DOLIBARR_x_y_BRANCH).
 
 - Run makepack-dolibarr.pl to generate all packages.
-- Enable the category that point to the beta files on joomla 
-  web site www.dolibarr.org
+- Move build files into www.dolibarr.org web site (/home/dolibarr/wwwroot/files).
 
 - Post a news on dolibarr.org/dolibarr.fr
 - Send mail on mailings-list
@@ -41,20 +40,17 @@ complete release of Dolibarr, step by step.
 - Update version number with x.x.x-y in htdocs/install/inc.php
 - Update version number with x.x.x-y in htdocs/support/inc.php
 - Update version number with x.x.x-y in htdocs/build/rpm/*.spec
-- Update PAD and DOAP files.
+- Update PAD files.
 - Commit all changes.
-- Add a CVS Tag (DOLIBARR_x_y)
+- Add a Tag (DOLIBARR_x_y)
 
-- Build Dolibarr and DoliWamp with makepack-dolibarr.pl
+- Build Dolibarr and DoliWamp packages with makepack-dolibarr.pl
 - Check content of built packages.
-- Move build files (tgz+exe+deb), ChangeLog and PAD/DOAP files into the
-  Dolibarr web site repository /home/dolibarr/wwwroot/files.
+- Move build files (tgz+exe+deb+rpm...), ChangeLog and PAD files
+  into www.dolibarr.org web site (/home/dolibarr/wwwroot/files).
 - Edit symbolic links in directory "/home/dolibarr/wwwroot/files" on server to
-  point to new files.
-- Update and upload NLTechno web page with DoliWamp version.
-
+  point to new files (used by PAD descriptor).
 - Upload files dolibarr.*.tgz and doliwamp.*.exe on sourceforge.
-- Add/Update entries on joomla web site www.dolibarr.org with new sourceforge link.
 
 - Send mail on mailings-list
 - Send news on OpenSource web sites (if major beta or release)
