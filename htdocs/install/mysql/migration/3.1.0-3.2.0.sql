@@ -65,3 +65,5 @@ ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_
 
 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_product_fournisseur;
 
+DROP TABLE IF EXISTS llx_pos_tmp;
+
