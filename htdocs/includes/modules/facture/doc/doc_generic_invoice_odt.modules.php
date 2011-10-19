@@ -103,7 +103,17 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		}
 		$alreadypayed=price($object->getSommePaiement(),'MT');
 
-        return array(
+	$substitutionarray = array(); // initiating the substitution array
+
+	// Generically add each property of the $object into the substitution array
+	foreach ($object as $key=>$value) {
+		if (!is_object($value) and !is_resource($value)) {
+			$substitutionarray['object_'.$key] = $value;
+		}
+	}
+
+	// Defining specific values
+        $substitutionarray = array(
             'object_id'=>$object->id,
             'object_ref'=>$object->ref,
             'object_ref_ext'=>$object->ref_ext,
@@ -127,6 +137,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_already_payed'=>$alreadypayed,
             'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,'MT')
         );
+
+	// Return the substitution array
+	return $substitutionarray;
     }
 
     /**
