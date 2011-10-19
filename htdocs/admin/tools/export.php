@@ -168,7 +168,8 @@ if ($what == 'mysql')
         {
             $read = fgets($handlein);
             fwrite($handle,$read);
-            if (preg_match('/-- Dump completed/i',$read)) $ok=1;
+            if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
+            elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
         }
         pclose($handlein);
 
