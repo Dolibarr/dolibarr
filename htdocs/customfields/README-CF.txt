@@ -1,14 +1,14 @@
 ==================================================
 *				CUSTOMFIELDS MODULE				 *
 *			by Stephen Larroque (lrq3000)		 *
-*				   version	1.2.1                *
-*               for Dolibarr v3.2.0	    		 *
+*				   version	1.2.2                *
+*               for Dolibarr >= 3.2.0    		 *
 *			 release date 2011/10/20			 *
 ==================================================
 
 ===== DESCRIPTION =====
 
-This module will enable the user to create custom fields to the supported module. You can choose the datatype, the size, the label(s), the possible values, the value by default, and even constraints (links to other tables) and custom sql definitions and custom sql statements!
+This module will enable the user to create custom fields for the supported modules. You can choose the datatype, the size, the label(s), the possible values, the value by default, and even constraints (links to other tables) and custom sql definitions and custom sql statements!
 
 CustomFields has been made with the intention of being as portable, flexible, modular and reusable as possible, so that it can be adapted to any Dolibarr's module, and to (almost) any user's need (even if something isn't implemented, you can most probably just use a custom sql statement, the rest will be managed automatically, even with custom statements!).
 
@@ -17,6 +17,40 @@ CustomFields has been made with the intention of being as portable, flexible, mo
 Just as any Dolibarr's module, just unzip the contents of this package inside your dolibarr's folder (you should be asked to overwrite some files if done right).
 
 ===== HOW TO ADD THE SUPPORT OF A NEW MODULE =====
+
+== NEW WAY (simpler)
+
+0/ Preliminary work
+You will need 3 things here: the module's table name, the module's context and the module's trigger action(s).
+
+To get these informations, you can take a look inside the code of the module's files you want to implement:
+* module's context: search for "callHooks(" without the quotes or take a look at the wiki: http://wiki.dolibarr.org/index.php/Hooks_system
+or you can get it by printing it in the /htdocs/customfields/class/actions_customfields.class.php by adding print_r($parameters) and search for $parameters->context
+* module's trigger actions: search for "run_triggers(" or take a look at the wiki: http://wiki.dolibarr.org/index.php/Triggers#List_of_known_triggers_actions
+* module's table name: either find it by yourself in the database (looks like llx_themodulename) or by printing it in actions_customfields.class.php by adding print_r($parameters) and search for $parameters->table_element
+
+1/ With these values, edit the config file (/htdocs/customfields/conf/conf_customfields.lib.php), particularly the $modulesarray and $triggersarray variables:
+
+A- Add the context and module's table name in the modulesarray:
+$modulesarray = array("invoicecard"=>"facture",
+                                            "propalcard"=>"propal",
+                                            "productcard"=>"product",
+                                            "ordercard"=>"commande",
+											"yourmodulecontext"=>"yourmoduletablename"); // Edit me to add the support of another module - NOTE: Lowercase only!
+
+B- Add the triggers (there can be several triggers):
+$triggersarray = array("order_create"=>"commande",
+						"yourmoduletriggeraction1"=>"yourmoduletablename",
+						"yourmoduletriggeraction2"=>"yourmoduletablename");
+
+Note: generally you will be looking to implement the _CREATE and _PREBUILDDOC actions.
+
+Done, now the module should be supported. If not, try the following:
+
+- Try the 6th step of the OLD WAY (adding the generic POST datas).
+- If that doesn't work out, try to implement the support via the old way (which should work all the time for any case).
+
+== OLD WAY (still supported and more customizable but more complicated)
 
 We will take as an example the way propal module support was added :
 
@@ -198,6 +232,7 @@ foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the 
 }
 
 Note: if you had replaced $object in a previous step (particularly step 3), do not forget to do the same change here.
+Note2: if you are a bit lost to find the right place to write this code block, you can just search for the object creation (something like $object = new ... or $product = new ... - eg: $object = new Product($db);) and place the generic POST code just below.
 
 Done.
 

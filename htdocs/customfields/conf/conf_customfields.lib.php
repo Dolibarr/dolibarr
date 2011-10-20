@@ -22,16 +22,26 @@
  *	\version    $Id: customfields.php, v1.2.2
  */
 
+// Loading the translation class if it's not yet loaded (or with another name) - DO NOT EDIT!
+if (! is_object($langs))
+{
+    include_once(DOL_DOCUMENT_ROOT."/core/class/translate.class.php");
+    $langs=new Translate("",$conf);
+}
+
 // **** EXPANSION VARIABLES ****
+// Here you can edit the values to expand the functionnalities of CustomFields (it will try to automatically manage the changes, if not you can add special cases by yourselves, please refer to the Readme-CF.txt)
+
 $fields_prefix = 'cf_'; // prefix that will be prepended to the variable name of a field for accessing the field's values
 
 // $modulesarray contains the modules support and their associated contexts : keys = contexts and values = table_element (the name of the module in the database like llx_product, product is the table_element)
 $modulesarray = array("invoicecard"=>"facture",
                                             "propalcard"=>"propal",
-                                            "productcard"=>"product"); // Edit me to add the support of another module - NOTE: Lowercase only!
+                                            "productcard"=>"product",
+                                            "ordercard"=>"commande"); // Edit me to add the support of another module - NOTE: Lowercase only!
 
 // Triggers to attach to commit actions
-$triggersarray = array("bill_create"=>"facture"); // Edit me to add the support of actions of another module - NOTE: Lowercase only!
+$triggersarray = array("order_create"=>"commande"); // Edit me to add the support of actions of another module - NOTE: Lowercase only!
 
 // Native SQL data types natively supported by CustomFields
 // Edit me to add new data types to be supported in custom fields (then manage their output in forms in /htdocs/customfields/class/customfields.class.php in showOutputField() function and printField())
