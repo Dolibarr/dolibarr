@@ -237,7 +237,8 @@ if ($_GET["action"] == 'create')
 	}
 
 	// Insert hooks
-	$parameters=array();
+	$parameters=array('socid'=>$socid);
+	$object=new Propal($db);
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print "</table>";
