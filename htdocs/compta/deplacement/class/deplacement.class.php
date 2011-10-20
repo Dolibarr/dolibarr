@@ -51,22 +51,23 @@ class Deplacement extends CommonObject
 	var $fk_project;
 
    /**
-	*  \brief  Constructeur de la classe
-	*  \param  DB          handler acces base de donnees
+	* Constructor
+	*
+	* @param	DoliDB		$db		Database handler
 	*/
-	function Deplacement($DB)
+	function Deplacement($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		return 1;
 	}
 
 	/**
 	 * Create object in database
-	 *
-	 * @param 	$user	User that creates
-	 * @return 	int		<0 if KO, >0 if OK
 	 * TODO Add ref number
+	 *
+	 * @param	User	$user	User that creates
+	 * @return 	int				<0 if KO, >0 if OK
 	 */
 	function create($user)
 	{
@@ -138,7 +139,10 @@ class Deplacement extends CommonObject
 	}
 
 	/**
+	 *	Update record
 	 *
+	 *	@param	User	$user		User making update
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function update($user)
 	{
@@ -195,7 +199,10 @@ class Deplacement extends CommonObject
 	}
 
    /**
-	*	Load an object from database
+	* Load an object from database
+	*
+	* @param	int		$id		Id of record to load
+	* @return	int				<0 if KO, >0 if OK
 	*/
 	function fetch($id)
 	{
@@ -231,7 +238,10 @@ class Deplacement extends CommonObject
 	}
 
    /**
+	*	Delete record
 	*
+	*	@param	int		$id		Id of record to delete
+	*	@return	int				<0 if KO, >0 if OK
 	*/
 	function delete($id)
 	{
@@ -252,9 +262,10 @@ class Deplacement extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libelle du statut
-	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * 	  \return     string      Libelle
+	 * Retourne le libelle du statut
+	 *
+	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * @return  string   		   	Libelle
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -262,10 +273,11 @@ class Deplacement extends CommonObject
 	}
 
 	/**
-	 *    \brief      Renvoi le libelle d'un statut donne
-	 *    \param      statut      id statut
-	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *    \return     string      Libelle
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut     Id status
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *  @return string      		Libelle
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -302,9 +314,10 @@ class Deplacement extends CommonObject
 	}
 
 	/**
-	 *	\brief      Return clicable name (with picto eventually)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\return		string			Chaine avec URL
+	 *	Return clicable name (with picto eventually)
+	 *
+	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@return		string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0)
 	{
@@ -328,6 +341,9 @@ class Deplacement extends CommonObject
 
 	/**
 	 * List of types
+	 *
+	 * @param	int		$active		Active or not
+	 * @return	void
 	 */
 	function listOfTypes($active=1)
 	{
@@ -356,10 +372,12 @@ class Deplacement extends CommonObject
 
         return $ret;
 	}
-	
-	/*
-	 *    \brief      Information sur l'objet
-	 *    \param      id      id du deplacement dont il faut afficher les infos
+
+	/**
+	 * Information on record
+	 *
+	 * @param	int		$id      Id of record
+	 * @return	void
 	 */
 	function info($id)
 	{
