@@ -38,10 +38,13 @@ $fields_prefix = 'cf_'; // prefix that will be prepended to the variable name of
 $modulesarray = array("invoicecard"=>"facture",
                                             "propalcard"=>"propal",
                                             "productcard"=>"product",
-                                            "ordercard"=>"commande"); // Edit me to add the support of another module - NOTE: Lowercase only!
+                                            "ordercard"=>"commande",
+                                            ); // Edit me to add the support of another module - NOTE: Lowercase only!
 
 // Triggers to attach to commit actions
-$triggersarray = array("order_create"=>"commande"); // Edit me to add the support of actions of another module - NOTE: Lowercase only!
+$triggersarray = array("order_create"=>"commande",
+                                            "order_prebuilddoc"=>"commande",
+                                            ); // Edit me to add the support of actions of another module - NOTE: Lowercase only!
 
 // Native SQL data types natively supported by CustomFields
 // Edit me to add new data types to be supported in custom fields (then manage their output in forms in /htdocs/customfields/class/customfields.class.php in showOutputField() function and printField())
