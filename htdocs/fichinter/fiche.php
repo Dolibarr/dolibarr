@@ -249,7 +249,17 @@ if ($action == 'setdescription')
 // Add line
 if ($action == "addline" && $user->rights->ficheinter->creer)
 {
-    if ($_POST['np_desc'] && ($_POST['durationhour'] || $_POST['durationmin']))
+    if (empty($_POST['np_desc']))
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
+        $error++;
+    }
+    if (empty($_POST['durationhour']) && empty($_POST['durationmin']))
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Duration")).'</div>';
+        $error++;
+    }
+    if (! $error)
     {
         $object = new Fichinter($db);
         $ret=$object->fetch($_POST['fichinterid']);
@@ -682,7 +692,7 @@ if ($action == 'create')
         print '<table class="border" width="100%">';
 
         print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
-        print '<tr><td class="fieldrequired">'.$langs->trans("Company").'</td><td>'.$societe->getNomUrl(1).'</td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Thirdparty").'</td><td>'.$societe->getNomUrl(1).'</td></tr>';
 
         print '<input type="hidden" name="action" value="add">';
 
@@ -730,7 +740,7 @@ if ($action == 'create')
     {
         print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="GET">';
         print '<table class="border" width="100%">';
-        print '<tr><td class="fieldrequired">'.$langs->trans("Company").'</td><td>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Thirdparty").'</td><td>';
         $html->select_societes('','socid','',1,1);
         print '</td></tr>';
         print '</table>';
@@ -994,7 +1004,7 @@ elseif ($fichinterid)
         $db->free($resql);
 
         /*
-         * Ajouter une ligne
+         * Add line
          */
         if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline')
         {
@@ -1029,13 +1039,14 @@ elseif ($fichinterid)
             // Date intervention
             print '<td align="center" nowrap="nowrap">';
             $timearray=dol_getdate(mktime());
-            $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+            if (empty($_POST['diday'])) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+            else $timewithnohour=dol_mktime($_POST['dihour'],$_POST['dimin'],$_POST['disec'],$_POST['dimonth'],$_POST['diday'],$_POST['diyear']);
             $html->select_date($timewithnohour,'di',1,1,0,"addinter");
             print '</td>';
 
             // Duration
             print '<td align="right">';
-            $html->select_duration('duration',3600);
+            $html->select_duration('duration',(empty($_POST["durationhour"]) && empty($_POST["durationmin"]))?3600:(60*60*$_POST["durationhour"]+60*$_POST["durationmin"]));
             print '</td>';
 
             print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
