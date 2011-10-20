@@ -1,9 +1,9 @@
 ==================================================
 *				CUSTOMFIELDS MODULE				 *
 *			by Stephen Larroque (lrq3000)		 *
-*				   version	1.2.0                *
+*				   version	1.2.1                *
 *               for Dolibarr v3.2.0	    		 *
-*			 release date 2011/10/19			 *
+*			 release date 2011/10/20			 *
 ==================================================
 
 ===== DESCRIPTION =====
@@ -25,25 +25,19 @@ We will take as an example the way propal module support was added :
 1/ Add the module support in customfields (auto management of the customfields schema definitions)
 Why: The goal here is to let customfields module know that we want to support and manage custom fields for a new module.
 
-For propales, in /htdocs/admin/customfields.php, edit $modulesarray from :
+For propales, in /htdocs/customfields/conf/conf_customfields.lib.php, edit $modulesarray from :
 
-$modulesarray = array("facture");
+$modulesarray = array("invoicecard"=>"facture");
 to
-$modulesarray = array("facture", "propal");
+$modulesarray = array("invoicecard"=>"facture", "propalcard"=>"propal");
+
+Format: $modulesarray = array($context=>$modulename) // $modulename = $object->table_element
 
 Note : it is very important to understand that the name of the module must be chosen carefully, it must be the name of the table managing the module, not just some random name.
 Eg: for the propal module, the table managing the propals is called "llx_propal", so we name the module "propal". We can later on change the label of the tab shown in the customfields module in the langs file.
 Eg2: if we had a module named "mymod" with the corresponding sql table "llx_thisismymodule", you should write in $modulesarray("facture","propal","thisismymodule") and not "mymod".
 
-NEW IN Dolibarr v3.2.0:
-Edit /htdocs/includes/modules/modCustomFields.class.php and search for the $this->const variable. You should see something like this:
-
-$this->const = array(
-				     0=>array('MAIN_MODULE_CUSTOMFIELDS_HOOKS', 'chaine', 'productcard:invoicecard:propalcard', 'Hooks list for managing printing functions of the CustomFields module', 0),
-				     );
-
-Just add the hook rootname for the module you want to hook at the third index (eg: so if our module's hook root name is "myownmodule" you will set 'productcard:invoicecard:propalcard:myownmodule').
-Note: see the next step to implement a hook (and set the hook root name, if you want to find the hook root name of an already existing module with hooks just search for the callHooks() function).
+Note2: see the next step to implement a hook (and set the hook root name, if you want to find the hook root name of an already existing module with hooks just search for the callHooks() function).
 
 IMPORTANT: Be careful: do not forget to DISABLE then RENABLE the module in the admin panel to accept the now const values, because these constants are only added to the database when enabling the module.
 And please note that the const are updated because there is the remove() function (in the same file) that tells Dolibarr to remove the constants when disabling the module, else Dolibarr would not update the constants if they were not removed first (even if the values changed).
@@ -346,13 +340,15 @@ Here is a full list of the CustomFields packaged files with a short description 
 files that are necessary for the CustomFields to work, they contains the core functions
 
 /htdocs/admin/customfields.php --- Administrator's configuration panel : this is where you create and manage the custom fields definitions
+/htdocs/customfields/class/actions_customfields.class.php --- Hooks class : used to hook into Dolibarr core modules without altering any core file (can be used to hook into your own modules too)
 /htdocs/customfields/class/customfields.class.php --- Core class : every database action is made here in this class. You can find some printing functions because they are very generic.
+/htdocs/customfields/conf/conf_customfields.lib.php --- Configuration file : contains the main configurable variables to adapt CustomFields to your needs or to expand its support and native sql types.
 /htdocs/customfields/langs/code_CODE/customfields.lang --- Core language file : this is where you can translate the admin config panel (data types names, labels, descriptions, etc.)
 /htdocs/customfields/langs/code_CODE/customfields-user.lang --- User defined language file : this is where you can store the labels and values of your custom fields (see the related chapter)
 /htdocs/customfields/lib/customfields.lib --- Core printing library for records : contains only printing functions, there's no really core functions but it permits to manage the printing of the custom fields records and their editing
 /htdocs/customfields/sql/* --- Unused (the tables are created directly via a function in the customfields.class.php)
-/htdocs/includes/modules/modCustomFields.class --- Dolibarr's module definition file : this is a core file necessary for Dolibarr to recognize the module (but it does not store anything else than meta-informations).
-/htdocs/includes/triggers/interface_modCustomFields_SaveFields.class --- Core triggers file : this is where the actions on records are managed. This is an interface between other modules and CustomFields management. This is where you must add the actions of other modules you'd want to support (generic customfields triggers actions are provided so you just have to basically do a copy/paste, see the related chapter).
+/htdocs/customfields/includes/triggers/interface_modCustomFields_SaveFields.class --- Core triggers file : this is where the actions on records are managed. This is an interface between other modules and CustomFields management. This is where you must add the actions of other modules you'd want to support (generic customfields triggers actions are provided so you just have to basically do a copy/paste, see the related chapter).
+/htdocs/includes/modules/modCustomFields.class --- Dolibarr's module definition file : this is a core file necessary for Dolibarr to recognize the module and to declare the hooks to Dolibarr (but it does not store anything else than meta-informations).
 
 == Invoice module support
 files that are necessary to support the Invoice module
@@ -365,15 +361,11 @@ files that are necessary to support the Invoice module
 == Propal module support
 files that are necessary to support the Propal module
 
-/htdocs/comm/addpropal.php --- creation page of propales
-/htdocs/comm/propal.php --- datasheet page of propales (with edit action)
 /htdocs/includes/modules/facture/modules_propale.php --- class managing the PDF template generation for propales (this is not the template). Just a small edit to add the PREBUILDDOC trigger that is necessary to generate PDF docs with custom fields.
 /htdocs/includes/modules/facture/pdf_propale_customfields.modules.php --- example template to show how to print custom fields in a PDF template, not needed
 
 == Products/Services module support
-files that are necessary to support the Product/Service module
-
-/htdocs/product/fiche.php --- creation and datashet of products and services
+everything is handled in the hooks class of CustomFields.
 
 ===== HOW TO USE MY CUSTOMFIELDS IN MY PDF OR ODT DOCUMENT =====
 
@@ -490,10 +482,10 @@ Should do :
 * Button to reorder the appearance of fields in editing mode (they currently appear in the same order as they were created)
 
 Known bugs :
-* in product and service modules, if you edit a field, the proposals and other fields below won't be shown, you need to refresh the page.
+* in product and service modules, if you edit a field, the proposals and other fields below won't be shown, you need to refresh the page. This problem resides in Dolibarr I think (since we are simply using a hook).
 
 Never/Maybe one day :
 * Add Upload field type (almost useless since we can attach files).
 * Add support for repeatable (predefined) invoices (the way it is currently managed makes it very difficult to manage this without making a big exception, adding specific functions in customfields modules that would not at all will be reusable anywhere else, when customfields has been designed to be as generic as possible to support any module and any version of dolibarr, because it's managed by a totally different table while it's still managed by the same module, CustomFields work with the paradigm: one module, one table).
 * Add support for clonable propal at creation (same as for repeatable invoices).
-* Add variables to access products or services customfields from tags (really useful ? How to use them without modifying the lines printing function ?)
+* Add variables to access products or services customfields from tags (is it really useful ? How to use them without modifying the lines printing function ?)

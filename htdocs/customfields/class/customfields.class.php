@@ -19,9 +19,12 @@
  *      \file       htdocs/customfields/class/customfields.class.php
  *      \ingroup    customfields
  *      \brief      Core class file for the CustomFields module, all critical functions reside here
- *		\version    $Id: customfields.class.php, v1.1.0
+ *		\version    $Id: customfields.class.php, v1.1.0.1
  *		\author		Stephen Larroque
  */
+
+// Include the config file (only used for $varprefix at this moment, so this class is pretty much self contained and independant)
+include_once(DOL_DOCUMENT_ROOT."/customfields/conf/conf_customfields.lib.php");
 
 // Put here all includes required by your class file
 $langs->load('customfields@customfields'); // customfields standard language support
@@ -39,7 +42,6 @@ class CustomFields // extends CommonObject
 	//var $element='customfields';			//!< Id that identify managed objects
 	//var $table_element='customfields';	//!< Name of table without prefix where object is stored
 
-
 	var $varprefix = 'cf_'; // prefix that will be prepended to the variables names for accessing the fields values
 
 	var $id;
@@ -55,6 +57,10 @@ class CustomFields // extends CommonObject
 	$this->db = $DB;
 	$this->module = $currentmodule;
 	$this->moduletable = MAIN_DB_PREFIX.$this->module."_customfields";
+
+	global $fields_prefix;
+	if (!empty($fields_prefix)) $this->varprefix = $fields_prefix;
+
 	return 1;
     }
 

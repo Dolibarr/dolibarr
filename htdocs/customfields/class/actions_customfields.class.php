@@ -41,19 +41,24 @@ class ActionsCustomFields // extends CommonObject
         global $conf, $user;
         // CustomFields : print fields at creation
         if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
-            if (!is_object($parameters)) $parameters = (object)$parameters;
+            if (!is_object($parameters)) $parameters = (object)$parameters; // fix for a bug of $parameters which is not always an object (sometimes it's an array)
 
-            if ($parameters->context == 'invoicecard' or $object->table_element == 'facture') {
+            // Initializing variables
+            $idvar = 'id'; // default value
+            $rights = null; // default value
+
+            // Preparing the CustomFields print arguments
+            if ($parameters->context == 'invoicecard' or $object->table_element == 'facture') { // for invoices
                 $currentmodule = 'facture';
                 $idvar = 'facid';
                 $rights = 'facture';
             }
-            elseif ($parameters->context == 'propalcard' or $object->table_element == 'propal') {
+            elseif ($parameters->context == 'propalcard' or $object->table_element == 'propal') { // for propales
                 $currentmodule = 'propal'; // EDIT ME: var to edit for each module
                 $idvar = 'id'; // EDIT ME: the name of the POST or GET variable that contains the id of the object (look at the URL for something like module.php?modid=3&... when you edit a field)
                 $rights = 'propale'; // EDIT ME: try first to put it null, then if it doesn't work try to find the right name (search in the same file for something like $user->rights->modname where modname is the string you must put in $rights).
             }
-            elseif ($parameters->context == 'productcard' or $object->table_element == 'product') {
+            elseif ($parameters->context == 'productcard' or $object->table_element == 'product') { // for products/services
                 $currentmodule = 'product';
                 $idvar = 'id';
                 // We use different rights depending on the product type (product or service?)
@@ -63,6 +68,16 @@ class ActionsCustomFields // extends CommonObject
                 } elseif ($object->type == 1) {
                         $rights = 'service';
                 }
+            }
+            else { // Generic Hook : else we try a generic approach, based on the $modulesarray keys (contexts) and values (table_element)
+                include_once(DOL_DOCUMENT_ROOT."/customfields/conf/conf_customfields.lib.php");
+                if (isset($modulesarray[$parameters->context])) {
+                    $currentmodule = $modulesarray[$parameters->context];
+                }
+                elseif (in_array($object->table_element, $modulesarray)) {
+                    $currentmodule = $object->table_element;
+                }
+
             }
 
             include_once(DOL_DOCUMENT_ROOT.'/customfields/lib/customfields.lib.php');

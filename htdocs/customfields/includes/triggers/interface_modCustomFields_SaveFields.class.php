@@ -19,7 +19,7 @@
  *      \file       htdocs/includes/triggers/interface_modCustomFields_SaveFields.class.php
  *      \ingroup    core
  *      \brief      Core triggers file for CustomFields module. Triggers actions for the customfields module. Necessary for actions to be comitted.
- *		\version	$Id: interface_modCustomFields_SaveFields.class.php, v1.1.0
+ *		\version	$Id: interface_modCustomFields_SaveFields.class.php, v1.2.0
  */
 
 
@@ -291,6 +291,29 @@ class InterfaceSaveFields
 
             return 1;
         }
+	else { // Generic trigger
+	    include(DOL_DOCUMENT_ROOT."/customfields/conf/conf_customfields.lib.php");
+	    $patternsarray = array();
+	    foreach ($modulesarray as $context => $module) { // we create a pattern for regexp with contexts and modules names mixed
+		$patternsarray[] = addslashes($module);
+		$patternsarray[] = $context;
+	    }
+	    $patterns_flattened = implode($patternsarray,'|'); // we flatten the patterns array in a single regexp OR pattern
+	    if (preg_match('/('.$patterns_flattened.').*/i', $action, $matches) ) { // if the current action is on a supported module or context
+		$triggername = $matches[1];
+		if (preg_match('/'.$triggername.'_CREATE.*/i', $action)) { // and if the action is to create, then we do a generic create trigger
+		    dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+		    $action = 'CUSTOMFIELDS_CREATE';
+		    if ($this->in_arrayi($triggername, $modulesarray)) { // Either we have a value (module) that matched, or a key (context)
+			$object->currentmodule = $triggername; // value (module) matched
+		    } else {
+			$object->currentmodule = $modulesarray[$triggername]; // key (context) matched
+		    }
+		    return $this->run_trigger($action,$object,$user,$langs,$conf);
+		}
+	    }
+	}
 
 	return 0;
     }

@@ -19,27 +19,15 @@
  *	\file       htdocs/admin/customfields.php
  *	\ingroup    others
  *	\brief          Configuring page for custom fields (add/delete/edit custom fields)
- *	\version    $Id: customfields.php, v1.1.0
+ *	\version    $Id: customfields.php, v1.2.0
  */
 
 // **** INIT ****
 require('../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/customfields/conf/conf_customfields.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/customfields/class/customfields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/customfields/lib/customfields.lib.php");
-
-// **** EXPANSION VARIABLES ****
-$modulesarray = array("facture", "propal", "product"); // Edit me to add the support of another module
-
-// Edit me to add new data types to be supported in custom fields (then manage their output in forms in /htdocs/customfields/class/customfields.class.php in showOutputField() function and printField())
-// sqldatatype => long_name_you_choose_to_show_to_user
-$sql_datatypes = array( 'varchar' => $langs->trans("Textbox"),
-                                             'text' => $langs->trans("Areabox"),
-                                             'enum(\'Yes\',\'No\')' => $langs->trans("YesNoBox"),
-                                             'boolean' => $langs->trans("TrueFalseBox"),
-                                             'enum' => $langs->trans("DropdownBox"),
-                                             'other' => $langs->trans("Other").'/'.$langs->trans("Constraint"),
-                                                );
 
 // Security check
 if (!$user->admin)
@@ -48,7 +36,7 @@ accessforbidden();
 // **** MAIN VARS ****
 // -- Getting the current active module
 if (!(GETPOST("module"))) {
-    $currentmodule = $modulesarray[0];
+    $currentmodule = reset($modulesarray); // reset($array) gets the first value of the array, use key() to get the first key
 } else {
     if (in_array(GETPOST("module"), $modulesarray)) { // protection to avoid sql injection (can only request referenced modules)
         $currentmodule = GETPOST("module");

@@ -65,7 +65,7 @@ class modCustomFields extends DolibarrModules
 		$this->picto='generic';
 
 		// Defined if the directory /mymodule/includes/triggers/ contains triggers or not
-		$this->triggers = 0;
+		$this->triggers = 1;
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
@@ -82,7 +82,7 @@ class modCustomFields extends DolibarrModules
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(3,1);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("customfields@customfields", "customfields-user@customfields");
 
 		// Constants
@@ -90,10 +90,9 @@ class modCustomFields extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',1)
-                //
-                // IMPORTANT: do not forget to DISABLE then RENABLE the module in the admin panel to accept the now const values, because these constants are only added to the database when enabling the module
+		include_once(DOL_DOCUMENT_ROOT."/customfields/conf/conf_customfields.lib.php");
 		$this->const = array(
-				     0=>array('MAIN_MODULE_CUSTOMFIELDS_HOOKS', 'chaine', 'productcard:invoicecard:propalcard', 'Hooks list for managing printing functions of the CustomFields module', 0),
+				     0=>array('MAIN_MODULE_CUSTOMFIELDS_HOOKS', 'chaine', implode(':', array_keys($modulesarray)), 'Hooks list for managing printing functions of the CustomFields module', 0, 'current', 1),
 				     );
 
 		// Array to add new pages in new tabs
@@ -244,13 +243,13 @@ class modCustomFields extends DolibarrModules
 
 	/**
 	 *		Function called when module is disabled.
-	 *              Remove from database constants, boxes and permissions from Dolibarr database.
+	 *      	Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted.
-	 *      @return     int             1 if OK, 0 if KO
+	 *      	@return     int             1 if OK, 0 if KO
 	 */
 	function remove()
 	{
-		$sql = array("DELETE FROM ".MAIN_DB_PREFIX."const WHERE name like '%_customfields' OR name like '%_customfields_%';");
+		$sql = array("DELETE FROM ".MAIN_DB_PREFIX."const WHERE name like '%_customfields';");
 
 		return $this->_remove($sql);
 	}
