@@ -19,7 +19,7 @@
  *	\file       htdocs/customfields/conf/conf_customfields.lib.php
  *	\ingroup    others
  *	\brief          Contains all the configurable variables to expand the functionnalities of CustomFields
- *	\version    $Id: customfields.php, v1.2.0
+ *	\version    $Id: customfields.php, v1.2.2
  */
 
 // **** EXPANSION VARIABLES ****
@@ -30,6 +30,10 @@ $modulesarray = array("invoicecard"=>"facture",
                                             "propalcard"=>"propal",
                                             "productcard"=>"product"); // Edit me to add the support of another module - NOTE: Lowercase only!
 
+// Triggers to attach to commit actions
+$triggersarray = array("bill_create"=>"facture"); // Edit me to add the support of actions of another module - NOTE: Lowercase only!
+
+// Native SQL data types natively supported by CustomFields
 // Edit me to add new data types to be supported in custom fields (then manage their output in forms in /htdocs/customfields/class/customfields.class.php in showOutputField() function and printField())
 // sqldatatype => long_name_you_choose_to_show_to_user
 $sql_datatypes = array( 'varchar' => $langs->trans("Textbox"),
