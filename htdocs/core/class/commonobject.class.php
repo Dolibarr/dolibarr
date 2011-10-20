@@ -1150,6 +1150,7 @@ abstract class CommonObject
 			$this->total_localtax1 = 0;
 			$this->total_localtax2 = 0;
 			$this->total_ttc = 0;
+			$salesTotalByVatRate = array();
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1163,11 +1164,23 @@ abstract class CommonObject
 				$this->total_localtax2 += $obj->total_localtax2;
 				$this->total_ttc       += $obj->total_ttc;
 
+				if (!isset($salesTotalByVatRate[$obj->vatrate])) {
+					$salesTotalByVatRate[$obj->vatrate] = 0;
+				}
+				$salesTotalByVatRate[$obj->vatrate] += $obj->total_ht;
+
 				// TODO Also fill array by vat rate
                 $varates[$this->vatrate][]=array('total_ht'=>$obj->total_ht,'total_tva'=>$obj->total_tva,'total_ttc'=>$obj->total_ttc,
                                                  'total_localtax1'=>$obj->total_localtax1,'total_localtax2'=>$obj->total_localtax2);
 				$i++;
 			}
+			
+			// Calculate vat rate by sum of all lines in each tax bracket
+			$this->total_tva = 0;
+			foreach ($salesTotalByVatRate as $vatRate => $total_ht) {
+				$this->total_tva += ($vatRate / 100 * $total_ht);
+			}
+			$this->total_ttc = $this->total_ht + $this->total_tva;
 
 			$this->db->free($resql);
 
