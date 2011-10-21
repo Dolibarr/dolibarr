@@ -766,11 +766,9 @@ class Facture extends CommonObject
         $sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
-        $sql.= ', el.fk_source';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = '".$this->element."'";
         $sql.= ' WHERE f.entity = '.$conf->entity;
         if ($rowid)   $sql.= " AND f.rowid=".$rowid;
         if ($ref)     $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
@@ -785,63 +783,45 @@ class Facture extends CommonObject
             {
                 $obj = $this->db->fetch_object($result);
 
-                $this->id                     = $obj->rowid;
-                $this->ref                    = $obj->facnumber;
-                $this->ref_client             = $obj->ref_client;
-                $this->ref_ext				  = $obj->ref_ext;
-                $this->ref_int				  = $obj->ref_int;
-                $this->type                   = $obj->type;
-                $this->date                   = $this->db->jdate($obj->df);
-                $this->date_creation          = $this->db->jdate($obj->datec);
-                $this->date_validation        = $this->db->jdate($obj->datev);
-                $this->datem                  = $this->db->jdate($obj->datem);
-                $this->amount                 = $obj->amount;
-                $this->remise_percent         = $obj->remise_percent;
-                $this->remise_absolue         = $obj->remise_absolue;
-                $this->remise                 = $obj->remise;
-                $this->total_ht               = $obj->total;
-                $this->total_tva              = $obj->tva;
-                $this->total_localtax1		  = $obj->localtax1;
-                $this->total_localtax2		  = $obj->localtax2;
-                $this->total_ttc              = $obj->total_ttc;
-                $this->paye                   = $obj->paye;
-                $this->close_code             = $obj->close_code;
-                $this->close_note             = $obj->close_note;
-                $this->socid                  = $obj->fk_soc;
-                $this->statut                 = $obj->fk_statut;
-                $this->date_lim_reglement     = $this->db->jdate($obj->dlr);
-                $this->mode_reglement_id      = $obj->fk_mode_reglement;
-                $this->mode_reglement_code    = $obj->mode_reglement_code;
-                $this->mode_reglement         = $obj->mode_reglement_libelle;
-                $this->cond_reglement_id      = $obj->fk_cond_reglement;
-                $this->cond_reglement_code    = $obj->cond_reglement_code;
-                $this->cond_reglement         = $obj->cond_reglement_libelle;
-                $this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
-                $this->fk_project             = $obj->fk_projet;
-                $this->fk_facture_source      = $obj->fk_facture_source;
-                $this->note                   = $obj->note;
-                $this->note_public            = $obj->note_public;
-                $this->user_author            = $obj->fk_user_author;
-                $this->user_valid             = $obj->fk_user_valid;
-                $this->modelpdf               = $obj->model_pdf;
-
-                $this->commande_id            = $obj->fk_commande;
-
-                if ($this->commande_id)
-                {
-                    $sql = "SELECT ref";
-                    $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-                    $sql.= " WHERE rowid = ".$this->commande_id;
-
-                    $resqlcomm = $this->db->query($sql);
-
-                    if ($resqlcomm)
-                    {
-                        $objc = $this->db->fetch_object($resqlcomm);
-                        $this->commande_ref = $objc->ref;
-                        $this->db->free($resqlcomm);
-                    }
-                }
+                $this->id					= $obj->rowid;
+                $this->ref					= $obj->facnumber;
+                $this->ref_client			= $obj->ref_client;
+                $this->ref_ext				= $obj->ref_ext;
+                $this->ref_int				= $obj->ref_int;
+                $this->type					= $obj->type;
+                $this->date					= $this->db->jdate($obj->df);
+                $this->date_creation		= $this->db->jdate($obj->datec);
+                $this->date_validation		= $this->db->jdate($obj->datev);
+                $this->datem				= $this->db->jdate($obj->datem);
+                $this->amount				= $obj->amount;
+                $this->remise_percent		= $obj->remise_percent;
+                $this->remise_absolue		= $obj->remise_absolue;
+                $this->remise				= $obj->remise;
+                $this->total_ht				= $obj->total;
+                $this->total_tva			= $obj->tva;
+                $this->total_localtax1		= $obj->localtax1;
+                $this->total_localtax2		= $obj->localtax2;
+                $this->total_ttc			= $obj->total_ttc;
+                $this->paye					= $obj->paye;
+                $this->close_code			= $obj->close_code;
+                $this->close_note			= $obj->close_note;
+                $this->socid				= $obj->fk_soc;
+                $this->statut				= $obj->fk_statut;
+                $this->date_lim_reglement	= $this->db->jdate($obj->dlr);
+                $this->mode_reglement_id	= $obj->fk_mode_reglement;
+                $this->mode_reglement_code	= $obj->mode_reglement_code;
+                $this->mode_reglement		= $obj->mode_reglement_libelle;
+                $this->cond_reglement_id	= $obj->fk_cond_reglement;
+                $this->cond_reglement_code	= $obj->cond_reglement_code;
+                $this->cond_reglement		= $obj->cond_reglement_libelle;
+                $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
+                $this->fk_project			= $obj->fk_projet;
+                $this->fk_facture_source	= $obj->fk_facture_source;
+                $this->note					= $obj->note;
+                $this->note_public			= $obj->note_public;
+                $this->user_author			= $obj->fk_user_author;
+                $this->user_valid			= $obj->fk_user_valid;
+                $this->modelpdf				= $obj->model_pdf;
 
                 if ($this->statut == 0)	$this->brouillon = 1;
 
