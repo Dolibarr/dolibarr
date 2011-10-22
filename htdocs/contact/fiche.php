@@ -403,7 +403,7 @@ else
 
             // Civility
             print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-            print $formcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
+            print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td>';
@@ -582,7 +582,7 @@ else
 
             // Civility
             print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-            print $formcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
+            print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';

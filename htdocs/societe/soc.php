@@ -690,7 +690,7 @@ else
             print '<tr class="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$object->firstname.'"></td>';
             print '<td colspan=2>&nbsp;</td></tr>';
             print '<tr class="individualline"><td>'.$langs->trans("UserTitle").'</td><td>';
-            print $formcompany->select_civilite($contact->civilite_id).'</td>';
+            print $formcompany->select_civility($contact->civilite_id).'</td>';
             print '<td colspan=2>&nbsp;</td></tr>';
         }
 

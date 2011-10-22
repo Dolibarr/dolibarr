@@ -696,7 +696,7 @@ if ($action == 'create')
 
     // Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-    print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id,'civilite_id').'</td>';
+    print $htmlcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id,'civilite_id').'</td>';
     print '</tr>';
 
     // Lastname
@@ -923,7 +923,7 @@ if ($action == 'edit')
 
 	// Civilite
 	print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
-	print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id)."\n";
+	print $htmlcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id)."\n";
 	print '</td>';
 	print '</tr>';
 
