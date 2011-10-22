@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/adherents/type.php
  *      \ingroup    member
- *		\brief      Page de configuration des types d'adherents
+ *		\brief      Member's type setup
  */
 
 require("../main.inc.php");
@@ -625,10 +625,11 @@ if ($rowid > 0)
 		$doleditor->Create();
 		print "</td></tr>";
 
-		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
-		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
-
 		print '</table>';
+		
+		print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+
 		print "</form>";
 	}
 }
