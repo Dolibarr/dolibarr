@@ -16,6 +16,8 @@ CustomFields has been made with the intention of being as portable, flexible, mo
 
 Just as any Dolibarr's module, just unzip the contents of this package inside your dolibarr's folder (you should be asked to overwrite some files if done right).
 
+ATTENTION: you need a MySQL database with INNODB. With MySQL >= 5.5, INNODB is default, for MySQL < 5.5 it is MyISAM so you'll have to manually switch to InnoDB. PostgreSQL is not supported (through you may try, I didin't).
+
 ===== HOW TO ADD THE SUPPORT OF A NEW MODULE =====
 
 == NEW WAY (simpler)
