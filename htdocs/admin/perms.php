@@ -120,15 +120,25 @@ foreach ($modulesdir as $dir)
 
                 if ($modName)
                 {
-                    include_once($dir."/".$file);
-                    $objMod = new $modName($db);
-                    if ($objMod->rights_class) {
+                	include_once($dir.$file);
+    	            $objMod = new $modName($db);
 
-                        $ret=$objMod->insert_permissions(0);
+    	            // Load all lang files of module
+    	            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+    	            {
+    	            	foreach($objMod->langfiles as $domain)
+    	            	{
+    	            		$langs->load($domain);
+    	            	}
+    	            }
+    	            // Load all permissions
+    	            if ($objMod->rights_class)
+    	            {
+    	                $ret=$objMod->insert_permissions(0);
 
-                        $modules[$objMod->rights_class]=$objMod;
-                        //print "modules[".$objMod->rights_class."]=$objMod;";
-                    }
+    	                $modules[$objMod->rights_class]=$objMod;
+    	                //print "modules[".$objMod->rights_class."]=$objMod;";
+    	            }
                 }
             }
         }
