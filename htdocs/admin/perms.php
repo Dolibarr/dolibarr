@@ -120,15 +120,25 @@ foreach ($modulesdir as $dir)
 
                 if ($modName)
                 {
-                    include_once($dir."/".$file);
-                    $objMod = new $modName($db);
-                    if ($objMod->rights_class) {
+                	include_once($dir.$file);
+    	            $objMod = new $modName($db);
 
-                        $ret=$objMod->insert_permissions(0);
+    	            // Load all lang files of module
+    	            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+    	            {
+    	            	foreach($objMod->langfiles as $domain)
+    	            	{
+    	            		$langs->load($domain);
+    	            	}
+    	            }
+    	            // Load all permissions
+    	            if ($objMod->rights_class)
+    	            {
+    	                $ret=$objMod->insert_permissions(0);
 
-                        $modules[$objMod->rights_class]=$objMod;
-                        //print "modules[".$objMod->rights_class."]=$objMod;";
-                    }
+    	                $modules[$objMod->rights_class]=$objMod;
+    	                //print "modules[".$objMod->rights_class."]=$objMod;";
+    	            }
                 }
             }
         }
@@ -136,7 +146,6 @@ foreach ($modulesdir as $dir)
 }
 
 $db->commit();
-
 
 // Affiche lignes des permissions
 $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
@@ -149,10 +158,11 @@ $sql.= " ORDER BY r.module, r.id";
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i = 0;
-    $var=True;
-    $old = "";
+    $num	= $db->num_rows($result);
+    $i		= 0;
+    $var	= True;
+    $oldmod	= "";
+    
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
@@ -166,7 +176,7 @@ if ($result)
 
         // Check if permission we found is inside a module definition. If not, we discard it.
         $found=false;
-        foreach($objMod->rights as $key => $val)
+        foreach($modules[$obj->module]->rights as $key => $val)
         {
         	$rights_class=$objMod->rights_class;
         	if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms)) 
@@ -180,12 +190,13 @@ if ($result)
 			$i++;
 			continue;	
 		}
-		
+
         // Break found, it's a new module to catch
-        if ($old <> $obj->module)
+        if ($oldmod <> $obj->module)
         {
-            $objMod=$modules[$obj->module];
-            $picto=($objMod->picto?$objMod->picto:'generic');
+        	$oldmod	= $obj->module;
+            $objMod	= $modules[$obj->module];
+            $picto	= ($objMod->picto?$objMod->picto:'generic');
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Module").'</td>';
@@ -193,7 +204,6 @@ if ($result)
             print '<td align="center">'.$langs->trans("Default").'</td>';
             print '<td align="center">&nbsp;</td>';
             print "</tr>\n";
-            $old = $obj->module;
         }
 
         $var=!$var;
