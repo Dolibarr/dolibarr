@@ -19,7 +19,7 @@
  *      \file       htdocs/customfields/class/customfields.class.php
  *      \ingroup    customfields
  *      \brief      Core class file for the CustomFields module, all critical functions reside here
- *		\version    $Id: customfields.class.php, v1.1.0.1
+ *		\version    $Id: customfields.class.php, v1.1.0.2
  *		\author		Stephen Larroque
  */
 
@@ -476,7 +476,7 @@ class CustomFields // extends CommonObject
 		PRIMARY KEY (rowid),
 		KEY fk_".$this->module." (fk_".$this->module."),
 		CONSTRAINT fk_".$this->module." FOREIGN KEY (fk_".$this->module.") REFERENCES ".$reftable." (".$prifield.") ON DELETE CASCADE ON UPDATE CASCADE
-		) ENGINE=InnoDB AUTO_INCREMENT=1 ;";
+		) AUTO_INCREMENT=1 ;";
 
 		// Trigger or not?
 		if ($notrigger) {
