@@ -34,9 +34,7 @@
 function customfields_completesubstitutionarray(&$substitutionarray,$langs,$object)
 {
    global $conf,$db;
-   $substitutionarray['testtag'] = 'HAHAHA';
 
-    /*
     // Adding customfields properties of the $object
     // CustomFields
     if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
@@ -59,6 +57,6 @@ function customfields_completesubstitutionarray(&$substitutionarray,$langs,$obje
                             }
                     }
             }
-    }*/
+    }
 
 }
