@@ -28,6 +28,7 @@ create table llx_deplacement
   dated				datetime,
   fk_user			integer NOT NULL,
   fk_user_author	integer,
+  fk_user_modif    integer,            -- utilisateur qui a modifie l'info
   type				varchar(12) NOT NULL,
   fk_statut         integer DEFAULT 1 NOT NULL,
   km				real,
