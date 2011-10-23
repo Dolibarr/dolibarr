@@ -274,6 +274,11 @@ else
 			$head[$h][1] = $langs->trans("Note");
 			$head[$h][2] = 'note';
 			$h++;
+			
+			$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/info.php?id=$deplacement->id";
+	    $head[$h][1] = $langs->trans("Info");
+	    $head[$h][2] = 'info';
+	    $h++;
 
 			dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
