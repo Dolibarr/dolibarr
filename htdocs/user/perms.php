@@ -150,7 +150,7 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 
 foreach($modulesdir as $dir)
 {
-	$handle=opendir($dir);
+	$handle=@opendir($dir);
     if (is_resource($handle))
     {
     	while (($file = readdir($handle))!==false)

@@ -23,42 +23,38 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/trip.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
 
-$socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
-
-if (!$user->rights->deplacement->lire)
-  accessforbidden();
-
 $langs->load("companies");
-$langs->load("bills");
 $langs->load("trips");
 
-// Securiy check
-if ($user->societe_id > 0)
-{
-  unset($_GET["action"]);
-  $socid = $user->societe_id;
-}
+$id			= GETPOST('id');
+$ref		= GETPOST('ref');
+$action		= GETPOST('action');
+$confirm	= GETPOST('confirm');
 
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'deplacement', $id, '');
 
-$trip = new Deplacement($db);
+$object = new Deplacement($db);
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->deplacement->creer)
+if ($action == 'update_public' && $user->rights->deplacement->creer)
 {
 	$db->begin();
 
-	$trip->fetch($_GET["id"]);
+	$object->fetch($id);
 
-	$res=$trip->update_note_public($_POST["note_public"],$user);
+	$res=$object->update_note_public($_POST["note_public"]);
 	if ($res < 0)
 	{
-		$mesg='<div class="error">'.$fac->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 		$db->rollback();
 	}
 	else
@@ -67,16 +63,16 @@ if ($_POST["action"] == 'update_public' && $user->rights->deplacement->creer)
 	}
 }
 
-if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
+if ($action == 'update' && $user->rights->deplacement->creer)
 {
 	$db->begin();
 
-	$trip->fetch($_GET["id"]);
+	$object->fetch($id);
 
-	$res=$trip->update_note($_POST["note"],$user);
+	$res=$object->update_note($_POST["note"]);
 	if ($res < 0)
 	{
-		$mesg='<div class="error">'.$fac->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 		$db->rollback();
 	}
 	else
@@ -95,30 +91,16 @@ llxHeader();
 
 $html = new Form($db);
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$trip = new Deplacement($db);
-	$trip->fetch($id,$ref);
+	$object->fetch($id, $ref);
 
 	$soc = new Societe($db);
-    $soc->fetch($trip->socid);
+    $soc->fetch($object->socid);
 
-	$h=0;
-
-	$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$trip->id";
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/note.php?id=$trip->id";
-	$head[$h][1] = $langs->trans("Note");
-	$head[$h][2] = 'note';
-	$h++;
+	$head = trip_prepare_head($object);
 
 	dol_fiche_head($head, 'note', $langs->trans("TripCard"), 0, 'trip');
-
 
     print '<table class="border" width="100%">';
 
@@ -126,17 +108,17 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
 	$morehtmlref='';
-	print $html->showrefnav($trip,'ref','',1,'ref','ref',$morehtmlref);
+	print $html->showrefnav($object,'ref','',1,'ref','ref',$morehtmlref);
 	print '</td></tr>';
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($trip->type).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($object->type).'</td></tr>';
 
 	// Who
 	print "<tr>";
 	print '<td>'.$langs->trans("Person").'</td><td>';
 	$userfee=new User($db);
-	$userfee->fetch($trip->fk_user);
+	$userfee->fetch($object->fk_user);
 	print $userfee->getNomUrl(1);
 	print '</td></tr>';
 
@@ -148,18 +130,18 @@ if ($id > 0 || ! empty($ref))
 	// Note publique
     print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 	print '<td valign="top" colspan="3">';
-    if ($_GET["action"] == 'edit')
+    if ($action == 'edit')
     {
-        print '<form method="post" action="note.php?id='.$trip->id.'">';
+        print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update_public">';
-        print '<textarea name="note_public" cols="80" rows="8">'.$trip->note_public."</textarea><br>";
+        print '<textarea name="note_public" cols="80" rows="8">'.$object->note_public."</textarea><br>";
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
         print '</form>';
     }
     else
     {
-	    print ($trip->note_public?nl2br($trip->note_public):"&nbsp;");
+	    print ($object->note_public?nl2br($object->note_public):"&nbsp;");
     }
 	print "</td></tr>";
 
@@ -168,18 +150,18 @@ if ($id > 0 || ! empty($ref))
 	{
 	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 		print '<td valign="top" colspan="3">';
-	    if ($_GET["action"] == 'edit')
+	    if ($action == 'edit')
 	    {
-	        print '<form method="post" action="note.php?id='.$trip->id.'">';
+	        print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">';
 	        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	        print '<input type="hidden" name="action" value="update">';
-	        print '<textarea name="note" cols="80" rows="8">'.$trip->note."</textarea><br>";
+	        print '<textarea name="note" cols="80" rows="8">'.$object->note."</textarea><br>";
 	        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	        print '</form>';
 	    }
 		else
 		{
-		    print ($trip->note?nl2br($trip->note):"&nbsp;");
+		    print ($object->note?nl2br($object->note):"&nbsp;");
 		}
 		print "</td></tr>";
 	}
@@ -193,9 +175,9 @@ if ($id > 0 || ! empty($ref))
     print '</div>';
     print '<div class="tabsAction">';
 
-    if ($user->rights->deplacement->creer && $_GET["action"] <> 'edit')
+    if ($action <> 'edit' && $user->rights->deplacement->creer)
     {
-        print "<a class=\"butAction\" href=\"note.php?id=$trip->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
+        print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id .'&amp;action=edit">' . $langs->trans('Modify') . '</a>';
     }
 
     print "</div>";

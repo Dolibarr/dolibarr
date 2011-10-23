@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2011	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 // Load list of modules
 foreach($modulesdir as $dir)
 {
-	$handle=opendir($dir);
+	$handle=@opendir($dir);
     if (is_resource($handle))
     {
     	while (($file = readdir($handle))!==false)

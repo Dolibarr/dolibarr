@@ -67,3 +67,5 @@ ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseu
 
 DROP TABLE IF EXISTS llx_pos_tmp;
 
+ALTER TABLE llx_deplacement ADD COLUMN fk_user_modif integer AFTER fk_user_author;
+
