@@ -154,7 +154,7 @@ if (empty($reshook))
         if (! $_POST["name"])
         {
             $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
-            $_GET["action"] = $_POST["action"] = 'create';
+            $action = 'create';
         }
 
         if ($_POST["name"])
@@ -163,7 +163,7 @@ if (empty($reshook))
             if ($id <= 0)
             {
                 $error++; $errors[]=($object->error?array($object->error):$object->errors);
-                $_GET["action"] = $_POST["action"] = 'create';
+                $action = 'create';
             }
         }
 
