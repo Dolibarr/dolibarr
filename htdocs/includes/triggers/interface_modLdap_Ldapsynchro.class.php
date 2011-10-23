@@ -218,7 +218,11 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-
+				
+				// Get a gid number for objectclass PosixGroup
+				if(in_array('posixGroup',$info['objectclass']))
+					$info['gidNumber'] = $ldap->getNextGroupGid();
+				
 	    	    $result=$ldap->add($dn,$info,$user);
 				if ($result < 0)
 				{
