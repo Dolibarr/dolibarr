@@ -351,13 +351,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 );
                 complete_substitutions_array($substitutionarray, $langs, $object);
 
+				/*
 				// Line of free text
 				$newfreetext='';
 				$paramfreetext='FACTURE_FREE_TEXT';
 			    if (! empty($conf->global->$paramfreetext))
 			    {
 			        $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
-			    }
+			    }*/
 
                 // Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
@@ -378,12 +379,32 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				if ($newfreetext)
 				{
 					try {
-						$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
+						$odfHandler->setVars('free_text', $conf->global->FACTURE_FREE_TEXT, true, 'UTF-8');
 					}
 					catch(OdfException $e)
 					{
 					}
 				}
+
+		// External substitution
+		foreach($substitutionarray as $key=>$value)
+                {
+                    try {
+                        if (preg_match('/logo$/',$key)) // Image
+                        {
+                            //var_dump($value);exit;
+                            if (file_exists($value)) $odfHandler->setImage($key, $value);
+                            else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+                        }
+                        else    // Text
+                        {
+                            $odfHandler->setVars($key, $value, true, 'UTF-8');
+                        }
+                    }
+                    catch(OdfException $e)
+                    {
+                    }
+                }
                 // Make substitutions into odt of user info
 				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
