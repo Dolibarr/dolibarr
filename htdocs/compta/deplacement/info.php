@@ -17,60 +17,45 @@
  */
 
 /**
- *    \file       htdocs/compta/deplacement/info.php
- *    \ingroup    facture
- *		\brief      Page to show a trip information
+ * 	\file       htdocs/compta/deplacement/info.php
+ * 	\ingroup    trip
+ * 	\brief      Page to show a trip information
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/trip.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
 
 $langs->load("trips");
 
+// Security check
+$id = GETPOST('id');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'deplacement', $id, '');
+
+
 /*
  * View
  */
+
 llxHeader();
 
 if ($id)
 {
-	$deplacement = new Deplacement($db);
-	$deplacement->fetch($_GET["id"], $user);
-  $deplacement->info($_GET["id"]);
-	if ($deplacement > 0)
-	{
-		if ($mesg) print $mesg."<br>";
-
-		$h=0;
-  
-    $head[$h][0] = DOL_URL_ROOT.'/compta/deplacement/fiche.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("Card");
-    $head[$h][2] = 'card';
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/compta/deplacement/note.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("Note");
-    $head[$h][2] = 'note';
-    $h++;
+	$object = new Deplacement($db);
+	$object->fetch($id);
+	$object->info($id);
 	
-    $head[$h][0] = DOL_URL_ROOT.'/compta/deplacement/info.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
-    $h++;
+	$head = trip_prepare_head($object);
 	
-    dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
+	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
 
     print '<table width="100%"><tr><td>';
-    dol_print_object_info($deplacement);
+    dol_print_object_info($object);
     print '</td></tr></table>';
       
     print '</div>';
-  }
-  else
-	{
-		dol_print_error($db);
-	}
 }
 
 $db->close();
