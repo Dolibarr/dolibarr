@@ -17,7 +17,7 @@
  */
 
 /**
- * \file       htdocs/lib/ldap.lib.php
+ * \file       htdocs/core/lib/ldap.lib.php
  * \brief      Ensemble de fonctions de base pour le module LDAP
  * \ingroup    ldap
  */
