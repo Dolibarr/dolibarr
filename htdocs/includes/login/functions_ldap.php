@@ -71,7 +71,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 
 		if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
 
-		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 		$ldap=new Ldap();
 		$ldap->server=array($ldaphost);
 		$ldap->serverPort=$ldapport;

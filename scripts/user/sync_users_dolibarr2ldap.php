@@ -44,7 +44,7 @@ $now=$argv[1];
 $version='1.13';
 
 require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
 $error=0;

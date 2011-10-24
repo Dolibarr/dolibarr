@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file 		htdocs/lib/ldap.class.php
+ *	\file 		htdocs/core/class/ldap.class.php
  *	\brief 		File of class to manage LDAP features
  */
 

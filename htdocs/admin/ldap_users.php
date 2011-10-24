@@ -30,7 +30,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("admin");

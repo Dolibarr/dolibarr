@@ -26,7 +26,7 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php');
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("companies");

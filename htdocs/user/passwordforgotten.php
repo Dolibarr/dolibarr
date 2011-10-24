@@ -25,8 +25,8 @@ define("NOLOGIN",1);	// This means this output page does not require to be logge
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
+if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 
 $langs->load("other");
 $langs->load("users");
