@@ -376,7 +376,7 @@ class Societe extends CommonObject
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update')
     {
-        require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
         global $langs,$conf;
 

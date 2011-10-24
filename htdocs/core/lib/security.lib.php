@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file		htdocs/lib/security.lib.php
+ *  \file		htdocs/core/lib/security.lib.php
  *  \ingroup    core
  *  \brief		Set of function used for dolibarr security.
  *  			Warning, this file must not depends on other library files, except function.lib.php

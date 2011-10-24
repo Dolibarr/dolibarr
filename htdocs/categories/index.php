@@ -27,7 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/treeview.lib.php");
 
 $type=(GETPOST('type') ? GETPOST('type') : 0);
 

@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file			htdocs/lib/functions2.lib.php
+ *	\file			htdocs/core/lib/functions2.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all rare functions.
  */

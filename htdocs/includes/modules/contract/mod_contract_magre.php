@@ -98,7 +98,7 @@ class mod_contract_magre extends ModelNumRefContracts
     {
 		global $db,$conf;
 
-		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
 
 		$mask=$conf->global->CONTRACT_MAGRE_MASK;
 

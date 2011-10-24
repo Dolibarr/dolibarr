@@ -49,7 +49,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 		$type='propal';
 		$liste=array();
 
-		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
 		$liste=getListOfModels($db,$type,'');
 
 		return $liste;

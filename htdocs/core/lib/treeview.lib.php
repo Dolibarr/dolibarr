@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/lib/treeview.lib.php
+ *  \file       htdocs/core/lib/treeview.lib.php
  *  \ingroup    core
  *  \brief      Libraries for tree views
  */

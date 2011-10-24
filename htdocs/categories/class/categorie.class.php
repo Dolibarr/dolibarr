@@ -1236,7 +1236,7 @@ class Categorie
 	 */
 	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/lib/images.lib.php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/lib/images.lib.php");
 
 		if (file_exists($file))
 		{

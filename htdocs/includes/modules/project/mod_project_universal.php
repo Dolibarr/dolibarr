@@ -106,7 +106,7 @@ class mod_project_universal extends ModeleNumRefProjects
     {
 		global $db,$conf;
 
-		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
 
 		// On defini critere recherche compteur
 		$mask=$conf->global->PROJECT_UNIVERSAL_MASK;

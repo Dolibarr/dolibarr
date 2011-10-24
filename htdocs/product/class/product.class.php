@@ -2491,7 +2491,7 @@ class Product extends CommonObject
 	 */
 	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/lib/images.lib.php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/lib/images.lib.php");
 
 		$file_osencoded=dol_osencode($file);
 		if (file_exists($file_osencoded))
@@ -2586,7 +2586,7 @@ class Product extends CommonObject
 		global $conf,$user,$langs;
 
 		include_once(DOL_DOCUMENT_ROOT ."/lib/files.lib.php");
-		include_once(DOL_DOCUMENT_ROOT ."/lib/images.lib.php");
+		include_once(DOL_DOCUMENT_ROOT ."/core/lib/images.lib.php");
 
 		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
 		$dir = $sdir . '/'. $pdir;

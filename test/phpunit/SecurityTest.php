@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/lib/functions.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/lib/security.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');

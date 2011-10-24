@@ -27,8 +27,8 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
@@ -1078,7 +1078,7 @@ if ($rowid && $action != 'edit')
 		if (empty($login))
 		{
 			// Full firstname and name separated with a dot : firstname.name
-			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+			include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
 			$login=dol_buildlogin($object->nom,$object->prenom);
 		}
 		if (empty($login)) $login=strtolower(substr($object->prenom, 0, 4)) . strtolower(substr($object->nom, 0, 4));

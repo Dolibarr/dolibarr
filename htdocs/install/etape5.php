@@ -117,7 +117,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
     // If password is encoded, we decode it
     if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
     {
-        require_once($dolibarr_main_document_root."/lib/security.lib.php");
+        require_once($dolibarr_main_document_root."/core/lib/security.lib.php");
         if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
         {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);

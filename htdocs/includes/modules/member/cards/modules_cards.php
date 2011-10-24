@@ -49,7 +49,7 @@ class ModelePDFCards
 		$type='members_card';
 		$liste=array();
 
-		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
 		$liste=getListOfModels($db,$type,'');
 
 		return $liste;

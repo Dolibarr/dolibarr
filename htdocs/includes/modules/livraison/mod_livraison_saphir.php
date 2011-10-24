@@ -103,7 +103,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
     {
 		global $db,$conf;
 
-		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
 
 		// On d�fini critere recherche compteur
 		$mask=$conf->global->LIVRAISON_SAPHIR_MASK;

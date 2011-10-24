@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file		htdocs/lib/memory.lib.php
+ *  \file		htdocs/core/lib/memory.lib.php
  *  \brief		Set of function for memory/cache management
  */
 

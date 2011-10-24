@@ -29,7 +29,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
@@ -100,7 +100,7 @@ if (empty($reshook))
     if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     && ($action == 'add' || $action == 'update') && $user->rights->societe->creer)
     {
-        require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
         if ($action == 'update') $object->fetch($socid);
 		else $object->canvas=$canvas;
@@ -1700,7 +1700,7 @@ else
         // Default language
         if ($conf->global->MAIN_MULTILANGS)
         {
-            require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+            require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
             print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">';
             //$s=picto_from_langcode($object->default_lang);
             //print ($s?$s.' ':'');

@@ -323,7 +323,7 @@ class InfoBox
 	{
 		global $conf;
 
-		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 		dol_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
 

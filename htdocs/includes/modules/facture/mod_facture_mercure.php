@@ -113,7 +113,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
     {
         global $db,$conf;
 
-        require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
+        require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
 
         // Get Mask value
         $mask = '';

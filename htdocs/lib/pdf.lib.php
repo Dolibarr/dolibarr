@@ -41,7 +41,7 @@ function pdf_getFormat()
 
 	if (empty($conf->global->MAIN_PDF_FORMAT))
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
 		$pdfformat=dol_getDefaultFormat();
 	}
 	else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
@@ -1077,7 +1077,7 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0,$hookm
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
-	include_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+	include_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 	if ($object->lines[$i]->special_code != 3)
 	{

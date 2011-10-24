@@ -28,7 +28,7 @@ require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
 require_once(DOL_DOCUMENT_ROOT."/lib/ws.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 
 dol_syslog("Call Dolibarr webservices interfaces");

@@ -119,7 +119,7 @@ abstract class ActionsCardCommon
         if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
         && ($action == 'add' || $action == 'update'))
         {
-            require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+            require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
             $error=0;
 
             if (GETPOST("private") == 1)
@@ -572,7 +572,7 @@ abstract class ActionsCardCommon
 
             if ($conf->global->MAIN_MULTILANGS)
             {
-                require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
                 //$s=picto_from_langcode($this->default_lang);
                 //print ($s?$s.' ':'');
                 $langs->load("languages");

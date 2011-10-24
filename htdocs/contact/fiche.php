@@ -711,7 +711,7 @@ else
         if ($action == 'create_user')
         {
             // Full firstname and name separated with a dot : firstname.name
-            include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+            include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
             $login=dol_buildlogin($object->nom,$object->prenom);
 
             $generated_password='';
