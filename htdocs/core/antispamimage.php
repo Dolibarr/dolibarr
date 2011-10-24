@@ -17,7 +17,7 @@
  */
 
 /**
- *		\file       htdocs/lib/antispamimage.php
+ *		\file       htdocs/core/antispamimage.php
  *		\brief      Return antispam image
  */
 

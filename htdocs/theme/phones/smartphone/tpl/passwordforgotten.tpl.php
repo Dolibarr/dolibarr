@@ -51,7 +51,7 @@ include('header.tpl.php');
 			<?php if ($captcha) { ?>
 			<label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label>
 			<input type="text" id="securitycode" name="securitycode" />
-			<div align="center"><img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="256" height="48" /></div>
+			<div align="center"><img src="<?php echo $dol_url_root.'/core/antispamimage.php'; ?>" border="0" width="256" height="48" /></div>
 			<?php } ?>
 		</div>
 

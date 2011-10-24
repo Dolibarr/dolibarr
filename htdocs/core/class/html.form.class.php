@@ -3048,7 +3048,7 @@ class Form
                     if (! $disabled)
                     {
                         $retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
-                        $base=DOL_URL_ROOT.'/lib/';
+                        $base=DOL_URL_ROOT.'/core/';
                         $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');">'.img_object($langs->trans("SelectDate"),'calendarday').'</button>';
                     }
 
