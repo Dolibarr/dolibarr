@@ -1316,6 +1316,33 @@ class Ldap
 		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1')	$str=utf8_encode($str);
 		return $str;
 	}
+	
+
+	/**
+	 *  \brief      Return available value of group GID 
+	 *  \param      
+	 *  \return     int         	gid number
+	 */	
+	function getNextGroupGid() {
+		global $conf;
+		$search='('.$conf->global->LDAP_KEY_GROUPS.'=*)';
+		$result = $this->search($this->groups,$search);
+		if($result) {
+			$c = $result['count'];
+		$gids = array();
+		for($i=0;$i<$c;$i++) 
+		{
+			$gids[] = $result[$i]['gidnumber'][0];	
+		}
+		rsort($gids);
+		
+		
+		return $gids[0]+1;	
+		}
+		
+		return 0;
+				
+	}
 }
 
 
