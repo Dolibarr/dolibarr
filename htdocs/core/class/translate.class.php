@@ -606,7 +606,7 @@ class Translate {
 		$newnumber=$number;
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-			$dir=$dirroot."/includes/modules/substitutions";
+			$dir=$dirroot."/core/modules/substitutions";
 			$fonc='numberwords';
 			if (file_exists($dir.'/functions_'.$fonc.'.lib.php'))
 			{

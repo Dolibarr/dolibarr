@@ -85,7 +85,7 @@ $j = 0;	// j is module number. Automatically affected if module number not defin
 
 foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
-	$modulesdir[] = $dirroot . "/includes/modules/";
+	$modulesdir[] = $dirroot . "/core/modules/";
 	
 	if ($type == 'alt')
 	{	
@@ -96,9 +96,9 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 			{
 			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
 			    {
-			    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+			    	if (is_dir($dirroot . '/' . $file . '/core/modules/'))
 			    	{
-			    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+			    		$modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
 			    	}
 			    }
 			}

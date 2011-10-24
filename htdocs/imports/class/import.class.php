@@ -67,10 +67,10 @@ class Import
         $var=true;
         $i=0;
 
-		//$dir=DOL_DOCUMENT_ROOT."/includes/modules";
+		//$dir=DOL_DOCUMENT_ROOT."/core/modules";
 		foreach($conf->file->dol_document_root as $dirroot)
 		{
-			$dir = $dirroot.'/includes/modules';
+			$dir = $dirroot.'/core/modules';
 
 			// Search available exports
 			$handle=@opendir(dol_osencode($dir));
@@ -182,7 +182,7 @@ class Import
 		dol_syslog(get_class($this)."::build_example_file ".$model);
 
 		// Creation de la classe d'import du model Import_XXX
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
 		$file = "import_".$model.".modules.php";
 		$classname = "Import".$model;
 		require_once($dir.$file);

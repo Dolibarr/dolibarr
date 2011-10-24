@@ -25,8 +25,8 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/cards/modules_cards.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/labels/modules_labels.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/member/cards/modules_cards.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/member/labels/modules_labels.php");
 
 $langs->load("members");
 $langs->load("errors");

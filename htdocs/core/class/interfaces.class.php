@@ -91,7 +91,7 @@ class Interfaces
                         if (in_array($modName,$modules))
                         {
                             $langs->load("errors");
-                            dol_syslog("Interface::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
+                            dol_syslog("Interface::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/core/triggers/"),LOG_ERR);
                             continue;
                         }
 
@@ -210,7 +210,7 @@ class Interfaces
                         if (in_array($modName,$modules))
                         {
                             $langs->load("errors");
-                            print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
+                            print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/core/triggers/").'</div>';
                             $objMod = new $modName($this->db);
 
                             $modules[$i] = $modName;

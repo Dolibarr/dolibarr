@@ -26,7 +26,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/triggers/interface_modNotification_Notification.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/triggers/interface_modNotification_Notification.class.php");
 
 $langs->load("companies");
 $langs->load("mails");

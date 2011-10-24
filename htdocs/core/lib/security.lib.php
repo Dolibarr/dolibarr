@@ -101,7 +101,7 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
     		if ($test && $mode && ! $login)
     		{
     		    $mode=trim($mode);
-    			$authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
+    			$authfile=DOL_DOCUMENT_ROOT.'/core/login/functions_'.$mode.'.php';
     			$result=include_once($authfile);
     			if ($result)
     			{
@@ -513,8 +513,8 @@ function getRandomPassword($generic=false)
 	{
 		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier=$nomclass.".class.php";
-		//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
-		require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
+		require_once(DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier);
 		$genhandler=new $nomclass($db,$conf,$langs,$user);
 		$generated_password=$genhandler->getNewGeneratedPassword();
 		unset($genhandler);

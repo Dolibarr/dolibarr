@@ -146,8 +146,8 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
         // Active module user
         $modName='modUser';
         $file = $modName . ".class.php";
-        dolibarr_install_syslog('install/etape5.php Load module user '.DOL_DOCUMENT_ROOT ."/includes/modules/".$file, LOG_INFO);
-        include_once(DOL_DOCUMENT_ROOT ."/includes/modules/".$file);
+        dolibarr_install_syslog('install/etape5.php Load module user '.DOL_DOCUMENT_ROOT ."/core/modules/".$file, LOG_INFO);
+        include_once(DOL_DOCUMENT_ROOT ."/core/modules/".$file);
         $objMod = new $modName($db);
         $result=$objMod->init();
         if (! $result) print 'ERROR in activating module file='.$file;
@@ -227,7 +227,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 
                         $file=$modtoactivatenew.'.class.php';
                         dolibarr_install_syslog('install/etape5.php Activate module file='.$file);
-                        $res=dol_include_once("/includes/modules/".$file);
+                        $res=dol_include_once("/core/modules/".$file);
 
                         $res=Activate($modtoactivatenew,1);
                         if (! $result) print 'ERROR in activating module file='.$file;

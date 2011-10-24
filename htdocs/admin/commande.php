@@ -72,7 +72,7 @@ if ($action == 'specimen')
 	$commande->initAsSpecimen();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/commande/";
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -243,7 +243,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/commande/";
+	$dir = $dirroot . "/core/modules/commande/";
 
 	if (is_dir($dir))
 	{
@@ -258,7 +258,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
-					require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/".$file.".php");
+					require_once(DOL_DOCUMENT_ROOT ."/core/modules/commande/".$file.".php");
 
 					$module = new $file;
 
@@ -374,7 +374,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/commande/";
+	$dir = $dirroot . "/core/modules/commande/";
 
 	if (is_dir($dir))
 	{

@@ -234,7 +234,7 @@ print "</tr>\n";
 $var = true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/societe/";
+	$dir = $dirroot . "/core/modules/societe/";
     $handle = opendir($dir);
     if (is_resource($handle))
     {
@@ -245,7 +245,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
     		{
     			$file = substr($file, 0, dol_strlen($file)-4);
 
-    			dol_include_once("/includes/modules/societe/".$file.".php");
+    			dol_include_once("/core/modules/societe/".$file.".php");
 
     			$modCodeTiers = new $file;
 
@@ -305,7 +305,7 @@ print "</tr>\n";
 $var = true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/societe/";
+	$dir = $dirroot . "/core/modules/societe/";
     $handle = opendir($dir);
     if (is_resource($handle))
     {
@@ -315,7 +315,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
     		{
     			$file = substr($file, 0, dol_strlen($file)-4);
 
-    			dol_include_once("/includes/modules/societe/".$file.".php");
+    			dol_include_once("/core/modules/societe/".$file.".php");
 
     			$modCodeCompta = new $file;
     			$var = !$var;
@@ -391,7 +391,7 @@ print "</tr>\n";
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/societe/doc";
+	$dir = $dirroot . "/core/modules/societe/doc";
 
 	if (is_dir($dir))
 	{

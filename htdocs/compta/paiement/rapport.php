@@ -23,7 +23,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/rapport/pdf_paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/rapport/pdf_paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 // Security check

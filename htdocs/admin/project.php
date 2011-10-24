@@ -69,7 +69,7 @@ if ($action == 'specimen')
 	$project->initAsSpecimen();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/project/pdf/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/project/pdf/";
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -183,7 +183,7 @@ print "<br>";
 
 // Project numbering module
 
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/project/";
+$dir = DOL_DOCUMENT_ROOT."/core/modules/project/";
 
 print_titre($langs->trans("ProjectsNumberingModules"));
 
@@ -209,7 +209,7 @@ if (is_resource($handle))
 		{
 			$file = substr($file, 0, dol_strlen($file)-4);
 
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$file.".php");
+			require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$file.".php");
 
 			$module = new $file;
 
@@ -280,7 +280,7 @@ print '</table><br>';
  * Modeles documents for projects
  */
 
-$dir = DOL_DOCUMENT_ROOT.'/includes/modules/project/pdf/';
+$dir = DOL_DOCUMENT_ROOT.'/core/modules/project/pdf/';
 
 print_titre($langs->trans("ProjectsModelModule"));
 

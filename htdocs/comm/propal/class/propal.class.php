@@ -885,7 +885,7 @@ class Propal extends CommonObject
 
 		$objsoc->fetch($object->socid);
 
-		if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
+		if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 		{
 			$this->error='ErrorSetupNotComplete';
 			return -1;
@@ -900,7 +900,7 @@ class Propal extends CommonObject
 		$object->ref_client		= '';
 
 		// Set ref
-		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 		$obj = $conf->global->PROPALE_ADDON;
 		$modPropale = new $obj;
 		$object->ref = $modPropale->getNextValue($objsoc,$object);
@@ -2275,7 +2275,7 @@ class Propal extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("propal");
 
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/propale/";
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/propale/";
 
 		if (! empty($conf->global->PROPALE_ADDON))
 		{

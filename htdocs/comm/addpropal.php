@@ -27,7 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php');
 if ($conf->projet->enabled)
 {
 	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
@@ -82,9 +82,9 @@ if ($_GET["action"] == 'create')
 	$obj = $conf->global->PROPALE_ADDON;
 	if ($obj)
 	{
-		if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
+		if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 		{
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
+			require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 			$modPropale = new $obj;
 			$numpr = $modPropale->getNextValue($soc,$propal);
 		}

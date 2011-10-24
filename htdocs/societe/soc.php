@@ -419,7 +419,7 @@ if (empty($reshook))
         }
         else
         {
-            require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
+            require_once(DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php');
 
             $object->fetch($socid);
             $object->fetch_thirdparty();
@@ -500,7 +500,7 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+        require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
         $modCodeClient = new $module;
         $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
         if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -508,7 +508,7 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+        require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
         $modCodeFournisseur = new $module;
 
         //if ($_GET["type"]=='cp') { $object->client=3; }
@@ -994,7 +994,7 @@ else
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
             $modCodeClient = new $module;
             // We verified if the tag prefix is used
             if ($modCodeClient->code_auto)
@@ -1007,7 +1007,7 @@ else
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
             $modCodeFournisseur = new $module;
             // On verifie si la balise prefix est utilisee
             if ($modCodeFournisseur->code_auto)

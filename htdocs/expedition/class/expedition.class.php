@@ -101,7 +101,7 @@ class Expedition extends CommonObject
 		global $db, $langs, $conf;
 		$langs->load("sendings");
 
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/expedition";
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/expedition";
 
 	    if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
         {
@@ -1151,9 +1151,9 @@ class Expedition extends CommonObject
 			$classname = "methode_expedition_".strtolower($code);
 
 			$url='';
-			if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php") && ! empty($this->tracking_number))
+			if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).".modules.php") && ! empty($this->tracking_number))
 			{
-				require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
+				require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
 				$shipmethod = new $classname();
 				$url = $shipmethod->provider_url_status($this->tracking_number);
 			}

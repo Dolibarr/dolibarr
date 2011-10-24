@@ -57,11 +57,11 @@ if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone
     $limitmenuto=1;	// A virer
 
     // Load the smartphone menu manager
-    $result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
+    $result=@include_once(DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu);
     if (! $result)	// If failed to include, we try with standard
     {
         $conf->smart_menu='smartphone_backoffice.php';
-        include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
+        include_once(DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu);
     }
 
     $menusmart = new MenuSmart($db);

@@ -30,7 +30,7 @@
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
@@ -1722,7 +1722,7 @@ if ($action == 'create')
     // Modele PDF
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td>';
-    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+    include_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
     $liste=ModelePDFFactures::liste_modeles($db);
     print $html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
     print "</td></tr>";

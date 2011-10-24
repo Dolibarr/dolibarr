@@ -90,7 +90,7 @@ class Conf
 		dol_syslog("Conf::setValues");
 
 		// Directory of core triggers
-		$this->triggers_modules[] = "/includes/triggers";	// Default relative path to triggers file
+		$this->triggers_modules[] = "/core/triggers";	// Default relative path to triggers file
 
 		// Avoid warning if not defined
 		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
@@ -142,13 +142,13 @@ class Conf
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							$this->triggers_modules[] = '/'.$modulename.'/includes/triggers/';
+							$this->triggers_modules[] = '/'.$modulename.'/core/triggers/';
 						}
 						// If this is constant for login method activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN_METHOD$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							$this->login_method_modules[] = dol_buildpath('/'.$modulename.'/includes/login/');
+							$this->login_method_modules[] = dol_buildpath('/'.$modulename.'/core/login/');
 						}
 						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with :
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))

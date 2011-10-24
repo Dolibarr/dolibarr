@@ -35,7 +35,7 @@ function llxFooter() { print '</body></html>'; }
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/class/import.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php');
 
 $langs->load("exports");
 

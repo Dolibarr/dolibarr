@@ -77,7 +77,7 @@ if ($action == 'specimen')  // For orders
     $commande->thirdparty=$specimenthirdparty;
 
 	// Charge le modele
-	$dir = "/includes/modules/supplier_order/pdf/";
+	$dir = "/core/modules/supplier_order/pdf/";
 	$file = "pdf_".$modele.".modules.php";
 	$file = dol_buildpath($dir.$file);
 	if (file_exists($file))
@@ -114,7 +114,7 @@ if ($action == 'specimenfacture')   // For invoices
     $facture->thirdparty=$specimenthirdparty;    // Define who should has build the invoice (so the supplier)
 
 	// Charge le modele
-	$dir = "/includes/modules/supplier_invoice/pdf/";
+	$dir = "/core/modules/supplier_invoice/pdf/";
 	$file = "pdf_".$modele.".modules.php";
 	$file = dol_buildpath($dir.$file);
     if (file_exists($file))
@@ -269,7 +269,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/supplier_order/";
+	$dir = $dirroot . "/core/modules/supplier_order/";
 
 	if (is_dir($dir))
 	{
@@ -404,7 +404,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/supplier_order/pdf/";
+	$dir = $dirroot . "/core/modules/supplier_order/pdf/";
 
 	if (is_dir($dir))
 	{
@@ -537,7 +537,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/supplier_invoice/pdf/";
+	$dir = $dirroot . "/core/modules/supplier_invoice/pdf/";
 
 	if (is_dir($dir))
 	{

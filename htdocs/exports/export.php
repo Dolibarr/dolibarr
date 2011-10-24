@@ -26,7 +26,7 @@ require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/exports/class/export.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php');
 
 $langs->load("exports");
 

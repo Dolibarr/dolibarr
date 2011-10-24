@@ -126,7 +126,7 @@ class Commande extends CommonObject
         global $db, $langs, $conf;
         $langs->load("order");
 
-        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande";
+        $dir = DOL_DOCUMENT_ROOT . "/core/modules/commande";
 
         if (! empty($conf->global->COMMANDE_ADDON))
         {

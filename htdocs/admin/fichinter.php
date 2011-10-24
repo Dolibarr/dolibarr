@@ -106,7 +106,7 @@ if ($action == 'specimen')
 	$inter->initAsSpecimen();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/fichinter/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -242,7 +242,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/fichinter/";
+	$dir = $dirroot . "/core/modules/fichinter/";
 
 	if (is_dir($dir))
 	{
@@ -360,7 +360,7 @@ clearstatcache();
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/fichinter/";
+	$dir = $dirroot . "/core/modules/fichinter/";
 
 	if (is_dir($dir))
 	{

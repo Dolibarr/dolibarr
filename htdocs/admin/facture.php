@@ -77,7 +77,7 @@ if ($action == 'specimen')
     $facture->initAsSpecimen();
 
     // Load template
-    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/doc/";
+    $dir = DOL_DOCUMENT_ROOT . "/core/modules/facture/doc/";
     $file = "pdf_".$modele.".modules.php";
     if (file_exists($dir.$file))
     {
@@ -345,7 +345,7 @@ clearstatcache();
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-    $dir = $dirroot . "/includes/modules/facture/";
+    $dir = $dirroot . "/core/modules/facture/";
 
     if (is_dir($dir))
     {
@@ -512,7 +512,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 {
     foreach (array('','/doc') as $valdir)
     {
-        $dir = $dirroot . "/includes/modules/facture".$valdir;
+        $dir = $dirroot . "/core/modules/facture".$valdir;
 
         if (is_dir($dir))
         {

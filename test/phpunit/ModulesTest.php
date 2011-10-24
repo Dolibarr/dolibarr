@@ -124,7 +124,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		'Service','Societe','Stock','Syslog','Tax','User','WebServices');
 		foreach($modulelist as $modlabel)
 		{
-    		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/mod'.$modlabel.'.class.php');
+    		require_once(DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php');
             $class='mod'.$modlabel;
     		$mod=new $class($db);
             $result=$mod->remove();

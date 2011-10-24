@@ -2557,7 +2557,7 @@ class Facture extends CommonObject
         // Include file with class
         foreach ($conf->file->dol_document_root as $dirroot)
         {
-            $dir = $dirroot."/includes/modules/facture/";
+            $dir = $dirroot."/core/modules/facture/";
             // Load file with numbering class (if found)
             $mybool|=@include_once($dir.$file);
         }
@@ -2570,7 +2570,7 @@ class Facture extends CommonObject
             // Include file with class
             foreach ($conf->file->dol_document_root as $dirroot)
             {
-                $dir = $dirroot."/includes/modules/facture/";
+                $dir = $dirroot."/core/modules/facture/";
                 // Load file with numbering class (if found)
                 $mybool|=@include_once($dir.$file);
             }

@@ -3815,11 +3815,11 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
     require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
     // Check if there is external substitution to do asked by plugins
-    // We look files into the includes/modules/substitutions directory
+    // We look files into the core/modules/substitutions directory
     // By default, there is no such external plugins.
     foreach ($conf->file->dol_document_root as $dirroot)
     {
-        $substitfiles=dol_dir_list($dirroot.'/includes/modules/substitutions','files',0,'functions_');
+        $substitfiles=dol_dir_list($dirroot.'/core/modules/substitutions','files',0,'functions_');
         foreach($substitfiles as $substitfile)
         {
             if (preg_match('/functions_(.*)\.lib\.php/i',$substitfile['name'],$reg))
@@ -3828,7 +3828,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
                 if (! empty($conf->$module->enabled))   // If module enabled
                 {
                     dol_syslog("Library functions_".$module.".lib.php found into ".$dirroot);
-                    require_once($dirroot."/includes/modules/substitutions/functions_".$module.".lib.php");
+                    require_once($dirroot."/core/modules/substitutions/functions_".$module.".lib.php");
                     $function_name=$module."_completesubstitutionarray";
                     $function_name($substitutionarray,$outputlangs,$object);
                 }

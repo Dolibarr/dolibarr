@@ -23,7 +23,7 @@
  */
 
 require("../main.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 include_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 $langs->load("admin");
@@ -277,12 +277,12 @@ if ($resql)
 		{
 			$boxname = $regs[1];
 			$module = $regs[2];
-			$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
+			$sourcefile = "/".$module."/core/boxes/".$boxname.".php";
 		}
 		else
 		{
 			$boxname=preg_replace('/.php$/i','',$obj->file);
-			$sourcefile = "/includes/boxes/".$boxname.".php";
+			$sourcefile = "/core/boxes/".$boxname.".php";
 		}
 
 		dol_include_once($sourcefile);
@@ -393,12 +393,12 @@ if ($resql)
 		{
 			$boxname = $regs[1];
 			$module = $regs[2];
-			$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
+			$sourcefile = "/".$module."/core/boxes/".$boxname.".php";
 		}
 		else
 		{
 			$boxname=preg_replace('/.php$/i','',$obj->file);
-			$sourcefile = "/includes/boxes/".$boxname.".php";
+			$sourcefile = "/core/boxes/".$boxname.".php";
 		}
 
 		dol_include_once($sourcefile);

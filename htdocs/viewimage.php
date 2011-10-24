@@ -400,7 +400,7 @@ if ($modulepart == 'barcode')
     // Output files with barcode generators
     foreach ($conf->file->dol_document_root as $dirroot)
     {
-        $dir=$dirroot . "/includes/modules/barcode/";
+        $dir=$dirroot . "/core/modules/barcode/";
         $result=@include_once($dir.$generator.".modules.php");
         if ($result) break;
     }

@@ -95,7 +95,7 @@ class Contrat extends CommonObject
 		global $db, $langs, $conf;
 		$langs->load("contract");
 
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/contract";
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/contract";
 
 		if (empty($conf->global->CONTRACT_ADDON))
 		{
