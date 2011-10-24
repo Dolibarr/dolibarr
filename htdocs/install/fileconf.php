@@ -259,7 +259,7 @@ if (! empty($force_install_message))
 		$option='';
 
 		// Scan les drivers
-		$dir=DOL_DOCUMENT_ROOT.'/lib/databases';
+		$dir=DOL_DOCUMENT_ROOT.'/core/db';
 		$handle=opendir($dir);
 		if (is_resource($handle))
 		{
