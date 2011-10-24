@@ -261,6 +261,8 @@ if ($action == "addline" && $user->rights->ficheinter->creer)
     }
     if (! $error)
     {
+		$db->begin();
+
         $object = new Fichinter($db);
         $ret=$object->fetch($_POST['fichinterid']);
         $object->fetch_thirdparty();
@@ -269,11 +271,11 @@ if ($action == "addline" && $user->rights->ficheinter->creer)
         $date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
         $duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
-        $object->addline(
-        $_POST['fichinterid'],
-        $desc,
-        $date_intervention,
-        $duration
+        $result=$object->addline(
+        	$_POST['fichinterid'],
+        	$desc,
+        	$date_intervention,
+        	$duration
         );
 
         // Define output language
@@ -286,9 +288,20 @@ if ($action == "addline" && $user->rights->ficheinter->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
-        exit;
+
+		if ($result >= 0)
+		{
+			$db->commit();
+
+        	fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+        	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
+        	exit;
+		}
+		else
+		{
+			$mesg=$object->error;
+			$db->rollback();
+		}
     }
 }
 
