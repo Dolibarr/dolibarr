@@ -58,6 +58,9 @@ $lineid  = GETPOST('lineid');
 $mesg    = GETPOST('mesg');
 
 $object = new Commande($db);
+foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields)
+    $object->$key = $value;
+}
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

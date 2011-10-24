@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
+    Copyright (C) 2011 Stephen Larroque <lrq3000@gmail.com>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +18,24 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/facture/doc/doc_generic_invoice_odt.modules.php
- *	\ingroup    societe
- *	\brief      File of class to build ODT documents for third parties
+ *	\file       doc_generic_odt._allmodules.php
+ *	\ingroup    all
+ *	\brief      File of class to build ODT documents for any module
  *	\author	    Laurent Destailleur
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 
 /**
  *	\class      doc_generic_invoice_odt
  *	\brief      Class to build documents using ODF templates generator
  */
-class doc_generic_invoice_odt extends ModelePDFFactures
+class doc_generic_odt extends ModelePDFFactures
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -47,7 +48,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *
 	 *  @param		DoliDB		$DB      Database handler
 	 */
-	function doc_generic_invoice_odt($db)
+	function doc_generic_odt($db, $modulename)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -55,9 +56,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$langs->load("companies");
 
 		$this->db = $db;
+		$this->modulename = $modulename;
 		$this->name = "ODT templates";
 		$this->description = $langs->trans("DocumentModelOdt");
-		$this->scandir = 'FACTURE_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
+		$this->scandir = $this->modulename.'_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
 		// Dimension page pour format A4
 		$this->type = 'odt';
@@ -68,6 +70,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$this->marge_droite=0;
 		$this->marge_haute=0;
 		$this->marge_basse=0;
+
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
@@ -96,10 +99,13 @@ class doc_generic_invoice_odt extends ModelePDFFactures
     {
         global $conf;
 
-        $invoice_source=new Facture($this->db);
-		if ($object->fk_facture_source > 0)
+	$lmodulename=strtolower($this->modulename);
+        $invoice_source=new $this->modulename($this->db);
+	$fksource = 'fk_'.$lmodulename.'_source';
+		if ($object->$fksource > 0)
 		{
-        	$invoice_source->fetch($object->fk_facture_source);
+			$fksource = 'fk_'.$lmodulename.'_source';
+        	$invoice_source->fetch($object->$fksource);
 		}
 		$alreadypayed=price($object->getSommePaiement(),'MT');
 
@@ -185,13 +191,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte.= '<input type="hidden" name="param1" value="FACTURE_ADDON_PDF_ODT_PATH">';
+		$texte.= '<input type="hidden" name="param1" value="'.strtoupper($this->modulename).'_ADDON_PDF_ODT_PATH">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
 		$texte.= '<tr><td>';
 		$texttitle=$langs->trans("ListOfDirectories");
-		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->FACTURE_ADDON_PDF_ODT_PATH)));
+		$odtpath = strtoupper($this->modulename).'_ADDON_PDF_ODT_PATH';
+		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->$odtpath)));
 		$listoffiles=array();
 		foreach($listofdir as $key=>$tmpdir)
 		{
@@ -213,7 +220,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
 		$texte.= '<table><tr><td>';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
-		$texte.=$conf->global->FACTURE_ADDON_PDF_ODT_PATH;
+		$texte.=$conf->global->$odtpath;
 		$texte.= '</textarea>';
         $texte.= '</td>';
 		$texte.= '<td align="center">&nbsp; ';
@@ -253,7 +260,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
 	 *	@return	int         						1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath)
+	function write_file($object,$outputlangs,$srctemplatepath,$morelangfiles)
 	{
 		global $user,$langs,$conf,$mysoc;
 
@@ -271,14 +278,20 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
+		if (is_array($morelangfiles) and !empty($morelangfiles)) {
+			foreach ($morelangfiles as $langfile) {
+				$outputlangs->load($langfile);
+			}
+		}
 
-		if ($conf->facture->dir_output)
+		$lmodulename = strtolower($this->modulename);
+		if ($conf->$lmodulename->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Facture($this->db);
+				$object = new $this->modulename($this->db);
 				$object->fetch($id);
 
 				if ($result < 0)
@@ -288,7 +301,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 			}
 
-			$dir = $conf->facture->dir_output;
+			$dir = $conf->$lmodulename->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -317,7 +330,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				create_exdir($conf->facture->dir_temp);
+				create_exdir($conf->$lmodulename->dir_temp);
 
 
                 // If BILLING contact defined on invoice, we use it
@@ -351,19 +364,20 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 );
                 complete_substitutions_array($substitutionarray, $langs, $object);
 
-				/*
+			/*
 				// Line of free text
 				$newfreetext='';
-				$paramfreetext='FACTURE_FREE_TEXT';
+				$paramfreetext=strtoupper($this->modulename).'_FREE_TEXT';
 			    if (! empty($conf->global->$paramfreetext))
 			    {
 			        $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
-			    }*/
+			    }
+			*/
 
                 // Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
-						'PATH_TO_TMP'	  => $conf->facture->dir_temp,
+						'PATH_TO_TMP'	  => $conf->$lmodulename->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}')
