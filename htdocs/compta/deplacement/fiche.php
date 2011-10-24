@@ -70,12 +70,7 @@ if ($action == 'add' && $user->rights->deplacement->creer)
 	{
 		$error=0;
 
-        $dated=dol_mktime(12, 0, 0,
-		$_POST["remonth"],
-		$_POST["reday"],
-		$_POST["reyear"]);
-
-		$object->date			= $dated;
+		$object->date			= dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 		$object->km				= $_POST["km"];
 		$object->type			= $_POST["type"];
 		$object->socid			= $_POST["socid"];
@@ -105,7 +100,7 @@ if ($action == 'add' && $user->rights->deplacement->creer)
 
 			if ($id > 0)
 			{
-				Header("Location: " . $_SERVER["PHP_SELF"] . "?id=".$id);
+				Header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 				exit;
 			}
 			else
@@ -132,14 +127,12 @@ if ($action == 'update' && $user->rights->deplacement->creer)
 	{
 		$result = $object->fetch($id);
 
-		$object->date = dol_mktime(12, 0 , 0,
-		$_POST["remonth"],
-		$_POST["reday"],
-		$_POST["reyear"]);
-		$object->km      = $_POST["km"];
-		$object->type    = $_POST["type"];
-		$object->fk_user = $_POST["fk_user"];
-		$object->socid   = $_POST["socid"];
+		$object->date		= dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$object->km			= $_POST["km"];
+		$object->type		= $_POST["type"];
+		$object->fk_user	= $_POST["fk_user"];
+		$object->socid		= $_POST["socid"];
+		
 		$result = $object->update($user);
 
 		if ($result > 0)
@@ -187,10 +180,7 @@ if ($action == 'create')
 
 	dol_htmloutput_errors($mesg);
 
-	$datec = dol_mktime(12, 0, 0,
-	$_POST["remonth"],
-	$_POST["reday"],
-	$_POST["reyear"]);
+	$datec = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -200,12 +190,12 @@ if ($action == 'create')
 
 	print "<tr>";
 	print '<td width="25%" class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-	print $html->select_type_fees($_POST["type"]?$_POST["type"]:$_GET["type"],'type',1);
+	print $html->select_type_fees(GETPOST("type"),'type',1);
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-	print $html->select_users($_POST["fk_user"]?$_POST["fk_user"]:$_GET["fk_user"],'fk_user',1);
+	print $html->select_users(GETPOST("fk_user"),'fk_user',1);
 	print '</td></tr>';
 
 	print "<tr>";
@@ -214,12 +204,12 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Km
-    print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value="'.($_POST["km"]?$_POST["km"]:'').'"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value="' . GETPOST("km") . '"></td></tr>';
 
     // Company
 	print "<tr>";
 	print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-	print $html->select_societes($_POST["socid"]?$_POST["socid"]:$_GET["socid"],'socid','',1);
+	print $html->select_societes(GETPOST("socid"),'socid','',1);
 	print '</td></tr>';
 
 	// Public note
