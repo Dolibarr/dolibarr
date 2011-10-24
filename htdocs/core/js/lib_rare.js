@@ -2,7 +2,7 @@
 //
 // Script javascript that contains functions not frequently used
 //
-// \file       htdocs/lib/lib_rare.js
+// \file       htdocs/core/js/lib_rare.js
 // \brief      File that include javascript functions not frequently used (included if option use_javascript activated)
 
 
