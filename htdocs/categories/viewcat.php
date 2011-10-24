@@ -26,7 +26,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/categories.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/categories.lib.php");
 
 $langs->load("categories");
 

@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file		htdocs/lib/date.lib.php
+ *  \file		htdocs/core/lib/date.lib.php
  *  \brief		Set of function to manipulate dates
  */
 

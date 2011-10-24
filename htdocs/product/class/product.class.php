@@ -1009,7 +1009,7 @@ class Product extends CommonObject
 	 */
 	function fetch($id='',$ref='',$ref_ext='')
 	{
-	    include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
+	    include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
 
 		global $langs, $conf;
 

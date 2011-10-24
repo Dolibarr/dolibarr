@@ -25,7 +25,7 @@
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 // Security check
 $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';

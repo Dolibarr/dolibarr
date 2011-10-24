@@ -25,7 +25,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
 $action = isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 

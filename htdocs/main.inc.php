@@ -242,7 +242,7 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 || (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ! empty($conf->global->MAIN_VERSION_LAST_INSTALL) && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION)))
 {
     $versiontocompare=empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE;
-    require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
+    require_once(DOL_DOCUMENT_ROOT ."/core/lib/admin.lib.php");
 	$dolibarrversionlastupgrade=preg_split('/[.-]/',$versiontocompare);
 	$dolibarrversionprogram=preg_split('/[.-]/',DOL_VERSION);
     $rescomp=versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade);

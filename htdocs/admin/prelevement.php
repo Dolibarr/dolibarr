@@ -26,7 +26,7 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("admin");

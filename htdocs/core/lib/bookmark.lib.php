@@ -17,7 +17,7 @@
  */
 
 /**
- *	    \file       htdocs/lib/bookmark.lib.php
+ *	    \file       htdocs/core/lib/bookmark.lib.php
  *		\brief      List of functions for bookmark module
  */
 

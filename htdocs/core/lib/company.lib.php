@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/lib/company.lib.php
+ *	\file       htdocs/core/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
  */

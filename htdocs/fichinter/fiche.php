@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 if ($conf->projet->enabled)
 {
     require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");

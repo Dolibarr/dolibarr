@@ -17,7 +17,7 @@
  */
 
 /**
- * \file       htdocs/lib/bank.lib.php
+ * \file       htdocs/core/lib/bank.lib.php
  * \brief      Ensemble de fonctions de base pour le module banque
  * \ingroup    banque
  */

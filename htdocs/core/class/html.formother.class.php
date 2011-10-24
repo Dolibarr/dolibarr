@@ -560,7 +560,7 @@ class FormOther
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
-        require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
         $month = monthArrayOrSelected(-1);	// Get array
 

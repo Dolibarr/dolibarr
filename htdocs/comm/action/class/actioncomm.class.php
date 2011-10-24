@@ -666,7 +666,7 @@ class ActionComm extends CommonObject
 		global $conf,$langs,$dolibarr_main_url_root,$mysoc;
 
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
-		require_once (DOL_DOCUMENT_ROOT ."/lib/date.lib.php");
+		require_once (DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php");
 
 		dol_syslog(get_class($this)."::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 

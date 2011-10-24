@@ -28,7 +28,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');

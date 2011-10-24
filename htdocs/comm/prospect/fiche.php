@@ -24,7 +24,7 @@
  */
 
 require_once("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");

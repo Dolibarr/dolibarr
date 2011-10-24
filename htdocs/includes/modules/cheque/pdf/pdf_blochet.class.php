@@ -24,7 +24,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/cheque/pdf/modules_chequereceipts.php");
 
 

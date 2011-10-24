@@ -23,7 +23,7 @@
  *	\brief      File to build payment reports
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
 
 /**
@@ -74,7 +74,7 @@ class pdf_paiement
 	 */
 	function write_file($_dir, $month, $year, $outputlangs)
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
 
 		global $user,$langs,$conf;
 

@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file		htdocs/lib/agenda.lib.php
+ *  \file		htdocs/core/lib/agenda.lib.php
  *  \brief		Set of function for the agenda module
  */
 

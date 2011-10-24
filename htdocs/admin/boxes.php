@@ -24,7 +24,7 @@
 
 require("../main.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
-include_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+include_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 $langs->load("admin");
 

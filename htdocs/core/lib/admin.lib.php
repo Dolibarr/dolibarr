@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file			htdocs/lib/admin.lib.php
+ *	\file			htdocs/core/lib/admin.lib.php
  *  \brief			Library of admin functions
  */
 

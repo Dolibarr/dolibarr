@@ -28,7 +28,7 @@
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/modules_commandefournisseur.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 

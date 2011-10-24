@@ -492,7 +492,7 @@ abstract class DolibarrModules
 
         $error=0;
 
-        include_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
+        include_once(DOL_DOCUMENT_ROOT ."/core/lib/admin.lib.php");
 
         $ok = 1;
         foreach($conf->file->dol_document_root as $dirroot)

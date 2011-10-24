@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file			htdocs/lib/admin_extrafields.inc.php
+ *	\file			htdocs/core/admin_extrafields.inc.php
  *  \brief			Code for actions on extrafields admin pages
  */
 

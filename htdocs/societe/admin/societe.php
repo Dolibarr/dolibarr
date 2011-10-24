@@ -26,8 +26,8 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
 $langs->load("admin");
 

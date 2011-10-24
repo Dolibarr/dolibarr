@@ -28,7 +28,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");

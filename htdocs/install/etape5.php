@@ -27,7 +27,7 @@
 
 include_once("./inc.php");
 if (file_exists($conffile)) include_once($conffile);
-require_once($dolibarr_main_document_root . "/lib/admin.lib.php");
+require_once($dolibarr_main_document_root . "/core/lib/admin.lib.php");
 
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
