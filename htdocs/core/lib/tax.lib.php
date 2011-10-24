@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/lib/tax.lib.php
+ *      \file       htdocs/core/lib/tax.lib.php
  *      \ingroup    tax
  *      \brief      Library for tax module
  */

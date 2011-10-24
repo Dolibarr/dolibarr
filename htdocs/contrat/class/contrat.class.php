@@ -28,7 +28,7 @@
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/price.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/price.lib.php");
 
 
 /**

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +18,8 @@
  */
 
 /**
- *	    \file       htdocs/lib/stock.lib.php
- *		\brief      Library file with function for stock module
+ *	    \file       htdocs/core/lib/contact.lib.php
+ *		\brief      Ensemble de fonctions de base pour les contacts
  */
 
 /**
@@ -27,52 +28,50 @@
  * @param   $object
  * @return  array
  */
-function stock_prepare_head($object)
+function contact_prepare_head($object)
 {
 	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("WarehouseCard");
+	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("StockMovements");
-	$head[$h][2] = 'movements';
-	$h++;
-
-	/*
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("EnhancedValue");
-	$head[$h][2] = 'value';
-	$h++;
-	*/
-
-	/* Disabled because will never be implemented. Table always empty.
-	if ($conf->global->STOCK_USE_WAREHOUSE_BY_USER)
+	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
 	{
-		// Should not be enabled by defaut because does not work yet correctly because
-		// personnal stocks are not tagged into table llx_entrepot
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Users");
-		$head[$h][2] = 'user';
+		$langs->load("ldap");
+
+		$head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("LDAPCard");
+		$head[$h][2] = 'ldap';
 		$h++;
 	}
-	*/
+
+	$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("PersonalInformations");
+	$head[$h][2] = 'perso';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("ExportImport");
+	$head[$h][2] = 'exportimport';
+	$h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'stock');
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'contact');
 
-    $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
+
+
 
 	return $head;
 }

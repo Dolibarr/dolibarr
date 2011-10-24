@@ -17,7 +17,7 @@
 
 
 /**
- *  \file       htdocs/lib/xcal.lib.php
+ *  \file       htdocs/core/lib/xcal.lib.php
  *  \brief      Function to manage calendar files (vcal/ical/...)
  */
 

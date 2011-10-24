@@ -18,7 +18,7 @@
  */
 
 /**
- *		\file 		htdocs/lib/price.lib.php
+ *		\file 		htdocs/core/lib/price.lib.php
  *		\brief 		Librairie contenant les fonctions pour calculer un prix.
  */
 

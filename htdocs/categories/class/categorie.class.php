@@ -1201,7 +1201,7 @@ class Categorie
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
 		$dir .= "photos/";
@@ -1306,7 +1306,7 @@ class Categorie
 	 */
 	function delete_photo($file)
 	{
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette

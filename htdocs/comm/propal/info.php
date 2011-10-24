@@ -26,7 +26,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/propal.lib.php");
 
 $langs->load('propal');
 $langs->load('compta');

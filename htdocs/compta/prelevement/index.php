@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'prelevement','','');
 
 llxHeader('',$langs->trans("CustomersStandingOrdersArea"));
 
-require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
 if (prelevement_check_config() < 0)
 {
 	$langs->load("errors");

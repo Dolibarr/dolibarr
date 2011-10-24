@@ -25,7 +25,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
 if(! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 // Defini si peux lire/modifier utilisateurs et permisssions

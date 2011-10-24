@@ -1122,7 +1122,7 @@ abstract class CommonObject
 	 */
 	function update_price($exclspec=0,$roundingadjust=-1)
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
 		if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
         if ($roundingadjust < 0) $roundingadjust=0;

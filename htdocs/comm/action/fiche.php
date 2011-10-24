@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formactions.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 
 $langs->load("companies");
 $langs->load("commercial");

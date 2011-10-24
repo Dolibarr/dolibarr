@@ -206,7 +206,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 {
 	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	if (!$fichinterref)
 	{

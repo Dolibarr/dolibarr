@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       	htdocs/lib/report.lib.php
+ *  \file       	htdocs/core/lib/report.lib.php
  *  \brief      	Set of functions for reporting
  */
 

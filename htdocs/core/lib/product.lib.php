@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/lib/product.lib.php
+ *	\file       htdocs/core/lib/product.lib.php
  *	\brief      Ensemble de fonctions de base pour le module produit et service
  * 	\ingroup	product
  */

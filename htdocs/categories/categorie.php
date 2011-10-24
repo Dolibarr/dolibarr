@@ -284,7 +284,7 @@ else if ($id || $ref)
 		/*
 		 * Fiche categorie de produit
 		 */
-		require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
 		require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 		// Produit
@@ -339,7 +339,7 @@ else if ($id || $ref)
 		/*
 		 * Fiche categorie d'adherent
 		 */
-		require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
 		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 

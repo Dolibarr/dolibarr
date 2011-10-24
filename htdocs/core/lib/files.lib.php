@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file		htdocs/lib/files.lib.php
+ *  \file		htdocs/core/lib/files.lib.php
  *  \brief		Library for file managing functions
  */
 
@@ -724,7 +724,7 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 function dol_delete_preview($object)
 {
 	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     if ($object->element == 'commande') $dir = $conf->commande->dir_output;
     if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';

@@ -20,7 +20,7 @@
  */
 
 /**
- *  \file       htdocs/lib/order.lib.php
+ *  \file       htdocs/core/lib/order.lib.php
  *  \brief      Ensemble de fonctions de base pour le module commande
  *  \ingroup    commande
  */

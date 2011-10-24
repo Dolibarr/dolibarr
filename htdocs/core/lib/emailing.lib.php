@@ -17,7 +17,7 @@
  */
 
 /**
- *	    \file       htdocs/lib/emailing.lib.php
+ *	    \file       htdocs/core/lib/emailing.lib.php
  *		\brief      Library file with function for emailing module
  */
 

@@ -24,7 +24,7 @@
  */
 
 require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 
 if (!$user->rights->prelevement->bons->lire)
@@ -58,7 +58,7 @@ if ( $action == 'confirm_credite' && GETPOST("confirm") == 'yes')
 
 if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	$bon = new BonPrelevement($db,"");
 	$bon->fetch($id);

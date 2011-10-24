@@ -23,7 +23,7 @@
  *		\ingroup    mailing
  *		\brief      File with parent class of emailing target selectors modules
  */
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
 
 
 /**

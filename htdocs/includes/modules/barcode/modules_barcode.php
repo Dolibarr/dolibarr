@@ -24,7 +24,7 @@
  *   \ingroup    barcode
  *   \brief      Fichier contenant la classe mere de generation des codes barres
  */
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
 
 
 /**

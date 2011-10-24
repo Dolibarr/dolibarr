@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/lib/ecm.lib.php
+ *  \file       htdocs/core/lib/ecm.lib.php
  *  \brief      Ensemble de fonctions de base pour le module ecm
  *  \ingroup    ecm
  */

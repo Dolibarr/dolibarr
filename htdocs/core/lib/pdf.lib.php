@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/lib/pdf.lib.php
+ *	\file       htdocs/core/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
  */

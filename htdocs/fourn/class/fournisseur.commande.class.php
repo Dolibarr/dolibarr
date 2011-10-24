@@ -272,7 +272,7 @@ class CommandeFournisseur extends Commande
     function valid($user)
     {
         global $langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $error=0;
 
@@ -933,7 +933,7 @@ class CommandeFournisseur extends Commande
         global $langs,$mysoc;
 
         dol_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2. $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type");
-        include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         // Clean parameters
         if (! $qty) $qty=1;
@@ -1565,7 +1565,7 @@ class CommandeFournisseur extends Commande
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0)
     {
         dol_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");
-        include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         if ($this->brouillon)
         {

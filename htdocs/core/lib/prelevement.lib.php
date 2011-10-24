@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/lib/prelevement.lib.php
+ *	\file       htdocs/core/lib/prelevement.lib.php
  *	\brief      Ensemble de fonctions de base pour le module prelevement
  *	\ingroup    propal
  */

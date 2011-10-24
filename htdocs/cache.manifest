@@ -12,7 +12,7 @@ index.php
 main.inc.php
 master.inc.php
 filefunc.inc.php
-lib/functions.lib.php
+core/lib/functions.lib.php
 
 # The NETWORK section contains the path to a folder to ensure that requests
 # to load resources contained under /api will bypass the cache and always fetch the resource from the server.

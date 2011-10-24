@@ -182,7 +182,7 @@ class FormFile
     function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hookmanager=false)
     {
         // filedir = conf->...dir_ouput."/".get_exdir(id)
-        include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
         global $langs,$bc,$conf;
 

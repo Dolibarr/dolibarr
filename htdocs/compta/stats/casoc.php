@@ -24,8 +24,8 @@
  */
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/report.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 $langs->load("companies");

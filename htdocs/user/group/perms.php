@@ -26,7 +26,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
 
 $langs->load("users");
 

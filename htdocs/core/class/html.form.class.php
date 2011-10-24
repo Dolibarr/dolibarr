@@ -2253,7 +2253,7 @@ class Form
     {
         global $langs;
 
-        require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 
         $langs->load("project");
         if ($htmlname != "none")

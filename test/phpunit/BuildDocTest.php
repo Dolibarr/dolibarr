@@ -34,7 +34,7 @@ require_once dirname(__FILE__).'/../../htdocs/fichinter/class/fichinter.class.ph
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
-require_once dirname(__FILE__).'/../../htdocs/lib/pdf.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/doc/pdf_crabe.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/doc/pdf_oursin.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/pdf_edison.modules.php';

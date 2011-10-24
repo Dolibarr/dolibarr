@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/lib/fichinter.lib.php
+ *	\file       htdocs/core/lib/fichinter.lib.php
  *	\brief      Ensemble de fonctions de base pour le module fichinter
  *	\ingroup    fichinter
  */

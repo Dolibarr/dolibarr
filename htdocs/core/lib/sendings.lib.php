@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/lib/sendings.lib.php
+ *	\file       htdocs/core/lib/sendings.lib.php
  *	\ingroup    expedition
  *	\brief      Library for expedition module
  */

@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
 
 /**

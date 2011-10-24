@@ -24,7 +24,7 @@
  *		\brief      Index page of VAT reports
  */
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 

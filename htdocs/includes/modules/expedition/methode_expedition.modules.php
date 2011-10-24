@@ -23,7 +23,7 @@
  *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
  *				et la classe mere de numerotation des bons de livraisons
  */
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
 /**

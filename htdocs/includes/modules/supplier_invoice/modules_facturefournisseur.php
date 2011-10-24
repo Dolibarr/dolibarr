@@ -128,7 +128,7 @@ function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 function supplier_invoice_delete_preview($db, $objectid)
 {
 	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	$comfourn = new FactureFournisseur($db);
 	$comfourn->fetch($objectid);

@@ -25,7 +25,7 @@
  *	\brief      File of parent class of document generator for members cards.
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 

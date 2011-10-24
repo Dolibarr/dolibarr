@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Include Dolibarr environment
 require_once($path.'../../htdocs/master.inc.php');
-require_once($path.'../../htdocs/lib/files.lib.php');
+require_once($path.'../../htdocs/core/lib/files.lib.php');
 // After this $db is an opened handler to database. We close it at end of file.
 
 // Load main language strings

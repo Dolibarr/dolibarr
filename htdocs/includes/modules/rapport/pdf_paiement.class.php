@@ -22,7 +22,7 @@
  *	\ingroup    banque
  *	\brief      File to build payment reports
  */
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
 

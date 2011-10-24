@@ -23,7 +23,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 $langs->load("companies");
 $langs->load("products");
@@ -74,7 +74,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
  */
 if ($_POST['addfile'] || $_POST['addfilehtml'])
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;

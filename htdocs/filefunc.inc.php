@@ -205,14 +205,14 @@ if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset(
 
 if (! defined('ADODB_DATE_VERSION'))    include_once(ADODB_PATH.'adodb-time.inc.php');
 
-if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
+if (! file_exists(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php"))
 {
 	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
 	exit;
 }
 
-include_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
+include_once(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
 include_once(DOL_DOCUMENT_ROOT ."/core/lib/security.lib.php");	// Include by default
 
 // If password is encoded, we decode it

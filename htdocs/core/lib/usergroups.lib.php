@@ -19,7 +19,7 @@
 
 
 /**
- *	    \file       htdocs/lib/usergroups.lib.php
+ *	    \file       htdocs/core/lib/usergroups.lib.php
  *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
  */
 function user_prepare_head($object)

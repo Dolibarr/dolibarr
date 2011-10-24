@@ -39,7 +39,7 @@ require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
 // Load main language strings
