@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2011	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ class Ldap
 	/**
 	 *  Constructor
 	 */
-	function Ldap ()
+	function __construct()
 	{
 		global $conf;
 
@@ -1319,29 +1319,29 @@ class Ldap
 	
 
 	/**
-	 *  \brief      Return available value of group GID 
-	 *  \param      
-	 *  \return     int         	gid number
+	 *	Return available value of group GID   
+	 *	@return     int         	gid number
 	 */	
-	function getNextGroupGid() {
+	function getNextGroupGid()
+	{
 		global $conf;
+		
 		$search='('.$conf->global->LDAP_KEY_GROUPS.'=*)';
 		$result = $this->search($this->groups,$search);
-		if($result) {
-			$c = $result['count'];
-		$gids = array();
-		for($i=0;$i<$c;$i++) 
+		if($result)
 		{
-			$gids[] = $result[$i]['gidnumber'][0];	
+			$c = $result['count'];
+			$gids = array();
+			for($i=0;$i<$c;$i++)
+			{
+				$gids[] = $result[$i]['gidnumber'][0];
+			}
+			rsort($gids);
+			
+			return $gids[0]+1;
 		}
-		rsort($gids);
 		
-		
-		return $gids[0]+1;	
-		}
-		
-		return 0;
-				
+		return 0;		
 	}
 }
 
