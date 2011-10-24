@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/lib/format_cards.lib.php
+ *	\file       htdocs/core/lib/format_cards.lib.php
  *	\brief      Set of functions used for cards generation
  *	\ingroup    core
  */

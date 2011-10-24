@@ -23,7 +23,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/trip.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/trip.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 if ($conf->projet->enabled)

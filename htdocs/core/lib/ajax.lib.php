@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file		htdocs/lib/ajax.lib.php
+ *  \file		htdocs/core/lib/ajax.lib.php
  *  \brief		Page called by Ajax request for produts
  */
 

@@ -417,7 +417,7 @@ function form_constantes($tableau)
             {
                 print '<td>';
                 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
-                require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
                 $arrayoflabels=array();
                 foreach(array_keys($_Avery_Labels) as $codecards)
                 {

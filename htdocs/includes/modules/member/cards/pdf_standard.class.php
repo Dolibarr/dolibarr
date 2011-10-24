@@ -63,7 +63,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
 
 
 /**
