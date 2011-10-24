@@ -199,7 +199,7 @@ else
     // Date To Birth
     if ($contact->birthday != '')
     {
-        include_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
 
         print '<tr><td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($contact->birthday,"day");
 

@@ -27,7 +27,7 @@
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
 
 
 /**

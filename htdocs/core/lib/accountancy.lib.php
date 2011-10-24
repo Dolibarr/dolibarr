@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file			htdocs/lib/accountancy.lib.php
+ *	\file			htdocs/core/lib/accountancy.lib.php
  *  \brief			Library of accountancy functions
  */
 

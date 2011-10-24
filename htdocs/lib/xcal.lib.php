@@ -44,7 +44,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 	$calfileh=fopen($outputfile,'w');
 	if ($calfileh)
 	{
-	    include_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
+	    include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
 		$now=dol_now();
 
 		$encoding='';
