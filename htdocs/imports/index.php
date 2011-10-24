@@ -61,7 +61,7 @@ print '<td>'.$langs->trans("LibraryShort").'</td>';
 print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
-include_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php');
 $model=new ModeleImports();
 $liste=$model->liste_modeles($db);
 

@@ -636,7 +636,7 @@ function Activate($value,$withdeps=1)
     $found=false;
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
-        $modulesdir[] = $dirroot."/includes/modules/";
+        $modulesdir[] = $dirroot."/core/modules/";
 
         if ($type == 'alt')
         {
@@ -647,9 +647,9 @@ function Activate($value,$withdeps=1)
                 {
                     if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                     {
-                        if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
                         {
-                            $modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
                         }
                     }
                 }
@@ -703,7 +703,7 @@ function Activate($value,$withdeps=1)
             $num = count($objMod->depends);
             for ($i = 0; $i < $num; $i++)
             {
-                if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->depends[$i].".class.php"))
+                if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/".$objMod->depends[$i].".class.php"))
                 {
                     Activate($objMod->depends[$i]);
                 }
@@ -716,7 +716,7 @@ function Activate($value,$withdeps=1)
             $num = count($objMod->conflictwith);
             for ($i = 0; $i < $num; $i++)
             {
-                if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->conflictwith[$i].".class.php"))
+                if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/".$objMod->conflictwith[$i].".class.php"))
                 {
                     UnActivate($objMod->conflictwith[$i],0);
                 }
@@ -751,7 +751,7 @@ function UnActivate($value, $requiredby=1)
     $found=false;
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
-        $modulesdir[] = $dirroot."/includes/modules/";
+        $modulesdir[] = $dirroot."/core/modules/";
 
         if ($type == 'alt')
         {
@@ -762,9 +762,9 @@ function UnActivate($value, $requiredby=1)
                 {
                     if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                     {
-                        if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
                         {
-                            $modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
                         }
                     }
                 }
@@ -842,7 +842,7 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
     $j = 0; // j is module number. Automatically affected if module number not defined.
     foreach ($conf->file->dol_document_root as $dirroot)
     {
-        $dir = $dirroot . "/includes/modules/";
+        $dir = $dirroot . "/core/modules/";
 
         // Load modules attributes in arrays (name, numero, orders) from dir directory
         //print $dir."\n<br>";

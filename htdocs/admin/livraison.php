@@ -70,7 +70,7 @@ if ($action == 'specimen')
 	//$sending->fetch_commande();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/livraison/pdf/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/livraison/pdf/";
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -238,7 +238,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/livraison/";
+	$dir = $dirroot . "/core/modules/livraison/";
 
 	if (is_dir($dir))
 	{
@@ -252,7 +252,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
-					require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/".$file.".php");
+					require_once(DOL_DOCUMENT_ROOT ."/core/modules/livraison/".$file.".php");
 
 					$module = new $file;
 
@@ -371,7 +371,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/livraison/pdf/";
+	$dir = $dirroot . "/core/modules/livraison/pdf/";
 
 	if (is_dir($dir))
 	{

@@ -211,7 +211,7 @@ print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
 // Charge tableau des modules generation
-$dir = "../includes/modules/security/generate";
+$dir = "../core/modules/security/generate";
 clearstatcache();
 $handle=opendir($dir);
 $i=1;

@@ -67,7 +67,7 @@ print "</table></form><br>\n";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("TargetsStatistics").'</td></tr>';
 
-$dir=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
+$dir=DOL_DOCUMENT_ROOT."/core/modules/mailings";
 $handle=opendir($dir);
 
 $var=True;

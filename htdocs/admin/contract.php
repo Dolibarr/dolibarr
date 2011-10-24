@@ -80,7 +80,7 @@ if ($action == 'setmod')
 
 llxHeader();
 
-$dir=DOL_DOCUMENT_ROOT."/includes/modules/contract/";
+$dir=DOL_DOCUMENT_ROOT."/core/modules/contract/";
 $html=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -101,7 +101,7 @@ print "</tr>\n";
 
 clearstatcache();
 
-$dir = "../includes/modules/contract/";
+$dir = "../core/modules/contract/";
 $handle = opendir($dir);
 if (is_resource($handle))
 {
@@ -113,7 +113,7 @@ if (is_resource($handle))
         {
             $file = substr($file, 0, dol_strlen($file)-4);
 
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/contract/".$file.".php");
+            require_once(DOL_DOCUMENT_ROOT ."/core/modules/contract/".$file.".php");
 
             $module = new $file;
 

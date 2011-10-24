@@ -30,7 +30,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/commande/modules_commande.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
@@ -852,7 +852,7 @@ if ($action == 'builddoc')	// In get or post
 {
     /*
      * Generate order document
-     * define into /includes/modules/commande/modules_commande.php
+     * define into /core/modules/commande/modules_commande.php
      */
 
     // Sauvegarde le dernier modele choisi pour generer un document
@@ -1285,7 +1285,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td colspan="2">';
     // pdf
-    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+    include_once(DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php');
     $liste=ModelePDFCommandes::liste_modeles($db);
     print $html->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
     print "</td></tr>";

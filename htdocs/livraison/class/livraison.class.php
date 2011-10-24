@@ -329,9 +329,9 @@ class Livraison extends CommonObject
 				// Definition du nom de module de numerotation de commande
 				$modName = $conf->global->LIVRAISON_ADDON;
 
-				if (is_readable(DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.$modName.'.php'))
+				if (is_readable(DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php'))
 				{
-					require_once DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.$modName.'.php';
+					require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php';
 
 					// Recuperation de la nouvelle reference
 					$objMod = new $modName($this->db);

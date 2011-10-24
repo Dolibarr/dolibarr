@@ -35,23 +35,23 @@ require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/doc/pdf_crabe.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/doc/pdf_oursin.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/pdf_edison.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/pdf_einstein.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/propale/pdf_propale_azur.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/propale/pdf_propale_jaune.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/project/pdf/pdf_baleine.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/fichinter/pdf_soleil.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/expedition/pdf/pdf_expedition_merou.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/expedition/pdf/pdf_expedition_rouget.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_oursin.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/pdf_edison.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/pdf_einstein.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/pdf_propale_azur.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/pdf_propale_jaune.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/project/pdf/pdf_baleine.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/pdf_soleil.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/pdf/pdf_expedition_merou.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/pdf/pdf_expedition_rouget.modules.php';
 // Mother classes of pdf generators
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/modules_facture.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/modules_commande.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/propale/modules_propale.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/project/modules_project.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/fichinter/modules_fichinter.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/expedition/pdf/ModelePdfExpedition.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/modules_facture.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/modules_commande.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/modules_propale.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_project.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/pdf/ModelePdfExpedition.class.php';
 
 if (empty($user->id))
 {

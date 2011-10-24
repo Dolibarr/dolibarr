@@ -29,7 +29,7 @@
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">../../htdocs/includes/menus/smartphone/</directory>
+    <directory suffix=".php">../../htdocs/core/menus/smartphone/</directory>
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
@@ -40,11 +40,11 @@
     <directory suffix=".lib.php">../../htdocs/</directory>
     <directory suffix=".inc.php">../../htdocs/</directory>
     <directory suffix=".modules.php">../../htdocs/</directory>
-    <file>../../htdocs/includes/modules/facture/modules_facture.php</file>
-    <file>../../htdocs/includes/modules/commande/modules_commande.php</file>
-    <file>../../htdocs/includes/modules/propale/modules_propale.php</file>
-    <file>../../htdocs/includes/modules/project/modules_project.php</file>
-    <file>../../htdocs/includes/modules/fichinter/modules_fichinter.php</file>
+    <file>../../htdocs/core/modules/facture/modules_facture.php</file>
+    <file>../../htdocs/core/modules/commande/modules_commande.php</file>
+    <file>../../htdocs/core/modules/propale/modules_propale.php</file>
+    <file>../../htdocs/core/modules/project/modules_project.php</file>
+    <file>../../htdocs/core/modules/fichinter/modules_fichinter.php</file>
     <exclude>
     <directory suffix=".php">../../build/</directory>
     <directory suffix=".php">../../dev/</directory>
@@ -67,7 +67,7 @@
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">../../htdocs/includes/menus/smartphone</directory>
+    <directory suffix=".php">../../htdocs/core/menus/smartphone</directory>
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>

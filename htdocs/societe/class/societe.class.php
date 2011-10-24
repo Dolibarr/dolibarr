@@ -1743,7 +1743,7 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODECLIENT_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
             $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
             $mod = new $var;
 
@@ -1763,7 +1763,7 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
             $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
             $mod = new $var;
 
@@ -1784,7 +1784,7 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODECLIENT_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
 
             $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 
@@ -1812,7 +1812,7 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
 
             $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 
@@ -1844,7 +1844,7 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODECLIENT_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
 
             $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 
@@ -1873,7 +1873,7 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
 
             $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 
@@ -1902,7 +1902,7 @@ class Societe extends CommonObject
 
         if ($conf->global->SOCIETE_CODECOMPTA_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECOMPTA_ADDON.'.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODECOMPTA_ADDON.'.php';
 
             $var = $conf->global->SOCIETE_CODECOMPTA_ADDON;
 

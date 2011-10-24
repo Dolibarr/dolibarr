@@ -1154,11 +1154,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
 
 	// Load the top menu manager
-	$result=dol_include_once("/includes/menus/standard/".$top_menu);
+	$result=dol_include_once("/core/menus/standard/".$top_menu);
 	if (! $result)	// If failed to include, we try with standard
 	{
 		$top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT."/includes/menus/standard/".$top_menu);
+		include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
 	}
 
 
@@ -1351,11 +1351,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
 
     // Load the left menu manager
-	$result=dol_include_once("/includes/menus/standard/".$left_menu);
+	$result=dol_include_once("/core/menus/standard/".$left_menu);
 	if (! $result)	// If menu manager removed or not found
 	{
 		$left_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$left_menu);
+		include_once(DOL_DOCUMENT_ROOT ."/core/menus/standard/".$left_menu);
 	}
 
     // Left column

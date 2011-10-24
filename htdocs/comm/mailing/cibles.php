@@ -36,7 +36,7 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0)
 accessforbidden();
 
 
-$dirmod=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
+$dirmod=DOL_DOCUMENT_ROOT."/core/modules/mailings";
 
 
 $mesg = '';
@@ -69,7 +69,7 @@ if ($_GET["action"] == 'add')
 	$var=true;
 	foreach ($conf->file->dol_document_root as $dirmod)
 	{
-		$dir=$dirmod."/includes/modules/mailings/";
+		$dir=$dirmod."/core/modules/mailings/";
 
 		if (is_dir($dir))
 		{
@@ -229,7 +229,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		$var=true;
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-			$dir=$dirroot."/includes/modules/mailings/";
+			$dir=$dirroot."/core/modules/mailings/";
 
 			if (is_dir($dir))
 			{

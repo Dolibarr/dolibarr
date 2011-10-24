@@ -27,7 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/class/livraison.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/livraison/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/sendings.lib.php");
 if ($conf->product->enabled || $conf->service->enabled) require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");

@@ -79,7 +79,7 @@ $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 foreach ($dirlist as $dirroot)
 {
-    $dir = $dirroot . "/includes/modules/";
+    $dir = $dirroot . "/core/modules/";
 
     // Charge tableaux modules, nom, numero, orders depuis repertoire dir
     $handle=opendir($dir);
