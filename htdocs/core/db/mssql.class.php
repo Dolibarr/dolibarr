@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       	htdocs/lib/databases/mssql.class.php
+ *	\file       	htdocs/core/db/mssql.class.php
  *	\brief			Fichier de la classe permettant de gerer une base mssql
  */
 

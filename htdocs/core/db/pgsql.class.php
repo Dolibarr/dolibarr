@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/lib/databases/pgsql.class.php
+ *	\file       htdocs/core/db/pgsql.class.php
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
  */
 

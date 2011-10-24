@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/lib/databases/mysqli.class.php
+ *	\file       htdocs/core/db/mysqli.class.php
  *	\brief      Class file to manage Dolibarr database access for a Mysql database
  */
 
