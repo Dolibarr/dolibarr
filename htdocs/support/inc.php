@@ -37,7 +37,7 @@ if (! defined('ADODB_PATH'))
 require_once('../core/class/translate.class.php');
 require_once('../lib/functions.lib.php');
 require_once('../core/lib/admin.lib.php');
-require_once('../lib/files.lib.php');
+require_once('../core/lib/files.lib.php');
 require_once(ADODB_PATH.'adodb-time.inc.php');
 
 

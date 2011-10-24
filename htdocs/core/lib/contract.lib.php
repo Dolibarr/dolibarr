@@ -18,7 +18,7 @@
  */
 
 /**
- * \file       htdocs/lib/contract.lib.php
+ * \file       htdocs/core/lib/contract.lib.php
  * \brief      Ensemble de fonctions de base pour le module contrat
  */
 

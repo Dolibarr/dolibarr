@@ -47,7 +47,7 @@ accessforbidden();
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["cancel"]))
 || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     $new_pays_id=$_POST["pays_id"];
     $new_pays_code=getCountry($new_pays_id,2);
@@ -201,7 +201,7 @@ if ($_GET["action"] == 'addthumb')
 
 if ($_GET["action"] == 'removelogo')
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     $logofile=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
     dol_delete_file($logofile);

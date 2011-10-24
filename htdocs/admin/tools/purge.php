@@ -21,7 +21,7 @@
  */
 
 require("../../main.inc.php");
-include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 $langs->load("admin");
 

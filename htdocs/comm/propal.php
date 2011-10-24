@@ -399,7 +399,7 @@ if (GETPOST('action') == 'setstatut' && $user->rights->propale->cloturer)
  */
 if ($_POST['addfile'])
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	// Set tmp user directory TODO Use a dedicated directory for temp mails files
 	$vardir=$conf->user->dir_output."/".$user->id;
@@ -416,7 +416,7 @@ if ($_POST['addfile'])
  */
 if (! empty($_POST['removedfile']))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;

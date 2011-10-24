@@ -58,7 +58,7 @@ if ( $action == 'confirm_credite' && GETPOST("confirm") == 'yes')
 
 if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	$bon = new BonPrelevement($db,"");
 	$bon->fetch($id);

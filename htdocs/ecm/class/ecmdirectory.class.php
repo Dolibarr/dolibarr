@@ -322,7 +322,7 @@ class EcmDirectory // extends CommonObject
 	function delete($user)
 	{
 		global $conf, $langs;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 		$relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
 
@@ -643,7 +643,7 @@ class EcmDirectory // extends CommonObject
 	function refreshcachenboffile($all=0)
 	{
 		global $conf;
-		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 		$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
 		$filelist=dol_dir_list($dir,'files',0,'','\.meta$');

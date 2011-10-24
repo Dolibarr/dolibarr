@@ -1059,7 +1059,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
             // with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
             if (! empty($obj->description))	// List of directories to scan is defined
             {
-                include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+                include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
                 $const=$obj->description;
                 $dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));

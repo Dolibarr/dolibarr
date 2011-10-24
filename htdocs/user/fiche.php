@@ -267,7 +267,7 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
 
 if ($action == 'update' && ! $_POST["cancel"])
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     if ($caneditfield)	// Case we can edit all field
     {

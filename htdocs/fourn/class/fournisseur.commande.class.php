@@ -272,7 +272,7 @@ class CommandeFournisseur extends Commande
     function valid($user)
     {
         global $langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $error=0;
 

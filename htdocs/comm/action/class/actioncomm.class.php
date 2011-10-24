@@ -695,7 +695,7 @@ class ActionComm extends CommonObject
 		if ($cachedelay)
 		{
 			$nowgmt = dol_now();
-            include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+            include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 			if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay))
 			{
 				dol_syslog(get_class($this)."::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");

@@ -36,7 +36,7 @@ require_once($dolibarr_main_document_root . '/commande/class/commande.class.php'
 require_once($dolibarr_main_document_root . '/fourn/class/fournisseur.commande.class.php');
 require_once($dolibarr_main_document_root . '/lib/price.lib.php');
 require_once($dolibarr_main_document_root . '/core/class/menubase.class.php');
-require_once($dolibarr_main_document_root . '/lib/files.lib.php');
+require_once($dolibarr_main_document_root . '/core/lib/files.lib.php');
 
 $grant_query='';
 $etape = 2;

@@ -51,7 +51,7 @@ function llxHeader() { }
 
 
 require("./main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');

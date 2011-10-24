@@ -174,7 +174,7 @@ class Commande extends CommonObject
     function valid($user)
     {
         global $conf,$langs;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $error=0;
 
@@ -2290,7 +2290,7 @@ class Commande extends CommonObject
     function delete($user)
     {
         global $conf, $langs;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $err = 0;
 

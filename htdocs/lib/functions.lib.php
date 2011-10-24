@@ -2081,7 +2081,7 @@ function img_allow($allow,$alt='default')
  */
 function img_mime($file,$alt='')
 {
-    require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+    require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
     $mimetype=dol_mimetype($file,'',1);
     $mimeimg=dol_mimetype($file,'',2);
@@ -3812,7 +3812,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 {
     global $conf,$user;
 
-    require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+    require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
     // Check if there is external substitution to do asked by plugins
     // We look files into the includes/modules/substitutions directory

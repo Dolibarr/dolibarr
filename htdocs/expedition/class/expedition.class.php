@@ -421,7 +421,7 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs;
 
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 		dol_syslog("Expedition::valid");
 
@@ -770,7 +770,7 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";

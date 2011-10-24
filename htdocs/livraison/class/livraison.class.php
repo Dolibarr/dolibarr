@@ -314,7 +314,7 @@ class Livraison extends CommonObject
 	function valid($user)
 	{
 		global $conf;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 		dol_syslog("livraison.class.php::valid begin");
 
@@ -526,7 +526,7 @@ class Livraison extends CommonObject
 	 */
 	function delete()
 	{
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet";

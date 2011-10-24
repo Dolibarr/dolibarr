@@ -18,7 +18,7 @@
  */
 
 /**
- *	    \file       htdocs/lib/contact.lib.php
+ *	    \file       htdocs/core/lib/contact.lib.php
  *		\brief      Ensemble de fonctions de base pour les contacts
  */
 

@@ -235,7 +235,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 function supplier_order_delete_preview($db, $comfournid, $comfournref='')
 {
 	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	if (!$comfournref)
 	{
