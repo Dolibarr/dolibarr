@@ -101,8 +101,6 @@ $form=new Form($db);
 $formadmin=new FormAdmin($db);
 $formother=new FormOther($db);
 
-//$arrayofjs=array('/includes/jquery/plugins/colorpicker/jquery.colorpicker.js');
-//$arrayofcss=array('/includes/jquery/plugins/colorpicker/jquery.colorpicker.css');
 $arrayofjs=array();
 $arrayofcss=array();
 
