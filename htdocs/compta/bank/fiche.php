@@ -301,7 +301,7 @@ if ($action == 'create')
 	print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 	print '<td colspan="3">';
     // Editor wysiwyg
-	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 	$doleditor=new DolEditor('account_comment',$account->comment,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 	$doleditor->Create();
 	print '</td></tr>';
@@ -589,7 +589,7 @@ else
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">';
 	   // Editor wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 		$doleditor=new DolEditor('account_comment',(isset($_POST["account_comment"])?$_POST["account_comment"]:$account->comment),'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 		$doleditor->Create();
 		print '</td></tr>';

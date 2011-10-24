@@ -674,7 +674,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {
@@ -1165,7 +1165,7 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // Description - Editor wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
                 $doleditor=new DolEditor('eldesc',$line->description,'',200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
@@ -1218,7 +1218,7 @@ if ($id > 0 || ! empty($ref))
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
             // Editor wysiwyg
-            require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
             $nbrows=ROWS_2;
             if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
             $doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
@@ -1269,7 +1269,7 @@ if ($id > 0 || ! empty($ref))
                 if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
                 // Editor wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
                 $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);

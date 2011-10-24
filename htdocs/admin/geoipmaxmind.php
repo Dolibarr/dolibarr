@@ -24,7 +24,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/dolgeoip.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/dolgeoip.class.php");
 
 // Security check
 if (!$user->admin)

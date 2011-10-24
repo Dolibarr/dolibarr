@@ -558,7 +558,7 @@ if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_AD
                 $mimetype = $attachedfiles['mimes'];
 
                 // Envoi de la propal
-                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {
@@ -976,7 +976,7 @@ elseif ($fichinterid)
                 print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
                 // Editeur wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
                 $doleditor->Create();
                 print '</td>';
@@ -1031,7 +1031,7 @@ elseif ($fichinterid)
             print '<tr '.$bc[$var].">\n";
             print '<td>';
             // editeur wysiwyg
-            require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
             $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
             $doleditor->Create();
             print '</td>';

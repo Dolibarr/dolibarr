@@ -207,7 +207,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 		$subject=make_substitutions($subject,$substitutionarrayfortest);
 		$body=make_substitutions($body,$substitutionarrayfortest);
 
-		require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 		$mailfile = new CMailFile(
 			$subject, $sendto, $email_from, $body,
 			$filepath, $mimetype, $filename,
@@ -639,7 +639,7 @@ else
 		// If we use SSL/TLS
 		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
 
-		include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 		$mail = new CMailFile('','','','');
 		$result=$mail->check_server_port($server,$port);
 		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';

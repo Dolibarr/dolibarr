@@ -234,7 +234,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
 	// Editeur wysiwyg
-	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 	$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,'',142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
 	$doleditor->Create();
 	print '</td></tr>'."\n";
@@ -242,7 +242,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	// Message of the day on home page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
-	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 	$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,'',142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
 	$doleditor->Create();
 	print '</td></tr>'."\n";

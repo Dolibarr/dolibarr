@@ -243,7 +243,7 @@ if ($action == 'create')
     print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
     if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
     {
-        require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
         $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false);
         $doleditor->Create();
     }
@@ -500,7 +500,7 @@ else
 
             if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
             {
-                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true);
                 $doleditor->Create();
             }

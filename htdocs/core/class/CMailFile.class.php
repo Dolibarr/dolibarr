@@ -22,7 +22,7 @@
  */
 
 /**
- *      \file       htdocs/lib/CMailFile.class.php
+ *      \file       htdocs/core/class/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
  *      \author     Dan Potter.
  *      \author	    Eric Seigne

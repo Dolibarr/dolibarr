@@ -1221,7 +1221,7 @@ function dol_print_ip($ip,$mode=0)
         //$ip='24.24.24.24';
         //$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 
-        include_once(DOL_DOCUMENT_ROOT.'/lib/dolgeoip.class.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php');
         $geoip=new DolGeoIP('country',$datafile);
         //print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
         //print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
@@ -1257,7 +1257,7 @@ function dol_user_country()
         $datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
         //$ip='24.24.24.24';
         //$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
-        include_once(DOL_DOCUMENT_ROOT.'/lib/dolgeoip.class.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php');
         $geoip=new DolGeoIP('country',$datafile);
         $countrycode=$geoip->getCountryCodeFromIP($ip);
         $ret=$countrycode;

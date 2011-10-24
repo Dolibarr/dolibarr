@@ -1292,7 +1292,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {

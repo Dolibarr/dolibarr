@@ -501,7 +501,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				$mimetype = $attachedfiles['mimes'];
 
 				// Envoi de la propal
-				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+				require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)
 				{

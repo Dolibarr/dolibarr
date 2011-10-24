@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file			htdocs/lib/google.class.php
+ *	\file			htdocs/core/class/google.class.php
  *	\brief			A set of functions for using Google APIs
  */
 class GoogleAPI

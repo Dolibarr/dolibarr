@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/lib/doleditor.class.php
+ *       \file       htdocs/core/class/doleditor.class.php
  *       \brief      Class to manage a WYSIWYG editor
  */
 

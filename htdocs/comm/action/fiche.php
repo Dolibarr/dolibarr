@@ -587,7 +587,7 @@ if ($action == 'create')
 
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
     $doleditor=new DolEditor('note',($_POST["note"]?$_POST["note"]:$actioncomm->note),'',280,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
     $doleditor->Create();
     print '</td></tr>';
@@ -801,7 +801,7 @@ if ($id)
         // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
         // Editeur wysiwyg
-        require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
         $doleditor=new DolEditor('note',$act->note,'',240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,90);
         $doleditor->Create();
         print '</td></tr>';

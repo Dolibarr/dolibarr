@@ -42,7 +42,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 
 
 require($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
 
 $error = 0;

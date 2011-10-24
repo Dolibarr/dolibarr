@@ -719,7 +719,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {
@@ -1459,7 +1459,7 @@ else
                 }
 
                 // Description - Editor wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
                 $doleditor=new DolEditor('label',$fac->lines[$i]->description,'',128,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
@@ -1589,7 +1589,7 @@ else
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
             // Editor wysiwyg
-            require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
             $nbrows=ROWS_2;
             if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
             $doleditor=new DolEditor('label',GETPOST("label"),'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);

@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file		htdocs/lib/dolgeoip.class.php
+ *  \file		htdocs/core/class/dolgeoip.class.php
  * 	\ingroup	geoip
  *  \brief		Library for managing module geoip
  */

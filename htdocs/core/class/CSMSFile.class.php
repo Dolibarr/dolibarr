@@ -22,7 +22,7 @@
  */
 
 /**
- *      \file       htdocs/lib/CSMSFile.class.php
+ *      \file       htdocs/core/class/CSMSFile.class.php
  *      \brief      File of class to send sms
  *      \author	    Laurent Destailleur.
  */

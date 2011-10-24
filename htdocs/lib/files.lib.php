@@ -520,7 +520,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	// If we need to make a virus scan
 	if (empty($disablevirusscan) && file_exists($src_file) && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php');
 		$antivir=new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0)	// If virus or error, we stop here

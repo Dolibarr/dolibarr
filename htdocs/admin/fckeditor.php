@@ -25,7 +25,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 
 $langs->load("admin");
 $langs->load("fckeditor");
