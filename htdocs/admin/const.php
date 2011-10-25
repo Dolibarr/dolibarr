@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
-accessforbidden();
-//var_dump($_POST);
+if (! $user->admin) accessforbidden();
+
+$action = GETPOST('action');
 
 $typeconst=array('yesno','texte','chaine');
 
@@ -39,7 +39,7 @@ $typeconst=array('yesno','texte','chaine');
  * Actions
  */
 
-if ($_POST["action"] == 'add')
+if ($action == 'add')
 {
 	$error=0;
 
@@ -93,9 +93,9 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 }
 
 // Delete line from delete picto
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
-	if (dolibarr_del_const($db, $_GET["rowid"],$_GET["entity"]) < 0)
+	if (dolibarr_del_const($db, $_GET["rowid"], $_GET["entity"]) < 0)
 	{
 		dolibarr_print_error($db);
 	}
@@ -112,7 +112,7 @@ llxHeader('',$langs->trans("OtherSetup"));
 if ($conf->use_javascript_ajax)
 {
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#updateconst").hide();
 	jQuery("#delconst").hide();

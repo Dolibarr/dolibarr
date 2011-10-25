@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne                  <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin                <regis@dolibarr.fr>
- * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
+/* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Eric Seigne					<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2011	Regis Houssin				<regis@dolibarr.fr>
+ * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +30,12 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 
 $langs->load("admin");
-//$langs->load("companies");
-//$langs->load("bills");
-//$langs->load("other");
 $langs->load("errors");
 
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
 $action = GETPOST("action");
 $value = GETPOST("value");
-
-//$typeconst=array('yesno','texte','chaine');
 
 
 /*
@@ -282,23 +276,6 @@ if ($action == 'setforcedate')
     }
 }
 
-/*if ($action == 'update' || $action == 'add')
-{
-    if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity));
-    {
-        dol_print_error($db);
-    }
-}
-
-if ($action == 'delete')
-{
-	$rowid = GETPOST("rowid");
-    if (! dolibarr_del_const($db, $rowid,$conf->entity));
-    {
-        dol_print_error($db);
-    }
-}*/
-
 
 /*
  * View
@@ -312,17 +289,6 @@ $html=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("BillsSetup"),$linkback,'setup');
 print '<br>';
-
-/*
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/facture.php";
-$head[$h][1] = $langs->trans("Invoices");
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
-*/
 
 
 /*
@@ -364,7 +330,6 @@ foreach ($conf->file->dol_document_root as $dirroot)
                         $filebis = $file."/".$file.".modules.php";
                         $classname = "mod_facture_".$file;
                     }
-                    //print "x".$dir."-".$filebis."-".$classname;
                     if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
                     {
                         // Chargement de la classe de numerotation
@@ -524,8 +489,6 @@ foreach ($conf->file->dol_document_root as $dirroot)
                     $filelist[]=$file;
                 }
                 closedir($handle);
-                //sort($filelist);
-                //var_dump($filelist);
 
                 foreach($filelist as $file)
                 {
@@ -556,18 +519,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
-	                                print "<td align=\"center\">\n";
-	                                //if ($conf->global->FACTURE_ADDON_PDF != "$name")
-	                                //{
-	                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-	                                    print img_picto($langs->trans("Enabled"),'switch_on');
-	                                    print '</a>';
-	                                //}
-	                                //else
-	                                //{
-	                                //    print img_picto($langs->trans("Enabled"),'on');
-	                                //}
-	                                print "</td>";
+	                            	print '<td align="center">'."\n";
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+	                            	print '</a>';
+	                            	print '</td>';
 	                            }
 	                            else
 	                            {
@@ -640,8 +596,8 @@ print '</table>';
 print '<br>';
 print_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"));
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
 print '<table class="noborder" width="100%">';
 $var=True;
@@ -668,9 +624,10 @@ if ($conf->banque->enabled)
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num > 0) {
-            print '<select name="rib" class="flat" id="rib">';
-            print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+        if ($num > 0)
+        {
+        	print '<select name="rib" class="flat" id="rib">';
+        	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
             while ($i < $num)
             {
                 $row = $db->fetch_row($resql);
@@ -682,8 +639,10 @@ if ($conf->banque->enabled)
                 $i++;
             }
             print "</select>";
-        } else {
-            print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
+        }
+        else
+        {
+        	print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
         }
     }
 }
@@ -742,39 +701,39 @@ $var=true;
 
 // Force date validation
 $var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="setforcedate">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="setforcedate" />';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
 print $html->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 
 $var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_FACTURE_FREE_TEXT">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="set_FACTURE_FREE_TEXT" />';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInvoices").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="FACTURE_FREE_TEXT" class="flat" cols="120">'.$conf->global->FACTURE_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 
 $var=!$var;
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_FACTURE_DRAFT_WATERMARK\">";
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftBill").'<br>';
-print '<input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'">';
+print '<input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 
@@ -787,12 +746,15 @@ print '</table>';
 print '<br>';
 print_titre($langs->trans("PathToDocuments"));
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td>".$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Value")."</td>\n";
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '<td>'.$langs->trans("Name").'</td>'."\n";
+print '<td>'.$langs->trans("Value").'</td>'."\n";
 print "</tr>\n";
-print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->facture->dir_output."</td>\n</tr>\n";
+print '<tr '.$bc[false].'>'."\n";
+print '<td width="140">'.$langs->trans("PathDirectory").'</td>'."\n";
+print '<td>'.$conf->facture->dir_output.'</td>'."\n";
+print '</tr>'."\n";
 print "</table>\n";
 
 
