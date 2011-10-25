@@ -48,7 +48,6 @@ $action=GETPOST("action");
 $socid = GETPOST('socid');
 $id = GETPOST('id');
 if ($user->societe_id) $socid=$user->societe_id;
-// TODO: revoir les droits car pas clair
 //$result = restrictedArea($user, 'agenda', $id, 'actioncomm', 'actions', '', 'id');
 
 if (isset($_GET["error"])) $error=$_GET["error"];

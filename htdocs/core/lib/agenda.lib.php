@@ -26,22 +26,23 @@
 
 /**
  * Show filter form in agenda view
- * @param       $form
- * @param 		$canedit
- * @param 		$status
- * @param 		$year
- * @param 		$month
- * @param 		$day
- * @param 		$showbirthday
- * @param 		$filtera
- * @param 		$filtert
- * @param 		$filterd
- * @param 		$pid
- * @param 		$socid
+ * 
+ * @param	string	$form			Form name
+ * @param	int		$canedit		Can edit filter fields
+ * @param	int		$status			Status
+ * @param 	int		$year			Year
+ * @param 	int		$month			Month
+ * @param 	int		$day			Day
+ * @param 	int		$showbirthday	Show birthday
+ * @param 	string	$filtera		Filter on create by user
+ * @param 	string	$filtert		Filter on assigned to user
+ * @param 	string	$filterd		Filter of done by user
+ * @param 	int		$pid			Product id
+ * @param 	int		$socid			Third party id
  */
 function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid)
 {
-	global $conf,$langs;
+	global $conf,$langs,$db;
 
 	// Filters
 	if ($canedit || $conf->projet->enabled)
@@ -66,7 +67,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '<td nowrap="nowrap">';
 				print $langs->trans("ActionsAskedBy");
 				print ' &nbsp;</td><td nowrap="nowrap">';
-				print $form->select_users($filtera,'userasked',1,'',!$canedit);
+				print $form->select_dolusers($filtera,'userasked',1,'',!$canedit);
 				print '</td>';
 				print '</tr>';
 
@@ -74,14 +75,23 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '<td nowrap="nowrap">';
 				print $langs->trans("or").' '.$langs->trans("ActionsToDoBy");
 				print ' &nbsp;</td><td nowrap="nowrap">';
-				print $form->select_users($filtert,'usertodo',1,'',!$canedit);
+				print $form->select_dolusers($filtert,'usertodo',1,'',!$canedit);
 				print '</td></tr>';
 
 				print '<tr>';
 				print '<td nowrap="nowrap">';
 				print $langs->trans("or").' '.$langs->trans("ActionsDoneBy");
 				print ' &nbsp;</td><td nowrap="nowrap">';
-				print $form->select_users($filterd,'userdone',1,'',!$canedit);
+				print $form->select_dolusers($filterd,'userdone',1,'',!$canedit);
+				print '</td></tr>';
+				
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+				$htmlactions=new FormActions($db);
+				print '<tr>';
+				print '<td nowrap="nowrap">';
+				print $langs->trans("Type");
+				print ' &nbsp;</td><td nowrap="nowrap">';
+				print $htmlactions->select_type_actions(GETPOST('actioncode'), "actioncode");
 				print '</td></tr>';
 			}
 

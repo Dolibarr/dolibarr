@@ -39,6 +39,7 @@ $action=GETPOST('action','alpha');
 $year=GETPOST("year",'int');
 $month=GETPOST("month",'int');
 $day=GETPOST("day",'int');
+$actioncode=GETPOST('actioncode');
 $pid=GETPOST("projectid",'int');
 $status=GETPOST("status",'alpha');
 
@@ -144,6 +145,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
 $sql.= " WHERE c.id = a.fk_action";
 $sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND a.entity = '.$conf->entity;	// To limit to entity
+if ($actioncode) $sql.=" AND c.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
