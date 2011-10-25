@@ -121,6 +121,7 @@ ExportDataset_member_1=Adhérents et adhésions
 ImportDataset_member_1=Adhérents
 LastMembers=Les %s derniers adhérents
 LastMembersModified=Les %s derniers adhérents modifiés
+LastSubscriptionsModified=Les %s dernières adhésions modifiées
 AttributeName=Nom de l'attribut
 FieldEdition=Édition du champ %s
 AlphaNumOnlyCharsAndNoSpace=uniquement caractères alphanumériques sans espace
