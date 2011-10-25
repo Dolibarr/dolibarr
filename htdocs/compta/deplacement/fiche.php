@@ -75,7 +75,7 @@ if ($action == 'add' && $user->rights->deplacement->creer)
 		$object->type			= $_POST["type"];
 		$object->socid			= $_POST["socid"];
 		$object->fk_user		= $_POST["fk_user"];
-		$object->note			= $_POST["note"];
+		$object->note_private	= $_POST["note_private"];
 		$object->note_public	= $_POST["note_public"];
 
         if (! $object->date)
@@ -127,11 +127,13 @@ if ($action == 'update' && $user->rights->deplacement->creer)
 	{
 		$result = $object->fetch($id);
 
-		$object->date		= dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-		$object->km			= $_POST["km"];
-		$object->type		= $_POST["type"];
-		$object->fk_user	= $_POST["fk_user"];
-		$object->socid		= $_POST["socid"];
+		$object->date			= dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$object->km				= $_POST["km"];
+		$object->type			= $_POST["type"];
+		$object->fk_user		= $_POST["fk_user"];
+		$object->socid			= $_POST["socid"];
+		$object->note_private	= $_POST["note_private"];
+		$object->note_public	= $_POST["note_public"];
 		
 		$result = $object->update($user);
 
@@ -229,10 +231,10 @@ if ($action == 'create')
 	    print '<tr>';
 	    print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
 	    print '<td valign="top" colspan="2">';
-	    print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+	    print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 	    if (is_object($objectsrc))    // Take value from source object
 	    {
-	        print $objectsrc->note;
+	        print $objectsrc->note_private;
 	    }
 	    print '</textarea></td></tr>';
 	}
@@ -244,197 +246,220 @@ if ($action == 'create')
 
 	print '</form>';
 }
-else
+else if ($id)
 {
-	if ($id)
+	$result = $object->fetch($id);
+	if ($result > 0)
 	{
-		$result = $object->fetch($id);
-		if ($result > 0)
+		dol_htmloutput_mesg($mesg);
+
+		$head = trip_prepare_head($object);
+
+		dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
+
+		if ($action == 'edit')
 		{
-			dol_htmloutput_mesg($mesg);
-
-			$head = trip_prepare_head($object);
-
-			dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
-
-			if ($_GET["action"] == 'edit')
+			$soc = new Societe($db);
+			if ($object->socid)
 			{
-				$soc = new Societe($db);
-				if ($object->socid)
-				{
-					$soc->fetch($object->socid);
-				}
-
-				print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="update">';
-				print '<input type="hidden" name="id" value="'.$id.'">';
-
-				print '<table class="border" width="100%">';
-
-				// Ref
-				print "<tr>";
-				print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
-				print $object->ref;
-				print '</td></tr>';
-
-				// Type
-				print "<tr>";
-				print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-				print $html->select_type_fees($_POST["type"]?$_POST["type"]:$object->type,'type',0);
-				print '</td></tr>';
-
-				// Who
-				print "<tr>";
-				print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-				print $html->select_users($_POST["fk_user"]?$_POST["fk_user"]:$object->fk_user,'fk_user',0);
-				print '</td></tr>';
-
-				// Date
-				print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-				print $html->select_date($object->date,'','','','','update');
-				print '</td></tr>';
-
-                // Km
-                print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$object->km.'"></td></tr>';
-
-				// Where
-                print "<tr>";
-                print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-                print $html->select_societes($soc->id,'socid','',1);
-                print '</td></tr>';
-
-				print '</table>';
-
-				print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-				print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-				print '</center>';
-
-				print '</form>';
-
-				print '</div>';
-			}
-			else
-			{
-				/*
-				 * Confirmation de la suppression du deplacement
-				 */
-				if ($action == 'delete')
-				{
-					$ret=$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
-					if ($ret == 'html') print '<br>';
-				}
-
-				$soc = new Societe($db);
-				if ($object->socid) $soc->fetch($object->socid);
-
-				print '<table class="border" width="100%">';
-
-				// Ref
-				print "<tr>";
-				print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
-                print $html->showrefnav($object,'id','',1,'rowid','ref','');
-				print '</td></tr>';
-
-				// Type
-				print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($object->type).'</td></tr>';
-
-				// Who
-				print '<tr><td>'.$langs->trans("Person").'</td><td>';
-				$userfee=new User($db);
-				$userfee->fetch($object->fk_user);
-				print $userfee->getNomUrl(1);
-				print '</td></tr>';
-
-				// Date
-				print '<tr><td>'.$langs->trans("Date").'</td><td>';
-				print dol_print_date($object->date,'day');
-				print '</td></tr>';
-
-				// Km/Price
-				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$object->km.'</td></tr>';
-
-                // Where
-                print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
-                print '<td>';
-                if ($soc->id) print $soc->getNomUrl(1);
-                print '</td></tr>';
-
-				// Project
-				if ($conf->projet->enabled)
-				{
-					$langs->load('projects');
-					print '<tr>';
-					print '<td>';
-
-					print '<table class="nobordernopadding" width="100%"><tr><td>';
-					print $langs->trans('Project');
-					print '</td>';
-					if ($_GET['action'] != 'classify')
-					{
-						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
-						print img_edit($langs->trans('SetProject'),1);
-						print '</a></td>';
-					}
-					print '</tr></table>';
-					print '</td><td colspan="3">';
-					if ($_GET['action'] == 'classify')
-					{
-						$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
-					}
-					else
-					{
-						$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
-					}
-					print '</td>';
-					print '</tr>';
-				}
-
-				// Statut
-				print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-
-				print "</table>";
-
-				print '</div>';
+				$soc->fetch($object->socid);
 			}
 
+			print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="update">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
+
+			print '<table class="border" width="100%">';
+
+			// Ref
+			print "<tr>";
+			print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
+			print $object->ref;
+			print '</td></tr>';
+
+			// Type
+			print "<tr>";
+			print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
+			print $html->select_type_fees($_POST["type"]?$_POST["type"]:$object->type,'type',0);
+			print '</td></tr>';
+
+			// Who
+			print "<tr>";
+			print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
+			print $html->select_users($_POST["fk_user"]?$_POST["fk_user"]:$object->fk_user,'fk_user',0);
+			print '</td></tr>';
+
+			// Date
+			print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
+			print $html->select_date($object->date,'','','','','update');
+			print '</td></tr>';
+			
+			// Km
+			print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td>';
+			print '<input name="km" class="flat" size="10" value="'.$object->km.'">';
+			print '</td></tr>';
+			
+			// Where
+			print "<tr>";
+			print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
+			print $html->select_societes($soc->id,'socid','',1);
+			print '</td></tr>';
+			
+			// Public note
+			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+			print '<td valign="top" colspan="3">';
+			print '<textarea name="note_public" cols="80" rows="8">'.$object->note_public."</textarea><br>";
+			print "</td></tr>";
+			
+			// Private note
+			if (! $user->societe_id)
+			{
+				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+				print '<td valign="top" colspan="3">';
+				print '<textarea name="note_private" cols="80" rows="8">'.$object->note_private."</textarea><br>";
+				print "</td></tr>";
+			}
+			
+			print '</table>';
+			
+			print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '</center>';
+			
+			print '</form>';
+			
+			print '</div>';
 		}
 		else
 		{
-			dol_print_error($db);
+			/*
+			 * Confirmation de la suppression du deplacement
+			 */
+			if ($action == 'delete')
+			{
+				$ret=$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
+				if ($ret == 'html') print '<br>';
+			}
+
+			$soc = new Societe($db);
+			if ($object->socid) $soc->fetch($object->socid);
+
+			print '<table class="border" width="100%">';
+
+			// Ref
+			print "<tr>";
+			print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
+			print $html->showrefnav($object,'id','',1,'rowid','ref','');
+			print '</td></tr>';
+			
+			// Type
+			print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($object->type).'</td></tr>';
+
+			// Who
+			print '<tr><td>'.$langs->trans("Person").'</td><td>';
+			$userfee=new User($db);
+			$userfee->fetch($object->fk_user);
+			print $userfee->getNomUrl(1);
+			print '</td></tr>';
+
+			// Date
+			print '<tr><td>'.$langs->trans("Date").'</td><td>';
+			print dol_print_date($object->date,'day');
+			print '</td></tr>';
+
+			// Km/Price
+			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$object->km.'</td></tr>';
+			
+			// Where
+			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
+			print '<td>';
+			if ($soc->id) print $soc->getNomUrl(1);
+			print '</td></tr>';
+			
+			// Project
+			if ($conf->projet->enabled)
+			{
+				$langs->load('projects');
+				print '<tr>';
+				print '<td>';
+
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans('Project');
+				print '</td>';
+				if ($action != 'classify')
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
+					print img_edit($langs->trans('SetProject'),1);
+					print '</a></td>';
+				}
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+				if ($action == 'classify')
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
+				}
+				else
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
+				}
+				print '</td>';
+				print '</tr>';
+			}
+
+			// Statut
+			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+			
+			// Public note
+			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+			print '<td valign="top" colspan="3">';
+			print ($object->note_public ? nl2br($object->note_public) : "&nbsp;");
+			print "</td></tr>";
+			
+			// Private note
+			if (! $user->societe_id)
+			{
+				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+				print '<td valign="top" colspan="3">';
+				print ($object->note_private ? nl2br($object->note_private) : "&nbsp;");
+				print "</td></tr>";
+			}
+
+			print "</table>";
+
+			print '</div>';
+			
+			/*
+			 * Barre d'actions
+			 */
+			
+			print '<div class="tabsAction">';
+			
+			if ($user->rights->deplacement->creer)
+			{
+				print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
+			}
+			if ($user->rights->deplacement->supprimer)
+			{
+				print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
+			}
+			
+			print '</div>';
 		}
 	}
-}
-
-
-/*
- * Barre d'actions
- *
- */
-
-print '<div class="tabsAction">';
-
-if ($action != 'create' && $action != 'edit')
-{
-	if ($user->rights->deplacement->creer)
-	{
-		print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
-	}
-	if ($user->rights->deplacement->supprimer)
-	{
-		print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
-	}
-	else
-	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
+		dol_print_error($db);
 	}
 }
-
-print '</div>';
 
 $db->close();
 

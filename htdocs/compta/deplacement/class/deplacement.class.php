@@ -44,7 +44,8 @@ class Deplacement extends CommonObject
 	var $fk_user_author;
 	var $fk_user;
 	var $km;
-	var $note;
+	var $note;			// TODO obsolete
+	var $note_private;
 	var $note_public;
 	var $socid;
 	var $statut;		// 0=draft, 1=validated
@@ -55,7 +56,7 @@ class Deplacement extends CommonObject
 	*
 	* @param	DoliDB		$db		Database handler
 	*/
-	function Deplacement($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 
@@ -106,13 +107,13 @@ class Deplacement extends CommonObject
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
 		$sql.= ", '".$this->type."'";
-		$sql.= ", ".($this->note?"'".$this->db->escape($this->note)."'":"null");
+		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
 		$sql.= ", ".($this->fk_soc > 0? $this->fk_soc : "null");
 		$sql.= ")";
 
-		dol_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -125,6 +126,7 @@ class Deplacement extends CommonObject
 			}
 			else
 			{
+				$this->error=$this->db->error();
 				$this->db->rollback();
 				return $result;
 			}
@@ -178,12 +180,12 @@ class Deplacement extends CommonObject
 		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_user_modif = ".$user->id;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
-		$sql .= " , note = ".($this->note?"'".$this->db->escape($this->note)."'":"null");
+		$sql .= " , note = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql .= " , note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql .= " , fk_projet = ".($this->fk_project>0?$this->fk_project:0);
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Deplacement::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -192,8 +194,8 @@ class Deplacement extends CommonObject
 		}
 		else
 		{
-			$this->db->rollback();
 			$this->error=$this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -210,23 +212,23 @@ class Deplacement extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE rowid = ".$id;
 
-		dol_syslog("Deplacement::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ( $result )
 		{
 			$obj = $this->db->fetch_object($result);
 
-			$this->id          = $obj->rowid;
-			$this->ref         = $obj->rowid;
-			$this->date        = $this->db->jdate($obj->dated);
-			$this->fk_user     = $obj->fk_user;
-			$this->socid       = $obj->fk_soc;
-			$this->km          = $obj->km;
-			$this->type        = $obj->type;
-			$this->fk_statut   = $obj->fk_statut;
-			$this->note        = $obj->note;
-			$this->note_public = $obj->note_public;
-			$this->fk_project  = $obj->fk_projet;
+			$this->id			= $obj->rowid;
+			$this->ref			= $obj->rowid;
+			$this->date			= $this->db->jdate($obj->dated);
+			$this->fk_user		= $obj->fk_user;
+			$this->socid		= $obj->fk_soc;
+			$this->km			= $obj->km;
+			$this->type			= $obj->type;
+			$this->fk_statut	= $obj->fk_statut;
+			$this->note_private	= $obj->note;
+			$this->note_public	= $obj->note_public;
+			$this->fk_project	= $obj->fk_projet;
 
 			return 1;
 		}
@@ -245,17 +247,21 @@ class Deplacement extends CommonObject
 	*/
 	function delete($id)
 	{
+		$this->db->begin();
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".$id;
 
-		dol_syslog("Deplacement::delete sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
 			$this->error=$this->db->error();
+			$this->db->rollback();
 			return -1;
 		}
 	}
