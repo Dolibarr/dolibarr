@@ -16,8 +16,8 @@
  */
 
 /**
- *       \file       htdocs/core/ajaxconstantonoff.php
- *       \brief      File to set or del an on/off constant
+ *       \file       htdocs/core/ajax/security.php
+ *       \brief      File for return security data
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
@@ -27,9 +27,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-
+require('../../main.inc.php');
 
 /*
  * View
@@ -42,21 +40,15 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Registering the location of boxes
-if((isset($_GET['action']) && ! empty($_GET['action'])) && (isset($_GET['name']) && ! empty($_GET['name'])) )
+if(isset($_GET['action']) && ! empty($_GET['action']))
 {
-	if ($user->admin)
+	if ($_GET['action'] == 'getrandompassword' && $user->admin)
 	{
-		if ($_GET['action'] == 'set')
-		{
-			dolibarr_set_const($db, $_GET['name'], 1, 'chaine', 0, '', $conf->entity);
-		}
-		else if ($_GET['action'] == 'del')
-		{
-			dolibarr_del_const($db, $_GET['name'], $conf->entity);
-		}
+		$generic = $_GET['generic'];
+		echo getRandomPassword($generic);
 	}
 }
 

@@ -223,7 +223,7 @@ if ($action == 'valid')
 
 if ($action == 'set_thirdparty')
 {
-    $object->updateObjectField('facture',$id,'fk_soc',$socid);
+    $object->setValueFrom('facture',$id,'fk_soc',$socid);
 
     Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
     exit;

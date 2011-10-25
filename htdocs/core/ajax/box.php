@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/core/ajaxbox.php
+ *       \file       htdocs/core/ajax/box.php
  *       \brief      File to return Ajax response on Box move
  */
 
@@ -28,7 +28,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
-require('../main.inc.php');
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
 

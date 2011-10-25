@@ -234,7 +234,7 @@ function ajax_constantonoff($code,$input=array())
 
 			// Set constant
 			$( "#set_'.$code.'" ).click(function() {
-				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
+				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
 					action: \'set\',
 					name: \''.$code.'\'
 				},
@@ -256,7 +256,7 @@ function ajax_constantonoff($code,$input=array())
 
 			// Del constant
 			$( "#del_'.$code.'" ).click(function() {
-				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
+				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
 					action: \'del\',
 					name: \''.$code.'\'
 				},

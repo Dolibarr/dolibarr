@@ -123,10 +123,10 @@ class InterfacePaypalWorkflow
             if ($ret < 0) return -1;
 
             // Add payer id
-            $soc->updateObjectField('societe', $obj->socid, 'ref_int', $object->payerID);
+            $soc->setValueFrom('societe', $obj->socid, 'ref_int', $object->payerID);
 
             // Add transaction id
-            $obj->updateObjectField($obj->table_element,$obj->id,'ref_int',$object->resArray["TRANSACTIONID"]);
+            $obj->setValueFrom($obj->table_element,$obj->id,'ref_int',$object->resArray["TRANSACTIONID"]);
 
         }
 

@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file      htdocs/core/ajaxziptown.php
+ *       \file      htdocs/core/ajax/ziptown.php
  *       \ingroup	core
  *       \brief     File to return Ajax response on zipcode or town request
  */
@@ -29,7 +29,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 
-require('../main.inc.php');
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
 

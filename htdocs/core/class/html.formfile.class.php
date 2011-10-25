@@ -810,7 +810,7 @@ class FormFile
 				</script>';
 
         print '<div id="fileupload">';
-        print '<form action="'.DOL_URL_ROOT.'/core/ajaxfileupload.php" method="POST" enctype="multipart/form-data">';
+        print '<form action="'.DOL_URL_ROOT.'/core/ajax/fileupload.php" method="POST" enctype="multipart/form-data">';
         print '<input type="hidden" name="fk_element" value="'.$object->id.'">';
         print '<input type="hidden" name="element" value="'.$object->element.'">';
         print '<div class="fileupload-buttonbar">';

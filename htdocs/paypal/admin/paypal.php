@@ -112,7 +112,7 @@ if ($conf->use_javascript_ajax)
             });
 
             $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajaxsecurity.php", {
+            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: true
 				},
