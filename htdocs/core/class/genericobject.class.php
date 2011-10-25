@@ -37,7 +37,7 @@ class GenericObject extends CommonObject
 	 *
 	 *  @param		DoliDB		$DB      Database handler
 	 */
-	function GenericObject($db)
+	function __construct($db)
 	{
 	    $this->db=$db;
 	}

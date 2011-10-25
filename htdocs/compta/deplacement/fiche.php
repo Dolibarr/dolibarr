@@ -344,6 +344,8 @@ else if ($id)
 
 			$soc = new Societe($db);
 			if ($object->socid) $soc->fetch($object->socid);
+			
+			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxeditinplace.tpl.php');
 
 			print '<table class="border" width="100%">';
 
@@ -413,7 +415,9 @@ else if ($id)
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
-			print ($object->note_public ? nl2br($object->note_public) : "&nbsp;");
+			print '<div class="edit_area" id="note_public">';
+			print ($object->note_public ? dol_nl2br($object->note_public) : "&nbsp;");
+			print '</div>';
 			print "</td></tr>";
 			
 			// Private note
@@ -421,7 +425,9 @@ else if ($id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 				print '<td valign="top" colspan="3">';
-				print ($object->note_private ? nl2br($object->note_private) : "&nbsp;");
+				print '<div class="edit_area" id="note">';
+				print ($object->note_private ? dol_nl2br($object->note_private) : "&nbsp;");
+				print '</div>';
 				print "</td></tr>";
 			}
 

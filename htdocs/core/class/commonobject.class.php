@@ -589,25 +589,50 @@ abstract class CommonObject
 
 		return $result;
 	}
+	
+	/**
+	 *	Load value from specific field
+	 *	
+	 *	@param	string	$table		Table of element or element line
+	 *	@param	int		$id			Element id
+	 *	@param	string	$field		Field selected
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
+	function getValueFrom($table, $id, $field)
+	{
+		$result=false;
+	
+		$sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
+		$sql.= " WHERE rowid = ".$id;
+		
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$result = $row[0];
+		}
+	
+		return $result;
+	}
 
 	/**
-	 *    	Update a specific field from an object
+	 *	Update a specific field from an object
 	 *
-	 *    	@param		table		Table element or element line
-	 *    	@param		id			Object id
-	 *    	@param		field		Field to update
-	 *    	@param		value		New value
-	 *		@return		int			<0 if KO, >0 if OK
+	 *	@param	string	$table		Table element or element line
+	 *	@param	int		$id			Object id
+	 *	@param	string	$field		Field to update
+	 *	@param	mixte	$value		New value
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function updateObjectField($table,$id,$field,$value)
+	function setValueFrom($table, $id, $field, $value)
 	{
 		global $conf;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
-		$sql.= $field." = '".$value."'";
+		$sql.= $field." = '".$this->db->escape($value)."'";
 		$sql.= " WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::updateObjectField sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::setValueFrom sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
