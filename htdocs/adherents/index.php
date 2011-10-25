@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ llxHeader('',$langs->trans("Members"),'EN:Module_Foundations|FR:Module_Adh&eacut
 
 $staticmember=new Adherent($db);
 $statictype=new AdherentType($db);
+$subscriptionstatic=new Cotisation($db);
 
 print_fiche_titre($langs->trans("MembersArea"));
 
@@ -195,6 +196,112 @@ print '</td><td class="notopnoleftnoright" valign="top">';
 
 $var=true;
 
+/*
+ * Last modified members
+ */
+$max=5;
+
+$sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
+$sql.= " a.tms as datem, datefin as date_end_subscription,";
+$sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
+$sql.= " WHERE a.fk_adherent_type = ta.rowid";
+$sql.= $db->order("a.tms","DESC");
+$sql.= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="4">'.$langs->trans("LastMembersModified",$max).'</td></tr>';
+
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object($resql);
+			print "<tr ".$bc[$var].">";
+			$staticmember->id=$obj->rowid;
+			$staticmember->nom=$obj->nom;
+			$staticmember->prenom=$obj->prenom;
+			$staticmember->ref=$staticmember->getFullName($langs);
+			$statictype->id=$obj->typeid;
+			$statictype->libelle=$obj->libelle;
+			print '<td>'.$staticmember->getNomUrl(1,24).'</td>';
+			print '<td>'.$statictype->getNomUrl(1,16).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->date_end),'dayhour').'</td>';
+			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	print "</table><br>";
+}
+else
+{
+	dol_print_error($db);
+}
+
+
+/*
+ * Last modified subscriptions
+ */
+$max=5;
+
+$sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
+$sql.= " datefin as date_end_subscription,";
+$sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.cotisation";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."cotisation as c";
+$sql.= " WHERE c.fk_adherent = a.rowid";
+$sql.= $db->order("c.tms","DESC");
+$sql.= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="5">'.$langs->trans("LastSubscriptionsModified",$max).'</td></tr>';
+
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object($resql);
+			print "<tr ".$bc[$var].">";
+			$subscriptionstatic->id=$obj->cid;
+			$subscriptionstatic->ref=$obj->cid;
+			$staticmember->id=$obj->rowid;
+			$staticmember->nom=$obj->nom;
+			$staticmember->prenom=$obj->prenom;
+			$staticmember->ref=$staticmember->getFullName($langs);
+			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
+			print '<td>'.$staticmember->getNomUrl(1,24,'subscription').'</td>';
+			print '<td>'.get_date_range($db->jdate($obj->date_start),$db->jdate($obj->date_end)).'</td>';
+			print '<td align="right">'.price($obj->cotisation).'</td>';
+			//print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+			print '<td align="right">'.dol_print_date($db->jdate($obj->datem?$obj->datem:$obj->datec),'dayhour').'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	print "</table><br>";
+}
+else
+{
+	dol_print_error($db);
+}
+
+
 // Summary of members by type
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -226,56 +333,6 @@ print '</tr>';
 
 print "</table>\n";
 print "<br>\n";
-
-/*
- * Last modified members
- */
-$max=5;
-
-$sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
-$sql.= " a.tms as datem, datefin as date_end_subscription,";
-$sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
-$sql.= " WHERE a.fk_adherent_type = ta.rowid";
-$sql.= $db->order("a.tms","DESC");
-$sql.= $db->plimit($max, 0);
-
-$resql=$db->query($sql);
-if ($resql)
-{
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastMembersModified",$max).'</td></tr>';
-
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		$var = True;
-		while ($i < $num)
-		{
-			$var=!$var;
-			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]>";
-			$staticmember->id=$obj->rowid;
-			$staticmember->ref=trim($obj->prenom.' '.$obj->nom);
-			$statictype->id=$obj->typeid;
-			$statictype->libelle=$obj->libelle;
-			print '<td>'.$staticmember->getNomUrl(1,24).'</td>';
-			print '<td>'.$statictype->getNomUrl(1,16).'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
-			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table><br>";
-}
-else
-{
-	dol_print_error($db);
-}
-
 
 
 // List of subscription by year

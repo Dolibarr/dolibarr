@@ -117,6 +117,7 @@ ExportDataset_member_1=Members and subscriptions
 ImportDataset_member_1=Members
 LastMembers=Last %s members
 LastMembersModified=Last %s modified members
+LastSubscriptionsModified=Last %s modified subscriptions
 AttributeName=Attribute name
 FieldEdition=Edition of field %s
 AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
