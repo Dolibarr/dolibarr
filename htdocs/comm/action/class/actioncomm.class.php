@@ -129,9 +129,14 @@ class ActionComm extends CommonObject
 			# Get id from code
 			$cactioncomm=new CActionComm($this->db);
 			$result=$cactioncomm->fetch($this->type_code);
-			if ($result)
+			if ($result > 0)
 			{
 				$this->type_id=$cactioncomm->id;
+			}
+			else if ($result == 0)
+			{
+			    $this->error='Failed to get record with code AC_OTH from dictionnary "type of events"';
+			    return -1;
 			}
 			else
 			{
@@ -148,7 +153,7 @@ class ActionComm extends CommonObject
 		}
 
 
-		$this->db->begin("ActionComm::add");
+		$this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
@@ -208,13 +213,13 @@ class ActionComm extends CommonObject
 	            // Fin appel triggers
 			}
 
-			$this->db->commit("ActionComm::add");
+			$this->db->commit();
             return $this->id;
         }
         else
         {
 			$this->error=$this->db->lasterror().' sql='.$sql;
-			$this->db->rollback("ActionComm::add");
+			$this->db->rollback();
             return -1;
         }
 
