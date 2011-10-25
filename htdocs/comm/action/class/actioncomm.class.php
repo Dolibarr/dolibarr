@@ -91,7 +91,7 @@ class ActionComm extends CommonObject
 
     /**
      *    Add an action/event into database
-     *    
+     *
      *    @param	User	$user      		Object user making action
  	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
      *    @return   int 		        	Id of created event, < 0 if KO
@@ -126,9 +126,14 @@ class ActionComm extends CommonObject
 			// Get id from code
 			$cactioncomm=new CActionComm($this->db);
 			$result=$cactioncomm->fetch($this->type_code);
-			if ($result)
+					if ($result > 0)
 			{
 				$this->type_id=$cactioncomm->id;
+			}
+			else if ($result == 0)
+			{
+			    $this->error='Failed to get record with code AC_OTH from dictionnary "type of events"';
+			    return -1;
 			}
 			else
 			{
@@ -219,7 +224,7 @@ class ActionComm extends CommonObject
 
 	/**
 	*    Charge l'objet action depuis la base
-	*    
+	*
 	*    @param		int		$id     id de l'action a recuperer
 	*    @return	int				<0 if KO, >0 if OK
 	*/
@@ -307,7 +312,7 @@ class ActionComm extends CommonObject
 
 	/**
 	*    Supprime l'action de la base
-	*    
+	*
 	*    @return     int     <0 if KO, >0 if OK
 	*/
 	function delete()
@@ -480,7 +485,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *      Charge les informations d'ordre info dans l'objet facture
-	 *      
+	 *
 	 *      @param	int		$id       	Id de la facture a charger
 	 *		@return	void
 	 */
@@ -530,7 +535,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *    	Return label of status
-	 *    
+	 *
 	 *    	@param      mode            0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *      @param      hidenastatus    1=Show nothing if status is "Not applicable"
 	 *    	@return     string          String with status
