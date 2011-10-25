@@ -69,6 +69,7 @@ $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):0;
+$actioncode=GETPOST("actioncode");
 $pid=GETPOST("projectid","int")?GETPOST("projectid","int"):0;
 $status=GETPOST("status");
 $maxprint=GETPOST("maxprint");
@@ -198,6 +199,7 @@ if ($filterd) $param.="&filterd=".$filterd;
 if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
+if ($actioncode) $param.="&actioncode=".$actioncode;
 if (GETPOST("type"))   $param.="&type=".GETPOST("type");
 if ($action == 'show_day' || $action == 'show_week') $param.='&action='.$action;
 if ($maxprint) $param.="&maxprint=on";
@@ -281,6 +283,7 @@ $sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND u.entity in (0,'.$conf->entity.')';    // To limit to entity
 $sql.= ' AND a.entity = '.$conf->entity;
 if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
+if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if ($action == 'show_day')
 {
