@@ -25,7 +25,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/comm/mailing/class/mailing.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 $langs->load("commercial");
 $langs->load("orders");
@@ -67,7 +67,7 @@ print "</table></form><br>\n";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("TargetsStatistics").'</td></tr>';
 
-$dir=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
+$dir=DOL_DOCUMENT_ROOT."/core/modules/mailings";
 $handle=opendir($dir);
 
 $var=True;

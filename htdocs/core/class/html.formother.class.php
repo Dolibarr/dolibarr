@@ -417,7 +417,7 @@ class FormOther
             /*
 			// No list of colors forced, we can suggest any color
 			print "\n".'<table class="nobordernopadding"><tr><td valign="middle">';
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_colorpicker.js"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/lib/lib_colorpicker.js"></script>'."\n";
 			print '<script type="text/javascript">
 		           window.onload = function()
 		           {
@@ -560,7 +560,7 @@ class FormOther
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
-        require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
         $month = monthArrayOrSelected(-1);	// Get array
 

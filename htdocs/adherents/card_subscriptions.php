@@ -24,8 +24,8 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
@@ -372,7 +372,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 {
                     require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
                     require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-                    require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+                    require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
 
                     // Creation de la ligne paiement
                     $amounts[$invoice->id] = price2num($cotisation);

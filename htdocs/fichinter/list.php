@@ -27,7 +27,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 $langs->load("companies");
 $langs->load("interventions");

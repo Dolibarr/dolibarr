@@ -23,8 +23,8 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load('projects');
@@ -69,7 +69,7 @@ if (! $project->fetch($_GET['id'],$_GET['ref']) > 0)
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
 

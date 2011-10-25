@@ -2253,7 +2253,7 @@ class Form
     {
         global $langs;
 
-        require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 
         $langs->load("project");
         if ($htmlname != "none")
@@ -3048,7 +3048,7 @@ class Form
                     if (! $disabled)
                     {
                         $retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
-                        $base=DOL_URL_ROOT.'/lib/';
+                        $base=DOL_URL_ROOT.'/core/';
                         $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');">'.img_object($langs->trans("SelectDate"),'calendarday').'</button>';
                     }
 
@@ -3188,7 +3188,7 @@ class Form
             // Generate the date part, depending on the use or not of the javascript calendar
             if (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == "eldy")
             {
-                $base=DOL_URL_ROOT.'/lib/';
+                $base=DOL_URL_ROOT.'/core/lib/';
                 $reset_scripts .= 'resetDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');';
             }
             else
@@ -3238,7 +3238,7 @@ class Form
     {
         if ($iSecond)
         {
-            require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+            require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
             $hourSelected = ConvertSecondToTime($iSecond,'hour');
             $minSelected = ConvertSecondToTime($iSecond,'min');

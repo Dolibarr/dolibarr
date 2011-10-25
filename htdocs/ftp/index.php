@@ -25,8 +25,8 @@
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/treeview.lib.php");
 
 // Load traductions files
 $langs->load("ftp");
@@ -82,7 +82,7 @@ $conn_id=0;	// FTP connection ID
 // Envoie fichier
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	$result=$ecmdir->fetch($_REQUEST["section"]);
 	if (! $result > 0)

@@ -24,8 +24,8 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/fichinter.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php');
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 

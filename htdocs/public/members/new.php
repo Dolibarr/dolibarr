@@ -41,7 +41,7 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
 // Init vars
 $errmsg='';
@@ -398,7 +398,7 @@ else
 }
 // Civility
 print '<tr><td>'.$langs->trans("Civility").'</td><td>';
-print $formcompany->select_civilite(GETPOST('civilite_id'),'civilite_id').'</td></tr>'."\n";
+print $formcompany->select_civility(GETPOST('civilite_id'),'civilite_id').'</td></tr>'."\n";
 // Lastname
 print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
 // Firstname

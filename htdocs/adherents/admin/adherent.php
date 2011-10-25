@@ -28,8 +28,8 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
 
 $langs->load("admin");
 $langs->load("members");
@@ -417,7 +417,7 @@ function form_constantes($tableau)
             {
                 print '<td>';
                 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
-                require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
                 $arrayoflabels=array();
                 foreach(array_keys($_Avery_Labels) as $codecards)
                 {
@@ -442,7 +442,7 @@ function form_constantes($tableau)
                 }
                 else if (in_array($const,array('ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                     $doleditor=new DolEditor('constvalue'.$const,$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
                     $doleditor->Create();
 

@@ -589,25 +589,50 @@ abstract class CommonObject
 
 		return $result;
 	}
+	
+	/**
+	 *	Load value from specific field
+	 *	
+	 *	@param	string	$table		Table of element or element line
+	 *	@param	int		$id			Element id
+	 *	@param	string	$field		Field selected
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
+	function getValueFrom($table, $id, $field)
+	{
+		$result=false;
+	
+		$sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
+		$sql.= " WHERE rowid = ".$id;
+		
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$result = $row[0];
+		}
+	
+		return $result;
+	}
 
 	/**
-	 *    	Update a specific field from an object
+	 *	Update a specific field from an object
 	 *
-	 *    	@param		table		Table element or element line
-	 *    	@param		id			Object id
-	 *    	@param		field		Field to update
-	 *    	@param		value		New value
-	 *		@return		int			<0 if KO, >0 if OK
+	 *	@param	string	$table		Table element or element line
+	 *	@param	int		$id			Object id
+	 *	@param	string	$field		Field to update
+	 *	@param	mixte	$value		New value
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function updateObjectField($table,$id,$field,$value)
+	function setValueFrom($table, $id, $field, $value)
 	{
 		global $conf;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
-		$sql.= $field." = '".$value."'";
+		$sql.= $field." = '".$this->db->escape($value)."'";
 		$sql.= " WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::updateObjectField sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::setValueFrom sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1083,10 +1108,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 *    Update public note of element
+	 * Update public note of element
 	 *
-	 *    @param	string	$note_public	New value for note
-	 *    @return	int         			<0 if KO, >0 if OK
+	 * @param	string	$note_public	New value for note
+	 * @return	int         			<0 if KO, >0 if OK
 	 */
 	function update_note_public($note_public)
 	{
@@ -1116,20 +1141,20 @@ abstract class CommonObject
 	/**
 	 *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
 	 *
-	 *	@param	   exclspec          Exclude special product (product_type=9)
-	 *  @param     roundingadjust    -1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND or 0), 0=Use total of rounding, 1=Use rounding of total
-	 *	@return	   int               <0 if KO, >0 if OK
+	 *	@param	int		$exclspec          Exclude special product (product_type=9)
+	 *  @param  int		$roundingadjust    -1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND or 0), 0=Use total of rounding, 1=Use rounding of total
+	 *	@return	int    			           <0 if KO, >0 if OK
 	 */
 	function update_price($exclspec=0,$roundingadjust=-1)
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
 		if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
         if ($roundingadjust < 0) $roundingadjust=0;
 
 		$err=0;
 
-		// List lines to sum
+		// Define constants to find lines to sum
 		$fieldtva='total_tva';
 		$fieldlocaltax1='total_localtax1';
 		$fieldlocaltax2='total_localtax2';
@@ -1150,6 +1175,8 @@ abstract class CommonObject
 			$this->total_localtax1 = 0;
 			$this->total_localtax2 = 0;
 			$this->total_ttc = 0;
+			$vatrates = array();
+			$vatrates_alllines = array();
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1163,9 +1190,25 @@ abstract class CommonObject
 				$this->total_localtax2 += $obj->total_localtax2;
 				$this->total_ttc       += $obj->total_ttc;
 
-				// TODO Also fill array by vat rate
-                $varates[$this->vatrate][]=array('total_ht'=>$obj->total_ht,'total_tva'=>$obj->total_tva,'total_ttc'=>$obj->total_ttc,
-                                                 'total_localtax1'=>$obj->total_localtax1,'total_localtax2'=>$obj->total_localtax2);
+				// Define vatrates with totals for each line and for all lines
+                $vatrates[$this->vatrate][]=array(
+                	'total_ht'       =>$obj->total_ht,
+                	'total_tva'      =>$obj->total_tva,
+                	'total_ttc'      =>$obj->total_ttc,
+                	'total_localtax1'=>$obj->total_localtax1,
+                	'total_localtax2'=>$obj->total_localtax2
+                );
+                if (! isset($vatrates_alllines[$this->vatrate]['total_ht']))        $vatrates_alllines[$this->vatrate]['total_ht']=0;
+                if (! isset($vatrates_alllines[$this->vatrate]['total_tva']))       $vatrates_alllines[$this->vatrate]['total_tva']=0;
+                if (! isset($vatrates_alllines[$this->vatrate]['total_localtax1'])) $vatrates_alllines[$this->vatrate]['total_localtax1']=0;
+                if (! isset($vatrates_alllines[$this->vatrate]['total_localtax2'])) $vatrates_alllines[$this->vatrate]['total_localtax2']=0;
+                if (! isset($vatrates_alllines[$this->vatrate]['total_ttc']))       $vatrates_alllines[$this->vatrate]['total_ttc']=0;
+                $vatrates_alllines[$this->vatrate]['total_ht']       +=$obj->total_ht;
+                $vatrates_alllines[$this->vatrate]['total_tva']      +=$obj->total_tva;
+                $vatrates_alllines[$this->vatrate]['total_localtax1']+=$obj->total_localtax1;
+                $vatrates_alllines[$this->vatrate]['total_localtax2']+=$obj->total_localtax2;
+                $vatrates_alllines[$this->vatrate]['total_ttc']      +=$obj->total_ttc;
+
 				$i++;
 			}
 
@@ -1186,7 +1229,7 @@ abstract class CommonObject
 			    }
 			}
 
-			// Now update field total_ht, total_ttc and tva
+			// Now update global field total_ht, total_ttc and tva
 			$fieldht='total_ht';
 			$fieldtva='tva';
 			$fieldlocaltax1='localtax1';
@@ -1227,9 +1270,9 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	   Add objects linked in llx_element_element.
+	 * Add objects linked in llx_element_element.
 	 *
-	 *     @return         int         <=0 if KO, >0 if OK
+	 * @return         int         <=0 if KO, >0 if OK
 	 */
 	function add_object_linked()
 	{
@@ -1345,11 +1388,14 @@ abstract class CommonObject
 		            if ($objecttype == 'delivery')			{ $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
 		            if ($objecttype == 'invoice_supplier')	{ $classpath = 'fourn/class'; }
 		            if ($objecttype == 'order_supplier')	{ $classpath = 'fourn/class'; }
-		            if ($objecttype == 'fichinter')			{ $classpath = 'fichinter/class'; $subelement ='fichinter'; $module ='ficheinter'; }
+		            if ($objecttype == 'fichinter')			{ $classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter'; }
+
+		            // TODO ajout temporaire - MAXIME MANGIN
+		            if ($objecttype == 'contratabonnement')	{ $classpath = 'contrat/class'; $subelement = 'contrat'; $module = 'contratabonnement'; }
 
 		            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
-		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
-		            if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur'; }
+		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur'; }
+		            if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur'; }
 
 		            if ($conf->$module->enabled && $element != $this->element)
 		            {

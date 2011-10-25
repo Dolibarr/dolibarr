@@ -30,8 +30,8 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 // Security check

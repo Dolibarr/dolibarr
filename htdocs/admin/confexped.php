@@ -25,7 +25,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 $langs->load("admin");
 $langs->load("sendings");
@@ -65,7 +65,7 @@ else if ($action == 'disable_delivery')
 /*
  * Affiche page
  */
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
+$dir = DOL_DOCUMENT_ROOT."/core/modules/expedition/";
 $html=new Form($db);
 
 llxHeader("","");

@@ -23,7 +23,7 @@
  *  \brief      Page to list withdraw requests
  */
 require("../bank/pre.inc.php");
-require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/modules/modPrelevement.class.php";
 require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 

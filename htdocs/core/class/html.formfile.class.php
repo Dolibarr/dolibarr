@@ -182,7 +182,7 @@ class FormFile
     function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hookmanager=false)
     {
         // filedir = conf->...dir_ouput."/".get_exdir(id)
-        include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
         global $langs,$bc,$conf;
 
@@ -221,7 +221,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php');
                     $modellist=ModeleThirdPartyDoc::liste_modeles($this->db);
                 }
             }
@@ -230,7 +230,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php');
                     $modellist=ModelePDFPropales::liste_modeles($this->db);
                 }
             }
@@ -239,7 +239,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php');
                     $modellist=ModelePDFCommandes::liste_modeles($this->db);
                 }
             }
@@ -248,7 +248,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/expedition/pdf/ModelePdfExpedition.class.php');
                     $modellist=ModelePDFExpedition::liste_modeles($this->db);
                 }
             }
@@ -257,7 +257,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/livraison/modules_livraison.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php');
                     $modellist=ModelePDFDeliveryOrder::liste_modeles($this->db);
                 }
             }
@@ -266,7 +266,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php');
                     $modellist=ModelePDFFicheinter::liste_modeles($this->db);
                 }
             }
@@ -275,7 +275,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
                     $modellist=ModelePDFFactures::liste_modeles($this->db);
 
                     // This is to allow to join external files to invoices
@@ -295,7 +295,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/project/modules_project.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php');
                     $modellist=ModelePDFProjects::liste_modeles($this->db);
                 }
             }
@@ -304,7 +304,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php');
                     $modellist=ModeleExports::liste_modeles($this->db);
                 }
             }
@@ -313,7 +313,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php');
                     $modellist=ModelePDFSuppliersOrders::liste_modeles($this->db);
                 }
             }
@@ -322,7 +322,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_invoice/modules_facturefournisseur.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php');
                     $modellist=ModelePDFSuppliersInvoices::liste_modeles($this->db);
                 }
             }
@@ -331,7 +331,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/cheque/pdf/modules_chequereceipts.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/cheque/pdf/modules_chequereceipts.php');
                     $modellist=ModeleChequeReceipts::liste_modeles($this->db);
                 }
             }
@@ -340,7 +340,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/dons/modules_don.php');
+                    include_once(DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php');
                     $modellist=ModeleDon::liste_modeles($this->db);
                 }
             }
@@ -351,7 +351,7 @@ class FormFile
             else
             {
                 // Generic feature, for external modules
-                $file=dol_buildpath('/includes/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
+                $file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 if (file_exists($file))
                 {
                     $res=include_once($file);
@@ -562,7 +562,7 @@ class FormFile
 
         $nboffiles=count($filearray);
 
-        if ($nboffiles > 0) include_once(DOL_DOCUMENT_ROOT.'/lib/images.lib.php');
+        if ($nboffiles > 0) include_once(DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php');
 
         $var=true;
         foreach($filearray as $key => $file)      // filearray must be only files here
@@ -810,7 +810,7 @@ class FormFile
 				</script>';
 
         print '<div id="fileupload">';
-        print '<form action="'.DOL_URL_ROOT.'/core/ajaxfileupload.php" method="POST" enctype="multipart/form-data">';
+        print '<form action="'.DOL_URL_ROOT.'/core/ajax/fileupload.php" method="POST" enctype="multipart/form-data">';
         print '<input type="hidden" name="fk_element" value="'.$object->id.'">';
         print '<input type="hidden" name="element" value="'.$object->element.'">';
         print '<div class="fileupload-buttonbar">';

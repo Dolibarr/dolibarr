@@ -26,7 +26,7 @@
 require ("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $taskid = GETPOST("id");

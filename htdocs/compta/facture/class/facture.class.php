@@ -1044,7 +1044,7 @@ class Facture extends CommonObject
     {
         global $langs;
 
-        include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
         include_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
         $this->db->begin();
@@ -1488,7 +1488,7 @@ class Facture extends CommonObject
     function validate($user, $force_number='')
     {
         global $conf,$langs;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $error=0;
 
@@ -1790,7 +1790,7 @@ class Facture extends CommonObject
     function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0)
     {
         dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
-        include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         // Clean parameters
         if (empty($remise_percent)) $remise_percent=0;
@@ -1947,7 +1947,7 @@ class Facture extends CommonObject
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0)
     {
-        include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         dol_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type", LOG_DEBUG);
 
@@ -2557,7 +2557,7 @@ class Facture extends CommonObject
         // Include file with class
         foreach ($conf->file->dol_document_root as $dirroot)
         {
-            $dir = $dirroot."/includes/modules/facture/";
+            $dir = $dirroot."/core/modules/facture/";
             // Load file with numbering class (if found)
             $mybool|=@include_once($dir.$file);
         }
@@ -2570,7 +2570,7 @@ class Facture extends CommonObject
             // Include file with class
             foreach ($conf->file->dol_document_root as $dirroot)
             {
-                $dir = $dirroot."/includes/modules/facture/";
+                $dir = $dirroot."/core/modules/facture/";
                 // Load file with numbering class (if found)
                 $mybool|=@include_once($dir.$file);
             }

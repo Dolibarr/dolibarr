@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,11 @@ if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone
     $limitmenuto=1;	// A virer
 
     // Load the smartphone menu manager
-    $result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
+    $result=@include_once(DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu);
     if (! $result)	// If failed to include, we try with standard
     {
         $conf->smart_menu='smartphone_backoffice.php';
-        include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
+        include_once(DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu);
     }
 
     $menusmart = new MenuSmart($db);

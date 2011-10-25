@@ -24,9 +24,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 
 $langs->load("companies");
@@ -38,9 +38,9 @@ $langs->load("other");
 // Security check
 if (!$user->admin) accessforbidden();
 
-$dirtop = "/includes/menus/standard";
-$dirleft = "/includes/menus/standard";
-$dirsmartphone = "/includes/menus/smartphone";
+$dirtop = "/core/menus/standard";
+$dirleft = "/core/menus/standard";
+$dirsmartphone = "/core/menus/smartphone";
 
 
 // Cette page peut etre longue. On augmente le delai autorise.
@@ -77,7 +77,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		// Load sql init_menu_handler.sql file
-        $dir = "/includes/menus/";
+        $dir = "/core/menus/";
 	    $file='init_menu_'.$key.'.sql';
 	    $fullpath=dol_buildpath($dir.$file);
 

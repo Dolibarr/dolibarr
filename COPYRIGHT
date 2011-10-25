@@ -11,27 +11,28 @@ However it uses some external libraries under different licences. This is compat
 Composant         Version  License                     Compatible GPL   Usage
 ----------------------------------------------------------------------------
 PHP libraries:
-AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion
-ArtiChow          1.07     Public Domain               Yes              Graphics
-CKEditor		  3.6.1	   GPL or LGPL 2.1 or MPL 1.1  Yes				Editor WYSIWYG
-FPDI              1.4.1    Apache Software License 2.0 ?                PDF templates management
-NuSoap            0.9.5    LGPL 2.1                    Yes              Library to develop SOAP Web services
-OdtPHP            1.0.1    GPL 2.0                     Yes              Library to build/edit ODT files
-Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
-PHPExcel		  1.7.6    LGPL 2.1                    Yes              Read/Write XLS files, read ODS files
-TCPDF             5.9.098  LGPL 3.0                    Yes				PDF generation
+AdoDb-Date        0.21		Modified BSD License		Yes				Date convertion
+ArtiChow          1.07		Public Domain				Yes				Graphics
+CKEditor		  3.6.1		GPL or LGPL 2.1 or MPL 1.1	Yes				Editor WYSIWYG
+FPDI              1.4.1		Apache Software License 2.0	?				PDF templates management
+NuSoap            0.9.5		LGPL 2.1					Yes				Library to develop SOAP Web services
+OdtPHP            1.0.1		GPL 2.0						Yes				Library to build/edit ODT files
+Php-barcode       0.3pl1	GPL 2.0						Yes				Bar code generation
+PHPExcel		  1.7.6		LGPL 2.1					Yes				Read/Write XLS files, read ODS files
+TCPDF             5.9.098	LGPL 3.0					Yes				PDF generation
 
 JS libraries:
-jQuery            1.6.1    GPL and MIT Licence         Yes              JS library
-jQuery UI         1.8.14   GPL and MIT Licence         Yes              JS library plugin UI
-jQuery Flot       0.7      MIT Licence                 Yes              JS library to build graph
-jQuery JCrop      0.9.8    MIT Licence                 Yes              JS library plugin Crop (to crop images)
-jQuery Layout     1.3.0	   GPL and MIT Licence         Yes              JS library plugin Layout (RC-29.15)
-jQuery TableDnD   0.5      GPL and MIT Licence         Yes              JS library plugin TableDnD (to reorder table rows)
-jQuery jNotify	  1.1.00   Apache Software License 2.0 ?          		JS library plugin jNotify (to use ajax popups)
-jQuery Mobile	  1.0b1	   GPL and MIT Licence		   Yes			    JS library for smartphone (not used)
-jQuery Tiptip     1.3      GPL and MIT Licence         Yes              JS library for tooltips
-JSGantt           1.2      BSD Licence                 Yes              JS library (to build Gantt reports)
+jQuery            1.6.4		GPL and MIT Licence			Yes				JS library
+jQuery UI         1.8.16	GPL and MIT Licence			Yes				JS library plugin UI
+jQuery Flot       0.7		MIT Licence					Yes				JS library to build graph
+jQuery JCrop      0.9.8		MIT Licence					Yes				JS library plugin Crop (to crop images)
+jQuery jeditable  1.7.1		MIT Licence					Yes				JS library plugin jeditable (to edit in place)
+jQuery Layout     1.3.0		GPL and MIT Licence			Yes				JS library plugin Layout (RC-29.15)
+jQuery TableDnD   0.5		GPL and MIT Licence			Yes				JS library plugin TableDnD (to reorder table rows)
+jQuery jNotify	  1.1.00	Apache Software License 2.0	?				JS library plugin jNotify (to use ajax popups)
+jQuery Mobile	  1.0rc2	GPL and MIT Licence			Yes				JS library for smartphone (not used)
+jQuery Tiptip     1.3		GPL and MIT Licence			Yes				JS library for tooltips
+JSGantt           1.2		BSD Licence					Yes				JS library (to build Gantt reports)
 
 
 For licenses compatibility informations:

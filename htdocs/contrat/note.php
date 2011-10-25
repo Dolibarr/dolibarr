@@ -23,7 +23,7 @@
  */
 
 require ("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php');
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";

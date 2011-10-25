@@ -23,7 +23,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("users");
@@ -41,7 +41,7 @@ $upload_dir=$conf->admin->dir_temp;
 
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     $result=create_exdir($upload_dir);	// Create dir if not exists
     if ($result >= 0)

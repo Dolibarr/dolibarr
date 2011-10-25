@@ -2,7 +2,7 @@
 <project name="dolibarr" default="hudson" basedir=".">
 
 <!-- Exclude/ignore paths -->
- <property name="ignorepaths" value="${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes/adodbtime,${basedir}/htdocs/includes/artichow,${basedir}/htdocs/includes/barcode/php-barcode,${basedir}/htdocs/includes/ckeditor,${basedir}/htdocs/includes/fpdfi,${basedir}/htdocs/includes/geoip,${basedir}/htdocs/includes/jquery,${basedir}/htdocs/includes/jsgantt,${basedir}/htdocs/includes/nusoap,${basedir}/htdocs/includes/odtphp,${basedir}/htdocs/includes/phpexcel,${basedir}/htdocs/includes/tcpdf" />
+ <property name="ignorepaths" value="${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes" />
  <property name="ignoreregexp" value="**/PEAR/*,**/NET/*,**/HTTP/*" />
  
  <target name="clean">
@@ -44,18 +44,7 @@
   <exec executable="phpcpd">
    <arg line="	--log-pmd '${basedir}/hudson/logs/pmd-cpd.xml'
    				--exclude '${basedir}/htdocs/core/filemanagerdol'
-   				--exclude '${basedir}/htdocs/includes/adodbtime'
-   				--exclude '${basedir}/htdocs/includes/artichow'
-   				--exclude '${basedir}/htdocs/includes/barcode/php-barcode'
-   				--exclude '${basedir}/htdocs/includes/ckeditor'
-   				--exclude '${basedir}/htdocs/includes/fpdfi'
-   				--exclude '${basedir}/htdocs/includes/geoip'
-   				--exclude '${basedir}/htdocs/includes/jquery'
-   				--exclude '${basedir}/htdocs/includes/jsgantt'
-   				--exclude '${basedir}/htdocs/includes/nusoap'
-   				--exclude '${basedir}/htdocs/includes/odtphp'
-   				--exclude '${basedir}/htdocs/includes/phpexcel'
-   				--exclude '${basedir}/htdocs/includes/tcpdf'
+   				--exclude '${basedir}/htdocs/includes'
    				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'
    				htdocs
    				" />
@@ -67,18 +56,7 @@
   <exec executable="phploc">
    <arg line="	--log-csv '${basedir}/hudson/logs/phploc.csv'
    				--exclude '${basedir}/htdocs/core/filemanagerdol'
-   				--exclude '${basedir}/htdocs/includes/adodbtime'
-   				--exclude '${basedir}/htdocs/includes/artichow'
-   				--exclude '${basedir}/htdocs/includes/barcode/php-barcode'
-   				--exclude '${basedir}/htdocs/includes/ckeditor'
-   				--exclude '${basedir}/htdocs/includes/fpdfi'
-   				--exclude '${basedir}/htdocs/includes/geoip'
-   				--exclude '${basedir}/htdocs/includes/jquery'
-   				--exclude '${basedir}/htdocs/includes/jsgantt'
-   				--exclude '${basedir}/htdocs/includes/nusoap'
-   				--exclude '${basedir}/htdocs/includes/odtphp'
-   				--exclude '${basedir}/htdocs/includes/phpexcel'
-   				--exclude '${basedir}/htdocs/includes/tcpdf'
+   				--exclude '${basedir}/htdocs/includes'
    				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'
    				htdocs
    				" />

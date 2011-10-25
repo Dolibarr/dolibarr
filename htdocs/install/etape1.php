@@ -116,7 +116,7 @@ if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 // Test database connexion
 if (! $error)
 {
-    $result=@include_once($main_dir."/lib/databases/".$_POST["db_type"].".class.php");
+    $result=@include_once($main_dir."/core/db/".$_POST["db_type"].".class.php");
     if ($result)
     {
         // If we ask database or user creation we need to connect as root
@@ -195,7 +195,7 @@ if (! $error)
     }
     else
     {
-        print "<br>\nFailed to include_once(\"".$main_dir."/lib/databases/".$_POST["db_type"].".class.php\")<br>\n";
+        print "<br>\nFailed to include_once(\"".$main_dir."/core/db/".$_POST["db_type"].".class.php\")<br>\n";
         print '<div class="error">'.$langs->trans("ErrorWrongValueForParameter",$langs->transnoentities("WebPagesDirectory")).'</div>';
         print $langs->trans("ErrorGoBackAndCorrectParameters");
         $error++;

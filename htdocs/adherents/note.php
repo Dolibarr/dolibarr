@@ -23,7 +23,7 @@
 */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/member.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
@@ -136,7 +136,7 @@ if ($id)
 	{
 	    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$adh->id."\">";
-        require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
         $doleditor=new DolEditor('note',$adh->note,'',280,'dolibarr_notes','',true,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MEMBER,10,80);
         $doleditor->Create();
 	}

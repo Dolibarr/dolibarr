@@ -23,10 +23,10 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/emailing.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/emailing.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
@@ -450,7 +450,7 @@ if (! empty($_POST["removedfileid"]))
 // Action update emailing
 if ($_POST["action"] == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"]))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	$mil = new Mailing($db);
 	$mil->fetch($_POST["id"]);
@@ -633,7 +633,7 @@ if ($_GET["action"] == 'create')
 	print '</i></td>';
 	print '<td>';
 	// Editeur wysiwyg
-	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
 	$doleditor->Create();
 	print '</td></tr>';
@@ -1045,7 +1045,7 @@ else
 			print '</i></td>';
 			print '<td colspan="3">';
 			// Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 			$doleditor=new DolEditor('body',$mil->body,'',320,'dolibarr_mailings','',true,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
 			$doleditor->Create();
 			print '</td></tr>';

@@ -23,7 +23,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/usergroups.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
 
 $action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["action"]:"");
@@ -122,7 +122,7 @@ if ($id)
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
 	    // Editeur wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER,10,80);
 		$doleditor->Create();
 	}

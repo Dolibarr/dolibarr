@@ -27,17 +27,17 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/fichinter/modules_fichinter.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/fichinter.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 if ($conf->projet->enabled)
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
     require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 }
-if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
+if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {
-    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php");
+    require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php");
 }
 
 $langs->load("companies");
@@ -249,8 +249,20 @@ if ($action == 'setdescription')
 // Add line
 if ($action == "addline" && $user->rights->ficheinter->creer)
 {
-    if ($_POST['np_desc'] && ($_POST['durationhour'] || $_POST['durationmin']))
+    if (empty($_POST['np_desc']))
     {
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
+        $error++;
+    }
+    if (empty($_POST['durationhour']) && empty($_POST['durationmin']))
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Duration")).'</div>';
+        $error++;
+    }
+    if (! $error)
+    {
+		$db->begin();
+
         $object = new Fichinter($db);
         $ret=$object->fetch($_POST['fichinterid']);
         $object->fetch_thirdparty();
@@ -259,11 +271,11 @@ if ($action == "addline" && $user->rights->ficheinter->creer)
         $date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
         $duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
-        $object->addline(
-        $_POST['fichinterid'],
-        $desc,
-        $date_intervention,
-        $duration
+        $result=$object->addline(
+        	$_POST['fichinterid'],
+        	$desc,
+        	$date_intervention,
+        	$duration
         );
 
         // Define output language
@@ -276,9 +288,20 @@ if ($action == "addline" && $user->rights->ficheinter->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
-        exit;
+
+		if ($result >= 0)
+		{
+			$db->commit();
+
+        	fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+        	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
+        	exit;
+		}
+		else
+		{
+			$mesg=$object->error;
+			$db->rollback();
+		}
     }
 }
 
@@ -448,7 +471,7 @@ if ($action == 'down' && $user->rights->ficheinter->creer)
  */
 if ($_POST['addfile'])
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -464,7 +487,7 @@ if ($_POST['addfile'])
  */
 if (! empty($_POST['removedfile']))
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -548,7 +571,7 @@ if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_AD
                 $mimetype = $attachedfiles['mimes'];
 
                 // Envoi de la propal
-                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {
@@ -682,7 +705,7 @@ if ($action == 'create')
         print '<table class="border" width="100%">';
 
         print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
-        print '<tr><td class="fieldrequired">'.$langs->trans("Company").'</td><td>'.$societe->getNomUrl(1).'</td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Thirdparty").'</td><td>'.$societe->getNomUrl(1).'</td></tr>';
 
         print '<input type="hidden" name="action" value="add">';
 
@@ -730,7 +753,7 @@ if ($action == 'create')
     {
         print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="GET">';
         print '<table class="border" width="100%">';
-        print '<tr><td class="fieldrequired">'.$langs->trans("Company").'</td><td>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Thirdparty").'</td><td>';
         $html->select_societes('','socid','',1,1);
         print '</td></tr>';
         print '</table>';
@@ -966,7 +989,7 @@ elseif ($fichinterid)
                 print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
                 // Editeur wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
                 $doleditor->Create();
                 print '</td>';
@@ -994,7 +1017,7 @@ elseif ($fichinterid)
         $db->free($resql);
 
         /*
-         * Ajouter une ligne
+         * Add line
          */
         if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline')
         {
@@ -1021,7 +1044,7 @@ elseif ($fichinterid)
             print '<tr '.$bc[$var].">\n";
             print '<td>';
             // editeur wysiwyg
-            require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
             $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
             $doleditor->Create();
             print '</td>';
@@ -1029,13 +1052,14 @@ elseif ($fichinterid)
             // Date intervention
             print '<td align="center" nowrap="nowrap">';
             $timearray=dol_getdate(mktime());
-            $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+            if (empty($_POST['diday'])) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+            else $timewithnohour=dol_mktime($_POST['dihour'],$_POST['dimin'],$_POST['disec'],$_POST['dimonth'],$_POST['diday'],$_POST['diyear']);
             $html->select_date($timewithnohour,'di',1,1,0,"addinter");
             print '</td>';
 
             // Duration
             print '<td align="right">';
-            $html->select_duration('duration',3600);
+            $html->select_duration('duration',(empty($_POST["durationhour"]) && empty($_POST["durationmin"]))?3600:(60*60*$_POST["durationhour"]+60*$_POST["durationmin"]));
             print '</td>';
 
             print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';

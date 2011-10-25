@@ -61,7 +61,7 @@ $html = new Form($db);
  */
 if ($_GET["socid"])
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
 	$langs->load("companies");

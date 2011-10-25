@@ -1,0 +1,52 @@
+README (english)
+------------------------------------
+Adding your own email selector module
+------------------------------------
+
+
+If you want to add your own emails selector/import module. This is steps to follow
+to add you own email predefined selector:
+
+
+***** STEP 1 *****
+
+Copy file
+htdocs/core/modules/mailings/example.modules.php
+into
+htdocs/core/modules/mailings/myselector.modules.php
+
+You can choose value of your choice instead of "myselector" in name
+of new file.
+
+
+***** STEP 2 *****
+
+Edit this file myselector.modules.php and change following text:
+
+"class mailing_example"           into    "class mailing_myselector"
+"var $name='example';"            into    var $name='myselector';
+"var $desc='...';"                into    var $desc='A text to describe selector';
+"function mailing_example"        into    "function mailing_myselector"
+
+Then add code inside the "add_to_target" function. What you must do is simply
+fill the $target PHP array with one record for each email your selector must return.
+
+You can choose the way you get data: From a file, a database. You are free,
+the only requirement is that the $target array is filled by records that are
+themselves array of: ('email', 'name', 'firstname', 'other').
+
+This is for example how you can fill the $target array:
+
+// ----- Your code start here -----
+$target[0]=array('email'=>'email_0','name'=>'name_0','firstname'=>'firstname_0', 'other'=>'other_0');
+...
+$target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n', 'other'=>'other_n');
+// ----- Your code end here -----
+
+
+
+***** STEP 3 *****
+
+Once this file has been edited, you can go to the Dolibarr emailing feature,
+you will see a new line selector in the "targets" editor of emailing tool.
+

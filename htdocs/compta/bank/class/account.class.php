@@ -354,7 +354,7 @@ class Account extends CommonObject
         }
 
         // Chargement librairie pour acces fonction controle RIB
-        require_once DOL_DOCUMENT_ROOT.'/lib/bank.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
         $now=dol_now();
 
@@ -510,7 +510,7 @@ class Account extends CommonObject
         global $conf,$langs;
 
         // Chargement librairie pour acces fonction controle RIB
-        require_once(DOL_DOCUMENT_ROOT.'/lib/bank.lib.php');
+        require_once(DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php');
 
         dol_syslog("Account::update_bban $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
 
@@ -915,7 +915,7 @@ class Account extends CommonObject
      */
     function verif()
     {
-        require_once DOL_DOCUMENT_ROOT . '/lib/bank.lib.php';
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 
         // Call function to check BAN
         if (! checkBanForAccount($this))

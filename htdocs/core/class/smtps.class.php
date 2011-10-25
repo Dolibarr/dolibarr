@@ -295,7 +295,7 @@ class SMTPs
         $host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 
         // DOL_CHANGE LDR
-        include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
 
         if ( (! is_ip($host)) && ((gethostbyname ( $host )) == $host) )
         {

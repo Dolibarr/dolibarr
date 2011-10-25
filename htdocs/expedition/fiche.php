@@ -29,11 +29,11 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/pdf/ModelePdfExpedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/sendings.lib.php");
 if ($conf->product->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
@@ -252,7 +252,7 @@ if ($action == 'settrackingnumber' || $action == 'settrackingurl'
  */
 if ($action == 'builddoc')	// En get ou en post
 {
-	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/pdf/ModelePdfExpedition.class.php");
 
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$shipment = new Expedition($db);
@@ -287,7 +287,7 @@ if ($action == 'builddoc')	// En get ou en post
  */
 if ($_POST['addfile'])
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -303,7 +303,7 @@ if ($_POST['addfile'])
  */
 if (! empty($_POST['removedfile']))
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -387,7 +387,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {

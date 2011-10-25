@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ function printBoxesArea($user,$areacode)
 		    print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
 		    //print 'alert(\'boxorder=\' + boxorder);';
 		    print 'var userid = \''.$user->id.'\';'."\n";
-		    print 'jQuery.get(\'core/ajaxbox.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');'."\n";
+		    print 'jQuery.get(\'core/ajax/box.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');'."\n";
 		  	print '}'."\n";
 			print '</script>'."\n";
 		}
@@ -204,12 +204,12 @@ class InfoBox
 					{
 						$boxname = $regs[1];
 						$module = $regs[2];
-						$sourcefile = dol_buildpath("/".$module."/includes/boxes/".$boxname.".php");
+						$sourcefile = dol_buildpath("/".$module."/core/boxes/".$boxname.".php");
 					}
 					else
 					{
 						$boxname=preg_replace('/.php$/i','',$obj->file);
-						$sourcefile = DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php";
+						$sourcefile = DOL_DOCUMENT_ROOT."/core/boxes/".$boxname.".php";
 					}
 
 					include_once($sourcefile);
@@ -233,7 +233,8 @@ class InfoBox
 					$j++;
 				}
 			}
-			else {
+			else
+			{
 				$this->error=$this->db->error();
 				dol_syslog("InfoBox::listBoxes Error ".$this->error, LOG_ERR);
 				return array();
@@ -265,12 +266,12 @@ class InfoBox
 					{
 						$boxname = $regs[1];
 						$module = $regs[2];
-						$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
+						$sourcefile = "/".$module."/core/boxes/".$boxname.".php";
 					}
 					else
 					{
 						$boxname=preg_replace('/.php$/i','',$obj->file);
-						$sourcefile = "/includes/boxes/".$boxname.".php";
+						$sourcefile = "/core/boxes/".$boxname.".php";
 					}
 
 					dol_include_once($sourcefile);
@@ -299,7 +300,8 @@ class InfoBox
 					$j++;
 				}
 			}
-			else {
+			else
+			{
 				$this->error=$this->db->error();
 				dol_syslog("InfoBox::listBoxes Error ".$this->error, LOG_ERR);
 				return array();
@@ -323,7 +325,7 @@ class InfoBox
 	{
 		global $conf;
 
-		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 		dol_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
 

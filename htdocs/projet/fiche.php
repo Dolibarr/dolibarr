@@ -26,9 +26,9 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/project/modules_project.php");
 
 $langs->load("projects");
 $langs->load('companies');
@@ -284,9 +284,9 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
     $defaultref='';
     $obj = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
-    if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$conf->global->PROJECT_ADDON.".php"))
+    if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php"))
     {
-        require_once(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$conf->global->PROJECT_ADDON.".php");
+        require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php");
         $modProject = new $obj;
         $defaultref = $modProject->getNextValue($soc,$project);
     }

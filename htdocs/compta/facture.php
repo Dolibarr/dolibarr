@@ -30,15 +30,15 @@
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
+if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
 
 $langs->load('bills');
 //print 'ee'.$langs->trans('BillsCustomer');exit;
@@ -223,7 +223,7 @@ if ($action == 'valid')
 
 if ($action == 'set_thirdparty')
 {
-    $object->updateObjectField('facture',$id,'fk_soc',$socid);
+    $object->setValueFrom('facture',$id,'fk_soc',$socid);
 
     Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
     exit;
@@ -1177,7 +1177,7 @@ if ($action == 'down' && $user->rights->facture->creer)
  */
 if ($_POST['addfile'])
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -1193,7 +1193,7 @@ if ($_POST['addfile'])
  */
 if (! empty($_POST['removedfile']))
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -1292,7 +1292,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
@@ -1722,7 +1722,7 @@ if ($action == 'create')
     // Modele PDF
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td>';
-    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+    include_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
     $liste=ModelePDFFactures::liste_modeles($db);
     print $html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
     print "</td></tr>";

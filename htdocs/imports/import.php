@@ -26,9 +26,9 @@ require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/class/import.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/import.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php');
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/import.lib.php");
 
 $langs->load("exports");
 $langs->load("errors");
@@ -191,7 +191,7 @@ if ($action == 'add_import_model')
 
 if ($step == 3 && $datatoimport)
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
@@ -574,7 +574,7 @@ if ($step == 4 && $datatoimport)
 	$liste=$objmodelimport->liste_modeles($db);
 
 	// Create classe to use for import
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
 	require_once($dir.$file);
@@ -1026,7 +1026,7 @@ if ($step == 5 && $datatoimport)
 	$liste=$objmodelimport->liste_modeles($db);
 
 	// Create classe to use for import
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
 	require_once($dir.$file);
@@ -1353,7 +1353,7 @@ if ($step == 6 && $datatoimport)
 
 
 	// Create classe to use for import
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
 	require_once($dir.$file);

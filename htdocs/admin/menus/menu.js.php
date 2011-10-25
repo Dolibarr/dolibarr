@@ -35,7 +35,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 session_cache_limiter(FALSE);
 
 require_once("../../master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php");
 
 // Define css type
 header('Content-type: application/javascript');

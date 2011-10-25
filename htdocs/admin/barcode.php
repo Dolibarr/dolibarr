@@ -24,7 +24,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $langs->load("admin");
@@ -108,7 +108,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/barcode/";
+	$dir = $dirroot . "/core/modules/barcode/";
 
 	$handle=@opendir($dir);
 	if (is_resource($handle))
@@ -193,7 +193,7 @@ if ($resql)
 			// Chargement de la classe de codage
 			foreach ($conf->file->dol_document_root as $dirroot)
 			{
-				$dir=$dirroot . "/includes/modules/barcode/";
+				$dir=$dirroot . "/core/modules/barcode/";
 				$result=@include_once($dir.$obj->coder.".modules.php");
 				//print $dir.$obj->coder.".modules.php - ".$result;
 				if ($result) break;

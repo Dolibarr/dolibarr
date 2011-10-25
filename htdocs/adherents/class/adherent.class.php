@@ -28,8 +28,8 @@
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 
 /**
@@ -162,7 +162,7 @@ class Adherent extends CommonObject
         $from=$conf->email_from;
         if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
 
-        include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+        include_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
         $mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
         if ($mailfile->sendfile())
         {

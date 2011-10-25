@@ -22,8 +22,8 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/agenda.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/events.class.php");
 
 

@@ -23,11 +23,11 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/agenda.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 if (!$user->admin)
     accessforbidden();
@@ -101,8 +101,6 @@ $form=new Form($db);
 $formadmin=new FormAdmin($db);
 $formother=new FormOther($db);
 
-//$arrayofjs=array('/includes/jquery/plugins/colorpicker/jquery.colorpicker.js');
-//$arrayofcss=array('/includes/jquery/plugins/colorpicker/jquery.colorpicker.css');
 $arrayofjs=array();
 $arrayofcss=array();
 

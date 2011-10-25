@@ -227,7 +227,7 @@ if (! empty($conf->file->main_force_https))
 // Chargement des includes complementaires de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/core/class/menu.class.php");			// Need 10ko memory (11ko in 2.2)
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");	    // Need 660ko memory (800ko in 2.2)
-if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 22ko memory
+if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php');	// Need 22ko memory
 //dol_stopwithmem();
 
 // If install or upgrade process not done or not completely finished, we call the install page.
@@ -242,7 +242,7 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 || (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ! empty($conf->global->MAIN_VERSION_LAST_INSTALL) && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION)))
 {
     $versiontocompare=empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE;
-    require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
+    require_once(DOL_DOCUMENT_ROOT ."/core/lib/admin.lib.php");
 	$dolibarrversionlastupgrade=preg_split('/[.-]/',$versiontocompare);
 	$dolibarrversionprogram=preg_split('/[.-]/',DOL_VERSION);
     $rescomp=versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade);
@@ -904,7 +904,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
 			// Other external js
-			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
 			$ext='.js';
 			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $ext='.jgz'; }	// mini='_mini', ext='.gz'
@@ -917,19 +917,24 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/jquery.tipTip.min'.$ext.'"></script>'."\n";
             //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/js/jquery.lightbox-0.5.min'.$ext.'"></script>'."\n";
             // jQuery Layout
-			if (!empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
+			if (! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
 			{
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
 			}
 			// jQuery jnotify
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
-            // Flot
-            print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/excanvas.min.js"></script><![endif]-->'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js"></script>'."\n";
+            // jQuery jeditable
+			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min'.$ext.'"></script>'."\n";
+			// Flot
+			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT))
+			{
+				print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/excanvas.min.js"></script><![endif]-->'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js"></script>'."\n";
+			}
             // CKEditor
-            if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
+            if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
@@ -953,7 +958,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             }
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js"></script>'."\n";
 		}
 
 		// Output module javascript
@@ -1154,11 +1159,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
 
 	// Load the top menu manager
-	$result=dol_include_once("/includes/menus/standard/".$top_menu);
+	$result=dol_include_once("/core/menus/standard/".$top_menu);
 	if (! $result)	// If failed to include, we try with standard
 	{
 		$top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT."/includes/menus/standard/".$top_menu);
+		include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
 	}
 
 
@@ -1351,11 +1356,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
 
     // Load the left menu manager
-	$result=dol_include_once("/includes/menus/standard/".$left_menu);
+	$result=dol_include_once("/core/menus/standard/".$left_menu);
 	if (! $result)	// If menu manager removed or not found
 	{
 		$left_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$left_menu);
+		include_once(DOL_DOCUMENT_ROOT ."/core/menus/standard/".$left_menu);
 	}
 
     // Left column

@@ -107,7 +107,7 @@ class FormMail
     function clear_attached_files()
     {
         global $conf,$user;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         // Set tmp user directory
         $vardir=$conf->user->dir_output."/".$user->id;
@@ -600,7 +600,7 @@ class FormMail
                 }
 
                 // Editor wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $doleditor=new DolEditor('message',$defaultmessage,'',280,'dolibarr_notes','In',true,false,$this->withfckeditor,8,72);
                 $out.= $doleditor->Create(1);
             }

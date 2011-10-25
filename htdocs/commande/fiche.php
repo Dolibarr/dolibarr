@@ -30,13 +30,13 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/commande/modules_commande.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
-require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 
 if (!$user->rights->commande->lire) accessforbidden();
@@ -852,7 +852,7 @@ if ($action == 'builddoc')	// In get or post
 {
     /*
      * Generate order document
-     * define into /includes/modules/commande/modules_commande.php
+     * define into /core/modules/commande/modules_commande.php
      */
 
     // Sauvegarde le dernier modele choisi pour generer un document
@@ -892,7 +892,7 @@ if ($action == 'remove_file')
 {
     if ($object->fetch($id))
     {
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $upload_dir = $conf->commande->dir_output;
         $file = $upload_dir . '/' . $_GET['file'];
@@ -906,7 +906,7 @@ if ($action == 'remove_file')
  */
 if ($_POST['addfile'])
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -922,7 +922,7 @@ if ($_POST['addfile'])
  */
 if (! empty($_POST['removedfile']))
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -1006,7 +1006,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {
@@ -1285,7 +1285,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td colspan="2">';
     // pdf
-    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+    include_once(DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php');
     $liste=ModelePDFCommandes::liste_modeles($db);
     print $html->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
     print "</td></tr>";

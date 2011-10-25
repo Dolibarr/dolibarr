@@ -24,7 +24,7 @@
  */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php");
 
 $langs->load("banks");
 

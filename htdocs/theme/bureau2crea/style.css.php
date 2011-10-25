@@ -37,7 +37,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 
 require_once("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php");
 
 // Define css type
 header('Content-type: text/css');

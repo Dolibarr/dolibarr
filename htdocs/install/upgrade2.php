@@ -34,9 +34,9 @@ require_once($dolibarr_main_document_root . '/comm/propal/class/propal.class.php
 require_once($dolibarr_main_document_root . '/contrat/class/contrat.class.php');
 require_once($dolibarr_main_document_root . '/commande/class/commande.class.php');
 require_once($dolibarr_main_document_root . '/fourn/class/fournisseur.commande.class.php');
-require_once($dolibarr_main_document_root . '/lib/price.lib.php');
+require_once($dolibarr_main_document_root . '/core/lib/price.lib.php');
 require_once($dolibarr_main_document_root . '/core/class/menubase.class.php');
-require_once($dolibarr_main_document_root . '/lib/files.lib.php');
+require_once($dolibarr_main_document_root . '/core/lib/files.lib.php');
 
 $grant_query='';
 $etape = 2;
@@ -87,7 +87,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     // If password is encoded, we decode it
     if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
     {
-        require_once($dolibarr_main_document_root."/lib/security.lib.php");
+        require_once($dolibarr_main_document_root."/core/lib/security.lib.php");
         if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
         {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
@@ -1728,7 +1728,7 @@ function migrate_modeles($db,$langs,$conf)
 
     if (! empty($conf->facture->enabled))
     {
-        include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
         $modellist=ModelePDFFactures::liste_modeles($db);
         if (count($modellist)==0)
         {
@@ -1741,7 +1741,7 @@ function migrate_modeles($db,$langs,$conf)
 
     if (! empty($conf->commande->enabled))
     {
-        include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php');
         $modellist=ModelePDFCommandes::liste_modeles($db);
         if (count($modellist)==0)
         {
@@ -1754,7 +1754,7 @@ function migrate_modeles($db,$langs,$conf)
 
     if (! empty($conf->expedition->enabled))
     {
-        include_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
+        include_once(DOL_DOCUMENT_ROOT.'/core/modules/expedition/pdf/ModelePdfExpedition.class.php');
         $modellist=ModelePDFExpedition::liste_modeles($db);
         if (count($modellist)==0)
         {
@@ -3191,26 +3191,26 @@ function migrate_delete_old_files($db,$langs,$conf)
 
     // List of files to delete
     $filetodeletearray=array(
-    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/menus/barre_left/default.php',
-    DOL_DOCUMENT_ROOT.'/includes/menus/barre_top/default.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/modComptabiliteExpert.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/modCommercial.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/modProduit.class.php',
+    DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
     DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_fraisport.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPropale_PropalWorkflow.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone.lib.php',
-    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/mailings/dolibarr_services_expired.modules.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/mailings/poire.modules.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/mailings/kiwi.modules.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/facture/pdf_crabe.modules.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/facture/pdf_oursin.modules.php'
+    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
+    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_Ecotax.class.php',
+    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_fraisport.class.php',
+    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php'
     );
 
     foreach ($filetodeletearray as $filetodelete)
@@ -3251,8 +3251,8 @@ function migrate_delete_old_dir($db,$langs,$conf)
 
     // List of files to delete
     $filetodeletearray=array(
-    DOL_DOCUMENT_ROOT.'/includes/modules/facture/terre',
-    DOL_DOCUMENT_ROOT.'/includes/modules/facture/mercure'
+    DOL_DOCUMENT_ROOT.'/core/modules/facture/terre',
+    DOL_DOCUMENT_ROOT.'/core/modules/facture/mercure'
     );
 
     foreach ($filetodeletearray as $filetodelete)
@@ -3290,7 +3290,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_AGENDA))
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modAgenda.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php');
         if ($res) {
             $mod=new modAgenda($db);
             $mod->remove('noboxes');
@@ -3300,7 +3300,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_PHENIX))
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Phenix");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modPhenix.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modPhenix.class.php');
         if ($res) {
             $mod=new modPhenix($db);
             $mod->remove('noboxes');
@@ -3310,7 +3310,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_WEBCALENDAR))
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Webcalendar");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modWebcalendar.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modWebcalendar.class.php');
         if ($res) {
             $mod=new modWebcalendar($db);
             $mod->remove('noboxes');
@@ -3320,7 +3320,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_MANTIS))
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Mantis");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modMantis.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modMantis.class.php');
         if ($res) {
             $mod=new modMantis($db);
             $mod->remove('noboxes');
@@ -3330,7 +3330,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_SOCIETE))
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modSociete.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php');
         if ($res) {
             $mod=new modSociete($db);
             $mod->remove('noboxes');
@@ -3340,7 +3340,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_PRODUIT))    // Permission has changed into 2.7
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modProduct.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php');
         if ($res) {
             $mod=new modProduct($db);
             //$mod->remove('noboxes');
@@ -3351,7 +3351,7 @@ function migrate_reload_modules($db,$langs,$conf)
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
         if ($res) {
-            $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modService.class.php');
+            $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php');
             $mod=new modService($db);
             //$mod->remove('noboxes');
             $mod->init();
@@ -3361,7 +3361,7 @@ function migrate_reload_modules($db,$langs,$conf)
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
         if ($res) {
-            $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modCommande.class.php');
+            $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php');
             $mod=new modCommande($db);
             //$mod->remove('noboxes');
             $mod->init();
@@ -3371,7 +3371,7 @@ function migrate_reload_modules($db,$langs,$conf)
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
         if ($res) {
-            $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modFacture.class.php');
+            $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php');
             $mod=new modFacture($db);
             //$mod->remove('noboxes');
             $mod->init();
@@ -3380,7 +3380,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR))    // Permission has changed into 2.9
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modFournisseur.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php');
         if ($res) {
             $mod=new modFournisseur($db);
             //$mod->remove('noboxes');
@@ -3391,7 +3391,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_USER))    // Permission has changed into 3.0
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module User");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modUser.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php');
         if ($res) {
             $mod=new modUser($db);
             //$mod->remove('noboxes');  // We need to remove because id of module has changed
@@ -3401,7 +3401,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_DEPLACEMENT))    // Permission has changed into 3.0
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Deplacement");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modDeplacement.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php');
         if ($res) {
             $mod=new modDeplacement($db);
             //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
@@ -3411,7 +3411,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_DON))    // Permission has changed into 3.0
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Don");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modDon.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php');
         if ($res) {
             $mod=new modDon($db);
             //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
@@ -3422,7 +3422,7 @@ function migrate_reload_modules($db,$langs,$conf)
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
         if ($res) {
-            $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modECM.class.php');
+            $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php');
             $mod=new modECM($db);
             $mod->remove('noboxes');	// We need to remove because a permission id has been removed
             $mod->init();
@@ -3431,7 +3431,7 @@ function migrate_reload_modules($db,$langs,$conf)
     if (! empty($conf->global->MAIN_MODULE_PAYBOX))    // Permission has changed into 3.0
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Paybox");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modPaybox.class.php');
+        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php');
         if ($res) {
             $mod=new modPaybox($db);
             $mod->remove('noboxes');  // We need to remove because id of module has changed
@@ -3487,7 +3487,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
         print '<b>'.$langs->trans('Upgrade').'</b>: '.$langs->trans('MenuHandler')." ".$key."<br>\n";
 
         // Load sql ini_menu_handler.sql file
-        $dir = DOL_DOCUMENT_ROOT."/includes/menus/";
+        $dir = DOL_DOCUMENT_ROOT."/core/menus/";
         $file='init_menu_'.$key.'.sql';
         if (file_exists($dir.$file))
         {

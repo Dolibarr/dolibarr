@@ -24,8 +24,8 @@
  */
 
 require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php";
 
 $langs->load("bills");

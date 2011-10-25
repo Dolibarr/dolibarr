@@ -25,9 +25,9 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/emailing.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/emailing.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 $langs->load("mails");
 
@@ -36,7 +36,7 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0)
 accessforbidden();
 
 
-$dirmod=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
+$dirmod=DOL_DOCUMENT_ROOT."/core/modules/mailings";
 
 
 $mesg = '';
@@ -69,7 +69,7 @@ if ($_GET["action"] == 'add')
 	$var=true;
 	foreach ($conf->file->dol_document_root as $dirmod)
 	{
-		$dir=$dirmod."/includes/modules/mailings/";
+		$dir=$dirmod."/core/modules/mailings/";
 
 		if (is_dir($dir))
 		{
@@ -229,7 +229,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		$var=true;
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-			$dir=$dirroot."/includes/modules/mailings/";
+			$dir=$dirroot."/core/modules/mailings/";
 
 			if (is_dir($dir))
 			{

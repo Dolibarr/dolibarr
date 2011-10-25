@@ -209,7 +209,7 @@ class Propal extends CommonObject
 	{
 		global $langs;
 
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 		include_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
 		$this->db->begin();
@@ -306,7 +306,7 @@ class Propal extends CommonObject
 		global $conf;
 
 		dol_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
 		// Clean parameters
 		if (empty($remise_percent)) $remise_percent=0;
@@ -453,7 +453,7 @@ class Propal extends CommonObject
 		global $conf,$user,$langs;
 
 		dol_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
 		// Clean parameters
 		$remise_percent=price2num($remise_percent);
@@ -885,7 +885,7 @@ class Propal extends CommonObject
 
 		$objsoc->fetch($object->socid);
 
-		if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
+		if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 		{
 			$this->error='ErrorSetupNotComplete';
 			return -1;
@@ -900,7 +900,7 @@ class Propal extends CommonObject
 		$object->ref_client		= '';
 
 		// Set ref
-		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 		$obj = $conf->global->PROPALE_ADDON;
 		$modPropale = new $obj;
 		$object->ref = $modPropale->getNextValue($objsoc,$object);
@@ -1734,7 +1734,7 @@ class Propal extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf,$langs;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 		$error=0;
 
@@ -2275,7 +2275,7 @@ class Propal extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("propal");
 
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/propale/";
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/propale/";
 
 		if (! empty($conf->global->PROPALE_ADDON))
 		{

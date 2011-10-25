@@ -94,7 +94,7 @@ function donnefocus() {
 
 	<table style="width: 100px;"><tr>
 	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>
-	<td><img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36"></td>
+	<td><img src="<?php echo $dol_url_root.'/core/antispamimage.php'; ?>" border="0" width="128" height="36"></td>
 	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 

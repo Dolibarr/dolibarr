@@ -131,7 +131,7 @@ jQuery(document).ready(function () {
 
 		<table style="width: 100px;"><tr>
 		<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
-		<td><img src="<?php echo DOL_URL_ROOT ?>/lib/antispamimage.php" border="0" width="128" height="36" /></td>
+		<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="128" height="36" /></td>
 		<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
 		</tr></table>
 

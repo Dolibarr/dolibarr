@@ -338,19 +338,11 @@ class FormCompany
 	}
 
 	/**
-	 *    	\brief      Retourne la liste deroulante des civilite actives
-	 *    	\param      selected    civilite pre-selectionnee
-	 * 		\param		htmlname	Name of HTML select combo field
-	 */
-	function select_civilite($selected='',$htmlname='civilite_id')
-	{
-		print $this->select_civility($selected,$htmlname);
-	}
-
-	/**
-	 *    	\brief      Retourne la liste deroulante des civilite actives
-	 *    	\param      selected    civilite pre-selectionnee
-	 * 		\param		htmlname	Name of HTML select combo field
+	 *  Return combo list with people title
+	 *
+	 *  @param  string	$selected   Title preselected
+	 * 	@param	string	$htmlname	Name of HTML select combo field
+	 *  @return	void
 	 */
 	function select_civility($selected='',$htmlname='civilite_id')
 	{
@@ -362,7 +354,7 @@ class FormCompany
 		$sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog("Form::select_civilite sql=".$sql);
+		dol_syslog("Form::select_civility sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -636,7 +628,7 @@ class FormCompany
 		$size='';
 		if (!empty($fieldsize)) $size='size="'.$fieldsize.'"';
 
-		if ($conf->use_javascript_ajax && empty($disableautocomplete))	$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajaxziptown.php')."\n";
+		if ($conf->use_javascript_ajax && empty($disableautocomplete))	$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajax/ziptown.php')."\n";
 		$out.= '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
 
 		return $out;

@@ -25,10 +25,10 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
@@ -206,7 +206,7 @@ if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
 
 if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	$datenaiss='';
 	if (isset($_POST["naissday"]) && $_POST["naissday"]
@@ -696,7 +696,7 @@ if ($action == 'create')
 
     // Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-    print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id,'civilite_id').'</td>';
+    print $htmlcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id,'civilite_id').'</td>';
     print '</tr>';
 
     // Lastname
@@ -923,7 +923,7 @@ if ($action == 'edit')
 
 	// Civilite
 	print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
-	print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id)."\n";
+	print $htmlcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id)."\n";
 	print '</td>';
 	print '</tr>';
 
@@ -1078,7 +1078,7 @@ if ($rowid && $action != 'edit')
 		if (empty($login))
 		{
 			// Full firstname and name separated with a dot : firstname.name
-			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+			include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
 			$login=dol_buildlogin($object->nom,$object->prenom);
 		}
 		if (empty($login)) $login=strtolower(substr($object->prenom, 0, 4)) . strtolower(substr($object->nom, 0, 4));

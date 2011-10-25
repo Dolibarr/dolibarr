@@ -119,7 +119,7 @@ abstract class ActionsCardCommon
         if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
         && ($action == 'add' || $action == 'update'))
         {
-            require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+            require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
             $error=0;
 
             if (GETPOST("private") == 1)
@@ -335,7 +335,7 @@ abstract class ActionsCardCommon
             }
             else
             {
-                require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
+                require_once(DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php');
 
                 $this->object->fetch_thirdparty();
 
@@ -437,7 +437,7 @@ abstract class ActionsCardCommon
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
             $modCodeClient = new $module;
             $this->tpl['auto_customercode'] = $modCodeClient->code_auto;
             // We verified if the tag prefix is used
@@ -469,7 +469,7 @@ abstract class ActionsCardCommon
             	{
             		$module = substr($module, 0, dol_strlen($module)-4);
             	}
-            	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            	require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
             	$modCodeFournisseur = new $module;
             	$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
             	// We verified if the tag prefix is used
@@ -572,7 +572,7 @@ abstract class ActionsCardCommon
 
             if ($conf->global->MAIN_MULTILANGS)
             {
-                require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+                require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
                 //$s=picto_from_langcode($this->default_lang);
                 //print ($s?$s.' ':'');
                 $langs->load("languages");

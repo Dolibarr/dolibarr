@@ -23,7 +23,7 @@
  */
 
 require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
 

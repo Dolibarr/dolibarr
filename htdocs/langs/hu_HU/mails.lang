@@ -57,7 +57,7 @@ NoTargetYet=Nincs címzett megadva ('Címzettek fül')
 AddRecipients=Címzett hozzáadása
 RemoveRecipient=Címzett eltávolítása
 CommonSubstitutions=Általános helyettesítések
-YouCanAddYourOwnPredefindedListHere=To create your email selector module, see htdocs/includes/modules/mailings/README.
+YouCanAddYourOwnPredefindedListHere=To create your email selector module, see htdocs/core/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=When using test mode, substitutions variables are replaced by generic values
 
 

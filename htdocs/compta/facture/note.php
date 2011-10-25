@@ -25,7 +25,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php');
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 

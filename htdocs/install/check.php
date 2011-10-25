@@ -272,14 +272,14 @@ else
 			include_once($conffile);
 			if (! empty($dolibarr_main_db_type) && ! empty($dolibarr_main_document_root))
 			{
-				if (! file_exists($dolibarr_main_document_root."/lib/admin.lib.php"))
+				if (! file_exists($dolibarr_main_document_root."/core/lib/admin.lib.php"))
 				{
 				    print '<font class="error">A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.</font><br>'."\n";
 				    dol_syslog("A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.", LOG_WARNING);
 				}
 				else
 				{
-                    require_once($dolibarr_main_document_root."/lib/admin.lib.php");
+                    require_once($dolibarr_main_document_root."/core/lib/admin.lib.php");
 
     				// $conf is already instancied inside inc.php
     				$conf->db->type = $dolibarr_main_db_type;

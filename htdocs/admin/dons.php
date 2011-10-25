@@ -21,7 +21,7 @@
  *		\brief      Page d'administration/configuration du module Dons
  */
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 
 $langs->load("admin");
@@ -44,7 +44,7 @@ if ($_GET["action"] == 'specimen')
     $don->initAsSpecimen();
 
     // Charge le modele
-    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/dons/";
+    $dir = DOL_DOCUMENT_ROOT . "/core/modules/dons/";
     $file = $modele.".modules.php";
     if (file_exists($dir.$file))
     {
@@ -126,7 +126,7 @@ if ($_GET["action"] == 'del')
  * View
  */
 
-$dir = "../includes/modules/dons/";
+$dir = "../core/modules/dons/";
 $html=new Form($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');

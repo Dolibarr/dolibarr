@@ -26,8 +26,8 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 
 $servicename='PayPal';
 
@@ -112,7 +112,7 @@ if ($conf->use_javascript_ajax)
             });
 
             $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajaxsecurity.php", {
+            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: true
 				},

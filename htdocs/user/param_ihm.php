@@ -22,8 +22,8 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 
 $langs->load("companies");
@@ -56,8 +56,8 @@ if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
 
 
 $id=! empty($_GET["id"])?$_GET["id"]:$_POST["id"];
-$dirtop = "../includes/menus/standard";
-$dirleft = "../includes/menus/standard";
+$dirtop = "../core/menus/standard";
+$dirleft = "../core/menus/standard";
 
 // Charge utilisateur edite
 $fuser = new User($db);

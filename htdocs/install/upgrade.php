@@ -28,7 +28,7 @@ if (! file_exists($conffile))
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once($conffile); if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
-require_once($dolibarr_main_document_root."/lib/admin.lib.php");
+require_once($dolibarr_main_document_root."/core/lib/admin.lib.php");
 
 $grant_query='';
 $etape = 2;
@@ -87,7 +87,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     // If password is encoded, we decode it
     if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
     {
-        require_once($dolibarr_main_document_root."/lib/security.lib.php");
+        require_once($dolibarr_main_document_root."/core/lib/security.lib.php");
         if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
         {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);

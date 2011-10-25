@@ -26,9 +26,9 @@
  */
 
 require ("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/contract.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/contract.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("other");
@@ -69,7 +69,7 @@ $modulepart='contract';
  */
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 	if (create_exdir($upload_dir) >= 0)
 	{

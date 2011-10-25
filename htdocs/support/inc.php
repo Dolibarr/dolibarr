@@ -35,9 +35,9 @@ if (! defined('ADODB_PATH'))
 }
 
 require_once('../core/class/translate.class.php');
-require_once('../lib/functions.lib.php');
-require_once('../lib/admin.lib.php');
-require_once('../lib/files.lib.php');
+require_once('../core/lib/functions.lib.php');
+require_once('../core/lib/admin.lib.php');
+require_once('../core/lib/files.lib.php');
 require_once(ADODB_PATH.'adodb-time.inc.php');
 
 
@@ -105,7 +105,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 		{
 			if (! empty($dolibarr_main_document_root) && ! empty($dolibarr_main_db_type))
 			{
-				$result=include_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".class.php");
+				$result=include_once($dolibarr_main_document_root . "/core/db/".$dolibarr_main_db_type.".class.php");
 				if (! $result)
 				{
 					$includeconferror='ErrorBadValueForDolibarrMainDBType';

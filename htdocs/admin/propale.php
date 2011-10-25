@@ -29,7 +29,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 
 $langs->load("admin");
@@ -71,7 +71,7 @@ if ($action == 'specimen')
 	$propal->initAsSpecimen();
 
 	// Charge le modele
-	$dir = "/includes/modules/propale/";
+	$dir = "/core/modules/propale/";
 	$file = "pdf_propale_".$modele.".modules.php";
 	$file = dol_buildpath($dir.$file);
 	if (file_exists($file))
@@ -276,7 +276,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/propale/";
+	$dir = $dirroot . "/core/modules/propale/";
 
 	if (is_dir($dir))
 	{
@@ -406,7 +406,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/propale/";
+	$dir = $dirroot . "/core/modules/propale/";
 
 	if (is_dir($dir))
 	{

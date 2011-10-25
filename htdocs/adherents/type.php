@@ -240,7 +240,7 @@ if ($_GET["action"] == 'create')
 	print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
 
 	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
-	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 	$doleditor=new DolEditor('mail_valid',$adht->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
 	$doleditor->Create();
 	print '</td></tr>';
@@ -620,7 +620,7 @@ if ($rowid > 0)
 		print "<textarea name=\"comment\" wrap=\"soft\" cols=\"90\" rows=\"3\">".$adht->note."</textarea></td></tr>";
 
 		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 		$doleditor=new DolEditor('mail_valid',$adht->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
 		$doleditor->Create();
 		print "</td></tr>";

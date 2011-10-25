@@ -28,7 +28,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php');
 
 $langs->load("admin");
@@ -58,7 +58,7 @@ if ($action == 'specimen')
 	//$exp->fetch_commande();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/expedition/pdf/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/expedition/pdf/";
 	$file = "pdf_expedition_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -161,7 +161,7 @@ if ($action == 'setmethod' || $action== 'setmod')
 	$moduleid=GETPOST("moduleid");
 	$statut=GETPOST("statut");
 
-	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_$module.modules.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_$module.modules.php");
 
 	$classname = "methode_expedition_$module";
 	$expem = new $classname($db);
@@ -350,7 +350,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/expedition/";
+	$dir = $dirroot . "/core/modules/expedition/";
 
 	if (is_dir($dir))
 	{
@@ -365,7 +365,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
-					require_once(DOL_DOCUMENT_ROOT ."/includes/modules/expedition/".$file.".php");
+					require_once(DOL_DOCUMENT_ROOT ."/core/modules/expedition/".$file.".php");
 
 					$module = new $file;
 
@@ -486,7 +486,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/includes/modules/expedition/pdf/";
+	$dir = $dirroot . "/core/modules/expedition/pdf/";
 
 	if (is_dir($dir))
 	{

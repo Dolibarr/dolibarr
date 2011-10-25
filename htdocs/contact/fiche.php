@@ -28,8 +28,8 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/contact.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
 $langs->load("companies");
@@ -154,7 +154,7 @@ if (empty($reshook))
         if (! $_POST["name"])
         {
             $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
-            $_GET["action"] = $_POST["action"] = 'create';
+            $action = 'create';
         }
 
         if ($_POST["name"])
@@ -163,7 +163,7 @@ if (empty($reshook))
             if ($id <= 0)
             {
                 $error++; $errors[]=($object->error?array($object->error):$object->errors);
-                $_GET["action"] = $_POST["action"] = 'create';
+                $action = 'create';
             }
         }
 
@@ -403,7 +403,7 @@ else
 
             // Civility
             print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-            print $formcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
+            print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td>';
@@ -582,7 +582,7 @@ else
 
             // Civility
             print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-            print $formcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
+            print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';
@@ -711,7 +711,7 @@ else
         if ($action == 'create_user')
         {
             // Full firstname and name separated with a dot : firstname.name
-            include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+            include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
             $login=dol_buildlogin($object->nom,$object->prenom);
 
             $generated_password='';

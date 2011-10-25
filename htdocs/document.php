@@ -47,7 +47,7 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 function llxHeader() { }
 
 require("./main.inc.php");	// Load $user and permissions
-require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 $encoding = '';
 $action = GETPOST("action");

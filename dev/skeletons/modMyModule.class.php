@@ -20,12 +20,12 @@
 /**
  * 		\defgroup   mymodule     Module MyModule
  *      \brief      Example of a module descriptor.
- *					Such a file must be copied into htdocs/mymodule/includes/modules directory.
- *      \file       htdocs/mymodule/includes/modules/modMyModule.class.php
+ *					Such a file must be copied into htdocs/mymodule/core/modules directory.
+ *      \file       htdocs/mymodule/core/modules/modMyModule.class.php
  *      \ingroup    mymodule
  *      \brief      Description and activation file for module MyModule
  */
-include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
+include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 
 /**
@@ -69,7 +69,7 @@ class modMyModule extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='generic';
 
-		// Defined if the directory /mymodule/includes/triggers/ contains triggers or not
+		// Defined if the directory /mymodule/core/triggers/ contains triggers or not
 		$this->triggers = 0;
 
 		// Data directories to create when module is enabled.
@@ -139,7 +139,7 @@ class modMyModule extends DolibarrModules
         */
 
         // Boxes
-		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
+		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
         $this->boxes = array();			// List of boxes
 		$r=0;
 		// Example:

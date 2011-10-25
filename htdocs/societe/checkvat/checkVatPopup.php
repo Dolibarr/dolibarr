@@ -22,7 +22,7 @@
  */
 
 require ("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/nusoap/lib/nusoap.php");
 
 $langs->load("companies");
@@ -61,7 +61,7 @@ else
 
 	// Set the WebService URL
 	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL." WSDL=".$WS_DOL_URL_WSDL);
-    require_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+    require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
     $params=getSoapParams();
     //ini_set('default_socket_timeout', $params['response_timeout']);
     //$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);

@@ -23,9 +23,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
 
 if (!$user->rights->commande->lire)	accessforbidden();
 

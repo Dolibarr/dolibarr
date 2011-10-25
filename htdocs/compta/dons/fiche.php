@@ -23,12 +23,12 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/dons/modules_don.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/dons/modules_don.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
-if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
 
 $langs->load("companies");
 $langs->load("donations");

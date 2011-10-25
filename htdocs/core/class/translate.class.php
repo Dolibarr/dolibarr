@@ -227,7 +227,7 @@ class Translate {
 				{
 			        //dol_syslog('Translate::Load we will cache result into usecachekey '.$usecachekey);
 
-				    require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
+				    require_once(DOL_DOCUMENT_ROOT ."/core/lib/memory.lib.php");
 					$tmparray=dol_getcache($usecachekey);
 					if (is_array($tmparray) && count($tmparray))
 					{
@@ -606,7 +606,7 @@ class Translate {
 		$newnumber=$number;
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-			$dir=$dirroot."/includes/modules/substitutions";
+			$dir=$dirroot."/core/modules/substitutions";
 			$fonc='numberwords';
 			if (file_exists($dir.'/functions_'.$fonc.'.lib.php'))
 			{

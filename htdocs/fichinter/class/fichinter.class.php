@@ -462,7 +462,7 @@ class Fichinter extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("interventions");
 
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/fichinter/";
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
 
 		if (! empty($conf->global->FICHEINTER_ADDON))
 		{
@@ -555,7 +555,7 @@ class Fichinter extends CommonObject
 	function delete($user)
 	{
 		global $conf;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 		$error=0;
 

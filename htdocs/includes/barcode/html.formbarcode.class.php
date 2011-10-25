@@ -24,9 +24,9 @@
 
 
 /**
-        \class      Form
-        \brief      Classe permettant la generation de composants html
-*/
+ *       \class      Form
+ *       \brief      Classe permettant la generation de composants html
+ */
 class FormBarCode
 {
 	var $db;
@@ -34,12 +34,13 @@ class FormBarCode
 
 
 	/**
-		\brief     Constructeur
-		\param     DB      handler d'acc�s base de donn�e
-	*/
-	function FormBarCode($DB)
+	 *	Constructor
+	 *
+	 *	@param	DoliDB		$db		Database handler
+	 */
+	function FormBarCode($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		return 1;
 	}

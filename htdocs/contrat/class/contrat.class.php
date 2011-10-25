@@ -28,7 +28,7 @@
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/price.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/price.lib.php");
 
 
 /**
@@ -95,7 +95,7 @@ class Contrat extends CommonObject
 		global $db, $langs, $conf;
 		$langs->load("contract");
 
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/contract";
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/contract";
 
 		if (empty($conf->global->CONTRACT_ADDON))
 		{
