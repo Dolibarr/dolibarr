@@ -77,9 +77,9 @@ else if ($action == 'GENBARCODE_BARCODETYPE_THIRDPARTY')
 if($action && $action!='setcoder')
 {
 	if (! $res > 0) $error++;
-    
+
 	if (! $error)
-    {   
+    {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
     }
     else
@@ -207,8 +207,7 @@ if ($resql)
 					if ($module->encodingIsSupported($obj->encoding))
 					{
 						// Build barcode on disk (not used, this is done to make debug easier)
-						$result=$module->writeBarCode($obj->example,$obj->encoding,'Y');
-
+					    $result=$module->writeBarCode($obj->example,$obj->encoding,'Y');
 						// Generate on the fly and output barcode with generator
 						$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($obj->coder).'&code='.urlencode($obj->example).'&encoding='.urlencode($obj->encoding);
 						//print $url;

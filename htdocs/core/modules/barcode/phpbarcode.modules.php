@@ -89,10 +89,11 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
     /**
-	 *		\brief      Return an image file on the fly (no need to write on disk)
-	 *		\param   	$code			Value to encode
-	 *		\param   	$encoding		Mode of encoding
-	 *		\param   	$readable		Code can be read
+	 *	Return an image file on the fly (no need to write on disk)
+	 *
+	 *	@param	string   	$code			Value to encode
+	 *	@param  string	 	$encoding		Mode of encoding
+	 *	@param  string	 	$readable		Code can be read
      */
 	function buildBarCode($code,$encoding,$readable='Y')
 	{
@@ -119,7 +120,7 @@ class modPhpbarcode extends ModeleBarCode
 		if (! is_array($result))
 		{
 			$this->error=$result;
-			print $this->error;exit;
+			print $this->error;
 			return -1;
 		}
 
@@ -127,10 +128,11 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
 	/**
-	 *		\brief      Save an image file on disk (with no output)
-	 *		\param   	$code			Value to encode
-	 *		\param   	$encoding		Mode of encoding
-	 *		\param   	$readable		Code can be read
+	 *	Save an image file on disk (with no output)
+	 *
+	 *	@param	string   	$code			Value to encode
+	 *	@param	string   	$encoding		Mode of encoding
+	 *	@param  string	 	$readable		Code can be read
 	 */
 	function writeBarCode($code,$encoding,$readable='Y')
 	{
