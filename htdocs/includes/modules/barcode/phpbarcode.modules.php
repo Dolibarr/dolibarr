@@ -120,7 +120,7 @@ class modPhpbarcode extends ModeleBarCode
 		if (! is_array($result))
 		{
 			$this->error=$result;
-			print $this->error;exit;
+			print $this->error;
 			return -1;
 		}
 
