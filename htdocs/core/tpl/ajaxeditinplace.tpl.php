@@ -44,6 +44,7 @@ $(document).ready(function() {
 		$('.edit_text').editable('<?php echo DOL_URL_ROOT.'/core/ajax/saveinplace.php'; ?>', {
 			type		: 'text',
 			id			: 'field',
+			width		: 300,
 			tooltip		: '<?php echo $langs->trans('ClickToEdit'); ?>',
 			cancel		: '<?php echo $langs->trans('Cancel'); ?>',
 			submit		: '<?php echo $langs->trans('Ok'); ?>',
@@ -63,6 +64,7 @@ $(document).ready(function() {
 		$('.edit_numeric').editable('<?php echo DOL_URL_ROOT.'/core/ajax/saveinplace.php'; ?>', {
 			type		: 'text',
 			id			: 'field',
+			width		: 100,
 			tooltip		: '<?php echo $langs->trans('ClickToEdit'); ?>',
 			cancel		: '<?php echo $langs->trans('Cancel'); ?>',
 			submit		: '<?php echo $langs->trans('Ok'); ?>',
