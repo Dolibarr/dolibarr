@@ -218,12 +218,8 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
 	print '<td valign="top" colspan="2">';
-	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-	if (is_object($objectsrc))    // Take value from source object
-	{
-	    print $objectsrc->note_public;
-	}
-	print '</textarea></td></tr>';
+	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea>';
+	print '</td></tr>';
 
 	// Private note
 	if (! $user->societe_id)
@@ -231,12 +227,8 @@ if ($action == 'create')
 	    print '<tr>';
 	    print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
 	    print '<td valign="top" colspan="2">';
-	    print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-	    if (is_object($objectsrc))    // Take value from source object
-	    {
-	        print $objectsrc->note_private;
-	    }
-	    print '</textarea></td></tr>';
+	    print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea>';
+	    print '</td></tr>';
 	}
 
     print '</table>';
