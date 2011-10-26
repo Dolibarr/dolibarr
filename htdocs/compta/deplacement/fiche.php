@@ -157,10 +157,9 @@ if ($action == 'update' && $user->rights->deplacement->creer)
 // Set into a project
 if ($action == 'classin')
 {
-	$trip = new Deplacement($db);
-	$trip->fetch($id);
-	$result=$trip->setProject($_POST['projectid']);
-	if ($result < 0) dol_print_error($db,$trip->error);
+	$object->fetch($id);
+	$result=$object->setProject($_POST['projectid']);
+	if ($result < 0) dol_print_error($db, $object->error);
 }
 
 
@@ -330,7 +329,7 @@ else if ($id)
 			 */
 			if ($action == 'delete')
 			{
-				$ret=$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -435,7 +434,7 @@ else if ($id)
 			
 			if ($user->rights->deplacement->creer)
 			{
-				print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 			}
 			else
 			{
@@ -443,7 +442,7 @@ else if ($id)
 			}
 			if ($user->rights->deplacement->supprimer)
 			{
-				print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 			}
 			else
 			{
