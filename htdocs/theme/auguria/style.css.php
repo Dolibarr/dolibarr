@@ -1650,43 +1650,17 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /* ============================================================================== */
 
 .ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em; }
-.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/eldy/img/working.gif',1) ?>) right center no-repeat; }
+.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/auguria/img/working.gif',1) ?>) right center no-repeat; }
 
 
 /* ============================================================================== */
-/*  Ajax - In place editor                                                        */
+/*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-form.inplaceeditor-form { /* The form */
+.edit_area:hover {
+	background: white url(<?php echo dol_buildpath($path.'/theme/auguria/img/edit.png',1) ?>) right center no-repeat;
+	cursor: pointer;
 }
-
-form.inplaceeditor-form input[type="text"] { /* Input box */
-}
-
-form.inplaceeditor-form textarea { /* Textarea, if multiple columns */
-background: #FAF8E8;
-color: black;
-}
-
-form.inplaceeditor-form input[type="submit"] { /* The submit button */
-  font-size: 100%;
-  font-weight:normal;
-	border: 0px;
-	background-image : url(<?php echo dol_buildpath($path.'/theme/auguria/img/button_bg.png',1) ?>);
-	background-position : bottom;
-	cursor:pointer;
-}
-
-form.inplaceeditor-form a { /* The cancel link */
-  margin-left: 5px;
-  font-size: 11px;
-	font-weight:normal;
-	border: 0px;
-	background-image : url(<?php echo dol_buildpath($path.'/theme/auguria/img/button_bg.png',1); ?>);
-	background-position : bottom;
-	cursor:pointer;
-}
-
 
 
 /* ============================================================================== */
