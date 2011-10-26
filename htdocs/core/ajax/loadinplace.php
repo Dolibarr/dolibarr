@@ -25,7 +25,7 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
@@ -39,11 +39,26 @@ top_httphead();
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Load original field value
-if((isset($_GET['field']) && ! empty($_GET['field'])) && (isset($_GET['table_element']) && ! empty($_GET['table_element'])) && (isset($_GET['fk_element']) && ! empty($_GET['fk_element'])))
+if((isset($_GET['field']) && ! empty($_GET['field']))
+	&& (isset($_GET['element']) && ! empty($_GET['element']))
+	&& (isset($_GET['table_element']) && ! empty($_GET['table_element']))
+	&& (isset($_GET['fk_element']) && ! empty($_GET['fk_element'])))
 {
-	$object = new GenericObject($db);
-	$ret=$object->getValueFrom($_GET['table_element'], $_GET['fk_element'], $_GET['field']);
-	echo $ret;
+	$element		= GETPOST('element');
+	$table_element	= GETPOST('table_element');
+	$field			= GETPOST('field');
+	$fk_element		= GETPOST('fk_element');
+	
+	if ($user->rights->$element->lire || $user->rights->$element->read)
+	{
+		$object = new GenericObject($db);
+		$ret=$object->getValueFrom($table_element, $fk_element, $field);
+		echo $ret;
+	}
+	else
+	{
+		echo $langs->trans('NotEnoughPermissions');
+	}
 }
 
 ?>

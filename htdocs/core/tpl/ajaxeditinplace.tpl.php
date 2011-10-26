@@ -32,11 +32,13 @@ $(document).ready(function() {
 			loadurl		: '<?php echo DOL_URL_ROOT.'/core/ajax/loadinplace.php'; ?>',
 			loaddata	: {
 				type: 'textarea',
+				element: "<?php echo $object->element; ?>",
 				table_element: "<?php echo $object->table_element; ?>",
 				fk_element: "<?php echo $object->id; ?>"
 			},
 			submitdata	: {
 				type: 'textarea',
+				element: "<?php echo $object->element; ?>",
 				table_element: "<?php echo $object->table_element; ?>",
 				fk_element: "<?php echo $object->id; ?>"
 			}
@@ -52,11 +54,13 @@ $(document).ready(function() {
 			loadurl		: '<?php echo DOL_URL_ROOT.'/core/ajax/loadinplace.php'; ?>',
 			loaddata	: {
 				type: 'text',
+				element: "<?php echo $object->element; ?>",
 				table_element: "<?php echo $object->table_element; ?>",
 				fk_element: "<?php echo $object->id; ?>"
 			},
 			submitdata	: {
 				type: 'text',
+				element: "<?php echo $object->element; ?>",
 				table_element: "<?php echo $object->table_element; ?>",
 				fk_element: "<?php echo $object->id; ?>"
 			}
@@ -72,11 +76,13 @@ $(document).ready(function() {
 			loadurl		: '<?php echo DOL_URL_ROOT.'/core/ajax/loadinplace.php'; ?>',
 			loaddata	: {
 				type: 'numeric',
+				element: "<?php echo $object->element; ?>",
 				table_element: "<?php echo $object->table_element; ?>",
 				fk_element: "<?php echo $object->id; ?>"
 			},
 			submitdata	: {
 				type: 'numeric',
+				element: "<?php echo $object->element; ?>",
 				table_element: "<?php echo $object->table_element; ?>",
 				fk_element: "<?php echo $object->id; ?>"
 			}

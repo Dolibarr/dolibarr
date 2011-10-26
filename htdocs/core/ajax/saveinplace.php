@@ -40,22 +40,39 @@ top_httphead();
 //var_dump($_POST);
 
 // Load original field value
-if((isset($_POST['field']) && ! empty($_POST['field'])) && (isset($_POST['table_element']) && ! empty($_POST['table_element'])) && (isset($_POST['fk_element']) && ! empty($_POST['fk_element'])))
+if((isset($_POST['field']) && ! empty($_POST['field']))
+	&& (isset($_POST['element']) && ! empty($_POST['element']))
+	&& (isset($_POST['table_element']) && ! empty($_POST['table_element']))
+	&& (isset($_POST['fk_element']) && ! empty($_POST['fk_element'])))
 {
-	$object = new GenericObject($db);
+	$element		= GETPOST('element');
+	$table_element	= GETPOST('table_element');
+	$field			= GETPOST('field');
+	$fk_element		= GETPOST('fk_element');
+	$value			= GETPOST('value');
+	$type			= GETPOST('type');
 	
-	// Clean parameters
-	$value = trim($_POST['value']);
-	if ($_POST['type'] == 'numeric')
+	if ($user->rights->$element->creer || $user->rights->$element->write)
 	{
-		$value = price2num($value);
+		$object = new GenericObject($db);
 		
-		// Check parameters
-		if (! is_numeric($value)) $value = 0;
-	} 
-	
-	$ret=$object->setValueFrom($_POST['table_element'], $_POST['fk_element'], $_POST['field'], $value);
-	if ($ret > 0) echo (! empty($value) ? dol_nl2br($value) : '&nbsp;');
+		// Clean parameters
+		$value = trim($value);
+		if ($type == 'numeric')
+		{
+			$value = price2num($value);
+		
+			// Check parameters
+			if (! is_numeric($value)) $value = 0;
+		}
+		
+		$ret=$object->setValueFrom($table_element, $fk_element, $field, $value);
+		if ($ret > 0) echo (! empty($value) ? dol_nl2br($value) : '&nbsp;');
+	}
+	else
+	{
+		echo $langs->trans('NotEnoughPermissions');
+	}
 }
 
 ?>
