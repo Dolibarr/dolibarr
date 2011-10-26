@@ -313,7 +313,7 @@ $morejs="
         jQuery('#containerlayout').layout({
         	name: \"ecmlayout\"
         ,   paneClass:    \"ecm-layout-pane\"
-        ,   esizerClass: \"ecm-layout-resizer\"
+        ,   resizerClass: \"ecm-layout-resizer\"
         ,   togglerClass: \"ecm-layout-toggler\"
         ,   center__paneSelector:   \"#ecm-layout-center\"
         ,   north__paneSelector:    \"#ecm-layout-north\"

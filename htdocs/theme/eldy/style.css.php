@@ -886,10 +886,13 @@ td.photo {
 }
 
 .ecm-layout-resizer  { /* all 'resizer-bars' */
-    background:     #EEE;
+    background:     #EEEEEE;
     border:         1px solid #BBB;
     border-width:   0;
     }
+.ecm-layout-resizer-closed {
+    background-color: #EEEEEE;
+}
 
 .ecm-in-layout-center {
     border-left: 1px !important;
@@ -903,6 +906,7 @@ td.photo {
     border-bottom: 0px !important;
     padding: 4px 0 4px 4px !important;
 }
+
 
 
 /* ============================================================================== */
