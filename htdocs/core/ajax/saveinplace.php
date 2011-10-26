@@ -25,7 +25,7 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
@@ -46,6 +46,13 @@ if((isset($_POST['field']) && ! empty($_POST['field'])) && (isset($_POST['table_
 	
 	// Clean parameters
 	$value = trim($_POST['value']);
+	if ($_POST['type'] == 'numeric')
+	{
+		$value = price2num($value);
+		
+		// Check parameters
+		if (! is_numeric($value)) $value = 0;
+	} 
 	
 	$ret=$object->setValueFrom($_POST['table_element'], $_POST['fk_element'], $_POST['field'], $value);
 	if ($ret > 0) echo (! empty($value) ? dol_nl2br($value) : '&nbsp;');

@@ -362,7 +362,8 @@ else if ($id)
 			print '</td></tr>';
 
 			// Km/Price
-			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$object->km.'</td></tr>';
+			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td>';
+			print '<td><div class="edit_numeric" id="km">'.$object->km.'</div></td></tr>';
 			
 			// Where
 			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';

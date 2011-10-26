@@ -1813,7 +1813,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_area:hover {
+.edit_area:hover, .edit_text:hover, .edit_numeric:hover {
 	background: white url(<?php echo dol_buildpath($path.'/theme/cameleo/img/edit.png',1) ?>) right center no-repeat;
 	cursor: pointer;
 }

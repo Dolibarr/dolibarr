@@ -30,11 +30,51 @@ $(document).ready(function() {
 			submit		: '<?php echo $langs->trans('Ok'); ?>',
 			indicator	: '<img src="<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif"; ?>">',
 			loadurl		: '<?php echo DOL_URL_ROOT.'/core/ajax/loadinplace.php'; ?>',
-			loaddata	: { 
+			loaddata	: {
+				type: 'textarea',
 				table_element: "<?php echo $object->table_element; ?>",
 				fk_element: "<?php echo $object->id; ?>"
 			},
-			submitdata	: { 
+			submitdata	: {
+				type: 'textarea',
+				table_element: "<?php echo $object->table_element; ?>",
+				fk_element: "<?php echo $object->id; ?>"
+			}
+		});
+		$('.edit_text').editable('<?php echo DOL_URL_ROOT.'/core/ajax/saveinplace.php'; ?>', {
+			type		: 'text',
+			id			: 'field',
+			tooltip		: '<?php echo $langs->trans('ClickToEdit'); ?>',
+			cancel		: '<?php echo $langs->trans('Cancel'); ?>',
+			submit		: '<?php echo $langs->trans('Ok'); ?>',
+			indicator	: '<img src="<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif"; ?>">',
+			loadurl		: '<?php echo DOL_URL_ROOT.'/core/ajax/loadinplace.php'; ?>',
+			loaddata	: {
+				type: 'text',
+				table_element: "<?php echo $object->table_element; ?>",
+				fk_element: "<?php echo $object->id; ?>"
+			},
+			submitdata	: {
+				type: 'text',
+				table_element: "<?php echo $object->table_element; ?>",
+				fk_element: "<?php echo $object->id; ?>"
+			}
+		});
+		$('.edit_numeric').editable('<?php echo DOL_URL_ROOT.'/core/ajax/saveinplace.php'; ?>', {
+			type		: 'text',
+			id			: 'field',
+			tooltip		: '<?php echo $langs->trans('ClickToEdit'); ?>',
+			cancel		: '<?php echo $langs->trans('Cancel'); ?>',
+			submit		: '<?php echo $langs->trans('Ok'); ?>',
+			indicator	: '<img src="<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif"; ?>">',
+			loadurl		: '<?php echo DOL_URL_ROOT.'/core/ajax/loadinplace.php'; ?>',
+			loaddata	: {
+				type: 'numeric',
+				table_element: "<?php echo $object->table_element; ?>",
+				fk_element: "<?php echo $object->id; ?>"
+			},
+			submitdata	: {
+				type: 'numeric',
 				table_element: "<?php echo $object->table_element; ?>",
 				fk_element: "<?php echo $object->id; ?>"
 			}
