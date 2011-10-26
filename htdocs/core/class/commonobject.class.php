@@ -1293,11 +1293,14 @@ class CommonObject
 		            if ($objecttype == 'delivery')			{ $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
 		            if ($objecttype == 'invoice_supplier')	{ $classpath = 'fourn/class'; }
 		            if ($objecttype == 'order_supplier')	{ $classpath = 'fourn/class'; }
-		            if ($objecttype == 'fichinter')			{ $classpath = 'fichinter/class'; $subelement ='fichinter'; $module ='ficheinter'; }
+		            if ($objecttype == 'fichinter')			{ $classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter'; }
+		            
+		            // TODO ajout temporaire - MAXIME MANGIN
+		            if ($objecttype == 'contratabonnement')	{ $classpath = 'contrat/class'; $subelement = 'contrat'; $module = 'contratabonnement'; }
 
 		            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
-		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
-		            if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur'; }
+		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur'; }
+		            if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur'; }
 
 		            if ($conf->$module->enabled && $element != $this->element)
 		            {
