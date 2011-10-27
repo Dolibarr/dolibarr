@@ -361,7 +361,7 @@ else if ($id)
 
 			// Km/Price
 			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td>';
-			print '<td>'.$form->editInPlace($object->km, 'km', $object->element, 'text').'</td></tr>';
+			print '<td>'.$form->editInPlace($object->km, 'km', $object->element, 'numeric').'</td></tr>';
 			
 			// Where
 			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
@@ -405,7 +405,7 @@ else if ($id)
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
-			print $form->editInPlace(($object->note_public ? dol_nl2br($object->note_public) : "&nbsp;"), 'note_public', $user->rights->deplacement->creer);
+			print $form->editInPlace(dol_nl2br($object->note_public), 'note_public', $user->rights->deplacement->creer);
 			print "</td></tr>";
 			
 			// Private note
@@ -413,7 +413,7 @@ else if ($id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 				print '<td valign="top" colspan="3">';
-				print $form->editInPlace(($object->note_private ? dol_nl2br($object->note_private) : "&nbsp;"), 'note', $user->rights->deplacement->creer);
+				print $form->editInPlace(dol_nl2br($object->note_private), 'note', $user->rights->deplacement->creer);
 				print "</td></tr>";
 			}
 

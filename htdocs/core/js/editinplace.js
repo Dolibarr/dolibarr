@@ -42,13 +42,6 @@ $(document).ready(function() {
 			cancel		: cancelInPlace,
 			submit		: submitInPlace,
 			indicator	: indicatorInPlace,
-			loadurl		: urlLoadInPlace,
-			loaddata	: {
-				type: 'text',
-				element: element,
-				table_element: table_element,
-				fk_element: fk_element
-			},
 			submitdata	: {
 				type: 'text',
 				element: element,

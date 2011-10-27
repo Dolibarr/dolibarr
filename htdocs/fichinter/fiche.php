@@ -870,7 +870,7 @@ else if ($id > 0 || ! empty($ref))
     // Public note
     print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
     print '<td valign="top" colspan="3">';
-    print $form->editInPlace(($object->note_public ? dol_nl2br($object->note_public) : "&nbsp;"), 'note_public', $user->rights->ficheinter->creer);
+    print $form->editInPlace(dol_nl2br($object->note_public), 'note_public', $user->rights->ficheinter->creer);
     print "</td></tr>";
     	
     // Private note
@@ -878,7 +878,7 @@ else if ($id > 0 || ! empty($ref))
     {
     	print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
     	print '<td valign="top" colspan="3">';
-    	print $form->editInPlace(($object->note_private ? dol_nl2br($object->note_private) : "&nbsp;"), 'note_private', $user->rights->ficheinter->creer);
+    	print $form->editInPlace(dol_nl2br($object->note_private), 'note_private', $user->rights->ficheinter->creer);
     	print "</td></tr>";
     }
 

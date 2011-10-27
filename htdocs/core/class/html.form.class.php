@@ -156,6 +156,7 @@ class Form
     	global $user;
     	
     	$out='';
+    	$value = ($value ? $value : "&nbsp;");
     	
     	if ($condition)
     	{
