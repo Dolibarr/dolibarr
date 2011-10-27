@@ -4236,6 +4236,16 @@ function dol_eval($s)
     eval($s);
 }
 
+/**
+* Return if var element is ok
+*
+* @param   string      $element    Variable to check
+* @return  boolean                 Return true of variable is not empty
+*/
+function dol_validElement($element)
+{
+	return (trim($element) != '');
+}
 
 /**
  * 	Return img flag of country for a language code or country code
