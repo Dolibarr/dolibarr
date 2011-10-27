@@ -120,6 +120,7 @@ ExportDataset_member_1=Miembros y afiliaciones
 ImportDataset_member_1=Miembros
 LastMembers=Los %s últimos miembros
 LastMembersModified=Los %s últimos miembros modificados
+LastSubscriptionsModified=Lass %s últimas afiliaciones modificadas
 AttributeName=Nombre del atributo
 FieldEdition=Edición del campo %s
 AlphaNumOnlyCharsAndNoSpace=solamente caracteres alfanuméricos sin espacios

@@ -120,6 +120,7 @@ ExportDataset_member_1=Membres i afiliacions
 ImportDataset_member_1=Membres
 LastMembers=Els %s darrers membres
 LastMembersModified=Els %s darrers membres modificats
+LastSubscriptionsModified=Les %s últimes afiliacions modificades
 AttributeName=Nom de l'atribut
 FieldEdition=Edició del camp %s
 AlphaNumOnlyCharsAndNoSpace=només carateres alfanumèrics sense espais
