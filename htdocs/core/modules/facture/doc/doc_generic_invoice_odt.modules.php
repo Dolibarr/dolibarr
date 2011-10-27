@@ -362,15 +362,13 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 
 				// Make substitutions into odt of freetext
-				if ($newfreetext)
-				{
-					try {
-						$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
-					}
-					catch(OdfException $e)
-					{
-					}
+				try {
+					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
+				catch(OdfException $e)
+				{
+				}
+
                 // Make substitutions into odt of user info
 				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
