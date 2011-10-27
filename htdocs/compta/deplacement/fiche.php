@@ -361,7 +361,7 @@ else if ($id)
 
 			// Km/Price
 			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td>';
-			print '<td>'.$form->editInPlace($object->km, 'km', $object->element, 'numeric').'</td></tr>';
+			print '<td>'.$form->editInPlace($object->km, 'km', $user->rights->deplacement->creer, 'numeric').'</td></tr>';
 			
 			// Where
 			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
