@@ -397,10 +397,14 @@ class RemiseCheque extends CommonObject
 
 		$num=0;
 
-		// We use +0 to convert varchar to number
-		$sql = "SELECT MAX(number+0)";
+		// We use +0 to convert varchar to number for mysql, use ::integer for postgres.
+		// We must found a generic solution (Use a $db->toint function ?)
+		$sql = "SELECT ";
+		if ($this->db->type == 'pgsql') $sql.="MAX(number::integer)";
+		else $sql.="MAX(number+0)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
 		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " AND number not like '(%'";
 
 		dol_syslog("Remisecheque::getNextNumber sql=".$sql);
 		$resql = $this->db->query($sql);
