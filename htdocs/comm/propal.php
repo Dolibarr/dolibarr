@@ -237,10 +237,6 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
  */
 if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 {
-	foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields)
-		$object->$key = $value;
-	}
-
 	$object->socid=$_POST['socid'];
 	$object->fetch_thirdparty();
 

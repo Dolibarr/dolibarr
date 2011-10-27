@@ -364,7 +364,6 @@ class doc_generic_odt extends ModelePDFFactures
                 );
                 complete_substitutions_array($substitutionarray, $langs, $object);
 
-			/*
 				// Line of free text
 				$newfreetext='';
 				$paramfreetext=strtoupper($this->modulename).'_FREE_TEXT';
@@ -372,7 +371,6 @@ class doc_generic_odt extends ModelePDFFactures
 			    {
 			        $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
 			    }
-			*/
 
                 // Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
@@ -399,26 +397,6 @@ class doc_generic_odt extends ModelePDFFactures
 					{
 					}
 				}
-
-		// External substitution
-		foreach($substitutionarray as $key=>$value)
-                {
-                    try {
-                        if (preg_match('/logo$/',$key)) // Image
-                        {
-                            //var_dump($value);exit;
-                            if (file_exists($value)) $odfHandler->setImage($key, $value);
-                            else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-                        }
-                        else    // Text
-                        {
-                            $odfHandler->setVars($key, $value, true, 'UTF-8');
-                        }
-                    }
-                    catch(OdfException $e)
-                    {
-                    }
-                }
                 // Make substitutions into odt of user info
 				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
@@ -481,7 +459,8 @@ class doc_generic_odt extends ModelePDFFactures
 					}
 				}
 				// Replace tags of object
-			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+				$tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+				complete_substitutions_array($tmparray, $outputlangs, $object);
                 foreach($tmparray as $key=>$value)
                 {
                     try {

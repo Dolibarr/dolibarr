@@ -31,9 +31,21 @@
  *		@param	Object		$object			Object to use to get values
  * 		@return	void					The entry parameter $substitutionarray is modified
  */
-function customfields_completesubstitutionarray(&$substitutionarray,$langs,$object)
-{
+
+function generic_tag_filling(&$substitutionarray, $object) {
+   // Generically add each property of the $object into the substitution array
+   foreach ($object as $key=>$value) {
+      if (!is_object($value) and !is_resource($value)) {
+              $substitutionarray['object_'.$key] = $value;
+      }
+   }
+}
+
+function customfields_completesubstitutionarray(&$substitutionarray,$langs,$object) {
    global $conf,$db;
+
+   // OPTIONAL : Add generic support for any $object property
+   generic_tag_filling($substitutionarray, $object); // must be done before so that we can replace specific values after
 
     // Adding customfields properties of the $object
     // CustomFields

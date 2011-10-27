@@ -506,10 +506,6 @@ if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->f
  */
 if ($action == 'add' && $user->rights->facture->creer)
 {
-    foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields)
-	$object->$key = $value;
-    }
-
     $object->socid=GETPOST('socid');
 
     $db->begin();

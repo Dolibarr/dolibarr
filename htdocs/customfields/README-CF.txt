@@ -16,7 +16,7 @@ CustomFields has been made with the intention of being as portable, flexible, mo
 
 Just as any Dolibarr's module, just unzip the contents of this package inside your dolibarr's folder (you should be asked to overwrite some files if done right).
 
-ATTENTION: you need a MySQL database with INNODB. With MySQL >= 5.5, INNODB is default, for MySQL < 5.5 it is MyISAM so you'll have to manually switch to InnoDB. PostgreSQL is not supported (through you may try, I didin't).
+ATTENTION: you need a MySQL database with INNODB. With MySQL >= 5.5, INNODB is default, for MySQL < 5.5 it is MyISAM so you'll have to manually switch to InnoDB. PostgreSQL MAY be supported, we just didn't try yet.
 
 ===== HOW TO ADD THE SUPPORT OF A NEW MODULE =====
 
@@ -47,10 +47,10 @@ $triggersarray = array("order_create"=>"commande",
 
 Note: generally you will be looking to implement the _CREATE and _PREBUILDDOC actions.
 
-Done, now the module should be supported. If not, try the following:
+Done, now the module should be fully supported! If that's not the case, try the following:
 
-- Try the 6th step of the OLD WAY (adding the generic POST datas).
-- If that doesn't work out, try to implement the support via the old way (which should work all the time for any case).
+- If you can save and create but cannot generate the document, see the 4th step for implementing the PREBUILDDOC trigger.
+- If you can neither save nor create the fields, you just see them but changes are not committed when submitting, try to implement the support via the old way (which should work all the time for any case).
 
 == OLD WAY (still supported and more customizable but more complicated)
 
@@ -116,7 +116,7 @@ Done!
 Result: Now you should see the custom fields in the datasheet or at the creation form, and there should be an edit button on the datasheet to be able to edit the datas.
 However, editing a custom field should not work yet. You can now directly jump to the triggers (this is what will manage the saving actions).
 
-2/ Show the fields in the creation page. DEPRECATED - FOR DOLIBARR <= 3.1.x
+2/ Show the fields in the creation page. DEPRECATED - FOR DOLIBARR <= 3.1.x ONLY
 Why: The goal here is to find the place where the modules print the creation form, so that we can append our own custom fields at the end (or near the end)
 
 Add the creation code into the php file that creates new propals from nothing : in /htdocs/comm/addpropal.php, search for // Model, then just _above_ copy/paste the following :
@@ -139,7 +139,7 @@ Please try to do so before proceeding to the next step.
 
 Now we will proceed to show them on the main page (datasheet) of the module.
 
-3/ Add the main code required to show and edit the records of customfields. DEPRECATED - FOR DOLIBARR <= 3.1.x
+3/ Add the main code required to show and edit the records of customfields. DEPRECATED - FOR DOLIBARR <= 3.1.x ONLY
 Why: The goal here is to show the customfields in the main page of the module (the datasheet generally) and permit the edition of the values.
 
 Add the main management code into the php file that manages every propals (the module that show the infos of a propal and enables to edit them) : in /htdocs/comm/propal.php, search for /* Lines and copy paste the following code _above_ :
@@ -222,73 +222,6 @@ Note2: you can find the (almost) full list of dolibarr's triggers at http://wiki
 
 Result: You should now have a fully fonctional customfields support : try to edit the values and save them, and try to generate a pdf or odt document.
 If things don't go as expected but all previous steps were successful, then proceed onto the next optional steps. Else, if everything works well, you're done.
-
-6/ Optional: generic store all POST datas at creation
-Why: Some modules store only the POST variables they require at creation, but for CustomFields module to work, we need to add a generic POST variables saving.
-When: when you can edit your customfields, you can see them at the creation page but can't save them from creation page (but at edition they are saved).
-
-In /htdocs/comm/propal.php, just below if ($_POST['action'] == 'add' &&... you add:
-
-foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields)
-	$object->$key = $value;
-}
-
-Note: if you had replaced $object in a previous step (particularly step 3), do not forget to do the same change here.
-Note2: if you are a bit lost to find the right place to write this code block, you can just search for the object creation (something like $object = new ... or $product = new ... - eg: $object = new Product($db);) and place the generic POST code just below.
-
-Done.
-
-Result: now the customfields should be saved at creation.
-
-7/ Optional: Generic tags generation for customfields variables
-Why: The ODT generation class will only create tags for what it knows how to handle. We need to tell it a generic way to add tags for the customfields (this could be used for any property of an $object).
-When: when you want to use customfields tags in your ODT documents.
-
-In the file named doc_generic_modulename_odt.modules.php, in the function get_substitutionarray_object(), put everything after the return in an array called $subarr2, and add this before and after :
-
-	$subarr = array(); // initiating the substitution array
-
-	// Generically add each property of the $object into the substitution array
-	foreach ($object as $key=>$value) {
-		if (!is_object($value) and !is_resource($value)) {
-			$subarr['object_'.$key] = $value;
-		}
-	}
-
-	// Defining specific values
-        $subarr2 = array(
-            //EDIT ME: this is where you put everything that was in the return
-        );
-
-	$subarr = array_merge($subarr, $subarr2);
-
-	// Adding customfields properties of the $object
-	// CustomFields
-	if ($conf->global->MAIN_MODULE_CUSTOMFIELDS) { // if the customfields module is activated...
-		include_once(DOL_DOCUMENT_ROOT.'/customfields/class/customfields.class.php');
-		$customfields = new CustomFields($this->db, '');
-		foreach ($object->customfields as $field) {
-			$name = $customfields->varprefix.$field->column_name; // name of the property (this is one customfield)
-			$translatedname = $customfields->findLabelPDF($field->column_name, $outputlangs); // label of the customfield
-			$value = $customfields->printFieldPDF($field, $object->$name, $outputlangs); // value (cleaned and properly formatted) of the customfield
-			$subarr[$name] = $value; // adding this value to an odt variable (format: {cf_customfield} by default if varprefix is default)
-
-			// if the customfield has a constraint, we fetch all the datas from this constraint in the referenced table
-			if (!empty($field->referenced_table_name)) {
-				$record = $customfields->fetchAny('*', $field->referenced_table_name, $field->referenced_column_name.'='.$object->$name); // we fetch the record in the referencd table
-
-				foreach ($record as $column_name => $value) { // for each record, we add the value to an odt variable
-					$subarr[$name.'_'.$column_name] = $value;
-				}
-			}
-		}
-	}
-	
-	return $subarr;
-
-Done.
-
-Result: you should now be able to use your custom fields in your ODT document (see below the chapter How to use my customfields in my PDF or ODT document). And thank's to the generic access, you may access any other of the object's property.
 	
 ===== PORTING THE CODE AND CHANGES =====
 If dolibarr's core files gets updated in the future without including the changes I made to these, you can easily find what codes I added by just searching for "customfields" (without the quotes), because I tried to comment every code I added for this purpose, so you can consider it to be a sort of tag to easily find what have been changed and port the code.
@@ -333,13 +266,6 @@ Why: CustomFields fully supports multilanguage, so you can easily translate or p
 
 You can find them at /htdocs/customfields/langs/code_CODE/customfields.lang or customfields-user.lang
 
-===== HOW TO CREATE COMPLEX CONSTRAINED CUSTOM FIELDS =====
-
-What is nice with CustomFields is that it mainly relies on the SGBD to do all the work. This means that you can edit the database by yourself, and use any SQL statement to deepen the complexity of your setup until it ultimately fits your needs.
-To fully manage the database, you have the following choices:
-- Either use the included "Custom SQL" field to issue your own statements. It's not very versatile, but it enables you to add some quick constraints (CHECK) or triggers (TRIGGER) without having to directly access to the SGBD.
-- With your favourite SGBD manager (eg: phpMyAdmin for MySQL), you can directly edit the customfields tables (appended by _customfields) and the new fields you create will still be automatically managed by CustomFields afterwards. Just remember to leave untouched the first two columns (rowid and fk_someid). You can edit all the rest: add fields, add domain constraints, add triggers, add views, add foreign keys, etc..
-
 ===== HOW TO SET/TRANSLATE A LABEL FOR MY OWN CUSTOM FIELD =====
 
 User defined custom fields can easily be labeled or translated using the provided lang file.
@@ -362,6 +288,13 @@ Eg: let's say you want to show the name of the users in the llx_users table, not
 PowerTip2: What is great is that you are not limited to Dolibarr's tables: if a third-party module or even another software share this same database as Dolibarr, you can select their tables as well and everything will be managed the same way.
 
 PowerTip3: If that's still not enough to satisfy your needs, you can create more complex sql fields by using the Custom SQL field at the creation or update page, the sql statement that you will put there will be executed just after the creation/update of the field, so that you can create view, execute procedures. And the custom field will still be fully managed by CustomFields core without any edit to the core code!
+
+===== HOW TO CREATE COMPLEX CONSTRAINED CUSTOM FIELDS =====
+
+What is nice with CustomFields is that it mainly relies on the SGBD to do all the work. This means that you can edit the database by yourself, and use any SQL statement to deepen the complexity of your setup until it ultimately fits your needs.
+To fully manage the database, you have the following choices:
+- Either use the included "Custom SQL" field to issue your own statements. It's not very versatile, but it enables you to add some quick constraints (CHECK) or triggers (TRIGGER) without having to directly access to the SGBD.
+- With your favourite SGBD manager (eg: phpMyAdmin for MySQL), you can directly edit the customfields tables (appended by _customfields) and the new fields you create will still be automatically managed by CustomFields afterwards. Just remember to leave untouched the first two columns (rowid and fk_someid). You can edit all the rest: add fields, add domain constraints, add triggers, add views, add foreign keys, etc..
 
 ===== HOW TO CHANGE THE DEFAULT VARIABLE PREFIX =====
 A prefix is automatically added to each custom field's name in the code (not in the database!), to avoid any collision with other core variables or fields in the Dolibarr core code.
@@ -386,14 +319,13 @@ files that are necessary for the CustomFields to work, they contains the core fu
 /htdocs/customfields/sql/* --- Unused (the tables are created directly via a function in the customfields.class.php)
 /htdocs/customfields/includes/triggers/interface_modCustomFields_SaveFields.class --- Core triggers file : this is where the actions on records are managed. This is an interface between other modules and CustomFields management. This is where you must add the actions of other modules you'd want to support (generic customfields triggers actions are provided so you just have to basically do a copy/paste, see the related chapter).
 /htdocs/includes/modules/modCustomFields.class --- Dolibarr's module definition file : this is a core file necessary for Dolibarr to recognize the module and to declare the hooks to Dolibarr (but it does not store anything else than meta-informations).
+/htdocs/includes/modules/substitutions/functions_customfields.lib.php --- CustomFields substitution class for ODT generation : necessary to support customfields tags in ODT files
 
 == Invoice module support
 files that are necessary to support the Invoice module
 
-/htdocs/compta/facture.php --- creation and datasheet page all in one
 /htdocs/includes/modules/facture/modules_facture.php --- class managing the PDF template generation for invoices (this is not the template). Just a small edit to add the PREBUILDDOC trigger that is necessary to generate PDF docs with custom fields.
 /htdocs/includes/modules/facture/doc/pdf_customfields.modules.php --- example template to show how to print custom fields in a PDF template, not needed
-/htdocs/includes/modules/facture/doc/doc_generic_invoice_odt.modules.php --- necessary file to support custom fields tags in your ODT templates (this is not an example!). The change is mainly an include of the custom fields (but not only). See the related chapter about how to add the native support for a module.
 
 == Propal module support
 files that are necessary to support the Propal module
@@ -402,7 +334,10 @@ files that are necessary to support the Propal module
 /htdocs/includes/modules/facture/pdf_propale_customfields.modules.php --- example template to show how to print custom fields in a PDF template, not needed
 
 == Products/Services module support
-everything is handled in the hooks class of CustomFields.
+everything is handled in the hooks and triggers classes of CustomFields.
+
+== Commands module support
+everything is handled in the hooks class of CustomFields and config file.
 
 ===== HOW TO USE MY CUSTOMFIELDS IN MY PDF OR ODT DOCUMENT =====
 
@@ -410,19 +345,33 @@ everything is handled in the hooks class of CustomFields.
 
 Nothing is easier ! You can directly access them like any other standard property of the module's object.
 
+* To access the field's value:
+
 $object->variable_name
 by default (with the default varprefix of "cf_")
 $object->cf_mycustomfield
 
-But for some types like TrueFalseBox or Constrained field, the stored value may be very weird, and so you should use a function specially crafted to always show a meaningful representation of your field's values, the printFieldPDF() function. Use it this way :
-// Include the required class and instanciate one customfields object
-include
-$customfields=new CustomFields($db, '');
-// Print a meaningful representation of the data (notice the ->customfields-> for the first parameter, but not the second one)
-$customfields->printFieldPDF($object->customfields->variable_name, $object->variable_name);
+* To print it with FPDF (the default PDF generation library):
 
-And if you want to print the label of this field :
-$customfields->findLabel("variable_name");
+$pdf->MultiCell(0,3, $object->cf_monchamp, 0, 'L'); // printing the customfield
+
+* To print it with beautified formatting (eg: for constained fields or truefalsebox):
+
+// Init and main vars
+include_once(DOL_DOCUMENT_ROOT.'/customfields/class/customfields.class.php');
+$customfields = new CustomFields($this->db, '');
+ 
+// Getting the beautifully formatted value of the field
+$myvalue = $customfields->simpleprintFieldPDF('mycustomfield', $object->cf_mycustomfield);
+ 
+// Printing the field
+$pdf->MultiCell(0,3, $myvalue, 0, 'L');
+
+// old way to do it:
+// $customfields->printFieldPDF($object->customfields->variable_name, $object->variable_name);
+
+* And if you want to print the multilanguage label of this field :
+$mylabel = $customfields->findLabel("mycustomfield", $outputlangs); // where $outputlangs is the language the PDF should be outputted to
 
 == ODT
 

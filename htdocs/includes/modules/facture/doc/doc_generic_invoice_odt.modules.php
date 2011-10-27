@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/facture/doc/doc_generic_invoice_odt.modules.php
+ *	\file       htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
@@ -103,17 +103,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		}
 		$alreadypayed=price($object->getSommePaiement(),'MT');
 
-	$substitutionarray = array(); // initiating the substitution array
-
-	// Generically add each property of the $object into the substitution array
-	foreach ($object as $key=>$value) {
-		if (!is_object($value) and !is_resource($value)) {
-			$substitutionarray['object_'.$key] = $value;
-		}
-	}
-
-	// Defining specific values
-        $substitutionarray = array(
+        return array(
             'object_id'=>$object->id,
             'object_ref'=>$object->ref,
             'object_ref_ext'=>$object->ref_ext,
@@ -137,9 +127,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_already_payed'=>$alreadypayed,
             'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,'MT')
         );
-
-	// Return the substitution array
-	return $substitutionarray;
     }
 
     /**
@@ -446,8 +433,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					}
 				}
 				// Replace tags of object
-			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
-                            complete_substitutions_array($tmparray, $outputlangs, $object);
+				$tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+				complete_substitutions_array($tmparray, $outputlangs, $object);
                 foreach($tmparray as $key=>$value)
                 {
                     try {

@@ -96,6 +96,10 @@ class InterfaceSaveFields
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
 
+	foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields) - NECESSARY to get the fields' values
+	    $object->$key = $value;
+	}
+
         // Products and services
         if($action == 'PRODUCT_CREATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);

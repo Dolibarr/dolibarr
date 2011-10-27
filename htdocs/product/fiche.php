@@ -149,10 +149,6 @@ if (empty($reshook))
 
         $product=new Product($db);
 
-	foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields)
-		$product->$key = $value;
-	}
-
         if (! $error)
         {
             $product->ref                = $ref;
