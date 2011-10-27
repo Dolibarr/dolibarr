@@ -153,12 +153,12 @@ class Form
      */
     function editInPlace($value, $htmlname, $condition, $type='area')
     {
-    	global $user;
+    	global $conf,$user;
     	
     	$out='';
     	$value = ($value ? $value : "&nbsp;");
     	
-    	if ($condition)
+    	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $condition)
     	{
     		$out.= '<div class="edit_'.$type.'" id="'.$htmlname.'">';
     		$out.= $value;
