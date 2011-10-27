@@ -170,7 +170,7 @@ if ($action == 'classin')
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 /*
  * Action create
@@ -191,17 +191,17 @@ if ($action == 'create')
 
 	print "<tr>";
 	print '<td width="25%" class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-	print $html->select_type_fees(GETPOST("type"),'type',1);
+	print $form->select_type_fees(GETPOST("type"),'type',1);
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-	print $html->select_users(GETPOST("fk_user"),'fk_user',1);
+	print $form->select_users(GETPOST("fk_user"),'fk_user',1);
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	print $html->select_date($datec?$datec:-1,'','','','','add',1,1);
+	print $form->select_date($datec?$datec:-1,'','','','','add',1,1);
 	print '</td></tr>';
 
 	// Km
@@ -210,7 +210,7 @@ if ($action == 'create')
     // Company
 	print "<tr>";
 	print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-	print $html->select_societes(GETPOST("socid"),'socid','',1);
+	print $form->select_societes(GETPOST("socid"),'socid','',1);
 	print '</td></tr>';
 
 	// Public note
@@ -272,18 +272,18 @@ else if ($id)
 			// Type
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-			print $html->select_type_fees($_POST["type"]?$_POST["type"]:$object->type,'type',0);
+			print $form->select_type_fees($_POST["type"]?$_POST["type"]:$object->type,'type',0);
 			print '</td></tr>';
 
 			// Who
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-			print $html->select_users($_POST["fk_user"]?$_POST["fk_user"]:$object->fk_user,'fk_user',0);
+			print $form->select_users($_POST["fk_user"]?$_POST["fk_user"]:$object->fk_user,'fk_user',0);
 			print '</td></tr>';
 
 			// Date
 			print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-			print $html->select_date($object->date,'','','','','update');
+			print $form->select_date($object->date,'','','','','update');
 			print '</td></tr>';
 			
 			// Km
@@ -294,7 +294,7 @@ else if ($id)
 			// Where
 			print "<tr>";
 			print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-			print $html->select_societes($soc->id,'socid','',1);
+			print $form->select_societes($soc->id,'socid','',1);
 			print '</td></tr>';
 			
 			// Public note
@@ -329,7 +329,7 @@ else if ($id)
 			 */
 			if ($action == 'delete')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -346,7 +346,7 @@ else if ($id)
 			// Ref
 			print "<tr>";
 			print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
-			print $html->showrefnav($object,'id','',1,'rowid','ref','');
+			print $form->showrefnav($object,'id','',1,'rowid','ref','');
 			print '</td></tr>';
 			
 			// Type
@@ -366,7 +366,7 @@ else if ($id)
 
 			// Km/Price
 			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td>';
-			print '<td><div class="edit_numeric" id="km">'.$object->km.'</div></td></tr>';
+			print '<td>'.$form->editInPlace($object->km, 'km', $object->element, 'text').'</td></tr>';
 			
 			// Where
 			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
@@ -384,7 +384,7 @@ else if ($id)
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($action != 'classify')
+				if ($action != 'classify' && $user->rights->deplacement->creer)
 				{
 					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
 					print img_edit($langs->trans('SetProject'),1);
@@ -394,11 +394,11 @@ else if ($id)
 				print '</td><td colspan="3">';
 				if ($action == 'classify')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
+					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
 				}
 				else
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
+					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
 				}
 				print '</td>';
 				print '</tr>';
@@ -410,9 +410,7 @@ else if ($id)
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
-			print '<div class="edit_area" id="note_public">';
-			print ($object->note_public ? dol_nl2br($object->note_public) : "&nbsp;");
-			print '</div>';
+			print $form->editInPlace(($object->note_public ? dol_nl2br($object->note_public) : "&nbsp;"), 'note_public', $object->element);
 			print "</td></tr>";
 			
 			// Private note
@@ -420,9 +418,7 @@ else if ($id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 				print '<td valign="top" colspan="3">';
-				print '<div class="edit_area" id="note">';
-				print ($object->note_private ? dol_nl2br($object->note_private) : "&nbsp;");
-				print '</div>';
+				print $form->editInPlace(($object->note_private ? dol_nl2br($object->note_private) : "&nbsp;"), 'note', $object->element);
 				print "</td></tr>";
 			}
 

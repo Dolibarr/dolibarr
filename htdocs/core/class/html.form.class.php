@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -140,6 +140,35 @@ class Form
             else $ret.=$preselected;
         }
         return $ret;
+    }
+    
+    /**
+     *	Output edit in place form
+     *
+     *	@param		string	$value			Value to show/edit
+     *	@param		string	$htmlname		DIV ID (field name)
+     *	@param		string	$element		Type of element
+     *	@param		string	$area			Type of edit
+     *	@return     string   		      	HTML edit in place
+     */
+    function editInPlace($value, $htmlname, $element, $type='area')
+    {
+    	global $user;
+    	
+    	$out='';
+    	
+    	if ($user->rights->$element->creer || $user->rights->$element->write)
+    	{
+    		$out.= '<div class="edit_'.$type.'" id="'.$htmlname.'">';
+    		$out.= $value;
+    		$out.= '</div>';
+    	}
+    	else
+    	{
+    		$out = $value;
+    	}
+    	
+    	return $out;
     }
 
     /**
