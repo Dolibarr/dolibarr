@@ -405,7 +405,9 @@ else if ($id)
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
-			print $form->editInPlace(dol_nl2br($object->note_public), 'note_public', $user->rights->deplacement->creer);
+			// FIXME parameter note_private must not be denatured with a format function to be propagated. dol_nl2br must be used
+			// by editInPlace if necessary according to type (4rd parameter)
+			print $form->editInPlace(dol_nl2br($object->note_public), 'note_public', $user->rights->deplacement->creer, 'area');
 			print "</td></tr>";
 			
 			// Private note
@@ -413,7 +415,9 @@ else if ($id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 				print '<td valign="top" colspan="3">';
-				print $form->editInPlace(dol_nl2br($object->note_private), 'note', $user->rights->deplacement->creer);
+				// FIXME parameter note_private must not be denatured with a format function to be propagated. dol_nl2br must be used
+				// by editInPlace if necessary according to type (4rd parameter)
+				print $form->editInPlace(dol_nl2br($object->note_private), 'note', $user->rights->deplacement->creer, 'area');
 				print "</td></tr>";
 			}
 
