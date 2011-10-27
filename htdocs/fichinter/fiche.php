@@ -118,8 +118,6 @@ if ($action == 'confirm_modify' && $confirm == 'yes')
 
 if ($action == 'add')
 {
-    $object = new Fichinter($db);
-
     $object->socid			= $socid;
     $object->duree			= $_POST["duree"];
     $object->fk_project		= $_POST["projectid"];
@@ -127,6 +125,8 @@ if ($action == 'add')
     $object->description	= $_POST["description"];
     $object->ref			= $ref;
     $object->modelpdf		= $_POST["model"];
+    $object->note_private	= $_POST["note_private"];
+    $object->note_public	= $_POST["note_public"];
 
     if ($object->socid > 0)
     {
@@ -668,6 +668,12 @@ if ($action == 'create')
         // Ref
         print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
         print '<td><input name="ref" value="'.$numpr.'"></td></tr>'."\n";
+        
+        // Description (must be a textarea and not html must be allowed (used in list view)
+        print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+        print '<td>';
+        print '<textarea name="description" cols="80" rows="'.ROWS_3.'"></textarea>';
+        print '</td></tr>';
 
         // Project
         if ($conf->projet->enabled)
@@ -690,12 +696,23 @@ if ($action == 'create')
         $liste=ModelePDFFicheinter::liste_modeles($db);
         print $html->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
         print "</td></tr>";
-
-        // Description (must be a textarea and not html must be allowed (used in list view)
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
-        print '<td>';
-        print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'"></textarea>';
+        
+        // Public note
+        print '<tr>';
+        print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
+        print '<td valign="top" colspan="2">';
+        print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'"></textarea>';
         print '</td></tr>';
+        
+        // Private note
+        if (! $user->societe_id)
+        {
+        	print '<tr>';
+        	print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
+        	print '<td valign="top" colspan="2">';
+        	print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'"></textarea>';
+        	print '</td></tr>';
+        }
 
         print '</table>';
 

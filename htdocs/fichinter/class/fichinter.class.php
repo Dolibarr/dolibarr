@@ -87,14 +87,14 @@ class Fichinter extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("Fichinter.class::create ref=".$this->ref);
+		dol_syslog(get_class($this)."::create ref=".$this->ref);
 
 		// Check parameters
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
 		if ($this->socid <= 0)
 		{
 			$this->error='ErrorBadParameterForFunc';
-			dol_syslog("Fichinter::create ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
 			return -1;
 		}
 		// on verifie si la ref n'est pas utilisee
@@ -106,14 +106,14 @@ class Fichinter extends CommonObject
 			if ($result > 0)
 			{
 				$this->error='ErrorRefAlreadyExists';
-				dol_syslog("Fichinter::create ".$this->error,LOG_WARNING);
+				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
 				$this->db->rollback();
 				return -3;
 			}
 			else if ($result < 0)
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Fichinter::create ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -133,6 +133,8 @@ class Fichinter extends CommonObject
 		$sql.= ", model_pdf";
 		$sql.= ", fk_projet";
 		$sql.= ", fk_statut";
+		$sql.= ", note_private";
+		$sql.= ", note_public";
 		$sql.= ") ";
 		$sql.= " VALUES (";
 		$sql.= $this->socid;
@@ -144,9 +146,11 @@ class Fichinter extends CommonObject
 		$sql.= ", '".$this->modelpdf."'";
 		$sql.= ", ".($this->fk_project ? $this->fk_project : 0);
 		$sql.= ", ".$this->statut;
+		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
+		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ")";
 
-		dol_syslog("Fichinter::create sql=".$sql);
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -157,7 +161,7 @@ class Fichinter extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Fichinter::create ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -170,30 +174,32 @@ class Fichinter extends CommonObject
 	 */
 	function update($user)
 	{
-		global $conf;
-
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
 		if (! dol_strlen($this->fk_project)) { $this->fk_project = 0; }
 
-		/*
-		 *  Insertion dans la base
-		 */
+		$this->db->begin();
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
 		$sql.= ", description  = '".$this->db->escape($this->description)."'";
 		$sql.= ", duree = ".$this->duree;
 		$sql.= ", fk_projet = ".$this->fk_project;
+		$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
+		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= " WHERE rowid = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("Fichinter::update sql=".$sql);
-		if (! $this->db->query($sql))
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Fichinter::update error ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::update error ".$this->error, LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
-
-		return 1;
 	}
 
 	/**
@@ -213,7 +219,7 @@ class Fichinter extends CommonObject
 		if ($ref) $sql.= " WHERE f.ref='".$ref."'";
 		else $sql.= " WHERE f.rowid=".$rowid;
 
-		dol_syslog("Fichinter::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -252,7 +258,7 @@ class Fichinter extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Fichinter::fetch ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::fetch ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
