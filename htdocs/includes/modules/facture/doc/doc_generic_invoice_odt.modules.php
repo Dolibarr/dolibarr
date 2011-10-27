@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
+ *	\file       htdocs/includes/modules/facture/doc/doc_generic_invoice_odt.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur

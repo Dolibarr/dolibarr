@@ -1,7 +1,7 @@
 ==================================================
 *				CUSTOMFIELDS MODULE				 *
 *			by Stephen Larroque (lrq3000)		 *
-*				   version	1.2.2                *
+*				   version	1.2.3                *
 *               for Dolibarr >= 3.2.0    		 *
 *			 release date 2011/10/20			 *
 ==================================================
@@ -312,10 +312,10 @@ files that are necessary for the CustomFields to work, they contains the core fu
 /htdocs/admin/customfields.php --- Administrator's configuration panel : this is where you create and manage the custom fields definitions
 /htdocs/customfields/class/actions_customfields.class.php --- Hooks class : used to hook into Dolibarr core modules without altering any core file (can be used to hook into your own modules too)
 /htdocs/customfields/class/customfields.class.php --- Core class : every database action is made here in this class. You can find some printing functions because they are very generic.
-/htdocs/customfields/conf/conf_customfields.lib.php --- Configuration file : contains the main configurable variables to adapt CustomFields to your needs or to expand its support and native sql types.
+/htdocs/customfields/conf/conf_customfields.lib.php --- Configuration file : contains the main configurable variables to adapt CustomFields to your needs or to expand its support to other modules and more native sql types.
 /htdocs/customfields/langs/code_CODE/customfields.lang --- Core language file : this is where you can translate the admin config panel (data types names, labels, descriptions, etc.)
 /htdocs/customfields/langs/code_CODE/customfields-user.lang --- User defined language file : this is where you can store the labels and values of your custom fields (see the related chapter)
-/htdocs/customfields/lib/customfields.lib --- Core printing library for records : contains only printing functions, there's no really core functions but it permits to manage the printing of the custom fields records and their editing
+/htdocs/customfields/lib/customfields.lib.php --- Core printing library for records : contains only printing functions, there's no really core functions but it permits to manage the printing of the custom fields records and their editing
 /htdocs/customfields/sql/* --- Unused (the tables are created directly via a function in the customfields.class.php)
 /htdocs/customfields/includes/triggers/interface_modCustomFields_SaveFields.class --- Core triggers file : this is where the actions on records are managed. This is an interface between other modules and CustomFields management. This is where you must add the actions of other modules you'd want to support (generic customfields triggers actions are provided so you just have to basically do a copy/paste, see the related chapter).
 /htdocs/includes/modules/modCustomFields.class --- Dolibarr's module definition file : this is a core file necessary for Dolibarr to recognize the module and to declare the hooks to Dolibarr (but it does not store anything else than meta-informations).
