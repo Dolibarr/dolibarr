@@ -57,13 +57,6 @@ $(document).ready(function() {
 			cancel		: cancelInPlace,
 			submit		: submitInPlace,
 			indicator	: indicatorInPlace,
-			loadurl		: urlLoadInPlace,
-			loaddata	: {
-				type: 'numeric',
-				element: element,
-				table_element: table_element,
-				fk_element: fk_element
-			},
 			submitdata	: {
 				type: 'numeric',
 				element: element,

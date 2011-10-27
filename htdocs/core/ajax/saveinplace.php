@@ -52,6 +52,8 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	$value			= GETPOST('value');
 	$type			= GETPOST('type');
 	
+	$error=0;
+	
 	if ($element == 'fichinter') $element = 'ficheinter';
 	
 	if ($user->rights->$element->creer || $user->rights->$element->write)
@@ -65,11 +67,23 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 			$value = price2num($value);
 		
 			// Check parameters
-			if (! is_numeric($value)) $value = 0;
+			if (! is_numeric($value))
+			{
+				$error++;
+			}
 		}
 		
-		$ret=$object->setValueFrom($table_element, $fk_element, $field, $value);
-		if ($ret > 0) echo (! empty($value) ? dol_nl2br($value) : '&nbsp;');
+		if (! $error)
+		{
+			$ret=$object->setValueFrom($table_element, $fk_element, $field, $value);
+			if ($ret > 0)
+			{
+				if ($type == 'numeric') $value = price($value);
+				else $value = (! empty($value) ? dol_nl2br($value) : '&nbsp;');
+					
+				echo $value;
+			}
+		}
 	}
 	else
 	{
