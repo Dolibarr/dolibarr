@@ -808,24 +808,33 @@ else if ($id > 0 || ! empty($ref))
 
     // Description (must be a textarea and not html must be allowed (used in list view)
     print '<tr><td>';
-    print '<table class="nobordernopadding" width="100%"><tr><td>';
-    print $langs->trans('Description');
-    print '</td>';
-    if ($action != 'editdescription' && $object->statut == 0) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdescription&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
-    print '</tr></table>';
-    print '</td><td colspan="3">';
-    if ($action == 'editdescription')
+    if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
     {
-        print '<form name="editdescription" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="setdescription">';
-        print '<textarea name="description" wrap="soft" cols="70" rows="'.ROWS_3.'">'.dol_htmlentitiesbr_decode($object->description).'</textarea><br>';
-        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-        print '</form>';
+    	print $langs->trans('Description');
+    	print '</td><td colspan="3">';
+    	print $form->editInPlace(dol_nl2br($object->description), 'description', $user->rights->ficheinter->creer && $object->statut == 0);
     }
     else
     {
-        print dol_nl2br($object->description);
+    	print '<table class="nobordernopadding" width="100%"><tr><td>';
+    	print $langs->trans('Description');
+    	print '</td>';
+    	if ($action != 'editdescription' && $object->statut == 0) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdescription&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
+    	print '</tr></table>';
+    	print '</td><td colspan="3">';
+    	if ($action == 'editdescription')
+    	{
+    		print '<form name="editdescription" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+    		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    		print '<input type="hidden" name="action" value="setdescription">';
+    		print '<textarea name="description" wrap="soft" cols="70" rows="'.ROWS_3.'">'.dol_htmlentitiesbr_decode($object->description).'</textarea><br>';
+    		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+    		print '</form>';
+    	}
+    	else
+    	{
+    		print dol_nl2br($object->description);
+    	}
     }
     print '</td>';
     print '</tr>';
