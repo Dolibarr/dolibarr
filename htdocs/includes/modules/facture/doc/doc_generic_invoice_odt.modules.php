@@ -428,8 +428,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 					}
 				}
-				// Replace tags of object
+				// Replace tags of object + external module
 			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+			    complete_substitutions_array($tmparray, $outputlangs, $object);
                 foreach($tmparray as $key=>$value)
                 {
                     try {
