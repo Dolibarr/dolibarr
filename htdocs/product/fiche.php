@@ -115,16 +115,6 @@ if (empty($reshook))
         $action="";
     }
 
-    if ($action == 'fastappro')
-    {
-        $product = new Product($db);
-        $result=$product->fetch($id,$ref);
-        $result=$product->fastappro($user);
-        Header("Location: fiche.php?id=".$product->id);
-        exit;
-    }
-
-
     // Add a product or service
     if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
     {

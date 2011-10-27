@@ -1897,28 +1897,6 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Saisie une commande fournisseur
-	 *
-	 *	@param		user		Objet user de celui qui demande
-	 *	@return		int			<0 si ko, >0 si ok
-	 */
-	function fastappro($user)
-	{
-		include_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php";
-
-		$list = $this->list_suppliers();
-		if (count($list) > 0)
-		{
-			dol_syslog("Product::fastappro");
-			$fournisseur = new Fournisseur($this->db);
-			$fournisseur->fetch($this->fourn_appro_open);
-
-			$fournisseur->ProductCommande($user, $this->id);
-		}
-		return 1;
-	}
-
-	/**
 	 *  Recopie les prix d'un produit/service sur un autre
 	 *
 	 *  @param    fromId      Id produit source

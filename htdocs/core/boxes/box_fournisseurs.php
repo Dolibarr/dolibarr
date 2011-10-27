@@ -83,7 +83,6 @@ class box_fournisseurs extends ModeleBoxes {
                 $num = $db->num_rows($result);
 
                 $i = 0;
-    			//$supplierstatic=new Fournisseur($db);
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
