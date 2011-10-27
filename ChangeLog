@@ -22,6 +22,7 @@ For users:
 - New: Can export into Excel 2007 format.
 - New: Add hidden option CASHDESK_FORCE_STOCK_ON_BILL
 - New: Can search on part of barcode into POS module.
+- New: Cheques into cheques receipts are ordered by operation date.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:

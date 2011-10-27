@@ -39,7 +39,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	var $emetteur;	// Objet societe qui emet
 
 	/**
-	 *	\brief  Constructeur
+	 *	Constructor
+	 *
+	 *	@param	DoliDB	$db		Database handler
 	 */
 	function BordereauChequeBlochet($db)
 	{
@@ -76,6 +78,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 	/**
 	 *	Fonction generant le rapport sur le disque
+	 *
 	 *	@param		_dir			Directory
 	 *	@param		number			Number
 	 *	@param		outputlangs		Lang output object

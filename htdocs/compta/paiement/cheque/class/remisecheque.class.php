@@ -56,9 +56,9 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Load record
 	 *
-	 *	@param 		id 			Id record
-	 *	@param 		ref		 	Ref record
-	 * 	@return		int			<0 if KO, > 0 if OK
+	 *	@param	int		$id 			Id record
+	 *	@param 	string	$ref		 	Ref record
+	 * 	@return	int						<0 if KO, > 0 if OK
 	 */
 	function fetch($id,$ref='')
 	{
@@ -72,7 +72,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " WHERE bc.entity = ".$conf->entity;
 		if ($id)  $sql.= " AND bc.rowid = ".$id;
 		if ($ref) $sql.= " AND bc.number = '".$this->db->escape($ref)."'";
-
+		
 		dol_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -503,14 +503,14 @@ class RemiseCheque extends CommonObject
 			$sql.= " AND b.fk_bordereau = bc.rowid";
 			$sql.= " AND bc.rowid = ".$this->id;
 			$sql.= " AND bc.entity = ".$conf->entity;
-			$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
+			$sql.= " ORDER BY b.dateo ASC, b.rowid ASC";
 
 			dol_syslog("RemiseCheque::generatePdf sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
 				$i = 0;
-				while ( $objp = $this->db->fetch_object($result) )
+				while ($objp = $this->db->fetch_object($result))
 				{
 					$docmodel->lines[$i]->bank_chq = $objp->banque;
 					$docmodel->lines[$i]->emetteur_chq = $objp->emetteur;
@@ -531,7 +531,7 @@ class RemiseCheque extends CommonObject
 
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
-			$sav_charset_output=$outputlangs->charset_output;
+			$sav_charseSupprimert_output=$outputlangs->charset_output;
 			$result=$docmodel->write_file($conf->banque->dir_output.'/bordereau', $this->number, $outputlangs);
 			if ($result > 0)
 			{
