@@ -147,17 +147,17 @@ class Form
      *
      *	@param		string	$value			Value to show/edit
      *	@param		string	$htmlname		DIV ID (field name)
-     *	@param		string	$element		Type of element
+     *	@param		int		$condition		Condition to edit
      *	@param		string	$area			Type of edit
      *	@return     string   		      	HTML edit in place
      */
-    function editInPlace($value, $htmlname, $element, $type='area')
+    function editInPlace($value, $htmlname, $condition, $type='area')
     {
     	global $user;
     	
     	$out='';
     	
-    	if ($user->rights->$element->creer || $user->rights->$element->write)
+    	if ($condition)
     	{
     		$out.= '<div class="edit_'.$type.'" id="'.$htmlname.'">';
     		$out.= $value;

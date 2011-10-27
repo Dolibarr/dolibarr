@@ -49,6 +49,8 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	$field			= GETPOST('field');
 	$fk_element		= GETPOST('fk_element');
 	
+	if ($element == 'fichinter') $element = 'ficheinter';
+	
 	if ($user->rights->$element->lire || $user->rights->$element->read)
 	{
 		$object = new GenericObject($db);

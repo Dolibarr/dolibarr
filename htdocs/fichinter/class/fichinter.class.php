@@ -80,7 +80,8 @@ class Fichinter extends CommonObject
 
 
 	/**
-	 *	Create a intervention into data base
+	 *	Create an intervention into data base
+	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function create()
@@ -169,10 +170,11 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	Update a intervention
+	 *	Update an intervention
+	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function update($user)
+	function update()
 	{
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
 		if (! dol_strlen($this->fk_project)) { $this->fk_project = 0; }
@@ -204,8 +206,9 @@ class Fichinter extends CommonObject
 
 	/**
 	 *	Fetch a intervention
-	 *	@param		rowid		Id of intervention
-	 *	@param		ref			Ref of intervention
+	 *
+	 *	@param		int		$id		Id of intervention
+	 *	@param		string	$ref	Ref of intervention
 	 *	@return		int			<0 if ko, >0 if ok
 	 */
 	function fetch($rowid,$ref='')

@@ -52,6 +52,8 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	$value			= GETPOST('value');
 	$type			= GETPOST('type');
 	
+	if ($element == 'fichinter') $element = 'ficheinter';
+	
 	if ($user->rights->$element->creer || $user->rights->$element->write)
 	{
 		$object = new GenericObject($db);

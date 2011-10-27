@@ -159,7 +159,7 @@ if ($action == 'update')
     $object->description	= $_POST["description"];
     $object->ref			= $ref;
 
-    $object->update($user);
+    $object->update();
 }
 
 /*
@@ -619,7 +619,7 @@ if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_AD
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 
 llxHeader();
@@ -694,7 +694,7 @@ if ($action == 'create')
         print '<td>'.$langs->trans("DefaultModel").'</td>';
         print '<td colspan="2">';
         $liste=ModelePDFFicheinter::liste_modeles($db);
-        print $html->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
+        print $form->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
         print "</td></tr>";
         
         // Public note
@@ -727,7 +727,7 @@ if ($action == 'create')
         print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
         print '<table class="border" width="100%">';
         print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-        $html->select_societes('','socid','',1,1);
+        $form->select_societes('','socid','',1,1);
         print '</td></tr>';
         print '</table>';
 
@@ -761,36 +761,41 @@ else if ($id > 0 || ! empty($ref))
     // Confirmation de la suppression de la fiche d'intervention
     if ($action == 'delete')
     {
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
         if ($ret == 'html') print '<br>';
     }
 
     // Confirmation validation
     if ($action == 'validate')
     {
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate','',0,1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate','',0,1);
         if ($ret == 'html') print '<br>';
     }
 
     // Confirmation de la validation de la fiche d'intervention
     if ($action == 'modify')
     {
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
         if ($ret == 'html') print '<br>';
     }
 
     // Confirmation de la suppression d'une ligne d'intervention
     if ($action == 'ask_deleteline')
     {
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$_GET["line_id"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$_GET["line_id"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
         if ($ret == 'html') print '<br>';
+    }
+    
+    if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $user->rights->ficheinter->creer)
+    {
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxeditinplace.tpl.php');
     }
 
     print '<table class="border" width="100%">';
 
     // Ref
     print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-    print $html->showrefnav($object,'ref','',1,'ref','ref');
+    print $form->showrefnav($object,'ref','',1,'ref','ref');
     print '</td></tr>';
 
     // Third party
@@ -845,11 +850,11 @@ else if ($id > 0 || ! empty($ref))
         print '</td><td colspan="3">';
         if ($action == 'classify')
         {
-            $html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
+            $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
         }
         else
         {
-            $html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
+            $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
         }
         print '</td>';
         print '</tr>';
@@ -857,6 +862,21 @@ else if ($id > 0 || ! empty($ref))
 
     // Statut
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+    
+    // Public note
+    print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+    print '<td valign="top" colspan="3">';
+    print $form->editInPlace(($object->note_public ? dol_nl2br($object->note_public) : "&nbsp;"), 'note_public', $user->rights->ficheinter->creer);
+    print "</td></tr>";
+    	
+    // Private note
+    if (! $user->societe_id)
+    {
+    	print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+    	print '<td valign="top" colspan="3">';
+    	print $form->editInPlace(($object->note_private ? dol_nl2br($object->note_private) : "&nbsp;"), 'note_private', $user->rights->ficheinter->creer);
+    	print "</td></tr>";
+    }
 
     print "</table>";
 
@@ -967,12 +987,12 @@ else if ($id > 0 || ! empty($ref))
 
                 // Date d'intervention
                 print '<td align="center" nowrap="nowrap">';
-                $html->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+                $form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
                 print '</td>';
 
                 // Duration
                 print '<td align="right">';
-                $html->select_duration('duration',$objp->duree);
+                $form->select_duration('duration',$objp->duree);
                 print '</td>';
 
                 print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1025,12 +1045,12 @@ else if ($id > 0 || ! empty($ref))
             $timearray=dol_getdate(mktime());
             if (empty($_POST['diday'])) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
             else $timewithnohour=dol_mktime($_POST['dihour'],$_POST['dimin'],$_POST['disec'],$_POST['dimonth'],$_POST['diday'],$_POST['diyear']);
-            $html->select_date($timewithnohour,'di',1,1,0,"addinter");
+            $form->select_date($timewithnohour,'di',1,1,0,"addinter");
             print '</td>';
 
             // Duration
             print '<td align="right">';
-            $html->select_duration('duration',(empty($_POST["durationhour"]) && empty($_POST["durationmin"]))?3600:(60*60*$_POST["durationhour"]+60*$_POST["durationmin"]));
+            $form->select_duration('duration',(empty($_POST["durationhour"]) && empty($_POST["durationmin"]))?3600:(60*60*$_POST["durationhour"]+60*$_POST["durationmin"]));
             print '</td>';
 
             print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
