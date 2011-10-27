@@ -335,11 +335,6 @@ else if ($id)
 
 			$soc = new Societe($db);
 			if ($object->socid) $soc->fetch($object->socid);
-			
-			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $user->rights->deplacement->creer)
-			{
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxeditinplace.tpl.php');
-			}
 
 			print '<table class="border" width="100%">';
 

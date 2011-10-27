@@ -785,11 +785,6 @@ else if ($id > 0 || ! empty($ref))
         $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$_GET["line_id"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
         if ($ret == 'html') print '<br>';
     }
-    
-    if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $user->rights->ficheinter->creer)
-    {
-    	include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxeditinplace.tpl.php');
-    }
 
     print '<table class="border" width="100%">';
 

@@ -585,6 +585,14 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
     $out.="</div>\n";
 
     if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+    
+    // Parameters for edit in place
+    if (! empty($GLOBALS['object']))
+    {
+    	$out.='<div id="element" class="hidden">'.$GLOBALS['object']->element.'</div>'."\n";
+    	$out.='<div id="table_element" class="hidden">'.$GLOBALS['object']->table_element.'</div>'."\n";
+    	$out.='<div id="fk_element" class="hidden">'.$GLOBALS['object']->id.'</div>'."\n";
+    }
 
     return $out;
 }
