@@ -1013,49 +1013,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("December")
 		);
 		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
-
-		// Define tradMonthsMin javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
-		$tradMonthsMin=array($langs->trans("JanuaryMin"),
-		$langs->trans("FebruaryMin"),
-		$langs->trans("MarchMin"),
-		$langs->trans("AprilMin"),
-		$langs->trans("MayMin"),
-		$langs->trans("JuneMin"),
-		$langs->trans("JulyMin"),
-		$langs->trans("AugustMin"),
-		$langs->trans("SeptemberMin"),
-		$langs->trans("OctoberMin"),
-		$langs->trans("NovemberMin"),
-		$langs->trans("DecemberMin")
-		);
-		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';'."\n";
-
-		// Define tradDays javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
-		$tradDays=array($langs->trans("Monday"),
-		$langs->trans("Tuesday"),
-		$langs->trans("Wednesday"),
-		$langs->trans("Thursday"),
-		$langs->trans("Friday"),
-		$langs->trans("Saturday"),
-		$langs->trans("Sunday")
-		);
-		print 'var tradDays = '.json_encode($tradDays).';'."\n";
-
-		// Define tradDaysMin javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
-		$tradDaysMin=array($langs->trans("MondayMin"),
-		$langs->trans("TuesdayMin"),
-		$langs->trans("WednesdayMin"),
-		$langs->trans("ThursdayMin"),
-		$langs->trans("FridayMin"),
-		$langs->trans("SaturdayMin"),
-		$langs->trans("SundayMin")
-		);
-		print 'var tradDaysMin = '.json_encode($tradDaysMin).';'."\n";
-		print 'var datePickerFormat = \''.$langs->trans("FormatDateShortJQuery").'\';'."\n";
 		print '</script>'."\n";
 		
-		// Default datepicker options
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js"></script>'."\n";
+		// Add datepicker i18n for current language
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/langs/'.$langs->defaultlang.'/js/jquery.ui.datepicker-'.$langs->defaultlang.'.js"></script>'."\n";
 
 		if (! empty($head)) print $head."\n";
 		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
