@@ -627,6 +627,8 @@ abstract class CommonObject
 	function setValueFrom($table, $id, $field, $value)
 	{
 		global $conf;
+		
+		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 		$sql.= $field." = '".$this->db->escape($value)."'";
@@ -636,11 +638,13 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+	  		$this->db->rollback();
 			return -1;
 		}
 	}

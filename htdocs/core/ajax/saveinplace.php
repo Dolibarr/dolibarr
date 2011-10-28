@@ -85,6 +85,10 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 				
 				$return['value'] = $value;
 			}
+			else
+			{
+				$return['error'] = $object->error;
+			}
 		}
 		
 		echo json_encode($return);
