@@ -47,11 +47,10 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 
 $req_nb=GETPOST("req_nb",'',3);
-$thirdarty=GETPOST("thirdparty",'',3);
+$thirdparty=GETPOST("thirdparty",'',3);
 $account=GETPOST("account");
 $vline=GETPOST("vline");
 $action=GETPOST("action");
-
 $page=isset($_GET["page"])?$_GET["page"]:0;
 $negpage=isset($_GET["negpage"])?$_GET["negpage"]:0;
 if ($negpage)
@@ -179,7 +178,6 @@ if ($account || $_GET["ref"])
         $db->free($result);
     }
 
-
     // Definition de sql_rech et param
     $param='';
     $sql_rech='';
@@ -210,7 +208,7 @@ if ($account || $_GET["ref"])
     }
     if ($thirdparty)
     {
-        $sql_rech.=" AND s.nom LIKE '%".$db->escape($thirdparty)."%')";
+        $sql_rech.=" AND s.nom LIKE '%".$db->escape($thirdparty)."%'";
         $param.='&amp;thirdparty='.urlencode($thirdparty);
         $mode_search = 1;
     }
