@@ -97,7 +97,9 @@ class InterfaceSaveFields
         // Data and type of action are stored into $object and $action
 
 	foreach ($_POST as $key=>$value) { // Generic way to fill all the fields to the object (particularly useful for triggers and customfields) - NECESSARY to get the fields' values
-	    $object->$key = $value;
+	    if (!isset($object->$key)) { // Appending only: only add the property to the object if this property is not only defined
+		$object->$key = $value;
+	    }
 	}
 
         // Products and services
