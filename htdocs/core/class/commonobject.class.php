@@ -622,16 +622,18 @@ abstract class CommonObject
 	 *	@param	int		$id			Object id
 	 *	@param	string	$field		Field to update
 	 *	@param	mixte	$value		New value
+	 *	@param	string	$format		Data format
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function setValueFrom($table, $id, $field, $value)
+	function setValueFrom($table, $id, $field, $value, $format='text')
 	{
 		global $conf;
 		
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
-		$sql.= $field." = '".$this->db->escape($value)."'";
+		if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
+		else if ($format == 'date') $sql.= $field." = '".$this->db->idate($value)."'";
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog(get_class($this)."::setValueFrom sql=".$sql, LOG_DEBUG);

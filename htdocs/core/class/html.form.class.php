@@ -164,6 +164,9 @@ class Form
     	
     	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $condition)
     	{
+    		// Use for timestamp format
+    		if ($type == 'datepicker') $out.= '<input id="timeStamp" type="hidden"/>';
+    		
     		$out.= '<div class="edit_'.$type.'" id="'.$htmlname.'">';
     		$out.= $value;
     		$out.= '</div>';

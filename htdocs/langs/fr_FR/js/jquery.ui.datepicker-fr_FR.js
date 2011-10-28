@@ -16,6 +16,8 @@ jQuery(function($){
 		dayNamesShort: ['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.'],
 		dayNamesMin: ['D','L','M','M','J','V','S'],
 		weekHeader: 'Sem.',
+		altField: '#timeStamp',
+        altFormat: '@',        // Gives a timestamp dateformat
 		dateFormat: 'dd/mm/yy',
 		firstDay: 1,
 		isRTL: false,

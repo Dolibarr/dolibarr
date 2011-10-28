@@ -105,11 +105,14 @@ $(document).ready(function() {
 		cancel		: cancelInPlace,
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
-		submitdata	: {
-			type: 'datepicker',
-			element: element,
-			table_element: table_element,
-			fk_element: fk_element
+		submitdata	: function(value, settings) {
+			return {
+				type: 'datepicker',
+				element: element,
+				table_element: table_element,
+				fk_element: fk_element,
+				timestamp: $('#timeStamp').val()
+			};
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);

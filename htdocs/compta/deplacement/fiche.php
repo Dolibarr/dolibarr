@@ -356,8 +356,7 @@ else if ($id)
 
 			// Date
 			print '<tr><td>'.$langs->trans("Date").'</td><td>';
-			print $form->editInPlace($object->date, 'date', $user->rights->deplacement->creer, 'datepicker');
-			//print dol_print_date($object->date,'day');
+			print $form->editInPlace($object->date, 'dated', $user->rights->deplacement->creer, 'datepicker');
 			print '</td></tr>';
 
 			// Km/Price
