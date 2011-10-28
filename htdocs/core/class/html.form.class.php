@@ -151,15 +151,16 @@ class Form
      *	@param		string	$area			Type of edit
      *	@return     string   		      	HTML edit in place
      */
-    function editInPlace($value, $htmlname, $condition, $type='area')
+    function editInPlace($value, $htmlname, $condition, $type='textarea')
     {
     	global $conf;
     	
     	$out='';
     	
     	// Check parameters
-    	if ($type == 'area') $value = dol_nl2br($value);
+    	if ($type == 'textarea') $value = dol_nl2br($value);
     	else if ($type == 'numeric') $value = price($value);
+    	else if ($type == 'datepicker') $value = dol_print_date($value, 'day');
     	
     	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $condition)
     	{

@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
 top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
-//print_r($_POST);
+print_r($_POST);
 
 // Load original field value
 if((isset($_POST['field']) && ! empty($_POST['field']))

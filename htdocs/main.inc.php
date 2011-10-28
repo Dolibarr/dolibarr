@@ -931,6 +931,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min'.$ext.'"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js"></script>'."\n";
 				print '<script type="text/javascript">'."\n";
 				print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
 				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
@@ -996,7 +997,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 		}
 
-		// Define tradMonths javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
+		// Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
         print '<script type="text/javascript">'."\n";
 		$tradMonths=array($langs->trans("January"),
 		$langs->trans("February"),
@@ -1013,7 +1014,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		);
 		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
 
-		// Define tradMonthsMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
+		// Define tradMonthsMin javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
 		$tradMonthsMin=array($langs->trans("JanuaryMin"),
 		$langs->trans("FebruaryMin"),
 		$langs->trans("MarchMin"),
@@ -1029,7 +1030,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		);
 		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';'."\n";
 
-		// Define tradDays javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
+		// Define tradDays javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
 		$tradDays=array($langs->trans("Monday"),
 		$langs->trans("Tuesday"),
 		$langs->trans("Wednesday"),
@@ -1040,7 +1041,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		);
 		print 'var tradDays = '.json_encode($tradDays).';'."\n";
 
-		// Define tradDaysMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
+		// Define tradDaysMin javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
 		$tradDaysMin=array($langs->trans("MondayMin"),
 		$langs->trans("TuesdayMin"),
 		$langs->trans("WednesdayMin"),
@@ -1050,7 +1051,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("SundayMin")
 		);
 		print 'var tradDaysMin = '.json_encode($tradDaysMin).';'."\n";
+		print 'var datePickerFormat = \''.$langs->trans("FormatDateShortJQuery").'\';'."\n";
 		print '</script>'."\n";
+		
+		// Default datepicker options
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js"></script>'."\n";
 
 		if (! empty($head)) print $head."\n";
 		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";

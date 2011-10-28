@@ -807,7 +807,7 @@ else if ($id > 0 || ! empty($ref))
     {
     	print $langs->trans('Description');
     	print '</td><td colspan="3">';
-    	print $form->editInPlace($object->description, 'description', $user->rights->ficheinter->creer && $object->statut == 0, 'area');
+    	print $form->editInPlace($object->description, 'description', $user->rights->ficheinter->creer && $object->statut == 0, 'textarea');
     }
     else
     {
@@ -870,7 +870,7 @@ else if ($id > 0 || ! empty($ref))
     // Public note
     print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
     print '<td valign="top" colspan="3">';
-    print $form->editInPlace($object->note_public, 'note_public', $user->rights->ficheinter->creer, 'area');
+    print $form->editInPlace($object->note_public, 'note_public', $user->rights->ficheinter->creer, 'textarea');
     print "</td></tr>";
     	
     // Private note
@@ -878,7 +878,7 @@ else if ($id > 0 || ! empty($ref))
     {
     	print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
     	print '<td valign="top" colspan="3">';
-    	print $form->editInPlace($object->note_private, 'note_private', $user->rights->ficheinter->creer);
+    	print $form->editInPlace($object->note_private, 'note_private', $user->rights->ficheinter->creer, 'textarea');
     	print "</td></tr>";
     }
 
