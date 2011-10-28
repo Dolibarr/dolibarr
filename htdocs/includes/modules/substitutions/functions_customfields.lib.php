@@ -35,8 +35,8 @@
 function generic_tag_filling(&$substitutionarray, $object) {
    // Generically add each property of the $object into the substitution array
    foreach ($object as $key=>$value) {
-      if (!is_object($value) and !is_resource($value)) {
-              $substitutionarray['object_'.$key] = $value;
+      if (!is_object($value) and !is_resource($value) and !isset($substitutionarray['object_'.$key])) { // only add the property if it is not already defined, and is not an object nor a resource
+         $substitutionarray['object_'.$key] = $value;
       }
    }
 }
