@@ -1,0 +1,17 @@
+http://github.com/jquery/jquery-ui
+
+add "js" directory in language directory
+eg: /langs/fr_FR/js/
+
+add datepicker language file
+eg: /langs/fr_FR/js/jquery.ui.datepicker-fr.js
+
+and rename the file with country code
+eg: /langs/fr_FR/js/jquery.ui.datepicker-fr_FR.js
+
+edit the file and add 2 options :
+
+altField: '#timeStamp',
+altFormat: '@',        // Gives a timestamp dateformat
+
+for example, see /langs/fr_FR/js/jquery.ui.datepicker-fr_FR.js
