@@ -600,6 +600,7 @@ NewAttribute=Nou atribut
 AttributeCode=Codi atribut
 OptionalFieldsSetup=Configuració dels atributs opcionals
 CreateDraft=Crea esborrany
+ClickToEdit=Clic per a editar
 
 # Week day
 Monday=Dilluns
