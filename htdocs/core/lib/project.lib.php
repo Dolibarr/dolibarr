@@ -649,7 +649,8 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
         $sql.= " AND ec.fk_socpeople = ".$user->id;
     }
     $sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
-
+	$sql.= " ORDER BY p.title, p.ref";
+	
 	$var=true;
 	$resql = $db->query($sql);
 	if ( $resql )
