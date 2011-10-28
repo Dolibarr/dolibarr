@@ -49,6 +49,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         $invoicedettable='facturedet';
         $fk_facture='fk_facture';
         $total_tva='total_tva';
+        $total_localtax1='total_localtax1';
+        $total_localtax2='total_localtax2';
     }
     if ($direction == 'buy')
     {
@@ -56,6 +58,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         $invoicedettable='facture_fourn_det';
         $fk_facture='fk_facture_fourn';
         $total_tva='tva';
+        $total_localtax1='total_localtax1';
+        $total_localtax2='total_localtax2';
     }
 
     // Define sql request
@@ -74,8 +78,10 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         }
         if ($conf->global->MAIN_MODULE_COMPTABILITE)
         {
-            $sql = "SELECT s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj,";
-            $sql.= " sum(fd.total_ht) as amount, sum(fd.".$total_tva.") as tva";
+            $sql = "SELECT s.rowid as socid, s.nom as nom, s.siren as tva_intra, s.tva_assuj as assuj,";
+            $sql.= " sum(fd.total_ht) as amount, sum(fd.".$total_tva.") as tva,";
+            $sql.= " sum(fd.".$total_localtax1.") as localtax1,";
+            $sql.= " sum(fd.".$total_localtax2.") as localtax2";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
             $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as fd,";
             $sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -195,6 +201,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         $fk_facture2='fk_facture';
         $fk_payment='fk_paiement';
         $total_tva='total_tva';
+        $total_localtax1='total_localtax1';
+        $total_localtax2='total_localtax2';
         $paymenttable='paiement';
         $paymentfacturetable='paiement_facture';
     }
@@ -206,6 +214,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         $fk_facture2='fk_facturefourn';
         $fk_payment='fk_paiementfourn';
         $total_tva='tva';
+        $total_localtax1='total_localtax1';
+        $total_localtax2='total_localtax2';
         $paymenttable='paiementfourn';
         $paymentfacturetable='paiementfourn_facturefourn';
     }
@@ -229,6 +239,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         {
             // Count on delivery date (use invoice date as delivery is unknown)
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -275,6 +286,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         {
             // Count on delivery date (use invoice date as delivery is unknown)
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -331,12 +343,16 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             {
                 if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
                 if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
+                if (! isset($list[$assoc['rate']]['locatax1']))      $list[$assoc['rate']]['localtax1']=0;
+                if (! isset($list[$assoc['rate']]['locatax2']))      $list[$assoc['rate']]['localtax2']=0;
 
                 if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
                 {
                     $oldrowid=$assoc['rowid'];
                     $list[$assoc['rate']]['totalht']  += $assoc['total_ht'];
                     $list[$assoc['rate']]['vat']      += $assoc['total_vat'];
+                    $list[$assoc['rate']]['localtax1']      += $assoc['total_localtax1'];
+                    $list[$assoc['rate']]['localtax2']      += $assoc['total_localtax2'];
                 }
                 $list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
                 $list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
@@ -351,6 +367,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 
                 $list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
                 $list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
+                $list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
+                $list[$assoc['rate']]['localtax2_list'][]  = $assoc['total_localtax2'];
 
                 $list[$assoc['rate']]['pid'][] = $assoc['pid'];
                 $list[$assoc['rate']]['pref'][] = $assoc['pref'];
@@ -390,6 +408,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         {
             // Count on invoice date
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -437,6 +456,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         {
             // Count on payments date
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -491,12 +511,16 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             {
                 if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
                 if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
+				if (! isset($list[$assoc['rate']]['locatax1']))      $list[$assoc['rate']]['localtax1']=0;
+                if (! isset($list[$assoc['rate']]['locatax2']))      $list[$assoc['rate']]['localtax2']=0;
 
                 if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
                 {
                     $oldrowid=$assoc['rowid'];
                     $list[$assoc['rate']]['totalht']  += $assoc['total_ht'];
                     $list[$assoc['rate']]['vat']      += $assoc['total_vat'];
+                    $list[$assoc['rate']]['localtax1']	 += $assoc['total_localtax1'];
+                    $list[$assoc['rate']]['localtax2']	 += $assoc['total_localtax2'];
                 }
                 $list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
                 $list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
@@ -511,6 +535,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 
                 $list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
                 $list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
+                $list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
+                $list[$assoc['rate']]['localtax2_list'][] = $assoc['total_localtax2'];
 
                 $list[$assoc['rate']]['pid'][] = $assoc['pid'];
                 $list[$assoc['rate']]['pref'][] = $assoc['pref'];
