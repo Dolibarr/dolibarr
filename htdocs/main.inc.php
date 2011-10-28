@@ -1015,6 +1015,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
 		print '</script>'."\n";
 		
+		// Add datepicker default options
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js"></script>'."\n";
 		// Add datepicker i18n for current language
 		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/langs/'.$langs->defaultlang.'/js/jquery.ui.datepicker-'.$langs->defaultlang.'.js"></script>'."\n";
 
