@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
 top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
-//var_dump($_POST);
+//print_r($_POST);
 
 // Load original field value
 if((isset($_POST['field']) && ! empty($_POST['field']))
@@ -52,6 +52,7 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	$value			= GETPOST('value');
 	$type			= GETPOST('type');
 	
+	$return=array();
 	$error=0;
 	
 	if ($element == 'fichinter') $element = 'ficheinter';
@@ -70,6 +71,7 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 			if (! is_numeric($value))
 			{
 				$error++;
+				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		}
 		
@@ -79,11 +81,13 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 			if ($ret > 0)
 			{
 				if ($type == 'numeric') $value = price($value);
-				else $value = (! empty($value) ? dol_nl2br($value) : '&nbsp;');
-					
-				echo $value;
+				else if ($type == 'textarea') $value = dol_nl2br($value);
+				
+				$return['value'] = $value;
 			}
 		}
+		
+		echo json_encode($return);
 	}
 	else
 	{

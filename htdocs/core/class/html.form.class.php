@@ -153,10 +153,13 @@ class Form
      */
     function editInPlace($value, $htmlname, $condition, $type='area')
     {
-    	global $conf,$user;
+    	global $conf;
     	
     	$out='';
-    	$value = ($value ? $value : "&nbsp;");
+    	
+    	// Check parameters
+    	if ($type == 'area') $value = dol_nl2br($value);
+    	else if ($type == 'numeric') $value = price($value);
     	
     	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $condition)
     	{

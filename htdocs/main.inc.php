@@ -922,7 +922,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
 			}
 			// jQuery jnotify
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
+			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))
+			{
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify.js"></script>'."\n";
+			}
             // jQuery jeditable
 			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
 			{
@@ -930,7 +934,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<script type="text/javascript">'."\n";
 				print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
 				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
-				print 'var tooltipInPlace = \''.$langs->trans('ClickToEdit').'\';'."\n";
+				print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n";
+				print 'var placeholderInPlace = \''.$langs->trans('ClickToEdit').'\';'."\n";
 				print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
 				print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
 				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";

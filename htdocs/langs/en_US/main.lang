@@ -601,6 +601,7 @@ AttributeCode=Attribute code
 OptionalFieldsSetup=Extra attributes setup
 URLPhoto=Url of photo/logo
 CreateDraft=Create draft
+ClickToEdit=Click to edit
 
 # Week day
 Monday=Monday

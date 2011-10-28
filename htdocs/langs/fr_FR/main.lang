@@ -601,6 +601,7 @@ AttributeCode=Code de l'attribut
 OptionalFieldsSetup=Configuration des attributs complémentaires
 URLPhoto=Url vers photo/logo
 CreateDraft=Créer brouillon
+ClickToEdit=Cliquer ici pour éditer
 
 # Week day
 Monday=Lundi
