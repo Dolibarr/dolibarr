@@ -600,6 +600,7 @@ NewAttribute=Nuevo atributo
 AttributeCode=Código atributo
 OptionalFieldsSetup=Configuración de los atributos opcionales
 CreateDraft=Crear borrador
+ClickToEdit=Clic para editar
 
 # Week day
 Monday=Lunes
