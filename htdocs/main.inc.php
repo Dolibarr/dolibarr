@@ -1014,7 +1014,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		);
 		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
 		print '</script>'."\n";
-		
+
 		// Add datepicker default options
 		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js"></script>'."\n";
 		// Add datepicker i18n for current language
@@ -1438,7 +1438,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	// Execute hook printLeftBlock
 	$parameters=array();
-    $leftblock.=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
     print $leftblock;
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
