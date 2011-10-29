@@ -944,35 +944,35 @@ class Contact extends CommonObject
 			if ($statut==4) return $langs->trans('StatusContactValidated');
 			if ($statut==5) return $langs->trans('StatusContactValidated');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut==0) return $langs->trans('StatusContactDraftShort');
 			if ($statut==1) return $langs->trans('StatusContactValidatedShort');
 			if ($statut==4) return $langs->trans('StatusContactValidatedShort');
 			if ($statut==5) return $langs->trans('StatusContactValidatedShort');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans('StatusContactDraftShort'),'statut0').' '.$langs->trans('StatusContactDraft');
 			if ($statut==1) return img_picto($langs->trans('StatusContactValidatedShort'),'statut1').' '.$langs->trans('StatusContactValidated');
 			if ($statut==4) return img_picto($langs->trans('StatusContactValidatedShort'),'statut4').' '.$langs->trans('StatusContactValidated');
 			if ($statut==5) return img_picto($langs->trans('StatusContactValidatedShort'),'statut5').' '.$langs->trans('StatusContactValidated');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans('StatusContactDraft'),'statut0');
 			if ($statut==1) return img_picto($langs->trans('StatusContactValidated'),'statut1');
 			if ($statut==4) return img_picto($langs->trans('StatusContactValidated'),'statut4');
 			if ($statut==5) return img_picto($langs->trans('StatusContactValidated'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans('StatusContactDraft'),'statut0').' '.$langs->trans('StatusContactDraft');
 			if ($statut==1) return img_picto($langs->trans('StatusContactValidated'),'statut1').' '.$langs->trans('StatusContactValidated');
 			if ($statut==4) return img_picto($langs->trans('StatusContactValidated'),'statut4').' '.$langs->trans('StatusContactValidated');
 			if ($statut==5) return img_picto($langs->trans('StatusContactValidated'),'statut5').' '.$langs->trans('StatusContactValidated');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans('StatusContactDraftShort').' '.img_picto($langs->trans('StatusContactDraftShort'),'statut0');
 			if ($statut==1) return $langs->trans('StatusContactValidatedShort').' '.img_picto($langs->trans('StatusContactValidatedShort'),'statut1');
