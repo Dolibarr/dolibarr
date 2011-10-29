@@ -11,23 +11,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorPasswordDiffers=Hasła różni, wpisz je ponownie.
-ErrorForbidden=Dostęp zabroniony. <br> Podczas próby dostępu do strony, na powierzchni lub funkcji bez poświadczoną sesji lub które nie są dopuszczone do użytkownika.
-ErrorForbidden2=Wykorzystanie tej nazwie może być zdefiniowana przez administratora z menu Dolibarr %s-> %s.
-ErrorForbidden3=Wydaje się, że Dolibarr nie jest używany przez uwierzytelniane sesji. Rzuć okiem na Dolibarr konfiguracji dokumentacji wiedzieć, jak zarządzać authentications (htaccess, mod_auth lub innych ...).
-ErrorNoImagickReadimage=Funkcja imagick_readimage nie jest w tej PHP. Podgląd może być dostępny. Administratorzy mogą wyłączyć tę zakładkę z menu Ustawienia - Ekran.
-ErrorRecordAlreadyExists=Zapis już istnieje
-ErrorCantReadFile=Nie można odczytać pliku ' %s'
-ErrorCantReadDir=Nie można odczytać katalogu ' %s'
-ErrorFailedToFindEntity=Nie można odczytać jednostki " %s"
-ErrorBadLoginPassword=Zła wartość dla loginu lub hasła
-ErrorLoginDisabled=Twoje konto zostało zablokowane
-ErrorFailedToRunExternalCommand=Nie można uruchomić polecenia zewnętrznych. Zameldowanie jest ona dostępna i runnable przez serwer PHP. Jeśli PHP <b>safe mode</b> jest włączony, czy polecenie wewnątrz katalogu określonym przez parametr <b>safe_mode_exec_dir.</b>
-ErrorFailedToChangePassword=Nie można zmienić hasła
-ErrorLoginDoesNotExists=Użytkownik z <b>logowania %s</b> nie może zostać znaleziony.
-ErrorLoginHasNoEmail=Ten użytkownik nie ma adresu e-mail. Proces przerwany.
-ErrorBadValueForCode=Zła wartość typy kodu. Spróbuj ponownie z nową wartość ...
-ErrorFileIsInfectedWith=Ten plik jest zainfekowany %s
 SecurityCode=Kod zabezpieczający
 Calendar=Kalendarz
 AddTrip=Dodaj podróż
@@ -44,8 +27,6 @@ AttachANewFile=Załącz nowy plik / dokument
 LinkedObject=Związany obiektu
 Miscellanous=Miscellaneous
 NbOfActiveNotifications=Liczba zgłoszeń
-WarningInstallDirExists=Ostrzeżenie zainstalować katalog ( %s), nadal istnieje. Jest to poważne dziury bezpieczeństwa. Należy usunąć go jak najszybciej.
-WarningUntilDirRemoved=To ostrzeżenie pozostanie aktywne, dopóki ten katalog jest obecny (Widoczne tylko admin użytkowników).
 ChooseYourDemoProfil=Wybierz demo, które pasują do profilu działalności ...
 DemoFundation=Zarządzanie użytkowników o fundacji
 DemoFundation2=Zarządzanie użytkowników i konta bankowego z fundacji

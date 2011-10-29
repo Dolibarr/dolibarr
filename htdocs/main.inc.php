@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
+ * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -347,7 +348,7 @@ if (! defined('NOLOGIN'))
 			{
 				dol_syslog('Bad value for code, connexion refused');
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
@@ -389,7 +390,7 @@ if (! defined('NOLOGIN'))
 			{
 				dol_syslog('Bad password, connexion refused',LOG_DEBUG);
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				// Bad password. No authmode has found a good password.
 				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
@@ -428,7 +429,7 @@ if (! defined('NOLOGIN'))
 			if ($resultFetchUser == 0)
 			{
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
@@ -468,7 +469,7 @@ if (! defined('NOLOGIN'))
 			if ($resultFetchUser == 0)
 			{
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);

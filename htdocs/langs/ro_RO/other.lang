@@ -9,23 +9,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorPasswordDiffers=Parolele diferă, vă rugăm să le tip din nou.
-ErrorForbidden=Accesul interzis. <br> Va încerca să aibă acces la o pagină, zona sau caracteristică, fără a fi într-o sesiune autentificate sau că nu îi este permis să dvs. de utilizator.
-ErrorForbidden2=Permisiunea pentru acest login poate fi definită de către administratorul dvs. Dolibarr din meniul %s-> %s.
-ErrorForbidden3=Se pare că Dolibarr nu este utilizat autentificate printr-o sesiune. Aruncati o privire la documentaţia de instalare Dolibarr să ştie cum să gestioneze authentications (htaccess, mod_auth sau alte ...).
-ErrorNoImagickReadimage=Funcţia imagick_readimage nu este gasit in acest PHP. Nu poate fi previzualizare disponibilă. Administratorii pot dezactiva această filă din meniul Setup - Display.
-ErrorRecordAlreadyExists=Record există deja
-ErrorCantReadFile=Nu a reuşit să citească fişierul " %s"
-ErrorCantReadDir=Nu a reuşit să citesc directorul ' %s'
-ErrorFailedToFindEntity=Nu şi-a citit entităţii " %s"
-ErrorBadLoginPassword=Bad valoarea de autentificare sau parola
-ErrorLoginDisabled=Contul dvs. a fost dezactivat
-ErrorFailedToRunExternalCommand=Nu a reuşit să rulaţi comanda externe. Verificaţi aceasta este disponibilă şi runnable de către dumneavoastră PHP de server. Dacă PHP <b>Safe Mode</b> este activat, comanda verifica că este în interiorul unui director definite de parametru <b>safe_mode_exec_dir.</b>
-ErrorFailedToChangePassword=Nu a reuşit să schimbaţi parola
-ErrorLoginDoesNotExists=User login <b>cu %s</b> nu a putut fi găsit.
-ErrorLoginHasNoEmail=Acest utilizator nu are nici o adresa de e-mail. Procesul de anulată.
-ErrorBadValueForCode=Bad valoare tipuri de cod. Încercaţi din nou cu o nouă valoare ...
-ErrorFileIsInfectedWith=Acest fişier este infectat cu %s
 SecurityCode=Cod de securitate
 Calendar=Calendar
 AddTrip=Adauga-intors
@@ -42,8 +25,6 @@ AttachANewFile=Ataşaţi un fişier nou / document
 LinkedObject=Legate de obiectul
 Miscellanous=Diverse
 NbOfActiveNotifications=Număr de notificări
-WarningInstallDirExists=Atenţie, directorul de instalare ( %s) încă mai există. Aceasta este o gaura grave de securitate. Ar trebui eliminate cât mai curând posibil.
-WarningUntilDirRemoved=Acest avertisment va rămâne activ, atât timp cât acest director este prezent (afişat numai la admin utilizatori).
 ChooseYourDemoProfil=Alegeţi demo care se potrivesc cu profilul de activitate ...
 DemoFundation=Gestionare membrii unui Fundaţia
 DemoFundation2=Gestionaţi membri şi un cont bancar de Fundaţia

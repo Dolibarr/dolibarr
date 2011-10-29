@@ -9,23 +9,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorPasswordDiffers=Salasanat vaihtelee, kirjoita ne uudelleen.
-ErrorForbidden=Pääsy kielletty. <br> Yrität saada sivun, alue tai ominaisuus ilman oikeaksi todistettu istunnon tai että ei saa käyttäjän.
-ErrorForbidden2=Lupa tämän sisäänkirjoittautumissivuksesi voidaan määritellä oma Dolibarr järjestelmänvalvoja valikkopalkki %s-> %s.
-ErrorForbidden3=Vaikuttaa siltä, että Dolibarr ei käytetä kautta autentikoitu istunnossa. Tutustu Dolibarr setup asiakirjat tietää, miten hallita authentications (htaccess, mod_auth tai muita ...).
-ErrorNoImagickReadimage=Tehtävä imagick_readimage ei löydy tässä PHP. Esikatselu ei voi olla käytettävissä. Järjestelmänvalvojat voivat poistaa tämän välilehden valikosta Asetukset - Näyttö.
-ErrorRecordAlreadyExists=Record jo olemassa
-ErrorCantReadFile=Failed to read file ' %s'
-ErrorCantReadDir=Lukeminen epäonnistui directory ' %s'
-ErrorFailedToFindEntity=Lukeminen epäonnistui yksikkö ' %s'
-ErrorBadLoginPassword=Bad arvo kirjautumistunnus tai salasana
-ErrorLoginDisabled=Tilisi on poistettu käytöstä
-ErrorFailedToRunExternalCommand=Epäonnistui suorittaa ulkoista komentoa. Tarkista se on saatavilla ja runnable teidän PHP palvelimelta. Jos PHP <b>Vikasietotila</b> on käytössä, tarkista, että komento on sisällä hakemiston määritelty parametri <b>safe_mode_exec_dir.</b>
-ErrorFailedToChangePassword=Ei vaihda salasana
-ErrorLoginDoesNotExists=Käyttäjälle <b>sisäänkirjoittautumissivuksesi %s</b> ei löydy.
-ErrorLoginHasNoEmail=Tämä käyttäjä ei ole sähköpostiosoitetta. Process aborted.
-ErrorBadValueForCode=Bad arvotyypeillä koodin. Yritä uudelleen uuteen arvoon ...
-ErrorFileIsInfectedWith=Tämä tiedosto on tartunnan %s
 SecurityCode=Suojakoodi
 Calendar=Kalenteri
 AddTrip=Lisää matka
@@ -42,8 +25,6 @@ AttachANewFile=Liitä uusi tiedosto / asiakirjan
 LinkedObject=Linkitettyä objektia
 Miscellanous=Miscellaneous
 NbOfActiveNotifications=Ilmoitusten lukumäärä
-WarningInstallDirExists=Varoitus, asentaa hakemistoon ( %s) on yhä olemassa. Tämä on vakava turvallisuuteen reikään. Sinun tulisi poistaa niin pian kuin mahdollista.
-WarningUntilDirRemoved=Tämä varoitus pysyy aktiivisena niin kauan kuin tähän hakemistoon on läsnä (Näkyy vain admin-käyttäjät).
 ChooseYourDemoProfil=Valitse demo profil jotka vastaavat aktiviisuutesi ...
 DemoCompanyShopWithCashDesk=Hallinnoi liikkeen kanssa kassa
 DemoCompanyProductAndStocks=Hallitse pieni tai keskisuuri yritys myy tuotteitaan

@@ -599,7 +599,7 @@ if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_AD
         }
         else
         {
-            $langs->load("other");
+            $langs->load("errors");
             $mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
             dol_syslog('Failed to read file: '.$file);
         }
