@@ -585,7 +585,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
     $out.="</div>\n";
 
     if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
-    
+
     // Parameters for edit in place
     if (! empty($GLOBALS['object']))
     {
@@ -3848,10 +3848,10 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 /**
  *    Format output for start and end date
  *
- *    @param      	date_start    Start date
- *    @param      	date_end      End date
- *    @param      	format        Output format
- *    @param		outputlangs   Output language
+ *    @param	timestamp	$date_start    Start date
+ *    @param    timestamp	$date_end      End date
+ *    @param    string		$format        Output format
+ *    @param	Translate	$outputlangs   Output language
  *    @return	void
  */
 function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
@@ -3862,11 +3862,11 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 /**
  *    Format output for start and end date
  *
- *    @param      	date_start    Start date
- *    @param      	date_end      End date
- *    @param      	format        Output format
- *    @param		outputlangs   Output language
- *    @return	string			String
+ *    @param	timestamp	$date_start    Start date
+ *    @param    timestamp	$date_end      End date
+ *    @param    string		$format        Output format
+ *    @param	Translate	$outputlangs   Output language
+ *    @return	string						String
  */
 function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
