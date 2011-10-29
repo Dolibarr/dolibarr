@@ -275,7 +275,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		{
 			$mc = new ActionsMulticompany($db);
 
-			$select_entity=$mc->select_entities($lastentity, 'tabindex="3"');
+			$select_entity=$mc->select_entities($lastentity, 'tabindex="3"', 1);
 		}
 	}
 

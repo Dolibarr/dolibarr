@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - bills
+# Dolibarr language file - es_ES - bills 
 CHARSET=UTF-8
 Bill=Factura
 Bills=Facturas
@@ -234,7 +234,10 @@ GlobalDiscount=Descuento fijo
 CreditNote=Abono
 CreditNotes=Abonos
 AddDiscount=Crear descuento fijo
+AddRelativeDiscount=Crear descuento relativo
+EditRelativeDiscount=Editar descuento relativo
 AddGlobalDiscount=Crear descuento fijo
+EditGlobalDiscounts=Editar descuento fijo
 AddCreditNote=Crear factura de abono
 Deposit=Anticipo
 Deposits=Anticipos
@@ -277,7 +280,7 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma del importe de los 2 nuevos descuen
 ConfirmRemoveDiscount=¿Está seguro de querer eliminar este descuento?
 RelatedBill=Factura asociada
 RelatedBills=Facturas asociadas
-# PaymentConditions=
+# PaymentConditions
 PaymentConditionShortRECEP=A la recepción
 PaymentConditionRECEP=A la recepción de la factura
 PaymentConditionShort30D=30 días
@@ -288,7 +291,7 @@ PaymentConditionShort60D=60 días
 PaymentCondition60D=Pago a los 60 días
 PaymentConditionShort60DENDMONTH=60 días a fin de mes
 PaymentCondition60DENDMONTH=Pago a los 60 días a fin de mes
-# PaymentType=
+# PaymentType
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia
 PaymentTypePRE=Domiciliación bancaria

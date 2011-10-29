@@ -55,28 +55,28 @@ if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->
     accessforbidden();
 }
 
+$id			= GETPOST("id");
+$action		= GETPOST("action");
+$group		= GETPOST("group","int",3);
+$confirm	= GETPOST("confirm");
 
 // Define value to know what current user can do on properties of edited user
-if ($_GET["id"])
+if ($id)
 {
     // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edite
-    $caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
-    || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
-    $caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
-    || (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
+    $caneditfield=( (($user->id == $id) && $user->rights->user->self->creer)
+    || (($user->id != $id) && $user->rights->user->user->creer) );
+    $caneditpassword=( (($user->id == $id) && $user->rights->user->self->password)
+    || (($user->id != $id) && $user->rights->user->user->password) );
 }
-
-$action=GETPOST("action");
-$group=GETPOST("group","int",3);
-$confirm=GETPOST("confirm");
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2='user';
-if ($user->id == $_GET["id"]) { $feature2=''; $canreaduser=1; } // A user can always read its own card
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
-if ($user->id <> $_GET["id"] && ! $canreaduser) accessforbidden();
+if ($user->id == $id) { $feature2=''; $canreaduser=1; } // A user can always read its own card
+$result = restrictedArea($user, 'user', $id, '', $feature2);
+if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 $langs->load("users");
 $langs->load("companies");
@@ -91,36 +91,36 @@ $form = new Form($db);
 if ($_GET["subaction"] == 'addrights' && $canedituser)
 {
     $edituser = new User($db);
-    $edituser->fetch($_GET["id"]);
+    $edituser->fetch($id);
     $edituser->addrights($_GET["rights"]);
 }
 
 if ($_GET["subaction"] == 'delrights' && $canedituser)
 {
     $edituser = new User($db);
-    $edituser->fetch($_GET["id"]);
+    $edituser->fetch($id);
     $edituser->delrights($_GET["rights"]);
 }
 
 if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser)
 {
-    if ($_GET["id"] <> $user->id)
+    if ($id <> $user->id)
     {
         $edituser = new User($db);
-        $edituser->fetch($_GET["id"]);
+        $edituser->fetch($id);
         $edituser->setstatus(0);
-        Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
+        Header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
         exit;
     }
 }
 if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
 {
-    if ($_GET["id"] <> $user->id)
+    if ($id <> $user->id)
     {
         $message='';
 
         $edituser = new User($db);
-        $edituser->fetch($_GET["id"]);
+        $edituser->fetch($id);
 
         if (!empty($conf->file->main_limit_users))
         {
@@ -134,7 +134,7 @@ if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
         if (! $message)
         {
             $edituser->setstatus(1);
-            Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
+            Header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
             exit;
         }
     }
@@ -142,10 +142,10 @@ if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
 {
-    if ($_GET["id"] <> $user->id)
+    if ($id <> $user->id)
     {
         $edituser = new User($db);
-        $edituser->id=$_GET["id"];
+        $edituser->id=$id;
         $result = $edituser->delete();
         if ($result < 0)
         {
@@ -161,21 +161,23 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
 }
 
 // Action ajout user
-if ($_POST["action"] == 'add' && $canadduser)
+if ($action == 'add' && $canadduser)
 {
     $message="";
-    if (! $_POST["nom"]) {
+    if (! $_POST["nom"])
+    {
         $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
         $action="create";       // Go back to create page
     }
-    if (! $_POST["login"]) {
+    if (! $_POST["login"])
+    {
         $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
         $action="create";       // Go back to create page
     }
 
     $edituser = new User($db);
 
-    if (!empty($conf->file->main_limit_users)) // If option to limit users is set
+    if (! empty($conf->file->main_limit_users)) // If option to limit users is set
     {
         $nb = $edituser->getNbOfUsers("active",1);
         if ($nb >= $conf->file->main_limit_users)
@@ -203,14 +205,24 @@ if ($_POST["action"] == 'add' && $canadduser)
         $edituser->ldap_sid		= $_POST["ldap_sid"];
         // If multicompany is off, admin users must all be on entity 0.
         if($conf->multicompany->enabled)
-                if($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ! empty($_POST["superadmin"]))
-                    $edituser->entity=0;
-                else
-                    $edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+        {
+        	if($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ! empty($_POST["superadmin"]))
+        	{
+        		$edituser->entity=0;
+        	}
+        	else
+        	{
+        		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+        	}
+        }
         else if(! empty($_POST["admin"]))
-            $edituser->entity=0;
+        {
+        	$edituser->entity=0;
+        }
         else
-            $edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+        {
+        	$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+        }
 
         $db->begin();
 
@@ -224,7 +236,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 
             $db->commit();
 
-            Header("Location: fiche.php?id=$id");
+            Header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
             exit;
         }
         else
@@ -249,13 +261,13 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
         $editgroup->oldcopy=dol_clone($editgroup);
 
         $edituser = new User($db);
-        $edituser->fetch($_GET["id"]);
+        $edituser->fetch($id);
         if ($action == 'addgroup')    $edituser->SetInGroup($group,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?GETPOST("entity"):$editgroup->entity));
         if ($action == 'removegroup') $edituser->RemoveFromGroup($group,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?GETPOST("entity"):$editgroup->entity));
 
         if ($result > 0)
         {
-            header("Location: fiche.php?id=".$_GET["id"]);
+            header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
             exit;
         }
         else
@@ -288,7 +300,7 @@ if ($action == 'update' && ! $_POST["cancel"])
         {
             $db->begin();
             $edituser = new User($db);
-            $edituser->fetch($_GET["id"]);
+            $edituser->fetch($id);
 
             $edituser->oldcopy=dol_clone($edituser);
 
@@ -307,14 +319,24 @@ if ($action == 'update' && ! $_POST["cancel"])
             $edituser->phenix_login	= $_POST["phenix_login"];
             $edituser->phenix_pass	= $_POST["phenix_pass"];
             if($conf->multicompany->enabled)
-                if($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ! empty($_POST["superadmin"]))
-                    $edituser->entity=0;
-                else
-                    $edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+            {
+            	if($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ! empty($_POST["superadmin"]))
+            	{
+            		$edituser->entity=0;
+            	}
+            	else
+            	{
+            		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+            	}
+            }
             else if(! empty($_POST["admin"]))
-                $edituser->entity=0;
+            {
+            	$edituser->entity=0;
+            }
             else
-                $edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+            {
+            	$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+            }
         
             if (GETPOST('deletephoto')) $edituser->photo='';
             if (! empty($_FILES['photo']['name'])) $edituser->photo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -386,7 +408,7 @@ if ($action == 'update' && ! $_POST["cancel"])
     else if ($caneditpassword)	// Case we can edit only password
     {
         $edituser = new User($db);
-        $edituser->fetch($_GET["id"]);
+        $edituser->fetch($id);
 
         $ret=$edituser->setPassword($user,$_POST["password"]);
         if ($ret < 0)
@@ -401,7 +423,7 @@ if ((($action == 'confirm_password' && $confirm == 'yes')
 || ($action == 'confirm_passwordsend' && $confirm == 'yes')) && $caneditpassword)
 {
     $edituser = new User($db);
-    $edituser->fetch($_GET["id"]);
+    $edituser->fetch($id);
 
     $newpassword=$edituser->setPassword($user,'');
     if ($newpassword < 0)
@@ -433,7 +455,7 @@ if ((($action == 'confirm_password' && $confirm == 'yes')
 }
 
 // Action initialisation donnees depuis record LDAP
-if ($_POST["action"] == 'adduserldap')
+if ($action == 'adduserldap')
 {
     $selecteduser = $_POST['users'];
 
@@ -455,7 +477,7 @@ if ($_POST["action"] == 'adduserldap')
     if ($result >= 0)
     {
         // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
-        $required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
+        $required_fields=array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
         $ldapusers = $ldap->getRecords($selecteduser, $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields);
         //print_r($ldapusers);
@@ -464,17 +486,17 @@ if ($_POST["action"] == 'adduserldap')
         {
             foreach ($ldapusers as $key => $attribute)
             {
-                $ldap_nom    = $attribute[$conf->global->LDAP_FIELD_NAME];
-                $ldap_prenom = $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
-                $ldap_login  = $attribute[$conf->global->LDAP_FIELD_LOGIN];
-                $ldap_loginsmb = $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
-                $ldap_pass         = $attribute[$conf->global->LDAP_FIELD_PASSWORD];
-                $ldap_pass_crypted = $attribute[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED];
-                $ldap_phone  = $attribute[$conf->global->LDAP_FIELD_PHONE];
-                $ldap_fax    = $attribute[$conf->global->LDAP_FIELD_FAX];
-                $ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
-                $ldap_mail   = $attribute[$conf->global->LDAP_FIELD_MAIL];
-                $ldap_sid    = $attribute[$conf->global->LDAP_FIELD_SID];
+                $ldap_nom			= $attribute[$conf->global->LDAP_FIELD_NAME];
+                $ldap_prenom		= $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
+                $ldap_login			= $attribute[$conf->global->LDAP_FIELD_LOGIN];
+                $ldap_loginsmb		= $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
+                $ldap_pass			= $attribute[$conf->global->LDAP_FIELD_PASSWORD];
+                $ldap_pass_crypted	= $attribute[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED];
+                $ldap_phone			= $attribute[$conf->global->LDAP_FIELD_PHONE];
+                $ldap_fax			= $attribute[$conf->global->LDAP_FIELD_FAX];
+                $ldap_mobile		= $attribute[$conf->global->LDAP_FIELD_MOBILE];
+                $ldap_mail			= $attribute[$conf->global->LDAP_FIELD_MAIL];
+                $ldap_sid			= $attribute[$conf->global->LDAP_FIELD_SID];
             }
         }
     }
@@ -527,7 +549,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
             $conf->global->LDAP_FIELD_LOGIN_SAMBA);
 
             // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
-            $required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
+            $required_fields=array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
             // Get from LDAP database an array of results
             $ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
@@ -851,10 +873,10 @@ else
     /*                                                                            */
     /* ************************************************************************** */
 
-    if ($_GET["id"])
+    if ($id)
     {
         $fuser = new User($db);
-        $fuser->fetch($_GET["id"]);
+        $fuser->fetch($id);
 
         // Connexion ldap
         // pour recuperer passDoNotExpire et userChangePassNextLogon
@@ -959,7 +981,7 @@ else
         /*
          * Fiche en mode visu
          */
-        if ($_GET["action"] != 'edit')
+        if ($action != 'edit')
         {
             print '<table class="border" width="100%">';
 
@@ -1236,13 +1258,13 @@ else
             // Si on a un gestionnaire de generation de mot de passe actif
             if ($conf->global->USER_PASSWORD_GENERATED != 'none')
             {
-                if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
+                if (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
                 (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
                 {
                     print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
                 }
 
-                if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
+                if (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
                 (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
                 {
                     if ($fuser->email) print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
@@ -1251,19 +1273,19 @@ else
             }
 
             // Activer
-            if ($user->id <> $_GET["id"] && $candisableuser && $fuser->statut == 0 &&
+            if ($user->id <> $id && $candisableuser && $fuser->statut == 0 &&
             (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
             }
             // Desactiver
-            if ($user->id <> $_GET["id"] && $candisableuser && $fuser->statut == 1 &&
+            if ($user->id <> $id && $candisableuser && $fuser->statut == 1 &&
             (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
             {
                 print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
             // Delete
-            if ($user->id <> $_GET["id"] && $candisableuser &&
+            if ($user->id <> $id && $candisableuser &&
             (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
             {
                 print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
@@ -1302,7 +1324,7 @@ else
                 if ($caneditgroup)
                 {
                     $form = new Form($db);
-                    print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
+                    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">'."\n";
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
                     print '<input type="hidden" name="action" value="addgroup" />';
                     print '<table class="noborder" width="100%">'."\n";
@@ -1400,7 +1422,7 @@ else
          * Fiche en mode edition
          */
 
-        if ($_GET["action"] == 'edit' && ($canedituser || ($user->id == $fuser->id)))
+        if ($action == 'edit' && ($canedituser || ($user->id == $fuser->id)))
         {
 
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
@@ -1793,18 +1815,5 @@ else
 $db->close();
 
 llxFooter();
-
-
-
-/**
- * Return if var element is ok
- * 
- * @param   string      $element    Variable to check
- * @return  boolean                 Return true of variable is not empty
- */
-function dolValidElement($element)
-{
-    return (trim($element) != '');
-}
 
 ?>

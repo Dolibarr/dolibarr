@@ -298,6 +298,8 @@ IncludedVAT=Dont TVA
 HT=HT
 TTC=TTC
 VAT=TVA
+LT1ES=RE
+LT2ES=IRPF
 VATRate=Taux TVA
 Average=Moyenne
 Sum=Somme
@@ -601,6 +603,7 @@ AttributeCode=Code de l'attribut
 OptionalFieldsSetup=Configuration des attributs complémentaires
 URLPhoto=Url vers photo/logo
 CreateDraft=Créer brouillon
+ClickToEdit=Cliquer ici pour éditer
 
 # Week day
 Monday=Lundi

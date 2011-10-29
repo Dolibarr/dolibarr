@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
 top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
-//var_dump($_POST);
+//print_r($_POST);
 
 // Load original field value
 if((isset($_POST['field']) && ! empty($_POST['field']))
@@ -51,23 +51,54 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	$fk_element		= GETPOST('fk_element');
 	$value			= GETPOST('value');
 	$type			= GETPOST('type');
+	$timestamp		= GETPOST('timestamp');
+	
+	$format='text';
+	$return=array();
+	$error=0;
+	
+	if ($element == 'fichinter') $element = 'ficheinter';
 	
 	if ($user->rights->$element->creer || $user->rights->$element->write)
 	{
 		$object = new GenericObject($db);
 		
 		// Clean parameters
-		$value = trim($value);
+		$newvalue = trim($value);
 		if ($type == 'numeric')
 		{
-			$value = price2num($value);
+			$newvalue = price2num($newvalue);
 		
 			// Check parameters
-			if (! is_numeric($value)) $value = 0;
+			if (! is_numeric($newvalue))
+			{
+				$error++;
+				$return['error'] = $langs->trans('ErrorBadValue');
+			}
+		}
+		else if ($type == 'datepicker')
+		{
+			$format = 'date';
+			$newvalue = ($timestamp / 1000);
 		}
 		
-		$ret=$object->setValueFrom($table_element, $fk_element, $field, $value);
-		if ($ret > 0) echo (! empty($value) ? dol_nl2br($value) : '&nbsp;');
+		if (! $error)
+		{
+			$ret=$object->setValueFrom($table_element, $fk_element, $field, $newvalue, $format);
+			if ($ret > 0)
+			{
+				if ($type == 'numeric') $value = price($newvalue);
+				else if ($type == 'textarea') $value = dol_nl2br($newvalue);
+				
+				$return['value'] = $value;
+			}
+			else
+			{
+				$return['error'] = $object->error;
+			}
+		}
+		
+		echo json_encode($return);
 	}
 	else
 	{

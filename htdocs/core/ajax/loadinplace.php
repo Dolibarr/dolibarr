@@ -48,12 +48,15 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	$table_element	= GETPOST('table_element');
 	$field			= GETPOST('field');
 	$fk_element		= GETPOST('fk_element');
+	$type			= GETPOST('type');
+	
+	if ($element == 'fichinter') $element = 'ficheinter';
 	
 	if ($user->rights->$element->lire || $user->rights->$element->read)
 	{
 		$object = new GenericObject($db);
-		$ret=$object->getValueFrom($table_element, $fk_element, $field);
-		echo $ret;
+		$value=$object->getValueFrom($table_element, $fk_element, $field);
+		echo $value;
 	}
 	else
 	{

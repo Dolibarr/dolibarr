@@ -585,6 +585,14 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
     $out.="</div>\n";
 
     if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+    
+    // Parameters for edit in place
+    if (! empty($GLOBALS['object']))
+    {
+    	$out.='<div id="element" class="hidden">'.$GLOBALS['object']->element.'</div>'."\n";
+    	$out.='<div id="table_element" class="hidden">'.$GLOBALS['object']->table_element.'</div>'."\n";
+    	$out.='<div id="fk_element" class="hidden">'.$GLOBALS['object']->id.'</div>'."\n";
+    }
 
     return $out;
 }
@@ -3955,21 +3963,6 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     					jQuery.jnotify("'.dol_escape_js($out).'",
     					"'.($style=="ok" ? 3000 : $style).'",
     					'.($style=="ok" ? "false" : "true").',
-                        {
-                          closeLabel: "&times;"                     // the HTML to use for the "Close" link
-                          , showClose: true                           // determines if the "Close" link should be shown if notification is also sticky
-                          , fadeSpeed: 1000                           // the speed to fade messages out (in milliseconds)
-                          , slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
-                          , classContainer: "jnotify-container"
-                          , classNotification: "jnotify-notification"
-                          , classBackground: "jnotify-background"
-                          , classClose: "jnotify-close"
-                          , classMessage: "jnotify-message"
-                          , init: null                                // callback that occurs when the main jnotify container is created
-                          , create: null                              // callback that occurs when when the note is created (occurs just before
-                                                                      // appearing in DOM)
-                          , beforeRemove: null                        // callback that occurs when before the notification starts to fade away
-                        },
     					{ remove: function (){} } );
     				});
     			</script>';
@@ -4236,6 +4229,16 @@ function dol_eval($s)
     eval($s);
 }
 
+/**
+* Return if var element is ok
+*
+* @param   string      $element    Variable to check
+* @return  boolean                 Return true of variable is not empty
+*/
+function dol_validElement($element)
+{
+	return (trim($element) != '');
+}
 
 /**
  * 	Return img flag of country for a language code or country code
