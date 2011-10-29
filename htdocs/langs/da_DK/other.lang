@@ -11,23 +11,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorPasswordDiffers=Passwords er forskellig, skal du skrive dem igen.
-ErrorForbidden=Adgang forbudt. <br> Du forsøger at få adgang til en side, et område eller funktion uden at være i en authenticated samling, eller som ikke er tilladt til din brugerkonto.
-ErrorForbidden2=Tilladelse til dette login kan defineres af din Dolibarr administrator fra menuen %s-> %s.
-ErrorForbidden3=Det lader til, at Dolibarr ikke anvendes gennem en authenticated session. Tag et kig på Dolibarr setup dokumentation for at vide, hvordan man forvalter authentications (htaccess, mod_auth eller andre ...).
-ErrorNoImagickReadimage=Funktion imagick_readimage er ikke fundet i denne PHP. Intet eksempel kan være til rådighed. Administratorer kan deaktivere denne fane fra menuen Setup - Display.
-ErrorRecordAlreadyExists=Optag allerede findes
-ErrorCantReadFile=Kunne ikke læse filen ' %s'
-ErrorCantReadDir=Kunne ikke læse directory ' %s'
-ErrorFailedToFindEntity=Kunne ikke læse enhed ' %s'
-ErrorBadLoginPassword=Bad værdi for brugernavn eller password
-ErrorLoginDisabled=Din konto er blevet deaktiveret
-ErrorFailedToRunExternalCommand=Det lykkedes ikke at køre eksterne kommando. Check den er tilgængelig og runnable af din PHP server. Hvis PHP <b>Safe Mode</b> er aktiveret, skal du kontrollere, at kommandoen er inde i en mappe defineret ved parameter <b>safe_mode_exec_dir.</b>
-ErrorFailedToChangePassword=Det lykkedes ikke at ændre password
-ErrorLoginDoesNotExists=Bruger med <b>login %s</b> kunne ikke findes.
-ErrorLoginHasNoEmail=Denne bruger har ingen e-mail-adresse. Processen afbrydes.
-ErrorBadValueForCode=Bad værdi former for kode. Prøv igen med en ny værdi ...
-ErrorFileIsInfectedWith=Denne fil er inficeret med %s
 SecurityCode=Sikkerhedskode
 Calendar=Kalender
 AddTrip=Tilføj tur
@@ -44,8 +27,6 @@ AttachANewFile=Vedhæfte en ny fil / dokument
 LinkedObject=Forbundet objekt
 Miscellanous=Miscellaneous
 NbOfActiveNotifications=Antal anmeldelser
-WarningInstallDirExists=Advarsel, installere directory ( %s) eksisterer stadig. Dette er en alvorlig sikkerheds-hul. Du bør fjernes så hurtigt som muligt.
-WarningUntilDirRemoved=Denne advarsel vil forblive aktiv, så længe denne mappe er til stede (vises kun til admin-brugere).
 ChooseYourDemoProfil=Vælg den demo profil, der passer til din virksomhed ...
 DemoCompanyShopWithCashDesk=Administrer en butik med et kontant desk
 DemoCompanyProductAndStocks=Administrer en lille eller mellemstor virksomhed, der sælger produkter
