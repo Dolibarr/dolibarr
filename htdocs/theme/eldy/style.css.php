@@ -131,6 +131,15 @@ textarea.flat {
 textarea:disabled {
 	background:#ddd;
 }
+form.flat select {
+	background: #FDFDFD;
+    font-size: <?php print $fontsize ?>px;
+	font-family: <?php print $fontlist ?>;
+	font-weight: normal;
+    border: 1px solid #ACBCBB;
+    padding: 1px 1px 1px 1px;
+    margin: 0px 0px 0px 0px;
+}
 select.flat {
 	background: #FDFDFD;
     font-size: <?php print $fontsize ?>px;
@@ -1724,7 +1733,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_textarea:hover, .edit_text:hover, .edit_numeric:hover {
+.edit_textarea:hover, .edit_text:hover, .edit_numeric:hover, .edit_select:hover {
 	background: white url(<?php echo dol_buildpath($path.'/theme/eldy/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 }

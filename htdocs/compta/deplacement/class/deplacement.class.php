@@ -361,7 +361,7 @@ class Deplacement extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees";
         $sql.= " WHERE active = ".$active;
 
-        dol_syslog("Deplacement::listOfTypes sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::listOfTypes sql=".$sql, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ( $result )
         {
@@ -370,11 +370,14 @@ class Deplacement extends CommonObject
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
-                $ret[$obj->id]=array('code'=>$obj->code, 'label'=>(($langs->trans($obj->code)!=$obj->code)?$langs->trans($obj->code):$obj->label));
+                $ret[$obj->code]=(($langs->trans($obj->code)!=$obj->code)?$langs->trans($obj->code):$obj->label);
                 $i++;
             }
         }
-        else dol_print_error($this->db);
+        else
+        {
+        	dol_print_error($this->db);
+        }
 
         return $ret;
 	}
