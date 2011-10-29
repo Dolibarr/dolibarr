@@ -8,8 +8,9 @@ CustomFieldsSetup= CustomFields Setup
 
 # Modules tabs
 facture= Invoices
-propal= Estimate
+propal= Commercial proposals
 product= Products/Services
+commande= Customer orders
 
 # Table headers
 Fieldname= Field Name

@@ -19,7 +19,7 @@
  *      \file       htdocs/customfields/class/customfields.class.php
  *      \ingroup    customfields
  *      \brief      Core class file for the CustomFields module, all critical functions reside here
- *		\version    $Id: customfields.class.php, v1.1.0.2
+ *		\version    $Id: customfields.class.php, v1.2.4
  *		\author		Stephen Larroque
  */
 
@@ -315,11 +315,11 @@ class CustomFields // extends CommonObject
 		if ($notrigger) {
 			$trigger = null;
 		} else {
-			$trigger = strtoupper($this->module).'_CUSTOMFIELD_FETCHRECORD';
+			$trigger = strtoupper($this->module).'_CUSTOMFIELD_DELETERECORD';
 		}
 
 		// Executing the SQL statement
-		$rtncode = $this->executeSQL($sql, 'fetchRecord_CustomFields',$trigger);
+		$rtncode = $this->executeSQL($sql, 'deleteRecord_CustomFields',$trigger);
 
 		$this->id = $id;
 
@@ -508,7 +508,8 @@ class CustomFields // extends CommonObject
 		$sql = "SELECT 1
 		FROM INFORMATION_SCHEMA.TABLES
 		WHERE TABLE_TYPE='BASE TABLE'
-		AND TABLE_NAME='".$this->moduletable."'";
+		AND TABLE_SCHEMA='".$this->db->database_name."'
+		AND TABLE_NAME='".$this->moduletable."';";
 
 		// Trigger or not?
 		if ($notrigger) {
@@ -559,10 +560,10 @@ class CustomFields // extends CommonObject
                 s.index_name
 		FROM information_schema.COLUMNS as c
 		LEFT JOIN information_schema.key_column_usage as k
-		ON (k.column_name=c.column_name AND k.table_name=c.table_name)
+		ON (k.column_name=c.column_name AND k.table_name=c.table_name AND k.table_schema=c.table_schema)
                 LEFT JOIN information_schema.statistics as s
-                ON (s.column_name=c.column_name AND s.table_name=c.table_name)
-		WHERE c.table_name = '".$this->moduletable."' ".$whereaddendum."
+                ON (s.column_name=c.column_name AND s.table_name=c.table_name AND s.table_schema=c.table_schema)
+		WHERE c.table_schema = '".$this->db->database_name."' AND c.table_name = '".$this->moduletable."' ".$whereaddendum."
 		ORDER BY c.ordinal_position;"; // We filter the reserved columns so that the user  cannot alter them, even by mistake and we get only the specified field by id
 
 		// Trigger or not?
@@ -640,8 +641,8 @@ class CustomFields // extends CommonObject
 				table_name, column_name, referenced_table_name, referenced_column_name
 				FROM information_schema.key_column_usage
 				WHERE referenced_table_name is not null
-					AND
-					table_name = '".$this->moduletable."';";
+					AND table_schema = '".$this->db->database_name."'
+					AND table_name = '".$this->moduletable."';";
 
 		// Trigger or not?
 		if ($notrigger) {
@@ -696,10 +697,10 @@ class CustomFields // extends CommonObject
                 s.index_name
 		FROM information_schema.COLUMNS as c
 		LEFT JOIN information_schema.key_column_usage as k
-		ON (k.column_name=c.column_name AND k.table_name=c.table_name)
+		ON (k.column_name=c.column_name AND k.table_name=c.table_name AND k.table_schema=c.table_schema)
                 LEFT JOIN information_schema.statistics as s
-                ON (s.column_name=c.column_name AND s.table_name=c.table_name)
-		WHERE c.table_name = '".$sqltable."' AND c.column_name = '".$sqlname."'
+                ON (s.column_name=c.column_name AND s.table_name=c.table_name AND s.table_schema=c.table_schema)
+		WHERE c.table_schema ='".$this->db->database_name."' AND c.table_name = '".$sqltable."' AND c.column_name = '".$sqlname."'
 		ORDER BY c.ordinal_position;";
 
 		// Trigger or not?
@@ -845,7 +846,7 @@ class CustomFields // extends CommonObject
 		// Forging the SQL statement
 		$sql = "SELECT column_name
 		FROM information_schema.COLUMNS
-		WHERE TABLE_NAME = '".$table."' AND COLUMN_KEY = 'PRI';";
+		WHERE TABLE_SCHEMA = '".$this->db->database_name."' AND TABLE_NAME = '".$table."' AND COLUMN_KEY = 'PRI';";
 
 		// Trigger or not?
 		if ($notrigger) {

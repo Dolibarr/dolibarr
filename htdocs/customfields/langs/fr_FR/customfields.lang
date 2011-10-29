@@ -10,6 +10,7 @@ CustomFieldsSetup= Interface de configuration des champs personnalisés
 facture= Facture
 propal= Proposition commerciale
 product= Produits/Services
+commande= Commandes client
 
 # Table headers
 Fieldname= Nom du champ
