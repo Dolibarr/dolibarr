@@ -177,6 +177,10 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$localobject->fax='New fax';
 		$localobject->email='New email';
 		$localobject->url='New url';
+		$localobject->idprof1='new idprof1';
+		$localobject->idprof2='new idprof2';
+		$localobject->idprof3='new idprof3';
+		$localobject->idprof4='new idprof4';
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
@@ -203,6 +207,10 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals($localobject->fax, $newobject->fax);
     	$this->assertEquals($localobject->email, $newobject->email);
     	$this->assertEquals($localobject->url, $newobject->url);
+    	$this->assertEquals($localobject->idprof1, $newobject->idprof1);
+    	$this->assertEquals($localobject->idprof2, $newobject->idprof2);
+    	$this->assertEquals($localobject->idprof3, $newobject->idprof3);
+    	$this->assertEquals($localobject->idprof4, $newobject->idprof4);
 
     	return $localobject;
     }

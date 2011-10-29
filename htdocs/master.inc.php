@@ -42,7 +42,6 @@ require_once("filefunc.inc.php");	// May have been already require by main.inc.p
 require_once(DOL_DOCUMENT_ROOT."/core/class/conf.class.php");
 
 $conf = new Conf();
-
 // Identifiant propres au serveur base de donnee
 $conf->db->host   = $dolibarr_main_db_host;
 $conf->db->port   = $dolibarr_main_db_port;

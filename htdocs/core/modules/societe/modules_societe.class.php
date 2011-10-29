@@ -352,12 +352,12 @@ abstract class ModeleAccountancyCode
 /**
  *	Create a document for third party
  *
- *	@param   	db  			Database handler
- *	@param   	id				Id of third party to use
- *	@param	    message			Message
- *	@param	    modele			Force model to use ('' to not force). model can be a model name or a template file.
- *	@param		outputlangs		Objet lang to use for translation
- *	@return  	int        		<0 if KO, >0 if OK
+ *	@param	DoliDB		$db  			Database handler
+ *	@param  int			$id				Id of third party to use
+ *	@param	string		$message		Message
+ *	@param	string		$modele			Force model to use ('' to not force). model can be a model name or a template file.
+ *	@param	Translate	$outputlangs	Object lang to use for translation
+ *	@return int        					<0 if KO, >0 if OK
  */
 function thirdparty_doc_create($db, $id, $message, $modele, $outputlangs)
 {

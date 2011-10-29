@@ -43,7 +43,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function doc_generic_odt($db)
 	{
@@ -226,7 +226,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				// Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
-				$odfHandler = new odf($srctemplatepath, array(
+				$odfHandler = new odf($srctemplatepath, array
+				(
 						'PATH_TO_TMP'	  => $conf->societe->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
@@ -255,6 +256,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                     }
                     catch(OdfException $e)
                     {
+                        // setVars failed, probably because key not found
                     }
                 }
                 // Make substitutions into odt of mysoc info
@@ -276,11 +278,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 					catch(OdfException $e)
 					{
+                        // setVars failed, probably because key not found
 					}
 				}
                 // Make substitutions into odt of thirdparty + external modules
 				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
-                complete_substitutions_array($tmparray, $langs, $object);
+                complete_substitutions_array($tmparray, $outputlangs, $object);
                 //var_dump($object->id); exit;
 				foreach($tmparray as $key=>$value)
 				{
@@ -297,6 +300,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 					catch(OdfException $e)
 					{
+                        // setVars failed, probably because key not found
 					}
 				}
 
