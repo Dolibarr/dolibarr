@@ -1,6 +1,6 @@
-﻿# Dolibarr language file - fr_FR - customfields user defined labels
+# Dolibarr language file - fr_FR - customfields user defined labels
 # Vous pouvez ici définir les libellés de vos propres champs personnalisés et leurs valeurs (après les avoir créés dans l'interface admin)
-# IMPORTANT: pour supporter les accents, n'oubliez pas d'enregistrer ce fichier en encodage UTF-8 !
+# IMPORTANT: pour supporter les accents, n'oubliez pas d'enregistrer ce fichier en encodage UTF-8 sans BOM (sans marqueur utf) !
 CHARSET= UTF-8
 
 # Format:
