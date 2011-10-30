@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +102,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password pour '".$usertotest."'");
 					sleep(1);
 					$langs->load('main');
-					$langs->load('other');
+					$langs->load('errors');
 					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 				}
 			}
@@ -110,7 +111,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko user not found for '".$usertotest."'");
 				sleep(1);
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 			}
 		}
