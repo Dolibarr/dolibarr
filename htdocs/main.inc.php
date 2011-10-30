@@ -998,24 +998,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 		}
 
-		// Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
-        print '<script type="text/javascript">'."\n";
-		$tradMonths=array($langs->trans("January"),
-		$langs->trans("February"),
-		$langs->trans("March"),
-		$langs->trans("April"),
-		$langs->trans("May"),
-		$langs->trans("June"),
-		$langs->trans("July"),
-		$langs->trans("August"),
-		$langs->trans("September"),
-		$langs->trans("October"),
-		$langs->trans("November"),
-		$langs->trans("December")
-		);
-		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
-		print '</script>'."\n";
-
 		// Add datepicker default options
 		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 
