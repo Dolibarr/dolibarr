@@ -127,9 +127,9 @@ jQuery(function($){
 		"'".$langs->trans("ShortSaturday")."'" ?>],
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
-                firstDay: <?php echo $conf->global->MAIN_START_WEEK; ?>,
-                isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
-		showMonthAfterYear: false,
+        firstDay: <?php echo $conf->global->MAIN_START_WEEK; ?>,
+        isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
+		showMonthAfterYear: false,  // TODO add specific to country
 		yearSuffix: ''				// TODO add specific to country
 	};
 	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
