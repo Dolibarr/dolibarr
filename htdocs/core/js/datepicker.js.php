@@ -46,18 +46,18 @@ else header('Cache-Control: no-cache');
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
 $tradMonths=array(
-$langs->trans("January"),
-$langs->trans("February"),
-$langs->trans("March"),
-$langs->trans("April"),
-$langs->trans("May"),
-$langs->trans("June"),
-$langs->trans("July"),
-$langs->trans("August"),
-$langs->trans("September"),
-$langs->trans("October"),
-$langs->trans("November"),
-$langs->trans("December")
+dol_escape_js($langs->transnoentitiesnoconv("January")),
+dol_escape_js($langs->transnoentitiesnoconv("February")),
+dol_escape_js($langs->transnoentitiesnoconv("March")),
+dol_escape_js($langs->transnoentitiesnoconv("April")),
+dol_escape_js($langs->transnoentitiesnoconv("May")),
+dol_escape_js($langs->transnoentitiesnoconv("June")),
+dol_escape_js($langs->transnoentitiesnoconv("July")),
+dol_escape_js($langs->transnoentitiesnoconv("August")),
+dol_escape_js($langs->transnoentitiesnoconv("September")),
+dol_escape_js($langs->transnoentitiesnoconv("October")),
+dol_escape_js($langs->transnoentitiesnoconv("November")),
+dol_escape_js($langs->transnoentitiesnoconv("December"))
 );
 ?>
 
@@ -92,14 +92,25 @@ jQuery(function($){
 		"'".$langs->transnoentitiesnoconv("October")."',".
 		"'".$langs->transnoentitiesnoconv("November")."',".
 		"'".$langs->transnoentitiesnoconv("December")."'" ?>],
-		monthNamesShort: ['Janv.','Févr.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'],
+		monthNamesShort: [<?php echo "'".$langs->transnoentitiesnoconv("JanuaryMin")."',".
+		"'".$langs->transnoentitiesnoconv("FebruaryMin")."',".
+		"'".$langs->transnoentitiesnoconv("MarchMin")."',".
+		"'".$langs->transnoentitiesnoconv("AprilMin")."',".
+		"'".$langs->transnoentitiesnoconv("MayMin")."',".
+		"'".$langs->transnoentitiesnoconv("JuneMin")."',".
+		"'".$langs->transnoentitiesnoconv("JulyMin")."',".
+		"'".$langs->transnoentitiesnoconv("AugustMin")."',".
+		"'".$langs->transnoentitiesnoconv("SeptemberMin")."',".
+		"'".$langs->transnoentitiesnoconv("OctoberMin")."',".
+		"'".$langs->transnoentitiesnoconv("NovemberMin")."',".
+		"'".$langs->transnoentitiesnoconv("DecemberMin")."'" ?>],
 		dayNames: ['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Sunday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Monday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Tuesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Wednesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Thursday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Friday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Saturday")) ?>'],
 		dayNamesShort: ['<?php echo dol_escape_js($langs->transnoentitiesnoconv("SundayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("MondayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("TuesdayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("WednesdayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ThursdayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("FridayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("SaturdayMin")) ?>'],
 		dayNamesMin: ['<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortSunday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortMonday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortTuesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortWednesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortThursday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortFriday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortSaturday")) ?>'],
-		weekHeader: 'Sem.',
+		weekHeader: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Week")) ?>',
 		dateFormat: '<?php echo $langs->transnoentitiesnoconv("FormatDateShortJQuery"); ?>',
-		firstDay: 1,
-		isRTL: false,
+		firstDay: <?php echo $conf->global->MAIN_START_WEEK; ?>,
+		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
 		showMonthAfterYear: false,
 		yearSuffix: ''};
 	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
