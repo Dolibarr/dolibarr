@@ -102,6 +102,6 @@ jQuery(function($){
 		isRTL: false,				// TODO add specific to country
 		showMonthAfterYear: false,	// TODO add specific to country
 		yearSuffix: ''				// TODO add specific to country
-		};
+	};
 	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
 });
