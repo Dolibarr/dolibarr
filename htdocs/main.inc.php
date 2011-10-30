@@ -1017,9 +1017,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '</script>'."\n";
 
 		// Add datepicker default options
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js"></script>'."\n";
-		// Add datepicker i18n for current language
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/langs/'.$langs->defaultlang.'/js/jquery.ui.datepicker.js"></script>'."\n";
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 
 		if (! empty($head)) print $head."\n";
 		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
