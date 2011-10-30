@@ -54,9 +54,16 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	
 	if ($user->rights->$element->lire || $user->rights->$element->read)
 	{
-		$object = new GenericObject($db);
-		$value=$object->getValueFrom($table_element, $fk_element, $field);
-		echo $value;
+		if ($type == 'select')
+		{
+			echo json_encode(array("Aberdeen", "Ada", "Adamsville", "Addyston", "Adelphi", "Adena", "Adrian", "Akron"));
+		}
+		else
+		{
+			$object = new GenericObject($db);
+			$value=$object->getValueFrom($table_element, $fk_element, $field);
+			echo $value;
+		}
 	}
 	else
 	{

@@ -298,6 +298,8 @@ IncludedVAT=Included tax
 HT=Net of tax
 TTC=Inc. tax
 VAT=Sales tax
+LT1ES=RE
+LT2ES=IRPF
 VATRate=Tax Rate
 Average=Average
 Sum=Sum
@@ -601,6 +603,7 @@ AttributeCode=Attribute code
 OptionalFieldsSetup=Extra attributes setup
 URLPhoto=Url of photo/logo
 CreateDraft=Create draft
+ClickToEdit=Click to edit
 
 # Week day
 Monday=Monday

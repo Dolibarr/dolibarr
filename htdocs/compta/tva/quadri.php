@@ -49,7 +49,8 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * Gets VAT to collect for the given month of the given year
  * The function gets the VAT in split results, as the VAT declaration asks
  * to report the amounts for different VAT rates as different lines.
- * This function also accounts recurrent invoices
+ * This function also accounts recurrent invoices.
+ *
  * @param		db		Database handler
  * @param		y		Year
  * @param		q		Year quarter (1-4)
@@ -57,7 +58,8 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 function tva_coll($db,$y,$q)
 {
 	global $conf;
-    if ($conf->compta->mode == "CREANCES-DETTES")
+
+    if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
     {
         // if vat paid on due invoices
         $sql = "SELECT d.fk_facture as facid, f.facnumber as facnum, d.tva_tx as rate, d.total_ht as totalht, d.total_tva as amount";
@@ -124,7 +126,7 @@ function tva_paye($db, $y,$q)
 {
 	global $conf;
 
-    if ($conf->compta->mode == "CREANCES-DETTES")
+    if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
     {
         // Si on paye la tva sur les factures dues (non brouillon)
         $sql = "SELECT d.fk_facture_fourn as facid, f.facnumber as facnum, d.tva_tx as rate, d.total_ht as totalht, d.tva as amount";
@@ -208,10 +210,9 @@ print "<td align=\"right\">".$langs->trans("Invoices")."</td>";
 print "<td align=\"right\">".$langs->trans("TotalToPay")."</td>";
 print "</tr>\n";
 
-if ($conf->compta->mode == "CREANCES-DETTES")
+if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
 {
-	$y = $year_current ;
-
+	$y = $year_current;
 
 	$total = 0;  $subtotal = 0;
 	$i=0;
@@ -219,7 +220,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 	$subtot_coll_vat = 0;
 	$subtot_paye_total = 0;
 	$subtot_paye_vat = 0;
-	for ($q = 1 ; $q <= 4 ; $q++ )
+	for ($q = 1 ; $q <= 4 ; $q++)
 	{
 		print "<tr class=\"liste_titre\"><td colspan=\"8\">".$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(0,0,0,(($q-1)*3)+1,1,$y),"%b %Y").' - '.dol_print_date(dol_mktime(0,0,0,($q*3),1,$y),"%b %Y").")</td></tr>";
 		$var=true;

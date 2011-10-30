@@ -38,6 +38,9 @@ class Conf
 	var $db;
 	//! To store properties found in conf file
 	var $file;
+	//! To store properties found into database
+	var $global;
+
 	//! To store if javascript/ajax is enabked
 	var $use_javascript_ajax;
 
@@ -73,10 +76,15 @@ class Conf
 	 */
 	function Conf()
 	{
-		//! Charset for HTML output and for storing data in memory
-		$this->file->character_set_client='UTF-8';	// UTF-8, ISO-8859-1
-
-        // $this->agendas_modules['comm/action'][]= 'ActionAgenda';
+	    // Avoid warnings when filling this->xxx
+	    $this->file=(object) array();
+        $this->db=(object) array();
+        $this->global=(object) array();
+        $this->mycompany=(object) array();
+        $this->admin=(object) array();
+        $this->user=(object) array();
+	    //! Charset for HTML output and for storing data in memory
+	    $this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
 	}
 
 
@@ -172,6 +180,7 @@ class Conf
 						{
 							$module=strtolower($reg[1]);
 							//print "Module ".$module." is enabled<br>\n";
+							$this->$module=(object) array();
 							$this->$module->enabled=true;
 							// Add this module in list of enabled modules
 							$this->modules[]=$module;
@@ -231,7 +240,6 @@ class Conf
 
 		// For backward compatibility
 		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code
-		if (isset($this->comptabilite->enabled)) $this->compta->enabled=$this->comptabilite->enabled;
 		if (isset($this->propale->enabled)) $this->propal->enabled=$this->propale->enabled;
 
 		// Define default dir_output and dir_temp for directories of modules
@@ -313,10 +321,8 @@ class Conf
 		$this->monnaie=$this->global->MAIN_MONNAIE;	// TODO deprecated
 		$this->currency=$this->global->MAIN_MONNAIE;
 
-		// $this->compta->mode = Option du module Comptabilite (simple ou expert):
-		// Defini le mode de calcul des etats comptables (CA,...)
-		$this->compta->mode = 'RECETTES-DEPENSES';  // By default
-		if (isset($this->global->COMPTA_MODE)) $this->compta->mode = $this->global->COMPTA_MODE;  // Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+		// $this->global->COMPTA_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
+        if (empty($this->global->COMPTA_MODE)) $this->global->COMPTA_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 
 		// $this->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
@@ -373,11 +379,6 @@ class Conf
         if (empty($this->global->TAX_MODE_BUY_PRODUCT))  $this->global->TAX_MODE_BUY_PRODUCT='invoice';
         if (empty($this->global->TAX_MODE_SELL_SERVICE)) $this->global->TAX_MODE_SELL_SERVICE='payment';
         if (empty($this->global->TAX_MODE_BUY_SERVICE))  $this->global->TAX_MODE_BUY_SERVICE='payment';
-
-		/* We always show vat menus if module tax is enabled.
-		 * Because even when vat option is 'franchise' and vat rate is 0, we have to pay vat.
-		 */
-		$this->compta->tva=1; // This option means "Show vat menus"
 
 		// Delay before warnings
 		$this->actions->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;

@@ -296,6 +296,8 @@ IncludedVAT=IVA incluido
 HT=Sin IVA
 TTC=IVA incluido
 VAT=IVA
+LT1ES=RE
+LT2ES=IRPF
 VATRate=Tasa IVA
 Average=Media
 Sum=Suma
@@ -598,6 +600,7 @@ NewAttribute=Nuevo atributo
 AttributeCode=Código atributo
 OptionalFieldsSetup=Configuración de los atributos opcionales
 CreateDraft=Crear borrador
+ClickToEdit=Clic para editar
 
 # Week day
 Monday=Lunes

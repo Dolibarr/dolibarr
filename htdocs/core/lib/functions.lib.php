@@ -7,7 +7,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -585,7 +585,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
     $out.="</div>\n";
 
     if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
-    
+
     // Parameters for edit in place
     if (! empty($GLOBALS['object']))
     {
@@ -2494,7 +2494,7 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
         $langs=new Translate('',$conf);
     }
 
-    $langs->load("other");
+    $langs->load("errors");
 
     if ($printheader)
     {
@@ -3848,10 +3848,10 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 /**
  *    Format output for start and end date
  *
- *    @param      	date_start    Start date
- *    @param      	date_end      End date
- *    @param      	format        Output format
- *    @param		outputlangs   Output language
+ *    @param	timestamp	$date_start    Start date
+ *    @param    timestamp	$date_end      End date
+ *    @param    string		$format        Output format
+ *    @param	Translate	$outputlangs   Output language
  *    @return	void
  */
 function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
@@ -3862,11 +3862,11 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 /**
  *    Format output for start and end date
  *
- *    @param      	date_start    Start date
- *    @param      	date_end      End date
- *    @param      	format        Output format
- *    @param		outputlangs   Output language
- *    @return	string			String
+ *    @param	timestamp	$date_start    Start date
+ *    @param    timestamp	$date_end      End date
+ *    @param    string		$format        Output format
+ *    @param	Translate	$outputlangs   Output language
+ *    @return	string						String
  */
 function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
@@ -3963,21 +3963,6 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     					jQuery.jnotify("'.dol_escape_js($out).'",
     					"'.($style=="ok" ? 3000 : $style).'",
     					'.($style=="ok" ? "false" : "true").',
-                        {
-                          closeLabel: "&times;"                     // the HTML to use for the "Close" link
-                          , showClose: true                           // determines if the "Close" link should be shown if notification is also sticky
-                          , fadeSpeed: 1000                           // the speed to fade messages out (in milliseconds)
-                          , slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
-                          , classContainer: "jnotify-container"
-                          , classNotification: "jnotify-notification"
-                          , classBackground: "jnotify-background"
-                          , classClose: "jnotify-close"
-                          , classMessage: "jnotify-message"
-                          , init: null                                // callback that occurs when the main jnotify container is created
-                          , create: null                              // callback that occurs when when the note is created (occurs just before
-                                                                      // appearing in DOM)
-                          , beforeRemove: null                        // callback that occurs when before the notification starts to fade away
-                        },
     					{ remove: function (){} } );
     				});
     			</script>';

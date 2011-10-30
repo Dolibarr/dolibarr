@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
+ * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -347,7 +348,7 @@ if (! defined('NOLOGIN'))
 			{
 				dol_syslog('Bad value for code, connexion refused');
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
@@ -389,7 +390,7 @@ if (! defined('NOLOGIN'))
 			{
 				dol_syslog('Bad password, connexion refused',LOG_DEBUG);
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				// Bad password. No authmode has found a good password.
 				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
@@ -428,7 +429,7 @@ if (! defined('NOLOGIN'))
 			if ($resultFetchUser == 0)
 			{
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
@@ -468,7 +469,7 @@ if (! defined('NOLOGIN'))
 			if ($resultFetchUser == 0)
 			{
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
@@ -922,15 +923,22 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
 			}
 			// jQuery jnotify
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
+			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))
+			{
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify.js"></script>'."\n";
+			}
             // jQuery jeditable
 			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min'.$ext.'"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js"></script>'."\n";
 				print '<script type="text/javascript">'."\n";
 				print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
 				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
-				print 'var tooltipInPlace = \''.$langs->trans('ClickToEdit').'\';'."\n";
+				print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n";
+				print 'var placeholderInPlace = \''.$langs->trans('ClickToEdit').'\';'."\n";
 				print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
 				print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
 				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
@@ -991,61 +999,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 		}
 
-		// Define tradMonths javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
-        print '<script type="text/javascript">'."\n";
-		$tradMonths=array($langs->trans("January"),
-		$langs->trans("February"),
-		$langs->trans("March"),
-		$langs->trans("April"),
-		$langs->trans("May"),
-		$langs->trans("June"),
-		$langs->trans("July"),
-		$langs->trans("August"),
-		$langs->trans("September"),
-		$langs->trans("October"),
-		$langs->trans("November"),
-		$langs->trans("December")
-		);
-		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
-
-		// Define tradMonthsMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
-		$tradMonthsMin=array($langs->trans("JanuaryMin"),
-		$langs->trans("FebruaryMin"),
-		$langs->trans("MarchMin"),
-		$langs->trans("AprilMin"),
-		$langs->trans("MayMin"),
-		$langs->trans("JuneMin"),
-		$langs->trans("JulyMin"),
-		$langs->trans("AugustMin"),
-		$langs->trans("SeptemberMin"),
-		$langs->trans("OctoberMin"),
-		$langs->trans("NovemberMin"),
-		$langs->trans("DecemberMin")
-		);
-		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';'."\n";
-
-		// Define tradDays javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
-		$tradDays=array($langs->trans("Monday"),
-		$langs->trans("Tuesday"),
-		$langs->trans("Wednesday"),
-		$langs->trans("Thursday"),
-		$langs->trans("Friday"),
-		$langs->trans("Saturday"),
-		$langs->trans("Sunday")
-		);
-		print 'var tradDays = '.json_encode($tradDays).';'."\n";
-
-		// Define tradDaysMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
-		$tradDaysMin=array($langs->trans("MondayMin"),
-		$langs->trans("TuesdayMin"),
-		$langs->trans("WednesdayMin"),
-		$langs->trans("ThursdayMin"),
-		$langs->trans("FridayMin"),
-		$langs->trans("SaturdayMin"),
-		$langs->trans("SundayMin")
-		);
-		print 'var tradDaysMin = '.json_encode($tradDaysMin).';'."\n";
-		print '</script>'."\n";
+		// Add datepicker default options
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 
 		if (! empty($head)) print $head."\n";
 		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
@@ -1465,7 +1420,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	// Execute hook printLeftBlock
 	$parameters=array();
-    $leftblock.=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
     print $leftblock;
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";

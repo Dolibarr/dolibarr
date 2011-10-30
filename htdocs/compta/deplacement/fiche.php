@@ -339,13 +339,15 @@ else if ($id)
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print "<tr>";
-			print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
+			print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>';
 			print $form->showrefnav($object,'id','',1,'rowid','ref','');
 			print '</td></tr>';
 			
 			// Type
-			print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($object->type).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Type").'</td><td>';
+			print $form->editInPlace($langs->trans($object->type), 'type', $user->rights->deplacement->creer, 'select');
+			//print $langs->trans($object->type);
+			print '</td></tr>';
 
 			// Who
 			print '<tr><td>'.$langs->trans("Person").'</td><td>';
@@ -356,12 +358,12 @@ else if ($id)
 
 			// Date
 			print '<tr><td>'.$langs->trans("Date").'</td><td>';
-			print dol_print_date($object->date,'day');
+			print $form->editInPlace($object->date, 'dated', $user->rights->deplacement->creer, 'datepicker');
 			print '</td></tr>';
 
 			// Km/Price
 			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td>';
-			print '<td>'.$form->editInPlace(price($object->km), 'km', $user->rights->deplacement->creer, 'numeric').'</td></tr>';
+			print '<td>'.$form->editInPlace($object->km, 'km', $user->rights->deplacement->creer, 'numeric').'</td></tr>';
 			
 			// Where
 			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
@@ -405,9 +407,7 @@ else if ($id)
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
-			// FIXME parameter note_private must not be denatured with a format function to be propagated. dol_nl2br must be used
-			// by editInPlace if necessary according to type (4rd parameter)
-			print $form->editInPlace(dol_nl2br($object->note_public), 'note_public', $user->rights->deplacement->creer, 'area');
+			print $form->editInPlace($object->note_public, 'note_public', $user->rights->deplacement->creer, 'textarea');
 			print "</td></tr>";
 			
 			// Private note
@@ -415,9 +415,7 @@ else if ($id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 				print '<td valign="top" colspan="3">';
-				// FIXME parameter note_private must not be denatured with a format function to be propagated. dol_nl2br must be used
-				// by editInPlace if necessary according to type (4rd parameter)
-				print $form->editInPlace(dol_nl2br($object->note_private), 'note', $user->rights->deplacement->creer, 'area');
+				print $form->editInPlace($object->note_private, 'note', $user->rights->deplacement->creer, 'textarea');
 				print "</td></tr>";
 			}
 

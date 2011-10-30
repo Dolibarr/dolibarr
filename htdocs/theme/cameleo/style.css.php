@@ -38,7 +38,6 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 session_cache_limiter(FALSE);
 
 require_once("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -1813,8 +1812,13 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_area:hover, .edit_text:hover, .edit_numeric:hover {
+.edit_textarea:hover, .edit_text:hover, .edit_numeric:hover {
 	background: white url(<?php echo dol_buildpath($path.'/theme/cameleo/img/edit.png',1) ?>) right center no-repeat;
+	cursor: pointer;
+}
+
+.edit_datepicker:hover {
+	background: white url(<?php echo dol_buildpath($path.'/theme/cameleo/img/calendar.png',1) ?>) right center no-repeat;
 	cursor: pointer;
 }
 

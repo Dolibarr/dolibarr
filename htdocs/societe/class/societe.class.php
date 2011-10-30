@@ -150,7 +150,6 @@ class Societe extends CommonObject
 
         $this->db = $DB;
 
-        $this->id = $id;
         $this->client = 0;
         $this->prospect = 0;
         $this->fournisseur = 0;
@@ -720,12 +719,12 @@ class Societe extends CommonObject
 
                 $this->parent    = $obj->parent;
 
-                $this->siren		= $obj->siren;	// TODO obsolete
-                $this->idprof1		= $obj->siren;
-                $this->siret		= $obj->siret;	// TODO obsolete
-                $this->idprof2		= $obj->siret;
-                $this->ape			= $obj->ape;	// TODO obsolete
-                $this->idprof3		= $obj->ape;
+                $this->siren		= $obj->idprof1;	// TODO obsolete
+                $this->idprof1		= $obj->idprof1;
+                $this->siret		= $obj->idprof2;	// TODO obsolete
+                $this->idprof2		= $obj->idprof2;
+                $this->ape			= $obj->idprof3;	// TODO obsolete
+                $this->idprof3		= $obj->idprof3;
                 $this->idprof4		= $obj->idprof4;
 
                 $this->capital   = $obj->capital;
@@ -2521,6 +2520,11 @@ class Societe extends CommonObject
         $this->tva_intra='EU1234567';
         $this->note_public='This is a comment (public)';
         $this->note='This is a comment (private)';
+
+        $this->idprof1='idprof1';
+        $this->idprof2='idprof2';
+        $this->idprof3='idprof3';
+        $this->idprof4='idprof4';
     }
 
 }

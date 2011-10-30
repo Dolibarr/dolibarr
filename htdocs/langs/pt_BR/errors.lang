@@ -49,5 +49,22 @@ ErrorRefAlreadyExists=a referencia utilizada para a criação já existe
 ErrorPleaseTypeBankTransactionReportName=Introduzca o Nome do registo bancario sobre a qual o escrito está constatado (formato AAAAMM ó AAAMMJJ)
 ErrorRecordHasChildren=não se pode eliminar o registo porque tem hijos.
 ErrorFailedToSendPassword=Erro ao enviar a senha
-
-
+ErrorPasswordDiffers=As Senhas não são identicas, volte a introduzi-las
+ErrorForbidden=acesso não autorizado.<br>Tentando acessar a uma página, zona o função sem estar em uma Sessão autentificada o que não se autoriza para a sua conta de usuário.
+ErrorForbidden2=Os permissões para este usuário podem ser designados por o administrador Dolibarr mediante o menu %s-> %s.
+ErrorForbidden3=Dolibarr não parece funcionar em uma Sessão autentificada. Consulte a documentação de Instalação de Dolibarr para saber cómo administrar as autenticaciones (htaccess, mod_auth u outro...).
+ErrorNoImagickReadimage=a função imagick_readimage não está presente nesta Instalação de PHP. a resenha não está pois disponível. Os administradores podem desativar esta separador ao menu configuração - visualização.
+ErrorRecordAlreadyExists=registo já existente
+ErrorCantReadFile=Erro na leitura do arquivo '&s'
+ErrorCantReadDir=Erro na leitura da pasta '%s'
+ErrorFailedToFindEntity=Error de leitura da entidade '%s'
+ErrorBadLoginPassword=Identificadores de usuário o senha incorretos
+ErrorLoginDisabled=a sua conta está desativada
+ErrorFailedToRunExternalCommand=Error ao tentar o comando externo. verifique que está disponível e ejecutable por a sua servidor PHP. sim o PHP <b>Safe Mode</b> está ativo, verifique que o comando encontra-se em uma pasta definida ao parâmetro <b>safe_mode_exec_dir</b>.
+ErrorFailedToChangePassword=Error na modificação da senha
+ErrorLoginDoesNotExists=a conta de usuário de <b>%s</b> não foi encontrado.
+ErrorLoginHasNoEmail=Este usuário não tem e-mail. impossível continuar.
+ErrorBadValueForCode=Valor incorreto para o código. volte a 	tentar com um Novo valor...
+ErrorFileIsInfectedWith=Este Arquivo está infectado por %s
+WarningInstallDirExists=Atenção: a pasta install (%s) ainda existe. uma vez concluida a Instalação a sua presença não é necessário, e representa um falho serio de segurança. Devería eliminarla o antes possível.
+WarningUntilDirRemoved=Esta alerta seguirá ativa mientras a pasta exista (alerta visivel para Os Usuários admin somente).

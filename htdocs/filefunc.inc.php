@@ -33,30 +33,29 @@ if (! defined('DOL_VERSION')) define('DOL_VERSION','3.2.0-alpha');	// Also defin
 if (! defined('EURO')) define('EURO',chr(128));
 
 // Definition des constantes syslog
-if (function_exists("define_syslog_variables"))
+if (! defined('LOG_DEBUG'))
 {
-	if (version_compare(PHP_VERSION, '5.3.0', '<'))
-	{
-		define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
-	}
+    if (function_exists("define_syslog_variables"))
+    {
+    	define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
+    }
+    else
+    {
+    	// Pour PHP sans syslog (comme sous Windows)
+    	define('LOG_EMERG',0);
+    	define('LOG_ALERT',1);
+    	define('LOG_CRIT',2);
+    	define('LOG_ERR',3);
+    	define('LOG_WARNING',4);
+    	define('LOG_NOTICE',5);
+    	define('LOG_INFO',6);
+    	define('LOG_DEBUG',7);
+    }
 }
-else
-{
-	// Pour PHP sans syslog (comme sous Windows)
-	define('LOG_EMERG',0);
-	define('LOG_ALERT',1);
-	define('LOG_CRIT',2);
-	define('LOG_ERR',3);
-	define('LOG_WARNING',4);
-	define('LOG_NOTICE',5);
-	define('LOG_INFO',6);
-	define('LOG_DEBUG',7);
-}
-
 
 // Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
 error_reporting(E_ALL ^ E_NOTICE);
-//error_reporting(E_ALL);
+//error_reporting(E_ALL | E_STRICT);
 
 
 // Define vars
