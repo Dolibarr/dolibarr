@@ -76,28 +76,57 @@ $(document).ready(function() {
 
 jQuery(function($){
 	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		closeText: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Close")) ?>',
-		prevText: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Previous")) ?>',
-		nextText: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Next")) ?>',
-		currentText: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("January")) ?>',
-		monthNames: [<?php echo "'".$langs->transnoentitiesnoconv("January")."',".
-		"'".$langs->transnoentitiesnoconv("February")."',".
-		"'".$langs->transnoentitiesnoconv("March")."',".
-		"'".$langs->transnoentitiesnoconv("April")."',".
-		"'".$langs->transnoentitiesnoconv("May")."',".
-		"'".$langs->transnoentitiesnoconv("June")."',".
-		"'".$langs->transnoentitiesnoconv("July")."',".
-		"'".$langs->transnoentitiesnoconv("August")."',".
-		"'".$langs->transnoentitiesnoconv("September")."',".
-		"'".$langs->transnoentitiesnoconv("October")."',".
-		"'".$langs->transnoentitiesnoconv("November")."',".
-		"'".$langs->transnoentitiesnoconv("December")."'" ?>],
-		monthNamesShort: ['Janv.','Févr.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'],
-		dayNames: ['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Sunday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Monday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Tuesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Wednesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Thursday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Friday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("Saturday")) ?>'],
-		dayNamesShort: ['<?php echo dol_escape_js($langs->transnoentitiesnoconv("SundayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("MondayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("TuesdayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("WednesdayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ThursdayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("FridayMin")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("SaturdayMin")) ?>'],
-		dayNamesMin: ['<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortSunday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortMonday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortTuesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortWednesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortThursday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortFriday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortSaturday")) ?>'],
-		weekHeader: 'Sem.',
-		dateFormat: '<?php echo $langs->transnoentitiesnoconv("FormatDateShortJQuery"); ?>',
+		closeText: '<?php echo $langs->trans("Close") ?>',
+		prevText: '<?php echo $langs->trans("Previous") ?>',
+		nextText: '<?php echo $langs->trans("Next") ?>',
+		currentText: '<?php echo $langs->trans("Now") ?>',
+		monthNames: [<?php echo "'".$langs->trans("January")."',".
+		"'".$langs->trans("February")."',".
+		"'".$langs->trans("March")."',".
+		"'".$langs->trans("April")."',".
+		"'".$langs->trans("May")."',".
+		"'".$langs->trans("June")."',".
+		"'".$langs->trans("July")."',".
+		"'".$langs->trans("August")."',".
+		"'".$langs->trans("September")."',".
+		"'".$langs->trans("October")."',".
+		"'".$langs->trans("November")."',".
+		"'".$langs->trans("December")."'" ?>],
+		monthNamesShort: [<?php echo "'".$langs->trans("JanuaryMin")."',".
+		"'".$langs->trans("FebruaryMin")."',".
+		"'".$langs->trans("MarchMin")."',".
+		"'".$langs->trans("AprilMin")."',".
+		"'".$langs->trans("MayMin")."',".
+		"'".$langs->trans("JuneMin")."',".
+		"'".$langs->trans("JulyMin")."',".
+		"'".$langs->trans("AugustMin")."',".
+		"'".$langs->trans("SeptemberMin")."',".
+		"'".$langs->trans("OctoberMin")."',".
+		"'".$langs->trans("NovemberMin")."',".
+		"'".$langs->trans("DecemberMin")."'" ?>],
+		dayNames: [<?php echo "'".$langs->trans("Sunday")."',".
+		"'".$langs->trans("Monday")."',".
+		"'".$langs->trans("Tuesday")."',".
+		"'".$langs->trans("Wednesday")."',".
+		"'".$langs->trans("Thursday")."',".
+		"'".$langs->trans("Friday")."',".
+		"'".$langs->trans("Saturday")."'" ?>],
+		dayNamesShort: [<?php echo "'".$langs->trans("SundayMin")."',".
+		"'".$langs->trans("MondayMin")."',".
+		"'".$langs->trans("TuesdayMin")."',".
+		"'".$langs->trans("WednesdayMin")."',".
+		"'".$langs->trans("ThursdayMin")."',".
+		"'".$langs->trans("FridayMin")."',".
+		"'".$langs->trans("SaturdayMin")."'" ?>],
+		dayNamesMin: [<?php echo "'".$langs->trans("ShortSunday")."',".
+		"'".$langs->trans("ShortMonday")."',".
+		"'".$langs->trans("ShortTuesday")."',".
+		"'".$langs->trans("ShortWednesday")."',".
+		"'".$langs->trans("ShortThursday")."',".
+		"'".$langs->trans("ShortFriday")."',".
+		"'".$langs->trans("ShortSaturday")."'" ?>],
+		weekHeader: 'Sem.',			// TODO add specific to country
+		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
 		firstDay: 1,				// TODO add specific to country
 		isRTL: false,				// TODO add specific to country
 		showMonthAfterYear: false,	// TODO add specific to country
