@@ -144,7 +144,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 -- Descriptif des plans comptables FR PCG99-BASE
 --
 
-insert into llx_accountingsystem (pcg_version, fk_pays, label, datec, fk_author, active) VALUES ('PCG99-BASE', 1, 'The base accountancy french plan', CURRENT_DATE, null, 0);
+insert into llx_accountingsystem (pcg_version, fk_pays, label, datec, fk_author, active) VALUES ('PCG99-BASE', 2, 'The base accountancy french plan', CURRENT_DATE, null, 0);
 
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (103,'PCG99-BASE','CAPIT', 'XXXXXX',   '10',  '1', 'Capital  et réserves');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (104,'PCG99-BASE','CAPIT', 'CAPITAL', '101', '10', 'Capital');
