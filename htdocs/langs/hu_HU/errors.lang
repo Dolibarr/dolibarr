@@ -1,0 +1,12 @@
+# Dolibarr language file - hu_HU - errors
+CHARSET=UTF-8
+ErrorForbidden=A hozzáférés megtagadva. <br> Ha megpróbál hozzáférni egy oldalra, terület vagy szolgáltatás, anélkül, hogy hiteles ülésen, vagy, hogy nem szabad a felhasználó számára.
+ErrorForbidden2=Engedély e be lehet meghatározni a Dolibarr rendszergazda menüből %s-&gt; %s.
+ErrorForbidden3=Úgy tűnik, hogy Dolibarr nem használt keresztül hitelesített ülésén. Vessen egy pillantást Dolibarr üzembe helyezési dokumentációban tudni, hogyan kell kezelni hitelesítések (htaccess, mod_auth vagy más ...).
+ErrorNoImagickReadimage=Osztály imagick nem található ebben a PHP. Nem előnézet elérhető. A rendszergazdák letilthatják ezt a lapot menüből Setup - Display.
+ErrorRecordAlreadyExists=Felvétel már létezik
+ErrorCantReadFile=Nem sikerült olvasni file "%s"
+ErrorCantReadDir=Nem sikerült olvasni könyvtár "%s"
+ErrorFailedToFindEntity=Nem sikerült olvasni környezet "%s"
+ErrorBadLoginPassword=Rossz érték be vagy jelszó
+ErrorLoginDisabled=A fiók le van tiltva

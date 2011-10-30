@@ -1,14 +1,5 @@
 # Dolibarr language file - no_NB - other
 CHARSET=UTF-8
-ErrorPasswordDiffers=Passordene er forskjellige, prøv igjen
-ErrorForbidden=Tilgang forbudt.<br>Du prøver å nå en side, et område eller en funksjon uten at du er riktig logget inn. Det kan også være at du ikke har tilstrekkelige rettigheter.
-ErrorForbidden2=Tillatelse for denne innloggingen kan settes av Dolibarr-administratoren fra menyen %s->%s.
-ErrorForbidden3=Det ser ut til at Dolibarr ikke brukes gjennom en autensitert sesjon. Du kan lese mer i dokumentasjonen om hvordan du håndterer autensitering (htaccess, mod_auth eller andre...).
-ErrorNoImagickReadimage=Funksjonen imagick_readimage finnes ikke på denne PHP-installaajonen. Forhåndsvisning er da ikke mulig. Administrator kan slå av denne fanen i oppsett - visning.
-ErrorRecordAlreadyExists=Posten eksistererer fra før.
-ErrorCantReadFile=Kunne ikke lese filen '%s'
-ErrorCantReadDir=Kunne ikke lese mappen '%s'
-ErrorFailedToFindEntity=Kunne ikke lese enheten '%s'
 ErrorBadLoginPassword=Ugyldig verdi i brukernavn eller passord
 ErrorLoginDisabled=Din konto er deaktivert
 ErrorFailedToRunExternalCommand=Klarte ikke å kjøre ekstern kommando. Sjekk at den er tilgjengelig og kjørbar på serveren. Hvis PHP <b>Safe Mode</b> er slått på, sjekk at kommandoen er i en mappe definert med parameter <b>safe_mode_exec_dir</b>.
@@ -33,8 +24,6 @@ AttachANewFile=Legg ved ny fil/dokument
 LinkedObject=Lenkede objekter
 Miscellanous=Diverse
 NbOfActiveNotifications=Antall påminnelser
-WarningInstallDirExists=Advarsel! Installasjonsmappen (%s) eksisterer fortsatt! Dette er et alvorlig sikkerhetshull. Du bør fjerne mappen så snart som mulig.
-WarningUntilDirRemoved=Denne advarselen vil være aktivert så lenge denne mappen eksisterer (Den vises kun til administratorer).
 PredefinedMailContentSendInvoice=Vedlagt oversendes faktura __FACREF__\n\nMed vennlig hilsen\n\n
 PredefinedMailContentSendInvoiceReminder=I følge våre noteringer ser det ut til at vår faktura  __FACREF__ fortsatt står ubetalt hos oss. Dersom Deres betaling har krysset denne påminnelsen ber vi Dem vennligst se bort fra denne henvendelsen. \n\nMed vennlig hilsen\n\n
 PredefinedMailContentSendProposal=Vedlagt oversendes tilbud __PROPREF__\n\nMed vennlig hilsen\n\n

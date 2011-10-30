@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -743,7 +743,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
         }
         else
         {
-            $langs->load("other");
+            $langs->load("errors");
             $mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
             dol_syslog('Failed to read file: '.$file);
         }

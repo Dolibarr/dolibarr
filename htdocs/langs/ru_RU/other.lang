@@ -9,23 +9,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorPasswordDiffers=Пароли отличается, введите их заново.
-ErrorForbidden=Доступ запрещен. <br> При попытке доступа к странице, района или функцию, не будучи в аутентифицированных сессии или, что не разрешено пользователя.
-ErrorForbidden2=Разрешение на этот логин может быть определено администратором вашей Dolibarr из меню %s-> %s.
-ErrorForbidden3=Кажется, что Dolibarr не используется через аутентифицированных сессии. Взгляните на Dolibarr Настройка документации знать, как управлять подлинности (htaccess, mod_auth или другие ...).
-ErrorNoImagickReadimage=Функция imagick_readimage не найдена в этой PHP. Нет предварительного просмотра могут быть доступны. Администраторы могут отключить эту закладку из меню Настройка - Экран.
-ErrorRecordAlreadyExists=Запись уже существует
-ErrorCantReadFile=Не удалось прочитать файл ' %s'
-ErrorCantReadDir=Не удалось прочитать каталог ' %s'
-ErrorFailedToFindEntity=Не удалось прочитать лицом ' %s'
-ErrorBadLoginPassword=Плохо стоимости логин или пароль
-ErrorLoginDisabled=Ваша учетная запись была отключена
-ErrorFailedToRunExternalCommand=Не удалось запустить внешнюю команду. Проверить это можно и работоспособной PHP на вашем сервере. Если PHP <b>установлен безопасный режим,</b> проверьте, что команда находится внутри каталога определяется параметром <b>safe_mode_exec_dir.</b>
-ErrorFailedToChangePassword=Не удается изменить пароль
-ErrorLoginDoesNotExists=Пользователь с <b>логином %s</b> не может быть найдено.
-ErrorLoginHasNoEmail=Этот пользователь не имеет адреса электронной почты. Процесс прерван.
-ErrorBadValueForCode=Плохо значения типов кода. Попробуйте еще раз с новой стоимости ...
-ErrorFileIsInfectedWith=Этот файл заражен %s
 SecurityCode=Защитный код
 Calendar=Календарь
 AddTrip=Добавить поездку
@@ -42,8 +25,6 @@ AttachANewFile=Присоединить новый файл / документ
 LinkedObject=Связанные объект
 Miscellanous=Разное
 NbOfActiveNotifications=Количество уведомлений
-WarningInstallDirExists=Внимание, установить каталог ( %s) по-прежнему существует. Это серьезная дыра в безопасности. Вы должны удалить его как можно скорее.
-WarningUntilDirRemoved=Это предупреждение остается активным до тех пор, пока эта директория присутствует (отображается только для администратора пользователей).
 ChooseYourDemoProfil=Выберите демо-профиль, которые соответствуют Вашей деятельности ...
 DemoFundation=Управление членов Фонда
 DemoFundation2=Управление членами и банковские счета Фонда

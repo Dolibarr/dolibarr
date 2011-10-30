@@ -73,6 +73,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
     else
     {
+    	$langs->load("errors");
         $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
     }
 }
@@ -94,10 +95,10 @@ if ($action == 'add')
 		if (! $message)
 		{
 			$object->nom	= trim($_POST["nom"]);
-                        if($conf->multicompany->enabled && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-                            $object->entity = 0;
-                        else
-                            $object->entity = $_POST["entity"];
+			if($conf->multicompany->enabled && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+				$object->entity = 0;
+			else
+				$object->entity = $_POST["entity"];
 			$object->note	= trim($_POST["note"]);
 
             $db->begin();
@@ -123,6 +124,7 @@ if ($action == 'add')
     }
     else
     {
+    	$langs->load("errors");
         $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
     }
 }
@@ -155,6 +157,7 @@ if ($action == 'adduser' || $action =='removeuser')
     }
     else
     {
+    	$langs->load("errors");
         $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
     }
 }
@@ -194,6 +197,7 @@ if ($action == 'update')
     }
     else
     {
+    	$langs->load("errors");
         $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
     }
 }

@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -334,7 +335,7 @@ if ($id > 0 || ! empty($ref))
                 }
                 else
                 {
-                    $langs->load("other");
+                    $langs->load("errors");
                     print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
                 }
             }

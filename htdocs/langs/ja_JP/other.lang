@@ -8,17 +8,6 @@
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
 // Reference language: en_US -> ja_JP
 CHARSET=UTF-8
-ErrorPasswordDiffers=パスワードが異なる、それらを再度入力してください。
-ErrorCantReadFile=ファイル&quot;%s&quot;を読み取ることができませんでした
-ErrorCantReadDir=ディレクトリ&quot;%s&quot;を読み取ることができませんでした
-ErrorFailedToFindEntity=環境&quot;%s&quot;を読み取ることができませんでした
-ErrorBadLoginPassword=ログインまたはパスワードの値が正しくありません
-ErrorLoginDisabled=あなたのアカウントは無効にされています
-ErrorFailedToRunExternalCommand=外部コマンドの実行に失敗しました。それはあなたのPHPサーバで利用可能と実行可能になったのを確認してください。 PHP <b>セーフモードが</b>有効<b>になっ</b>ている場合、コマンドは、パラメータの<b>safe_mode_exec_dirの</b>によって定義されたディレクトリ内にあることを確認してください。
-ErrorFailedToChangePassword=パスワードの変更に失敗しました
-ErrorLoginDoesNotExists=ログイン<b>%s</b>を持つユーザーを見つけることができませんでした。
-ErrorLoginHasNoEmail=このユーザーは電子メールアドレスを持っていません。プロセスが中止されました。
-ErrorBadValueForCode=セキュリティコードの値が正しくありません。新しい値で再試行してください...
 BirthdayDate=誕生日
 DateToBirth=誕生日
 BirthdayAlertOn=誕生日アラートアクティブ
@@ -47,8 +36,6 @@ AttachANewFile=新しいファイル/文書を添付する
 LinkedObject=リンクされたオブジェクト
 Miscellanous=その他
 NbOfActiveNotifications=通知の数
-WarningInstallDirExists=警告、インストールディレクトリ<b>（htdocsディレクトリは/インストールするには</b> ）依然として存在する。これは重大なセキュリティホールです。あなたはできるだけ早くそれを削除してください。
-WarningUntilDirRemoved=すべてのセキュリティ警告は、（のみの管理者ユーザでは表示）の脆弱性が存在する（またはその定数MAIN_REMOVE_INSTALL_WARNINGがセットアップ] - &gt; [その他の設定に追加される）である限り、アクティブのままです。
 PredefinedMailContentSendSupplierOrder=あなたは__ORDERREF__ \ nの\ nSincerely \ nの\ nをここに私たちの注文を検索します
 PredefinedMailContentSendSupplierInvoice=あなたがここに請求書__FACREF__ \ nを\ nSincerely \ n \ nを見つける
 PredefinedMailContentSendShipping=送料は__SHIPPINGREF__ \ nを\ nSincerely \ nの\ nをここに見つける

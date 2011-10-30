@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -207,7 +208,11 @@ if ($what == 'mysql')
             @dol_delete_file($outputerror,1);
             @rename($outputfile,$outputerror);
             // Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
-            if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
+            if (! $errormsg) 
+            {
+            	$langs->load("errors");
+            	$errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
+            }
         }
     }
     // Fin execution commande
