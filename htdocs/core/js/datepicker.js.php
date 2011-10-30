@@ -98,9 +98,10 @@ jQuery(function($){
 		dayNamesMin: ['<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortSunday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortMonday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortTuesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortWednesday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortThursday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortFriday")) ?>','<?php echo dol_escape_js($langs->transnoentitiesnoconv("ShortSaturday")) ?>'],
 		weekHeader: 'Sem.',
 		dateFormat: '<?php echo $langs->transnoentitiesnoconv("FormatDateShortJQuery"); ?>',
-		firstDay: 1,
-		isRTL: false,
-		showMonthAfterYear: false,
-		yearSuffix: ''};
+		firstDay: 1,				// TODO add specific to country
+		isRTL: false,				// TODO add specific to country
+		showMonthAfterYear: false,	// TODO add specific to country
+		yearSuffix: ''				// TODO add specific to country
+		};
 	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
 });
