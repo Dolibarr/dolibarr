@@ -509,7 +509,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (14, '! $conf->glob
 insert into `llx_menu_constraint` (`rowid`, `action`) values (15, '$conf->don->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (16, '$conf->deplacement->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (17, '$conf->tax->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (18, '($conf->compta->enabled || $conf->comptaexpert->enabled) && $conf->compta->tva && $user->societe_id == 0');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (18, '($conf->compta->enabled || $conf->comptaexpert->enabled) && empty($conf->global->TAX_DISABLE_VAT_MENUS) && $user->societe_id == 0');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (19, '$conf->compta-enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (20, '$conf->prelevement->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (21, '$conf->banque->enabled');
