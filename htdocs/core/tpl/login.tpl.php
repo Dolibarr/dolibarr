@@ -173,18 +173,26 @@ jQuery(document).ready(function () {
 
 </form>
 
-	<?php if ($_SESSION['dol_loginmesg']) { ?>
+	<?php if (! empty($_SESSION['dol_loginmesg']))
+	{
+	?>
 		<center><table width="60%"><tr><td align="center"><div class="error">
 		<?php echo $_SESSION['dol_loginmesg']; ?>
 		</div></td></tr></table></center>
-	<?php } ?>
+	<?php
+    }
+    ?>
 
-	<?php if ($main_home) { ?>
+	<?php if ($main_home)
+	{
+	?>
 		<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750">
 		<tr><td align="center">
 		<?php echo $main_home; ?>
 		</td></tr></table></center><br>
-	<?php } ?>
+	<?php
+    }
+    ?>
 
 	<?php
 	if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
@@ -202,13 +210,15 @@ jQuery(document).ready(function () {
 				src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 			</script>
 		</div>
-	<?php } ?>
+	<?php
+    }
+    ?>
 
 <!-- authentication mode = <?php echo $main_authentication ?> -->
 <!-- cookie name used for this session = <?php echo $session_name ?> -->
 <!-- urlfrom in this session = <?php echo $_SESSION["urlfrom"] ?> -->
 
-<?php echo $conf->global->MAIN_HTML_FOOTER; ?>
+<?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
 
 </body>
 </html>
