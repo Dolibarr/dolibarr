@@ -74,7 +74,7 @@ function dol_shutdown()
     global $conf,$user,$langs,$db;
     $disconnectdone=false;
     if (is_object($db) && ! empty($db->connected)) $disconnectdone=$db->close();
-    dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced)':''));
+    dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced)':''), ($disconnectdone?LOG_WARNING:LOG_DEBUG));
 }
 
 /**
@@ -496,7 +496,10 @@ function dol_syslog($message, $level=LOG_INFO)
                 restore_include_path();
                 ob_start();
                 $firephp = FirePHP::getInstance(true);
-                $firephp->log($message);
+                if ($level == LOG_ERR) $firephp->error($message);
+                elseif ($level == LOG_WARNING) $firephp->warn($message);
+                elseif ($level == LOG_INFO) $firephp->log($message);
+                else $firephp->log($message);
             }
             catch(Exception $e)
             {
