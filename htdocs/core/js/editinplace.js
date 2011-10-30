@@ -125,4 +125,48 @@ $(document).ready(function() {
 			}
 		}
 	});
+	$('.edit_select').editable(urlSaveInPlace, {
+		type		: 'select',
+		id			: 'field',
+		onblur		: 'ignore',
+		cssclass	: 'flat',
+		tooltip		: tooltipInPlace,
+		placeholder	: placeholderInPlace,
+		cancel		: cancelInPlace,
+		submit		: submitInPlace,
+		indicator	: indicatorInPlace,
+		loadurl		: urlLoadInPlace,
+		loaddata	: {
+			type: 'select',
+			element: element,
+			table_element: table_element,
+			fk_element: fk_element
+		},
+		submitdata	: {
+			type: 'select',
+			element: element,
+			table_element: table_element,
+			fk_element: fk_element
+		},
+		callback : function(result, settings) {
+			var obj = $.parseJSON(result);
+			
+			if (obj.error) {
+				$(this).html(this.revert);
+				$.jnotify(obj.error, "error", true);
+			} else {
+				$(this).html(obj.value);
+			}
+		}
+	});
+	$('.edit_autocomplete').editable(urlSaveInPlace, {
+		type		: 'autocomplete',
+		id			: 'field',
+		onblur		: 'submit',
+		tooltip		: tooltipInPlace,
+		indicator	: indicatorInPlace,
+		autocomplete : {
+			data : ["Aberdeen", "Ada", "Adamsville", "Addyston", "Adelphi", "Adena", "Adrian", "Akron"]
+		}
+	});
 });

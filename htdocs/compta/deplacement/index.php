@@ -102,9 +102,9 @@ print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
 $listoftype=$tripandexpense_static->listOfTypes();
-foreach ($listoftype as $typefee)
+foreach ($listoftype as $code => $label)
 {
-    $dataseries[]=array('label'=>$typefee['label'],'values'=>array(0=>(isset($nb[$typefee['code']])?$nb[$typefee['code']]:0)));
+    $dataseries[]=array('label'=>$label,'values'=>array(0=>(isset($nb[$code])?$nb[$code]:0)));
 }
 
 if ($conf->use_javascript_ajax)

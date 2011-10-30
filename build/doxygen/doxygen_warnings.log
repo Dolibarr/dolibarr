@@ -1,0 +1,391 @@
+/home/ldestail/git/dolibarr/htdocs/societe/admin/societe.php:23: warning: the name `htdocs/admin/societe.php' supplied as the second argument in the \file statement is not an input file
+/home/ldestail/git/dolibarr/htdocs/societe/admin/societe_extrafields.php:21: warning: the name `htdocs/admin/societe_extrafields.php' supplied as the second argument in the \file statement is not an input file
+/home/ldestail/git/dolibarr/htdocs/admin/agenda_extsites.php:178: warning: documented function `while' was not declared or defined.
+/home/ldestail/git/dolibarr/htdocs/compta/bank/admin/bank.php:182: warning: documented function `while' was not declared or defined.
+/home/ldestail/git/dolibarr/htdocs/societe/admin/societe.php:556: warning: documented function `while' was not declared or defined.
+/home/ldestail/git/dolibarr/htdocs/core/class/smtps.class.php:24: warning: Found unknown command `\license'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_order/modules_commandefournisseur.php:139: warning: argument 'modele' of command @param is not found in the argument list of supplier_order_pdf_create($db,$object,$model,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_order/modules_commandefournisseur.php:139: warning: The following parameters of supplier_order_pdf_create($db,$object,$model,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0) are not documented:
+  parameter 'model'
+/home/ldestail/git/dolibarr/htdocs/lib/functions.lib.php:1676: warning: Found unknown command `\mymodule'
+/home/ldestail/git/dolibarr/htdocs/lib/functions.lib.php:1716: warning: Found unknown command `\mymodule'
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'head' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'title' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'help_url' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'target' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'disablejs' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'disablehead' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'arrayofjs' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'arrayofcss' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: argument 'morequerystring' of command @param is not found in the argument list of analyse_sql_and_script(&$var,$get)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:90: warning: The following parameters of analyse_sql_and_script(&$var,$get) are not documented:
+  parameter 'var'
+  parameter 'get'
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:1547: warning: argument 'foot' of command @param is not found in the argument list of printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname)
+/home/ldestail/git/dolibarr/htdocs/main.inc.php:1547: warning: The following parameters of printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname) are not documented:
+  parameter 'urlaction'
+  parameter 'urlobject'
+  parameter 'title'
+  parameter 'htmlmodesearch'
+  parameter 'htmlinputname'
+/home/ldestail/git/dolibarr/htdocs/webservices/server_invoice.php:246: warning: The following parameters of getInvoice($authentication,$id='',$ref='',$ref_ext='') are not documented:
+  parameter 'id'
+  parameter 'ref'
+  parameter 'ref_ext'
+/home/ldestail/git/dolibarr/htdocs/webservices/server_invoice.php:353: warning: The following parameters of getInvoicesForThirdParty($authentication,$idthirdparty) are not documented:
+  parameter 'idthirdparty'
+/home/ldestail/git/dolibarr/htdocs/webservices/server_productorservice.php:159: warning: The following parameters of getProductOrService($authentication,$id='',$ref='',$ref_ext='') are not documented:
+  parameter 'id'
+  parameter 'ref'
+  parameter 'ref_ext'
+/home/ldestail/git/dolibarr/htdocs/societe/canvas/actions_card_common.class.php:96: warning: argument 'socid' of command @param is not found in the argument list of ActionsCardCommon::doActions(&$action)
+/home/ldestail/git/dolibarr/htdocs/societe/canvas/actions_card_common.class.php:96: warning: The following parameters of ActionsCardCommon::doActions(&$action) are not documented:
+  parameter 'action'
+/home/ldestail/git/dolibarr/htdocs/societe/canvas/actions_card_common.class.php:72: warning: argument 'int' of command @param is not found in the argument list of ActionsCardCommon::getObject($id,$ref='')
+/home/ldestail/git/dolibarr/htdocs/societe/canvas/actions_card_common.class.php:72: warning: The following parameters of ActionsCardCommon::getObject($id,$ref='') are not documented:
+  parameter 'id'
+/home/ldestail/git/dolibarr/htdocs/societe/canvas/company/actions_card_company.class.php:75: warning: argument 'socid' of command @param is not found in the argument list of ActionsCardCompany::doActions(&$action,$id)
+/home/ldestail/git/dolibarr/htdocs/societe/canvas/company/actions_card_company.class.php:75: warning: The following parameters of ActionsCardCompany::doActions(&$action,$id) are not documented:
+  parameter 'action'
+  parameter 'id'
+/home/ldestail/git/dolibarr/htdocs/societe/canvas/individual/actions_card_individual.class.php:75: warning: The following parameters of ActionsCardIndividual::doActions(&$action,$id) are not documented:
+  parameter 'action'
+/home/ldestail/git/dolibarr/htdocs/contact/canvas/actions_contactcard_common.class.php:92: warning: argument 'id' of command @param is not found in the argument list of ActionsContactCardCommon::doActions(&$action)
+/home/ldestail/git/dolibarr/htdocs/contact/canvas/actions_contactcard_common.class.php:92: warning: The following parameters of ActionsContactCardCommon::doActions(&$action) are not documented:
+  parameter 'action'
+/home/ldestail/git/dolibarr/htdocs/contact/canvas/actions_contactcard_common.class.php:70: warning: argument 'int' of command @param is not found in the argument list of ActionsContactCardCommon::getObject($id)
+/home/ldestail/git/dolibarr/htdocs/contact/canvas/actions_contactcard_common.class.php:70: warning: The following parameters of ActionsContactCardCommon::getObject($id) are not documented:
+  parameter 'id'
+/home/ldestail/git/dolibarr/htdocs/contact/canvas/default/actions_contactcard_default.class.php:72: warning: The following parameters of ActionsContactCardDefault::assign_values(&$action,$id) are not documented:
+  parameter 'id'
+/home/ldestail/git/dolibarr/htdocs/core/class/canvas.class.php:65: warning: Found unknown command `\myexternalmodule'
+/home/ldestail/git/dolibarr/htdocs/lib/CMailFile.class.php:938: warning: Found unknown command `\doe'
+/home/ldestail/git/dolibarr/htdocs/lib/CMailFile.class.php:942: warning: Found unknown command `\doe'
+/home/ldestail/git/dolibarr/htdocs/commande/class/commande.class.php:948: warning: The following parameters of Commande::addline($commandeid,$desc,$pu_ht,$qty,$txtva,$txlocaltax1=0,$txlocaltax2=0,$fk_product=0,$remise_percent=0,$info_bits=0,$fk_remise_except=0,$price_base_type='HT',$pu_ttc=0,$date_start='',$date_end='',$type=0,$rang=-1,$special_code=0,$fk_parent_line=0) are not documented:
+  parameter 'special_code'
+  parameter 'fk_parent_line'
+/home/ldestail/git/dolibarr/htdocs/commande/class/commande.class.php:2057: warning: argument 'mode' of command @param is not found in the argument list of Commande::demand_reason($demand_reason_id)
+/home/ldestail/git/dolibarr/htdocs/commande/class/commande.class.php:2057: warning: The following parameters of Commande::demand_reason($demand_reason_id) are not documented:
+  parameter 'demand_reason_id'
+/home/ldestail/git/dolibarr/htdocs/commande/class/commande.class.php:1990: warning: argument 'mode' of command @param is not found in the argument list of Commande::mode_reglement($mode_reglement_id)
+/home/ldestail/git/dolibarr/htdocs/commande/class/commande.class.php:1990: warning: The following parameters of Commande::mode_reglement($mode_reglement_id) are not documented:
+  parameter 'mode_reglement_id'
+/home/ldestail/git/dolibarr/htdocs/commande/class/commande.class.php:2153: warning: argument 'tva_tx' of command @param is not found in the argument list of Commande::updateline($rowid,$desc,$pu,$qty,$remise_percent=0,$txtva,$txlocaltax1=0,$txlocaltax2=0,$price_base_type='HT',$info_bits=0,$date_start='',$date_end='',$type=0,$fk_parent_line=0,$skip_update_total=0)
+/home/ldestail/git/dolibarr/htdocs/commande/class/commande.class.php:2153: warning: The following parameters of Commande::updateline($rowid,$desc,$pu,$qty,$remise_percent=0,$txtva,$txlocaltax1=0,$txlocaltax2=0,$price_base_type='HT',$info_bits=0,$date_start='',$date_end='',$type=0,$fk_parent_line=0,$skip_update_total=0) are not documented:
+  parameter 'txtva'
+  parameter 'fk_parent_line'
+  parameter 'skip_update_total'
+/home/ldestail/git/dolibarr/htdocs/fourn/class/fournisseur.commande.class.php:1549: warning: argument 'tva_tx' of command @param is not found in the argument list of CommandeFournisseur::updateline($rowid,$desc,$pu,$qty,$remise_percent=0,$txtva,$txlocaltax1=0,$txlocaltax2=0,$price_base_type='HT',$info_bits=0,$type=0)
+/home/ldestail/git/dolibarr/htdocs/fourn/class/fournisseur.commande.class.php:1549: warning: argument 'localtax1' of command @param is not found in the argument list of CommandeFournisseur::updateline($rowid,$desc,$pu,$qty,$remise_percent=0,$txtva,$txlocaltax1=0,$txlocaltax2=0,$price_base_type='HT',$info_bits=0,$type=0)
+/home/ldestail/git/dolibarr/htdocs/fourn/class/fournisseur.commande.class.php:1549: warning: argument 'localtax2' of command @param is not found in the argument list of CommandeFournisseur::updateline($rowid,$desc,$pu,$qty,$remise_percent=0,$txtva,$txlocaltax1=0,$txlocaltax2=0,$price_base_type='HT',$info_bits=0,$type=0)
+/home/ldestail/git/dolibarr/htdocs/fourn/class/fournisseur.commande.class.php:1549: warning: The following parameters of CommandeFournisseur::updateline($rowid,$desc,$pu,$qty,$remise_percent=0,$txtva,$txlocaltax1=0,$txlocaltax2=0,$price_base_type='HT',$info_bits=0,$type=0) are not documented:
+  parameter 'txtva'
+  parameter 'txlocaltax1'
+  parameter 'txlocaltax2'
+/home/ldestail/git/dolibarr/htdocs/core/class/commonobject.class.php:1843: warning: The following parameters of CommonObject::printLine($action='viewline',1843,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false) are not documented:
+  parameter 'hookmanager'
+/home/ldestail/git/dolibarr/htdocs/core/class/commonobject.class.php:1769: warning: The following parameters of CommonObject::printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false) are not documented:
+  parameter 'hookmanager'
+/home/ldestail/git/dolibarr/htdocs/contrat/class/contrat.class.php:310: warning: The following parameters of Contrat::fetch($id,$ref='') are not documented:
+  parameter 'ref'
+/home/ldestail/git/dolibarr/htdocs/contrat/class/contrat.class.php:1627: warning: The following parameters of ContratLigne::getNomUrl($withpicto=0,$maxlength=0) are not documented:
+  parameter 'maxlength'
+/home/ldestail/git/dolibarr/htdocs/adherents/class/cotisation.class.php:187: warning: argument 'rowid' of command @param is not found in the argument list of Cotisation::delete($user)
+/home/ldestail/git/dolibarr/htdocs/adherents/class/cotisation.class.php:187: warning: The following parameters of Cotisation::delete($user) are not documented:
+  parameter 'user'
+/home/ldestail/git/dolibarr/htdocs/adherents/class/cotisation.class.php:146: warning: argument 'int' of command @param is not found in the argument list of Cotisation::update($user,$notrigger=0)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/doc_generic_invoice_odt.modules.php:45: warning: argument 'DB' of command @param is not found in the argument list of doc_generic_invoice_odt::doc_generic_invoice_odt($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/doc_generic_invoice_odt.modules.php:45: warning: The following parameters of doc_generic_invoice_odt::doc_generic_invoice_odt($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/societe/doc/doc_generic_odt.modules.php:43: warning: argument 'DB' of command @param is not found in the argument list of doc_generic_odt::doc_generic_odt($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/societe/doc/doc_generic_odt.modules.php:43: warning: The following parameters of doc_generic_odt::doc_generic_odt($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/core/class/cookie.class.php:105: warning: argument 'domaine' of command @param is not found in the argument list of DolCookie::_setCookie($cookie,$value,$expire=0,$path="/",$domain="",$secure=0)
+/home/ldestail/git/dolibarr/htdocs/core/class/cookie.class.php:105: warning: The following parameters of DolCookie::_setCookie($cookie,$value,$expire=0,$path="/",$domain="",$secure=0) are not documented:
+  parameter 'domain'
+/home/ldestail/git/dolibarr/htdocs/lib/databases/mysql.class.php:1207: warning: The following parameters of DoliDBMysql::getServerStatusValues($key,$filter='') are not documented:
+  parameter 'key'
+/home/ldestail/git/dolibarr/htdocs/lib/databases/mysqli.class.php:1198: warning: The following parameters of DoliDBMysqli::getServerParametersValues($key,$filter='') are not documented:
+  parameter 'key'
+/home/ldestail/git/dolibarr/htdocs/lib/databases/pgsql.class.php:948: warning: The following parameters of DoliDBPgsql::DDLListTables($database,$table='') are not documented:
+  parameter 'table'
+/home/ldestail/git/dolibarr/htdocs/lib/databases/pgsql.class.php:849: warning: The following parameters of DoliDBPgsql::last_insert_id($tab,$fieldid='rowid') are not documented:
+  parameter 'fieldid'
+/home/ldestail/git/dolibarr/htdocs/compta/dons/class/don.class.php:524: warning: argument 'modepaiementd' of command @param is not found in the argument list of Don::set_paye($rowid,$modepaiement='')
+/home/ldestail/git/dolibarr/htdocs/compta/dons/class/don.class.php:524: warning: The following parameters of Don::set_paye($rowid,$modepaiement='') are not documented:
+  parameter 'modepaiement'
+/home/ldestail/git/dolibarr/htdocs/ecm/class/ecmdirectory.class.php:393: warning: The following parameters of EcmDirectory::getNomUrl($withpicto=0,$option='',$max=0) are not documented:
+  parameter 'max'
+/home/ldestail/git/dolibarr/htdocs/ecm/class/ecmdirectory.class.php:637: warning: argument 'directory' of command @param is not found in the argument list of EcmDirectory::refreshcachenboffile($all=0)
+/home/ldestail/git/dolibarr/htdocs/product/stock/class/entrepot.class.php:65: warning: argument 'Objet' of command @param is not found in the argument list of Entrepot::create($user)
+/home/ldestail/git/dolibarr/htdocs/product/stock/class/entrepot.class.php:65: warning: The following parameters of Entrepot::create($user) are not documented:
+  parameter 'user'
+/home/ldestail/git/dolibarr/htdocs/product/stock/class/entrepot.class.php:379: warning: argument 'type' of command @param is not found in the argument list of Entrepot::getLibStatut($mode=0)
+/home/ldestail/git/dolibarr/htdocs/product/stock/class/entrepot.class.php:390: warning: argument 'status' of command @param is not found in the argument list of Entrepot::LibStatut($statut,$mode=0)
+/home/ldestail/git/dolibarr/htdocs/product/stock/class/entrepot.class.php:390: warning: argument 'type' of command @param is not found in the argument list of Entrepot::LibStatut($statut,$mode=0)
+/home/ldestail/git/dolibarr/htdocs/product/stock/class/entrepot.class.php:390: warning: The following parameters of Entrepot::LibStatut($statut,$mode=0) are not documented:
+  parameter 'statut'
+/home/ldestail/git/dolibarr/htdocs/expedition/class/expedition.class.php:911: warning: The following parameters of Expedition::getNomUrl($withpicto=0,$option=0,$max=0,$short=0) are not documented:
+  parameter 'option'
+  parameter 'max'
+  parameter 'short'
+/home/ldestail/git/dolibarr/htdocs/core/class/extrafields.class.php:447: warning: The following parameters of ExtraFields::showOutputField($key,$value,$moreparam='') are not documented:
+  parameter 'moreparam'
+/home/ldestail/git/dolibarr/htdocs/core/class/extrafields.class.php:289: warning: argument 'length' of command @param is not found in the argument list of ExtraFields::update_label($attrname,$label,$type,$size,$elementtype='member')
+/home/ldestail/git/dolibarr/htdocs/core/class/extrafields.class.php:289: warning: The following parameters of ExtraFields::update_label($attrname,$label,$type,$size,$elementtype='member') are not documented:
+  parameter 'size'
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:1783: warning: The following parameters of Facture::addline($facid,$desc,$pu_ht,$qty,$txtva,$txlocaltax1=0,$txlocaltax2=0,$fk_product=0,$remise_percent=0,$date_start='',$date_end='',$ventil=0,$info_bits=0,$fk_remise_except='',$price_base_type='HT',$pu_ttc=0,$type=0,$rang=-1,$special_code=0,$origin='',$origin_id=0,$fk_parent_line=0) are not documented:
+  parameter 'special_code'
+  parameter 'origin'
+  parameter 'origin_id'
+  parameter 'fk_parent_line'
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:680: warning: The following parameters of Facture::getNomUrl($withpicto=0,$option='',$max=0,$short=0) are not documented:
+  parameter 'short'
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:2747: warning: argument 'user' of command @param is not found in the argument list of Facture::getVentilExportCompta()
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:3174: warning: argument 'user' of command @param is not found in the argument list of Facture::load_state_board()
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:2713: warning: argument 'mode' of command @param is not found in the argument list of Facture::mode_reglement($mode_reglement_id)
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:2713: warning: The following parameters of Facture::mode_reglement($mode_reglement_id) are not documented:
+  parameter 'mode_reglement_id'
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:1718: warning: argument 'int' of command @param is not found in the argument list of Facture::set_draft($user)
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:1951: warning: argument 'tva_tx' of command @param is not found in the argument list of Facture::updateline($rowid,$desc,$pu,$qty,$remise_percent=0,$date_start,$date_end,$txtva,$txlocaltax1=0,$txlocaltax2=0,$price_base_type='HT',$info_bits=0,$type=0,$fk_parent_line=0,$skip_update_total=0)
+/home/ldestail/git/dolibarr/htdocs/compta/facture/class/facture.class.php:1951: warning: The following parameters of Facture::updateline($rowid,$desc,$pu,$qty,$remise_percent=0,$date_start,$date_end,$txtva,$txlocaltax1=0,$txlocaltax2=0,$price_base_type='HT',$info_bits=0,$type=0,$fk_parent_line=0,$skip_update_total=0) are not documented:
+  parameter 'txtva'
+  parameter 'fk_parent_line'
+  parameter 'skip_update_total'
+/home/ldestail/git/dolibarr/htdocs/fourn/class/fournisseur.facture.class.php:840: warning: argument 'int' of command @param is not found in the argument list of FactureFournisseur::set_draft($user)
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:92: warning: The following parameters of Form::editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string',$editvalue='') are not documented:
+  parameter 'paramvalue'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:2654: warning: The following parameters of Form::form_address($page,$selected='',$socid,$htmlname='address_id',$origin='',$originid='') are not documented:
+  parameter 'socid'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:2016: warning: The following parameters of Form::form_confirm($page,$title,$question,$action,$formquestion='',$selectedchoice="",$useajax=0,$height=170,$width=500) are not documented:
+  parameter 'width'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:2571: warning: The following parameters of Form::form_contacts($page,$societe,$selected='',$htmlname='contactidp') are not documented:
+  parameter 'societe'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:2034: warning: The following parameters of Form::formconfirm($page,$title,$question,$action,$formquestion='',$selectedchoice="",$useajax=0,$height=170,$width=500) are not documented:
+  parameter 'width'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:681: warning: argument 'show_empty' of command @param is not found in the argument list of Form::select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0,$moreclass='')
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:681: warning: The following parameters of Form::select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0,$moreclass='') are not documented:
+  parameter 'showempty'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:907: warning: The following parameters of Form::select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0) are not documented:
+  parameter 'hidelabel'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:1190: warning: argument 'status' of command @param is not found in the argument list of Form::select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$disableout=0)
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:1190: warning: The following parameters of Form::select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$disableout=0) are not documented:
+  parameter 'statut'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:615: warning: The following parameters of Form::select_remises($selected='',$htmlname='remise_id',$filter='',$socid,$maxvalue=0) are not documented:
+  parameter 'socid'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:3339: warning: argument 'name' of command @param is not found in the argument list of Form::selectyesno($htmlname,$value='',$option=0)
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:3339: warning: The following parameters of Form::selectyesno($htmlname,$value='',$option=0) are not documented:
+  parameter 'htmlname'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:205: warning: argument 'htmltooltip' of command @param is not found in the argument list of Form::textwithpicto($text,$htmltext,$direction=1,$type='help',$extracss='',$noencodehtmltext=0)
+/home/ldestail/git/dolibarr/htdocs/core/class/html.form.class.php:205: warning: The following parameters of Form::textwithpicto($text,$htmltext,$direction=1,$type='help',$extracss='',$noencodehtmltext=0) are not documented:
+  parameter 'htmltext'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.formcompany.class.php:177: warning: argument 'departement_id' of command @param is not found in the argument list of FormCompany::select_departement($selected='',$pays_code=0,$htmlname='departement_id')
+/home/ldestail/git/dolibarr/htdocs/core/class/html.formcompany.class.php:177: warning: The following parameters of FormCompany::select_departement($selected='',$pays_code=0,$htmlname='departement_id') are not documented:
+  parameter 'htmlname'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.formcompany.class.php:192: warning: argument 'departement_id' of command @param is not found in the argument list of FormCompany::select_state($selected='',$pays_code=0,$htmlname='departement_id')
+/home/ldestail/git/dolibarr/htdocs/core/class/html.formcompany.class.php:192: warning: The following parameters of FormCompany::select_state($selected='',$pays_code=0,$htmlname='departement_id') are not documented:
+  parameter 'htmlname'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.formother.class.php:203: warning: The following parameters of FormOther::select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100) are not documented:
+  parameter 'disabled'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.formother.class.php:588: warning: The following parameters of FormOther::select_year($selected='',$htmlname='yearid',$useempty=0,$min_year=10,$max_year=5,$offset=0,$invert=0,$option='') are not documented:
+  parameter 'offset'
+  parameter 'invert'
+  parameter 'option'
+/home/ldestail/git/dolibarr/htdocs/core/class/html.formother.class.php:601: warning: The following parameters of FormOther::selectyear($selected='',$htmlname='yearid',$useempty=0,$min_year=10,$max_year=5,$offset=0,$invert=0,$option='') are not documented:
+  parameter 'offset'
+  parameter 'invert'
+  parameter 'option'
+/home/ldestail/git/dolibarr/htdocs/fourn/class/fournisseur.class.php:38: warning: The following parameters of Fournisseur::Fournisseur($DB,$id=0,$user=0) are not documented:
+  parameter 'user'
+/home/ldestail/git/dolibarr/htdocs/fourn/class/fournisseur.class.php:102: warning: The following parameters of Fournisseur::updateFromCommandeClient($user,$idc,$comclientid) are not documented:
+  parameter 'idc'
+  parameter 'comclientid'
+/home/ldestail/git/dolibarr/htdocs/core/class/genericobject.class.php:35: warning: argument 'DB' of command @param is not found in the argument list of GenericObject::GenericObject($db)
+/home/ldestail/git/dolibarr/htdocs/core/class/genericobject.class.php:35: warning: The following parameters of GenericObject::GenericObject($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/import/import_csv.modules.php:264: warning: The following parameters of ImportCsv::import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid) are not documented:
+  parameter 'importid'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/import/import_csv.modules.php:135: warning: The following parameters of ImportCsv::write_record_example($outputlangs,$contentlinevalues) are not documented:
+  parameter 'contentlinevalues'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/import/import_csv.modules.php:125: warning: The following parameters of ImportCsv::write_title_example($outputlangs,$headerlinefields) are not documented:
+  parameter 'headerlinefields'
+/home/ldestail/git/dolibarr/htdocs/includes/triggers/interface_modPaypal_PaypalWorkflow.class.php:83: warning: argument 'lang' of command @param is not found in the argument list of InterfacePaypalWorkflow::run_trigger($action,$object,$user,$langs,$conf)
+/home/ldestail/git/dolibarr/htdocs/includes/triggers/interface_modPaypal_PaypalWorkflow.class.php:83: warning: The following parameters of InterfacePaypalWorkflow::run_trigger($action,$object,$user,$langs,$conf) are not documented:
+  parameter 'langs'
+/home/ldestail/git/dolibarr/htdocs/core/class/interfaces.class.php:47: warning: argument 'lang' of command @param is not found in the argument list of Interfaces::run_triggers($action,$object,$user,$langs,$conf)
+/home/ldestail/git/dolibarr/htdocs/core/class/interfaces.class.php:47: warning: The following parameters of Interfaces::run_triggers($action,$object,$user,$langs,$conf) are not documented:
+  parameter 'langs'
+/home/ldestail/git/dolibarr/htdocs/lib/ldap.class.php:1277: warning: argument 'string' of command @param is not found in the argument list of Ldap::convert_time($value)
+/home/ldestail/git/dolibarr/htdocs/lib/ldap.class.php:1277: warning: The following parameters of Ldap::convert_time($value) are not documented:
+  parameter 'value'
+/home/ldestail/git/dolibarr/htdocs/lib/ldap.class.php:357: warning: argument 'ds' of command @param is not found in the argument list of Ldap::getVersion()
+/home/ldestail/git/dolibarr/htdocs/lib/ldap.class.php:341: warning: argument 'ds' of command @param is not found in the argument list of Ldap::unbind()
+/home/ldestail/git/dolibarr/htdocs/comm/mailing/class/mailing.class.php:228: warning: The following parameters of Mailing::createFromClone($fromid,$option1,$option2) are not documented:
+  parameter 'option1'
+  parameter 'option2'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/contacts1.modules.php:151: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_contacts1::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/contacts1.modules.php:151: warning: The following parameters of mailing_contacts1::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/contacts2.modules.php:59: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_contacts2::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/contacts2.modules.php:59: warning: The following parameters of mailing_contacts2::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/contacts3.modules.php:59: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_contacts3::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/contacts3.modules.php:59: warning: The following parameters of mailing_contacts3::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/example.modules.php:53: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_example::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/example.modules.php:53: warning: The following parameters of mailing_example::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/fraise.modules.php:131: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_fraise::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/fraise.modules.php:131: warning: The following parameters of mailing_fraise::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/framboise.modules.php:51: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_framboise::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/framboise.modules.php:51: warning: The following parameters of mailing_framboise::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/peche.modules.php:97: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_peche::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/peche.modules.php:97: warning: The following parameters of mailing_peche::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/pomme.modules.php:119: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_pomme::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/pomme.modules.php:119: warning: The following parameters of mailing_pomme::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/thirdparties.modules.php:46: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_thirdparties::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/thirdparties.modules.php:46: warning: The following parameters of mailing_thirdparties::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/thirdparties_services_expired.modules.php:74: warning: argument 'filterarray' of command @param is not found in the argument list of mailing_thirdparties_services_expired::add_to_target($mailing_id,$filtersarray=array())
+/home/ldestail/git/dolibarr/htdocs/includes/modules/mailings/thirdparties_services_expired.modules.php:74: warning: The following parameters of mailing_thirdparties_services_expired::add_to_target($mailing_id,$filtersarray=array()) are not documented:
+  parameter 'filtersarray'
+/home/ldestail/git/dolibarr/htdocs/includes/menus/standard/auguria_backoffice.php:78: warning: argument 'DB' of command @param is not found in the argument list of MenuLeft::MenuLeft($db,&$menu_array,&$menu_array_after)
+/home/ldestail/git/dolibarr/htdocs/includes/menus/standard/auguria_backoffice.php:78: warning: The following parameters of MenuLeft::MenuLeft($db,&$menu_array,&$menu_array_after) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/menus/smartphone/smartphone_frontoffice.php:36: warning: argument 'DB' of command @param is not found in the argument list of MenuSmart::MenuSmart($db)
+/home/ldestail/git/dolibarr/htdocs/includes/menus/smartphone/smartphone_frontoffice.php:36: warning: The following parameters of MenuSmart::MenuSmart($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/menus/standard/empty.php:35: warning: argument 'DB' of command @param is not found in the argument list of MenuTop::MenuTop($db)
+/home/ldestail/git/dolibarr/htdocs/includes/menus/standard/empty.php:35: warning: The following parameters of MenuTop::MenuTop($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/fichinter/mod_arctic.php:103: warning: argument 'ficheinter' of command @param is not found in the argument list of mod_arctic::getNextValue($objsoc=0,$object='')
+/home/ldestail/git/dolibarr/htdocs/includes/modules/fichinter/mod_arctic.php:103: warning: The following parameters of mod_arctic::getNextValue($objsoc=0,$object='') are not documented:
+  parameter 'object'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/societe/mod_codeclient_elephant.php:194: warning: argument 'int' of command @param is not found in the argument list of mod_codeclient_elephant::verif_prefixIsUsed()
+/home/ldestail/git/dolibarr/htdocs/includes/modules/societe/mod_codeclient_leopard.php:75: warning: argument 'langs' of command @param is not found in the argument list of mod_codeclient_leopard::getNextValue($objsoc=0,$type=-1)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/fichinter/mod_pacific.php:92: warning: argument 'ficheinter' of command @param is not found in the argument list of mod_pacific::getNextValue($objsoc=0,$object='')
+/home/ldestail/git/dolibarr/htdocs/includes/modules/fichinter/mod_pacific.php:92: warning: The following parameters of mod_pacific::getNextValue($objsoc=0,$object='') are not documented:
+  parameter 'object'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/societe/modules_societe.class.php:228: warning: argument 'int' of command @param is not found in the argument list of ModeleThirdPartyCode::verif_prefixIsUsed()
+/home/ldestail/git/dolibarr/htdocs/includes/modules/project/pdf/pdf_baleine.modules.php:42: warning: argument 'DB' of command @param is not found in the argument list of pdf_baleine::pdf_baleine($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/project/pdf/pdf_baleine.modules.php:42: warning: The following parameters of pdf_baleine::pdf_baleine($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php:869: warning: argument 'outputlang' of command @param is not found in the argument list of pdf_canelle::_pagefoot(&$pdf,$object,$outputlangs)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php:869: warning: The following parameters of pdf_canelle::_pagefoot(&$pdf,$object,$outputlangs) are not documented:
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php:577: warning: The following parameters of pdf_canelle::_tableau(&$pdf,$tab_top,$tab_height,$nexY,$outputlangs) are not documented:
+  parameter 'tab_top'
+  parameter 'tab_height'
+  parameter 'nexY'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php:390: warning: The following parameters of pdf_canelle::_tableau_tot(&$pdf,$object,$deja_regle,$posy,$outputlangs) are not documented:
+  parameter 'posy'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php:58: warning: argument 'DB' of command @param is not found in the argument list of pdf_canelle::pdf_canelle($db,$object)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php:58: warning: The following parameters of pdf_canelle::pdf_canelle($db,$object) are not documented:
+  parameter 'db'
+  parameter 'object'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_crabe.modules.php:910: warning: The following parameters of pdf_crabe::_tableau(&$pdf,$tab_top,$tab_height,$nexY,$outputlangs) are not documented:
+  parameter 'tab_top'
+  parameter 'tab_height'
+  parameter 'nexY'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_crabe.modules.php:62: warning: argument 'DB' of command @param is not found in the argument list of pdf_crabe::pdf_crabe($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_crabe.modules.php:62: warning: The following parameters of pdf_crabe::pdf_crabe($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/commande/pdf_einstein.modules.php:765: warning: The following parameters of pdf_einstein::_tableau(&$pdf,$tab_top,$tab_height,$nexY,$outputlangs) are not documented:
+  parameter 'tab_top'
+  parameter 'tab_height'
+  parameter 'nexY'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/commande/pdf_einstein.modules.php:61: warning: argument 'DB' of command @param is not found in the argument list of pdf_einstein::pdf_einstein($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/commande/pdf_einstein.modules.php:61: warning: The following parameters of pdf_einstein::pdf_einstein($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php:800: warning: argument 'outputlang' of command @param is not found in the argument list of pdf_muscadet::_pagefoot(&$pdf,$object,$outputlangs)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php:800: warning: The following parameters of pdf_muscadet::_pagefoot(&$pdf,$object,$outputlangs) are not documented:
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php:581: warning: The following parameters of pdf_muscadet::_tableau(&$pdf,$tab_top,$tab_height,$nexY,$outputlangs) are not documented:
+  parameter 'tab_top'
+  parameter 'tab_height'
+  parameter 'nexY'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php:391: warning: The following parameters of pdf_muscadet::_tableau_tot(&$pdf,$object,$deja_regle,$posy,$outputlangs) are not documented:
+  parameter 'posy'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php:60: warning: argument 'DB' of command @param is not found in the argument list of pdf_muscadet::pdf_muscadet($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php:60: warning: The following parameters of pdf_muscadet::pdf_muscadet($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_oursin.modules.php:1008: warning: argument 'outputlang' of command @param is not found in the argument list of pdf_oursin::_pagefoot(&$pdf,$object,$outputlangs)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_oursin.modules.php:1008: warning: The following parameters of pdf_oursin::_pagefoot(&$pdf,$object,$outputlangs) are not documented:
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_oursin.modules.php:314: warning: argument 'fac' of command @param is not found in the argument list of pdf_oursin::_tableau_versements(&$pdf,$object,$posy,$outputlangs)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_oursin.modules.php:314: warning: The following parameters of pdf_oursin::_tableau_versements(&$pdf,$object,$posy,$outputlangs) are not documented:
+  parameter 'object'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_oursin.modules.php:50: warning: argument 'DB' of command @param is not found in the argument list of pdf_oursin::pdf_oursin($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/facture/doc/pdf_oursin.modules.php:50: warning: The following parameters of pdf_oursin::pdf_oursin($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/rapport/pdf_paiement.class.php:207: warning: argument 'object' of command @param is not found in the argument list of pdf_paiement::_pagehead(&$pdf,$page,$showaddress=1,$outputlangs)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/rapport/pdf_paiement.class.php:207: warning: The following parameters of pdf_paiement::_pagehead(&$pdf,$page,$showaddress=1,$outputlangs) are not documented:
+  parameter 'page'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/propale/pdf_propale_azur.modules.php:792: warning: The following parameters of pdf_propale_azur::_tableau(&$pdf,$tab_top,$tab_height,$nexY,$outputlangs) are not documented:
+  parameter 'tab_top'
+  parameter 'tab_height'
+  parameter 'nexY'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/propale/pdf_propale_azur.modules.php:44: warning: argument 'DB' of command @param is not found in the argument list of pdf_propale_azur::pdf_propale_azur($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/propale/pdf_propale_azur.modules.php:44: warning: The following parameters of pdf_propale_azur::pdf_propale_azur($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/propale/pdf_propale_jaune.modules.php:792: warning: The following parameters of pdf_propale_jaune::_tableau(&$pdf,$tab_top,$tab_height,$nexY,$outputlangs) are not documented:
+  parameter 'tab_top'
+  parameter 'tab_height'
+  parameter 'nexY'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/propale/pdf_propale_jaune.modules.php:44: warning: argument 'DB' of command @param is not found in the argument list of pdf_propale_jaune::pdf_propale_jaune($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/propale/pdf_propale_jaune.modules.php:44: warning: The following parameters of pdf_propale_jaune::pdf_propale_jaune($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/livraison/pdf/pdf_sirocco.modules.php:296: warning: The following parameters of pdf_sirocco::_tableau(&$pdf,$tab_top,$tab_height,$nexY,$outputlangs) are not documented:
+  parameter 'tab_top'
+  parameter 'tab_height'
+  parameter 'nexY'
+  parameter 'outputlangs'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/livraison/pdf/pdf_sirocco.modules.php:40: warning: argument 'DB' of command @param is not found in the argument list of pdf_sirocco::pdf_sirocco($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/livraison/pdf/pdf_sirocco.modules.php:40: warning: The following parameters of pdf_sirocco::pdf_sirocco($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/member/cards/pdf_standard.class.php:98: warning: argument 'DB' of command @param is not found in the argument list of pdf_standard::pdf_standard($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/member/cards/pdf_standard.class.php:98: warning: The following parameters of pdf_standard::pdf_standard($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/member/labels/pdf_standardlabel.class.php:99: warning: argument 'DB' of command @param is not found in the argument list of pdf_standardlabel::pdf_standard($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/member/labels/pdf_standardlabel.class.php:99: warning: The following parameters of pdf_standardlabel::pdf_standard($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/includes/modules/livraison/pdf/pdf_typhon.modules.php:44: warning: argument 'DB' of command @param is not found in the argument list of pdf_typhon::pdf_typhon($db)
+/home/ldestail/git/dolibarr/htdocs/includes/modules/livraison/pdf/pdf_typhon.modules.php:44: warning: The following parameters of pdf_typhon::pdf_typhon($db) are not documented:
+  parameter 'db'
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:749: warning: argument 'int' of command @param is not found in the argument list of Product::_log_price($user,$level=0)
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:749: warning: The following parameters of Product::_log_price($user,$level=0) are not documented:
+  parameter 'level'
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:2503: warning: argument 'files' of command @param is not found in the argument list of Product::add_photo_web($sdir,$file)
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:2503: warning: The following parameters of Product::add_photo_web($sdir,$file) are not documented:
+  parameter 'file'
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:1647: warning: The following parameters of Product::add_sousproduit($id_pere,$id_fils,$qty) are not documented:
+  parameter 'qty'
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:2484: warning: argument 'sdir' of command @param is not found in the argument list of Product::add_thumb($file,$maxWidth=160,$maxHeight=120)
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:1992: warning: The following parameters of Product::fetch_prod_arbo($prod,$compl_path="",$multiply=1,$level=1) are not documented:
+  parameter 'prod'
+  parameter 'compl_path'
+  parameter 'level'
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:706: warning: argument 'int' of command @param is not found in the argument list of Product::getMultiLangs()
+/home/ldestail/git/dolibarr/htdocs/product/class/product.class.php:639: warning: argument 'int' of command @param is not found in the argument list of Product::setMultiLangs()
+/home/ldestail/git/dolibarr/htdocs/fourn/class/fournisseur.product.class.php:273: warning: argument 'fournid' of command @param is not found in the argument list of ProductFournisseur::fetch_product_fournisseur_price($rowid)
+/home/ldestail/git/dolibarr/htdocs/comm/propal/class/propal.class.php:1730: warning: The following parameters of Propal::delete($user,$notrigger=0) are not documented:
+  parameter 'notrigger'
+/home/ldestail/git/dolibarr/htdocs/comm/propal/class/propal.class.php:1141: warning: The following parameters of Propal::valid($user,$notrigger=0) are not documented:
+  parameter 'notrigger'
+/home/ldestail/git/dolibarr/htdocs/core/class/smtps.class.php:1348: warning: argument 'string' of command @param is not found in the argument list of SMTPs::getSensitivity()
+/home/ldestail/git/dolibarr/htdocs/core/class/smtps.class.php:1111: warning: argument '_msgContent' of command @param is not found in the argument list of SMTPs::setBodyContent($strContent,$strType='plain')
+/home/ldestail/git/dolibarr/htdocs/core/class/smtps.class.php:1111: warning: The following parameters of SMTPs::setBodyContent($strContent,$strType='plain') are not documented:
+  parameter 'strContent'
+  parameter 'strType'
