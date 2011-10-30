@@ -104,3 +104,8 @@ jQuery(function($){
 		yearSuffix: ''};
 	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
 });
+
+
+<?php
+if (is_object($db)) $db->close();
+?>
