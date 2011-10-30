@@ -380,11 +380,6 @@ class Conf
         if (empty($this->global->TAX_MODE_SELL_SERVICE)) $this->global->TAX_MODE_SELL_SERVICE='payment';
         if (empty($this->global->TAX_MODE_BUY_SERVICE))  $this->global->TAX_MODE_BUY_SERVICE='payment';
 
-		/* We always show vat menus if module tax is enabled.
-		 * Because even when vat option is 'franchise' and vat rate is 0, we have to pay vat.
-		 */
-		$this->compta->tva=1; // This option means "Show vat menus"
-
 		// Delay before warnings
 		$this->actions->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
 		$this->commande->client->warning_delay=(isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_ORDERS_TO_PROCESS:2)*24*60*60;

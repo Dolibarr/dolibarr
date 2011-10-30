@@ -49,7 +49,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 }
 -->
 </style>
-<?php echo $conf->global->MAIN_HTML_HEADER ?>
+<?php if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER; ?>
 <!-- HTTP_USER_AGENT = <?php echo $_SERVER['HTTP_USER_AGENT']; ?> -->
 </head>
 
