@@ -248,7 +248,7 @@ else if ($id)
 
 		dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
-		if ($action == 'edit')
+		if ($action == 'edit' && $user->rights->deplacement->creer)
 		{
 			$soc = new Societe($db);
 			if ($object->socid)
