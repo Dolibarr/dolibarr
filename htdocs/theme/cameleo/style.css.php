@@ -1574,6 +1574,12 @@ border-radius:6px;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+.ui-datepicker-trigger {
+	vertical-align: middle;
+	cursor: pointer;
+}
+
 .bodyline {
 	padding: 0px;
 	margin-bottom: 5px;
@@ -1782,7 +1788,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_textarea:hover, .edit_text:hover, .edit_numeric:hover {
+.edit_textarea:hover, .edit_ckeditor:hover, .edit_text:hover, .edit_numeric:hover, .edit_select:hover {
 	background: white url(<?php echo dol_buildpath($path.'/theme/cameleo/img/edit.png',1) ?>) right center no-repeat;
 	cursor: pointer;
 }

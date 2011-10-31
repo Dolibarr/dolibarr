@@ -1462,16 +1462,9 @@ opacity: 1;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
-.ui-datepicker-title {
-    margin: 0 !important;
-    line-height: 28px;
-}
-.ui-datepicker-month {
-    margin: 0 !important;
-    padding: 0 !important;
-}
-.ui-datepicker-header {
-    height: 28px !important;
+.ui-datepicker-trigger {
+	vertical-align: middle;
+	cursor: pointer;
 }
 
 .bodyline {
@@ -1632,7 +1625,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_textarea:hover, .edit_text:hover, .edit_numeric:hover {
+.edit_textarea:hover, .edit_ckeditor:hover, .edit_text:hover, .edit_numeric:hover, .edit_select:hover {
 	background: white url(<?php echo dol_buildpath($path.'/theme/auguria/img/edit.png',1) ?>) right center no-repeat;
 	cursor: pointer;
 }

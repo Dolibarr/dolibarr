@@ -117,6 +117,9 @@ var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
 // For JQuery date picker
 $(document).ready(function() {
 	$.datepicker.setDefaults({
+		autoSize: true,
+		changeMonth: true,
+		changeYear: true,
 		altField: '#timeStamp',
 		altFormat: '@'			// Gives a timestamp dateformat
 	});
@@ -124,15 +127,15 @@ $(document).ready(function() {
 
 jQuery(function($){
 	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		closeText: '<?php echo $langs->trans("Close") ?>',
+		closeText: '<?php echo $langs->trans("Close2") ?>',
 		prevText: '<?php echo $langs->trans("Previous") ?>',
 		nextText: '<?php echo $langs->trans("Next") ?>',
 		currentText: '<?php echo $langs->trans("Now") ?>',
 		monthNames: tradMonths,
 		monthNamesShort: tradMonthsShort,
 		dayNames: tradDays,
-		dayNamesShort: tradDaysMin,
-		dayNamesMin: tradDaysShort,
+		dayNamesShort: tradDaysShort,
+		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
 		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,

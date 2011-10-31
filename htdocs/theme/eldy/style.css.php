@@ -1495,19 +1495,6 @@ border-radius: 6px;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
-.ui-datepicker-title {
-    margin: 0 !important;
-    line-height: 28px;
-    z-index: 3000;
-}
-.ui-datepicker-month {
-    margin: 0 !important;
-    padding: 0 !important;
-}
-.ui-datepicker-header {
-    height: 28px !important;
-}
-
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
