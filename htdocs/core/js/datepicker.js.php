@@ -58,11 +58,60 @@ dol_escape_js($langs->transnoentitiesnoconv("October")),
 dol_escape_js($langs->transnoentitiesnoconv("November")),
 dol_escape_js($langs->transnoentitiesnoconv("December"))
 );
+
+$tradMonthsShort=array(
+$langs->trans("JanuaryMin"),
+$langs->trans("FebruaryMin"),
+$langs->trans("MarchMin"),
+$langs->trans("AprilMin"),
+$langs->trans("MayMin"),
+$langs->trans("JuneMin"),
+$langs->trans("JulyMin"),
+$langs->trans("AugustMin"),
+$langs->trans("SeptemberMin"),
+$langs->trans("OctoberMin"),
+$langs->trans("NovemberMin"),
+$langs->trans("DecemberMin")
+);
+
+$tradDays=array(
+$langs->trans("Sunday"),
+$langs->trans("Monday"),
+$langs->trans("Tuesday"),
+$langs->trans("Wednesday"),
+$langs->trans("Thursday"),
+$langs->trans("Friday"),
+$langs->trans("Saturday")
+);
+
+$tradDaysShort=array(
+$langs->trans("ShortSunday"),
+$langs->trans("ShortMonday"),
+$langs->trans("ShortTuesday"),
+$langs->trans("ShortWednesday"),
+$langs->trans("ShortThursday"),
+$langs->trans("ShortFriday"),
+$langs->trans("ShortSaturday")
+);
+
+$tradDaysMin=array(
+$langs->trans("SundayMin"),
+$langs->trans("MondayMin"),
+$langs->trans("TuesdayMin"),
+$langs->trans("WednesdayMin"),
+$langs->trans("ThursdayMin"),
+$langs->trans("FridayMin"),
+$langs->trans("SaturdayMin")
+);
 ?>
 
 
-// For eldy date picker
+// For eldy and jQuery date picker
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
+var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
+var tradDays = <?php echo json_encode($tradDays) ?>;
+var tradDaysShort = <?php echo json_encode($tradDaysShort) ?>;
+var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
 
 
 // For JQuery date picker
@@ -79,55 +128,15 @@ jQuery(function($){
 		prevText: '<?php echo $langs->trans("Previous") ?>',
 		nextText: '<?php echo $langs->trans("Next") ?>',
 		currentText: '<?php echo $langs->trans("Now") ?>',
-		monthNames: [<?php echo "'".$langs->trans("January")."',".
-		"'".$langs->trans("February")."',".
-		"'".$langs->trans("March")."',".
-		"'".$langs->trans("April")."',".
-		"'".$langs->trans("May")."',".
-		"'".$langs->trans("June")."',".
-		"'".$langs->trans("July")."',".
-		"'".$langs->trans("August")."',".
-		"'".$langs->trans("September")."',".
-		"'".$langs->trans("October")."',".
-		"'".$langs->trans("November")."',".
-		"'".$langs->trans("December")."'" ?>],
-		monthNamesShort: [<?php echo "'".$langs->trans("JanuaryMin")."',".
-		"'".$langs->trans("FebruaryMin")."',".
-		"'".$langs->trans("MarchMin")."',".
-		"'".$langs->trans("AprilMin")."',".
-		"'".$langs->trans("MayMin")."',".
-		"'".$langs->trans("JuneMin")."',".
-		"'".$langs->trans("JulyMin")."',".
-		"'".$langs->trans("AugustMin")."',".
-		"'".$langs->trans("SeptemberMin")."',".
-		"'".$langs->trans("OctoberMin")."',".
-		"'".$langs->trans("NovemberMin")."',".
-		"'".$langs->trans("DecemberMin")."'" ?>],
-		dayNames: [<?php echo "'".$langs->trans("Sunday")."',".
-		"'".$langs->trans("Monday")."',".
-		"'".$langs->trans("Tuesday")."',".
-		"'".$langs->trans("Wednesday")."',".
-		"'".$langs->trans("Thursday")."',".
-		"'".$langs->trans("Friday")."',".
-		"'".$langs->trans("Saturday")."'" ?>],
-		dayNamesShort: [<?php echo "'".$langs->trans("SundayMin")."',".
-		"'".$langs->trans("MondayMin")."',".
-		"'".$langs->trans("TuesdayMin")."',".
-		"'".$langs->trans("WednesdayMin")."',".
-		"'".$langs->trans("ThursdayMin")."',".
-		"'".$langs->trans("FridayMin")."',".
-		"'".$langs->trans("SaturdayMin")."'" ?>],
-		dayNamesMin: [<?php echo "'".$langs->trans("ShortSunday")."',".
-		"'".$langs->trans("ShortMonday")."',".
-		"'".$langs->trans("ShortTuesday")."',".
-		"'".$langs->trans("ShortWednesday")."',".
-		"'".$langs->trans("ShortThursday")."',".
-		"'".$langs->trans("ShortFriday")."',".
-		"'".$langs->trans("ShortSaturday")."'" ?>],
+		monthNames: tradMonths,
+		monthNamesShort: tradMonthsShort,
+		dayNames: tradDays,
+		dayNamesShort: tradDaysMin,
+		dayNamesMin: tradDaysShort,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
-        firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
-        isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
+		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
+		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
 		showMonthAfterYear: false,  // TODO add specific to country
 		yearSuffix: ''				// TODO add specific to country
 	};
