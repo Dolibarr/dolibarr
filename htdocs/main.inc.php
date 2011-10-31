@@ -845,7 +845,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		else print "<title>".$appli."</title>";
 		print "\n";
 
-        if (! defined('DISABLE_JQUERY'))
+        if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {
             print '<!-- Includes for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
@@ -976,31 +976,32 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/js/ColVis.min'.$ext.'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/js/TableTools.min'.$ext.'"></script>'."\n";
             }
+            
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js"></script>'."\n";
+            
+            // Add datepicker default options
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
+            
+            // Output module javascript
+            if (is_array($arrayofjs))
+            {
+            	print '<!-- Includes JS specific to page -->'."\n";
+            	foreach($arrayofjs as $jsfile)
+            	{
+            		if (preg_match('/^http/i',$jsfile))
+            		{
+            			print '<script type="text/javascript" src="'.$jsfile.'"></script>'."\n";
+            		}
+            		else
+            		{
+            			if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
+            			print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
+            		}
+            	}
+            }
 		}
-
-		// Output module javascript
-		if (is_array($arrayofjs))
-		{
-			print '<!-- Includes JS specific to page -->'."\n";
-			foreach($arrayofjs as $jsfile)
-			{
-				if (preg_match('/^http/i',$jsfile))
-				{
-					print '<script type="text/javascript" src="'.$jsfile.'"></script>'."\n";
-				}
-				else
-				{
-					if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
-					print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
-				}
-			}
-		}
-
-		// Add datepicker default options
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 
 		if (! empty($head)) print $head."\n";
 		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
