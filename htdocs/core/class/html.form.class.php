@@ -49,6 +49,7 @@ class Form
     var $cache_conditions_paiements=array();
     var $cache_availability=array();
 	var $cache_demand_reason=array();
+	var $cache_type_fees=array();
 
     var $tva_taux_value;
     var $tva_taux_libelle;
@@ -518,18 +519,65 @@ class Form
         }
 
     }
+    
+    /**
+     *	Load into cache cache_types_fees, array of types of fees
+     *
+     *	@return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
+     *	TODO move in DAO class
+     */
+    function load_cache_types_fees()
+    {
+    	global $langs;
+    	
+    	$langs->load("trips");
+    	
+    	if (count($this->cache_types_fees)) return 0;    // Cache already load
+    
+    	$sql = "SELECT c.code, c.libelle as label";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
+    	$sql.= " ORDER BY lower(c.libelle) ASC";
+    	
+    	dol_syslog(get_class($this).'::load_cache_types_fees sql='.$sql, LOG_DEBUG);
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $this->db->num_rows($resql);
+    		$i = 0;
+    		
+    		while ($i < $num)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    		
+    			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+    			$label=($obj->code != $langs->trans($obj->code) ? $langs->trans($obj->code) : $langs->trans($obj->label));
+    			$this->cache_types_fees[$obj->code] = $label;
+    			$i++;
+    		}
+    		return $num;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		return -1;
+    	}
+    }
 
     /**
-     *		Return list of types of notes
+     *	Return list of types of notes
      *
-     *		@param      selected        Preselected type
-     *		@param      htmlname        Name of field in form
-     * 		@param		showempty		Add an empty field
+     *	@param      string		$selected		Preselected type
+     *	@param      string		$htmlname		Name of field in form
+     * 	@param		int			$showempty		Add an empty field
+     * 	@return		void
      */
     function select_type_fees($selected='',$htmlname='type',$showempty=0)
     {
-        global $db,$langs,$user;
-        $langs->load("trips");
+        global $user, $langs;
+        
+        dol_syslog(get_class($this)."::select_type_fees ".$selected.", ".$htmlname, LOG_DEBUG);
+        
+        $this->load_cache_types_fees();
 
         print '<select class="flat" name="'.$htmlname.'">';
         if ($showempty)
@@ -538,26 +586,16 @@ class Form
             if ($selected == -1) print ' selected="selected"';
             print '>&nbsp;</option>';
         }
-
-        $sql = "SELECT c.code, c.libelle as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-        $sql.= " ORDER BY lower(c.libelle) ASC";
-        $resql=$db->query($sql);
-        if ($resql)
+        
+        foreach($this->cache_types_fees as $key => $value)
         {
-            $num = $db->num_rows($resql);
-            $i = 0;
-
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                print '<option value="'.$obj->code.'"';
-                if ($obj->code == $selected) print ' selected="selected"';
-                print '>';
-                if ($obj->code != $langs->trans($obj->code)) print $langs->trans($obj->code);
-                else print $langs->trans($obj->type);
-                $i++;
-            }
+        	print '<option value="'.$key.'"';
+        	if ($key == $selected) print ' selected="selected"';
+        	print '>';
+        	print $value;
+        	print '</option>';
         }
+
         print '</select>';
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
@@ -1744,7 +1782,8 @@ class Form
             }
             return $num;
         }
-        else {
+        else
+        {
             dol_print_error($this->db);
             return -1;
         }
