@@ -9,4 +9,5 @@ default.properties
 .buildpath
 .gitmodules
 dolibarr_install.log
+doxygen_warnings.log
 /.project
