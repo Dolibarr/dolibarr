@@ -346,7 +346,6 @@ else if ($id)
 			// Type
 			print '<tr><td>'.$langs->trans("Type").'</td><td>';
 			print $form->editInPlace($langs->trans($object->type), 'type', $user->rights->deplacement->creer, 'select', 'types_fees');
-			//print $langs->trans($object->type);
 			print '</td></tr>';
 
 			// Who
@@ -407,7 +406,7 @@ else if ($id)
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
-			print $form->editInPlace($object->note_public, 'note_public', $user->rights->deplacement->creer, 'textarea');
+			print $form->editInPlace($object->note_public, 'note_public', $user->rights->deplacement->creer, 'ckeditor', 'dolibarr_notes');
 			print "</td></tr>";
 			
 			// Private note
@@ -415,7 +414,7 @@ else if ($id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 				print '<td valign="top" colspan="3">';
-				print $form->editInPlace($object->note_private, 'note', $user->rights->deplacement->creer, 'textarea');
+				print $form->editInPlace($object->note_private, 'note', $user->rights->deplacement->creer, 'ckeditor', 'dolibarr_notes');
 				print "</td></tr>";
 			}
 

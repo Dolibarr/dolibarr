@@ -149,28 +149,44 @@ class Form
      *	@param		string	$value			Value to show/edit
      *	@param		string	$htmlname		DIV ID (field name)
      *	@param		int		$condition		Condition to edit
-     *	@param		string	$area			Type of edit
-     *	@param		string	$loadmethod		Name of load method
+     *	@param		string	$inputType		Type of input
+     *	@param		string	$inputOption	Input option
      *	@return     string   		      	HTML edit in place
      */
-    function editInPlace($value, $htmlname, $condition, $type='textarea', $loadmethod='')
+    function editInPlace($value, $htmlname, $condition, $inputType='textarea', $inputOption='')
     {
     	global $conf;
     	
     	$out='';
     	
     	// Check parameters
-    	if ($type == 'textarea') $value = dol_nl2br($value);
-    	else if ($type == 'numeric') $value = price($value);
-    	else if ($type == 'datepicker') $value = dol_print_date($value, 'day');
+    	if ($inputType == 'textarea') $value = dol_nl2br($value);
+    	else if ($inputType == 'numeric') $value = price($value);
+    	else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
     	
     	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $condition)
     	{
-    		// Use for timestamp format
-    		if ($type == 'datepicker') $out.= '<input id="timeStamp" type="hidden"/>';
-    		else if ($type == 'select' && ! empty($loadmethod)) $out.= '<input id="loadmethod" value="'.$loadmethod.'" type="hidden"/>';
+    		if ($inputType == 'datepicker')
+    		{
+    			$out.= '<input id="timeStamp" type="hidden"/>'; // Use for timestamp format
+    		}
+    		else if ($inputType == 'select' && ! empty($inputOption))
+    		{
+    			$out.= '<input id="loadmethod" value="'.$inputOption.'" type="hidden"/>';
+    		}
+    		else if ($inputType == 'ckeditor' && ! empty($inputOption))
+    		{
+    			if (! empty($conf->fckeditor->enabled))
+    			{
+    				$out.= '<input id="toolbar" value="'.$inputOption.'" type="hidden"/>';
+    			}
+    			else
+    			{
+    				$inputType = 'textarea';
+    			}
+    		}
     		
-    		$out.= '<div class="edit_'.$type.'" id="'.$htmlname.'">';
+    		$out.= '<div class="edit_'.$inputType.'" id="'.$htmlname.'">';
     		$out.= $value;
     		$out.= '</div>';
     	}

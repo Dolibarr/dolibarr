@@ -44,6 +44,36 @@ $(document).ready(function() {
 			}
 		}
 	});
+	$('.edit_ckeditor').editable(urlSaveInPlace, {
+		type		: 'ckeditor',
+		id			: 'field',
+		onblur		: 'ignore',
+		tooltip		: tooltipInPlace,
+		placeholder	: placeholderInPlace,
+		cancel		: cancelInPlace,
+		submit		: submitInPlace,
+		indicator	: indicatorInPlace,
+		ckeditor	: {
+			customConfig: ckeditorConfig,
+			toolbar: $('#toolbar').val()
+		},
+		submitdata	: {
+			type: 'ckeditor',
+			element: element,
+			table_element: table_element,
+			fk_element: fk_element
+		},
+		callback : function(result, settings) {
+			var obj = $.parseJSON(result);
+			
+			if (obj.error) {
+				$(this).html(this.revert);
+				$.jnotify(obj.error, "error", true);
+			} else {
+				$(this).html(obj.value);
+			}
+		}
+	});
 	$('.edit_text').editable(urlSaveInPlace, {
 		type		: 'text',
 		id			: 'field',
