@@ -71,3 +71,6 @@ i18n["Quarter"] = "<?php echo $langs->transnoentities("Quarter") ?>";
 i18n["Period"] = "<?php echo $langs->transnoentities("Period") ?>";
 
 
+<?php
+if (is_object($db)) $db->close();
+?>
