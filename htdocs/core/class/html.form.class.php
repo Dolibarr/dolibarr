@@ -150,9 +150,10 @@ class Form
      *	@param		string	$htmlname		DIV ID (field name)
      *	@param		int		$condition		Condition to edit
      *	@param		string	$area			Type of edit
+     *	@param		string	$loadmethod		Name of load method
      *	@return     string   		      	HTML edit in place
      */
-    function editInPlace($value, $htmlname, $condition, $type='textarea')
+    function editInPlace($value, $htmlname, $condition, $type='textarea', $loadmethod='')
     {
     	global $conf;
     	
@@ -167,6 +168,7 @@ class Form
     	{
     		// Use for timestamp format
     		if ($type == 'datepicker') $out.= '<input id="timeStamp" type="hidden"/>';
+    		else if ($type == 'select' && ! empty($loadmethod)) $out.= '<input id="loadmethod" value="'.$loadmethod.'" type="hidden"/>';
     		
     		$out.= '<div class="edit_'.$type.'" id="'.$htmlname.'">';
     		$out.= $value;

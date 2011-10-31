@@ -138,12 +138,14 @@ $(document).ready(function() {
 		loadurl		: urlLoadInPlace,
 		loaddata	: {
 			type: 'select',
+			method: $('#loadmethod').val(),
 			element: element,
 			table_element: table_element,
 			fk_element: fk_element
 		},
 		submitdata	: {
 			type: 'select',
+			method: $('#loadmethod').val(),
 			element: element,
 			table_element: table_element,
 			fk_element: fk_element

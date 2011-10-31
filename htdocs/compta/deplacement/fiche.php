@@ -345,7 +345,7 @@ else if ($id)
 			
 			// Type
 			print '<tr><td>'.$langs->trans("Type").'</td><td>';
-			print $form->editInPlace($langs->trans($object->type), 'type', $user->rights->deplacement->creer, 'select');
+			print $form->editInPlace($langs->trans($object->type), 'type', $user->rights->deplacement->creer, 'select', 'types_fees');
 			//print $langs->trans($object->type);
 			print '</td></tr>';
 

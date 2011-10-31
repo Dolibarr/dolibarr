@@ -22,7 +22,7 @@
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
@@ -51,7 +51,6 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	$fk_element		= GETPOST('fk_element');
 	$value			= GETPOST('value');
 	$type			= GETPOST('type');
-	$timestamp		= GETPOST('timestamp');
 	
 	$format='text';
 	$return=array();
@@ -65,6 +64,7 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 		
 		// Clean parameters
 		$newvalue = trim($value);
+		
 		if ($type == 'numeric')
 		{
 			$newvalue = price2num($newvalue);
@@ -78,8 +78,22 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 		}
 		else if ($type == 'datepicker')
 		{
-			$format = 'date';
-			$newvalue = ($timestamp / 1000);
+			$timestamp	= GETPOST('timestamp');
+			$format		= 'date';
+			$newvalue	= ($timestamp / 1000);
+		}
+		else if ($type == 'select')
+		{
+			$methodname	= 'load_cache_'.GETPOST('method');
+			$cachename	= 'cache_'.GETPOST('method');
+				
+			$form = new Form($db);
+			$ret = $form->$methodname();
+			if ($ret > 0)
+			{
+				$cache = $form->$cachename;
+				$value = $cache[$newvalue];
+			}
 		}
 		
 		if (! $error)
