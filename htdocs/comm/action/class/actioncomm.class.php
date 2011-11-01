@@ -34,6 +34,7 @@ class ActionComm extends CommonObject
 {
 	public $element='action';
 	public $table_element = 'actioncomm';
+	public $table_rowid = 'id';
 	protected $ismultientitymanaged = 2;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $type_id;
@@ -82,7 +83,8 @@ class ActionComm extends CommonObject
 
     /**
      *      Constructor
-     *      @param      db      Database handler
+     *
+     *      @param		DoliDB		$db      Database handler
      */
     function ActionComm($db)
     {
@@ -123,12 +125,13 @@ class ActionComm extends CommonObject
 
 		if (! $this->type_id && $this->type_code)
 		{
-			// Get id from code
-			$cactioncomm=new CActionComm($this->db);
-			$result=$cactioncomm->fetch($this->type_code);
-					if ($result > 0)
+		    // Get id from code
+		    $cactioncomm=new CActionComm($this->db);
+		    $result=$cactioncomm->fetch($this->type_code);
+
+			if ($result > 0)
 			{
-				$this->type_id=$cactioncomm->id;
+			    $this->type_id=$cactioncomm->id;
 			}
 			else if ($result == 0)
 			{
@@ -148,7 +151,6 @@ class ActionComm extends CommonObject
 			$this->error="ErrorWrongParameters";
 			return -1;
 		}
-
 
 		$this->db->begin();
 
@@ -877,6 +879,31 @@ class ActionComm extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	*  Initialise an instance with random values.
+	*  Used to build previews or test instances.
+	*	id must be 0 if object instance is a specimen.
+	*
+	*  @return	void
+	*/
+	function initAsSpecimen()
+	{
+	    global $user,$langs,$conf;
+
+	    $now=dol_now();
+
+	    // Initialise parametres
+	    $this->id=0;
+	    $this->specimen=1;
+
+	    $this->type_code='AC_OTH';
+	    $this->label='Event Specimen';
+	    $this->note = 'Note';
+	    $this->location='Location';
+	    $this->datep=$now;
+	    $this->datef=$now;
 	}
 
 }

@@ -589,10 +589,10 @@ abstract class CommonObject
 
 		return $result;
 	}
-	
+
 	/**
 	 *	Load value from specific field
-	 *	
+	 *
 	 *	@param	string	$table		Table of element or element line
 	 *	@param	int		$id			Element id
 	 *	@param	string	$field		Field selected
@@ -601,17 +601,17 @@ abstract class CommonObject
 	function getValueFrom($table, $id, $field)
 	{
 		$result=false;
-	
+
 		$sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
 		$sql.= " WHERE rowid = ".$id;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$row = $this->db->fetch_row($resql);
 			$result = $row[0];
 		}
-	
+
 		return $result;
 	}
 
@@ -628,7 +628,7 @@ abstract class CommonObject
 	function setValueFrom($table, $id, $field, $value, $format='text')
 	{
 		global $conf;
-		
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
@@ -1070,6 +1070,38 @@ abstract class CommonObject
 				$row = $this->db->fetch_row($resql);
 				return $row[0];
 			}
+		}
+	}
+
+	/**
+	 *  Update private note of element
+	 *
+	 *  @param      string		$ref_ext	Update field ref_ext
+	 *  @return     int      		   		<0 if KO, >0 if OK
+	 */
+	function update_ref_ext($ref_ext)
+	{
+		if (! $this->table_element)
+		{
+			dol_syslog(get_class($this)."::update_ref_ext was called on objet with property table_element not defined", LOG_ERR);
+			return -1;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " SET ref_ext = '".$this->db->escape($ref_ext)."'";
+		$sql.= " WHERE ".(isset($this->table_rowid)?$this->table_rowid:'rowid')." = ". $this->id;
+
+		dol_syslog(get_class($this)."::update_ref_ext sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->ref_ext = $ref_ext;
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog(get_class($this)."::update_ref_ext error=".$this->error, LOG_ERR);
+			return -1;
 		}
 	}
 
