@@ -381,7 +381,18 @@ if (! defined('NOLOGIN'))
 			{
 				$dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
 				$dol_tz=$_POST["tz"];
-				$dol_dst=$_POST["dst"];
+				$dol_dst=0;
+				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
+				{
+                    $datenow=dol_now();
+                    $datefirst=dol_stringtotime($_POST["dst_first"]);
+                    $datesecond=dol_stringtotime($_POST["dst_second"]);
+                    if ($datenow >= $datefirst && $datenow < $datesecond) $dol_dst=1;
+				}
+				//print $datefirst.'-'.$datesecond.'-'.$datenow; exit;
+				$dol_dst_observed=$_POST["dst_observed"];
+				$dol_dst_first=$_POST["dst_first"];
+				$dol_dst_second=$_POST["dst_second"];
 				$dol_screenwidth=$_POST["screenwidth"];
 				$dol_screenheight=$_POST["screenheight"];
 			}
@@ -515,6 +526,9 @@ if (! defined('NOLOGIN'))
 		$_SESSION["dol_authmode"]=isset($dol_authmode)?$dol_authmode:'';
 		$_SESSION["dol_tz"]=isset($dol_tz)?$dol_tz:'';
 		$_SESSION["dol_dst"]=isset($dol_dst)?$dol_dst:'';
+		$_SESSION["dol_dst_observed"]=isset($dol_dst_observed)?$dol_dst_observed:'';
+		$_SESSION["dol_dst_first"]=isset($dol_dst_first)?$dol_dst_first:'';
+		$_SESSION["dol_dst_second"]=isset($dol_dst_second)?$dol_dst_second:'';
 		$_SESSION["dol_screenwidth"]=isset($dol_screenwidth)?$dol_screenwidth:'';
 		$_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
 		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -978,14 +992,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/js/ColVis.min'.$ext.'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/js/TableTools.min'.$ext.'"></script>'."\n";
             }
-            
+
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js"></script>'."\n";
-            
+
             // Add datepicker default options
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
-            
+
             // Output module javascript
             if (is_array($arrayofjs))
             {

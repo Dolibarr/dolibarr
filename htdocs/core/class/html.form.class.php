@@ -142,7 +142,7 @@ class Form
         }
         return $ret;
     }
-    
+
     /**
      *	Output edit in place form
      *
@@ -156,14 +156,14 @@ class Form
     function editInPlace($value, $htmlname, $condition, $inputType='textarea', $inputOption='')
     {
     	global $conf;
-    	
+
     	$out='';
-    	
+
     	// Check parameters
     	if ($inputType == 'textarea') $value = dol_nl2br($value);
     	else if ($inputType == 'numeric') $value = price($value);
     	else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
-    	
+
     	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $condition)
     	{
     		if ($inputType == 'datepicker')
@@ -185,7 +185,7 @@ class Form
     				$inputType = 'textarea';
     			}
     		}
-    		
+
     		$out.= '<div class="edit_'.$inputType.'" id="'.$htmlname.'">';
     		$out.= $value;
     		$out.= '</div>';
@@ -194,7 +194,7 @@ class Form
     	{
     		$out = $value;
     	}
-    	
+
     	return $out;
     }
 
@@ -355,11 +355,11 @@ class Form
                 }
 
                 array_multisort($label, SORT_ASC, $countryArray);
-                
+
                 foreach ($countryArray as $row)
                 {
 					//print 'rr'.$selected.'-'.$row['label'].'-'.$row['code_iso'].'<br>';
-                	if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['label']) ) 
+                	if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['label']) )
                 	{
                 		$foundselected=true;
                         $out.= '<option value="'.$row['rowid'].'" selected="selected">';
@@ -537,7 +537,7 @@ class Form
         }
 
     }
-    
+
     /**
      *	Load into cache cache_types_fees, array of types of fees
      *
@@ -547,26 +547,26 @@ class Form
     function load_cache_types_fees()
     {
     	global $langs;
-    	
+
     	$langs->load("trips");
-    	
+
     	if (count($this->cache_types_fees)) return 0;    // Cache already load
-    
+
     	$sql = "SELECT c.code, c.libelle as label";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
     	$sql.= " ORDER BY lower(c.libelle) ASC";
-    	
+
     	dol_syslog(get_class($this).'::load_cache_types_fees sql='.$sql, LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
     		$num = $this->db->num_rows($resql);
     		$i = 0;
-    		
+
     		while ($i < $num)
     		{
     			$obj = $this->db->fetch_object($resql);
-    		
+
     			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
     			$label=($obj->code != $langs->trans($obj->code) ? $langs->trans($obj->code) : $langs->trans($obj->label));
     			$this->cache_types_fees[$obj->code] = $label;
@@ -592,9 +592,9 @@ class Form
     function select_type_fees($selected='',$htmlname='type',$showempty=0)
     {
         global $user, $langs;
-        
+
         dol_syslog(get_class($this)."::select_type_fees ".$selected.", ".$htmlname, LOG_DEBUG);
-        
+
         $this->load_cache_types_fees();
 
         print '<select class="flat" name="'.$htmlname.'">';
@@ -604,7 +604,7 @@ class Form
             if ($selected == -1) print ' selected="selected"';
             print '>&nbsp;</option>';
         }
-        
+
         foreach($this->cache_types_fees as $key => $value)
         {
         	print '<option value="'.$key.'"';

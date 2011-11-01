@@ -828,11 +828,11 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
  *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
  *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
- *		                		19700101020000 -> 7200
  *  @param	int		$gm         1=Input date is GM date, 0=Input date is local date
+ *		                		19700101020000 -> 7200 with gm=1
  *  @return	date				Date
  *
- *  @see        dol_print_date, dol_mktime, dol_getdate
+ *  @see    dol_print_date, dol_mktime, dol_getdate
  */
 function dol_stringtotime($string, $gm=1)
 {

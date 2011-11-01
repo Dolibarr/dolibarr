@@ -553,16 +553,15 @@ if (count($listofextcals))
                     $event->id=$icalevent['UID'];
                     $event->icalname=$namecal;
                     $event->icalcolor=$colorcal;
-                    //$usertime=($_SESSION['dol_tz']*60*60)+($_SESSION['dol_dst']*60*60);
                     $usertime=0;    // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
                     $event->datep=$datestart+$usertime;
                     $event->datef=$dateend+$usertime;
                     $event->type_code="ICALEVENT";
-                    
+
                     if($icalevent['SUMMARY']) $event->libelle=$icalevent['SUMMARY'];
                     elseif($icalevent['DESCRIPTION']) $event->libelle=dol_nl2br($icalevent['DESCRIPTION'],1);
 					else $event->libelle = $langs->trans("ExtSiteNoLabel");
-                    
+
 					$event->date_start_in_calendar=$event->datep;
 
                     if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
