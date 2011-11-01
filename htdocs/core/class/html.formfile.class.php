@@ -130,24 +130,24 @@ class FormFile
     /**
      *      Show the box with list of available documents for object
      *
-     *      @param      modulepart          propal, facture, facture_fourn, ...
-     *      @param      filename            Sub dir to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if filedir already complete)
-     *      @param      filedir             Dir to scan
-     *      @param      urlsource           Url of origin page (for return)
-     *      @param      genallowed          Generation is allowed (1/0 or array of formats)
-     *      @param      delallowed          Remove is allowed (1/0)
-     *      @param      modelselected       Model to preselect by default
-     *      @param      allowgenifempty		Show warning if no model activated
-     *      @param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
-     *      @param      iconPDF             Show only PDF icon with link (1/0)
-     * 		@param		maxfilenamelength	Max length for filename shown
-     * 		@param		noform				Do not output html form tags
-     * 		@param		param				More param on http links
-     * 		@param		title				Title to show on top of form
-     * 		@param		buttonlabel			Label on submit button
-     * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
-     * 		@param		hookmanager			Object hook of external modules
-     * 		@return		int					<0 if KO, number of shown files if OK
+     *      @param      string				$modulepart         propal, facture, facture_fourn, ...
+     *      @param      string				$filename           Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
+     *      @param      string				$filedir            Directory to scan
+     *      @param      string				$urlsource          Url of origin page (for return)
+     *      @param      int					$genallowed         Generation is allowed (1/0 or array of formats)
+     *      @param      int					$delallowed         Remove is allowed (1/0)
+     *      @param      string				$modelselected      Model to preselect by default
+     *      @param      string				$allowgenifempty	Show warning if no model activated
+     *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+     *      @param      int					$iconPDF            Show only PDF icon with link (1/0)
+     * 		@param		int					$maxfilenamelength	Max length for filename shown
+     * 		@param		string				$noform				Do not output html form tags
+     * 		@param		string				$param				More param on http links
+     * 		@param		string				$title				Title to show on top of form
+     * 		@param		string				$buttonlabel		Label on submit button
+     * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
+     * 		@param		HookManager			$hookmanager		Object hookmanager with instance of external modules hook classes
+     * 		@return		int										<0 if KO, number of shown files if OK
      */
     function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hookmanager=false)
     {
@@ -160,24 +160,24 @@ class FormFile
      *      Return a string to show the box with list of available documents for object.
      *      This also set the property $this->numoffiles
      *
-     *      @param      modulepart          propal, facture, facture_fourn, ...
-     *      @param      filename            Sub dir to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if filedir already complete)
-     *      @param      filedir             Dir to scan
-     *      @param      urlsource           Url of origin page (for return)
-     *      @param      genallowed          Generation is allowed (1/0 or array of formats)
-     *      @param      delallowed          Remove is allowed (1/0)
-     *      @param      modelselected       Model to preselect by default
-     *      @param      allowgenifempty		Show warning if no model activated
-     *      @param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
-     *      @param      iconPDF             Show only PDF icon with link (1/0)
-     * 		@param		maxfilenamelength	Max length for filename shown
-     * 		@param		noform				Do not output html form tags
-     * 		@param		param				More param on http links
-     * 		@param		title				Title to show on top of form
-     * 		@param		buttonlabel			Label on submit button
-     * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
-     * 		@param		hookmanager			Object hookmanager with instance of external modules hook classes
-     * 		@return		string              Output string.
+     *      @param      string				$modulepart         propal, facture, facture_fourn, ...
+     *      @param      string				$filename           Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
+     *      @param      string				$filedir            Directory to scan
+     *      @param      string				$urlsource          Url of origin page (for return)
+     *      @param      int					$genallowed         Generation is allowed (1/0 or array of formats)
+     *      @param      int					$delallowed         Remove is allowed (1/0)
+     *      @param      string				$modelselected      Model to preselect by default
+     *      @param      string				$allowgenifempty	Show warning if no model activated
+     *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+     *      @param      int					$iconPDF            Show only PDF icon with link (1/0)
+     * 		@param		int					$maxfilenamelength	Max length for filename shown
+     * 		@param		string				$noform				Do not output html form tags
+     * 		@param		string				$param				More param on http links
+     * 		@param		string				$title				Title to show on top of form
+     * 		@param		string				$buttonlabel		Label on submit button
+     * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
+     * 		@param		HookManager			$hookmanager		Object hookmanager with instance of external modules hook classes
+     * 		@return		string              					Output string with HTML array of documents (might be empty string)
      */
     function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hookmanager=false)
     {
@@ -213,7 +213,6 @@ class FormFile
         if ($genallowed)
         {
             $modellist=array();
-            $cgvlist=array();
 
             if ($modulepart == 'company')
             {
@@ -277,17 +276,6 @@ class FormFile
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
                     $modellist=ModelePDFFactures::liste_modeles($this->db);
-
-                    // This is to allow to join external files to invoices
-                    if (! empty($conf->concatpdf->enabled))
-                    {
-                        $filescgv=glob($conf->concatpdf->dir_output."/invoices/*.pdf");
-                        if ($filescgv) {
-                            foreach ($filescgv as $cgvfilename) {
-                                $cgvlist[] = basename($cgvfilename, ".pdf");
-                            }
-                        }
-                    }
                 }
             }
             elseif ($modulepart == 'project')
@@ -394,10 +382,6 @@ class FormFile
                     $modelselected=$arraykeys[0];
                 }
                 $out.= $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
-                if (count($cgvlist) > 0)
-                {
-                    $out.= $html->selectarray('cgv',$cgvlist,"-1",1,0,1);
-                }
                 $out.= '</td>';
             }
             else

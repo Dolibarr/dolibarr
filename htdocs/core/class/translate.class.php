@@ -146,15 +146,14 @@ class Translate {
      *  tab_loaded is completed with $domain key.
      *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
      *
-	 *  @param      domain      		File name to load (.lang file). Must be "file" or "file@module" if file is in a module directory.
- 	 *									If $domain is "file@module" instead of "file" then we look for module lang file
-	 *									in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
-	 *									and in htdocs/mymodule/langs/code_CODE/file.lang for backward compatibility
-	 *									instead of file htdocs/langs/code_CODE/file.lang
-	 *  @param      alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
-	 * 	@param		stopafterdirection	Stop when the DIRECTION tag is found (optimize)
-	 * 	@param		forcelangdir		To force a lang directory
-	 *	@return		int					<0 if KO, 0 if already loaded, >0 if OK
+	 *  @param	string	$domain      		File name to load (.lang file). Must be "file" or "file@module" for module language files:
+ 	 *										If $domain is "file@module" instead of "file" then we look for module lang file
+	 *										in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
+	 *										then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
+	 *  @param	string	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
+	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
+	 * 	@param	int		$forcelangdir		To force a different lang directory
+	 *	@return	int							<0 if KO, 0 if already loaded, >0 if OK
 	 */
 	function Load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
 	{
