@@ -491,9 +491,10 @@ function dol_syslog($message, $level=LOG_INFO)
             {
                 // Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once() a constant from
                 // database or config file because we must be able to log data before database or config file read.
+			    $oldinclude=get_include_path();
                 set_include_path('/usr/share/php/');
                 require_once('FirePHPCore/FirePHP.class.php');
-                restore_include_path();
+                set_include_path($oldinclude);
                 ob_start();
                 $firephp = FirePHP::getInstance(true);
                 if ($level == LOG_ERR) $firephp->error($message);
