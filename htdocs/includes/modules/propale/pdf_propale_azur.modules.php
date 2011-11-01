@@ -455,7 +455,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY(82, $posy);
-			$lib_availability=$outputlangs->transnoentities("AvailabilityPeriod".$object->availability_code)!=('AvailabilityPeriod'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityPeriod".$object->availability_code):$outputlangs->convToOutputCharset($object->availability);
+			$lib_availability=$outputlangs->transnoentities("AvailabilityType".$object->availability_code)!=('AvailabilityType'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityType".$object->availability_code):$outputlangs->convToOutputCharset($object->availability);
 			$lib_availability=str_replace('\n',"\n",$lib_availability);
 			$pdf->MultiCell(80, 4, $lib_availability,0,'L');
 
