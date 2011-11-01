@@ -422,23 +422,25 @@ if ($modulepart)
 	else
 	{
 		// Define $accessallowed
-		$subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
-		if (! empty($conf->global->$subPermCategoryConstName)) $subPermCategory = $conf->global->$subPermCategoryConstName;
-		if (empty($subPermCategory) && (($user->rights->$modulepart->lire) || ($user->rights->$modulepart->read) || ($user->rights->$modulepart->download)))
+		if (($user->rights->$modulepart->lire) || ($user->rights->$modulepart->read) || ($user->rights->$modulepart->download)) $accessallowed=1;	// No subpermission, we have checked on main permission
+		elseif (preg_match('/^specimen/i',$original_file))	$accessallowed=1;    // If link to a specimen
+ 		elseif ($user->admin) $accessallowed=1;    // If user is admin
+
+ 		// For modules who wants to manage different levels of permissions for documents
+	    $subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
+		if (! empty($conf->global->$subPermCategoryConstName))
 		{
-			$accessallowed=1;	// No subpermission, we have checked on main permission
+		    $subPermCategory = $conf->global->$subPermCategoryConstName;
+    		if (! empty($subPermCategory) && (($user->rights->$modulepart->$subPermCategory->lire) || ($user->rights->$modulepart->$subPermCategory->read) || ($user->rights->$modulepart->$subPermCategory->download)))
+    		{
+    		    $accessallowed=1;
+    		}
 		}
-		elseif (! empty($subPermCategory) && (($user->rights->$modulepart->$subPermCategory->lire) || ($user->rights->$modulepart->$subPermCategory->read) || ($user->rights->$modulepart->$subPermCategory->download)))
-		{
-			$accessallowed=1;	// There is subpermission supported, we have checked on them
-		}
- 		elseif (preg_match('/^specimen/i',$original_file))	// If link to a specimen
- 		{
-			$accessallowed=1;
- 		}
+
  		// Define $original_file
  		$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
- 		// Define $sqlprotectagainstexternals
+
+ 		// Define $sqlprotectagainstexternals for modules who want to protect access using a SQL query.
  		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
 		if (! empty($conf->global->$sqlProtectConstName))	// If module want to define its own $sqlprotectagainstexternals
 		{
