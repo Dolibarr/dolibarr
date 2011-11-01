@@ -32,6 +32,7 @@ For developers:
 - New: Add webservice to get or create a prodcut or service.
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
+- New: Add trigger ACTION_DELETE and ACTION_MODIFY
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.
 - Qual: Cleaned a lot of dead code.

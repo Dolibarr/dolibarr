@@ -59,7 +59,7 @@ class Interfaces
         // Check parameters
         if (! is_object($object) || ! is_object($conf))	// Error
         {
-            dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERROR);
+            dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERR);
             return -1;
         }
         if (! is_object($user) || ! is_object($langs))	// Warning
@@ -154,7 +154,7 @@ class Interfaces
                         }
                         else
                         {
-                            dol_syslog("Interfaces::run_triggers action=".$action." Failed to instantiate trigger for file '".$file."'",LOG_ERROR);
+                            dol_syslog("Interfaces::run_triggers action=".$action." Failed to instantiate trigger for file '".$file."'",LOG_ERR);
                         }
                     }
                 }

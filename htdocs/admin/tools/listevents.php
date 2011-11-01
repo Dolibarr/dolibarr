@@ -92,7 +92,7 @@ if ($_REQUEST['action'] == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $
 	else
 	{
 		$error++;
-		dol_syslog($securityevent->error, LOG_ERROR);
+		dol_syslog($securityevent->error, LOG_ERR);
 		$db->rolback();
 	}
 }
