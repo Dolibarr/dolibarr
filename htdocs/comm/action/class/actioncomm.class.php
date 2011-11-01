@@ -228,7 +228,7 @@ class ActionComm extends CommonObject
     /**
      *    Load object from database
      *
-     *    @param	int		$id     id de l'action a recuperer
+     *    @param	int		$id     Id of action to get
      *    @return	int				<0 if KO, >0 if OK
      */
     function fetch($id)
@@ -236,8 +236,8 @@ class ActionComm extends CommonObject
         global $langs;
 
         $sql = "SELECT a.id,";
-        $sql.= " a.id as ref";
-        $sql.= " a.ref_ext";
+        $sql.= " a.id as ref,";
+        $sql.= " a.ref_ext,";
         $sql.= " a.datep,";
         $sql.= " a.datep2,";
         $sql.= " a.datec,";

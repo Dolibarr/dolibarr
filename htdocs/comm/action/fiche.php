@@ -579,7 +579,7 @@ if ($action == 'create')
 
 	// Priority
 	print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-	print '<input type="text" name="priority" value="'.($_POST["priority"]?$_POST["priority"]:$actioncomm->priority).'" size="5">';
+	print '<input type="text" name="priority" value="'.($_POST["priority"]?$_POST["priority"]:($actioncomm->priority?$actioncomm->priority:'')).'" size="5">';
 	print '</td></tr>';
 
 	add_row_for_calendar_link();
@@ -700,6 +700,7 @@ if ($id)
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="ref_ext" value="'.$act->ref_ext.'">';
 		if (GETPOST("backtopage")) print '<input type="hidden" name="backtopage" value="'.(GETPOST("backtopage") ? GETPOST("backtopage") : $_SERVER["HTTP_REFERER"]).'">';
 
 		print '<table class="border" width="100%">';
@@ -787,7 +788,7 @@ if ($id)
 
 		// Priority
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-		print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
+		print '<input type="text" name="priority" value="'.($act->priority?$act->priority:'').'" size="5">';
 		print '</td></tr>';
 
 		// Object linked
@@ -949,7 +950,7 @@ if ($id)
 
 		// Priority
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-		print $act->priority;
+		print ($act->priority?$act->priority:'');
 		print '</td></tr>';
 
 		// Object linked
