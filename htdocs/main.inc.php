@@ -76,6 +76,7 @@ function test_sql_and_script_inject($val,$get)
 	$sql_inj += preg_match('/(\.\.%2f)+/i', $val);
 	// For XSS Injection done by adding javascript with script
 	$sql_inj += preg_match('/<script/i', $val);
+	if ($get) $sql_inj += preg_match('/javascript:/i', $val);
 	// For XSS Injection done by adding javascript with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($get) $sql_inj += preg_match('/"/i', $val);	// We refused " in GET parameters value
 	return $sql_inj;
@@ -751,11 +752,11 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	if (GETPOST('action') == 'switchentity' && $user->admin && ! $user->entity)
 	{
 		$res = @dol_include_once("/multicompany/class/actions_multicompany.class.php");
-		
+
 		if ($res)
 		{
 			$mc = new ActionsMulticompany($db);
-	
+
 			if($mc->switchEntity(GETPOST('entity')) > 0)
 			{
 				Header("Location: ".DOL_URL_ROOT.'/');
@@ -872,7 +873,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         // Output style sheets (optioncss='print' or '')
         $themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
         //print 'themepath='.$themepath;exit;
-		print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'').'">'."\n";
+		print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss','alpha',1):'').'">'."\n";
 		// CSS forced by modules (relative url starting with /)
 		if (is_array($conf->css_modules))
 		{
@@ -880,7 +881,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{	// cssfile is an absolute path
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
-				if (!preg_match('/\.css$/i',$cssfile)) print '?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'');
+				if (!preg_match('/\.css$/i',$cssfile)) print '?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss','alpha',1):'');
 				print '">'."\n";
 			}
 		}
@@ -891,7 +892,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
-				if (!preg_match('/\.css$/i',$cssfile)) print '?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'');
+				if (!preg_match('/\.css$/i',$cssfile)) print '?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss','alpha',1):'');
 				print '">'."\n";
 			}
 		}
