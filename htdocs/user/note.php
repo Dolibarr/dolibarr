@@ -26,7 +26,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
 
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $action = GETPOST('action');
 
 $langs->load("companies");

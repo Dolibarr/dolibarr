@@ -36,6 +36,11 @@ if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 if (! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
+$id			= GETPOST('id','int');
+$action		= GETPOST("action");
+$group		= GETPOST("group","int",3);
+$confirm	= GETPOST("confirm");
+
 // Define value to know what current user can do on users
 $canadduser=($user->admin || $user->rights->user->user->creer);
 $canreaduser=($user->admin || $user->rights->user->user->lire);
@@ -48,18 +53,6 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
     $canreadgroup=($user->admin || $user->rights->user->group_advance->read);
     $caneditgroup=($user->admin || $user->rights->user->group_advance->write);
 }
-
-//Multicompany in mode transversal
-if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-{
-    accessforbidden();
-}
-
-$id			= GETPOST("id");
-$action		= GETPOST("action");
-$group		= GETPOST("group","int",3);
-$confirm	= GETPOST("confirm");
-
 // Define value to know what current user can do on properties of edited user
 if ($id)
 {
@@ -68,6 +61,12 @@ if ($id)
     || (($user->id != $id) && $user->rights->user->user->creer) );
     $caneditpassword=( (($user->id == $id) && $user->rights->user->self->password)
     || (($user->id != $id) && $user->rights->user->user->password) );
+}
+
+//Multicompany in mode transversal
+if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+{
+    accessforbidden();
 }
 
 // Security check
@@ -337,7 +336,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             {
             	$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
             }
-        
+
             if (GETPOST('deletephoto')) $edituser->photo='';
             if (! empty($_FILES['photo']['name'])) $edituser->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
@@ -409,6 +408,8 @@ if ($action == 'update' && ! $_POST["cancel"])
     {
         $edituser = new User($db);
         $edituser->fetch($id);
+
+        $edituser->oldcopy=dol_clone($edituser);
 
         $ret=$edituser->setPassword($user,$_POST["password"]);
         if ($ret < 0)
@@ -509,7 +510,7 @@ if ($action == 'adduserldap')
 
 
 /*
- * Affichage page
+ * View
  */
 
 llxHeader('',$langs->trans("UserCard"));
@@ -860,9 +861,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '<td><input size="30" type="text" name="phenix_pass" value="'.$_POST["phenix_pass"].'"></td></tr>';
     }
  	print "</table>\n";
- 
+
     print '<center><br><input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit"></center>';
-    
+
     print "</form>";
 }
 else
@@ -923,9 +924,7 @@ else
             }
         }
 
-        /*
-         * Affichage onglets
-         */
+        // Show tabs
         $head = user_prepare_head($fuser);
 
         $title = $langs->trans("User");

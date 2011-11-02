@@ -35,7 +35,7 @@ $langs->load("languages");
 // Defini si peux lire/modifier permisssions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $action = GETPOST('action');
 
 if ($id)
