@@ -36,7 +36,7 @@ $langs->load("companies");
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+$sall=GETPOST('sall','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');

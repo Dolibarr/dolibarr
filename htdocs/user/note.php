@@ -26,8 +26,8 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
 
-$action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["action"]:"");
-$id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
+$id = GETPOST('id');
+$action = GETPOST('action');
 
 $langs->load("companies");
 $langs->load("members");
@@ -57,7 +57,7 @@ $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
+if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
 {
 	$db->begin();
 
