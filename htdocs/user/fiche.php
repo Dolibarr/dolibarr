@@ -362,6 +362,8 @@ if ($action == 'update' && ! $_POST["cancel"])
         $edituser = new User($db);
         $edituser->fetch($_GET["id"]);
 
+        $edituser->oldcopy=dol_clone($edituser);
+
         $ret=$edituser->setPassword($user,$_POST["password"]);
         if ($ret < 0)
         {
