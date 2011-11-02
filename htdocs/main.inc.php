@@ -516,7 +516,7 @@ if (! defined('NOLOGIN'))
 	}
 
 	// Is it a new session that has started ?
-	// If we are here this means authentication was successfull.
+	// If we are here, this means authentication was successfull.
 	if (! isset($_SESSION["dol_login"]))
 	{
 		$error=0;
@@ -576,34 +576,14 @@ if (! defined('NOLOGIN'))
 			$entityCookie->_setCookie($entityCookieName, $entity, $ttl);
 		}
 
-		// Module webcalendar
-		if (! empty($conf->webcalendar->enabled) && $user->webcal_login != "")
-		{
-			$domain='';
-
-			// Creation of a cookie to save login
-			$cookiename='webcalendar_login';
-			if (! isset($_COOKIE[$cookiename]))
-			{
-				setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
-			}
-			// Creation of a cookie to save session
-			$cookiename='webcalendar_session';
-			if (! isset($_COOKIE[$cookiename]))
-			{
-				setcookie($cookiename, 'TODO', 0, "/", $domain, 0);
-			}
-		}
-
-		// Module Phenix
-		if (! empty($conf->phenix->enabled) && $user->phenix_login != "" && $conf->phenix->cookie)
-		{
-			// Creation du cookie permettant la connexion automatique, valide jusqu'a la fermeture du browser
-			if (!isset($_COOKIE[$conf->phenix->cookie]))
-			{
-				setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
-			}
-		}
+        // Hooks on successfull login
+        $action='';
+        include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+        $hookmanager=new HookManager($db);
+        $hookmanager->callHooks(array('login'));
+        $parameters=array('dol_authmode'=>$dol_authmode);
+        $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) $error++;
 	}
 
 
