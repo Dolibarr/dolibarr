@@ -33,7 +33,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 $langs->load("users");
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+$sall=GETPOST("sall");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -68,9 +68,9 @@ else
 }
 if ($_POST["search_group"])
 {
-    $sql .= " AND (g.nom LIKE '%".$_POST["search_group"]."%' OR g.note LIKE '%".$_POST["search_group"]."%')";
+    $sql .= " AND (g.nom LIKE '%".$db->escape($_POST["search_group"])."%' OR g.note LIKE '%".$db->escape($_POST["search_group"])."%')";
 }
-if ($sall) $sql.= " AND (g.nom LIKE '%".$sall."%' OR g.note LIKE '%".$sall."%')";
+if ($sall) $sql.= " AND (g.nom LIKE '%".$db->escape($sall)."%' OR g.note LIKE '%".$db->escape($sall)."%')";
 $sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -80,7 +80,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $param="search_group=$search_group&amp;sall=$sall";
+    $param="search_group=".$search_group."&amp;sall=".$sall;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
