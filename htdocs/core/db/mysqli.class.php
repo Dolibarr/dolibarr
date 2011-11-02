@@ -522,8 +522,8 @@ class DoliDBMysqli
                 if (! $return) $return.=' ORDER BY ';
                 else $return.=',';
 
-                $return.=$val;
-                if ($sortorder) $return.=' '.$sortorder;
+				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
+                if ($sortorder) $return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
             }
             return $return;
         }

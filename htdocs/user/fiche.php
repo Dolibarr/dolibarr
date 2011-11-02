@@ -36,6 +36,11 @@ if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 if (! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
+$id			= GETPOST('id','int');
+$action		= GETPOST("action");
+$group		= GETPOST("group","int",3);
+$confirm	= GETPOST("confirm");
+
 // Define value to know what current user can do on users
 $canadduser=($user->admin || $user->rights->user->user->creer);
 $canreaduser=($user->admin || $user->rights->user->user->lire);
@@ -48,18 +53,6 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
     $canreadgroup=($user->admin || $user->rights->user->group_advance->read);
     $caneditgroup=($user->admin || $user->rights->user->group_advance->write);
 }
-
-//Multicompany in mode transversal
-if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-{
-    accessforbidden();
-}
-
-$id			= GETPOST("id");
-$action		= GETPOST("action");
-$group		= GETPOST("group","int",3);
-$confirm	= GETPOST("confirm");
-
 // Define value to know what current user can do on properties of edited user
 if ($id)
 {
@@ -68,6 +61,12 @@ if ($id)
     || (($user->id != $id) && $user->rights->user->user->creer) );
     $caneditpassword=( (($user->id == $id) && $user->rights->user->self->password)
     || (($user->id != $id) && $user->rights->user->user->password) );
+}
+
+//Multicompany in mode transversal
+if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+{
+    accessforbidden();
 }
 
 // Security check
