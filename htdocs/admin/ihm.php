@@ -37,23 +37,21 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
 
-if (!$user->admin) accessforbidden();
+if (! $user->admin) accessforbidden();
+
+$action = GETPOST('action');
 
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
-$searchform=array(	"MAIN_SEARCHFORM_SOCIETE","MAIN_SEARCHFORM_CONTACT",
-					"MAIN_SEARCHFORM_PRODUITSERVICE","MAIN_SEARCHFORM_ADHERENT");
-$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,
-					$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT);
-$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),
-					$langs->trans("ProductsAndServices"),$langs->trans("Members"));
-$searchformmodule=array('Module1Name','Module1Name',
-					'Module50Name','Module310Name');
+$searchform=array("MAIN_SEARCHFORM_SOCIETE","MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE","MAIN_SEARCHFORM_ADHERENT");
+$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT);
+$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"),$langs->trans("Members"));
+$searchformmodule=array('Module1Name','Module1Name','Module50Name','Module310Name');
 
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update')
+if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"],'chaine',0,'',$conf->entity);
@@ -101,7 +99,7 @@ print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";
 
 
-if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
+if ($action == 'edit')	// Edit
 {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

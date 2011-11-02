@@ -32,10 +32,11 @@ $langs->load("admin");
 $langs->load("users");
 $langs->load("languages");
 
-$id=GETPOST('id','int');
-
 // Defini si peux lire/modifier permisssions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
+
+$id = GETPOST('id','int');
+$action = GETPOST('action');
 
 if ($id)
 {
@@ -55,7 +56,6 @@ if ($user->id == $id)	// A user can always read its own card
 }
 $result = restrictedArea($user, 'user', $id, '', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
-
 
 $dirtop = "../core/menus/standard";
 $dirleft = "../core/menus/standard";
@@ -77,13 +77,9 @@ $formadmin=new FormAdmin($db);
 /*
  * Actions
  */
-if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
+if ($action == 'update' && ($caneditfield  || $user->admin))
 {
-    if ($_POST["cancel"])
-    {
-        $_GET["id"]=$_POST["id"];
-    }
-    else
+    if (! $_POST["cancel"])
     {
         $tabparam=array();
 
@@ -106,7 +102,7 @@ if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
 
         $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST["id"]);
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
         exit;
     }
 }
@@ -152,7 +148,7 @@ if ($_GET["action"] == 'edit')
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+    print '<input type="hidden" name="id" value="'.$id.'">';
 
     clearstatcache();
     $var=true;
