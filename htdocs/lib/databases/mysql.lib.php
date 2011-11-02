@@ -494,6 +494,7 @@ class DoliDb
 
 	/**
 	 * Define sort criteria of request
+	 *
 	 * @param	    sortfield   List of sort fields
 	 * @param	    sortorder   Sort order
 	 * @return	    string      String to provide syntax of a sort sql string
@@ -510,8 +511,8 @@ class DoliDb
 				if (! $return) $return.=' ORDER BY ';
 				else $return.=',';
 
-				$return.=$val;
-				if ($sortorder) $return.=' '.$sortorder;
+				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
+				if ($sortorder) $return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
 			}
 			return $return;
 		}
