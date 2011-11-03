@@ -83,6 +83,7 @@ function test_sql_and_script_inject($val, $get)
 	$sql_inj += preg_match('/(\.\.%2f)+/i', $val);
 	// For XSS Injection done by adding javascript with script
     $sql_inj += preg_match('/<script/i', $val);
+    $sql_inj += preg_match('/img[\s]src/i', $val);
 	if ($get) $sql_inj += preg_match('/javascript:/i', $val);
 	// For XSS Injection done by adding javascript with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($get) $sql_inj += preg_match('/"/i', $val);	// We refused " in GET parameters value
