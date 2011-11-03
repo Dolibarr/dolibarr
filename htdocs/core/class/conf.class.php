@@ -112,7 +112,7 @@ class Conf
 		$sql = "SELECT ".$db->decrypt('name')." as name,";
 		$sql.= " ".$db->decrypt('value')." as value, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE entity IN (0,1,".$this->entity.")"; // 1 to herite configuration
+		$sql.= " WHERE entity IN (0,".$this->entity.")";
 		$sql.= " ORDER BY entity";	// This is to have entity 0 first, then entity 1 that overwrite.
 
 		$result = $db->query($sql);
