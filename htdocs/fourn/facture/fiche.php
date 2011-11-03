@@ -407,8 +407,8 @@ if ($_REQUEST['action'] == 'update_line')
             if (trim($_POST['label']) != trim($label)) $label=$_POST['label'];
 
             $type = $prod->type;
-            $localtax1_tx = $prod->localtax1_tx;
-            $localtax2_tx = $prod->localtax2_tx;
+            $localtax1tx = $prod->localtax1_tx;
+            $localtax2tx = $prod->localtax2_tx;
         }
         else
         {
@@ -468,7 +468,7 @@ if ($_GET['action'] == 'addline')
 
             $type = $product->type;
 
-            $result=$facfou->addline($label, $product->fourn_pu, $tvatx, $localtax2tx, $localtax2tx ,$_POST['qty'], $idprod);
+            $result=$facfou->addline($label, $product->fourn_pu, $tvatx, $localtax1tx, $localtax2tx ,$_POST['qty'], $idprod);
         }
         if ($idprod == -1)
         {
