@@ -37,7 +37,7 @@ $langs->load('projects');
 $langs->load('propal');
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
@@ -226,7 +226,6 @@ if ($socid > 0)
 	{
 		$propal_static=new Propal($db);
 
-		print '<table class="noborder" width="100%">';
 		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql.= " p.datep as dp, p.fin_validite as datelimite,";
 		$sql.= " c.label as statut, c.id as statutid";
@@ -248,7 +247,8 @@ if ($socid > 0)
 
 			if ($num > 0)
 			{
-    			print '<tr class="liste_titre">';
+		        print '<table class="noborder" width="100%">';
+			    print '<tr class="liste_titre">';
     			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
     			print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table></td>';
@@ -273,13 +273,14 @@ if ($socid > 0)
 				$i++;
 			}
 			$db->free();
+
+			if ($num > 0) print "</table>";
 		}
 		else
 		{
 			dol_print_error($db);
 		}
 
-		print "</table>";
 	}
 
 	print "</td></tr>";

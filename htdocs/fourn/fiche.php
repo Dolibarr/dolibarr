@@ -253,11 +253,12 @@ if ( $societe->fetch($socid) )
 		{
 			$i = 0 ;
 			$num = $db->num_rows($resql);
-			print '<table class="noborder" width="100%">';
 
 			if ($num > 0)
 			{
-    			print '<tr class="liste_titre">';
+			    print '<table class="noborder" width="100%">';
+
+			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
     			print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td>';
@@ -288,7 +289,8 @@ if ( $societe->fetch($socid) )
 				$i++;
 			}
 			$db->free($resql);
-			print "</table>";
+
+			if ($num >0) print "</table>";
 		}
 		else
 		{
@@ -318,10 +320,11 @@ if ( $societe->fetch($socid) )
 		{
 			$i = 0 ;
 			$num = $db->num_rows($resql);
-			print '<table class="noborder" width="100%">';
 			if ($num > 0)
 			{
-    			print '<tr class="liste_titre">';
+			    print '<table class="noborder" width="100%">';
+
+			    print '<tr class="liste_titre">';
     			print '<td colspan="4">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
@@ -345,7 +348,7 @@ if ( $societe->fetch($socid) )
 				$i++;
 			}
 			$db->free($resql);
-			print '</table>';
+			if ($num > 0) print '</table>';
 		}
 		else
 		{

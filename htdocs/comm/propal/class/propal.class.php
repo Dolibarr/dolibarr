@@ -495,14 +495,14 @@ class Propal extends CommonObject
 			$staticline=new PropaleLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
-			
+
 			// Reorder if fk_parent_line change
 			if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
 			{
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
 			}
-			
+
 			$this->line->rowid				= $rowid;
 			$this->line->desc				= $desc;
 			$this->line->qty				= $qty;
@@ -530,7 +530,7 @@ class Propal extends CommonObject
 			{
 				// Reorder if child line
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
-				
+
 				$this->update_price(1);
 
 				$this->fk_propal = $this->id;
@@ -2265,10 +2265,11 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Renvoie la reference de propale suivante non utilisee en fonction du module
-	 *                  de numerotation actif defini dans PROPALE_ADDON
-	 *      \param	    soc  		            objet societe
-	 *      \return     string              reference libre pour la propale
+	 *  Renvoie la reference de propale suivante non utilisee en fonction du module
+	 *  de numerotation actif defini dans PROPALE_ADDON
+	 *
+	 *  @param	Societe		$soc  	Object thirdparty
+	 *  @return string      		Reference libre pour la propale
 	 */
 	function getNextNumRef($soc)
 	{
@@ -2296,7 +2297,8 @@ class Propal extends CommonObject
 			}
 			else
 			{
-				dol_print_error($db,"Propale::getNextNumRef ".$obj->error);
+				$this->error=$obj->error;
+			    //dol_print_error($db,"Propale::getNextNumRef ".$obj->error);
 				return "";
 			}
 		}

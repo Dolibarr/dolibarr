@@ -38,6 +38,9 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+
 
 /*
  * View

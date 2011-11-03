@@ -62,7 +62,7 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/societe/societe.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
+print '<th colspan="3">'.$langs->trans("Search").'</th></tr>';
 print "<tr $bc[0]><td>";
 print $langs->trans("Name").':</td><td><input class="flat" type="text" size="14" name="search_nom_only"></td>';
 print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
@@ -103,7 +103,7 @@ if ($result)
 else dol_print_error($db);
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if ($conf->use_javascript_ajax && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0) >= 2))
 {
     print '<tr><td align="center">';
@@ -176,9 +176,9 @@ if ($result)
 
         print '<table class="noborder" width="100%">';
 
-        print '<tr class="liste_titre"><td colspan="2">'.$transRecordedType.'</td>';
-        print '<td>&nbsp;</td>';
-        print '<td align="right">'.$langs->trans('Status').'</td>';
+        print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</td>';
+        print '<th>&nbsp;</td>';
+        print '<th align="right">'.$langs->trans('Status').'</td>';
         print '</tr>';
 
         $var=True;

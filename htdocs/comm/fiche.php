@@ -471,8 +471,6 @@ if ($socid > 0)
 
 		//var_dump($proposals);
 
-		print '<table class="noborder" width="100%">';
-
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql.= " p.datep as dp, p.fin_validite as datelimite";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
@@ -488,7 +486,9 @@ if ($socid > 0)
 
             if ($num > 0)
             {
-    			print '<tr class="liste_titre">';
+		        print '<table class="noborder" width="100%">';
+
+                print '<tr class="liste_titre">';
     			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$objsoc->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$objsoc->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table></td>';
@@ -512,12 +512,13 @@ if ($socid > 0)
 				$i++;
 			}
 			$db->free($resql);
+
+			if ($num > 0) print "</table>";
 		}
 		else
 		{
 			dol_print_error($db);
 		}
-		print "</table>";
 	}
 
 	/*
@@ -526,8 +527,6 @@ if ($socid > 0)
 	if ($conf->commande->enabled && $user->rights->commande->lire)
 	{
 		$commande_static=new Commande($db);
-
-		print '<table class="noborder" width="100%">';
 
 		$sql = "SELECT s.nom, s.rowid,";
 		$sql.= " c.rowid as cid, c.total_ht, c.ref, c.fk_statut, c.facture,";
@@ -545,7 +544,9 @@ if ($socid > 0)
 
 			if ($num > 0)
 			{
-    			print '<tr class="liste_titre">';
+        		print '<table class="noborder" width="100%">';
+
+			    print '<tr class="liste_titre">';
     			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$objsoc->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table></td>';
@@ -565,12 +566,13 @@ if ($socid > 0)
 				$i++;
 			}
 			$db->free($resql);
+
+			if ($num >0) print "</table>";
 		}
 		else
 		{
 			dol_print_error($db);
 		}
-		print "</table>";
 	}
 
 	/*
@@ -579,8 +581,6 @@ if ($socid > 0)
 	if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	{
 		$contratstatic=new Contrat($db);
-
-		print '<table class="noborder" width="100%">';
 
 		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
@@ -595,7 +595,9 @@ if ($socid > 0)
 			$num = $db->num_rows($resql);
 			if ($num >0 )
 			{
-				print '<tr class="liste_titre">';
+		        print '<table class="noborder" width="100%">';
+
+			    print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
 				print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllContracts").' ('.$num.')</a></td></tr></table></td>';
 				print '</tr>';
@@ -623,12 +625,13 @@ if ($socid > 0)
 				$i++;
 			}
 			$db->free($resql);
+
+			if ($num > 0) print "</table>";
 		}
 		else
 		{
 			dol_print_error($db);
 		}
-		print "</table>";
 	}
 
 	/*
@@ -636,8 +639,6 @@ if ($socid > 0)
 	 */
 	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire)
 	{
-		print '<table class="noborder" width="100%">';
-
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.duree as duration, f.datei as startdate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -653,7 +654,9 @@ if ($socid > 0)
 			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
-				print '<tr class="liste_titre">';
+		        print '<table class="noborder" width="100%">';
+
+			    print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$objsoc->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
 				print '</tr>';
 				$var=!$var;
@@ -674,12 +677,13 @@ if ($socid > 0)
 				$i++;
 			}
 			$db->free($resql);
+
+			if ($num > 0) print "</table>";
 		}
 		else
 		{
 			dol_print_error($db);
 		}
-		print "</table>";
 	}
 
 	/*
@@ -688,8 +692,6 @@ if ($socid > 0)
 	if ($conf->facture->enabled && $user->rights->facture->lire)
 	{
 		$facturestatic = new Facture($db);
-
-		print '<table class="noborder" width="100%">';
 
 		$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
 		$sql.= ' f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut,';
@@ -711,7 +713,9 @@ if ($socid > 0)
 			$i = 0;
 			if ($num > 0)
 			{
-				$tableaushown=1;
+		        print '<table class="noborder" width="100%">';
+
+			    $tableaushown=1;
 				print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$objsoc->id.'">'.$langs->trans("AllBills").' ('.$num.')</a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$objsoc->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
@@ -745,12 +749,13 @@ if ($socid > 0)
 				$i++;
 			}
 			$db->free($resql);
+
+			if ($num > 0) print "</table>";
 		}
 		else
 		{
 			dol_print_error($db);
 		}
-		print "</table>";
 	}
 
 	print "</td></tr>";

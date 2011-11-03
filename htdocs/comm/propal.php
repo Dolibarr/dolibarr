@@ -1050,11 +1050,18 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($action == 'validate')
 	{
+	    $error=0;
+
 		// on verifie si l'objet est en numerotation provisoire
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV')
 		{
 			$numref = $object->getNextNumRef($soc);
+			if (empty($numref))
+			{
+			    $error++;
+			    dol_htmloutput_errors($object->error);
+			}
 		}
 		else
 		{
@@ -1070,7 +1077,7 @@ if ($id > 0 || ! empty($ref))
 			$text.=$notify->confirmMessage('NOTIFY_VAL_PROPAL',$object->socid);
 		}
 
-		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
+		if (! $error) $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 	}
 
 	if (! $formconfirm)
@@ -1094,7 +1101,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Ref client
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+	print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
 	print '</td>';
 	if ($action != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
@@ -1817,7 +1824,7 @@ else
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="16" name="search_societe" value="'.GETPOST('search_societe').'">';
 		print '</td>';
-		print '<td class="liste_titre" colspan="1" align="right">';
+		print '<td class="liste_titre" colspan="1" align="center">';
 		print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 		print '&nbsp;'.$langs->trans('Year').': ';
 		$syear = $year;

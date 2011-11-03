@@ -98,7 +98,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Informations").'</td></tr>';
+print '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
 print '<tr '.$bc[false].'>';
 print '<td nowrap="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
 print '<tr '.$bc[true].'>';
@@ -123,8 +123,8 @@ if ($user->societe_id == 0)
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("DolibarrStateBoard").'</td>';
-    print '<td align="right">&nbsp;</td>';
+    print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
+    print '<th class="liste_titre" align="right">&nbsp;</th>';
     print '</tr>';
 
     $var=true;
@@ -266,12 +266,12 @@ $dashboardlines=array();
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("DolibarrWorkBoard").'</td>';
-print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("Late").'</td>';
-print '<td>&nbsp;</td>';
-print '<td width="20">&nbsp;</td>';
-if ($showweather) print '<td width="80">&nbsp;</td>';
+print '<th class="liste_titre"colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
+print '<th class="liste_titre"align="right">'.$langs->trans("Number").'</th>';
+print '<th class="liste_titre"align="right">'.$langs->trans("Late").'</th>';
+print '<th class="liste_titre">&nbsp;</th>';
+print '<th class="liste_titre"width="20">&nbsp;</th>';
+if ($showweather) print '<th class="liste_titre" width="80">&nbsp;</th>';
 print '</tr>';
 
 
