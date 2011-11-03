@@ -116,8 +116,10 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 		if ($obj->write_file($object, $outputlangs) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			// on supprime l'image correspondant au preview
-			//expedition_delete_preview($db, $id);
+
+			// we delete preview files
+        	//require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			//dol_delete_preview($object);
 			return 1;
 		}
 		else

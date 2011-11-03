@@ -180,7 +180,7 @@ class Fichinter extends CommonObject
 		if (! dol_strlen($this->fk_project)) { $this->fk_project = 0; }
 
 		$this->db->begin();
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
 		$sql.= ", description  = '".$this->db->escape($this->description)."'";
 		$sql.= ", duree = ".$this->duree;
@@ -617,7 +617,7 @@ class Fichinter extends CommonObject
 					$file = $conf->ficheinter->dir_output . "/" . $fichinterref . "/" . $fichinterref . ".pdf";
 					if (file_exists($file))
 					{
-						fichinter_delete_preview($this->db, $this->id, $this->ref);
+						dol_delete_preview($this);
 
 						if (!dol_delete_file($file))
 						{

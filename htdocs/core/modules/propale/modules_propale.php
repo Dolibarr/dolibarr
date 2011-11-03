@@ -205,8 +205,10 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			// on supprime l'image correspondant au preview
-			propale_delete_preview($db, $object->id);
+
+			// we delete preview files
+        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			dol_delete_preview($object);
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -239,57 +241,4 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	}
 }
 
-/**
- *  Delete preview files
- * 	@param	    db  		objet base de donnee
- * 	@param	    propalid	id de la propal a effacer
- * 	@param      propalref   reference de la propal si besoin
- */
-function propale_delete_preview($db, $propalid, $propalref='')
-{
-	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
-	if (!$propalref)
-	{
-		$propal = new Propal($db,"",$propalid);
-		$propal->fetch($propalid);
-		$propalref = $propal->ref;
-	}
-
-	if ($conf->propale->dir_output)
-	{
-		$propalref = dol_sanitizeFileName($propalref);
-		$dir = $conf->propale->dir_output . "/" . $propalref ;
-		$file = $dir . "/" . $propalref . ".pdf.png";
-		$multiple = $file . ".";
-
-		if ( file_exists( $file ) && is_writable( $file ) )
-		{
-			if ( ! dol_delete_file($file,1) )
-			{
-				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-				return 0;
-			}
-		}
-		else
-		{
-			for ($i = 0; $i < 20; $i++)
-			{
-				$preview = $multiple.$i;
-
-				if ( file_exists( $preview ) && is_writable( $preview ) )
-				{
-					if ( ! unlink($preview) )
-					{
-						$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
-						return 0;
-					}
-				}
-			}
-		}
-	}
-
-	return 1;
-}
 ?>

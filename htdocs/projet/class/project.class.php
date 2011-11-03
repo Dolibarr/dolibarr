@@ -438,7 +438,7 @@ class Project extends CommonObject
                 $file = $conf->projet->dir_output . "/" . $projectref . "/" . $projectref . ".pdf";
                 if (file_exists($file))
                 {
-                    //project_delete_preview($this->db, $this->id, $this->ref);
+                    dol_delete_preview($this);
 
                     if (!dol_delete_file($file))
                     {

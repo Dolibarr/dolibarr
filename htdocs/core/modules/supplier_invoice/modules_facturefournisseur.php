@@ -98,10 +98,11 @@ function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($object,$outputlangs) > 0)
 		{
-			// on supprime l'image correspondant au preview
-			supplier_invoice_delete_preview($db, $object->id);
-
 			$outputlangs->charset_output=$sav_charset_output;
+
+			// we delete preview files
+        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			dol_delete_preview($object);
 			return 1;
 		}
 		else
@@ -119,38 +120,4 @@ function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 	}
 }
 
-/**
- * Delete preview files
- * @param   $db
- * @param   $objectid
- * @return  int
- */
-function supplier_invoice_delete_preview($db, $objectid)
-{
-	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
-	$comfourn = new FactureFournisseur($db);
-	$comfourn->fetch($objectid);
-	$client = new Societe($db);
-	$client->fetch($comfourn->socid);
-
-	if ($conf->fournisseur->dir_output.'/facture')
-	{
-		$comfournref = dol_sanitizeFileName($comfourn->ref);
-		$dir = $conf->facture->dir_output . "/" . $comfournref ;
-		$file = $dir . "/" . $comfournref . ".pdf.png";
-
-		if ( file_exists( $file ) && is_writable( $file ) )
-		{
-			if ( ! dol_delete_file($file) )
-			{
-				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-				return 0;
-			}
-		}
-	}
-
-	return 1;
-}
 ?>
