@@ -40,13 +40,13 @@ $search_compta_fournisseur = GETPOST("search_compta_fournisseur");
 $search_datec              = GETPOST("search_datec");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'');
+$result = restrictedArea($user,'societe',$socid,'');
 
-$page = isset($_GET["page"])?$_GET["page"]:'';
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'';
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'';
+$page = GETPOST('page');
+$sortorder = GETPOST('sortorder');
+$sortfield = GETPOST('sortfield');
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -55,7 +55,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
 // Load categ filters
-$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+$search_categ = GETPOST('search_categ');
 
 
 /*
@@ -74,12 +74,14 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.f
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
+$sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1";
+$sql.= " AND s.entity = ".$conf->entity;
 if ($search_categ) $sql.= " AND s.rowid = cf.fk_societe";	// Join for the needed table to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
-if ($socname) {
-	$sql .= " AND s.nom like '%".$db->escape($socname)."%'";
+if ($socname)
+{
+	$sql .= " AND s.nom LIKE '%".$db->escape($socname)."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
