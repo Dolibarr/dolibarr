@@ -163,8 +163,8 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
             $createuser->id=0;
 
             $newuser = new User($db);
-            $newuser->nom='SuperAdmin';
-            $newuser->prenom='';
+            $newuser->lastname='SuperAdmin';
+            $newuser->firstname='';
             $newuser->login=$_POST["login"];
             $newuser->pass=$_POST["pass"];
             $newuser->admin=1;
