@@ -771,12 +771,12 @@ function dol_delete_preview($object)
 }
 
 /**
-*	Create a meta file with document file into same directory.
-*  This should allow rgrep search
-*
-*	@param	Object	$object		Object
-*	@return	void
-*/
+ *	Create a meta file with document file into same directory.
+ *	This should allow rgrep search
+ *
+ *	@param	Object	$object		Object
+ *	@return	void
+ */
 function dol_meta_create($object)
 {
     global $langs,$conf;
@@ -804,23 +804,24 @@ function dol_meta_create($object)
 			CLIENT=\"" . $client . "\"
 			TOTAL_HT=\"" . $object->total_ht . "\"
 			TOTAL_TTC=\"" . $object->total_ttc . "\"\n";
-
+			
             for ($i = 0 ; $i < $nblignes ; $i++)
             {
-                //Pour les articles
-            $meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
-				ITEM_" . $i . "_UNIT_PRICE=\"" . $object->lines[$i]->price . "\"
-            ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
-            ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
-            ";
+            	//Pour les articles
+            	$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
+            	ITEM_" . $i . "_UNIT_PRICE=\"" . $object->lines[$i]->price . "\"
+            	ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
+            	ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
+            	";
+            }
+        }
+        
+        $fp = fopen($file,"w");
+        fputs($fp,$meta);
+        fclose($fp);
+        if (! empty($conf->global->MAIN_UMASK))
+        @chmod($file, octdec($conf->global->MAIN_UMASK));
     }
-    }
-    $fp = fopen($file,"w");
-    fputs($fp,$meta);
-    fclose($fp);
-    if (! empty($conf->global->MAIN_UMASK))
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
 }
 
 /**
