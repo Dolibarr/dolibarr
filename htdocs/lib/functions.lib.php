@@ -35,6 +35,23 @@
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_DATE_VERSION'))    include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
+
+if (! function_exists('json_encode'))
+{
+    /**
+     * Implement json_encode for PHP that does not support it
+     *
+     * @param	mixed	$elements		PHP Object to json encode
+     * @return 	string					Json encoded string
+     */
+    function json_encode($elements)
+    {
+        if (is_array($elements)) return '["' . join('","', $elements) . '"]';
+        else return '"'.$elements.'"';
+    }
+}
+
+
 /**
  *  This function output memory used by PHP and exit everything. Used for debugging purpose.
  */
