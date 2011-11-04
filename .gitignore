@@ -11,3 +11,4 @@ default.properties
 dolibarr_install.log
 doxygen_warnings.log
 /.project
+.DS_Store

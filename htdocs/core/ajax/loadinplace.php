@@ -50,6 +50,12 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	$fk_element		= GETPOST('fk_element');
 	$type			= GETPOST('type');
 	
+	if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+	{
+		$element = $regs[1];
+		$subelement = $regs[2];
+	}
+	
 	if ($element == 'fichinter') $element = 'ficheinter';
 	
 	if ($user->rights->$element->lire || $user->rights->$element->read)

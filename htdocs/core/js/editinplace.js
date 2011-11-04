@@ -7,9 +7,9 @@
 
 
 $(document).ready(function() {
-	var element = $('#element').html();
-	var table_element = $('#table_element').html();
-	var fk_element = $('#fk_element').html();
+	var element = $('#jeditable_element').html();
+	var table_element = $('#jeditable_table_element').html();
+	var fk_element = $('#jeditable_fk_element').html();
 	
 	$('.edit_textarea').editable(urlSaveInPlace, {
 		type		: 'textarea',
@@ -131,7 +131,7 @@ $(document).ready(function() {
 		id			: 'field',
 		onblur		: 'ignore',
 		tooltip		: tooltipInPlace,
-		placeholder	: placeholderInPlace,
+		placeholder	: '&nbsp;',
 		cancel		: cancelInPlace,
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
