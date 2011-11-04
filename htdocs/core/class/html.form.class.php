@@ -973,7 +973,7 @@ class Form
                     }
                     $out.= $userstatic->getFullName($langs);
 
-                    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                    if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
                     	if ($obj->admin && ! $obj->entity) $out.=" (".$langs->trans("AllEntities").")";
 						else $out.=" (".$obj->label.")";
@@ -3734,7 +3734,7 @@ class Form
                     $out.= '>';
 
                     $out.= $obj->nom;
-                    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+                    if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
                     {
                     	$out.= " (".$obj->label.")";
                     }

@@ -69,7 +69,7 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
 }

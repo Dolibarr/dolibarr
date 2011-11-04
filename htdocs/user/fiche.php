@@ -64,7 +64,7 @@ if ($id)
 }
 
 //Multicompany in mode transversal
-if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->multicompany->transverse_mode)
 {
     accessforbidden();
 }
@@ -205,7 +205,7 @@ if ($action == 'add' && $canadduser)
         // If multicompany is off, admin users must all be on entity 0.
         if($conf->multicompany->enabled)
         {
-        	if($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ! empty($_POST["superadmin"]))
+        	if($conf->multicompany->transverse_mode || ! empty($_POST["superadmin"]))
         	{
         		$edituser->entity=0;
         	}
@@ -261,8 +261,8 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
 
         $edituser = new User($db);
         $edituser->fetch($id);
-        if ($action == 'addgroup')    $edituser->SetInGroup($group,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?GETPOST("entity"):$editgroup->entity));
-        if ($action == 'removegroup') $edituser->RemoveFromGroup($group,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?GETPOST("entity"):$editgroup->entity));
+        if ($action == 'addgroup')    $edituser->SetInGroup($group,($conf->multicompany->transverse_mode?GETPOST("entity"):$editgroup->entity));
+        if ($action == 'removegroup') $edituser->RemoveFromGroup($group,($conf->multicompany->transverse_mode?GETPOST("entity"):$editgroup->entity));
 
         if ($result > 0)
         {
@@ -319,7 +319,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $edituser->phenix_pass	= $_POST["phenix_pass"];
             if($conf->multicompany->enabled)
             {
-            	if($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ! empty($_POST["superadmin"]))
+            	if($conf->multicompany->transverse_mode || ! empty($_POST["superadmin"]))
             	{
             		$edituser->entity=0;
             	}
@@ -704,7 +704,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '<td>';
         print $form->selectyesno('admin',$_POST["admin"],1);
 
-        if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
         {
             if ($conf->use_javascript_ajax)
             {
@@ -744,7 +744,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     //Multicompany
     if (! empty($conf->multicompany->enabled))
     {
-        if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $mc = new ActionsMulticompany($db);
             print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
@@ -1076,7 +1076,7 @@ else
             print '</td></tr>'."\n";
 
             // Multicompany
-            if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             {
             	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
             	if ($fuser->admin && ! $fuser->entity)
@@ -1237,7 +1237,7 @@ else
 
             print '<div class="tabsAction">';
 
-            if ($caneditfield && (empty($conf->multicompany->enabled) || (($fuser->entity == $conf->entity) || $fuser->entity == $user->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
+            if ($caneditfield && (empty($conf->multicompany->enabled) || (($fuser->entity == $conf->entity) || $fuser->entity == $user->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)) )
             {
                 if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
                 {
@@ -1249,7 +1249,7 @@ else
                 }
             }
             elseif ($caneditpassword && ! $fuser->ldap_sid &&
-            (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
+            (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)) )
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
             }
@@ -1258,13 +1258,13 @@ else
             if ($conf->global->USER_PASSWORD_GENERATED != 'none')
             {
                 if (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
-                (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
+                (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
                 {
                     print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
                 }
 
                 if (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
-                (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
+                (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)) )
                 {
                     if ($fuser->email) print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
                     else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendNewPassword").'</a>';
@@ -1273,19 +1273,19 @@ else
 
             // Activer
             if ($user->id <> $id && $candisableuser && $fuser->statut == 0 &&
-            (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
+            (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)) )
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
             }
             // Desactiver
             if ($user->id <> $id && $candisableuser && $fuser->statut == 1 &&
-            (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
+            (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)) )
             {
                 print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
             // Delete
             if ($user->id <> $id && $candisableuser &&
-            (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)) )
+            (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)) )
             {
                 print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
             }
@@ -1311,7 +1311,7 @@ else
 
                 if (! empty($groupslist))
                 {
-                    if( ! ($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+                    if( ! ($conf->multicompany->enabled && $conf->multicompany->transverse_mode))
                     {
                         foreach($groupslist as $groupforuser)
                         {
@@ -1334,7 +1334,7 @@ else
                     // Multicompany
                     if (! empty($conf->multicompany->enabled))
                     {
-                        if ($conf->entity == 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+                        if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
                         {
                             $mc = new ActionsMulticompany($db);
                             print '</td><td valign="top">'.$langs->trans("Entity").'</td>';
@@ -1362,7 +1362,7 @@ else
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
-                if(! empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
                 	print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
                 }
@@ -1387,7 +1387,7 @@ else
                             print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
                         }
                         print '</td>';
-                        if(! empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                        if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                         {
                             $mc = new ActionsMulticompany($db);
                             $mc->getInfo($group->usergroup_entity);
@@ -1544,7 +1544,7 @@ else
                 {
                     print $form->selectyesno('admin',$fuser->admin,1);
 
-                    if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+                    if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
                     {
                         if ($conf->use_javascript_ajax)
                         {
@@ -1602,7 +1602,7 @@ else
             //Multicompany
             if (! empty($conf->multicompany->enabled))
             {
-            	if(empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	if(empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             	{
             		$mc = new ActionsMulticompany($db);
             		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
