@@ -72,7 +72,7 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	}
 	else
 	{
-		echo $langs->trans('NotEnoughPermissions');
+		echo $langs->transnoentities('NotEnoughPermissions');
 	}
 }
 
