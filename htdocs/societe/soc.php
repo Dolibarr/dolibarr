@@ -129,7 +129,7 @@ if (empty($reshook))
         $object->url                   = trim($_POST["url"]);
         $object->idprof1               = $_POST["idprof1"];
         $object->idprof2               = $_POST["idprof2"];
-        $object->idprof4               = $_POST["idprof3"];
+        $object->idprof3               = $_POST["idprof3"];
         $object->idprof4               = $_POST["idprof4"];
         $object->prefix_comm           = $_POST["prefix_comm"];
         $object->code_client           = $_POST["code_client"];
