@@ -906,7 +906,7 @@ elseif ($fichinterid)
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
                 print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-                print nl2br($objp->description);
+                print dol_htmlentitiesbr($objp->description);
 
                 // Date
                 print '<td align="center" width="150">'.dol_print_date($db->jdate($objp->date_intervention),'dayhour').'</td>';
