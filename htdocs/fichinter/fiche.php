@@ -654,7 +654,7 @@ if ($action == 'create')
     if ($socid > 0)
     {
     	$soc->fetch($socid);
-    	
+
         print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -668,7 +668,7 @@ if ($action == 'create')
         // Ref
         print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
         print '<td><input name="ref" value="'.$numpr.'"></td></tr>'."\n";
-        
+
         // Description (must be a textarea and not html must be allowed (used in list view)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
         print '<td>';
@@ -696,14 +696,14 @@ if ($action == 'create')
         $liste=ModelePDFFicheinter::liste_modeles($db);
         print $form->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
         print "</td></tr>";
-        
+
         // Public note
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
         print '<td valign="top" colspan="2">';
         print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'"></textarea>';
         print '</td></tr>';
-        
+
         // Private note
         if (! $user->societe_id)
         {
@@ -745,7 +745,7 @@ else if ($id > 0 || ! empty($ref))
     /*
      * Affichage en mode visu
      */
-	
+
 	$object->fetch($id, $ref);
     $object->fetch_thirdparty();
 
@@ -866,13 +866,13 @@ else if ($id > 0 || ! empty($ref))
 
     // Statut
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-    
+
     // Public note
     print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
     print '<td valign="top" colspan="3">';
     print $form->editInPlace($object->note_public, 'note_public', $user->rights->ficheinter->creer, 'textarea');
     print "</td></tr>";
-    	
+
     // Private note
     if (! $user->societe_id)
     {
@@ -922,7 +922,7 @@ else if ($id > 0 || ! empty($ref))
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
                 print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-                print nl2br($objp->description);
+                print dol_htmlentitiesbr($objp->description);
 
                 // Date
                 print '<td align="center" width="150">'.dol_print_date($db->jdate($objp->date_intervention),'dayhour').'</td>';
