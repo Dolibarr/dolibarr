@@ -41,9 +41,101 @@ if (! function_exists('json_encode'))
      */
     function json_encode($elements)
     {
-        if (is_array($elements)) return '["' . join('","', $elements) . '"]';
-        else return '"'.$elements.'"';
+    	$num = count($elements);
+    	
+    	// determine type
+    	if (is_numeric(key($elements)))
+    	{
+    		// indexed (list)
+    		$output = '[';
+    		for ($i = 0, $last = ($num - 1); isset($elements[$i]); ++$i)
+    		{
+    			if (is_array($elements[$i])) $output.= json_encode($elements[$i]);
+    			else $output .= _val($elements[$i]);
+    			if($i !== $last) $output.= ',';
+    		}
+    		$output.= ']';
+    	}
+    	else
+    	{
+    		// associative (object)
+    		$output = '{';
+    		$last = $num - 1;
+    		$i = 0;
+    		foreach($elements as $key => $value)
+    		{
+    			$output .= '"'.$key.'":';
+    			if (is_array($value)) $output.= json_encode($value);
+    			else $output .= _val($value);
+    			if ($i !== $last) $output.= ',';
+    			++$i;
+    		}
+    		$output.= '}';
+    	}
+    	
+    	// return
+    	return $output;
     }
+    
+    function _val($val)
+    {
+    	if (is_string($val)) return '"'.rawurlencode($val).'"';
+    	elseif (is_int($val)) return sprintf('%d', $val);
+    	elseif (is_float($val)) return sprintf('%F', $val);
+    	elseif (is_bool($val)) return ($val ? 'true' : 'false');
+    	else  return 'null';
+    }
+}
+
+if (! function_exists('json_decode'))
+{
+	/**
+	 * Implement json_decode for PHP that does not support it
+	 *
+	 * @param	string	$json		Json encoded to PHP Object or Array
+	 * @param	bool	$assoc		False return an object, true return an array
+	 * @return 	mixed				Object or Array
+	 */
+	function json_decode($json, $assoc=false)
+	{
+		$comment = false;
+		
+		for ($i=0; $i<strlen($json); $i++)
+		{
+			if (! $comment)
+			{
+				if (($json[$i] == '{') || ($json[$i] == '[')) $out.= 'array(';
+				else if (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
+				else if ($json[$i] == ':') $out.= ' => ';
+				else $out.= $json[$i];
+			}
+			else $out.= $json[$i];
+			if ($json[$i] == '"' && $json[($i-1)]!="\\") $comment = !$comment;
+		}
+		
+		// Return an array
+		eval('$array = '.$out.';');
+		
+		// Return an object
+		if (! $assoc)
+		{
+			if (! empty($array))
+			{
+				$object = false;
+				
+				foreach ($array as $key => $value)
+				{
+					$object->{$key} = $value;
+				}
+				
+				return $object;
+			}
+			
+			return false;
+		}
+		
+		return $array;
+	}
 }
 
 
