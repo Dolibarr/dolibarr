@@ -376,9 +376,9 @@ else if ($id)
 
 			// Type
 			print '<tr><td>';
-            print $form->editfieldkey("Type",'type',$langs->trans($object->type),'id',$object->id,$user->rights->deplacement->creer,'select:type_fees');
+            print $form->editfieldkey("Type",'type',$langs->trans($object->type),'id',$object->id,$user->rights->deplacement->creer,'select:types_fees');
 			print '</td><td>';
-            print $form->editfieldval("Type",'type',$langs->trans($object->type),'id',$object->id,$user->rights->deplacement->creer,'select:type_fees');
+            print $form->editfieldval("Type",'type',$langs->trans($object->type),'id',$object->id,$user->rights->deplacement->creer,'select:types_fees');
 			print '</td></tr>';
 
 			// Who
