@@ -618,16 +618,19 @@ abstract class CommonObject
 	/**
 	 *	Update a specific field from an object
 	 *
-	 *	@param	string	$table		Table element or element line
-	 *	@param	int		$id			Object id
 	 *	@param	string	$field		Field to update
 	 *	@param	mixte	$value		New value
-	 *	@param	string	$format		Data format
+	 *	@param	string	$table		To force other table element or element line
+	 *	@param	int		$id			To force other object id
+	 *	@param	string	$format		Data format ('text' by default, 'date')
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function setValueFrom($table, $id, $field, $value, $format='text')
+	function setValueFrom($field, $value, $table='', $id='', $format='text')
 	{
 		global $conf;
+
+		if (empty($table)) $table=$this->table_element;
+		if (empty($id))    $id=$this->id;
 
 		$this->db->begin();
 

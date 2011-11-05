@@ -121,6 +121,7 @@ if ($action == 'add' && $user->rights->deplacement->creer)
 	}
 }
 
+// Update record
 if ($action == 'update' && $user->rights->deplacement->creer)
 {
 	if (empty($_POST["cancel"]))
@@ -134,7 +135,7 @@ if ($action == 'update' && $user->rights->deplacement->creer)
 		$object->socid			= $_POST["socid"];
 		$object->note_private	= $_POST["note_private"];
 		$object->note_public	= $_POST["note_public"];
-		
+
 		$result = $object->update($user);
 
 		if ($result > 0)
@@ -162,6 +163,14 @@ if ($action == 'classin')
 	if ($result < 0) dol_print_error($db, $object->error);
 }
 
+// Set fields
+if ($action == 'setdated')
+{
+    $dated=dol_mktime($_POST['datedhour'], $_POST['datedmin'], $_POST['datedsec'], $_POST['datedmonth'], $_POST['datedday'], $_POST['datedyear']);
+    $object->fetch($id);
+    $result=$object->setValueFrom('dated',$dated,'','','date');
+    if ($result < 0) dol_print_error($db, $object->error);
+}
 
 
 /*
@@ -285,24 +294,24 @@ else if ($id)
 			print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 			print $form->select_date($object->date,'','','','','update');
 			print '</td></tr>';
-			
+
 			// Km
 			print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td>';
 			print '<input name="km" class="flat" size="10" value="'.$object->km.'">';
 			print '</td></tr>';
-			
+
 			// Where
 			print "<tr>";
 			print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
 			print $form->select_societes($soc->id,'socid','',1);
 			print '</td></tr>';
-			
+
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
 			print '<textarea name="note_public" cols="80" rows="8">'.$object->note_public."</textarea><br>";
 			print "</td></tr>";
-			
+
 			// Private note
 			if (! $user->societe_id)
 			{
@@ -311,15 +320,15 @@ else if ($id)
 				print '<textarea name="note_private" cols="80" rows="8">'.$object->note_private."</textarea><br>";
 				print "</td></tr>";
 			}
-			
+
 			print '</table>';
-			
+
 			print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
 			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 			print '</center>';
-			
+
 			print '</form>';
-			
+
 			print '</div>';
 		}
 		else
@@ -342,7 +351,7 @@ else if ($id)
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>';
 			print $form->showrefnav($object,'id','',1,'rowid','ref','');
 			print '</td></tr>';
-			
+
 			// Type
 			print '<tr><td>'.$langs->trans("Type").'</td><td>';
 			print $form->editInPlace($langs->trans($object->type), 'type', $user->rights->deplacement->creer, 'select', 'types_fees');
@@ -356,20 +365,24 @@ else if ($id)
 			print '</td></tr>';
 
 			// Date
-			print '<tr><td>'.$langs->trans("Date").'</td><td>';
-			print $form->editInPlace($object->date, 'dated', $user->rights->deplacement->creer, 'datepicker');
+			print '<tr><td>';
+			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $langs->trans('Date');
+			else print $form->editfieldkey("Date",'dated',$object->date,'id',$object->id,$user->rights->deplacement->creer,'datepicker');
+			print '</td><td colspan="3">';
+			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $form->editInPlace($object->date, 'dated', $user->rights->deplacement->creer, 'datepicker');
+			else print $form->editfieldval("Date",'dated',$object->date,'id',$object->id,$user->rights->deplacement->creer,'datepicker');
 			print '</td></tr>';
 
 			// Km/Price
 			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td>';
 			print '<td>'.$form->editInPlace($object->km, 'km', $user->rights->deplacement->creer, 'numeric').'</td></tr>';
-			
+
 			// Where
 			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
 			print '<td>';
 			if ($soc->id) print $soc->getNomUrl(1);
 			print '</td></tr>';
-			
+
 			// Project
 			if ($conf->projet->enabled)
 			{
@@ -402,13 +415,13 @@ else if ($id)
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-			
+
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
 			print $form->editInPlace($object->note_public, 'note_public', $user->rights->deplacement->creer, 'ckeditor', 'dolibarr_notes');
 			print "</td></tr>";
-			
+
 			// Private note
 			if (! $user->societe_id)
 			{
@@ -421,13 +434,13 @@ else if ($id)
 			print "</table>";
 
 			print '</div>';
-			
+
 			/*
 			 * Barre d'actions
 			 */
-			
+
 			print '<div class="tabsAction">';
-			
+
 			if ($user->rights->deplacement->creer)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
@@ -444,7 +457,7 @@ else if ($id)
 			{
 				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
 			}
-			
+
 			print '</div>';
 		}
 	}

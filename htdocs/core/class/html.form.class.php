@@ -74,7 +74,7 @@ class Form
      * @param   string	$paramkey       Key of parameter for Url (unique if there is several parameter to show). In most cases "id".
      * @param   string	$paramvalue     Value of parameter for Url
      * @param	boolean	$perm           Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day', ...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day' or 'datepicker', ...)
      * @return	string    			    HTML edit field
      * TODO no GET or POST in class file, use a param
      */
@@ -96,9 +96,9 @@ class Form
      * @param	string	$text			Text of label (not used in this function)
      * @param	string	$htmlname		Name of select field
      * @param	string	$preselected	Value to show/edit
-     * @param	string	$paramkey		Key of parameter (unique if there is several parameter to show)
+     * @param	string	$paramkey		Key of parameter (unique if there is several parameter to show). In most cases "id".
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day', ...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day' or 'datepicker', ...)
      * @param	string	$editvalue		Use this value instead $preselected
      * @return  string   		      	HTML edit field
      * TODO no GET or POST in class file, use a param
@@ -124,20 +124,20 @@ class Form
             {
                 $ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$preselected).'</textarea>';
             }
-            else if ($typeofdata == 'day')
+            else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
             {
                 $html=new Form($db);
                 $ret.=$html->form_date($_SERVER['PHP_SELF'].($paramkey?'?'.$paramkey.'='.$paramvalue:''),$preselected,$htmlname);
             }
             $ret.='</td>';
-            if ($typeofdata != 'day') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            if ($typeofdata != 'day' && $typeofdata != 'datepicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             $ret.='</tr></table>'."\n";
             $ret.='</form>'."\n";
         }
         else
         {
             if ($typeofdata == 'email')   $ret.=dol_print_email($preselected,0,0,0,0,1);
-            elseif ($typeofdata == 'day') $ret.=dol_print_date($preselected,'day');
+            elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($preselected,'day');
             elseif ($typeofdata == 'text' || $typeofdata == 'textarea') $ret.=dol_htmlentitiesbr($preselected);
             else $ret.=$preselected;
         }
