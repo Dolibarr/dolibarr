@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2004-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2010	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011		Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1844,14 +1844,23 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_textarea:hover, .edit_ckeditor:hover, .edit_text:hover, .edit_numeric:hover, .edit_select:hover {
-	background: white url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/edit.png',1) ?>) right center no-repeat;
+.editkey_textarea, .editkey_ckeditor, .editkey_text, .editkey_numeric, .editkey_select {
+	background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 }
 
-.edit_datepicker:hover {
-	background: white url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/calendar.png',1) ?>) right center no-repeat;
+.editkey_datepicker {
+	background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/calendar.png',1) ?>) right center no-repeat;
 	cursor: pointer;
+}
+
+.editval_textarea:hover, .editval_ckeditor:hover, .editval_text:hover, .editval_numeric:hover, .editval_select:hover, .editval_datepicker:hover {
+	background: white;
+	cursor: pointer;
+}
+
+.editval_hover {
+	background: white;
 }
 
 

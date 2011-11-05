@@ -79,19 +79,27 @@ class Form
      */
     function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
     {
-        global $conf,$langs;
-
-        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) return $langs->trans($text);
-        else
-        {
-            $ret='';
-            $ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-            $ret.=$langs->trans($text);
-            $ret.='</td>';
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-            $ret.='</tr></table>';
-            return $ret;
+    	global $conf,$langs;
+    	
+    	$ret='';
+    	
+    	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+    	{
+    		$tmp=explode(':',$typeofdata);
+    		$ret.= "\n".'<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
+    		$ret.= $langs->trans($text);
+    		$ret.= '</div>'."\n";
+    	}
+    	else
+    	{
+    		$ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+    		$ret.=$langs->trans($text);
+    		$ret.='</td>';
+    		if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+    		$ret.='</tr></table>';
         }
+        
+        return $ret;
     }
 
     /**
@@ -215,9 +223,9 @@ class Form
     			}
     		}
 
-    		$out.= '<div class="edit_'.$inputType.'" id="'.$htmlname.'">';
+    		$out.= "\n".'<div class="editval_'.$inputType.'" id="val_'.$htmlname.'">';
     		$out.= $value;
-    		$out.= '</div>';
+    		$out.= '</div>'."\n";
     	}
     	else
     	{

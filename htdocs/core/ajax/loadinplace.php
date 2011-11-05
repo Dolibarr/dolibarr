@@ -46,7 +46,7 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 {
 	$element		= GETPOST('element');
 	$table_element	= GETPOST('table_element');
-	$field			= GETPOST('field');
+	$field			= substr(GETPOST('field'), 4); // remove prefix val_
 	$fk_element		= GETPOST('fk_element');
 	$type			= GETPOST('type');
 	
