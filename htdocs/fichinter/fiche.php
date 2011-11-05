@@ -816,9 +816,9 @@ else if ($id > 0 || ! empty($ref))
 
     // Description (must be a textarea and not html must be allowed (used in list view)
     print '<tr><td valign="top">';
-    print $form->editfieldkey("Description",'description',$object->description,'id',$object->id,$object->statut == 0 && $user->rights->ficheinter->creer,'textarea');
+    print $form->editfieldkey("Description",'description',$object->description,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
     print '</td><td colspan="3">';
-    print $form->editfieldval("Description",'description',$object->description,'id',$object->id,$object->statut == 0 && $user->rights->ficheinter->creer,'textarea');
+    print $form->editfieldval("Description",'description',$object->description,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
     print '</td>';
     print '</tr>';
 
@@ -857,18 +857,18 @@ else if ($id > 0 || ! empty($ref))
 
     // Public note
     print '<tr><td valign="top">';
-    print $form->editfieldkey("NotePublic",'note_public',$object->note_public,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
+    print $form->editfieldkey("NotePublic",'note_public',$object->note_public,'id',$object->id,$user->rights->ficheinter->creer,'ckeditor:dolibarr_notes:600:180');
     print '</td><td colspan="3">';
-    print $form->editfieldval("NotePublic",'note_public',$object->note_public,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
+    print $form->editfieldval("NotePublic",'note_public',$object->note_public,'id',$object->id,$user->rights->ficheinter->creer,'ckeditor:dolibarr_notes:600:180');
     print "</td></tr>";
 
     // Private note
     if (! $user->societe_id)
     {
     	print '<tr><td valign="top">';
-        print $form->editfieldkey("NotePrivate",'note_private',$object->note_private,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
+        print $form->editfieldkey("NotePrivate",'note_private',$object->note_private,'id',$object->id,$user->rights->ficheinter->creer,'ckeditor:dolibarr_notes:600:180');
         print '</td><td colspan="3">';
-        print $form->editfieldval("NotePrivate",'note_private',$object->note_private,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
+        print $form->editfieldval("NotePrivate",'note_private',$object->note_private,'id',$object->id,$user->rights->ficheinter->creer,'ckeditor:dolibarr_notes:600:180');
     	print "</td></tr>";
     }
 
