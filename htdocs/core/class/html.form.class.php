@@ -74,20 +74,24 @@ class Form
      * @param   string	$paramkey       Key of parameter for Url (unique if there is several parameter to show). In most cases "id".
      * @param   string	$paramvalue     Value of parameter for Url
      * @param	boolean	$perm           Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day' or 'datepicker', ...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz', 'select:xxx'...)
      * @return	string    			    HTML edit field
-     * TODO no GET or POST in class file, use a param
      */
     function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
     {
-        global $langs;
-        $ret='';
-        $ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-        $ret.=$langs->trans($text);
-        $ret.='</td>';
-        if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-        $ret.='</tr></table>';
-        return $ret;
+        global $conf,$langs;
+
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) return $langs->trans($text);
+        else
+        {
+            $ret='';
+            $ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+            $ret.=$langs->trans($text);
+            $ret.='</td>';
+            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+            $ret.='</tr></table>';
+            return $ret;
+        }
     }
 
     /**
@@ -95,51 +99,67 @@ class Form
      *
      * @param	string	$text			Text of label (not used in this function)
      * @param	string	$htmlname		Name of select field
-     * @param	string	$preselected	Value to show/edit
+     * @param	string	$value			Value to show/edit
      * @param	string	$paramkey		Key of parameter (unique if there is several parameter to show). In most cases "id".
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day' or 'datepicker', ...)
-     * @param	string	$editvalue		Use this value instead $preselected
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:rows:cols', 'select:xxx'...)
+     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @return  string   		      	HTML edit field
-     * TODO no GET or POST in class file, use a param
      */
-    function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string',$editvalue='')
+    function editfieldval($text,$htmlname,$value,$paramkey,$paramvalue,$perm,$typeofdata='string',$editvalue='')
     {
-        global $langs,$db;
+        global $conf,$langs,$db;
         $ret='';
-        if (GETPOST('action') == 'edit'.$htmlname)
+
+        // When option to edit inline is activated
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
         {
-            $ret.="\n";
-            $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-            $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
-            $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            $ret.='<input type="hidden" name="'.$paramkey.'" value="'.$paramvalue.'">';
-            $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            $ret.='<tr><td>';
-            if (in_array($typeofdata,array('string','email')))
-            {
-                $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$preselected).'">';
-            }
-            else if ($typeofdata == 'text' || $typeofdata == 'textarea')
-            {
-                $ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$preselected).'</textarea>';
-            }
-            else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
-            {
-                $html=new Form($db);
-                $ret.=$html->form_date($_SERVER['PHP_SELF'].($paramkey?'?'.$paramkey.'='.$paramvalue:''),$preselected,$htmlname);
-            }
-            $ret.='</td>';
-            if ($typeofdata != 'day' && $typeofdata != 'datepicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            $ret.='</tr></table>'."\n";
-            $ret.='</form>'."\n";
+            $ret.=$this->editInPlace($value, $htmlname, $perm, $typeofdata);
         }
         else
         {
-            if ($typeofdata == 'email')   $ret.=dol_print_email($preselected,0,0,0,0,1);
-            elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($preselected,'day');
-            elseif ($typeofdata == 'text' || $typeofdata == 'textarea') $ret.=dol_htmlentitiesbr($preselected);
-            else $ret.=$preselected;
+            if (GETPOST('action') == 'edit'.$htmlname)
+            {
+                $ret.="\n";
+                $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+                $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
+                $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $ret.='<input type="hidden" name="'.$paramkey.'" value="'.$paramvalue.'">';
+                $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+                $ret.='<tr><td>';
+                if (preg_match('/^(string|email|numeric)/',$typeofdata))
+                {
+        		    $tmp=explode(':',$typeofdata);
+                    $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
+                }
+                else if ($typeofdata == 'text' || $typeofdata == 'textarea')
+                {
+                    $ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
+                }
+                else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
+                {
+                    $ret.=$this->form_date($_SERVER['PHP_SELF'].($paramkey?'?'.$paramkey.'='.$paramvalue:''),$value,$htmlname);
+                }
+                else if (preg_match('/^ckeditor/',$typeofdata))
+                {
+        		    $tmp=explode(':',$typeofdata);
+                    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                    $doleditor=new DolEditor($htmlname,($editvalue?$editvalue:$value),($tmp[2]?$tmp[2]:''),($tmp[3]?$tmp[3]:'100'),($tmp[1]?$tmp[1]:'dolibarr_notes'),'In',false,true,true,($tmp[4]?$tmp[4]:ROWS_4),($tmp[5]?$tmp[5]:'100'));
+                    $ret.=$doleditor->Create(1);
+                    //$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
+                }
+                $ret.='</td>';
+                if ($typeofdata != 'day' && $typeofdata != 'datepicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+                $ret.='</tr></table>'."\n";
+                $ret.='</form>'."\n";
+            }
+            else
+            {
+                if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+                elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
+                elseif ($typeofdata == 'text' || $typeofdata == 'textarea') $ret.=dol_htmlentitiesbr($value);
+                else $ret.=$value;
+            }
         }
         return $ret;
     }
@@ -150,11 +170,10 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	string	$htmlname		DIV ID (field name)
      * @param	int		$condition		Condition to edit
-     * @param	string	$inputType		Type of input
-     * @param	string	$inputOption	Input option
+     * @param	string	$inputType		Type of input ('numeric', 'datepicker', 'textarea', 'ckeditor:dolibarr_zzz', 'select:xxx')
      * @return	string   		      	HTML edit in place
      */
-    function editInPlace($value, $htmlname, $condition, $inputType='textarea', $inputOption='')
+    function editInPlace($value, $htmlname, $condition, $inputType='textarea')
     {
     	global $conf;
 
@@ -162,21 +181,30 @@ class Form
 
     	// Check parameters
     	if ($inputType == 'textarea') $value = dol_nl2br($value);
-    	else if ($inputType == 'numeric') $value = price($value);
+    	else if (preg_match('/^numeric/',$inputType)) $value = price($value);
     	else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
 
     	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && $condition)
     	{
-    		if ($inputType == 'datepicker')
+    		if (preg_match('/^(string|email|numeric)/',$inputType))
+    		{
+    		    $tmp=explode(':',$inputType);
+    		    $inputType=$tmp[0]; $inputOption=$tmp[1];
+    		}
+    	    if ($inputType == 'datepicker')
     		{
     			$out.= '<input id="timeStamp" type="hidden"/>'; // Use for timestamp format
     		}
-    		else if ($inputType == 'select' && ! empty($inputOption))
+    		else if (preg_match('/^select/',$inputType))
     		{
+    		    $tmp=explode(':',$inputType);
+    		    $inputType=$tmp[0]; $inputOption=$tmp[1];
     			$out.= '<input id="loadmethod" value="'.$inputOption.'" type="hidden"/>';
     		}
-    		else if ($inputType == 'ckeditor' && ! empty($inputOption))
+    		else if (preg_match('/^ckeditor/',$inputType))
     		{
+    		    $tmp=explode(':',$inputType);
+    		    $inputType=$tmp[0]; $inputOption=$tmp[1];
     			if (! empty($conf->fckeditor->enabled))
     			{
     				$out.= '<input id="toolbar" value="'.$inputOption.'" type="hidden"/>';

@@ -171,6 +171,24 @@ if ($action == 'setdated')
     $result=$object->setValueFrom('dated',$dated,'','','date');
     if ($result < 0) dol_print_error($db, $object->error);
 }
+if ($action == 'setkm')
+{
+    $object->fetch($id);
+    $result=$object->setValueFrom('km',GETPOST('km'));
+    if ($result < 0) dol_print_error($db, $object->error);
+}
+if ($action == 'setnote_public')
+{
+    $object->fetch($id);
+    $result=$object->setValueFrom('note_public',GETPOST('note_public'));
+    if ($result < 0) dol_print_error($db, $object->error);
+}
+if ($action == 'setnote')
+{
+    $object->fetch($id);
+    $result=$object->setValueFrom('note',GETPOST('note'));
+    if ($result < 0) dol_print_error($db, $object->error);
+}
 
 
 /*
@@ -309,7 +327,9 @@ else if ($id)
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
-			print '<textarea name="note_public" cols="80" rows="8">'.$object->note_public."</textarea><br>";
+			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+			$doleditor=new DolEditor('note_public',$object->note_public,600,200,'dolibarr_notes','In',false,true,true,ROWS_8,'100');
+			print $doleditor->Create(1);
 			print "</td></tr>";
 
 			// Private note
@@ -317,7 +337,9 @@ else if ($id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 				print '<td valign="top" colspan="3">';
-				print '<textarea name="note_private" cols="80" rows="8">'.$object->note_private."</textarea><br>";
+    			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    			$doleditor=new DolEditor('note_private',$object->note_private,600,200,'dolibarr_notes','In',false,true,true,ROWS_8,'100');
+    			print $doleditor->Create(1);
 				print "</td></tr>";
 			}
 
@@ -353,8 +375,10 @@ else if ($id)
 			print '</td></tr>';
 
 			// Type
-			print '<tr><td>'.$langs->trans("Type").'</td><td>';
-			print $form->editInPlace($langs->trans($object->type), 'type', $user->rights->deplacement->creer, 'select', 'types_fees');
+			print '<tr><td>';
+            print $form->editfieldkey("Type",'type',$langs->trans($object->type),'id',$object->id,$user->rights->deplacement->creer,'select:type_fees');
+			print '</td><td>';
+            print $form->editfieldval("Type",'type',$langs->trans($object->type),'id',$object->id,$user->rights->deplacement->creer,'select:type_fees');
 			print '</td></tr>';
 
 			// Who
@@ -366,16 +390,17 @@ else if ($id)
 
 			// Date
 			print '<tr><td>';
-			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $langs->trans('Date');
-			else print $form->editfieldkey("Date",'dated',$object->date,'id',$object->id,$user->rights->deplacement->creer,'datepicker');
-			print '</td><td colspan="3">';
-			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $form->editInPlace($object->date, 'dated', $user->rights->deplacement->creer, 'datepicker');
-			else print $form->editfieldval("Date",'dated',$object->date,'id',$object->id,$user->rights->deplacement->creer,'datepicker');
+			print $form->editfieldkey("Date",'dated',$object->date,'id',$object->id,$user->rights->deplacement->creer,'datepicker');
+			print '</td><td>';
+			print $form->editfieldval("Date",'dated',$object->date,'id',$object->id,$user->rights->deplacement->creer,'datepicker');
 			print '</td></tr>';
 
 			// Km/Price
-			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td>';
-			print '<td>'.$form->editInPlace($object->km, 'km', $user->rights->deplacement->creer, 'numeric').'</td></tr>';
+			print '<tr><td valign="top">';
+			print $form->editfieldkey("FeesKilometersOrAmout",'km',$object->km,'id',$object->id,$user->rights->deplacement->creer,'numeric:6');
+			print '</td><td>';
+			print $form->editfieldval("FeesKilometersOrAmout",'km',$object->km,'id',$object->id,$user->rights->deplacement->creer,'numeric:6');
+			print "</td></tr>";
 
 			// Where
 			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
@@ -417,18 +442,20 @@ else if ($id)
 			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 			// Public note
-			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
-			print '<td valign="top" colspan="3">';
-			print $form->editInPlace($object->note_public, 'note_public', $user->rights->deplacement->creer, 'ckeditor', 'dolibarr_notes');
+			print '<tr><td valign="top">';
+			print $form->editfieldkey("NotePublic",'note_public',$object->note_public,'id',$object->id,$user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180:100:6');
+			print '</td><td>';
+			print $form->editfieldval("NotePublic",'note_public',$object->note_public,'id',$object->id,$user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180:100:6');
 			print "</td></tr>";
 
 			// Private note
 			if (! $user->societe_id)
 			{
-				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
-				print '<td valign="top" colspan="3">';
-				print $form->editInPlace($object->note_private, 'note', $user->rights->deplacement->creer, 'ckeditor', 'dolibarr_notes');
-				print "</td></tr>";
+    			print '<tr><td valign="top">';
+    			print $form->editfieldkey("NotePrivate",'note',$object->note_private,'id',$object->id,$user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180:100:6');
+    			print '</td><td>';
+    			print $form->editfieldval("NotePrivate",'note',$object->note_private,'id',$object->id,$user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180:100:6');
+    			print "</td></tr>";
 			}
 
 			print "</table>";
