@@ -245,7 +245,13 @@ foreach ($conf->file->dol_document_root as $dirroot)
     		{
     			$file = substr($file, 0, dol_strlen($file)-4);
 
-    			dol_include_once("/core/modules/societe/".$file.".php");
+    			try {
+        			dol_include_once("/core/modules/societe/".$file.".php");
+    			}
+    			catch(Exception $e)
+    			{
+    			    dol_syslog($e->getMessage(), LOG_ERR);
+    			}
 
     			$modCodeTiers = new $file;
 
