@@ -168,7 +168,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
 	{
 		if ($atleastonerpm && ! $ENV{"DESTI"})
 		{
-			print "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell package it must create subdirs for each package.\n";
+			print "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell packager where it can create subdirs for each generated package.\n";
 			exit;
 		}
 		$atleastonerpm=1;			
