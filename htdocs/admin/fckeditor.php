@@ -103,7 +103,6 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
@@ -117,23 +116,16 @@ foreach($modules as $const => $desc)
     print "<tr ".$bc[$var].">";
     print '<td width="16">'.img_object("",$picto[$const]).'</td>';
     print '<td>'.$langs->trans($desc).'</td>';
-    print '<td align="center" width="20">';
-
+    print '<td align="center" width="100">';
     $constante = 'FCKEDITOR_ENABLE_'.$const;
     $value = $conf->global->$constante;
-
-    print $value == 1 ? img_picto($langs->trans("Active"),'tick') : '&nbsp;';
-
-    print '</td>';
-    print '<td align="center" width="100">';
-
     if($value == 0)
     {
-        print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.$langs->trans("Activate").'</a>';
+        print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
     }
     else if($value == 1)
     {
-        print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.$langs->trans("Disable").'</a>';
+        print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
     }
 
     print "</td>";
