@@ -351,6 +351,28 @@ div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/home.png',1) ?>);
 }
 
+div.mainmenu.accountancy {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/money.png',1) ?>);
+}
+
+div.mainmenu.agenda {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/agenda.png',1) ?>);
+}
+
+div.mainmenu.bank {
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/bank.png',1) ?>);
+}
+
+div.mainmenu.bookmark {
+}
+
+div.mainmenu.cashdesk {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/pointofsale.png',1) ?>);
+}
+
+div.mainmenu.click2dial {
+}
+
 div.mainmenu.companies {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/members.png',1) ?>);
 }
@@ -359,21 +381,38 @@ div.mainmenu.contacts {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/stethoscope.png',1) ?>);
 }
 
-div.mainmenu.products {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/products.png',1) ?>);
-	margin-left: 10px;
-}
-
 div.mainmenu.commercial {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/commercial.png',1) ?>);
 }
 
-div.mainmenu.accountancy {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/money.png',1) ?>);
+div.mainmenu.ecm {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/ecm.png',1) ?>);
 }
 
-div.mainmenu.bank {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/bank.png',1) ?>);
+div.mainmenu.externalsite {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/externalsite.png',1) ?>);
+}
+
+div.mainmenu.ftp {
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/tools.png',1) ?>);
+}
+
+div.mainmenu.gravatar {
+}
+
+div.mainmenu.geopipmaxmind {
+}
+
+div.mainmenu.members {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/members.png',1) ?>);
+}
+
+div.mainmenu.paypal {
+}
+
+div.mainmenu.products {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/products.png',1) ?>);
+	margin-left: 10px;
 }
 
 div.mainmenu.project {
@@ -384,28 +423,11 @@ div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/tools.png',1) ?>);
 }
 
-div.mainmenu.ftp {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/tools.png',1) ?>);
-}
-
-div.mainmenu.members {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/members.png',1) ?>);
-}
-
 div.mainmenu.shop {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/shop.png',1) ?>);
 }
 
-div.mainmenu.agenda {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/agenda.png',1) ?>);
-}
-
-div.mainmenu.ecm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/ecm.png',1) ?>);
-}
-
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/pointofsale.png',1) ?>);
+div.mainmenu.webservices {
 }
 
 div.mainmenu.google {
@@ -432,7 +454,7 @@ foreach($conf->modules as $key => $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','cashdesk');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','bookmark','cashdesk','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
 foreach($mainmenuusedarray as $key => $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;

@@ -385,21 +385,12 @@ div.mainmenu {
 
 <?php if (empty($conf->browser->phone)) { ?>
 
-div.mainmenu.home{
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/home.png' ?>);
+div.mainmenu.agenda {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/agenda.png' ?>);
 }
 
-div.mainmenu.companies {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/company.png' ?>);
-}
-
-div.mainmenu.products {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/products.png' ?>);
-	margin-left: 10px;
-}
-
-div.mainmenu.commercial {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/commercial.png' ?>);
+div.mainmenu.cashdesk {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/pointofsale.png' ?>);
 }
 
 div.mainmenu.accountancy {
@@ -410,6 +401,45 @@ div.mainmenu.bank {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/bank.png' ?>);
 }
 
+div.mainmenu.companies {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/company.png' ?>);
+}
+
+div.mainmenu.commercial {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/commercial.png' ?>);
+}
+
+div.mainmenu.externalsite {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/externalsite.png',1) ?>);
+}
+
+div.mainmenu.ftp {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/tools.png' ?>);
+}
+
+div.mainmenu.ecm {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/ecm.png' ?>);
+}
+
+div.mainmenu.home{
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/home.png' ?>);
+}
+
+div.mainmenu.gravatar {
+}
+
+div.mainmenu.geopipmaxmind {
+}
+
+div.mainmenu.members {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/members.png' ?>);
+}
+
+div.mainmenu.products {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/products.png' ?>);
+	margin-left: 10px;
+}
+
 div.mainmenu.project {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/project.png' ?>);
 }
@@ -418,28 +448,8 @@ div.mainmenu.tools {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/tools.png' ?>);
 }
 
-div.mainmenu.ftp {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/tools.png' ?>);
-}
-
-div.mainmenu.members {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/members.png' ?>);
-}
-
 div.mainmenu.shop {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/shop.png' ?>);
-}
-
-div.mainmenu.agenda {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/agenda.png' ?>);
-}
-
-div.mainmenu.ecm {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/ecm.png' ?>);
-}
-
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/pointofsale.png' ?>);
 }
 
 div.mainmenu.google {
@@ -465,31 +475,29 @@ foreach($conf->modules as $key => $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','cashdesk');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','bookmark','cashdesk','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
 foreach($mainmenuusedarray as $key => $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
 	//print "XXX".$val;
 
 	// Search img file in module dir
-	$found=0; $url='';
+	$url='';
 	foreach($conf->file->dol_document_root as $dirroot)
 	{
 		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 		{
 			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-			$found=1;
 			break;
 		}
 	}
 	// Img file not found
-	if (! $found && $generic <= 4)
+	if (! $url && $generic <= 4)
 	{
 		$url=DOL_URL_ROOT."/theme/cameleo/img/menus/generic".$generic.".png";
-		$found=1;
 		$generic++;
 	}
-	if ($found)
+	if ($url)
 	{
 		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
 		print "div.mainmenu.".$val." {\n";
