@@ -68,6 +68,9 @@ class DolEditor
 
     	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
 
+    	if (! $rows) $rows=round($height/25);
+    	if (! $cols) $rows=round($height/6);
+
         // Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
         $defaulteditor='ckeditor';
         $this->tool=empty($conf->global->FCKEDITOR_EDITORNAME)?$defaulteditor:$conf->global->FCKEDITOR_EDITORNAME;

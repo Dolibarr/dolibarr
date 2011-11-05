@@ -74,7 +74,7 @@ class Form
      * @param   string	$paramkey       Key of parameter for Url (unique if there is several parameter to show). In most cases "id".
      * @param   string	$paramvalue     Value of parameter for Url
      * @param	boolean	$perm           Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz', 'select:xxx'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
      * @return	string    			    HTML edit field
      */
     function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
@@ -102,7 +102,7 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	string	$paramkey		Key of parameter (unique if there is several parameter to show). In most cases "id".
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:rows:cols', 'select:xxx'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @return  string   		      	HTML edit field
      */
@@ -132,7 +132,7 @@ class Form
         		    $tmp=explode(':',$typeofdata);
                     $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
                 }
-                else if ($typeofdata == 'text' || $typeofdata == 'textarea')
+                else if ($typeofdata == 'text' || $typeofdata == 'textarea' || $typeofdata == 'note')
                 {
                     $ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
                 }
@@ -144,7 +144,7 @@ class Form
                 {
         		    $tmp=explode(':',$typeofdata);
                     require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-                    $doleditor=new DolEditor($htmlname,($editvalue?$editvalue:$value),($tmp[2]?$tmp[2]:''),($tmp[3]?$tmp[3]:'100'),($tmp[1]?$tmp[1]:'dolibarr_notes'),'In',false,true,true,($tmp[4]?$tmp[4]:ROWS_4),($tmp[5]?$tmp[5]:'100'));
+                    $doleditor=new DolEditor($htmlname,($editvalue?$editvalue:$value),($tmp[2]?$tmp[2]:''),($tmp[3]?$tmp[3]:'100'),($tmp[1]?$tmp[1]:'dolibarr_notes'),'In',false,true,true);
                     $ret.=$doleditor->Create(1);
                     //$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
                 }
@@ -157,7 +157,14 @@ class Form
             {
                 if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
-                elseif ($typeofdata == 'text' || $typeofdata == 'textarea') $ret.=dol_htmlentitiesbr($value);
+                elseif ($typeofdata == 'text' || $typeofdata == 'textarea')  $ret.=dol_htmlentitiesbr($value);
+                else if (preg_match('/^ckeditor/',$typeofdata))
+                {
+                    $tmpcontent=dol_htmlentitiesbr($value);
+                    $firstline=preg_replace('/<br>.*/','',$tmpcontent);
+                    $firstline=preg_replace('/[\n\r].*/','',$firstline);
+                    $ret.=$firstline.((strlen($firstline) != strlen($tmpcontent))?'...':'');
+                }
                 else $ret.=$value;
             }
         }
@@ -173,7 +180,7 @@ class Form
      * @param	string	$inputType		Type of input ('numeric', 'datepicker', 'textarea', 'ckeditor:dolibarr_zzz', 'select:xxx')
      * @return	string   		      	HTML edit in place
      */
-    function editInPlace($value, $htmlname, $condition, $inputType='textarea')
+    private function editInPlace($value, $htmlname, $condition, $inputType='textarea')
     {
     	global $conf;
 
