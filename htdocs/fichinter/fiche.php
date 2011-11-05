@@ -56,6 +56,7 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
 
+
 /*
  * Actions
  */
@@ -217,6 +218,18 @@ if ($action == 'setdescription')
 {
     $object->fetch($id);
     $result=$object->set_description($user,$_POST['description']);
+    if ($result < 0) dol_print_error($db,$object->error);
+}
+if ($action == 'setnote_public')
+{
+    $object->fetch($id);
+    $result=$object->update_note_public($_POST['note_public']);
+    if ($result < 0) dol_print_error($db,$object->error);
+}
+if ($action == 'setnote_private')
+{
+    $object->fetch($id);
+    $result=$object->update_note($_POST['note_private']);
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -802,35 +815,12 @@ else if ($id > 0 || ! empty($ref))
     print '</tr>';
 
     // Description (must be a textarea and not html must be allowed (used in list view)
-    print '<tr><td>';
-    if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
-    {
-    	print $langs->trans('Description');
-    	print '</td><td colspan="3">';
-    	print $form->editInPlace($object->description, 'description', $user->rights->ficheinter->creer && $object->statut == 0, 'textarea');
-    }
-    else
-    {
-    	print '<table class="nobordernopadding" width="100%"><tr><td>';
-    	print $langs->trans('Description');
-    	print '</td>';
-    	if ($action != 'editdescription' && $object->statut == 0) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdescription&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
-    	print '</tr></table>';
-    	print '</td><td colspan="3">';
-    	if ($action == 'editdescription')
-    	{
-    		print '<form name="editdescription" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-    		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    		print '<input type="hidden" name="action" value="setdescription">';
-    		print '<textarea name="description" wrap="soft" cols="70" rows="'.ROWS_3.'">'.dol_htmlentitiesbr_decode($object->description).'</textarea><br>';
-    		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-    		print '</form>';
-    	}
-    	else
-    	{
-    		print dol_nl2br($object->description);
-    	}
-    }
+    print '<tr><td valign="top">';
+    if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $langs->trans('Description');
+    else print $form->editfieldkey("Description",'description',$object->description,'id',$object->id,$object->statut == 0 && $user->rights->ficheinter->creer,'textarea');
+    print '</td><td colspan="3">';
+    if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $form->editInPlace($object->description, 'description', $user->rights->ficheinter->creer && $object->statut == 0, 'textarea');
+    else print $form->editfieldval("Description",'description',$object->description,'id',$object->id,$object->statut == 0 && $user->rights->ficheinter->creer,'textarea');
     print '</td>';
     print '</tr>';
 
@@ -868,17 +858,23 @@ else if ($id > 0 || ! empty($ref))
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
     // Public note
-    print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
-    print '<td valign="top" colspan="3">';
-    print $form->editInPlace($object->note_public, 'note_public', $user->rights->ficheinter->creer, 'textarea');
+    print '<tr><td valign="top">';
+    if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $langs->trans('NotePublic');
+    else print $form->editfieldkey("NotePublic",'note_public',$object->note_public,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
+    print '</td><td colspan="3">';
+    if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $form->editInPlace($object->note_public, 'note_public', $user->rights->ficheinter->creer, 'textarea');
+    else print $form->editfieldval("NotePublic",'note_public',$object->note_public,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
     print "</td></tr>";
 
     // Private note
     if (! $user->societe_id)
     {
-    	print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
-    	print '<td valign="top" colspan="3">';
-    	print $form->editInPlace($object->note_private, 'note_private', $user->rights->ficheinter->creer, 'textarea');
+    	print '<tr><td valign="top">';
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $langs->trans('NotePrivate');
+        else print $form->editfieldkey("NotePrivate",'note_private',$object->note_private,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
+        print '</td><td colspan="3">';
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) print $form->editInPlace($object->note_private, 'note_private', $user->rights->ficheinter->creer, 'textarea');
+        else print $form->editfieldval("NotePrivate",'note_private',$object->note_private,'id',$object->id,$user->rights->ficheinter->creer,'textarea');
     	print "</td></tr>";
     }
 

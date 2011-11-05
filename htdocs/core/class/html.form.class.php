@@ -68,14 +68,14 @@ class Form
     /**
      * Output key field for an editable field
      *
-     * @param      string	$text            Text of label
-     * @param      string	$htmlname        Name of select field
-     * @param      string	$preselected     Preselected value for parameter
-     * @param      string	$paramkey        Key of parameter (unique if there is several parameter to show)
-     * @param      string	$paramvalue      Value of parameter
-     * @param      boolean	$perm            Permission to allow button to edit parameter
-     * @param      string	$typeofdata      Type of data (string by default, email, ...)
-     * @return     string    			      HTML edit field
+     * @param   string	$text           Text of label or key to translate
+     * @param   string	$htmlname       Name of select field
+     * @param   string	$preselected    Value to show/edit
+     * @param   string	$paramkey       Key of parameter for Url (unique if there is several parameter to show). In most cases "id".
+     * @param   string	$paramvalue     Value of parameter for Url
+     * @param	boolean	$perm           Permission to allow button to edit parameter
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day', ...)
+     * @return	string    			    HTML edit field
      * TODO no GET or POST in class file, use a param
      */
     function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
@@ -91,17 +91,17 @@ class Form
     }
 
     /**
-     *	Output val field for an editable field
+     * Output val field for an editable field
      *
-     * 	@param		string	$text			Text of label (not used in this function)
-     * 	@param		string	$htmlname		Name of select field
-     * 	@param		string	$preselected	Preselected value for parameter
-     * 	@param		string	$paramkey		Key of parameter (unique if there is several parameter to show)
-     * 	@param		boolean	$perm			Permission to allow button to edit parameter
-     * 	@param		string	$typeofdata		Type of data ('string' by default, 'email', 'text', 'day', ...)
-     * 	@param		string	$editvalue		Use this value instead $preselected
-     *  @return     string   		      	HTML edit field
-     *  TODO no GET or POST in class file, use a param
+     * @param	string	$text			Text of label (not used in this function)
+     * @param	string	$htmlname		Name of select field
+     * @param	string	$preselected	Value to show/edit
+     * @param	string	$paramkey		Key of parameter (unique if there is several parameter to show)
+     * @param	boolean	$perm			Permission to allow button to edit parameter
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'text' or 'textarea', 'day', ...)
+     * @param	string	$editvalue		Use this value instead $preselected
+     * @return  string   		      	HTML edit field
+     * TODO no GET or POST in class file, use a param
      */
     function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string',$editvalue='')
     {
@@ -118,11 +118,11 @@ class Form
             $ret.='<tr><td>';
             if (in_array($typeofdata,array('string','email')))
             {
-                $ret.='<input type="text" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$preselected).'">';
+                $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$preselected).'">';
             }
-            else if ($typeofdata == 'text')
+            else if ($typeofdata == 'text' || $typeofdata == 'textarea')
             {
-                $ret.='<textarea name="'.$htmlname.'">'.($editvalue?$editvalue:$preselected).'</textarea>';
+                $ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$preselected).'</textarea>';
             }
             else if ($typeofdata == 'day')
             {
@@ -136,22 +136,23 @@ class Form
         }
         else
         {
-            if ($typeofdata == 'email') $ret.=dol_print_email($preselected,0,0,0,0,1);
-            if ($typeofdata == 'day')   $ret.=dol_print_date($preselected,'day');
+            if ($typeofdata == 'email')   $ret.=dol_print_email($preselected,0,0,0,0,1);
+            elseif ($typeofdata == 'day') $ret.=dol_print_date($preselected,'day');
+            elseif ($typeofdata == 'text' || $typeofdata == 'textarea') $ret.=dol_htmlentitiesbr($preselected);
             else $ret.=$preselected;
         }
         return $ret;
     }
 
     /**
-     *	Output edit in place form
+     * Output edit in place form
      *
-     *	@param		string	$value			Value to show/edit
-     *	@param		string	$htmlname		DIV ID (field name)
-     *	@param		int		$condition		Condition to edit
-     *	@param		string	$inputType		Type of input
-     *	@param		string	$inputOption	Input option
-     *	@return     string   		      	HTML edit in place
+     * @param	string	$value			Value to show/edit
+     * @param	string	$htmlname		DIV ID (field name)
+     * @param	int		$condition		Condition to edit
+     * @param	string	$inputType		Type of input
+     * @param	string	$inputOption	Input option
+     * @return	string   		      	HTML edit in place
      */
     function editInPlace($value, $htmlname, $condition, $inputType='textarea', $inputOption='')
     {
