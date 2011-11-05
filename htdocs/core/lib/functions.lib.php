@@ -31,6 +31,22 @@
  */
 
 
+if (! function_exists('json_encode'))
+{
+    /**
+     * Implement json_encode for PHP that does not support it
+     *
+     * @param	mixed	$elements		PHP Object to json encode
+     * @return 	string					Json encoded string
+     */
+    function json_encode($elements)
+    {
+        if (is_array($elements)) return '["' . join('","', $elements) . '"]';
+        else return '"'.$elements.'"';
+    }
+}
+
+
 /**
  * Return a DoliDB instance (database handler).
  *
@@ -53,18 +69,6 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 
 
 /**
- *  This function output memory used by PHP and exit everything. Used for debugging purpose.
- *
- *  @return	void
- */
-function dol_stopwithmem()
-{
-    print memory_get_usage();
-    llxFooter();
-    exit;
-}
-
-/**
  *  Function called at end of web php process
  *
  *  @return	void
@@ -76,6 +80,7 @@ function dol_shutdown()
     if (is_object($db) && ! empty($db->connected)) $disconnectdone=$db->close();
     dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced)':''), ($disconnectdone?LOG_WARNING:LOG_DEBUG));
 }
+
 
 /**
  *  Return value of a param into GET or POST supervariable
