@@ -92,6 +92,57 @@ if (! function_exists('json_encode'))
     }
 }
 
+if (! function_exists('json_decode'))
+{
+	/**
+	 * Implement json_decode for PHP that does not support it
+	 *
+	 * @param	string	$json		Json encoded to PHP Object or Array
+	 * @param	bool	$assoc		False return an object, true return an array
+	 * @return 	mixed				Object or Array
+	 */
+	function json_decode($json, $assoc=false)
+	{
+		$comment = false;
+		
+		for ($i=0; $i<strlen($json); $i++)
+		{
+			if (! $comment)
+			{
+				if (($json[$i] == '{') || ($json[$i] == '[')) $out.= 'array(';
+				else if (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
+				else if ($json[$i] == ':') $out.= ' => ';
+				else $out.= $json[$i];
+			}
+			else $out.= $json[$i];
+			if ($json[$i] == '"' && $json[($i-1)]!="\\") $comment = !$comment;
+		}
+		
+		// Return an array
+		eval('$array = '.$out.';');
+		
+		// Return an object
+		if (! $assoc)
+		{
+			if (! empty($array))
+			{
+				$object = false;
+				
+				foreach ($array as $key => $value)
+				{
+					$object->{$key} = $value;
+				}
+				
+				return $object;
+			}
+			
+			return false;
+		}
+		
+		return $array;
+	}
+}
+
 
 /**
  *  This function output memory used by PHP and exit everything. Used for debugging purpose.
