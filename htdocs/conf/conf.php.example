@@ -279,4 +279,17 @@ $dolibarr_main_prod='0';
 #$dolibarr_font_DOL_DEFAULT_TTF="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
 #$dolibarr_font_DOL_DEFAULT_TTF_BOLD="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf";
 
+##############################
+# Extrernal module           #
+##############################
+
+# multicompany_transverse_mode
+# Pyramidal (0): The rights and groups are managed in each entity,
+# users belong to the entity for their rights.
+# Transversal (1): The groups can belong only to the master entity
+# and that the user belongs to a particular entity
+# Default value: 0 (pyramidal)
+# Examples:
+# $multicompany_transverse_mode='1';
+
 ?>

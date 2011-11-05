@@ -771,54 +771,55 @@ function dol_delete_preview($object)
 }
 
 /**
-*	Create a meta file with document file into same directory.
-*  This should allow rgrep search
-*
-*	@param	Object	$object		Object
-*	@return	void
-*/
+ *	Create a meta file with document file into same directory.
+ *	This should allow rgrep search
+ *
+ *	@param	Object	$object		Object
+ *	@return	void
+ */
 function dol_meta_create($object)
 {
-    global $langs,$conf;
-
-    $object->fetch_thirdparty();
-
-    if ($conf->facture->dir_output)
-    {
-        $facref = dol_sanitizeFileName($object->ref);
-        $dir = $conf->facture->dir_output . "/" . $facref ;
-        $file = $dir . "/" . $facref . ".meta";
-
-        if (! is_dir($dir))
-        {
-            create_exdir($dir);
-        }
-
-        if (is_dir($dir))
-        {
-            $nblignes = count($object->lines);
-            $client = $object->client->nom . " " . $object->client->address . " " . $object->client->cp . " " . $object->client->ville;
-            $meta = "REFERENCE=\"" . $object->ref . "\"
+	global $langs,$conf;
+	
+	$object->fetch_thirdparty();
+	
+	if ($conf->facture->dir_output)
+	{
+		$facref = dol_sanitizeFileName($object->ref);
+		$dir = $conf->facture->dir_output . "/" . $facref;
+		$file = $dir . "/" . $facref . ".meta";
+		
+		if (! is_dir($dir))
+		{
+			create_exdir($dir);
+		}
+		
+		if (is_dir($dir))
+		{
+			$nblignes = count($object->lines);
+			$client = $object->client->nom . " " . $object->client->address . " " . $object->client->cp . " " . $object->client->ville;
+			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
 			CLIENT=\"" . $client . "\"
 			TOTAL_HT=\"" . $object->total_ht . "\"
 			TOTAL_TTC=\"" . $object->total_ttc . "\"\n";
-
-            for ($i = 0 ; $i < $nblignes ; $i++)
-            {
-                //Pour les articles
-            $meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
+			
+			for ($i = 0 ; $i < $nblignes ; $i++)
+			{
+				//Pour les articles
+				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
 				ITEM_" . $i . "_UNIT_PRICE=\"" . $object->lines[$i]->price . "\"
-            ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
-            ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
-            ";
-    }
-    }
-    $fp = fopen($file,"w");
-    fputs($fp,$meta);
-    fclose($fp);
-    if (! empty($conf->global->MAIN_UMASK))
+				ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
+				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
+				";
+			}
+		}
+		
+		$fp = fopen($file,"w");
+		fputs($fp,$meta);
+		fclose($fp);
+		if (! empty($conf->global->MAIN_UMASK))
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
 	}
 }

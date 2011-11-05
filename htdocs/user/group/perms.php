@@ -169,7 +169,7 @@ if ($id)
     $sql.= " WHERE ugr.fk_id = r.id";
     if(! empty($conf->multicompany->enabled))
     {
-        if(empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        if(empty($conf->multicompany->transverse_mode))
         {
         	$sql.= " AND r.entity = ".$conf->entity;
         }
@@ -250,7 +250,7 @@ if ($id)
     //$sql.= " AND r.entity = ".(empty($conf->multicompany->enabled) ? $conf->entity : $fgroup->entity);
     if(! empty($conf->multicompany->enabled))
     {
-        if(empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        if(empty($conf->multicompany->transverse_mode))
         {
         	$sql.= " AND r.entity = ".$conf->entity;
         }

@@ -23,14 +23,14 @@ create table llx_propal
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(30) NOT NULL,			-- proposal reference number
-  entity          integer DEFAULT 1 NOT NULL,   -- multi company id
+  entity          integer DEFAULT 1 NOT NULL,	-- multi company id
 
-  ref_ext         varchar(50),                  -- reference into an external system (not used by dolibarr)
-  ref_int		  varchar(50),                  -- reference into an internal system (used by dolibarr)
-  ref_client      varchar(50),					-- customer proposal number
+  ref_ext         varchar(255),					-- reference into an external system (not used by dolibarr)
+  ref_int		  varchar(255),					-- reference into an internal system (used by dolibarr)
+  ref_client      varchar(255),					-- customer proposal number
 
   fk_soc          integer,
-  fk_projet       integer     DEFAULT 0,        -- projet auquel est rattache la propale
+  fk_projet       integer     DEFAULT 0,		-- projet auquel est rattache la propale
 
   tms             timestamp,
   datec           datetime,						-- date de creation 

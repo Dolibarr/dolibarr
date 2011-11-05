@@ -43,31 +43,31 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/conf.class.php");
 
 $conf = new Conf();
 // Identifiant propres au serveur base de donnee
-$conf->db->host   = $dolibarr_main_db_host;
-$conf->db->port   = $dolibarr_main_db_port;
-$conf->db->name   = $dolibarr_main_db_name;
-$conf->db->user   = $dolibarr_main_db_user;
-$conf->db->pass   = $dolibarr_main_db_pass;
-$conf->db->type   = $dolibarr_main_db_type;
-$conf->db->prefix = $dolibarr_main_db_prefix;
-$conf->db->character_set=$dolibarr_main_db_character_set;
-$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
-$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
-$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
-$conf->file->main_limit_users = $dolibarr_main_limit_users;
-$conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
+$conf->db->host							= $dolibarr_main_db_host;
+$conf->db->port							= $dolibarr_main_db_port;
+$conf->db->name							= $dolibarr_main_db_name;
+$conf->db->user							= $dolibarr_main_db_user;
+$conf->db->pass							= $dolibarr_main_db_pass;
+$conf->db->type							= $dolibarr_main_db_type;
+$conf->db->prefix						= $dolibarr_main_db_prefix;
+$conf->db->character_set				= $dolibarr_main_db_character_set;
+$conf->db->dolibarr_main_db_collation	= $dolibarr_main_db_collation;
+$conf->db->dolibarr_main_db_encryption	= $dolibarr_main_db_encryption;
+$conf->db->dolibarr_main_db_cryptkey	= $dolibarr_main_db_cryptkey;
+$conf->file->main_limit_users			= $dolibarr_main_limit_users;
+$conf->file->mailing_limit_sendbyweb	= $dolibarr_mailing_limit_sendbyweb;
 if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');	// For test purpose
 // Identifiant autres
-$conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
+$conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
 // Force https
-$conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
+$conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
 // Define charset for HTML Output (can set hidden value force_charset in conf file)
-$conf->file->character_set_client=strtoupper($force_charset_do_notuse);
+$conf->file->character_set_client		= strtoupper($force_charset_do_notuse);
 // Cookie cryptkey
-$conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
+$conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
 
 // Define array of document root directories
-$conf->file->dol_document_root=array('main' => DOL_DOCUMENT_ROOT);
+$conf->file->dol_document_root			= array('main' => DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories
@@ -77,6 +77,9 @@ if (! empty($dolibarr_main_document_root_alt))
 		$conf->file->dol_document_root['alt']=$value;
 	}
 }
+
+// Multi-Company transverse mode
+$conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;
 
 // Chargement des includes principaux de librairies communes
 if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");		// Need 500ko memory

@@ -71,17 +71,30 @@ DROP TABLE IF EXISTS llx_pos_tmp;
 
 ALTER TABLE llx_deplacement ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
-CREATE TABLE IF NOT EXISTS `llx_localtax` (
-  `rowid` int(11) NOT NULL AUTO_INCREMENT,
-  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `datep` date DEFAULT NULL,
-  `datev` date DEFAULT NULL,
-  `amount` double NOT NULL DEFAULT '0',
-  `label` varchar(255) DEFAULT NULL,
-  `entity` int(11) NOT NULL DEFAULT '1',
-  `note` text,
-  `fk_bank` int(11) DEFAULT NULL,
-  `fk_user_creat` int(11) DEFAULT NULL,
-  `fk_user_modif` int(11) DEFAULT NULL,
-  PRIMARY KEY (`rowid`)
+CREATE TABLE IF NOT EXISTS llx_localtax
+(
+	rowid			integer		AUTO_INCREMENT PRIMARY KEY,
+	entity			integer			NOT NULL DEFAULT '1',
+	tms				timestamp,
+	datep			date			DEFAULT NULL,
+	datev			date			DEFAULT NULL,
+	amount			double			NOT NULL DEFAULT '0',
+	label			varchar(255)	DEFAULT NULL,
+	note			text,
+	fk_bank			integer			DEFAULT NULL,
+	fk_user_creat	integer			DEFAULT NULL,
+	fk_user_modif	integer			DEFAULT NULL
+	
 ) ENGINE=InnoDB;
+
+ALTER TABLE llx_propal MODIFY ref_int varchar(255);
+ALTER TABLE llx_propal MODIFY ref_ext varchar(255);
+ALTER TABLE llx_propal MODIFY ref_client varchar(255);
+
+ALTER TABLE llx_commande MODIFY ref_int varchar(255);
+ALTER TABLE llx_commande MODIFY ref_ext varchar(255);
+ALTER TABLE llx_commande MODIFY ref_client varchar(255);
+
+ALTER TABLE llx_facture MODIFY ref_int varchar(255);
+ALTER TABLE llx_facture MODIFY ref_ext varchar(255);
+ALTER TABLE llx_facture MODIFY ref_client varchar(255);

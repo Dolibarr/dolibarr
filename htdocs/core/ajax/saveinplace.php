@@ -56,6 +56,12 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	$return=array();
 	$error=0;
 	
+	if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+	{
+		$element = $regs[1];
+		$subelement = $regs[2];
+	}
+	
 	if ($element == 'fichinter') $element = 'ficheinter';
 	
 	if ($user->rights->$element->creer || $user->rights->$element->write)

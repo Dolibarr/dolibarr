@@ -53,6 +53,8 @@ class Conf
 	var $top_menu;
 	var $smart_menu;
 
+	//! To store properties of multi-company
+	var $multicompany;
 	//! Used to store instance for multi-company (default 1)
 	var $entity=1;
 
@@ -89,9 +91,10 @@ class Conf
 
 
 	/**
-	 *      Load setup values into conf object (read llx_const)
-	 *      @param      $db			    Handler d'acces base
-	 *      @return     int         	< 0 if KO, >= 0 if OK
+	 *	Load setup values into conf object (read llx_const)
+	 *
+	 *	@param      DoliDB		$db		Handler d'acces base
+	 *	@return     int					< 0 if KO, >= 0 if OK
 	 */
 	function setValues($db)
 	{
@@ -112,7 +115,14 @@ class Conf
 		$sql = "SELECT ".$db->decrypt('name')." as name,";
 		$sql.= " ".$db->decrypt('value')." as value, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE entity IN (0,".$this->entity.")";
+		if (! empty($this->multicompany->transverse_mode))
+		{
+			$sql.= " WHERE entity IN (0,1,".$this->entity.")";
+		}
+		else
+		{
+			$sql.= " WHERE entity IN (0,".$this->entity.")";
+		}
 		$sql.= " ORDER BY entity";	// This is to have entity 0 first, then entity 1 that overwrite.
 
 		$result = $db->query($sql);
