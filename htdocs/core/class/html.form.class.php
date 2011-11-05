@@ -85,10 +85,17 @@ class Form
     	
     	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
     	{
-    		$tmp=explode(':',$typeofdata);
-    		$ret.= "\n".'<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
-    		$ret.= $langs->trans($text);
-    		$ret.= '</div>'."\n";
+    		if ($perm)
+    		{
+    			$tmp=explode(':',$typeofdata);
+    			$ret.= '<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
+    			$ret.= $langs->trans($text);
+    			$ret.= '</div>'."\n";
+    		}
+    		else
+    		{
+    			$ret.= $langs->trans($text);
+    		}
     	}
     	else
     	{
@@ -230,7 +237,7 @@ class Form
     			}
     		}
 
-    		$out.= "\n".'<div class="editval_'.$inputType.'" id="val_'.$htmlname.'">';
+    		$out.= '<div class="editval_'.$inputType.'" id="val_'.$htmlname.'">';
     		$out.= $value;
     		$out.= '</div>'."\n";
     	}
