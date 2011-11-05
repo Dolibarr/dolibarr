@@ -442,10 +442,6 @@ div.mainmenu.cashdesk {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/pointofsale.png' ?>);
 }
 
-div.mainmenu.webcal {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/agenda.png' ?>);
-}
-
 div.mainmenu.google {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/globe.png' ?>);
 }

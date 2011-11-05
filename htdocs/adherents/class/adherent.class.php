@@ -324,8 +324,6 @@ class Adherent extends CommonObject
                     }
                 }
 
-                $this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
-
                 if (! $notrigger)
                 {
                     // Appel des triggers
@@ -564,8 +562,6 @@ class Adherent extends CommonObject
 
                 if (! $error && ! $notrigger)
                 {
-                    $this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
-
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
                     $interface=new Interfaces($this->db);
@@ -687,8 +683,6 @@ class Adherent extends CommonObject
                 {
                     if ($this->db->affected_rows($resql))
                     {
-                        $this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
-
                         // Appel des triggers
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
                         $interface=new Interfaces($this->db);
@@ -1181,7 +1175,6 @@ class Adherent extends CommonObject
                 $this->last_subscription_amount=$montant;
                 $this->last_subscription_date_start=$date;
                 $this->last_subscription_date_end=$datefin;
-                $this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1236,8 +1229,6 @@ class Adherent extends CommonObject
         {
             $this->statut=1;
 
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
-
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);
@@ -1283,8 +1274,6 @@ class Adherent extends CommonObject
         if ($result)
         {
             $this->statut=0;
-
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

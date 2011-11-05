@@ -408,10 +408,6 @@ div.mainmenu.cashdesk {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/pointofsale.png',1) ?>);
 }
 
-div.mainmenu.webcal {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/agenda.png',1) ?>);
-}
-
 div.mainmenu.google {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/globe.png',1) ?>);
 }

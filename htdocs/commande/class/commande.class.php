@@ -418,8 +418,6 @@ class Commande extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);

@@ -1334,8 +1334,6 @@ class Facture extends CommonObject
             $resql = $this->db->query($sql);
             if ($resql)
             {
-                $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
                 $interface=new Interfaces($this->db);
@@ -1390,8 +1388,6 @@ class Facture extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);
@@ -1452,8 +1448,6 @@ class Facture extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
                 $interface=new Interfaces($this->db);
@@ -1663,8 +1657,6 @@ class Facture extends CommonObject
                 $this->facnumber=$num;
                 $this->statut=1;
             }
-
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
             // Trigger calls
             if (! $error)
