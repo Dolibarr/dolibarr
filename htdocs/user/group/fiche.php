@@ -245,18 +245,10 @@ if ($action == 'create')
 	}
 
     print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-    if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
-    {
-        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false);
-        $doleditor->Create();
-    }
-    else
-    {
-        print '<textarea class="flat" name="note" rows="'.ROWS_8.'" cols="90">';
-        print '</textarea>';
-    }
-    print "</textarea></td></tr>\n";
+    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
+    $doleditor->Create();
+    print "</td></tr>\n";
     print "</table>\n";
 
     print '<center><br><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></center>';
@@ -353,7 +345,7 @@ else
 			print "<br>\n";
 
 
-            dol_htmloutput_errors($message);
+            dol_htmloutput_mesg($message);
 
             /*
              * Liste des utilisateurs dans le groupe
@@ -501,23 +493,15 @@ else
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td class="valeur">';
-
-            if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
-            {
-                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-                $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true);
-                $doleditor->Create();
-            }
-            else
-            {
-                print '<textarea class="flat" name="note" rows="'.ROWS_8.'" cols="90">';
-                print dol_htmlentitiesbr_decode($object->note);
-                print '</textarea>';
-            }
+            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+            $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
+            $doleditor->Create();
             print '</td>';
             print "</tr>\n";
-            print '<tr><td align="center" colspan="2"><input class="button" value="'.$langs->trans("Save").'" type="submit"></td></tr>';
             print "</table>\n";
+
+            print '<center><br><input class="button" value="'.$langs->trans("Save").'" type="submit"></center>';
+
             print '</form>';
 
             print '</div>';
@@ -526,7 +510,7 @@ else
     }
 }
 
-$db->close();
-
 llxFooter();
+
+if (is_object($db)) $db->close();
 ?>

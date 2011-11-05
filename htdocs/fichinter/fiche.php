@@ -975,7 +975,7 @@ else if ($id > 0 || ! empty($ref))
 
                 // Editeur wysiwyg
                 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-                $doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
+                $doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
                 $doleditor->Create();
                 print '</td>';
 
@@ -1030,7 +1030,7 @@ else if ($id > 0 || ! empty($ref))
             print '<td>';
             // editeur wysiwyg
             require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-            $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
+            $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
             $doleditor->Create();
             print '</td>';
 

@@ -137,7 +137,7 @@ if ($id)
 	    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$adh->id."\">";
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note',$adh->note,'',280,'dolibarr_notes','',true,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MEMBER,10,80);
+        $doleditor=new DolEditor('note',$adh->note,'',280,'dolibarr_notes','',true,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
         $doleditor->Create();
 	}
 	else

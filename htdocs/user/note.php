@@ -123,25 +123,26 @@ if ($id)
 		print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
 	    // Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER,10,80);
+		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
 		$doleditor->Create();
 	}
 	else
 	{
-		print dol_textishtml($fuser->note)?$fuser->note:dol_nl2br($fuser->note,1,true);
+		print dol_htmlentitiesbr($fuser->note);
 	}
 	print "</td></tr>";
 
+    print "</table>";
+
 	if ($action == 'edit')
 	{
-		print '<tr><td colspan="4" align="center">';
+		print '<center><br>';
 		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
 		print '&nbsp; &nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
+		print '</center>';
 	}
 
-    print "</table>";
 	print "</form>\n";
 
 

@@ -34,28 +34,22 @@ if (!$user->admin) accessforbidden();
 
 // Constante et traduction de la description du module
 $modules = array(
-'USER' => 'FCKeditorForUsers',
-'SOCIETE' => 'FCKeditorForCompany',			// TODO Regrouper les 4 parm sur edit notes en 1 seul
+'SOCIETE' => 'FCKeditorForCompany',
 'PRODUCTDESC' => 'FCKeditorForProduct',
-'MEMBER' => 'FCKeditorForMembers',
 'MAILING' => 'FCKeditorForMailing',
 'DETAILS' => 'FCKeditorForProductDetails',
 );
 // Conditions pour que l'option soit proposee
 $conditions = array(
-'USER' => 1,
-'SOCIETE' => $conf->societe->enabled,
+'SOCIETE' => 1,
 'PRODUCTDESC' => ($conf->product->enabled||$conf->service->enabled),
-'MEMBER' => $conf->adherent->enabled,
 'MAILING' => $conf->mailing->enabled,
 'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
 );
 // Picto
 $picto = array(
-'USER' => 'user',
-'SOCIETE' => 'company',
+'SOCIETE' => 'generic',
 'PRODUCTDESC' => 'product',
-'MEMBER' => 'user',
 'MAILING' => 'email',
 'DETAILS' => 'generic',
 );

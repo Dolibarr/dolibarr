@@ -1176,12 +1176,9 @@ FreeLegalTextOnDeliveryReceipts= Mention complémentaire sur les bons de récept
 ##### FCKeditor #####
 AdvancedEditor=Editeur avancé
 ActivateFCKeditor= Activer éditeur avancé pour :
-FCKeditorForUsers= Création/édition WYSIWIG de la description et note des utilisateurs
-FCKeditorForCompany= Création/édition WYSIWIG de la description et note des tiers
+FCKeditorForCompany= Création/édition WYSIWIG de la description et note des éléments (autre que produits/services)
 FCKeditorForProduct= Création/édition WYSIWIG de la description et note des produits/services
-FCKeditorForMembers= Création/édition WYSIWIG de la description et note des adhérents
 FCKeditorForProductDetails= Création/édition WYSIWIG des lignes détails produits (sur commandes, propales, factures, etc...). <font class="warning">Attention: L'utilisation pour ce cas est fortement déconseillée car peut poser des problèmes dans la gestion de caractères et mise en page des fichiers PDF générés.</font>
-FCKeditorForProductDetailsPerso= Création/édition WYSIWIG des lignes détails produits personnalisées (sur commandes, propales, factures, etc...)
 FCKeditorForMailing= Création/édition WYSIWIG des mailings
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase= La connexion a réussi mais la base ne semble pas être une base OSCommerce (clé %s  non trouvée dans la table %s).

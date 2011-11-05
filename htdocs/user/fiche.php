@@ -829,18 +829,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr><td valign="top">';
     print $langs->trans("Note");
     print '</td><td>';
-    if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
-    {
-        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note','','',180,'dolibarr_notes','',false);
-        $doleditor->Create();
-    }
-    else
-    {
-        print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
-        print $_POST["note"];
-        print '</textarea>';
-    }
+    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    $doleditor=new DolEditor('note','','',180,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_4,90);
+    $doleditor->Create();
     print "</td></tr>\n";
 
     // Autres caracteristiques issus des autres modules

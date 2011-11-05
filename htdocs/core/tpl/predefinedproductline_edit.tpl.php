@@ -53,12 +53,12 @@
 			$parameters=array('fk_parent_line'=>$fk_parent_line);
 		    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 		}
-		
+
 		// editeur wysiwyg
 		$nbrows=ROWS_2;
 		if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-		$doleditor=new DolEditor('desc',$line->description,'',164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+		$doleditor=new DolEditor('desc',$line->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
 		$doleditor->Create();
 		?>
 	</td>
@@ -77,9 +77,9 @@
 
 	<td align="right" nowrap>
 	<?php if (($line->info_bits & 2) != 2) { ?>
-		<input size="1" type="text" class="flat" name="remise_percent" value="<?php echo $line->remise_percent; ?>" />% 
+		<input size="1" type="text" class="flat" name="remise_percent" value="<?php echo $line->remise_percent; ?>" />%
 	<?php } else { ?>
-		&nbsp; 
+		&nbsp;
 	<?php } ?>
 	</td>
 

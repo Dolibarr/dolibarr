@@ -68,11 +68,9 @@ class modFckeditor extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
-		$this->const[0]  = array("FCKEDITOR_ENABLE_USER","yesno","1","Activation fckeditor sur notes utilisateurs");
-        $this->const[1]  = array("FCKEDITOR_ENABLE_SOCIETE","yesno","1","Activation fckeditor sur notes societe");
-        $this->const[2]  = array("FCKEDITOR_ENABLE_PRODUCTDESC","yesno","1","Activation fckeditor sur notes produits");
-        $this->const[3]  = array("FCKEDITOR_ENABLE_MEMBER","yesno","1","Activation fckeditor sur notes adherent");
-        $this->const[4]  = array("FCKEDITOR_ENABLE_MAILING","yesno","1","Activation fckeditor sur emailing");
+        $this->const[0]  = array("FCKEDITOR_ENABLE_SOCIETE","yesno","1","Activation fckeditor sur notes autres");
+        $this->const[1]  = array("FCKEDITOR_ENABLE_PRODUCTDESC","yesno","1","Activation fckeditor sur notes produits");
+        $this->const[2]  = array("FCKEDITOR_ENABLE_MAILING","yesno","1","Activation fckeditor sur emailing");
 
 		// Boites
 		$this->boxes = array();

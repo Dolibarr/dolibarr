@@ -120,7 +120,7 @@ if ($socid > 0)
 
         // Editeur wysiwyg
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note',$societe->note,'',360,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
+        $doleditor=new DolEditor('note',$societe->note,'',360,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
         $doleditor->Create();
     }
     else
@@ -129,16 +129,16 @@ if ($socid > 0)
     }
     print "</td></tr>";
 
+    print "</table>";
+
     if ($action == 'edit')
     {
-        print '<tr><td colspan="2" align="center">';
+        print '<center><br>';
         print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
         print ' &nbsp; ';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</td></tr>';
+        print '</center>';
     }
-
-    print "</table>";
 
     print '</form>';
 }
