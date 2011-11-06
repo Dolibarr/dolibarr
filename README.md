@@ -9,7 +9,9 @@ If you have no technical knowledge, and you are looking for an autoinstaller to 
 
 You can download this at: [Official website] (http://www.dolibarr.org/downloads/)
 
-If you already have installed a Web server and a Mysql database, you can install this version like this:
+If you already have installed a Web server and a Mysql database, you can install the standard version like this:
+
+- Uncompress the downloaded archive.
 
 - Copy directory "dolibarr" and all its files inside your web server root, or copy directory anywhere and set up your web server to use "dolibarr/htdocs" as root for a new web server virtual host (second choice need to be server administrator).
   
@@ -52,7 +54,7 @@ Note: Migrate process can be ran safely several times.
 
 ## WHAT'S NEW
 
-See ChangeLog file.
+See ChangeLog file found into package.
 
 
 

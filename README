@@ -23,8 +23,10 @@ You can download this at:
 http://www.dolibarr.org/downloads/
 
 If you already have installed a Web server and a Mysql database, you can
-install this version like this:
+install the standard version like this:
 
+- Uncompress the downloaded archive.
+ 
 - Copy directory "dolibarr" and all its files inside your web server root,
   or copy directory anywhere and set up your web server to use "dolibarr/htdocs"
   as root for a new web server virtual host (second choice need to be web 
@@ -70,7 +72,7 @@ To upgrade Dolibarr from an old version to this one:
 III - WHAT'S NEW
 ----------------
 
-See ChangeLog file.
+See ChangeLog file found into package.
 
 
 
