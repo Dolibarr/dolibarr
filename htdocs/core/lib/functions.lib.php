@@ -100,7 +100,8 @@ if (! function_exists('json_decode'))
 	{
 		$comment = false;
 		
-		for ($i=0; $i<strlen($json); $i++)
+		$strLength = dol_strlen($json);
+		for ($i=0; $i<$strLength; $i++)
 		{
 			if (! $comment)
 			{
@@ -1466,8 +1467,6 @@ function isValidPhone($address)
  */
 function dol_strlen($string,$stringencoding='UTF-8')
 {
-    //    print $stringencoding."xxx";
-    //    $stringencoding='rrr';
     if (function_exists('mb_strlen')) return mb_strlen($string,$stringencoding);
     else return strlen($string);
 }
@@ -4205,7 +4204,8 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 function utf8_check($str)
 {
     // We must use here a binary strlen function (so not dol_strlen)
-    for ($i=0; $i<strlen($str); $i++)
+    $strLength = dol_strlen($str);
+    for ($i=0; $i<$strLength; $i++)
     {
         if (ord($str[$i]) < 0x80) continue; // 0bbbbbbb
         elseif ((ord($str[$i]) & 0xE0) == 0xC0) $n=1; // 110bbbbb
