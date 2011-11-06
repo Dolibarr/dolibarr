@@ -34,9 +34,10 @@ $langs->load("products");
 $langs->load("stocks");
 $langs->load("companies");
 
+$action=GETPOST('action');
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
@@ -48,7 +49,7 @@ $mesg = '';
  */
 
 // Ajout entrepot
-if ($_POST["action"] == 'add' && $user->rights->stock->creer)
+if ($action == 'add' && $user->rights->stock->creer)
 {
 	$entrepot = new Entrepot($db);
 
@@ -70,17 +71,17 @@ if ($_POST["action"] == 'add' && $user->rights->stock->creer)
 			exit;
 		}
 
-		$_GET["action"] = 'create';
+		$action = 'create';
 		$mesg='<div class="error">'.$entrepot->error.'</div>';
 	}
 	else {
 		$mesg='<div class="error">'.$langs->trans("ErrorWarehouseRefRequired").'</div>';
-		$_GET["action"]="create";   // Force retour sur page creation
+		$action="create";   // Force retour sur page creation
 	}
 }
 
 // Delete warehouse
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->stock->supprimer)
+if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->stock->supprimer)
 {
 	$entrepot = new Entrepot($db);
 	$entrepot->fetch($_REQUEST["id"]);
@@ -93,12 +94,12 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 	else
 	{
 		$mesg='<div class="error">'.$entrepot->error.'</div>';
-		$_REQUEST['action']='';
+		$action='';
 	}
 }
 
 // Modification entrepot
-if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
 	$entrepot = new Entrepot($db);
 	if ($entrepot->fetch($_POST["id"]))
@@ -114,20 +115,20 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 		if ( $entrepot->update($_POST["id"], $user) > 0)
 		{
-			$_GET["action"] = '';
+			$action = '';
 			$_GET["id"] = $_POST["id"];
 			//$mesg = '<div class="ok">Fiche mise a jour</div>';
 		}
 		else
 		{
-			$_GET["action"] = 'edit';
+			$action = 'edit';
 			$_GET["id"] = $_POST["id"];
 			$mesg = '<div class="error">'.$entrepot->error.'</div>';
 		}
 	}
 	else
 	{
-		$_GET["action"] = 'edit';
+		$action = 'edit';
 		$_GET["id"] = $_POST["id"];
 		$mesg = '<div class="error">'.$entrepot->error.'</div>';
 	}
@@ -135,7 +136,7 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
-	$_GET["action"] = '';
+	$action = '';
 	$_GET["id"] = $_POST["id"];
 }
 
@@ -152,7 +153,7 @@ $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("WarehouseCard"),$help_url);
 
 
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("NewWarehouse"));
 
@@ -197,7 +198,7 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	print '</table>';
-	
+
 	print '<center><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 
 	print '</form>';
@@ -218,14 +219,14 @@ else
 		/*
 		 * Affichage fiche
 		 */
-		if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
+		if ($action <> 'edit' && $action <> 're-edit')
 		{
 			$head = stock_prepare_head($entrepot);
 
 			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
 			// Confirm delete third party
-			if ($_GET["action"] == 'delete')
+			if ($action == 'delete')
 			{
 				$html = new Form($db);
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$entrepot->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$entrepot->libelle),"confirm_delete",'',0,2);
@@ -290,8 +291,15 @@ else
 				dol_print_error($db);
 			}
 			print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
-			if ($lastmovementdate) print dol_print_date($lastmovementdate,'dayhour').' ';
-			print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id.'">'.$langs->trans("FullList").'</a>)';
+			if ($lastmovementdate)
+			{
+			    print dol_print_date($lastmovementdate,'dayhour').' ';
+			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id.'">'.$langs->trans("FullList").'</a>)';
+			}
+			else
+			{
+			     print $langs->trans("None");
+			}
 			print "</td></tr>";
 
 			print "</table>";
@@ -307,7 +315,7 @@ else
 
 			print "<div class=\"tabsAction\">\n";
 
-			if ($_GET["action"] == '')
+			if ($action == '')
 			{
 				if ($user->rights->stock->creer)
 				print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$entrepot->id."\">".$langs->trans("Modify")."</a>";
@@ -460,7 +468,7 @@ else
 		/*
 		 * Edition fiche
 		 */
-		if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && 1)
+		if (($action == 'edit' || $action == 're-edit') && 1)
 		{
 			print_fiche_titre($langs->trans("WarehouseEdit"), $mesg);
 

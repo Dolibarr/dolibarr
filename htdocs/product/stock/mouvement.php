@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,9 +43,9 @@ $search_movement = isset($_REQUEST["search_movement"])?$_REQUEST["search_movemen
 $search_product = isset($_REQUEST["search_product"])?$_REQUEST["search_product"]:'';
 $search_warehouse = isset($_REQUEST["search_warehouse"])?$_REQUEST["search_warehouse"]:'';
 $search_user = isset($_REQUEST["search_user"])?$_REQUEST["search_user"]:'';
-$page = $_GET["page"];
-$sortfield = $_GET["sortfield"];
-$sortorder = $_GET["sortorder"];
+$page = GETPOST("page");
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
 if ($page < 0) $page = 0;
 $offset = $conf->liste_limit * $page;
 
@@ -173,7 +173,7 @@ if ($resql)
 		print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
 		// Description
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.dol_htmlentitiesbr($entrepot->description).'</td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
@@ -222,7 +222,14 @@ if ($resql)
 		}
 
 		print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
-		if ($lastmovementdate) print dol_print_date($lastmovementdate,'dayhour');
+		if ($lastmovementdate)
+		{
+		    print dol_print_date($lastmovementdate,'dayhour');
+		}
+		else
+		{
+		    print $langs->trans("None");
+		}
 		print "</td></tr>";
 
 		print "</table>";
