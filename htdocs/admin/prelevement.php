@@ -190,6 +190,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
         $db->free($resql);
     }
 
+    // Get list of triggers for module withdraw
     $sql = "SELECT rowid, code, label";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
     $sql.= " WHERE elementtype = 'withdraw'";

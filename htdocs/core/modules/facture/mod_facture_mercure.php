@@ -98,7 +98,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         if (! $numExample)
         {
-            $numExample = $langs->trans('NotConfigured');
+            $numExample = 'NotConfigured';
         }
         return $numExample;
     }

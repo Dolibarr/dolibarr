@@ -50,7 +50,7 @@ if ($action == 'updateMask')
     $maskcredit=GETPOST("maskcredit");
     if ($maskconstinvoice) $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
     if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -127,7 +127,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
     $type='invoice';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -158,7 +158,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
     $db->begin();
 
     if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -206,10 +206,10 @@ if ($action == 'setribchq')
 {
 	$rib = GETPOST("rib");
 	$chq = GETPOST("chq");
-	
+
 	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib,'chaine',0,'',$conf->entity);
     $res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$chq,'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -225,9 +225,9 @@ if ($action == 'setribchq')
 if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("FACTURE_DRAFT_WATERMARK");
-	
+
     $res = dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -243,9 +243,9 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 if ($action == 'set_FACTURE_FREE_TEXT')
 {
 	$free = GETPOST("FACTURE_FREE_TEXT");
-	
+
     $res = dolibarr_set_const($db, "FACTURE_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -261,9 +261,9 @@ if ($action == 'set_FACTURE_FREE_TEXT')
 if ($action == 'setforcedate')
 {
 	$forcedate = GETPOST("forcedate");
-	
+
     $res = dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$forcedate,'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -355,7 +355,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
                             // Show example of numbering module
                             print '<td nowrap="nowrap">';
                             $tmp=$module->getExample();
-                            if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                            if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+                            elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                             else print $tmp;
                             print '</td>'."\n";
 

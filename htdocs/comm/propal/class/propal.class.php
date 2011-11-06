@@ -1139,9 +1139,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Passe au statut valider une propale
-	 *      \param      user        Objet utilisateur qui valide
-	 *      \return     int         <0 si ko, >=0 si ok
+	 *  Set status to validated
+	 *
+	 *  @param	User	$user       Object user that validate
+	 *  @return int         		<0 if KO, >=0 if OK
 	 */
 	function valid($user, $notrigger=0)
 	{
@@ -1157,6 +1158,7 @@ class Propal extends CommonObject
 			$sql.= " SET fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
+			dol_syslog(get_class($this).'::valid sql='.$sql);
 			if ($this->db->query($sql))
 			{
 				if (! $notrigger)
@@ -1194,10 +1196,11 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Define proposal date
-	 *      \param      user        		Object user that modify
-	 *      \param      date				Date
-	 *      \return     int         		<0 if KO, >0 if OK
+	 *  Define proposal date
+	 *
+	 *  @param  User		$user      		Object user that modify
+	 *  @param  timestamp	$date			Date
+	 *  @return	int         				<0 if KO, >0 if OK
 	 */
 	function set_date($user, $date)
 	{
@@ -1205,6 +1208,8 @@ class Propal extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = ".$this->db->idate($date);
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+
+			dol_syslog(get_class($this)."::set_date sql=".$sql);
 			if ($this->db->query($sql) )
 			{
 				$this->date = $date;
@@ -1213,8 +1218,8 @@ class Propal extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error();
-				dol_syslog("Propal::set_date Erreur SQL".$this->error, LOG_ERR);
+				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this)."::set_date ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -2298,7 +2303,8 @@ class Propal extends CommonObject
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_NotDefined");
+		    $langs->load("errors");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
 			return "";
 		}
 	}

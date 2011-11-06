@@ -91,7 +91,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		if (! $numExample)
 		{
-			$numExample = $langs->trans('NotConfigured');
+			$numExample = 'NotConfigured';
 		}
 		return $numExample;
     }
