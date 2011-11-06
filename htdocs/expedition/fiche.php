@@ -749,7 +749,7 @@ if ($action == 'create')
 						// Show warehous
 						if ($_REQUEST["entrepot_id"])
 						{
-							$formproduct->selectWarehouses($_REQUEST["entrepot_id"],'entl'.$indiceAsked,'',1,0,$line->fk_product);
+							print $formproduct->selectWarehouses($_REQUEST["entrepot_id"],'entl'.$indiceAsked,'',1,0,$line->fk_product);
 							//print $stock.' '.$quantityToBeDelivered;
 							//if ($stock >= 0 && $stock < $quantityToBeDelivered)
 							if ($stock < $quantityToBeDelivered)
@@ -759,7 +759,7 @@ if ($action == 'create')
 						}
 						else
 						{
-							$formproduct->selectWarehouses('','entl'.$indiceAsked,'',1,0,$line->fk_product);
+							print $formproduct->selectWarehouses('','entl'.$indiceAsked,'',1,0,$line->fk_product);
 						}
 					}
 					else

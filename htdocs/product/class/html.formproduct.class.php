@@ -39,22 +39,24 @@ class FormProduct
 
 
 	/**
-	 *	\brief     Constructeur
-	 *	\param     DB      Database handler
+	 *	Constructor
+	 *
+	 *	@param	DoliDB	$db		Database handler
 	 */
-	function FormProduct($DB)
+	function FormProduct($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		return 1;
 	}
 
 
 	/**
-	 *      \brief      Load in cache array list of warehouses
-	 * 		\param		fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 *      \return     int      		Nb of loaded lines, 0 if already loaded, <0 if KO
-	 * 		\remarks	If fk_product is not 0, we do not use cache
+	 * Load in cache array list of warehouses
+	 * If fk_product is not 0, we do not use cache
+	 *
+	 * @param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 * @return  int  		    		Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
 	function loadWarehouses($fk_product=0)
 	{
@@ -73,7 +75,7 @@ class FormProduct
 		$sql.= " WHERE statut = 1";
 		$sql.= " ORDER BY e.label";
 
-		dol_syslog('FormProduct::loadWarehouses sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::loadWarehouses sql='.$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -98,39 +100,41 @@ class FormProduct
 	}
 
 	/**
-	 *      \brief      Return list of possible payments modes
-	 *      \param      selected        Id du mode de paiement pre-selectionne
-	 *      \param      htmlname        Name of html select html
-	 *      \param      filtertype      For filtre
-	 *      \param      empty			1=Can be empty, 0 if not
-	 * 		\param		disabled		1=Select is disabled
-	 * 		\param		fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 * 		\return		int				<0 if KO, Nb of product in list if OK
+	 *  Return list of possible payments modes
+	 *
+	 *  @param	int		$selected       Id du mode de paiement pre-selectionne
+	 *  @param  string	$htmlname       Name of html select html
+	 *  @param  string	$filtertype     For filter
+	 *  @param  int		$empty			1=Can be empty, 0 if not
+	 * 	@param	int		$disabled		1=Select is disabled
+	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 * 	@return	string					HTML select
 	 */
 	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0)
 	{
 		global $langs,$user;
 
-		dol_syslog("Form::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product",LOG_DEBUG);
 
 		$this->loadWarehouses($fk_product);
 
-		print '<select class="flat"'.($disabled?' disabled="disabled"':'').' name="'.($htmlname.($disabled?'_disabled':'')).'">';
-		if ($empty) print '<option value="">&nbsp;</option>';
+		$out='<select class="flat"'.($disabled?' disabled="disabled"':'').' name="'.($htmlname.($disabled?'_disabled':'')).'">';
+		if ($empty) $out.='<option value="">&nbsp;</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
-			print '<option value="'.$id.'"';
+			$out.='<option value="'.$id.'"';
 			// Si selected est text, on compare avec code, sinon avec id
-			if ($selected == $id) print ' selected="selected"';
-			print '>';
-			print $arraytypes['label'];
-			if ($fk_product) print ' ('.$langs->trans("Stock").': '.($arraytypes['stock']>0?$arraytypes['stock']:'?').')';
-			print '</option>';
+			if ($selected == $id) $out.=' selected="selected"';
+			$out.='>';
+			$out.=$arraytypes['label'];
+			if ($fk_product) $out.=' ('.$langs->trans("Stock").': '.($arraytypes['stock']>0?$arraytypes['stock']:'?').')';
+			$out.='</option>';
 		}
-		print '</select>';
-		if ($disabled) print '<input type="hidden" name="'.$htmlname.'" value="'.$selected.'">';
+		$out.='</select>';
+		if ($disabled) $out.='<input type="hidden" name="'.$htmlname.'" value="'.$selected.'">';
 
-		return count($this->cache_warehouses);
+		//count($this->cache_warehouses);
+		return $out;
 	}
 
 	/**

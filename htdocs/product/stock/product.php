@@ -327,7 +327,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
 		print '<td width="20%">';
-		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot','',1);
+		print $formproduct->selectWarehouses($_GET["dwid"],'id_entrepot','',1);
 		print '</td>';
 		print '<td width="20%">';
 		print '<select name="mouvement" class="flat">';
@@ -366,10 +366,10 @@ if ($_GET["id"] || $_GET["ref"])
 
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
-		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
+		print $formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
 		print '</td>';
 		print '<td width="20%">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
-		$formproduct->selectWarehouses('','id_entrepot_destination','',1);
+		print $formproduct->selectWarehouses('','id_entrepot_destination','',1);
 		print '</td>';
 		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td>';
 		print '</tr>';
@@ -403,7 +403,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<input type="hidden" name="action" value="create_stock">';
 		print '<table class="border" width="100%"><tr>';
 		print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%">';
-		$formproduct->selectWarehouses('','id_entrepot','',1);
+		print $formproduct->selectWarehouses('','id_entrepot','',1);
 		print '</td><td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
 		print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';

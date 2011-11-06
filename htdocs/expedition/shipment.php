@@ -624,8 +624,8 @@ if ($id > 0 || ! empty($ref))
 				{
 					print '<td>'.$langs->trans("WarehouseSource").'</td>';
 					print '<td>';
-					$result=$formproduct->selectWarehouses(-1,'entrepot_id','',1);
-					if ($result <= 0)
+					print $formproduct->selectWarehouses(-1,'entrepot_id','',1);
+					if (count($formproduct->cache_warehouses) <= 0)
 					{
 						print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
 					}
@@ -653,7 +653,7 @@ if ($id > 0 || ! empty($ref))
 				print '</div>';
 			}
 		}
-		
+
 		show_list_sending_receive('commande',$commande->id);
 	}
 	else
