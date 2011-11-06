@@ -34,11 +34,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
 $langs->load("admin");
 $langs->load("members");
 
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
 
-$typeconst=array('yesno','texte','chaine');
+$type=array('yesno','texte','chaine');
 
 $action = GETPOST("action");
 
@@ -46,33 +45,31 @@ $action = GETPOST("action");
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
-	$const=GETPOST("constname");
-    $value=GETPOST("constvalue");
-
-    if (($const=='ADHERENT_CARD_TYPE' || $const=='ADHERENT_ETIQUETTE_TYPE')
-    && $value == -1) $value='';
-    if ($const=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
-    {
-        if ($value) $value=0;
-        else $value=1;
-    }
-
-
-    if (in_array($const,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $value=$_POST["constvalue".$const];
-    $type=$_POST["consttype"];
-    $constnote=GETPOST("constnote");
-    $res=dolibarr_set_const($db,$const,$value,$typeconst[$type],0,$constnote,$conf->entity);
-
-    if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	$constname=GETPOST("constname");
+	$constvalue=GETPOST("constvalue");
+	
+	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE') && $constvalue == -1) $constvalue='';
+	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
+	{
+		if ($constvalue) $constvalue=0;
+		else $constvalue=1;
+	}
+	
+	if (in_array($constname,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $constvalue=$_POST["constvalue".$constname];
+	$consttype=$_POST["consttype"];
+	$constnote=GETPOST("constnote");
+	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
+	
+	if (! $res > 0) $error++;
+	
+	if (! $error)
+	{
+		$mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+	}
+	else
+	{
+		$mesg = '<div class="error">'.$langs->trans("Error").'</div>';
+	}
 }
 
 // Action activation d'un sous module du module adherent
@@ -211,11 +208,12 @@ if ($conf->global->ADHERENT_USE_MAILMAN)
     $lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
     // Edition des varibales globales
-    $constantes=array('ADHERENT_MAILMAN_LISTS',
-		    'ADHERENT_MAILMAN_ADMINPW',
-		    'ADHERENT_MAILMAN_URL',
-		    'ADHERENT_MAILMAN_UNSUB_URL'
-		    );
+    $constantes=array(
+    		'ADHERENT_MAILMAN_LISTS',
+    		'ADHERENT_MAILMAN_ADMINPW',
+    		'ADHERENT_MAILMAN_URL',
+    		'ADHERENT_MAILMAN_UNSUB_URL'
+    		);
 		    print_fiche_titre("Mailman mailing list system",$lien,'');
 
 		    // JQuery activity
@@ -254,12 +252,14 @@ if ($conf->global->ADHERENT_USE_SPIP)
     $lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
     // Edition des varibales globales
-    $constantes=array('ADHERENT_USE_SPIP_AUTO',
-		    'ADHERENT_SPIP_SERVEUR',
-		    'ADHERENT_SPIP_DB',
-		    'ADHERENT_SPIP_USER',
-		    'ADHERENT_SPIP_PASS'
-		    );
+    $constantes=array(
+    		'ADHERENT_USE_SPIP_AUTO',
+    		'ADHERENT_SPIP_SERVEUR',
+    		'ADHERENT_SPIP_DB',
+    		'ADHERENT_SPIP_USER',
+    		'ADHERENT_SPIP_PASS'
+			);
+
 		    print_fiche_titre("SPIP CMS",$lien,'');
 		    form_constantes($constantes);
 		    print '<br>';
@@ -282,7 +282,7 @@ $constantes=array(
 		'ADHERENT_CARD_TEXT',
 		'ADHERENT_CARD_TEXT_RIGHT',
 		'ADHERENT_CARD_FOOTER_TEXT'
-);
+		);
 
 print_fiche_titre($langs->trans("MembersCards"),'','');
 
@@ -323,8 +323,8 @@ $constantes=array(
 		'ADHERENT_MAIL_RESIL_SUBJECT',
 		'ADHERENT_MAIL_RESIL',
 		'ADHERENT_MAIL_FROM',
+		);
 
-);
 print_fiche_titre($langs->trans("Other"),'','');
 
 form_constantes($constantes);
