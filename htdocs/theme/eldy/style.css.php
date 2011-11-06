@@ -1704,14 +1704,23 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_textarea:hover, .edit_ckeditor:hover, .edit_text:hover, .edit_numeric:hover, .edit_select:hover {
-	background: white url(<?php echo dol_buildpath($path.'/theme/eldy/img/edit.png',1) ?>) right top no-repeat;
+.editkey_textarea, .editkey_ckeditor, .editkey_text, .editkey_numeric, .editkey_select {
+	background: url(<?php echo dol_buildpath($path.'/theme/eldy/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 }
 
-.edit_datepicker:hover {
-	background: white url(<?php echo dol_buildpath($path.'/theme/eldy/img/calendar.png',1) ?>) right center no-repeat;
+.editkey_datepicker {
+	background: url(<?php echo dol_buildpath($path.'/theme/eldy/img/calendar.png',1) ?>) right center no-repeat;
 	cursor: pointer;
+}
+
+.editval_textarea:hover, .editval_ckeditor:hover, .editval_text:hover, .editval_numeric:hover, .editval_select:hover, .editval_datepicker:hover {
+	background: white;
+	cursor: pointer;
+}
+
+.editval_hover {
+	background: white;
 }
 
 

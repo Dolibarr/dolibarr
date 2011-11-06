@@ -11,7 +11,7 @@ $(document).ready(function() {
 	var table_element = $('#jeditable_table_element').html();
 	var fk_element = $('#jeditable_fk_element').html();
 	
-	$('.edit_textarea').editable(urlSaveInPlace, {
+	$('.editval_textarea').editable(urlSaveInPlace, {
 		type		: 'textarea',
 		rows		: 4,
 		id			: 'field',
@@ -44,7 +44,19 @@ $(document).ready(function() {
 			}
 		}
 	});
-	$('.edit_ckeditor').editable(urlSaveInPlace, {
+	$('.editkey_textarea').hover(
+			function () {
+				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+			},
+			function () {
+				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+			}
+	);
+	$('.editkey_textarea').click(function() {
+		$( '#val_' + $(this).attr('id') ).click();
+	});
+
+	$('.editval_ckeditor').editable(urlSaveInPlace, {
 		type		: 'ckeditor',
 		id			: 'field',
 		onblur		: 'ignore',
@@ -74,7 +86,19 @@ $(document).ready(function() {
 			}
 		}
 	});
-	$('.edit_text').editable(urlSaveInPlace, {
+	$('.editkey_ckeditor').hover(
+			function () {
+				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+			},
+			function () {
+				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+			}
+	);
+	$('.editkey_ckeditor').click(function() {
+		$( '#val_' + $(this).attr('id') ).click();
+	});
+	
+	$('.editval_text').editable(urlSaveInPlace, {
 		type		: 'text',
 		id			: 'field',
 		width		: 300,
@@ -100,7 +124,19 @@ $(document).ready(function() {
 			}
 		}
 	});
-	$('.edit_numeric').editable(urlSaveInPlace, {
+	$('.editkey_text').hover(
+			function () {
+				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+			},
+			function () {
+				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+			}
+	);
+	$('.editkey_text').click(function() {
+		$( '#val_' + $(this).attr('id') ).click();
+	});
+	
+	$('.editval_numeric').editable(urlSaveInPlace, {
 		type		: 'text',
 		id			: 'field',
 		width		: 100,
@@ -126,7 +162,19 @@ $(document).ready(function() {
 			}
 		}
 	});
-	$('.edit_datepicker').editable(urlSaveInPlace, {
+	$('.editkey_numeric').hover(
+			function () {
+				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+			},
+			function () {
+				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+			}
+	);
+	$('.editkey_numeric').click(function() {
+		$( '#val_' + $(this).attr('id') ).click();
+	});
+	
+	$('.editval_datepicker').editable(urlSaveInPlace, {
 		type		: 'datepicker',
 		id			: 'field',
 		onblur		: 'ignore',
@@ -155,7 +203,19 @@ $(document).ready(function() {
 			}
 		}
 	});
-	$('.edit_select').editable(urlSaveInPlace, {
+	$('.editkey_datepicker').hover(
+			function () {
+				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+			},
+			function () {
+				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+			}
+	);
+	$('.editkey_datepicker').click(function() {
+		$( '#val_' + $(this).attr('id') ).click();
+	});
+	
+	$('.editval_select').editable(urlSaveInPlace, {
 		type		: 'select',
 		id			: 'field',
 		onblur		: 'ignore',
@@ -191,6 +251,18 @@ $(document).ready(function() {
 			}
 		}
 	});
+	$('.editkey_select').hover(
+			function () {
+				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+			},
+			function () {
+				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+			}
+	);
+	$('.editkey_select').click(function() {
+		$( '#val_' + $(this).attr('id') ).click();
+	});
+	
 	$('.edit_autocomplete').editable(urlSaveInPlace, {
 		type		: 'autocomplete',
 		id			: 'field',

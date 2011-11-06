@@ -246,12 +246,12 @@ class Fournisseur extends Societe
 	}
 
 	/**
-     *    	Return a link on thirdparty (with picto)
-     *
-     *		@param		withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-     *		@param		option			Target of link ('', 'customer', 'prospect', 'supplier')
-     *		@param		maxlen			Max length of text
-     *		@return		string			String with URL
+	 *	Return a link on thirdparty (with picto)
+	 *
+	 *	@param		int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+	 *	@param		string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+	 *	@param		int		$maxlen			Max length of text
+	 *	@return		string					String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='supplier',$maxlen=0)
 	{

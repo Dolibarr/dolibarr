@@ -375,7 +375,7 @@ class InterfaceLdapsynchro
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
-				# If status field is setup to be synchronized
+				// If status field is setup to be synchronized
 				if ($conf->global->LDAP_FIELD_MEMBER_STATUS)
 				{
 					$ldap=new Ldap();
@@ -399,7 +399,7 @@ class InterfaceLdapsynchro
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
-				# If subscriptions fields are setup to be synchronized
+				// If subscriptions fields are setup to be synchronized
 				if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE
 				|| $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT
 				|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE
@@ -458,7 +458,7 @@ class InterfaceLdapsynchro
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
-				# If password field is setup to be synchronized
+				// If password field is setup to be synchronized
 				if ($conf->global->LDAP_FIELD_PASSWORD || $conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
 				{
 					$ldap=new Ldap();
