@@ -713,6 +713,8 @@ if ($action == 'add' && $user->rights->facture->creer)
 
                         for ($i=0;$i<$num;$i++)
                         {
+                            $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+
                             if ($lines[$i]->subprice < 0)
                             {
                                 // Negative line, we create a discount line
@@ -739,7 +741,6 @@ if ($action == 'add' && $user->rights->facture->creer)
                             else
                             {
                                 // Positive line
-                                $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
                                 $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
                                 // Date start
