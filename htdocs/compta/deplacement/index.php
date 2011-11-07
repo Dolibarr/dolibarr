@@ -65,6 +65,7 @@ llxHeader('',$langs->trans("ListOfFees"),$help_url);
 $totalnb=0;
 $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d";
+$sql.= " WHERE d.entity = ".$conf->entity;
 $sql.= " GROUP BY d.type";
 $sql.= " ORDER BY d.type";
 
