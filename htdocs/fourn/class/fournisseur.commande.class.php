@@ -377,8 +377,9 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Set draft status
-     *	@param		user		Object user that modify
-     *	@return		int			<0 if KO, >0 if OK
+     *
+     *	@param	User	$user		Object user that modify
+     *	@return	int					<0 if KO, >0 if OK
      */
     function set_draft($user)
     {
@@ -421,7 +422,7 @@ class CommandeFournisseur extends Commande
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
                         $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -612,6 +613,7 @@ class CommandeFournisseur extends Commande
 
     /**
      * 	Accept an order
+     *
      *	@param		user		Object user
      *	@return		int			<0 if KO, >0 if OK
      */
@@ -640,8 +642,8 @@ class CommandeFournisseur extends Commande
                 {
                     require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-                    $num=count($this->lines);
-                    for ($i = 0; $i < $num; $i++)
+                    $cpt=count($this->lines);
+                    for ($i = 0; $i < $cpt; $i++)
                     {
                         // Product with reference
                         if ($this->lines[$i]->fk_product > 0)
@@ -649,7 +651,7 @@ class CommandeFournisseur extends Commande
                             $mouvP = new MouvementStock($this->db);
                             // We decrement stock of product (and sub-products)
                             $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderApprovedInDolibarr",$this->ref));
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -1074,6 +1076,7 @@ class CommandeFournisseur extends Commande
 
     /**
      * Add a product into a stock warehouse.
+     *
      * @param 	$user		User object making change
      * @param 	$product	Id of product to dispatch
      * @param 	$qty		Qty to dispatch

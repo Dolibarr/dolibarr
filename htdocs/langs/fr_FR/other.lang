@@ -203,6 +203,7 @@ MemberValidatedInDolibarr=Adhérent %s validé dans Dolibarr
 MemberResiliatedInDolibarr=Adhérent %s résilié dans Dolibarr
 MemberDeletedInDolibarr=Adhérent %s supprimé de Dolibarr
 MemberSubscriptionAddedInDolibarr=Souscription adhérent %s ajoutée dans Dolibarr
+ShipmentValidatedInDolibarr=Expédition %s validée dans Dolibarr
 ##### Export #####
 Export=Export
 ExportsArea=Espace exports

@@ -241,15 +241,15 @@ class Commande extends CommonObject
                 $langs->load("agenda");
 
                 // Loop on each line
-                $num=count($this->lines);
-                for ($i = 0; $i < $num; $i++)
+                $cpt=count($this->lines);
+                for ($i = 0; $i < $cpt; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $langs->load("agenda");
                         $mouvP = new MouvementStock($this->db);
                         // We decrement stock of product (and sub-products)
-                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$this->ref));
+                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$num));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -361,7 +361,7 @@ class Commande extends CommonObject
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
                         $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -534,7 +534,7 @@ class Commande extends CommonObject
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
                         $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }

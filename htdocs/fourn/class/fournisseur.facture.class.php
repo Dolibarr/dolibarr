@@ -789,8 +789,8 @@ class FactureFournisseur extends Facture
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
                 $langs->load("agenda");
 
-                $num=count($this->lines);
-                for ($i = 0; $i < $num; $i++)
+                $cpt=count($this->lines);
+                for ($i = 0; $i < $cpt; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
@@ -865,8 +865,8 @@ class FactureFournisseur extends Facture
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
                 $langs->load("agenda");
 
-                $num=count($this->lines);
-                for ($i = 0; $i < $num; $i++)
+                $cpt=count($this->lines);
+                for ($i = 0; $i < $cpt; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {

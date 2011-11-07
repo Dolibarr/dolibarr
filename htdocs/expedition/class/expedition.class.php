@@ -412,10 +412,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *        Validate object and update stock if option enabled
+	 *  Validate object and update stock if option enabled
 	 *
-	 *        @param      User		$user       Object user that validate
-	 *        @return     int					<0 if OK, >0 if KO
+	 *  @param      User		$user       Object user that validate
+	 *  @return     int						<0 if OK, >0 if KO
 	 */
 	function valid($user)
 	{
@@ -489,8 +489,8 @@ class Expedition extends CommonObject
 			// Loop on each product line to add a stock movement
 			// TODO possibilite d'expedier a partir d'une propale ou autre origine
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
-			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
-			$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+			$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
 
@@ -498,9 +498,8 @@ class Expedition extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				$num = $this->db->num_rows($resql);
-				$i=0;
-				while($i < $num)
+			    $cpt = $this->db->num_rows($resql);
+                for ($i = 0; $i < $cpt; $i++)
 				{
 					dol_syslog("Expedition::valid movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
@@ -509,7 +508,7 @@ class Expedition extends CommonObject
 					$mouvS = new MouvementStock($this->db);
 					// We decrement stock of product (and sub-products)
 					// We use warehouse selected for each line
-					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice);
+					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 					if ($result < 0) { $error++; break; }
 
 					$i++;

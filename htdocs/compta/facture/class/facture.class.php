@@ -1606,8 +1606,8 @@ class Facture extends CommonObject
                     $langs->load("agenda");
 
                     // Loop on each line
-                    $num=count($this->lines);
-                    for ($i = 0; $i < $num; $i++)
+                    $cpt=count($this->lines);
+                    for ($i = 0; $i < $cpt; $i++)
                     {
                         if ($this->lines[$i]->fk_product > 0)
                         {
