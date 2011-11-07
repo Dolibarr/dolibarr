@@ -839,6 +839,8 @@ abstract class CommonObject
 		$sql.= ' WHERE '.$this->fk_element.'='.$this->id;
 		if (! $renum) $sql.= ' AND rang = 0';
 		if ($renum) $sql.= ' AND rang <> 0';
+		
+		dol_syslog(get_class($this)."::line_order sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -850,6 +852,8 @@ abstract class CommonObject
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
+			
+			dol_syslog(get_class($this)."::line_order sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -910,6 +914,8 @@ abstract class CommonObject
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
+		
+		dol_syslog(get_class($this)."::updateRangOfLine sql=".$sql, LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			dol_print_error($this->db);
