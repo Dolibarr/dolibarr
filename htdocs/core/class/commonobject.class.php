@@ -839,35 +839,39 @@ abstract class CommonObject
             return -1;
         }
 
-        $sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-        $sql.= ' WHERE '.$this->fk_element.'='.$this->id;
-        if (! $renum) $sql.= ' AND rang = 0';
-        if ($renum) $sql.= ' AND rang <> 0';
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $row = $this->db->fetch_row($resql);
-            $nl = $row[0];
-        }
-        if ($nl > 0)
-        {
-            $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-            $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-            $sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
-            $resql = $this->db->query($sql);
-            if ($resql)
-            {
-                $num = $this->db->num_rows($resql);
-                $i = 0;
-                while ($i < $num)
-                {
-                    $row = $this->db->fetch_row($resql);
-                    $this->updateRangOfLine($row[0], ($i+1));
-                    $i++;
-                }
-            }
-        }
-    }
+		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= ' WHERE '.$this->fk_element.'='.$this->id;
+		if (! $renum) $sql.= ' AND rang = 0';
+		if ($renum) $sql.= ' AND rang <> 0';
+
+		dol_syslog(get_class($this)."::line_order sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$nl = $row[0];
+		}
+		if ($nl > 0)
+		{
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
+
+			dol_syslog(get_class($this)."::line_order sql=".$sql, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$row = $this->db->fetch_row($resql);
+					$this->updateRangOfLine($row[0], ($i+1));
+					$i++;
+				}
+			}
+		}
+	}
 
     /**
      * 	Update a line to have a lower rank
@@ -904,21 +908,23 @@ abstract class CommonObject
         $this->updateLineDown($rowid, $rang, $max);
     }
 
-    /**
-     * 	Update position of line (rang)
-     *
-     * 	@param		int		$rowid
-     * 	@param		int		$rang
-     */
-    function updateRangOfLine($rowid,$rang)
-    {
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
-        $sql.= ' WHERE rowid = '.$rowid;
-        if (! $this->db->query($sql) )
-        {
-            dol_print_error($this->db);
-        }
-    }
+	/**
+	 * 	Update position of line (rang)
+	 *
+	 * 	@param		int		$rowid
+	 * 	@param		int		$rang
+	 */
+	function updateRangOfLine($rowid,$rang)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
+		$sql.= ' WHERE rowid = '.$rowid;
+
+		dol_syslog(get_class($this)."::updateRangOfLine sql=".$sql, LOG_DEBUG);
+		if (! $this->db->query($sql))
+		{
+			dol_print_error($this->db);
+		}
+	}
 
     /**
      * 	Update position of line with ajax (rang)

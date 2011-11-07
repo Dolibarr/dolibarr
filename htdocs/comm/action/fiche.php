@@ -63,6 +63,8 @@ $contact = new Contact($db);
  */
 if ($action == 'add_action')
 {
+	$error=0;
+	
     $backtopage='';
     if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
     if (! $backtopage)
@@ -104,7 +106,7 @@ if ($action == 'add_action')
 	// Check parameters
 	if (! $datef && $_POST["percentage"] == 100)
 	{
-		$error=1;
+		$error++;
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
 	}
@@ -112,7 +114,7 @@ if ($action == 'add_action')
 	// Initialisation objet cactioncomm
 	if (! $_POST["actioncode"])
 	{
-		$error=1;
+		$error++;
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
 	}
@@ -178,20 +180,20 @@ if ($action == 'add_action')
 	// Check parameters
 	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || $datef == ''))
 	{
-		$error=1;
+		$error++;
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
 	}
 	if ($datea && $_POST["percentage"] == 0)
 	{
-		$error=1;
+		$error++;
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
 	}
 
 	if (! $_POST["apyear"] && ! $_POST["adyear"])
 	{
-		$error=1;
+		$error++;
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
 	}

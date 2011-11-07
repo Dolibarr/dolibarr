@@ -1941,20 +1941,23 @@ class Facture extends CommonObject
     {
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
-        dol_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type", LOG_DEBUG);
+        dol_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type, $fk_parent_line", LOG_DEBUG);
 
         if ($this->brouillon)
         {
             $this->db->begin();
 
             // Clean parameters
-            $remise_percent=price2num($remise_percent);
-            $qty=price2num($qty);
-            if (! $qty) $qty=0;
-            $pu = price2num($pu);
-            $txtva=price2num($txtva);
-            $txlocaltax1=price2num($txlocaltax1);
-            $txlocaltax2=price2num($txlocaltax2);
+            if (empty($qty)) $qty=0;
+            if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
+            
+            $remise_percent	= price2num($remise_percent);
+            $qty			= price2num($qty);
+            $pu 			= price2num($pu);
+            $txtva			= price2num($txtva);
+            $txlocaltax1	= price2num($txlocaltax1);
+            $txlocaltax2	= price2num($txlocaltax2);
+            
             // Check parameters
             if ($type < 0) return -1;
 
@@ -3593,7 +3596,6 @@ class FactureLigne
         if ($this->date_end) { $sql.= ",date_end='".$this->db->idate($this->date_end)."'"; }
         else { $sql.=',date_end=null'; }
         $sql.= ",product_type=".$this->product_type;
-        $sql.= ",rang='".$this->rang."'";
         $sql.= ",info_bits='".$this->info_bits."'";
         if (empty($this->skip_update_total))
         {
