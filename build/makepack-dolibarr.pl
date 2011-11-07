@@ -334,10 +334,6 @@ if ($nboftargetok) {
    	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/fckeditor`;
    	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/jquery.js`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/jquery.min.js`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jcrop/js/jquery.min.js`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/datatables`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/license.txt`;
