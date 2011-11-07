@@ -739,23 +739,39 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['cancel
 
 if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->commande->valider)
 {
+    $idwarehouse=GETPOST('idwarehouse');
+
     $object->fetch($id);	// Load order and lines
     $object->fetch_thirdparty();
 
-    $result=$object->valid($user);
-    if ($result	>= 0)
+    // Check parameters
+    if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
     {
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-        if (! empty($newlang))
+        if (! $idwarehouse || $idwarehouse == -1)
         {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
+            $error++;
+            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $action='';
         }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    }
+
+    if (! $error)
+    {
+        $result=$object->valid($user,$idwarehouse);
+        if ($result	>= 0)
+        {
+            // Define output language
+            $outputlangs = $langs;
+            $newlang='';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        }
     }
 }
 
@@ -1413,6 +1429,7 @@ else
     if ($id > 0 || ! empty($ref))
     {
         dol_htmloutput_mesg($mesg,$mesgs);
+        dol_htmloutput_errors('',$errors);
 
         $product_static=new Product($db);
 
@@ -1462,8 +1479,9 @@ else
                     $text.='<br>';
                     $text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$object->socid);
                 }
-                if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && '1' == 'TODO')
+                if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
                 {
+                    $langs->load("stocks");
                     require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
                     $formproduct=new FormProduct($db);
                     $formquestion=array(
@@ -1473,7 +1491,7 @@ else
                     array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
                 }
 
-                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1);
+                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 240);
             }
 
             /*

@@ -167,11 +167,13 @@ class Commande extends CommonObject
 
 
     /**
-     *  \brief   Validate order
-     *  \param   user     	User making status change
-     *  \return  int		<=0 if OK, >0 if KO
+     * Validate order
+     *
+     * @param	User	$user     		User making status change
+     * @param	int		$idwarehouse	Id of warehouse to use for stock decrease
+     * @return  int						<=0 if OK, >0 if KO
      */
-    function valid($user)
+    function valid($user, $idwarehouse=0)
     {
         global $conf,$langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -181,14 +183,14 @@ class Commande extends CommonObject
         // Protection
         if ($this->statut == 1)
         {
-            dol_syslog("Commande::valid no draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
             return 0;
         }
 
         if (! $user->rights->commande->valider)
         {
             $this->error='Permission denied';
-            dol_syslog("Commande::valid ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -215,17 +217,17 @@ class Commande extends CommonObject
 
         // Validate
         $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-        $sql.= " SET ref = '".$num."'";
-        $sql.= ", fk_statut = 1";
-        $sql.= ", date_valid=".$this->db->idate($now);
-        $sql.= ", fk_user_valid = ".$user->id;
+        $sql.= " SET ref = '".$num."',";
+        $sql.= " fk_statut = 1,";
+        $sql.= " date_valid='".$this->db->idate($now)."',";
+        $sql.= " fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog("Commande::valid() sql=".$sql);
         $resql=$this->db->query($sql);
         if (! $resql)
         {
-            dol_syslog("Commande::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+            dol_syslog(get_class($this)."::valid Echec update - 10 - sql=".$sql, LOG_ERR);
             dol_print_error($this->db);
             $error++;
         }
@@ -244,10 +246,10 @@ class Commande extends CommonObject
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
+                        $langs->load("agenda");
                         $mouvP = new MouvementStock($this->db);
                         // We decrement stock of product (and sub-products)
-                        $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -269,7 +271,7 @@ class Commande extends CommonObject
                 $dirdest = $conf->commande->dir_output.'/'.$snum;
                 if (file_exists($dirsource))
                 {
-                    dol_syslog("Commande::valid() rename dir ".$dirsource." into ".$dirdest);
+                    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
 
                     if (@rename($dirsource, $dirdest))
                     {

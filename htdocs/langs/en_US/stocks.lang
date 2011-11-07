@@ -79,3 +79,5 @@ DeleteAWarehouse=Delete a warehouse
 ConfirmDeleteWarehouse=Are you sure you want to delete the warehouse <b>%s</b> ?
 PersonalStock=Personal stock %s
 ThisWarehouseIsPersonalStock=This warehouse represents personal stock of %s %s
+SelectWarehouseForStockDecrease=Choose warehouse to use for stock decrease
+SelectWarehouseForStockIncrease=Choose warehouse to use for stock increase

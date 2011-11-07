@@ -118,7 +118,7 @@ class FormProduct
 
 		$this->loadWarehouses($fk_product);
 
-		$out='<select class="flat"'.($disabled?' disabled="disabled"':'').' name="'.($htmlname.($disabled?'_disabled':'')).'">';
+		$out='<select class="flat"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
 		if ($empty) $out.='<option value="">&nbsp;</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
