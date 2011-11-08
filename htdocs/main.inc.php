@@ -338,7 +338,7 @@ if (! defined('NOLOGIN'))
         }
 
 		// Verification security graphic code
-		if (isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+		if (GETPOST("username","alpha",2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			require_once(ARTICHOW_PATH.'Artichow.cfg.php');
 			require_once(ARTICHOW.'/AntiSpam.class.php');
@@ -352,7 +352,7 @@ if (! defined('NOLOGIN'))
 				$langs->load('main');
 				$langs->load('errors');
 
-				$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
+				$user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
 
@@ -365,7 +365,7 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : $_POST["username"]);
+		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
 		$passwordtotest	= (! empty($_COOKIE['password_dolibarr']) ? $_COOKIE['password_dolibarr'] : $_POST["password"]);
 		$entitytotest	= (! empty($_POST["entity"]) ? $_POST["entity"] : 1);
 
@@ -374,7 +374,7 @@ if (! defined('NOLOGIN'))
 		// If error, we will put error message in session under the name dol_loginmesg
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
-		if (isset($_POST["username"]) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
+		if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
 		if ($test && $goontestloop)
 		{
@@ -406,13 +406,13 @@ if (! defined('NOLOGIN'))
 				$langs->load('errors');
 
 				// Bad password. No authmode has found a good password.
-				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
+				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($db);
-				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
 				if ($result < 0) { $error++; }
 				// Fin appel triggers
 			}
