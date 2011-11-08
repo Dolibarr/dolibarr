@@ -338,7 +338,7 @@ if (! defined('NOLOGIN'))
         }
 
 		// Verification security graphic code
-		if (isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+		if (GETPOST("username","alpha",2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			require_once(ARTICHOW_PATH.'Artichow.cfg.php');
 			require_once(ARTICHOW.'/AntiSpam.class.php');
@@ -352,7 +352,7 @@ if (! defined('NOLOGIN'))
 				$langs->load('main');
 				$langs->load('errors');
 
-				$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
+				$user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
 
@@ -365,7 +365,7 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : $_POST["username"]);
+		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
 		$passwordtotest	= (! empty($_COOKIE['password_dolibarr']) ? $_COOKIE['password_dolibarr'] : $_POST["password"]);
 		$entitytotest	= (! empty($_POST["entity"]) ? $_POST["entity"] : 1);
 
