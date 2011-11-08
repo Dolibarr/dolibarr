@@ -219,8 +219,8 @@ print '<table class="border" width="100%">';
 print '<tr><td valign="top" width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
 
 // Date payment
-print '<tr><td valign="top">'.$form->editfieldkey("Date",'date',$paiement->date,'id',$paiement->id,$user->rights->facture->paiement).'</td><td colspan="3">';
-print $form->editfieldval("Date",'date',$paiement->date,'id',$paiement->id,$user->rights->facture->paiement,'day');
+print '<tr><td valign="top">'.$form->editfieldkey("Date",'date',$paiement->date,$paiement,$user->rights->facture->paiement).'</td><td colspan="3">';
+print $form->editfieldval("Date",'date',$paiement->date,$paiement,$user->rights->facture->paiement,'day');
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
@@ -228,16 +228,16 @@ $labeltype=$langs->trans("PaymentType".$paiement->type_code)!=("PaymentType".$pa
 print '<tr><td valign="top">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 // Payment numero
-print '<tr><td valign="top">'.$form->editfieldkey("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-print $form->editfieldval("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
+print '<tr><td valign="top">'.$form->editfieldkey("Numero",'num',$paiement->numero,$paiement,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+print $form->editfieldval("Numero",'num',$paiement->numero,$paiement,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
 print '</td></tr>';
 
 // Amount
 print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 // Note
-print '<tr><td valign="top">'.$form->editfieldkey("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->facture->paiement).'</td><td colspan="3">';
-print $form->editfieldval("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->facture->paiement,'text');
+print '<tr><td valign="top">'.$form->editfieldkey("Note",'note',$paiement->note,$paiement,$user->rights->facture->paiement).'</td><td colspan="3">';
+print $form->editfieldval("Note",'note',$paiement->note,$paiement,$user->rights->facture->paiement,'text');
 print '</td></tr>';
 
 // Bank account

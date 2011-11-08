@@ -16,22 +16,18 @@ $(document).ready(function() {
 		rows		: 4,
 		id			: 'field',
 		tooltip		: tooltipInPlace,
-		placeholder	: placeholderInPlace,
+		placeholder	: '&nbsp;',
 		cancel		: cancelInPlace,
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		loadurl		: urlLoadInPlace,
-		loaddata	: {
-			type: 'textarea',
-			element: element,
-			table_element: table_element,
-			fk_element: fk_element
+		loaddata	: function(result, settings) {
+			var htmlname = $(this).attr('id').substr(4);
+			return getParameters('textarea', htmlname);
 		},
-		submitdata	: {
-			type: 'textarea',
-			element: element,
-			table_element: table_element,
-			fk_element: fk_element
+		submitdata	: function(result, settings) {
+			var htmlname = $(this).attr('id').substr(4);
+			return getParameters('textarea', htmlname);
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);
@@ -61,19 +57,17 @@ $(document).ready(function() {
 		id			: 'field',
 		onblur		: 'ignore',
 		tooltip		: tooltipInPlace,
-		placeholder	: placeholderInPlace,
+		placeholder	: '&nbsp;',
 		cancel		: cancelInPlace,
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		ckeditor	: {
 			customConfig: ckeditorConfig,
-			toolbar: $('#toolbar').val()
+			toolbar: $('#ckeditor_toolbar').val()
 		},
-		submitdata	: {
-			type: 'ckeditor',
-			element: element,
-			table_element: table_element,
-			fk_element: fk_element
+		submitdata	: function(result, settings) {
+			var htmlname = $(this).attr('id').substr(4);
+			return getParameters('ckeditor', htmlname);
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);
@@ -107,11 +101,9 @@ $(document).ready(function() {
 		cancel		: cancelInPlace,
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
-		submitdata	: {
-			type: 'text',
-			element: element,
-			table_element: table_element,
-			fk_element: fk_element
+		submitdata	: function(result, settings) {
+			var htmlname = $(this).attr('id').substr(4);
+			return getParameters('text', htmlname);
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);
@@ -145,11 +137,9 @@ $(document).ready(function() {
 		cancel		: cancelInPlace,
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
-		submitdata	: {
-			type: 'numeric',
-			element: element,
-			table_element: table_element,
-			fk_element: fk_element
+		submitdata	: function(result, settings) {
+			var htmlname = $(this).attr('id').substr(4);
+			return getParameters('numeric', htmlname);
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);
@@ -183,14 +173,9 @@ $(document).ready(function() {
 		cancel		: cancelInPlace,
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
-		submitdata	: function(value, settings) {
-			return {
-				type: 'datepicker',
-				element: element,
-				table_element: table_element,
-				fk_element: fk_element,
-				timestamp: $('#timeStamp').val()
-			};
+		submitdata	: function(result, settings) {
+			var htmlname = $(this).attr('id').substr(4);
+			return getParameters('datepicker', htmlname);
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);
@@ -226,19 +211,13 @@ $(document).ready(function() {
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		loadurl		: urlLoadInPlace,
-		loaddata	: {
-			type: 'select',
-			method: $('#loadmethod').val(),
-			element: element,
-			table_element: table_element,
-			fk_element: fk_element
+		loaddata	: function(result, settings) {
+			var htmlname = $(this).attr('id').substr(4);
+			return getParameters('select', htmlname);
 		},
-		submitdata	: {
-			type: 'select',
-			method: $('#loadmethod').val(),
-			element: element,
-			table_element: table_element,
-			fk_element: fk_element
+		submitdata	: function(result, settings) {
+			var htmlname = $(this).attr('id').substr(4);
+			return getParameters('select', htmlname);
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);
@@ -262,6 +241,29 @@ $(document).ready(function() {
 	$('.editkey_select').click(function() {
 		$( '#val_' + $(this).attr('id') ).click();
 	});
+	
+	function getParameters(type, htmlname) {
+		var element = $( '#element_' + htmlname ).val();
+		var table_element = $( '#table_element_' + htmlname ).val();
+		var fk_element = $( '#fk_element_' + htmlname ).val();
+		var method = false;
+		var timestamp = false;
+		
+		if (type == 'select') {
+			var method = $( '#loadmethod_' + htmlname ).val();
+		} else if (type == 'datepicker') {
+			var timestamp = $('#timestamp_' + htmlname ).val();
+		}
+		
+		return {
+			type: type,
+			element: element,
+			table_element: table_element,
+			fk_element: fk_element,
+			method: method,
+			timestamp: timestamp
+		};
+	}
 	
 	$('.edit_autocomplete').editable(urlSaveInPlace, {
 		type		: 'autocomplete',

@@ -1012,13 +1012,13 @@ else
             print '</tr>';
 
             // Accountancy sell code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,'id',$object->id,$user->rights->produit->creer).'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,'id',$object->id,$user->rights->produit->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,$object,$user->rights->produit->creer).'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,$object,$user->rights->produit->creer);
             print '</td></tr>';
 
             // Accountancy buy code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,'id',$object->id,$user->rights->produit->creer).'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,'id',$object->id,$user->rights->produit->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,$object,$user->rights->produit->creer).'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,$object,$user->rights->produit->creer);
             print '</td></tr>';
 
             // Status (to sell)

@@ -1016,8 +1016,8 @@ else
 			}
 
 			// Weight
-			print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,'id',$object->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
 			print $object->weight_units?measuring_units_string($object->weight_units,"weight"):'';
 			print '</td></tr>';
 
@@ -1044,20 +1044,20 @@ else
 			print '</tr>';
 
 			// Width
-			print '<tr><td>'.$form->editfieldkey("Width",'trueWidth',$object->trueWidth,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $form->editfieldval("Width",'trueWidth',$object->trueWidth,'id',$object->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$form->editfieldkey("Width",'trueWidth',$object->trueWidth,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("Width",'trueWidth',$object->trueWidth,$object,$user->rights->expedition->creer);
 			print $object->trueWidth?measuring_units_string($object->width_units,"size"):'';
 			print '</td></tr>';
 
 			// Height
-			print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $form->editfieldval("Height",'trueHeight',$object->trueHeight,'id',$object->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer);
 			print $object->trueHeight?measuring_units_string($object->height_units,"size"):'';
 			print '</td></tr>';
 
 			// Depth
-			print '<tr><td>'.$form->editfieldkey("Depth",'trueDepth',$object->trueDepth,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $form->editfieldval("Depth",'trueDepth',$object->trueDepth,'id',$object->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$form->editfieldkey("Depth",'trueDepth',$object->trueDepth,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("Depth",'trueDepth',$object->trueDepth,$object,$user->rights->expedition->creer);
 			print $object->trueDepth?measuring_units_string($object->depth_units,"size"):'';
 			print '</td></tr>';
 
@@ -1098,8 +1098,8 @@ else
 			print '</tr>';
 
 			// Tracking Number
-			print '<tr><td>'.$form->editfieldkey("TrackingNumber",'trackingnumber',$object->tracking_number,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $form->editfieldval("TrackingNumber",'trackingnumber',$object->tracking_url,'id',$object->id,$user->rights->expedition->creer,'string',$object->tracking_number);
+			print '<tr><td>'.$form->editfieldkey("TrackingNumber",'trackingnumber',$object->tracking_number,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("TrackingNumber",'trackingnumber',$object->tracking_url,$object,$user->rights->expedition->creer,'string',$object->tracking_number);
 			print '</td></tr>';
 
 			print "</table>\n";

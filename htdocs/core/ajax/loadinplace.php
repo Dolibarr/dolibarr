@@ -66,8 +66,18 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 			$cachename = 'cache_'.GETPOST('method');
 			
 			$form = new Form($db);
-			$ret = $form->$methodname();
-			if ($ret > 0) echo json_encode($form->$cachename);
+			if (method_exists($form, $methodname))
+			{
+				$ret = $form->$methodname();
+				if ($ret > 0) echo json_encode($form->$cachename);
+			}
+			else
+			{
+				dol_include_once('/'.$element.'/class/'.$element.'.class.php');
+				$classname = ucfirst($element);
+				$object = new $classname($db);
+				print_r($object);
+			}
 		}
 		else
 		{

@@ -277,8 +277,8 @@ if ($_GET["id"] || $_GET["ref"])
 		}
 
         // Stock
-        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
-        print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer);
+        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer);
         print '</td></tr>';
 
 		// Last movement
