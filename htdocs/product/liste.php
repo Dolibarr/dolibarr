@@ -96,7 +96,7 @@ if ($conf->categorie->enabled && GETPOST('catid'))
  */
 
 $htmlother=new FormOther($db);
-$html=new Form($db);
+$form=new Form($db);
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
@@ -405,7 +405,7 @@ else
         			    if ($product_fourn->product_fourn_price_id > 0)
         			    {
         			        $htmltext=$product_fourn->display_price_product_fournisseur();
-                            if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $html->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+                            if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
                             else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
         			    }
         			}

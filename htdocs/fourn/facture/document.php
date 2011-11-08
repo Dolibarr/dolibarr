@@ -119,7 +119,7 @@ if ($action=='delete')
  * Affichage
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
@@ -150,7 +150,7 @@ if ($facid > 0)
 
 		// Ref
 		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $html->showrefnav($facture,'facid','',1,'rowid','ref',$morehtmlref);
+		print $form->showrefnav($facture,'facid','',1,'rowid','ref',$morehtmlref);
 		print '</td>';
 		print "</tr>\n";
 

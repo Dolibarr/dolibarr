@@ -92,7 +92,7 @@ if($action && $action!='setcoder')
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formbarcode = new FormBarCode($db);
 
 llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');

@@ -88,7 +88,7 @@ if ($_POST["action"] == 'update' && $user->rights->contrat->creer)
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($_GET["id"])
 {

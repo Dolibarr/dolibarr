@@ -54,7 +54,7 @@ if ($file && ! $what)
 
 llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
 
-$html=new Form($db);
+$form=new Form($db);
 $formfile = new FormFile($db);
 
 print_fiche_titre($langs->trans("Backup"),'','setup');

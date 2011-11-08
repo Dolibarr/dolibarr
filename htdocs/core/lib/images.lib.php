@@ -545,7 +545,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$imageColorPending = $imageDir . "therm_color_pending.png";
 	$imageColorIntent = $imageDir . "therm_color_intent.png";
 
-	$htmlThermTop = '
+	$formThermTop = '
         <!-- Thermometer Begin -->
         <table cellpadding="0" cellspacing="4" border="0">
         <tr><td>
@@ -557,10 +557,10 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
             <td>
               <table cellpadding="0" cellspacing="0" border="0">';
 
-	$htmlSection = '
+	$formSection = '
           <tr><td><img src="{image}" width="26" height="{height}" border="0"></td></tr>';
 
-	$htmlThermbottom = '
+	$formThermbottom = '
               </table>
             </td>
             <td><img src="' . $imageIndex . '" width="32" height="200" border="0"></td>
@@ -578,7 +578,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$legendaPending = "&euro; " . round($pendingValue);
 	$legendaIntent = "&euro; " . round($intentValue);
 	$legendaTotal = "&euro; " . round($actualValue + $pendingValue + $intentValue);
-	$htmlLegenda = '
+	$formLegenda = '
 
         <table cellpadding="0" cellspacing="0" border="0">
           <tr><td><img src="' . $imageColorActual . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><b>'.$langs->trans("Paid").':<br>' . $legendaActual . '</b></font></td></tr>
@@ -621,14 +621,14 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	// start writing the html (from bottom to top)
 
 	// bottom
-	$thermometer = $htmlThermbottom;
+	$thermometer = $formThermbottom;
 
 	// actual
 	$sectionHeight = round(($actualValue / $maximumValue) * $height);
 	$totalHeight = $totalHeight + $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
-		$section = $htmlSection;
+		$section = $formSection;
 		$section = str_replace("{image}", $imageMiddleActual, $section);
 		$section = str_replace("{height}", $sectionHeight, $section);
 		$thermometer = $section . $thermometer;
@@ -639,7 +639,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$totalHeight = $totalHeight + $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
-		$section = $htmlSection;
+		$section = $formSection;
 		$section = str_replace("{image}", $imageMiddlePending, $section);
 		$section = str_replace("{height}", $sectionHeight, $section);
 		$thermometer = $section . $thermometer;
@@ -650,7 +650,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$totalHeight = $totalHeight + $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
-		$section = $htmlSection;
+		$section = $formSection;
 		$section = str_replace("{image}", $imageMiddleIntent, $section);
 		$section = str_replace("{height}", $sectionHeight, $section);
 		$thermometer = $section . $thermometer;
@@ -660,16 +660,16 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$sectionHeight = $height- $totalHeight;
 	if ( $sectionHeight > 0 )
 	{
-		$section = $htmlSection;
+		$section = $formSection;
 		$section = str_replace("{image}", $imageMiddleGoal, $section);
 		$section = str_replace("{height}", $sectionHeight, $section);
 		$thermometer = $section . $thermometer;
 	}
 
 	// top
-	$thermometer = $htmlThermTop . $thermometer;
+	$thermometer = $formThermTop . $thermometer;
 
-	return $thermometer . $htmlLegenda;
+	return $thermometer . $formLegenda;
 }
 
 ?>

@@ -41,7 +41,7 @@ $result = restrictedArea($user, 'prelevement', $id);
 
 llxHeader('','Bon de prelevement');
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {

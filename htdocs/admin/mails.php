@@ -270,7 +270,7 @@ $listofmethods['smtps']='SMTP/SMTPS socket library';
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
-	$html=new Form($db);
+	$form=new Form($db);
 
 	if ($conf->use_javascript_ajax)
 	{
@@ -321,7 +321,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// Disable
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
-	print $html->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
+	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
 	print '</td></tr>';
 
 	// Separator
@@ -335,14 +335,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// SuperAdministrator access only
 	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 	{
-		print $html->selectarray('MAIN_MAIL_SENDMODE',$listofmethods,$conf->global->MAIN_MAIL_SENDMODE);
+		print $form->selectarray('MAIN_MAIL_SENDMODE',$listofmethods,$conf->global->MAIN_MAIL_SENDMODE);
 	}
 	else
 	{
 		$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 		if (empty($text)) $text = $langs->trans("Undefined");
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
-		print $html->textwithpicto($text,$htmltext,1,'superadmin');
+		print $form->textwithpicto($text,$htmltext,1,'superadmin');
 		print '<input type="hidden" name="MAIN_MAIL_SENDMODE" value="'.$conf->global->MAIN_MAIL_SENDMODE.'">';
 	}
 	print '</td></tr>';
@@ -371,7 +371,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		{
 			$text = $conf->global->MAIN_MAIL_SMTP_SERVER ? $conf->global->MAIN_MAIL_SMTP_SERVER : $smtpserver;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print $html->textwithpicto($text,$htmltext,1,'superadmin');
+			print $form->textwithpicto($text,$htmltext,1,'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" value="'.$conf->global->MAIN_MAIL_SMTP_SERVER.'">';
 		}
 	}
@@ -401,7 +401,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		{
 			$text = $conf->global->MAIN_MAIL_SMTP_PORT ? $conf->global->MAIN_MAIL_SMTP_PORT : $smtpport;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print $html->textwithpicto($text,$htmltext,1,'superadmin');
+			print $form->textwithpicto($text,$htmltext,1,'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT" name="MAIN_MAIL_SMTP_PORT" value="'.$conf->global->MAIN_MAIL_SMTP_PORT.'">';
 		}
 	}
@@ -420,7 +420,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		else
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print $html->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext,1,'superadmin');
+			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext,1,'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_ID" value="'.$conf->global->MAIN_MAIL_SMTPS_ID.'">';
 		}
 		print '</td></tr>';
@@ -439,7 +439,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		else
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print $html->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,'superadmin');
+			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$conf->global->MAIN_MAIL_SMTPS_PW.'">';
 		}
 		print '</td></tr>';
@@ -452,7 +452,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	{
 		if (function_exists('openssl_open'))
 		{
-			print $html->selectyesno('MAIN_MAIL_EMAIL_TLS',$conf->global->MAIN_MAIL_EMAIL_TLS,1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS',$conf->global->MAIN_MAIL_EMAIL_TLS,1);
 		}
 		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 	}

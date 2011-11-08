@@ -120,7 +120,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -149,7 +149,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		print $html->showrefnav($object,'ref',$linkback,1,'ref','ref','');
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 		print '</td></tr>';
 
 		// Ref client
@@ -181,7 +181,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($action == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 

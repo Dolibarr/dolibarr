@@ -51,7 +51,7 @@
 	<td colspan="3">
 	<?php
 
-	$html->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
+	$form->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
 
 	if (is_object($hookmanager))
 	{
@@ -78,9 +78,9 @@
 	<td colspan="9">
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-	echo $html->select_date('','date_start_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
+	echo $form->select_date('','date_start_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
 	echo ' '.$langs->trans('to').' ';
-	echo $html->select_date('','date_end_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
+	echo $form->select_date('','date_end_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
 	?>
 	</td>
 </tr>

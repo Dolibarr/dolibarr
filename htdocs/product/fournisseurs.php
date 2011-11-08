@@ -176,7 +176,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
  * view
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($id || $ref)
 {
@@ -207,7 +207,7 @@ if ($id || $ref)
 			// Reference
 			print '<tr>';
 			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-			print $html->showrefnav($product,'ref','',1,'ref');
+			print $form->showrefnav($product,'ref','',1,'ref');
 			print '</td>';
 			print '</tr>';
 
@@ -271,8 +271,8 @@ if ($id || $ref)
 				}
 				else
 				{
-					$html=new Form($db);
-					$html->select_societes($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
+					$form=new Form($db);
+					$form->select_societes($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
 				}
 				print '</td></tr>';
 
@@ -294,7 +294,7 @@ if ($id || $ref)
 				{
 					$langs->load("propal");
 					print '<tr><td>'.$langs->trans("Availability").'</td><td colspan="3">';
-					$html->select_availability($product->fk_availability,"oselDispo",1);
+					$form->select_availability($product->fk_availability,"oselDispo",1);
 					print '</td></tr>'."\n";
 				}
 
@@ -316,7 +316,7 @@ if ($id || $ref)
 				print '<td class="fieldrequired" width="25%">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td width="25%"><input class="flat" name="price" size="8" value="'.($_POST["price"]?$_POST["price"]:(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
-				print $html->select_PriceBaseType(($_POST["price_base_type"]?$_POST["price_base_type"]:$product->price_base_type), "price_base_type");
+				print $form->select_PriceBaseType(($_POST["price_base_type"]?$_POST["price_base_type"]:$product->price_base_type), "price_base_type");
                 print '</td>';
 				print '</tr>';
 
@@ -389,8 +389,8 @@ if ($id || $ref)
 						//Availability
 						if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 						{
-							$html->load_cache_availability();
-                			$availability= $html->cache_availability[$productfourn->fk_availability]['label'];
+							$form->load_cache_availability();
+                			$availability= $form->cache_availability[$productfourn->fk_availability]['label'];
 							print '<td align="left">'.$availability.'</td>';
 						}
 

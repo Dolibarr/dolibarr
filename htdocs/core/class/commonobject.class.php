@@ -1829,7 +1829,7 @@ abstract class CommonObject
 	function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$langs,$object;
-		global $html,$bcnd,$var;
+		global $form,$bcnd,$var;
 
         // Use global variables + $dateSelector + $seller and $buyer
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
@@ -1848,7 +1848,7 @@ abstract class CommonObject
 	function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$langs,$object;
-		global $html,$bcnd,$var;
+		global $form,$bcnd,$var;
 
         // Use global variables + $dateSelector + $seller and $buyer
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
@@ -1951,7 +1951,7 @@ abstract class CommonObject
 	function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
-		global $html,$bc,$bcdd;
+		global $form,$bc,$bcdd;
 
 		$element = $this->element;
 		if ($element == 'propal') $element = 'propale';   // To work with non standard path

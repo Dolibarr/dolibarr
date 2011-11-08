@@ -183,7 +183,7 @@ class Interfaces
     {
         global $conf, $langs;
 
-        $html = new Form($this->db);
+        $form = new Form($this->db);
 
         $files = array();
         $modules = array();
@@ -285,7 +285,7 @@ class Interfaces
                 if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
             }
 
-            $triggers[$j]['info'] = $html->textwithpicto('',$text);
+            $triggers[$j]['info'] = $form->textwithpicto('',$text);
             $j++;
         }
         return $triggers;

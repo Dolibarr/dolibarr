@@ -149,7 +149,7 @@ if ($_POST["action"] == 'add_payment')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 // Formulaire de creation d'un paiement de charge
@@ -207,12 +207,12 @@ if ($_GET["action"] == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
-	$html->select_date($datepayment,'','','','',"add_payment",1,1);
+	$form->select_date($datepayment,'','','','',"add_payment",1,1);
 	print "</td>";
 	print '<td>'.$langs->trans("Comments").'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$html->select_types_paiements(isset($_POST["paiementtype"])?$_POST["paiementtype"]:$charge->paiementtype, "paiementtype");
+	$form->select_types_paiements(isset($_POST["paiementtype"])?$_POST["paiementtype"]:$charge->paiementtype, "paiementtype");
 	print "</td>\n";
 
 	print '<td rowspan="3" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="'.ROWS_3.'"></textarea></td></tr>';
@@ -220,7 +220,7 @@ if ($_GET["action"] == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	$html->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '',1);  // Show opend bank account list
+	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '',1);  // Show opend bank account list
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Numero');

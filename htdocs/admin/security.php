@@ -183,7 +183,7 @@ else if ($_GET["action"] == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 /*
  * View
  */
-$html = new Form($db);
+$form = new Form($db);
 
 llxHeader('',$langs->trans("Passwords"));
 
@@ -366,7 +366,7 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">';
 $text = $langs->trans("ProtectAndEncryptPdfFiles");
-$desc = $html->textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
+$desc = $form->textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
 print $desc;
 print '</td>';
 print '<td align="center" width="60">';

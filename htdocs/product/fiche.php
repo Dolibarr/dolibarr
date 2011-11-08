@@ -626,7 +626,7 @@ if (GETPOST("type") == '1')	$helpurl='EN:Module_Services_En|FR:Module_Services|E
 
 llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
-$html = new Form($db);
+$form = new Form($db);
 $formproduct = new FormProduct($db);
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
@@ -675,13 +675,13 @@ else
         // On sell
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
         $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-        print $html->selectarray('statut',$statutarray,$_POST["statut"]);
+        print $form->selectarray('statut',$statutarray,$_POST["statut"]);
         print '</td></tr>';
 
         // To buy
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
         $statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-        print $html->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
+        print $form->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
         print '</td></tr>';
 
         // Stock min level
@@ -710,7 +710,7 @@ else
         {
             print '<tr><td>'.$langs->trans("Nature").'</td><td>';
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-            print $html->selectarray('finished',$statutarray,$_POST["finished"]);
+            print $form->selectarray('finished',$statutarray,$_POST["finished"]);
             print '</td></tr>';
         }
 
@@ -755,7 +755,7 @@ else
 
         // Origin country
         print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-        $html->select_pays($_POST["country_id"],'country_id');
+        $form->select_pays($_POST["country_id"],'country_id');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
@@ -782,7 +782,7 @@ else
             // PRIX
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" size="10" value="'.$product->price.'">';
-            print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+            print $form->select_PriceBaseType($product->price_base_type, "price_base_type");
             print '</td></tr>';
 
             // MIN PRICE
@@ -792,7 +792,7 @@ else
 
             // VAT
             print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
-            print $html->load_tva("tva_tx",-1,$mysoc,'');
+            print $form->load_tva("tva_tx",-1,$mysoc,'');
             print '</td></tr>';
 
             print '</table>';
@@ -884,7 +884,7 @@ else
             {
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-                print $html->selectarray('finished',$statutarray,$object->finished);
+                print $form->selectarray('finished',$statutarray,$object->finished);
                 print '</td></tr>';
             }
 
@@ -945,7 +945,7 @@ else
 
             // Origin country
             print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">';
-            $html->select_pays($object->country_id,'country_id');
+            $form->select_pays($object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
 
@@ -977,7 +977,7 @@ else
             // Confirm delete product
             if ($action == 'delete' || $conf->use_javascript_ajax)
             {
-                $ret=$html->form_confirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
+                $ret=$form->form_confirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
                 if ($ret == 'html') print '<br>';
             }
 
@@ -988,7 +988,7 @@ else
 
             // Ref
             print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="'.(2+($isphoto?1:0)).'">';
-            print $html->showrefnav($object,'ref','',1,'ref');
+            print $form->showrefnav($object,'ref','',1,'ref');
             print '</td>';
 
             print '</tr>';
@@ -1012,13 +1012,13 @@ else
             print '</tr>';
 
             // Accountancy sell code
-            print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,'id',$object->id,$user->rights->produit->creer).'</td><td colspan="2">';
-            print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,'id',$object->id,$user->rights->produit->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,'id',$object->id,$user->rights->produit->creer).'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,'id',$object->id,$user->rights->produit->creer);
             print '</td></tr>';
 
             // Accountancy buy code
-            print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,'id',$object->id,$user->rights->produit->creer).'</td><td colspan="2">';
-            print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,'id',$object->id,$user->rights->produit->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,'id',$object->id,$user->rights->produit->creer).'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,'id',$object->id,$user->rights->produit->creer);
             print '</td></tr>';
 
             // Status (to sell)
@@ -1141,7 +1141,7 @@ if ($action == 'clone' || $conf->use_javascript_ajax)
     array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
     );
     // Paiement incomplet. On demande si motif = escompte ou autre
-    $html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestion,'yes','action-clone',230,600);
+    $form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestion,'yes','action-clone',230,600);
 }
 
 
@@ -1302,7 +1302,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                 print '<tr '.$bc[$var].'><td colspan="3">';
                 print '<input type="hidden" name="action" value="addinpropal">';
                 print $langs->trans("OtherPropals").'</td><td>';
-                print $html->selectarray("propalid", $otherprop);
+                print $form->selectarray("propalid", $otherprop);
                 print '</td></tr>';
                 print '<tr '.$bc[$var].'><td nowrap="nowrap" colspan="2">'.$langs->trans("Qty");
                 print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
@@ -1420,7 +1420,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                 print '<tr '.$bc[$var].'><td colspan="3">';
                 print '<input type="hidden" name="action" value="addincommande">';
                 print $langs->trans("OtherOrders").'</td><td>';
-                print $html->selectarray("commandeid", $othercom);
+                print $form->selectarray("commandeid", $othercom);
                 print '</td></tr>';
                 print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("Qty");
                 print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");

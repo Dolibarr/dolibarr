@@ -50,7 +50,7 @@ $now=dol_now();
 
 llxHeader('',$langs->trans("Bill"),'Facture');
 
-$html = new Form($db);
+$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -162,7 +162,7 @@ if ($id > 0 || ! empty($ref))
                     {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
                         $text2=$langs->trans("AbsoluteDiscountUse");
-                        print $html->textwithpicto($text,$text2);
+                        print $form->textwithpicto($text,$text2);
                     }
                 }
             }
@@ -171,7 +171,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type remise fixe (not credit note)
                 $filter='fk_facture_source IS NULL';
                 print '<br>';
-                $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
             }
         }
         else
@@ -191,7 +191,7 @@ if ($id > 0 || ! empty($ref))
                 if ($object->statut == 0 && $object->type != 3)
                 {
                     $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie));
-                    print $html->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
+                    print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
                 }
                 else
                 {
@@ -203,7 +203,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type avoir
                 $filter='fk_facture_source IS NOT NULL';
                 if (! $absolute_discount) print '<br>';
-                $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
             }
         }
         if (! $absolute_discount && ! $absolute_creditnote)
@@ -238,7 +238,7 @@ if ($id > 0 || ! empty($ref))
         {
             if ($action == 'editpaymentterm')
             {
-                $html->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date_lim_reglement,'paymentterm');
+                $form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date_lim_reglement,'paymentterm');
             }
             else
             {
@@ -254,7 +254,7 @@ if ($id > 0 || ! empty($ref))
 
         // Conditions reglement
         print '<tr><td>'.$langs->trans("PaymentConditionsShort").'</td><td colspan="5">';
-        $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$object->id",$object->cond_reglement_id,"none");
+        $form->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$object->id",$object->cond_reglement_id,"none");
         print '</td>';
         print '</td></tr>';
 
@@ -268,11 +268,11 @@ if ($id > 0 || ! empty($ref))
         print '</td><td colspan="3">';
         if ($action == 'editmode')
         {
-            $html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
         }
         else
         {
-            $html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
         }
         print '</td>';
 

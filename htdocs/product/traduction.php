@@ -135,7 +135,7 @@ if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
 llxHeader("","",$langs->trans("Translation"));
 
-$html = new Form($db);
+$form = new Form($db);
 $formadmin=new FormAdmin($db);
 
 $head=product_prepare_head($product, $user);
@@ -150,7 +150,7 @@ print '<table class="border" width="100%">';
 // Reference
 print '<tr>';
 print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-print $html->showrefnav($product,'ref','',1,'ref');
+print $form->showrefnav($product,'ref','',1,'ref');
 print '</td>';
 print '</tr>';
 print '</table>';

@@ -101,8 +101,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<p class="note_label">
 			<?php
 				echo $langs->trans("BankToPay"). "<br>";
-				$html = new Form($db);
-				$html->select_comptes($selected,'cashdeskbank',0,$filtre);
+				$form = new Form($db);
+				$form->select_comptes($selected,'cashdeskbank',0,$filtre);
 			?>
 		</p>
 		<p class="note_label"><?php echo $langs->trans("Notes"); ?><br><textarea class="textarea_note" name="txtaNotes"></textarea></p>

@@ -221,7 +221,7 @@ function create_key_table($list)
 }
 
 
-$html=new Form($db);
+$form=new Form($db);
 print_fiche_titre('Dolibarr eAccelerator '.$info['version'].' control panel','','setup');
 
 $var=true;

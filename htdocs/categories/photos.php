@@ -83,7 +83,7 @@ if ($action == 'addthumb' && $_GET["file"])
 
 llxHeader("","",$langs->trans("Categories"));
 
-$html = new Form($db);
+$form = new Form($db);
 
 if (!empty($id) || !empty($ref))
 {
@@ -105,7 +105,7 @@ if (!empty($id) || !empty($ref))
          */
         if ($action == 'delete')
         {
-            $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 

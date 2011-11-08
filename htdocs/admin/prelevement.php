@@ -110,7 +110,7 @@ if ($action == "deletenotif")
  *	View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader('',$langs->trans("WithdrawalsSetup"));
 
@@ -131,7 +131,7 @@ print "</tr>";
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom0" value="PRELEVEMENT_USER">';
-print $html->select_users($conf->global->PRELEVEMENT_USER,'value0',1);
+print $form->select_users($conf->global->PRELEVEMENT_USER,'value0',1);
 print '</td>';
 print '</tr>';
 
@@ -145,7 +145,7 @@ print '</tr>';
 // Bank account (from Banks module)
 print '<tr class="impair"><td>'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td align="left">';
-print $html->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
+print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
 print '</table>';
 print '<br>';
@@ -223,11 +223,11 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
     print "</tr>\n";
 
     print '<tr class="impair"><td align="left">';
-    print $html->selectarray('user',$internalusers);//  select_users(0,'user',0);
+    print $form->selectarray('user',$internalusers);//  select_users(0,'user',0);
     print '</td>';
 
     print '<td>';
-    print $html->selectarray('action',$actions);//  select_users(0,'user',0);
+    print $form->selectarray('action',$actions);//  select_users(0,'user',0);
     print '</td>';
 
     print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';

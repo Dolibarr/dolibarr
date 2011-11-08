@@ -515,7 +515,7 @@ if ($action == 'adduserldap')
 
 llxHeader('',$langs->trans("UserCard"));
 
-$html = new Form($db);
+$form = new Form($db);
 
 if (($action == 'create') || ($action == 'adduserldap'))
 {
@@ -600,7 +600,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
             print '</td>';
             print '<td>';
             print '<input type="hidden" name="action" value="adduserldap">';
-            print $html->selectarray('users', $liste, '', 1);
+            print $form->selectarray('users', $liste, '', 1);
             print '</td><td align="center">';
             print '<input type="submit" class="button" value="'.$langs->trans('Get').'">';
             print '</td></tr></table>';
@@ -760,7 +760,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Type
     print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
     print '<td>';
-    print $html->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+    print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
     print '</td></tr>';
 
     // Tel
@@ -926,7 +926,7 @@ else
          */
         if ($action == 'password')
         {
-            $ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password", '', 0, 1);
+            $ret=$form->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password", '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -935,7 +935,7 @@ else
          */
         if ($action == 'passwordsend')
         {
-            $ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend", '', 0, 1);
+            $ret=$form->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend", '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -944,7 +944,7 @@ else
          */
         if ($action == 'disable')
         {
-            $ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable", '', 0, 1);
+            $ret=$form->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable", '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -953,7 +953,7 @@ else
          */
         if ($action == 'enable')
         {
-            $ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable", '', 0, 1);
+            $ret=$form->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable", '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -962,7 +962,7 @@ else
          */
         if ($action == 'delete')
         {
-            $ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete", '', 0, 1);
+            $ret=$form->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete", '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -978,7 +978,7 @@ else
             // Ref
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
             print '<td colspan="2">';
-            print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+            print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
             print '</td>';
             print '</tr>'."\n";
 
@@ -994,7 +994,7 @@ else
 
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print $html->showphoto('userphoto',$fuser,100);
+            print $form->showphoto('userphoto',$fuser,100);
             print '</td>';
 
             print '</tr>'."\n";
@@ -1054,11 +1054,11 @@ else
             print '<tr><td valign="top">'.$langs->trans("Administrator").'</td><td>';
             if (! empty($conf->multicompany->enabled) && $fuser->admin && ! $fuser->entity)
             {
-                print $html->textwithpicto(yn($fuser->admin),$langs->trans("SuperAdministratorDesc"),1,"superadmin");
+                print $form->textwithpicto(yn($fuser->admin),$langs->trans("SuperAdministratorDesc"),1,"superadmin");
             }
             else if ($fuser->admin)
             {
-                print $html->textwithpicto(yn($fuser->admin),$langs->trans("AdministratorDesc"),1,"admin");
+                print $form->textwithpicto(yn($fuser->admin),$langs->trans("AdministratorDesc"),1,"admin");
             }
             else
             {
@@ -1087,7 +1087,7 @@ else
             print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>';
             if ($fuser->societe_id)
             {
-                print $html->textwithpicto($langs->trans("External"),$langs->trans("InternalExternalDesc"));
+                print $form->textwithpicto($langs->trans("External"),$langs->trans("InternalExternalDesc"));
             }
             else if ($fuser->ldap_sid)
             {
@@ -1095,7 +1095,7 @@ else
             }
             else
             {
-                print $html->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+                print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
             }
             print '</td></tr>'."\n";
 
@@ -1450,7 +1450,7 @@ else
             print '</td>';
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print $html->showphoto('userphoto',$fuser);
+            print $form->showphoto('userphoto',$fuser);
             if ($caneditfield)
             {
                 if ($fuser->photo) print "<br>\n";
@@ -1505,7 +1505,7 @@ else
                 $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$fuser->pass.'">';
                 if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
                 {
-                    $text=$html->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
+                    $text=$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
                 }
             }
             else
@@ -1584,7 +1584,7 @@ else
                 {
                     $yn = yn($fuser->admin);
                     print '<input type="hidden" name="admin" value="'.$fuser->admin.'">';
-                    if (! empty($conf->multicompany->enabled) && ! $fuser->entity) print $html->textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
+                    if (! empty($conf->multicompany->enabled) && ! $fuser->entity) print $form->textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
                     else print $yn;
                 }
                 print '</td></tr>';

@@ -118,7 +118,7 @@ if ($action == 'deleteline' && $user->rights->propale->creer)
 
 llxHeader('', $langs->trans("Proposal"), "Propal");
 
-$html = new Form($db);
+$form = new Form($db);
 $formcompany= new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+		print $form->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
 		print '</td></tr>';
 
 		// Ref client
@@ -222,7 +222,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td>';
 			// On recupere les id des users deja selectionnes
 			//$userAlreadySelected = $propal->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
-			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
+			$form->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($propal, '', 'type','internal');
@@ -252,7 +252,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td>';
-			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid');
+			$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid');
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';

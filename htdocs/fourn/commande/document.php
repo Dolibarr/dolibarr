@@ -118,7 +118,7 @@ if ($action=='delete')
  * View
  */
 
-$html =	new	Form($db);
+$form =	new	Form($db);
 
 $id = $_GET['id'];
 $ref= $_GET['ref'];
@@ -153,7 +153,7 @@ if ($id > 0 || ! empty($ref))
 	// Ref
 	print '<tr><td width="35%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="2">';
-	print $html->showrefnav($commande,'ref','',1,'ref','ref');
+	print $form->showrefnav($commande,'ref','',1,'ref','ref');
 	print '</td>';
 	print '</tr>';
 

@@ -74,7 +74,7 @@ if ($_POST['action'] ==	'setbarcode'	&& $user->rights->barcode->creer)
 
 llxHeader("","",$langs->trans("BarCode"));
 
-$html = new Form($db);
+$form = new Form($db);
 $formbarcode = new FormBarCode($db);
 
 $product = new Product($db);
@@ -92,7 +92,7 @@ print '<table class="border" width="100%">'."\n";
 // Reference
 print '<tr>';
 print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
-print $html->showrefnav($product,'ref','',1,'ref');
+print $form->showrefnav($product,'ref','',1,'ref');
 print '</td>';
 print '</tr>'."\n";
 

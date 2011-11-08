@@ -54,7 +54,7 @@ if ($user->societe_id > 0)
 
 llxHeader('','','');
 
-$html=new Form($db);
+$form=new Form($db);
 
 // Put here content of your page
 // ...
@@ -80,7 +80,7 @@ $nom=$langs->trans("SellsJournal");
 //$nomlink=;
 $builddate=time();
 $description=$langs->trans("DescSellsJournal");
-$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_PAYS);

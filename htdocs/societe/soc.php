@@ -837,10 +837,10 @@ else
         print '</tr>';
 
         // Assujeti TVA
-        $html = new Form($db);
+        $form = new Form($db);
         print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
         print '<td>';
-        print $html->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
+        print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
         print '</td>';
         print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
         print '<td nowrap="nowrap">';
@@ -904,22 +904,22 @@ else
             if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
                 print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                print $html->selectyesno('localtax1assuj_value',0,1);
+                print $form->selectyesno('localtax1assuj_value',0,1);
                 print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                print $html->selectyesno('localtax2assuj_value',0,1);
+                print $form->selectyesno('localtax2assuj_value',0,1);
                 print '</td></tr>';
 
             }
             elseif($mysoc->localtax1_assuj=="1")
             {
                 print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                print $html->selectyesno('localtax1assuj_value',0,1);
+                print $form->selectyesno('localtax1assuj_value',0,1);
                 print '</td><tr>';
             }
             elseif($mysoc->localtax2_assuj=="1")
             {
                 print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                print $html->selectyesno('localtax2assuj_value',0,1);
+                print $form->selectyesno('localtax2assuj_value',0,1);
                 print '</td><tr>';
             }
         }
@@ -1429,14 +1429,14 @@ else
 
         dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
-        $html = new Form($db);
+        $form = new Form($db);
 
 
         // Confirm delete third party
         if ($action == 'delete' || $conf->use_javascript_ajax)
         {
-            $html = new Form($db);
-            $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
+            $form = new Form($db);
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
             if ($ret == 'html') print '<br>';
         }
 
@@ -1471,7 +1471,7 @@ else
         if ($object->logo)
         {
             $showlogo.='<td rowspan="'.$rowspan.'" style="text-align: center;" width="25%">';
-            $showlogo.=$html->showphoto('societe',$object,50);
+            $showlogo.=$form->showphoto('societe',$object,50);
             $showlogo.='</td>';
         }
 
@@ -1611,7 +1611,7 @@ else
         else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
         // VAT payers
-        $html = new Form($db);
+        $form = new Form($db);
         print '<tr><td>';
         print $langs->trans('VATIsUsed');
         print '</td><td>';

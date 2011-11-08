@@ -385,7 +385,7 @@ if ($action == 'update')
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
 
-$html = new Form($db);
+$form = new Form($db);
 $htmlactions = new FormActions($db);
 
 
@@ -484,17 +484,17 @@ if ($action == 'create')
 	$datep=$actioncomm->datep;
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
 	print '<tr><td width="30%" nowrap="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $html->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) $html->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
-	else $html->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+	if (GETPOST("afaire") == 1) $form->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
+	else $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 	print '</td></tr>';
 	// Date end
 	$datef=$actioncomm->datef;
     if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
 	print '<tr><td><span id="dateend"'.(GETPOST("actioncode") == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	if (GETPOST("afaire") == 1) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	print '</td></tr>';
 
 	// Status
@@ -524,12 +524,12 @@ if ($action == 'create')
 
 	// Affected by
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	$html->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
+	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
 	print '</td></tr>';
 
 	// Realised by
 	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-	$html->select_users(GETPOST("doneby")?GETPOST("doneby"):($percent==100?$actioncomm->userdone:0),'doneby',1);
+	$form->select_users(GETPOST("doneby")?GETPOST("doneby"):($percent==100?$actioncomm->userdone:0),'doneby',1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -547,7 +547,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		print $html->select_societes('','socid','',1,1);
+		print $form->select_societes('','socid','',1,1);
 	}
 	print '</td></tr>';
 
@@ -555,7 +555,7 @@ if ($action == 'create')
 	if (GETPOST("contactid") > 0 || GETPOST("socid") > 0)
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-		$html->select_contacts(GETPOST("socid"),GETPOST('contactid'),'contactid',1);
+		$form->select_contacts(GETPOST("socid"),GETPOST('contactid'),'contactid',1);
 		print '</td></tr>';
 	}
 
@@ -656,7 +656,7 @@ if ($id)
 	// Confirmation suppression action
 	if ($action == 'delete')
 	{
-		$ret=$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
+		$ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -721,15 +721,15 @@ if ($id)
 
 		// Date start
 		print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
-		else if (GETPOST("afaire") == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
-		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		if (GETPOST("afaire") == 1) $form->select_date($act->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
+		else if (GETPOST("afaire") == 2) $form->select_date($act->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		else $form->select_date($act->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else if (GETPOST("afaire") == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else $html->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		if (GETPOST("afaire") == 1) $form->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else if (GETPOST("afaire") == 2) $form->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else $form->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
 		// Status
@@ -750,12 +750,12 @@ if ($id)
 
 		// Affected to
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
-		print $html->select_dolusers($act->usertodo->id>0?$act->usertodo->id:-1,'affectedto',1);
+		print $form->select_dolusers($act->usertodo->id>0?$act->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
 		// Realised by
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		print $html->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
+		print $form->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
 		print '</td></tr>';
 
 		print '</table><br>';
@@ -765,12 +765,12 @@ if ($id)
 		// Company
 		print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td>';
 		print '<td>';
-		print $html->select_societes($act->societe->id,'socid','',1,1);
+		print $form->select_societes($act->societe->id,'socid','',1,1);
 		print '</td>';
 
 		// Contact
 		print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-		print $html->selectarray("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
+		print $form->selectarray("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
 		print '</td></tr>';
 
 		// Project
@@ -823,7 +823,7 @@ if ($id)
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $html->showrefnav($act,'id','',($user->societe_id?0:1),'id','ref','');
+		print $form->showrefnav($act,'id','',($user->societe_id?0:1),'id','ref','');
 		print '</td></tr>';
 
 		// Type

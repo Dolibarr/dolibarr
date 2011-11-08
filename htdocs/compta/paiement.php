@@ -208,7 +208,7 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
@@ -355,7 +355,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
         $datepayment = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         $datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0) : $datepayment);
-        $html->select_date($datepayment,'','','',0,"add_paiement",1,1);
+        $form->select_date($datepayment,'','','',0,"add_paiement",1,1);
         print '</td>';
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
@@ -364,7 +364,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
-        $html->select_types_paiements((GETPOST('paiementcode')?GETPOST('paiementcode'):$facture->mode_reglement_code),'paiementcode','',2);
+        $form->select_types_paiements((GETPOST('paiementcode')?GETPOST('paiementcode'):$facture->mode_reglement_code),'paiementcode','',2);
         print "</td>\n";
         print '<td rowspan="'.$rowspan.'" valign="top">';
         print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
@@ -394,7 +394,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
             if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
             print '<td>';
-            $html->select_comptes($accountid,'accountid',0,'',2);
+            $form->select_comptes($accountid,'accountid',0,'',2);
             print '</td>';
         }
         else
@@ -604,7 +604,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
                 print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
             }
-            $html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+            $form->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
         }
 
         print "</form>\n";

@@ -127,7 +127,7 @@ if ($_GET["action"] == 'delete')
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($id)
 {
@@ -155,11 +155,11 @@ if ($_GET["action"] == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $html->select_date($datep,"datep",'','','','add');
+    print $form->select_date($datep,"datep",'','','','add');
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $html->select_date($datev,"datev",'','','','add');
+    print $form->select_date($datev,"datev",'','','','add');
     print '</td></tr>';
 
 	// Label
@@ -171,11 +171,11 @@ if ($_GET["action"] == 'create')
     if ($conf->banque->enabled)
     {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-        $html->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+        $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
 
 	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	    $html->select_types_paiements($_POST["paiementtype"], "paiementtype");
+	    $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
 	    print "</td>\n";
 	    print "</tr>";
 	}

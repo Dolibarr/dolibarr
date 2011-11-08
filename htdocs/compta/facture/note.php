@@ -91,7 +91,7 @@ if ($_POST["action"] == 'update' && $user->rights->facture->creer)
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 $id = $_GET['facid'];
 $ref= $_GET['ref'];
@@ -123,7 +123,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		dol_print_error('',$discount->error);
 	}
-	print $html->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
+	print $form->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
 	print '</td></tr>';
 
     // Company

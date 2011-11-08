@@ -90,7 +90,7 @@ $now=dol_now();
 
 llxHeader('',$langs->trans("Bill"));
 
-$html = new Form($db);
+$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -155,7 +155,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         {
             dol_print_error('',$discount->error);
         }
-        print $html->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
+        print $form->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
         print "</td></tr>";
 
         // Third party
@@ -227,7 +227,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
                     {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
                         $text2=$langs->trans("AbsoluteDiscountUse");
-                        print $html->textwithpicto($text,$text2);
+                        print $form->textwithpicto($text,$text2);
                     }
                 }
             }
@@ -236,7 +236,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
                 // Remise dispo de type non avoir
                 $filter='fk_facture_source IS NULL';
                 print '<br>';
-                $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount,$filter,$resteapayer);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount,$filter,$resteapayer);
             }
         }
         if ($absolute_creditnote > 0)
@@ -247,7 +247,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
                 if ($fac->statut == 0 && $fac->type != 3)
                 {
                     $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie));
-                    print $html->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
+                    print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
                 }
                 else print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'.';
             }
@@ -256,7 +256,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
                 // Remise dispo de type avoir
                 $filter='fk_facture_source IS NOT NULL';
                 if (! $absolute_discount) print '<br>';
-                $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id_for_payment',$soc->id,$absolute_creditnote,$filter,$resteapayer);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id_for_payment',$soc->id,$absolute_creditnote,$filter,$resteapayer);
             }
         }
         if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
@@ -275,7 +275,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         {
             if ($_GET['action'] == 'editinvoicedate')
             {
-                $html->form_date($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->date,'invoicedate');
+                $form->form_date($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->date,'invoicedate');
             }
             else
             {
@@ -301,7 +301,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         {
             if ($_GET['action'] == 'editpaymentterm')
             {
-                $html->form_date($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->date_lim_reglement,'paymentterm');
+                $form->form_date($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->date_lim_reglement,'paymentterm');
             }
             else
             {
@@ -327,11 +327,11 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         {
             if ($_GET['action'] == 'editconditions')
             {
-                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'cond_reglement_id');
+                $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'cond_reglement_id');
             }
             else
             {
-                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
+                $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
             }
         }
         else
@@ -350,11 +350,11 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         print '</td><td colspan="3">';
         if ($_GET['action'] == 'editmode')
         {
-            $html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'mode_reglement_id');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'mode_reglement_id');
         }
         else
         {
-            $html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
         }
         print '</td></tr>';
 

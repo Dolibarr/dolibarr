@@ -358,7 +358,7 @@ class FormFile
 
             $headershown=1;
 
-            $html = new Form($db);
+            $form = new Form($db);
             $buttonlabeltoshow=$buttonlabel;
             if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
@@ -381,7 +381,7 @@ class FormFile
                     $arraykeys=array_keys($modellist);
                     $modelselected=$arraykeys[0];
                 }
-                $out.= $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
+                $out.= $form->selectarray('model',$modellist,$modelselected,$showempty,0,0);
                 $out.= '</td>';
             }
             else

@@ -987,7 +987,7 @@ if ($action == 'down' && $user->rights->propale->creer)
 
 llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
-$html = new Form($db);
+$form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $companystatic=new Societe($db);
@@ -1023,10 +1023,10 @@ if ($id > 0 || ! empty($ref))
 		//'text' => $langs->trans("ConfirmClone"),
 		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 		//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-		array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $html->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
+		array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
+		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
 	}
 
 	/*
@@ -1034,7 +1034,7 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($action == 'delete')
 	{
-		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete','',0,1);
+		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete','',0,1);
 	}
 
 	/*
@@ -1042,7 +1042,7 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($action == 'ask_deleteline')
 	{
-		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
+		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 	}
 
 	/*
@@ -1077,7 +1077,7 @@ if ($id > 0 || ! empty($ref))
 			$text.=$notify->confirmMessage('NOTIFY_VAL_PROPAL',$object->socid);
 		}
 
-		if (! $error) $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
+		if (! $error) $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 	}
 
 	if (! $formconfirm)
@@ -1096,7 +1096,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
-	print $html->showrefnav($object,'ref',$linkback,1,'ref','ref','');
+	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
 
 	// Ref client
@@ -1149,7 +1149,7 @@ if ($id > 0 || ! empty($ref))
 			// Remise dispo de type non avoir
 			$filter='fk_facture_source IS NULL';
 			print '<br>';
-			$html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
+			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
 		}
 	}
 	if ($absolute_creditnote)
@@ -1173,7 +1173,7 @@ if ($id > 0 || ! empty($ref))
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setdate">';
-		$html->select_date($object->date,'re','','',0,"editdate");
+		$form->select_date($object->date,'re','','',0,"editdate");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
@@ -1218,7 +1218,7 @@ if ($id > 0 || ! empty($ref))
 		print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setecheance">';
-		$html->select_date($object->fin_validite,'ech','','','',"editecheance");
+		$form->select_date($object->fin_validite,'ech','','','',"editecheance");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
@@ -1247,11 +1247,11 @@ if ($id > 0 || ! empty($ref))
     print '</td><td colspan="3">';
     if ($action == 'editconditions')
     {
-        $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+        $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
     }
     else
     {
-        $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
+        $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
     }
     print '</td>';
     print '</tr>';
@@ -1270,7 +1270,7 @@ if ($id > 0 || ! empty($ref))
 		print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		$html->select_date($object->date_livraison,'liv_','','','',"editdate_livraison");
+		$form->select_date($object->date_livraison,'liv_','','','',"editdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
@@ -1295,11 +1295,11 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action == 'editdelivery_address')
 		{
-			$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid'),'fk_address','propal',$object->id);
+			$form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid'),'fk_address','propal',$object->id);
 		}
 		else
 		{
-			$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid'),'none','propal',$object->id);
+			$form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid'),'none','propal',$object->id);
 		}
 		print '</td></tr>';
 	}
@@ -1315,11 +1315,11 @@ if ($id > 0 || ! empty($ref))
 	print '</td><td colspan="3">';
 	if ($action == 'editavailability')
 	{
-		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id',1);
+		$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id',1);
 	}
 	else
 	{
-		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none',1);
+		$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none',1);
 	}
 
 	print '</td>';
@@ -1336,11 +1336,11 @@ if ($id > 0 || ! empty($ref))
 	//print $object->demand_reason_id;
 	if ($action == 'editdemandreason')
 	{
-		$html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
+		$form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
 	}
 	else
 	{
-		$html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
+		$form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
 	}
 
 	print '</td>';
@@ -1357,11 +1357,11 @@ if ($id > 0 || ! empty($ref))
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 	}
 	else
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 	}
 	print '</td></tr>';
 
@@ -1379,11 +1379,11 @@ if ($id > 0 || ! empty($ref))
 			print '</td><td colspan="3">';
 			if ($action == 'classify')
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
+				$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 			}
 			else
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
+				$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
 			}
 			print '</td></tr>';
 		}
@@ -1837,7 +1837,7 @@ else
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
-		$html->select_propal_statut($viewstatut,1);
+		$form->select_propal_statut($viewstatut,1);
 		print '</td>';
 		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '</td>';

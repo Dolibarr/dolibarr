@@ -63,10 +63,10 @@ class CMailFile
 	var $bodyCSS;
 
 	// Image
-	var $html;
+	var $form;
 	var $image_boundary;
 	var $atleastoneimage=0;
-	var $html_images=array();
+	var $form_images=array();
 	var $images_encoded=array();
 	var $image_types = array('gif'  => 'image/gif',
                            'jpg'  => 'image/jpeg',

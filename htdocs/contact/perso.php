@@ -131,8 +131,8 @@ if ($_GET["action"] == 'edit')
 
     // Date To Birth
     print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
-    $html=new Form($db);
-    print $html->select_date($contact->birthday,'birthday',0,0,1,"perso");
+    $form=new Form($db);
+    print $form->select_date($contact->birthday,'birthday',0,0,1,"perso");
     print '</td>';
 
     print '<td colspan="2">'.$langs->trans("Alert").': ';

@@ -69,7 +69,7 @@ $viewstatut=GETPOST('viewstatut');
 
 $now=dol_now();
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $companystatic = new Societe($db);
 

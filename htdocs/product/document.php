@@ -107,7 +107,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
  *	View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -146,7 +146,7 @@ if ($product->id)
     // Ref
     print '<tr>';
     print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $html->showrefnav($product,'ref','',1,'ref');
+	print $form->showrefnav($product,'ref','',1,'ref');
     print '</td>';
     print '</tr>';
 

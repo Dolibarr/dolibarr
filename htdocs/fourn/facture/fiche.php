@@ -855,7 +855,7 @@ if ($action == 'remove_file')
  *	View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 
 llxHeader('','','');
@@ -943,7 +943,7 @@ if ($action == 'create')
     }
     else
     {
-        $html->select_societes((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
+        $form->select_societes((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
     }
     print '</td>';
 
@@ -958,7 +958,7 @@ if ($action == 'create')
     print '<tr height="18"><td width="16px" valign="middle">';
     print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="checked"':'').'>';
     print '</td><td valign="middle">';
-    $desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
+    $desc=$form->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
     print $desc;
     print '</td></tr>'."\n";
 
@@ -967,7 +967,7 @@ if ($action == 'create')
      print '<tr height="18"><td width="16px" valign="middle">';
      print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="checked"':'').'>';
      print '</td><td valign="middle">';
-     $desc=$html->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
+     $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
      print $desc;
      print '</td></tr>'."\n";
 
@@ -977,7 +977,7 @@ if ($action == 'create')
      print '<tr height="18"><td width="16px" valign="middle">';
      print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="checked"':'').'>';
      print '</td><td valign="middle">';
-     $desc=$html->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
+     $desc=$form->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
      print $desc;
      print '</td></tr>'."\n";
      }
@@ -1002,7 +1002,7 @@ if ($action == 'create')
      $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
      }
      $text.='</select>';
-     $desc=$html->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
+     $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
      print $desc;
      print '</td></tr>';
 
@@ -1027,7 +1027,7 @@ if ($action == 'create')
      $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
      }
      $text.='</select>';
-     $desc=$html->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
+     $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
      //.' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
      print $desc;
      print '</td></tr>'."\n";
@@ -1040,12 +1040,12 @@ if ($action == 'create')
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
-    $html->select_date($dateinvoice,'','','','',"add",1,1);
+    $form->select_date($dateinvoice,'','','','',"add",1,1);
     print '</td></tr>';
 
     // Due date
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
-    $html->select_date($datedue,'ech','','','',"add",1,1);
+    $form->select_date($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('NotePublic').'</td>';
@@ -1101,7 +1101,7 @@ if ($action == 'create')
                 print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
                 print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
                 print '<td align="right">';
-                print $html->load_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
+                print $form->load_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
                 print '</td>';
                 print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
                 print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
@@ -1147,7 +1147,7 @@ else
         // Confirmation de la suppression d'une ligne produit
         if ($action == 'confirm_delete_line')
         {
-            $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline', '', 1, 1);
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline', '', 1, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -1160,21 +1160,21 @@ else
             //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
             );
             // Paiement incomplet. On demande si motif = escompte ou autre
-            $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes', 1);
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes', 1);
             if ($ret == 'html') print '<br>';
         }
 
         // Confirmation de la validation
         if ($action == 'valid')
         {
-            $ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid', '', 0, 1);
+            $ret=$form->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $fac->ref), 'confirm_valid', '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
         // Confirmation set paid
         if ($action == 'paid')
         {
-            $ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $fac->ref), 'confirm_paid', '', 0, 1);
+            $ret=$form->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $fac->ref), 'confirm_paid', '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -1183,7 +1183,7 @@ else
          */
         if ($action == 'delete')
         {
-            $ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
+            $ret=$form->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -1195,13 +1195,13 @@ else
 
         // Ref
         print '<tr><td nowrap="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
-        print $html->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
+        print $form->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
         print '</td>';
         print "</tr>\n";
 
         // Ref supplier
-        print '<tr><td>'.$html->editfieldkey("RefSupplier",'ref_supplier',$fac->ref_supplier,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $html->editfieldval("RefSupplier",'ref_supplier',$fac->ref_supplier,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer));
+        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$fac->ref_supplier,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
+        print $form->editfieldval("RefSupplier",'ref_supplier',$fac->ref_supplier,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer));
         print '</td></tr>';
 
         // Third party
@@ -1250,8 +1250,8 @@ else
 
 
         // Label
-        print '<tr><td>'.$html->editfieldkey("Label",'label',$fac->label,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="3">';
-        print $html->editfieldval("Label",'label',$fac->label,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer));
+        print '<tr><td>'.$form->editfieldkey("Label",'label',$fac->label,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="3">';
+        print $form->editfieldval("Label",'label',$fac->label,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer));
         print '</td>';
 
         /*
@@ -1333,13 +1333,13 @@ else
         print '</tr>';
 
         // Date
-        print '<tr><td>'.$html->editfieldkey("Date",'date',$fac->datep,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer && $fac->getSommePaiement() <= 0)).'</td><td colspan="3">';
-        print $html->editfieldval("Date",'date',$fac->datep,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer && $fac->getSommePaiement() <= 0),'day');
+        print '<tr><td>'.$form->editfieldkey("Date",'date',$fac->datep,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer && $fac->getSommePaiement() <= 0)).'</td><td colspan="3">';
+        print $form->editfieldval("Date",'date',$fac->datep,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer && $fac->getSommePaiement() <= 0),'day');
         print '</td>';
 
         // Due date
-        print '<tr><td>'.$html->editfieldkey("DateMaxPayment",'date_echeance',$fac->date_echeance,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer && $fac->getSommePaiement() <= 0)).'</td><td colspan="3">';
-        print $html->editfieldval("DateMaxPayment",'date_echeance',$fac->date_echeance,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer && $fac->getSommePaiement() <= 0),'day');
+        print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_echeance',$fac->date_echeance,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer && $fac->getSommePaiement() <= 0)).'</td><td colspan="3">';
+        print $form->editfieldval("DateMaxPayment",'date_echeance',$fac->date_echeance,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer && $fac->getSommePaiement() <= 0),'day');
         print '</td>';
 
         // Status
@@ -1388,11 +1388,11 @@ else
             print '</td><td colspan="3">';
             if ($action == 'classify')
             {
-                $html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projectid');
+                $form->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projectid');
             }
             else
             {
-                $html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'none');
+                $form->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'none');
             }
             print '</td>';
             print '</tr>';
@@ -1455,7 +1455,7 @@ else
                 }
                 else
                 {
-                    print $html->select_type_of_lines($fac->lines[$i]->product_type,'type',1);
+                    print $form->select_type_of_lines($fac->lines[$i]->product_type,'type',1);
                     if ($conf->product->enabled && $conf->service->enabled) print '<br>';
                 }
 
@@ -1469,7 +1469,7 @@ else
 
                 // VAT
                 print '<td align="right">';
-                print $html->load_tva('tauxtva',$fac->lines[$i]->tva_tx,$societe,$mysoc);
+                print $form->load_tva('tauxtva',$fac->lines[$i]->tva_tx,$societe,$mysoc);
                 print '</td>';
 
                 // Unit price
@@ -1504,7 +1504,7 @@ else
                     $text=$product_static->getNomUrl(1);
                     $text.= ' - '.$product_static->libelle;
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($fac->lines[$i]->description));
-                    print $html->textwithtooltip($text,$description,3,'','',$i);
+                    print $form->textwithtooltip($text,$description,3,'','',$i);
 
                     // Show range
                     print_date_range($fac->lines[$i]->date_start,$fac->lines[$i]->date_end);
@@ -1585,7 +1585,7 @@ else
             print '<td>';
 
             $forceall=1;	// For suppliers, we always show all types
-            print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
+            print $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
             if ($forceall || ($conf->product->enabled && $conf->service->enabled)
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
@@ -1598,7 +1598,7 @@ else
 
             print '</td>';
             print '<td align="right">';
-            print $html->load_tva('tauxtva',($_POST["tauxtva"]?$_POST["tauxtva"]:-1),$societe,$mysoc);
+            print $form->load_tva('tauxtva',($_POST["tauxtva"]?$_POST["tauxtva"]:-1),$societe,$mysoc);
             print '</td>';
             print '<td align="right">';
             print '<input size="4" name="amount" type="text">';
@@ -1642,7 +1642,7 @@ else
                 $var=! $var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';
-                $html->select_produits_fournisseurs($fac->socid,'','idprodfournprice','',$filtre);
+                $form->select_produits_fournisseurs($fac->socid,'','idprodfournprice','',$filtre);
                 print '</td>';
                 print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';

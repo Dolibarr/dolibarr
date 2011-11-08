@@ -82,17 +82,17 @@ function ConvertToXmlAttribute( $value )
  * Check whether given extension is in html etensions list
  *
  * @param string $ext
- * @param array $htmlExtensions
+ * @param array $formExtensions
  * @return boolean
  */
-function IsHtmlExtension( $ext, $htmlExtensions )
+function IsHtmlExtension( $ext, $formExtensions )
 {
-	if ( !$htmlExtensions || !is_array( $htmlExtensions ) )
+	if ( !$formExtensions || !is_array( $formExtensions ) )
 	{
 		return false ;
 	}
 	$lcaseHtmlExtensions = array();
-	foreach ( $htmlExtensions as $key => $val )
+	foreach ( $formExtensions as $key => $val )
 	{
 		$lcaseHtmlExtensions[$key] = strtolower( $val );
 	}

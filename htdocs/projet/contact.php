@@ -117,7 +117,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader('', $langs->trans("Project"), $help_url);
 
-$html = new Form($db);
+$form = new Form($db);
 $formcompany= new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
@@ -159,7 +159,7 @@ if ($id > 0 || ! empty($ref))
 		// Define a complementary filter for search of next/prev ref.
 		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
 		$project->next_prev_filter=" rowid in (".$projectsListId.")";
-		print $html->showrefnav($project,'ref',$linkback,1,'ref','ref','');
+		print $form->showrefnav($project,'ref',$linkback,1,'ref','ref','');
 		print '</td></tr>';
 
 		// Label
@@ -225,7 +225,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="1">';
 			// On recupere les id des users deja selectionnes
-			$html->select_users($user->id,'contactid',0);
+			$form->select_users($user->id,'contactid',0);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($project, '', 'type','internal','rowid');
@@ -257,7 +257,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
-				$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid');
+				$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid');
 				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 				print '</td>';
 				print '<td>';

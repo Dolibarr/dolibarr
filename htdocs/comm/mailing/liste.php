@@ -59,7 +59,7 @@ $filteremail=$_REQUEST["filteremail"]?$_REQUEST["filteremail"]:'';
 
 llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($filteremail)
 {
@@ -158,7 +158,7 @@ if ($result)
 			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
 				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-				print $html->textwithpicto($nbemail,$text,1,'warning');
+				print $form->textwithpicto($nbemail,$text,1,'warning');
 			}
 			else
 			{

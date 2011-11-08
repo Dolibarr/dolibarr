@@ -476,7 +476,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
 llxHeader('',$langs->trans('Sending'),'Expedition');
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 
@@ -563,7 +563,7 @@ if ($action == 'create')
 			print '<tr><td class="fieldrequired">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
 			//print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
-			print $html->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);
+			print $form->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);
 			print "</td>\n";
 			print '</tr>';
 
@@ -575,7 +575,7 @@ if ($action == 'create')
 				print '<td colspan="3">';
 				if (!empty($object->fk_delivery_address))
 				{
-					$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
+					$form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
 				}
 				print '</td></tr>'."\n";
 			}
@@ -608,7 +608,7 @@ if ($action == 'create')
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
-			print $html->selectarray("expedition_method_id",$expe->meths,$_POST["expedition_method_id"],1,0,0,"",1);
+			print $form->selectarray("expedition_method_id",$expe->meths,$_POST["expedition_method_id"],1,0,0,"",1);
 			print "</td></tr>\n";
 
 			// Tracking number
@@ -682,7 +682,7 @@ if ($action == 'create')
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$line->product_label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->desc));
-					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
@@ -861,7 +861,7 @@ else
 			 */
 			if ($action == 'delete')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
+				$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -879,7 +879,7 @@ else
 				{
 					$numref = $object->ref;
 				}
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$numref),'confirm_valid','',0,1);
+				$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$numref),'confirm_valid','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 			/*
@@ -887,7 +887,7 @@ else
 			 */
 			if ($action == 'annuler')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
+				$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -935,7 +935,7 @@ else
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
-			print $html->showrefnav($object,'ref','',1,'ref','ref');
+			print $form->showrefnav($object,'ref','',1,'ref','ref');
 			print '</td></tr>';
 
 			// Customer
@@ -991,7 +991,7 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$html->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
+				$form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
@@ -1010,14 +1010,14 @@ else
 				print '<td colspan="3">';
 				if (!empty($object->fk_delivery_address))
 				{
-					$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->deliveryaddress->socid,'none','shipment',$object->id);
+					$form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->deliveryaddress->socid,'none','shipment',$object->id);
 				}
 				print '</td></tr>'."\n";
 			}
 
 			// Weight
-			print '<tr><td>'.$html->editfieldkey("Weight",'trueWeight',$object->trueWeight,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $html->editfieldval("Weight",'trueWeight',$object->trueWeight,'id',$object->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,'id',$object->id,$user->rights->expedition->creer);
 			print $object->weight_units?measuring_units_string($object->weight_units,"weight"):'';
 			print '</td></tr>';
 
@@ -1044,20 +1044,20 @@ else
 			print '</tr>';
 
 			// Width
-			print '<tr><td>'.$html->editfieldkey("Width",'trueWidth',$object->trueWidth,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $html->editfieldval("Width",'trueWidth',$object->trueWidth,'id',$object->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$form->editfieldkey("Width",'trueWidth',$object->trueWidth,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("Width",'trueWidth',$object->trueWidth,'id',$object->id,$user->rights->expedition->creer);
 			print $object->trueWidth?measuring_units_string($object->width_units,"size"):'';
 			print '</td></tr>';
 
 			// Height
-			print '<tr><td>'.$html->editfieldkey("Height",'trueHeight',$object->trueHeight,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $html->editfieldval("Height",'trueHeight',$object->trueHeight,'id',$object->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("Height",'trueHeight',$object->trueHeight,'id',$object->id,$user->rights->expedition->creer);
 			print $object->trueHeight?measuring_units_string($object->height_units,"size"):'';
 			print '</td></tr>';
 
 			// Depth
-			print '<tr><td>'.$html->editfieldkey("Depth",'trueDepth',$object->trueDepth,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $html->editfieldval("Depth",'trueDepth',$object->trueDepth,'id',$object->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$form->editfieldkey("Depth",'trueDepth',$object->trueDepth,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("Depth",'trueDepth',$object->trueDepth,'id',$object->id,$user->rights->expedition->creer);
 			print $object->trueDepth?measuring_units_string($object->depth_units,"size"):'';
 			print '</td></tr>';
 
@@ -1081,7 +1081,7 @@ else
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setexpedition_method_id">';
 				$object->fetch_delivery_methods();
-				print $html->selectarray("expedition_method_id",$object->meths,$object->expedition_method_id,1,0,0,"",1);
+				print $form->selectarray("expedition_method_id",$object->meths,$object->expedition_method_id,1,0,0,"",1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
@@ -1098,8 +1098,8 @@ else
 			print '</tr>';
 
 			// Tracking Number
-			print '<tr><td>'.$html->editfieldkey("TrackingNumber",'trackingnumber',$object->tracking_number,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $html->editfieldval("TrackingNumber",'trackingnumber',$object->tracking_url,'id',$object->id,$user->rights->expedition->creer,'string',$object->tracking_number);
+			print '<tr><td>'.$form->editfieldkey("TrackingNumber",'trackingnumber',$object->tracking_number,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $form->editfieldval("TrackingNumber",'trackingnumber',$object->tracking_url,'id',$object->id,$user->rights->expedition->creer,'string',$object->tracking_number);
 			print '</td></tr>';
 
 			print "</table>\n";
@@ -1149,7 +1149,7 @@ else
 					$text.= ' - '.$lines[$i]->label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($lines[$i]->description));
 					//print $description;
-					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 					print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{

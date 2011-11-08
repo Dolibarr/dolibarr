@@ -104,7 +104,7 @@ foreach($listofparams as $param)
 
 llxHeader('','','','',0,0,'','',$morequerystring);
 
-$html=new Form($db);
+$form=new Form($db);
 
 $company_static=new Societe($db);
 $invoice_customer=new Facture($db);
@@ -125,7 +125,7 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
-    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
 	else { $prevquarter=4; $prevyear--; }
@@ -155,7 +155,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
-    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
 	else { $prevquarter=4; $prevyear--; }

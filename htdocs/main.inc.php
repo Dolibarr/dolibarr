@@ -1028,7 +1028,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 {
 	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
 
-	$html=new Form($db);
+	$form=new Form($db);
 
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 
@@ -1209,7 +1209,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	print '<div class="login_block">'."\n";
     print '<table class="nobordernopadding" summary=""><tr>';
 
-	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
+	print $form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
 
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
@@ -1223,7 +1223,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		}
 	}
 
-	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
+	print $form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
 
 	// Link to print main content area
 	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
@@ -1233,7 +1233,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
 		$text.=' title="" alt="">';
 		$text.='</a>';
-		print $html->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
+		print $form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
 	}
 
 	print '</tr></table>'."\n";

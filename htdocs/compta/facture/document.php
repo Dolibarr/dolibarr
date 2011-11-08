@@ -124,7 +124,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 $id = $_GET['facid']?$_GET['facid']:$_GET['id'];
 $ref= $_GET['ref'];
@@ -166,7 +166,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			dol_print_error('',$discount->error);
 		}
-		print $html->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
+		print $form->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
 		print '</td></tr>';
 
 		// Company
@@ -184,7 +184,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($action == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?facid='.$id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 

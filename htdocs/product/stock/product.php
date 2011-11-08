@@ -167,7 +167,7 @@ if ($_GET["id"] || $_GET["ref"])
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
 
-		$html = new Form($db);
+		$form = new Form($db);
 
 		print($mesg);
 
@@ -176,7 +176,7 @@ if ($_GET["id"] || $_GET["ref"])
 		// Ref
 		print '<tr>';
 		print '<td width="30%">'.$langs->trans("Ref").'</td><td>';
-		print $html->showrefnav($product,'ref','',1,'ref');
+		print $form->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
 
@@ -277,8 +277,8 @@ if ($_GET["id"] || $_GET["ref"])
 		}
 
         // Stock
-        print '<tr><td>'.$html->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
-        print $html->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer);
+        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer);
         print '</td></tr>';
 
 		// Last movement

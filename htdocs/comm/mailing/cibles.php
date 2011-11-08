@@ -158,7 +158,7 @@ if ($_POST["button_removefilter"])
 
 llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
-$html = new Form($db);
+$form = new Form($db);
 
 $mil = new Mailing($db);
 
@@ -173,7 +173,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print $html->showrefnav($mil,'id');
+	print $form->showrefnav($mil,'id');
 	print '</td></tr>';
 
 	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
@@ -195,7 +195,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 	{
 		$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-		print $html->textwithpicto($nbemail,$text,1,'warning');
+		print $form->textwithpicto($nbemail,$text,1,'warning');
 	}
 	else
 	{

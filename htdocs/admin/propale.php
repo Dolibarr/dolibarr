@@ -250,7 +250,7 @@ if ($action == 'setmod')
 
 llxHeader('',$langs->trans("PropalSetup"));
 
-$html=new Form($db);
+$form=new Form($db);
 
 //if ($mesg) print $mesg;
 
@@ -349,7 +349,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						}
 
 						print '<td align="center">';
-						print $html->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print "</tr>\n";
@@ -486,7 +486,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark,1,1);
 
 					print '<td align="center">';
-					print $html->textwithpicto('',$htmltooltip,1,0);
+					print $form->textwithpicto('',$htmltooltip,1,0);
 					print '</td>';
 					print '<td align="center">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'propal').'</a>';
@@ -538,7 +538,7 @@ print '<input type="hidden" name="action" value="setusecustomercontactasrecipien
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
 print '</td><td width="60" align="center">';
-print $html->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
+print $form->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -554,7 +554,7 @@ if ($conf->commande->enabled)
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("ClassifiedInvoicedWithOrder").'</td>';
 	print '<td width="60" align="center">';
-	print $html->selectyesno('value',$conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER,1);
+	print $form->selectyesno('value',$conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER,1);
 	print "</td>";
 	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';

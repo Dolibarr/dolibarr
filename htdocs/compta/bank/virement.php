@@ -131,7 +131,7 @@ if ($_POST["action"] == 'add')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 print_fiche_titre($langs->trans("BankTransfer"));
@@ -153,15 +153,15 @@ print '</tr>';
 
 $var=false;
 print '<tr '.$bc[$var].'><td>';
-print $html->select_comptes($_POST['account_from'],'account_from',0,'',1);
+print $form->select_comptes($_POST['account_from'],'account_from',0,'',1);
 print "</td>";
 
 print "<td>\n";
-print $html->select_comptes($_POST['account_to'],'account_to',0,'',1);
+print $form->select_comptes($_POST['account_to'],'account_to',0,'',1);
 print "</td>\n";
 
 print "<td>";
-$html->select_date($dateo,'','','','','add');
+$form->select_date($dateo,'','','','','add');
 print "</td>\n";
 print '<td><input name="label" class="flat" type="text" size="40" value="'.$_POST["label"].'"></td>';
 print '<td><input name="amount" class="flat" type="text" size="8" value="'.$_POST["amount"].'"></td>';

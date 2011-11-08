@@ -210,8 +210,8 @@ if (function_exists("imagecreatefrompng"))
 }
 else
 {
-    $html = new Form($db);
-    $desc = $html->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
+    $form = new Form($db);
+    $desc = $form->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
     print $desc;
 }
 print "</td>";

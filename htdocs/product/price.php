@@ -108,7 +108,7 @@ if ($_GET["action"] == 'delete' && $user->rights->produit->supprimer)
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 $product = new Product($db);
 if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
@@ -127,7 +127,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr>';
 print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-print $html->showrefnav($product,'ref','',1,'ref');
+print $form->showrefnav($product,'ref','',1,'ref');
 print '</td>';
 print '</tr>';
 
@@ -316,7 +316,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 
         // VAT
         print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-        print $html->load_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id,$product->tva_npr);
+        print $form->load_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id,$product->tva_npr);
         print '</td></tr>';
 
 		// Price base
@@ -324,14 +324,14 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+		print $form->select_PriceBaseType($product->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
 
 		// Price
 		print '<tr><td width="20%">';
 		$text=$langs->trans('SellingPrice');
-		print $html->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
+		print $form->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
 		print '</td><td>';
 		if ($product->price_base_type == 'TTC')
 		{
@@ -346,7 +346,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 		// Price minimum
 		print '<tr><td>' ;
 		$text=$langs->trans('MinPrice');
-		print $html->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
+		print $form->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
 		if ($product->price_base_type == 'TTC')
 		{
 			print '<td><input name="price_min" size="10" value="'.price($product->price_min_ttc).'">';
@@ -378,7 +378,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
             if ($i == 1)
             {
                 print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-                print $html->load_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'',$product->id);
+                print $form->load_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'',$product->id);
                 print '</td></tr>';
             }
             else
@@ -389,7 +389,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 			// Selling price
 			print '<tr><td width="20%">';
 			$text=$langs->trans('SellingPrice').' '.$i;
-			print $html->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
+			print $form->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
 			print '</td><td>';
 			if ($product->multiprices_base_type["$i"] == 'TTC')
 			{
@@ -399,13 +399,13 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 			{
 				print '<input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'">';
 			}
-			print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
+			print $form->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
 			print '</td></tr>';
 
             // Min price
 			print '<tr><td>';
 			$text=$langs->trans('MinPrice').' '.$i;
-			print $html->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
+			print $form->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
 			if ($product->multiprices_base_type["$i"] == 'TTC')
 			{
 				print '<td><input name="price_min_'.$i.'" size="10" value="'.price($product->multiprices_min_ttc["$i"]).'">';

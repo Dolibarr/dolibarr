@@ -126,7 +126,7 @@ if ($id > 0)
 		if ($conf->notification->enabled) $langs->load("mails");
 		$head = member_prepare_head($member);
 
-		$html=new Form($db);
+		$form=new Form($db);
 
 		dol_fiche_head($head, 'document', $langs->trans("Member"),0,'user');
 
@@ -145,7 +145,7 @@ if ($id > 0)
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
         print '<td class="valeur">';
-        print $html->showrefnav($member,'rowid');
+        print $form->showrefnav($member,'rowid');
         print '</td></tr>';
 
         // Login
@@ -157,7 +157,7 @@ if ($id > 0)
         // Morphy
         print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$member->getmorphylib().'</td>';
         /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-        print $html->showphoto('memberphoto',$member);
+        print $form->showphoto('memberphoto',$member);
         print '</td>';*/
         print '</tr>';
 
@@ -199,7 +199,7 @@ if ($id > 0)
 		 */
 		if ($_GET['action'] == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 

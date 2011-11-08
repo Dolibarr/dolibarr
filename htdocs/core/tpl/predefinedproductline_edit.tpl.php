@@ -63,7 +63,7 @@
 		?>
 	</td>
 
-	<td align="right"><?php echo $html->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,'',$line->info_bits); ?></td>
+	<td align="right"><?php echo $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,'',$line->info_bits); ?></td>
 
 	<td align="right">
 		<input size="6" type="text" class="flat" name="subprice" value="<?php echo price($line->subprice,0,'',0); ?>" />
@@ -93,9 +93,9 @@
 <tr <?php echo $bc[$var]; ?>>
 	<td colspan="9"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
-	echo $html->select_date($line->date_start,'date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_start?0:1,"updateligne");
+	echo $form->select_date($line->date_start,'date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_start?0:1,"updateligne");
 	echo ' '.$langs->trans('to').' ';
-	echo $html->select_date($line->date_end,'date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_end?0:1,"updateligne");
+	echo $form->select_date($line->date_end,'date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_end?0:1,"updateligne");
 	?>
 	</td>
 </tr>

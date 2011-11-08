@@ -138,7 +138,7 @@ if ($action == 'setdate' && !empty($_POST['dateday']))
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 $h=0;
 
@@ -163,7 +163,7 @@ if ($result > 0)
 	 */
 	if ($action == 'delete')
 	{
-		$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+		$ret=$form->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -172,7 +172,7 @@ if ($result > 0)
 	 */
 	if ($action == 'valide')
 	{
-		$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+		$ret=$form->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -182,16 +182,16 @@ if ($result > 0)
 	print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
 
 	// Date payment
-    print '<tr><td valign="top" colspan="2">'.$html->editfieldkey("Date",'date',$paiement->date,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $html->editfieldval("Date",'date',$paiement->date,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
+    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Date",'date',$paiement->date,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Date",'date',$paiement->date,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
     print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
 
 	// Payment numero
-    print '<tr><td valign="top" colspan="2">'.$html->editfieldkey("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $html->editfieldval("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
+    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
     print '</td></tr>';
 
 	// Amount
@@ -203,8 +203,8 @@ if ($result > 0)
 	}
 
 	// Note
-    print '<tr><td valign="top"" colspan="2">'.$html->editfieldkey("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $html->editfieldval("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->fournisseur->facture->creer,'text');
+    print '<tr><td valign="top"" colspan="2">'.$form->editfieldkey("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->fournisseur->facture->creer,'text');
     print '</td></tr>';
 
     // Bank account

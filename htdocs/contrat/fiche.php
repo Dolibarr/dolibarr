@@ -464,7 +464,7 @@ if ($action == 'confirm_move' && $_REQUEST["confirm"] == 'yes')
 llxHeader('',$langs->trans("ContractCard"),"Contrat");
 
 $form = new Form($db);
-$html = new Form($db);
+$form = new Form($db);
 
 $objectlignestatic=new ContratLigne($db);
 
@@ -644,7 +644,7 @@ else
 
         // Ref du contrat
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $html->showrefnav($object,'ref','',1,'ref','ref','');
+        print $form->showrefnav($object,'ref','',1,'ref','ref','');
         print "</td></tr>";
 
         // Customer
@@ -918,7 +918,7 @@ else
              */
             if ($_REQUEST["action"] == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline-1]->id == $_GET["rowid"])
             {
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
+                $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
                 if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
             }
 
@@ -938,7 +938,7 @@ else
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
                 array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-                $html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
             }
 
@@ -950,7 +950,7 @@ else
                 $dateactstart = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
                 $dateactend   = dol_mktime(12, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
                 $comment      = $_POST["comment"];
-                $html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
             }
 
@@ -962,7 +962,7 @@ else
                 $dateactstart = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
                 $dateactend   = dol_mktime(12, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
                 $comment      = $_POST["comment"];
-                $html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
             }
 
@@ -1049,11 +1049,11 @@ else
                 }
 
                 print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
-                print $html->select_date($dateactstart,'',$usehm,$usehm,'',"active");
+                print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active");
                 print '</td>';
 
                 print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
-                print $html->select_date($dateactend,"end",$usehm,$usehm,'',"active");
+                print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active");
                 print '</td>';
 
                 print '<td align="center" rowspan="2" valign="middle">';

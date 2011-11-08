@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'societe', $socid);
 
 $contactstatic = new Contact($db);
 
-$html = new Form($db);
+$form = new Form($db);
 
 /*
  * Fiche categorie de client et/ou fournisseur
@@ -79,7 +79,7 @@ if ($_GET["socid"])
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
-	print $html->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
+	print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field

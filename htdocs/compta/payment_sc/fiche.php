@@ -124,7 +124,7 @@ if ($result <= 0)
 	exit;
 }
 
-$html = new Form($db);
+$form = new Form($db);
 
 $h=0;
 
@@ -146,7 +146,7 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), 0,
  */
 if ($_GET['action'] == 'delete')
 {
-	$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+	$ret=$form->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
 	if ($ret == 'html') print '<br>';
 }
 
@@ -156,7 +156,7 @@ if ($_GET['action'] == 'delete')
 if ($_GET['action'] == 'valide')
 {
 	$facid = $_GET['facid'];
-	$ret=$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+	$ret=$form->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 	if ($ret == 'html') print '<br>';
 }
 
@@ -169,7 +169,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print $html->showrefnav($paiement,'id','',1,'rowid','id');
+print $form->showrefnav($paiement,'id','',1,'rowid','id');
 print '</td></tr>';
 
 // Date

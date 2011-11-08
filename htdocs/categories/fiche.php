@@ -176,7 +176,7 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
  */
 
 llxHeader("","",$langs->trans("Categories"));
-$html = new Form($db);
+$form = new Form($db);
 
 if ($user->rights->categorie->creer)
 {
@@ -216,7 +216,7 @@ if ($user->rights->categorie->creer)
 
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-		print $html->select_all_categories($type,$catorigin);
+		print $form->select_all_categories($type,$catorigin);
 		print '</td></tr>';
 
 		print '</table>';

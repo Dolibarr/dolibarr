@@ -297,7 +297,7 @@ if ($action == 'set_SHIPPING_FREE_TEXT')
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 llxHeader("","");
@@ -424,7 +424,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						}
 
 						print '<td align="center">';
-						print $html->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print '</tr>';
@@ -552,7 +552,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 	    			print '<td align="center">';
 	    			$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"),'sending').'</a>';
-	    			print $html->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
+	    			print $form->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
 	    			print '</td>';
 
 	    			print '</tr>';

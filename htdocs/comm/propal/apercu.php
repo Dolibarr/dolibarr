@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'propale', $id, 'propal');
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */

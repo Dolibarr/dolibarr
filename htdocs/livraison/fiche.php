@@ -184,7 +184,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 
 llxHeader('',$langs->trans('Delivery'),'Livraison');
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 
 /*********************************************************************
@@ -409,7 +409,7 @@ else
 			if ($_GET["action"] == 'delete')
 			{
 				$expedition_id = $_GET["expid"];
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
+				$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -419,7 +419,7 @@ else
 			 */
 			if ($_GET["action"] == 'valid')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$delivery->ref),'confirm_valid','','',1);
+				$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$delivery->ref),'confirm_valid','','',1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -533,7 +533,7 @@ else
 					$text.= ' - '.$delivery->lines[$i]->label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($delivery->lines[$i]->description));
 					//print $description;
-					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 					print_date_range($delivery->lines[$i]->date_start,$delivery->lines[$i]->date_end);
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{

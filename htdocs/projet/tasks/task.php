@@ -111,7 +111,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 
 llxHeader("",$langs->trans("Task"));
 
-$html = new Form($db);
+$form = new Form($db);
 $formother = new FormOther($db);
 $project = new Project($db);
 
@@ -170,12 +170,12 @@ if ($taskid)
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-			print $html->select_date($task->date_start,'dateo');
+			print $form->select_date($task->date_start,'dateo');
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print $html->select_date($task->date_end?$task->date_end:-1,'datee');
+			print $form->select_date($task->date_end?$task->date_end:-1,'datee');
 			print '</td></tr>';
 
 			// Progress
@@ -206,7 +206,7 @@ if ($taskid)
 
 			if ($_GET["action"] == 'delete')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -218,7 +218,7 @@ if ($taskid)
 			print '</td><td colspan="3">';
 			$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
 			$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
-			print $html->showrefnav($task,'id','',1,'rowid','ref','','');
+			print $form->showrefnav($task,'id','',1,'rowid','ref','','');
 			print '</td>';
 			print '</tr>';
 

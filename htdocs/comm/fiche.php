@@ -294,7 +294,7 @@ if ($socid > 0)
 
 	// Conditions de reglement par defaut
 	$langs->load('bills');
-	$html = new Form($db);
+	$form = new Form($db);
 	print '<tr><td nowrap>';
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentConditions');
@@ -304,11 +304,11 @@ if ($socid > 0)
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editconditions')
 	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'cond_reglement_id',-1,1);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'cond_reglement_id',-1,1);
 	}
 	else
 	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->cond_reglement,'none');
 	}
 	print "</td>";
 	print '</tr>';
@@ -323,11 +323,11 @@ if ($socid > 0)
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editmode')
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'mode_reglement_id');
 	}
 	else
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
 	}
 	print "</td>";
 	print '</tr>';

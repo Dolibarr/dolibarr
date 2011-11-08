@@ -181,9 +181,9 @@ Source Location: /tcpdf.php<br /><br />
     <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$header_title">$header_title</a></li>
     <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$hPt">$hPt</a></li>
     <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$HREF">$HREF</a></li>
-    <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$htmlLinkColorArray">$htmlLinkColorArray</a></li>
-    <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$htmlLinkFontStyle">$htmlLinkFontStyle</a></li>
-    <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$htmlvspace">$htmlvspace</a></li>
+    <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$formLinkColorArray">$formLinkColorArray</a></li>
+    <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$formLinkFontStyle">$formLinkFontStyle</a></li>
+    <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$formvspace">$formvspace</a></li>
     <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$imagekeys">$imagekeys</a></li>
     <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$images">$images</a></li>
     <li><a href="../com-tecnick-tcpdf/TCPDF.html#var$imgscale">$imgscale</a></li>
@@ -3204,9 +3204,9 @@ This is a PHP class for generating PDF documents without requiring external exte
       </table>
 	</div><br /><br />
 	<div class="top">[ <a href="#top">Top</a> ]</div><br />
-	<a name="var$htmlLinkColorArray"></a>
+	<a name="var$formLinkColorArray"></a>
 	<p></p>
-	<h4>$htmlLinkColorArray = <span class="value">array(0,&nbsp;0,&nbsp;255)</span></h4>
+	<h4>$formLinkColorArray = <span class="value">array(0,&nbsp;0,&nbsp;255)</span></h4>
 	<p>[line 1138]</p>
   Default color for html links<br /><br /><br /><br />
 <h4>Tags:</h4>
@@ -3231,9 +3231,9 @@ This is a PHP class for generating PDF documents without requiring external exte
       </table>
 	</div><br /><br />
 	<div class="top">[ <a href="#top">Top</a> ]</div><br />
-	<a name="var$htmlLinkFontStyle"></a>
+	<a name="var$formLinkFontStyle"></a>
 	<p></p>
-	<h4>$htmlLinkFontStyle = <span class="value">&nbsp;'U'</span></h4>
+	<h4>$formLinkFontStyle = <span class="value">&nbsp;'U'</span></h4>
 	<p>[line 1145]</p>
   Default font style to add to html links<br /><br /><br /><br />
 <h4>Tags:</h4>
@@ -3258,9 +3258,9 @@ This is a PHP class for generating PDF documents without requiring external exte
       </table>
 	</div><br /><br />
 	<div class="top">[ <a href="#top">Top</a> ]</div><br />
-	<a name="var$htmlvspace"></a>
+	<a name="var$formvspace"></a>
 	<p></p>
-	<h4>$htmlvspace = <span class="value">&nbsp;0</span></h4>
+	<h4>$formvspace = <span class="value">&nbsp;0</span></h4>
 	<p>[line 1038]</p>
   Count the latest inserted vertical spaces on HTML<br /><br /><br /><br />
 <h4>Tags:</h4>
@@ -8868,7 +8868,7 @@ $h)</code>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td><b>author:</b>&nbsp;&nbsp;</td><td>Andreas Würmser, Nicola Asuni</td>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Andreas Wï¿½rmser, Nicola Asuni</td>
   </tr>
   <tr>
     <td><b>since:</b>&nbsp;&nbsp;</td><td>3.1.000 (2008-06-09)</td>
@@ -9391,7 +9391,7 @@ $antialias = false])</code>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td><b>author:</b>&nbsp;&nbsp;</td><td>Andreas Würmser, Nicola Asuni</td>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Andreas Wï¿½rmser, Nicola Asuni</td>
   </tr>
   <tr>
     <td><b>since:</b>&nbsp;&nbsp;</td><td>3.1.000 (2008-06-09)</td>
@@ -10273,7 +10273,7 @@ $y)</code>
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
 		<code>string fixHTMLCode(
 string
-$html, [string
+$form, [string
 $default_css = ''], [array
 $tagvs = ''], [array
 $tidy_options = ''])</code>
@@ -10309,7 +10309,7 @@ $tidy_options = ''])</code>
     <table border="0" cellspacing="0" cellpadding="0">
           <tr>
         <td class="type">string&nbsp;&nbsp;</td>
-        <td><b>$html</b>&nbsp;&nbsp;</td>
+        <td><b>$form</b>&nbsp;&nbsp;</td>
         <td>htmlcode to fix</td>
       </tr>
           <tr>
@@ -12371,7 +12371,7 @@ $v)</code>
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
 		<code>array getHtmlDomArray(
 string
-$html)</code>
+$form)</code>
     </td></tr></table>
     </td></tr></table><br />
 	
@@ -12395,7 +12395,7 @@ $html)</code>
     <table border="0" cellspacing="0" cellpadding="0">
           <tr>
         <td class="type">string&nbsp;&nbsp;</td>
-        <td><b>$html</b>&nbsp;&nbsp;</td>
+        <td><b>$form</b>&nbsp;&nbsp;</td>
         <td>html code</td>
       </tr>
         </table>
@@ -12410,7 +12410,7 @@ $html)</code>
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
 		<code>float getHTMLUnitToUnits(
 string
-$htmlval, [string
+$formval, [string
 $refsize = 1], [string
 $defaultunit = 'px'], [
 $points = false], boolean
@@ -12441,7 +12441,7 @@ $point)</code>
     <table border="0" cellspacing="0" cellpadding="0">
           <tr>
         <td class="type">string&nbsp;&nbsp;</td>
-        <td><b>$htmlval</b>&nbsp;&nbsp;</td>
+        <td><b>$formval</b>&nbsp;&nbsp;</td>
         <td>string containing values and unit</td>
       </tr>
           <tr>
@@ -12881,7 +12881,7 @@ $border = 0])</code>
     <td><b>return:</b>&nbsp;&nbsp;</td><td>Return the minimal height needed for multicell method for printing the $txt param.</td>
   </tr>
   <tr>
-    <td><b>author:</b>&nbsp;&nbsp;</td><td>Alexander Escalona Fernández, Nicola Asuni</td>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Alexander Escalona Fernï¿½ndez, Nicola Asuni</td>
   </tr>
   <tr>
     <td><b>since:</b>&nbsp;&nbsp;</td><td>4.5.011</td>
@@ -13745,7 +13745,7 @@ $border = 0])</code>
     <td><b>return:</b>&nbsp;&nbsp;</td><td>Return the minimal height needed for multicell method for printing the $txt param.</td>
   </tr>
   <tr>
-    <td><b>author:</b>&nbsp;&nbsp;</td><td>Nicola Asuni, Alexander Escalona Fernández</td>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Nicola Asuni, Alexander Escalona Fernï¿½ndez</td>
   </tr>
   <tr>
     <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
@@ -14972,7 +14972,7 @@ $script)</code>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td><b>author:</b>&nbsp;&nbsp;</td><td>Johannes Güntert, Nicola Asuni</td>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Johannes Gï¿½ntert, Nicola Asuni</td>
   </tr>
   <tr>
     <td><b>since:</b>&nbsp;&nbsp;</td><td>2.1.002 (2008-02-12)</td>
@@ -15286,7 +15286,7 @@ $coords = array(0,0,1,0)])</code>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td><b>author:</b>&nbsp;&nbsp;</td><td>Andreas Würmser, Nicola Asuni</td>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Andreas Wï¿½rmser, Nicola Asuni</td>
   </tr>
   <tr>
     <td><b>since:</b>&nbsp;&nbsp;</td><td>3.1.000 (2008-06-09)</td>
@@ -16768,7 +16768,7 @@ $coords = array(0.5,0.5,0.5,0.5,1)])</code>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td><b>author:</b>&nbsp;&nbsp;</td><td>Andreas Würmser, Nicola Asuni</td>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Andreas Wï¿½rmser, Nicola Asuni</td>
   </tr>
   <tr>
     <td><b>since:</b>&nbsp;&nbsp;</td><td>3.1.000 (2008-06-09)</td>
@@ -24806,7 +24806,7 @@ $file)</code>
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
 		<code>void writeHTML(
 string
-$html, [boolean
+$form, [boolean
 $ln = true], [boolean
 $fill = false], [boolean
 $reseth = false], [boolean
@@ -24832,7 +24832,7 @@ $align = ''])</code>
     <table border="0" cellspacing="0" cellpadding="0">
           <tr>
         <td class="type">string&nbsp;&nbsp;</td>
-        <td><b>$html</b>&nbsp;&nbsp;</td>
+        <td><b>$form</b>&nbsp;&nbsp;</td>
         <td>text to display</td>
       </tr>
           <tr>
@@ -24876,7 +24876,7 @@ $w, float
 $h, float
 $x, float
 $y, [string
-$html = ''], [mixed
+$form = ''], [mixed
 $border = 0], [int
 $ln = 0], [boolean
 $fill = false], [boolean
@@ -24929,7 +24929,7 @@ $autopadding = true])</code>
       </tr>
           <tr>
         <td class="type">string&nbsp;&nbsp;</td>
-        <td><b>$html</b>&nbsp;&nbsp;</td>
+        <td><b>$form</b>&nbsp;&nbsp;</td>
         <td>html text to print. Default value: empty string.</td>
       </tr>
           <tr>
@@ -26734,7 +26734,7 @@ $y3)</code>
     </td></tr></table>
     </td></tr></table><br />
 	
-		Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x2, y2) as the Bézier control points.<br /><br /><p>The new current point shall be (x3, y3).</p><br /><br /><br />
+		Append a cubic Bï¿½zier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x2, y2) as the Bï¿½zier control points.<br /><br /><p>The new current point shall be (x3, y3).</p><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -26801,7 +26801,7 @@ $y3)</code>
     </td></tr></table>
     </td></tr></table><br />
 	
-		Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using the current point and (x2, y2) as the Bézier control points.<br /><br /><p>The new current point shall be (x3, y3).</p><br /><br /><br />
+		Append a cubic Bï¿½zier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using the current point and (x2, y2) as the Bï¿½zier control points.<br /><br /><p>The new current point shall be (x3, y3).</p><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -26860,7 +26860,7 @@ $y2)</code>
     </td></tr></table>
     </td></tr></table><br />
 	
-		Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x3, y3) as the Bézier control points.<br /><br /><p>The new current point shall be (x3, y3).</p><br /><br /><br />
+		Append a cubic Bï¿½zier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x3, y3) as the Bï¿½zier control points.<br /><br /><p>The new current point shall be (x3, y3).</p><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -27805,7 +27805,7 @@ $cidoffset = 0])</code>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td><b>author:</b>&nbsp;&nbsp;</td><td>Johannes Güntert, Nicola Asuni</td>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Johannes Gï¿½ntert, Nicola Asuni</td>
   </tr>
   <tr>
     <td><b>since:</b>&nbsp;&nbsp;</td><td>2.1.002 (2008-02-12)</td>

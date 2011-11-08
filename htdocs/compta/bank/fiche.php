@@ -191,7 +191,7 @@ $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("Se
 llxHeader();
 
 $form = new Form($db);
-$htmlcompany = new FormCompany($db);
+$formcompany = new FormCompany($db);
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -273,7 +273,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 	if ($selectedcode)
 	{
-		$htmlcompany->select_departement(isset($_POST["account_departement_id"])?$_POST["account_departement_id"]:'',$selectedcode,'account_departement_id');
+		$formcompany->select_departement(isset($_POST["account_departement_id"])?$_POST["account_departement_id"]:'',$selectedcode,'account_departement_id');
 	}
 	else
 	{
@@ -544,7 +544,7 @@ else
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 		if ($selectedcode)
 		{
-			$htmlcompany->select_departement(isset($_POST["account_departement_id"])?$_POST["account_departement_id"]:$account->fk_departement,$selectedcode,'account_departement_id');
+			$formcompany->select_departement(isset($_POST["account_departement_id"])?$_POST["account_departement_id"]:$account->fk_departement,$selectedcode,'account_departement_id');
 		}
 		else
 		{
