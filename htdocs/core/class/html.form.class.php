@@ -152,7 +152,7 @@ class Form
                 }
                 else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
                 {
-                    $ret.=$this->form_date($_SERVER['PHP_SELF'].($objectkey?'?id='.$object->id:''),$value,$htmlname);
+                    $ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
                 }
                 else if (preg_match('/^ckeditor/',$typeofdata))
                 {
