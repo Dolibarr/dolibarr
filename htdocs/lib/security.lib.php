@@ -181,7 +181,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	// Login
-	$login = (!empty($lastuser)?$lastuser:(GETPOST("username")?GETPOST("username"):$demologin));
+	$login = (!empty($lastuser)?$lastuser:(GETPOST("username","alpha",2)?GETPOST("username","alpha",2):$demologin));
 	$password = $demopassword;
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
