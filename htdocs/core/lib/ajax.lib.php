@@ -25,6 +25,7 @@
 
 /**
  *	Get value of an HTML field, do Ajax process and show result
+ *
  *  @param      selected            Preselecte value
  *	@param	    htmlname            HTML name of input field
  *	@param	    url                 Url for request: /chemin/fichier.php

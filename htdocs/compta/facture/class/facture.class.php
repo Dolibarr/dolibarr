@@ -129,10 +129,10 @@ class Facture extends CommonObject
      *	Create invoice in database
      *  Note: this->ref can be set or empty. If empty, we will use "(PROV)"
      *
-     *	@param     	user       		Object user that create
-     *	@param      notrigger		1=Does not execute triggers, 0 otherwise
-     * 	@param		forceduedate	1=Do not recalculate due date from payment condition but force it with value
-     *	@return		int				<0 if KO, >0 if OK
+     *	@param	User	$user      		Object user that create
+     *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
+     * 	@param	int		$forceduedate	1=Do not recalculate due date from payment condition but force it with value
+     *	@return	int						<0 if KO, >0 if OK
      */
     function create($user,$notrigger=0,$forceduedate=0)
     {
@@ -1491,14 +1491,14 @@ class Facture extends CommonObject
         // Protection
         if (! $this->brouillon)
         {
-            dol_syslog("Facture::validate no draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
             return 0;
         }
 
         if (! $user->rights->facture->valider)
         {
             $this->error='Permission denied';
-            dol_syslog("Facture::validate ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::validate ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -1581,11 +1581,11 @@ class Facture extends CommonObject
             }
             $sql.= ' WHERE rowid = '.$this->id;
 
-            dol_syslog("Facture::validate sql=".$sql);
+            dol_syslog(get_class($this)."::validate sql=".$sql);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
-                dol_syslog("Facture::validate Echec update - 10 - sql=".$sql, LOG_ERR);
+                dol_syslog(get_class($this)."::validate Echec update - 10 - sql=".$sql, LOG_ERR);
                 dol_print_error($this->db);
                 $error++;
             }
@@ -1637,7 +1637,7 @@ class Facture extends CommonObject
                     $dirdest = $conf->facture->dir_output.'/'.$snumfa;
                     if (file_exists($dirsource))
                     {
-                        dol_syslog("Facture::validate rename dir ".$dirsource." into ".$dirdest);
+                        dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 
                         if (@rename($dirsource, $dirdest))
                         {
@@ -1689,11 +1689,13 @@ class Facture extends CommonObject
     }
 
     /**
-     *		\brief		Set draft status
-     *		\param		user		Object user that modify
-     *		\param		int			<0 if KO, >0 if OK
+     *	Set draft status
+     *
+     *	@param	User	$user			Object user that modify
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user)
+    function set_draft($user,$idwarehouse=0)
     {
         global $conf,$langs;
 
@@ -1701,7 +1703,7 @@ class Facture extends CommonObject
 
         if ($this->statut == 0)
         {
-            dol_syslog("Facture::set_draft already draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
             return 0;
         }
 
@@ -1711,7 +1713,7 @@ class Facture extends CommonObject
         $sql.= " SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             // Si on decremente le produit principal et ses composants a la validation de facture, on réincrement

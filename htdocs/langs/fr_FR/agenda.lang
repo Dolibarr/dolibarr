@@ -37,6 +37,7 @@ PropalValidatedInDolibarr=Proposition %s validée
 InvoiceValidatedInDolibarr=Facture %s validée
 InvoiceBackToDraftInDolibarr=Facture %s repassée en brouillon
 OrderValidatedInDolibarr=Commande %s validée
+OrderApprovedInDolibarr=Commande %s approuvée
 InterventionValidatedInDolibarr=Intervention %s validée
 ProposalSentByEMail=Proposition commerciale %s envoyée par EMail
 OrderSentByEMail=Commande client %s envoyée par EMail

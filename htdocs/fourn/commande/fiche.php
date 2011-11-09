@@ -274,17 +274,17 @@ if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$
     $localtax2_tx=get_localtax($_POST['tva_tx'],2,$societe);
 
     $result	= $object->updateline(
-    $_POST['elrowid'],
-    $_POST['eldesc'],
-    $_POST['pu'],
-    $_POST['qty'],
-    $_POST['remise_percent'],
-    $_POST['tva_tx'],
-    $localtax1_tx,
-    $localtax2_tx,
-    	'HT',
-    0,
-    isset($_POST["type"])?$_POST["type"]:$product->type
+        $_POST['elrowid'],
+        $_POST['eldesc'],
+        $_POST['pu'],
+        $_POST['qty'],
+        $_POST['remise_percent'],
+        $_POST['tva_tx'],
+        $localtax1_tx,
+        $localtax2_tx,
+        'HT',
+        0,
+        isset($_POST["type"])?$_POST["type"]:$product->type
     );
 
     if ($result	>= 0)
@@ -304,13 +304,13 @@ if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$
     }
 }
 
-if ($action == 'confirm_deleteproductline' && $confirm == 'yes')
+if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
 {
-    if ($user->rights->fournisseur->commande->creer)
-    {
-        $object->fetch($id);
-        $result = $object->deleteline($_GET['lineid']);
+    $object->fetch($id);
 
+    $result = $object->deleteline(GETPOST('lineid'));
+    if ($result	>= 0)
+    {
         $outputlangs = $langs;
         if (! empty($_REQUEST['lang_id']))
         {
@@ -318,6 +318,17 @@ if ($action == 'confirm_deleteproductline' && $confirm == 'yes')
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    }
+    else
+    {
+        $error++;
+        $mesg=$object->error;
+    }
+
+    if (! $error)
+    {
+        Header("Location: fiche.php?id=".$id);
+        exit;
     }
 }
 
@@ -342,8 +353,8 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseu
         $mesg=$object->error;
     }
 
-    // If we have permission, we go directly on approved step
-    if ($user->rights->fournisseur->commande->approuver)
+    // If we have permission, and if we don't need to provide th idwarehouse, we go directly on approved step
+    if ($user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
     {
         $action='confirm_approve';
     }
@@ -351,16 +362,34 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseu
 
 if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
+    $idwarehouse=GETPOST('idwarehouse');
+
     $object->fetch($id);
-    $result	= $object->approve($user);
-    if ($result > 0)
+    $object->fetch_thirdparty();
+
+    // Check parameters
+    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
     {
-        Header("Location: fiche.php?id=".$id);
-        exit;
+        if (! $idwarehouse || $idwarehouse == -1)
+        {
+            $error++;
+            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $action='';
+        }
     }
-    else
+
+    if (! $error)
     {
-        $mesg=$object->error;
+        $result	= $object->approve($user, $idwarehouse);
+        if ($result > 0)
+        {
+            Header("Location: fiche.php?id=".$id);
+            exit;
+        }
+        else
+        {
+            $mesg=$object->error;
+        }
     }
 }
 
@@ -832,7 +861,20 @@ if ($id > 0 || ! empty($ref))
          */
         if ($action	== 'approve')
         {
-            $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", '', 1, 1);
+            $formquestion=array();
+            if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+            {
+                $langs->load("stocks");
+                require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+                $formproduct=new FormProduct($db);
+                $formquestion=array(
+                //'text' => $langs->trans("ConfirmClone"),
+                //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+                //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+                array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+            }
+
+            $ret=$form->form_confirm("fiche.php?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
             if ($ret == 'html') print '<br>';
         }
         /*
@@ -1023,10 +1065,10 @@ if ($id > 0 || ! empty($ref))
         print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($object->total_ttc).'</td>';
         print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-        print "</table>";
+        print "</table><br>";
 
-        if ($mesg) print $mesg;
-        else print '<br>';
+        dol_htmloutput_mesg($mesg);
+        dol_htmloutput_errors('',$errors);
 
         /*
          * Lines
@@ -1264,6 +1306,7 @@ if ($id > 0 || ! empty($ref))
                 $var=!$var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="3">';
+
                 $form->select_produits_fournisseurs($object->fourn_id,'','idprodfournprice','',$filtre);
 
                 if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';

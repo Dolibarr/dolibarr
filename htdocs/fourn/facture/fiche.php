@@ -1,30 +1,30 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent		 <jmenent@2byte.es>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
+* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
+* Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
+* Copyright (C) 2010-2011 Juanjo Menent		 <jmenent@2byte.es>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *	\file       htdocs/fourn/facture/fiche.php
- *	\ingroup    facture, fournisseur
- *	\brief      Page for supplier invoice card (view, edit, validate)
- */
+*	\ingroup    facture, fournisseur
+*	\brief      Page for supplier invoice card (view, edit, validate)
+*/
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
@@ -56,7 +56,7 @@ $object=new FactureFournisseur($db);
 
 /*
  * Actions
- */
+*/
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -84,29 +84,45 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 
 if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider)
 {
-    $object->fetch($id);
-    $result = $object->validate($user);
-    if ($result < 0)
-    {
-        $mesg='<div class="error">'.$object->error.'</div>';
-    }
-}
+    $idwarehouse=GETPOST('idwarehouse');
 
-if ($action == 'confirm_delete' && $confirm == 'yes')
-{
-    if ($user->rights->fournisseur->facture->supprimer )
+    $object->fetch($id);
+    $object->fetch_thirdparty();
+
+    // Check parameters
+    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
     {
-        $object->fetch($id);
-        $result=$object->delete($id);
-        if ($result > 0)
+        $langs->load("stocks");
+        if (! $idwarehouse || $idwarehouse == -1)
         {
-            Header('Location: index.php');
-            exit;
+            $error++;
+            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $action='';
         }
-        else
+    }
+
+    if (! $error)
+    {
+        $result = $object->validate($user,'',$idwarehouse);
+        if ($result < 0)
         {
             $mesg='<div class="error">'.$object->error.'</div>';
         }
+    }
+}
+
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
+{
+    $object->fetch($id);
+    $result=$object->delete($id);
+    if ($result > 0)
+    {
+        Header('Location: index.php');
+        exit;
+    }
+    else
+    {
+        $mesg='<div class="error">'.$object->error.'</div>';
     }
 }
 
@@ -190,7 +206,7 @@ if ($action == 'update' && ! $_POST['cancel'])
 
     if (! $error)
     {
-    	// TODO move to DAO class
+        // TODO move to DAO class
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set ';
         $sql .= " facnumber='".$db->escape(trim($_POST['facnumber']))."'";
         $sql .= ", libelle='".$db->escape(trim($_POST['libelle']))."'";
@@ -203,7 +219,7 @@ if ($action == 'update' && ! $_POST['cancel'])
 }
 /*
  * Action creation
- */
+*/
 if ($action == 'add' && $user->rights->fournisseur->facture->creer)
 {
     $error=0;
@@ -245,15 +261,23 @@ if ($action == 'add' && $user->rights->fournisseur->facture->creer)
             $element = $subelement = $_POST['origin'];
             /*if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
              {
-             $element = $regs[1];
-             $subelement = $regs[2];
-             }*/
+            $element = $regs[1];
+            $subelement = $regs[2];
+            }*/
 
             // For compatibility
-            if ($element == 'order')    { $element = $subelement = 'commande'; }
-            if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
-            if ($element == 'contract') { $element = $subelement = 'contrat'; }
-            if ($element == 'order_supplier') { $element = 'fourn'; $subelement = 'fournisseur.commande'; }
+            if ($element == 'order')    {
+                $element = $subelement = 'commande';
+            }
+            if ($element == 'propal')   {
+                $element = 'comm/propal'; $subelement = 'propal';
+            }
+            if ($element == 'contract') {
+                $element = $subelement = 'contrat';
+            }
+            if ($element == 'order_supplier') {
+                $element = 'fourn'; $subelement = 'fournisseur.commande';
+            }
 
             $object->origin 	= $_POST['origin'];
             $object->origin_id = $_POST['originid'];
@@ -290,20 +314,20 @@ if ($action == 'add' && $user->rights->fournisseur->facture->creer)
                         if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
                         $result = $object->addline(
-                            $desc,
-                            $lines[$i]->subprice,
-                            $lines[$i]->tva_tx,
-                            $lines[$i]->localtax1_tx,
-                            $lines[$i]->localtax2_tx,
-                            $lines[$i]->qty,
-                            $lines[$i]->fk_product,
-                            $lines[$i]->remise_percent,
-                            $date_start,
-                            $date_end,
-                            0,
-                            $lines[$i]->info_bits,
+                        $desc,
+                        $lines[$i]->subprice,
+                        $lines[$i]->tva_tx,
+                        $lines[$i]->localtax1_tx,
+                        $lines[$i]->localtax2_tx,
+                        $lines[$i]->qty,
+                        $lines[$i]->fk_product,
+                        $lines[$i]->remise_percent,
+                        $date_start,
+                        $date_end,
+                        0,
+                        $lines[$i]->info_bits,
         					'HT',
-                            $product_type
+                        $product_type
                         );
 
                         if ($result < 0)
@@ -618,7 +642,7 @@ if ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
 
 /*
  * Add file in email form
- */
+*/
 if ($_POST['addfile'])
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -634,7 +658,7 @@ if ($_POST['addfile'])
 
 /*
  * Remove file in email form
- */
+*/
 if (! empty($_POST['removedfile']))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -650,7 +674,7 @@ if (! empty($_POST['removedfile']))
 
 /*
  * Send mail
- */
+*/
 if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
 {
     $langs->load('mails');
@@ -747,7 +771,9 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
-                        if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                        if ($result < 0) {
+                            $error++; $this->errors=$interface->errors;
+                        }
                         // Fin appel triggers
 
                         if ($error)
@@ -806,7 +832,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
 /*
  * Build document
- */
+*/
 
 if ($action	== 'builddoc')
 {
@@ -853,7 +879,7 @@ if ($action == 'remove_file')
 
 /*
  *	View
- */
+*/
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -886,10 +912,19 @@ if ($action == 'create')
         else if (in_array($element,array('order_supplier')))
         {
             // For compatibility
-            if ($element == 'order')    { $element = $subelement = 'commande'; }
-            if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
-            if ($element == 'contract') { $element = $subelement = 'contrat'; }
-            if ($element == 'order_supplier') { $element = 'fourn'; $subelement = 'fournisseur.commande'; }
+            if ($element == 'order')    {
+                $element = $subelement = 'commande';
+            }
+            if ($element == 'propal')   {
+                dol_htmloutput_errors('',$errors);
+                $element = 'comm/propal'; $subelement = 'propal';
+            }
+            if ($element == 'contract') {
+                $element = $subelement = 'contrat';
+            }
+            if ($element == 'order_supplier') {
+                $element = 'fourn'; $subelement = 'fournisseur.commande';
+            }
 
             require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
             $classname = ucfirst($subelement);
@@ -964,74 +999,74 @@ if ($action == 'create')
 
     /*
      // Deposit
-     print '<tr height="18"><td width="16px" valign="middle">';
-     print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="checked"':'').'>';
-     print '</td><td valign="middle">';
-     $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
-     print $desc;
-     print '</td></tr>'."\n";
+    print '<tr height="18"><td width="16px" valign="middle">';
+    print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="checked"':'').'>';
+    print '</td><td valign="middle">';
+    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
+    print $desc;
+    print '</td></tr>'."\n";
 
-     // Proforma
-     if ($conf->global->FACTURE_USE_PROFORMAT)
-     {
-     print '<tr height="18"><td width="16px" valign="middle">';
-     print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="checked"':'').'>';
-     print '</td><td valign="middle">';
-     $desc=$form->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
-     print $desc;
-     print '</td></tr>'."\n";
-     }
+    // Proforma
+    if ($conf->global->FACTURE_USE_PROFORMAT)
+    {
+    print '<tr height="18"><td width="16px" valign="middle">';
+    print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="checked"':'').'>';
+    print '</td><td valign="middle">';
+    $desc=$form->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
+    print $desc;
+    print '</td></tr>'."\n";
+    }
 
-     // Replacement
-     print '<tr height="18"><td valign="middle">';
-     print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked="checked"':'');
-     if (! $options) print ' disabled="disabled"';
-     print '>';
-     print '</td><td valign="middle">';
-     $text=$langs->trans("InvoiceReplacementAsk").' ';
-     $text.='<select class="flat" name="fac_replacement"';
-     if (! $options) $text.=' disabled="disabled"';
-     $text.='>';
-     if ($options)
-     {
-     $text.='<option value="-1">&nbsp;</option>';
-     $text.=$options;
-     }
-     else
-     {
-     $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
-     }
-     $text.='</select>';
-     $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
-     print $desc;
-     print '</td></tr>';
+    // Replacement
+    print '<tr height="18"><td valign="middle">';
+    print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked="checked"':'');
+    if (! $options) print ' disabled="disabled"';
+    print '>';
+    print '</td><td valign="middle">';
+    $text=$langs->trans("InvoiceReplacementAsk").' ';
+    $text.='<select class="flat" name="fac_replacement"';
+    if (! $options) $text.=' disabled="disabled"';
+    $text.='>';
+    if ($options)
+    {
+    $text.='<option value="-1">&nbsp;</option>';
+    $text.=$options;
+    }
+    else
+    {
+    $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
+    }
+    $text.='</select>';
+    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
+    print $desc;
+    print '</td></tr>';
 
-     // Credit note
-     print '<tr height="18"><td valign="middle">';
-     print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'');
-     if (! $optionsav) print ' disabled="disabled"';
-     print '>';
-     print '</td><td valign="middle">';
-     $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
-     //	$text.='<input type="text" value="">';
-     $text.='<select class="flat" name="fac_avoir"';
-     if (! $optionsav) $text.=' disabled="disabled"';
-     $text.='>';
-     if ($optionsav)
-     {
-     $text.='<option value="-1">&nbsp;</option>';
-     $text.=$optionsav;
-     }
-     else
-     {
-     $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
-     }
-     $text.='</select>';
-     $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
-     //.' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
-     print $desc;
-     print '</td></tr>'."\n";
-     */
+    // Credit note
+    print '<tr height="18"><td valign="middle">';
+    print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'');
+    if (! $optionsav) print ' disabled="disabled"';
+    print '>';
+    print '</td><td valign="middle">';
+    $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
+    //	$text.='<input type="text" value="">';
+    $text.='<select class="flat" name="fac_avoir"';
+    if (! $optionsav) $text.=' disabled="disabled"';
+    $text.='>';
+    if ($optionsav)
+    {
+    $text.='<option value="-1">&nbsp;</option>';
+    $text.=$optionsav;
+    }
+    else
+    {
+    $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
+    }
+    $text.='</select>';
+    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
+    //.' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
+    print $desc;
+    print '</td></tr>'."\n";
+    */
     print '</table>';
     print '</td></tr>';
 
@@ -1136,12 +1171,13 @@ else
 
         /*
          *	View card
-         */
+        */
         $head = facturefourn_prepare_head($object);
         $titre=$langs->trans('SupplierInvoice');
         dol_fiche_head($head, 'card', $titre, 0, 'bill');
 
         dol_htmloutput_mesg($mesg);
+        dol_htmloutput_errors('',$errors);
 
         // Confirmation de la suppression d'une ligne produit
         if ($action == 'confirm_delete_line')
@@ -1166,7 +1202,20 @@ else
         // Confirmation de la validation
         if ($action == 'valid')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $object->ref), 'confirm_valid', '', 0, 1);
+            $formquestion=array();
+            if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
+            {
+                $langs->load("stocks");
+                require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+                $formproduct=new FormProduct($db);
+                $formquestion=array(
+                //'text' => $langs->trans("ConfirmClone"),
+                //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+                //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+                array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+            }
+
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $object->ref), 'confirm_valid', $formquestion, 0, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -1179,7 +1228,7 @@ else
 
         /*
          * Confirmation de la suppression de la facture fournisseur
-         */
+        */
         if ($action == 'delete')
         {
             $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
@@ -1189,7 +1238,7 @@ else
 
         /*
          *   Facture
-         */
+        */
         print '<table class="border" width="100%">';
 
         // Ref
@@ -1255,7 +1304,7 @@ else
 
         /*
          * List of payments
-         */
+        */
         $nbrows=7;
         if ($conf->projet->enabled) $nbrows++;
 
@@ -1267,7 +1316,7 @@ else
         }
 
         print '<td rowspan="'.$nbrows.'" valign="top">';
-        
+
         // TODO move to DAO class
         $sql  = 'SELECT datep as dp, pf.amount,';
         $sql .= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
@@ -1404,7 +1453,7 @@ else
 
         /*
          * Lines
-         */
+        */
         print '<br>';
         print '<table class="noborder" width="100%">';
         $var=1;
@@ -1557,7 +1606,7 @@ else
 
         /*
          * Form to add new line
-         */
+        */
 
         if ($object->statut == 0 && $action != 'mod_ligne')
         {
@@ -1662,7 +1711,7 @@ else
 
             /*
              * Boutons actions
-             */
+            */
 
             print '<div class="tabsAction">';
 
@@ -1743,7 +1792,7 @@ else
 
                 /*
                  * Documents generes
-                 */
+                */
 
                 $ref=dol_sanitizeFileName($object->ref);
                 $subdir = get_exdir($object->id,2).$ref;
@@ -1754,8 +1803,6 @@ else
 
                 print '<br>';
                 $somethingshown=$formfile->show_documents('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
-
-                $object=$fac;
 
                 /*
                  * Linked object block
@@ -1775,7 +1822,7 @@ else
         }
         /*
          * Show mail form
-         */
+        */
         if ($action == 'presend')
         {
             $ref = dol_sanitizeFileName($object->ref);
