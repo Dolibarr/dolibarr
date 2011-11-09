@@ -1474,12 +1474,14 @@ class Facture extends CommonObject
     }
 
     /**
-     *      Tag invoice as validated + call trigger BILL_VALIDATE
-     *      @param     	user            Object user that validate
-     *      @param     	force_number	Reference to force on invoice
-     *	    @return		int				<0 if KO, >0 if OK
+     * Tag invoice as validated + call trigger BILL_VALIDATE
+     *
+     * @param	User	$user           Object user that validate
+     * @param   string	$force_number	Reference to force on invoice
+     * @param	int		$idwarehouse	Id of warehouse to use for stock decrease
+     * @return	int						<0 if KO, >0 if OK
      */
-    function validate($user, $force_number='')
+    function validate($user, $force_number='', $idwarehouse=0)
     {
         global $conf,$langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -1613,8 +1615,7 @@ class Facture extends CommonObject
                         {
                             $mouvP = new MouvementStock($this->db);
                             // We decrease stock for product
-                            $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                            $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
+                            $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -1950,14 +1951,14 @@ class Facture extends CommonObject
             // Clean parameters
             if (empty($qty)) $qty=0;
             if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
-            
+
             $remise_percent	= price2num($remise_percent);
             $qty			= price2num($qty);
             $pu 			= price2num($pu);
             $txtva			= price2num($txtva);
             $txlocaltax1	= price2num($txlocaltax1);
             $txlocaltax2	= price2num($txlocaltax2);
-            
+
             // Check parameters
             if ($type < 0) return -1;
 

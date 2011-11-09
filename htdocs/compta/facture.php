@@ -315,27 +315,43 @@ if ($action == 'set_ref_client')
 // Classify to validated
 if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider)
 {
+    $idwarehouse=GETPOST('idwarehouse');
+
     $object->fetch($id);
     $object->fetch_thirdparty();
 
-    $result = $object->validate($user);
-    if ($result >= 0)
+    // Check parameters
+    if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
     {
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-        if (! empty($newlang))
+        if (! $idwarehouse || $idwarehouse == -1)
         {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
+            $error++;
+            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $action='';
         }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     }
-    else
+
+    if (! $error)
     {
-        $mesg='<div class="error">'.$object->error.'</div>';
+        $result = $object->validate($user,'',$idwarehouse);
+        if ($result >= 0)
+        {
+            // Define output language
+            $outputlangs = $langs;
+            $newlang='';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        }
+        else
+        {
+            $mesg='<div class="error">'.$object->error.'</div>';
+        }
     }
 }
 
@@ -1440,6 +1456,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_mesg($mesg);
+    dol_htmloutput_errors('',$errors);
 
     $soc = new Societe($db);
     if ($socid) $res=$soc->fetch($socid);
@@ -1878,6 +1895,7 @@ else
     if ($id > 0 || ! empty($ref))
     {
         dol_htmloutput_mesg($mesg);
+        dol_htmloutput_errors('',$errors);
 
         $result=$object->fetch($id,$ref);
         if ($result > 0)
@@ -1966,8 +1984,20 @@ else
                     $text.='<br>';
                     $text.=$notify->confirmMessage('NOTIFY_VAL_FAC',$object->socid);
                 }
+                $formquestion=array();
+                if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
+                {
+                    $langs->load("stocks");
+                    require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+                    $formproduct=new FormProduct($db);
+                    $formquestion=array(
+                    //'text' => $langs->trans("ConfirmClone"),
+                    //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+                    //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+                    array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+                }
 
-                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid','',"yes",($conf->notification->enabled?0:2));
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid',$formquestion,"yes",($conf->notification->enabled?0:2));
             }
 
             // Confirmation du classement paye

@@ -223,7 +223,7 @@ class Commande extends CommonObject
         $sql.= " fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("Commande::valid() sql=".$sql);
+        dol_syslog(get_class($this)."::valid() sql=".$sql);
         $resql=$this->db->query($sql);
         if (! $resql)
         {
@@ -246,7 +246,6 @@ class Commande extends CommonObject
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
-                        $langs->load("agenda");
                         $mouvP = new MouvementStock($this->db);
                         // We decrement stock of product (and sub-products)
                         $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$num));

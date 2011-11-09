@@ -79,9 +79,9 @@ class Form
     function editfieldkey($text,$htmlname,$preselected,$object,$perm,$typeofdata='string')
     {
     	global $conf,$langs;
-    	
+
     	$ret='';
-    	
+
     	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
     	{
     		if ($perm)
@@ -104,7 +104,7 @@ class Form
     		if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
     		$ret.='</tr></table>';
         }
-        
+
         return $ret;
     }
 
@@ -236,11 +236,11 @@ class Form
     				$inputType = 'textarea';
     			}
     		}
-    		
+
     		$out.= '<input id="element_'.$htmlname.'" value="'.$object->element.'" type="hidden">'."\n";
     		$out.= '<input id="table_element_'.$htmlname.'" value="'.$object->table_element.'" type="hidden">'."\n";
     		$out.= '<input id="fk_element_'.$htmlname.'" value="'.$object->id.'" type="hidden">'."\n";
-    		
+
     		$out.= '<div id="val_'.$htmlname.'" class="editval_'.$inputType.'">'.$value.'</div>'."\n";
     	}
     	else
@@ -2203,7 +2203,7 @@ class Form
         $formconfirm='';
         $inputarray=array();
 
-        if ($formquestion)
+        if (is_array($formquestion) && count($formquestion) > 0)
         {
         	$more.='<table class="nobordernopadding" width="100%">'."\n";
             $more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>'."\n";

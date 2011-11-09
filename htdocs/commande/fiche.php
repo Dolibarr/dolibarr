@@ -1479,6 +1479,7 @@ else
                     $text.='<br>';
                     $text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$object->socid);
                 }
+                $formquestion=array();
                 if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
                 {
                     $langs->load("stocks");
