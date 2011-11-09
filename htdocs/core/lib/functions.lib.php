@@ -42,7 +42,7 @@ if (! function_exists('json_encode'))
     function json_encode($elements)
     {
     	$num = count($elements);
-    	
+
     	// determine type
     	if (is_numeric(key($elements)))
     	{
@@ -72,11 +72,11 @@ if (! function_exists('json_encode'))
     		}
     		$output.= '}';
     	}
-    	
+
     	// return
     	return $output;
     }
-    
+
     function _val($val)
     {
     	if (is_string($val)) return '"'.rawurlencode($val).'"';
@@ -99,7 +99,7 @@ if (! function_exists('json_decode'))
 	function json_decode($json, $assoc=false)
 	{
 		$comment = false;
-		
+
 		$strLength = dol_strlen($json);
 		for ($i=0; $i<$strLength; $i++)
 		{
@@ -113,28 +113,28 @@ if (! function_exists('json_decode'))
 			else $out.= $json[$i];
 			if ($json[$i] == '"' && $json[($i-1)]!="\\") $comment = !$comment;
 		}
-		
+
 		// Return an array
 		eval('$array = '.$out.';');
-		
+
 		// Return an object
 		if (! $assoc)
 		{
 			if (! empty($array))
 			{
 				$object = false;
-				
+
 				foreach ($array as $key => $value)
 				{
 					$object->{$key} = $value;
 				}
-				
+
 				return $object;
 			}
-			
+
 			return false;
 		}
-		
+
 		return $array;
 	}
 }
@@ -584,7 +584,7 @@ function dol_syslog($message, $level=LOG_INFO)
         }
 
         // Check if log is to syslog (SYSLOG_FIREPHP_ON defined)
-        if (defined("SYSLOG_FIREPHP_ON") && constant("SYSLOG_FIREPHP_ON"))
+        if (defined("SYSLOG_FIREPHP_ON") && constant("SYSLOG_FIREPHP_ON") && ! empty($_SERVER["SERVER_NAME"]))     //! empty($_SERVER["SERVER_NAME"]) to be sure to enable this in Web mode only
         {
             try
             {
