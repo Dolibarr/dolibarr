@@ -85,13 +85,16 @@ function test_sql_and_script_inject($val, $type)
     	$sql_inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
 	// For XSS Injection done by adding javascript with script
+	// This is all cases a browser consider text is javascript:
+	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
+	// All examples on page: http://ha.ckers.org/xss.html#XSScalc
     $sql_inj += preg_match('/<script/i', $val);
+    $sql_inj += preg_match('/<style/i', $val);
     $sql_inj += preg_match('/base[\s]+href/i', $val);
     if ($type == 1)
     {
-        $sql_inj += preg_match('/img[\s]+src/i', $val);
-        $sql_inj += preg_match('/style[\s]*=/i', $val);
 	    $sql_inj += preg_match('/javascript:/i', $val);
+	    $sql_inj += preg_match('/vbscript:/i', $val);
     }
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($type == 1) $sql_inj += preg_match('/"/i', $val);      // We refused " in GET parameters value
