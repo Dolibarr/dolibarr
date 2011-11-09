@@ -1056,13 +1056,13 @@ if ($id || $ref)
 			print '</tr>';
 
 			// Accountancy sell code
-			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
-			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer);
+			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer|$user->rights->service->creer).'</td><td colspan="2">';
+			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer|$user->rights->service->creer);
 			print '</td></tr>';
 
 			// Accountancy buy code
-			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
-			print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer);
+			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer|$user->rights->service->creer).'</td><td colspan="2">';
+			print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer|$user->rights->service->creer);
 			print '</td></tr>';
 
 			// Status (to sell)
