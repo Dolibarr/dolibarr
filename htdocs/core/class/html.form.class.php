@@ -118,9 +118,10 @@ class Form
      * @param	boolean	$perm			Permission to allow button to edit parameter
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
+     * @param	object	$extObject		External object
      * @return  string					HTML edit field
      */
-    function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='')
+    function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=false)
     {
         global $conf,$langs,$db;
         $ret='';
@@ -128,7 +129,7 @@ class Form
         // When option to edit inline is activated
         if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
         {
-            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata);
+            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $extObject);
         }
         else
         {
@@ -193,9 +194,10 @@ class Form
      * @param	string	$htmlname		DIV ID (field name)
      * @param	int		$condition		Condition to edit
      * @param	string	$inputType		Type of input ('numeric', 'datepicker', 'textarea', 'ckeditor:dolibarr_zzz', 'select:xxx')
+     * @param	object	$extObject		External object
      * @return	string   		      	HTML edit in place
      */
-    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea')
+    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=false)
     {
     	global $conf;
 
@@ -208,39 +210,74 @@ class Form
 
     	if ($condition)
     	{
+    		$element = false;
+    		$table_element = false;
+    		$fk_element = false;
+    		$loadmethod = false;
+    		$savemethod = false;
+    		$ext_element = false;
+    		//$ext_table_element = false;
+    		//$ext_fk_element = false;
+    		
+    		if (is_object($object))
+    		{
+    			$element = $object->element;
+    			$table_element = $object->table_element;
+    			$fk_element = $object->id;
+    		}
+    		
+    		if (is_object($extObject))
+    		{
+    			$ext_element = $extObject->element;
+    			//$ext_table_element = $extObject->table_element;
+    			//$ext_fk_element = $extObject->id;
+    		}
+    		
     		if (preg_match('/^(string|email|numeric)/',$inputType))
     		{
     		    $tmp=explode(':',$inputType);
     		    $inputType=$tmp[0]; $inputOption=$tmp[1];
+    		    if (! empty($tmp[2])) $savemethod=$tmp[2];
     		}
-    	    if ($inputType == 'datepicker')
+    	    if (preg_match('/^datepicker/',$inputType))
     		{
+    			$tmp=explode(':',$inputType);
+    			$inputType=$tmp[0]; $inputOption=$tmp[1];
+    			if (! empty($tmp[2])) $savemethod=$tmp[2];
+    			
     			$out.= '<input id="timestamp_'.$htmlname.'" type="hidden"/>'."\n"; // Use for timestamp format
     		}
     		else if (preg_match('/^select/',$inputType))
     		{
     		    $tmp=explode(':',$inputType);
-    		    $inputType=$tmp[0]; $inputOption=$tmp[1];
-    			$out.= '<input id="loadmethod_'.$htmlname.'" value="'.$inputOption.'" type="hidden"/>'."\n";
+    		    $inputType=$tmp[0]; $loadmethod=$tmp[1];
+    		    if (! empty($tmp[2])) $savemethod=$tmp[2];
     		}
     		else if (preg_match('/^ckeditor/',$inputType))
     		{
     		    $tmp=explode(':',$inputType);
-    		    $inputType=$tmp[0]; $inputOption=$tmp[1];
+    		    $inputType=$tmp[0]; $toolbar=$tmp[1];
+    		    if (! empty($tmp[2])) $savemethod=$tmp[2];
+    		    
     			if (! empty($conf->fckeditor->enabled))
     			{
-    				$out.= '<input id="ckeditor_toolbar" value="'.$inputOption.'" type="hidden"/>'."\n";
+    				$out.= '<input id="ckeditor_toolbar" value="'.$toolbar.'" type="hidden"/>'."\n";
     			}
     			else
     			{
     				$inputType = 'textarea';
     			}
     		}
-
-    		$out.= '<input id="element_'.$htmlname.'" value="'.$object->element.'" type="hidden">'."\n";
-    		$out.= '<input id="table_element_'.$htmlname.'" value="'.$object->table_element.'" type="hidden">'."\n";
-    		$out.= '<input id="fk_element_'.$htmlname.'" value="'.$object->id.'" type="hidden">'."\n";
-
+	
+    		$out.= '<input id="element_'.$htmlname.'" value="'.$element.'" type="hidden"/>'."\n";
+    		$out.= '<input id="table_element_'.$htmlname.'" value="'.$table_element.'" type="hidden"/>'."\n";
+    		$out.= '<input id="fk_element_'.$htmlname.'" value="'.$fk_element.'" type="hidden"/>'."\n";
+    		$out.= '<input id="loadmethod_'.$htmlname.'" value="'.$loadmethod.'" type="hidden"/>'."\n";
+    		$out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
+    		$out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
+    		//$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
+    		//$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
+    		
     		$out.= '<div id="val_'.$htmlname.'" class="editval_'.$inputType.'">'.$value.'</div>'."\n";
     	}
     	else

@@ -206,7 +206,7 @@ $(document).ready(function() {
 		onblur		: 'ignore',
 		cssclass	: 'flat',
 		tooltip		: tooltipInPlace,
-		placeholder	: placeholderInPlace,
+		placeholder	: '&nbsp;',
 		cancel		: cancelInPlace,
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
@@ -246,22 +246,24 @@ $(document).ready(function() {
 		var element = $( '#element_' + htmlname ).val();
 		var table_element = $( '#table_element_' + htmlname ).val();
 		var fk_element = $( '#fk_element_' + htmlname ).val();
-		var method = false;
-		var timestamp = false;
-		
-		if (type == 'select') {
-			var method = $( '#loadmethod_' + htmlname ).val();
-		} else if (type == 'datepicker') {
-			var timestamp = $('#timestamp_' + htmlname ).val();
-		}
+		var loadmethod = $( '#loadmethod_' + htmlname ).val();
+		var savemethod = $( '#savemethod_' + htmlname ).val();
+		var timestamp = $('#timestamp_' + htmlname ).val();
+		var ext_element = $( '#ext_element_' + htmlname ).val();
+		//var ext_table_element = $( '#ext_table_element_' + htmlname ).val();
+		//var ext_fk_element = $( '#ext_fk_element_' + htmlname ).val();
 		
 		return {
 			type: type,
 			element: element,
 			table_element: table_element,
 			fk_element: fk_element,
-			method: method,
-			timestamp: timestamp
+			loadmethod: loadmethod,
+			savemethod: savemethod,
+			timestamp: timestamp,
+			ext_element: ext_element,
+			//ext_table_element: ext_table_element,
+			//ext_fk_element: ext_fk_element
 		};
 	}
 	

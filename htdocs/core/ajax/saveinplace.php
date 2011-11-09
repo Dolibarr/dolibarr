@@ -45,12 +45,16 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	&& (isset($_POST['table_element']) && ! empty($_POST['table_element']))
 	&& (isset($_POST['fk_element']) && ! empty($_POST['fk_element'])))
 {
-	$element		= GETPOST('element');
-	$table_element	= GETPOST('table_element');
-	$field			= substr(GETPOST('field'), 4); // remove prefix val_
-	$fk_element		= GETPOST('fk_element');
-	$value			= GETPOST('value');
-	$type			= GETPOST('type');
+	$element			= GETPOST('element');
+	$table_element		= GETPOST('table_element');
+	$fk_element			= GETPOST('fk_element');
+	$ext_element		= GETPOST('ext_element');
+	//$ext_table_element	= GETPOST('ext_table_element');
+	//$ext_fk_element		= GETPOST('ext_fk_element');
+	$field				= substr(GETPOST('field'), 4); // remove prefix val_
+	$value				= GETPOST('value');
+	$type				= GETPOST('type');
+	$savemethodname		= (GETPOST('savemethod') ? GETPOST('savemethod') : 'setValueFrom');
 
 	$format='text';
 	$return=array();
@@ -66,8 +70,6 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 
 	if ($user->rights->$element->creer || $user->rights->$element->write)
 	{
-		$object = new GenericObject($db);
-
 		// Clean parameters
 		$newvalue = trim($value);
 
@@ -90,21 +92,47 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 		}
 		else if ($type == 'select')
 		{
-			$methodname	= 'load_cache_'.GETPOST('method');
-			$cachename	= 'cache_'.GETPOST('method');
+			$loadmethodname	= 'load_cache_'.GETPOST('loadmethod');
+			$loadcachename	= 'cache_'.GETPOST('loadmethod');
 
 			$form = new Form($db);
-			$ret = $form->$methodname();
-			if ($ret > 0)
+			if (method_exists($form, $loadmethodname))
 			{
-				$cache = $form->$cachename;
-				$value = $cache[$newvalue];
+				$ret = $form->$loadmethodname();
+				if ($ret > 0)
+				{
+					$loadcache = $form->$loadcachename;
+					$value = $loadcache[$newvalue];
+				}
+				else
+				{
+					$error++;
+					$return['error'] = $form->error;
+				}
+			}
+			else
+			{
+				dol_include_once('/'.$ext_element.'/class/actions_'.$ext_element.'.class.php');
+				$classname = 'Actions'.ucfirst($ext_element);
+				$object = new $classname($db);
+				$ret = $object->$loadmethodname();
+				if ($ret > 0)
+				{
+					$loadcache = $object->$loadcachename;
+					$value = $loadcache[$newvalue];
+				}
+				else
+				{
+					$error++;
+					$return['error'] = $object->error;
+				}
 			}
 		}
 
 		if (! $error)
 		{
-			$ret=$object->setValueFrom($field, $newvalue, $table_element, $fk_element, $format);
+			if (! is_object($object)) $object = new GenericObject($db);
+			$ret=$object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
 			if ($ret > 0)
 			{
 				if ($type == 'numeric') $value = price($newvalue);

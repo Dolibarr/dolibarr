@@ -1341,19 +1341,19 @@ abstract class CommonObject
         $sql.= ", '".$this->element."'";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::add_object_linked sql=".$sql);
-        if ($this->db->query($sql))
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            $this->db->rollback();
-            return 0;
-        }
-    }
+        dol_syslog(get_class($this)."::add_object_linked sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+	  	{
+	  		$this->db->commit();
+	  		return 1;
+	  	}
+	  	else
+	  	{
+	  		$this->error=$this->db->lasterror();
+	  		$this->db->rollback();
+	  		return 0;
+	  	}
+	}
 
     /**
      * 	   Fetch array of objects linked to current object. Links are loaded into this->linked_object array.
