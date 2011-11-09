@@ -24,6 +24,7 @@ For users:
 - New: Can search on part of barcode into POS module.
 - New: Cheques into cheques receipts are ordered by operation date.
 - New: Add hidden option MAIN_DISABLE_PDF_AUTOUPDATE to avoid generating pdf each time data change.
+- New: Add hidden option PROJECT_HIDE_UNSELECTABLES to hide project you can't select into combo list.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
