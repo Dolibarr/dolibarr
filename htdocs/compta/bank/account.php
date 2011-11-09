@@ -129,7 +129,7 @@ $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($account || $_GET["ref"])
 {
@@ -271,7 +271,7 @@ if ($account || $_GET["ref"])
 	// Ref
 	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print $html->showrefnav($acct,'ref','',1,'ref');
+	print $form->showrefnav($acct,'ref','',1,'ref');
 	print '</td></tr>';
 	
 	// Label
@@ -316,7 +316,7 @@ if ($account || $_GET["ref"])
 	if ($action == 'delete')
 	{
 		$text=$langs->trans('ConfirmDeleteTransaction');
-		$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?account='.$acct->id.'&amp;rowid='.$_GET["rowid"],$langs->trans('DeleteTransaction'),$text,'confirm_delete');
+		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?account='.$acct->id.'&amp;rowid='.$_GET["rowid"],$langs->trans('DeleteTransaction'),$text,'confirm_delete');
 		if ($ret == 'html') print '<br>';
 	}
 	
@@ -354,10 +354,10 @@ if ($account || $_GET["ref"])
 		
 		print '<tr '.$bc[false].'>';
 		print '<td nowrap="nowrap" colspan="2">';
-		$html->select_date($dateop,'op',0,0,0,'transaction');
+		$form->select_date($dateop,'op',0,0,0,'transaction');
 		print '</td>';
 		print '<td nowrap="nowrap">';
-		$html->select_types_paiements((isset($_POST["operation"])?$_POST["operation"]:''),'operation','1,2',2,1);
+		$form->select_types_paiements((isset($_POST["operation"])?$_POST["operation"]:''),'operation','1,2',2,1);
 		print '</td><td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.(isset($_POST["num_chq"])?$_POST["num_chq"]:'').'"></td>';
 		print '<td colspan="2">';
@@ -409,7 +409,7 @@ if ($account || $_GET["ref"])
 	print '<td>';
 	//$filtertype=array('TIP'=>'TIP','PRE'=>'PRE',...)
 	$filtertype='';
-	print $html->select_types_paiements($_REQUEST['paiementtype'],'paiementtype',$filtertype,2,1,1,8);
+	print $form->select_types_paiements($_REQUEST['paiementtype'],'paiementtype',$filtertype,2,1,1,8);
 	print '</td>';
 	print '<td><input type="text" class="flat" name="req_nb" value="'.$req_nb.'" size="2"></td>';
 	print '<td><input type="text" class="flat" name="req_desc" value="'.$_REQUEST["req_desc"].'" size="24"></td>';
@@ -475,8 +475,8 @@ if ($account || $_GET["ref"])
 		$now=dol_now();
 		$nows=dol_print_date($now,'%Y%m%d');
 		
-		//$html->load_cache_types_paiements();
-		//$html->cache_types_paiements
+		//$form->load_cache_types_paiements();
+		//$form->cache_types_paiements
 		
 		$var=true;
 		

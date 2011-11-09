@@ -198,8 +198,8 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
  * View
  */
 
-$html=new Form($db);
-$htmladmin=new FormAdmin($db);
+$form=new Form($db);
+$formadmin=new FormAdmin($db);
 $arrayofjs=array('/admin/menus/menu.js.php?lang='.$langs->defaultlang);
 
 llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs);
@@ -241,7 +241,7 @@ if ($_GET["action"] == 'delete')
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    $ret=$html->form_confirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
+    $ret=$form->form_confirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
     if ($ret == 'html') print '<br>';
 }
 
@@ -249,7 +249,7 @@ if ($_GET["action"] == 'delete')
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
-print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
+print $formadmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
 print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
 print '</form>';
 

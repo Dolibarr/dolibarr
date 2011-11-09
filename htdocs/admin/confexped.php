@@ -66,7 +66,7 @@ else if ($action == 'disable_delivery')
  * Affiche page
  */
 $dir = DOL_DOCUMENT_ROOT."/core/modules/expedition/";
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader("","");
 

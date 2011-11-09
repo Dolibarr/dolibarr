@@ -190,7 +190,7 @@ if ($action == 'setmod')
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader("","");
 
@@ -308,7 +308,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						}
 
 						print '<td align="center">';
-						print $html->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print '</tr>';
@@ -433,7 +433,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
 	    			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 	    	    	print '<td align="center">';
-	    	    	print $html->textwithpicto('',$htmltooltip,1,0);
+	    	    	print $form->textwithpicto('',$htmltooltip,1,0);
 	    	    	print '</td>';
 	    	    	print '<td align="center">';
 	    	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'sending').'</a>';

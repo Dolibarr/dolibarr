@@ -43,7 +43,7 @@
 <tr <?php echo $bcnd[$var]; ?>>
 	<td>
 	<?php
-	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
+	echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 
 	if (is_object($hookmanager))
@@ -64,7 +64,7 @@
 	<td align="right">
 	<?php
 	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
-	else echo $html->load_tva('np_tva_tx', (isset($_POST["np_tva_tx"])?$_POST["np_tva_tx"]:-1), $seller, $buyer);
+	else echo $form->load_tva('np_tva_tx', (isset($_POST["np_tva_tx"])?$_POST["np_tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
 	<td align="right"><input type="text" size="5" name="np_price" value="<?php echo (isset($_POST["np_price"])?$_POST["np_price"]:''); ?>"></td>
@@ -78,9 +78,9 @@
 	<td colspan="9">
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-	echo $html->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+	echo $form->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
 	echo ' '.$langs->trans('to').' ';
-	echo $html->select_date('','date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+	echo $form->select_date('','date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
 	?>
 	</td>
 </tr>

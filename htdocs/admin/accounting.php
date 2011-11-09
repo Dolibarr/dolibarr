@@ -70,7 +70,7 @@ if ($_GET['action'] == 'delete')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans('ComptaSetup'),$linkback,'setup');

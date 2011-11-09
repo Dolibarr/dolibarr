@@ -81,7 +81,7 @@ if ($action == 'setmod')
 llxHeader();
 
 $dir=DOL_DOCUMENT_ROOT."/core/modules/contract/";
-$html=new Form($db);
+$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ContractsSetup"),$linkback,'setup');
@@ -172,7 +172,7 @@ if (is_resource($handle))
                 }
 
                 print '<td align="center">';
-                print $html->textwithpicto('',$htmltooltip,1,0);
+                print $form->textwithpicto('',$htmltooltip,1,0);
                 print '</td>';
 
                 print '</tr>';

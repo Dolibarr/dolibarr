@@ -169,7 +169,7 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
 
 llxHeader('',$langs->trans("SocialContribution"));
 
-$html = new Form($db);
+$form = new Form($db);
 
 // Mode creation
 if ($_GET["action"] == 'create')
@@ -213,18 +213,18 @@ if ($_GET["action"] == 'create')
 
 	// Type
     print '<td align="left">';
-    $html->select_type_socialcontrib(isset($_POST["actioncode"])?$_POST["actioncode"]:'','actioncode',1);
+    $form->select_type_socialcontrib(isset($_POST["actioncode"])?$_POST["actioncode"]:'','actioncode',1);
     print '</td>';
 
 	// Date end period
 	print '<td align="center">';
-    print $html->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
+    print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
 
     print '<td align="right"><input type="text" size="6" name="amount" class="flat"></td>';
 
     print '<td align="center">';
-    print $html->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+    print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
 	print '</td>';
 
     print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
@@ -264,13 +264,13 @@ if ($chid > 0)
 		if ($_GET["action"] == 'paid')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
-			print $html->formconfirm($_SERVER["PHP_SELF"]."?id=".$cha->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cha->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
 		}
 
 		if ($_GET['action'] == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteSocialContribution');
-			print $html->formconfirm($_SERVER['PHP_SELF'].'?id='.$cha->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$cha->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
 		}
 
 		if ($_GET['action'] == 'edit')
@@ -283,7 +283,7 @@ if ($chid > 0)
 
 		// Ref
 		print "<tr><td>".$langs->trans("Ref").'</td><td colspan="2">';
-		print $html->showrefnav($cha,'id');
+		print $form->showrefnav($cha,'id');
 		print "</td></tr>";
 
 		// Label
@@ -306,7 +306,7 @@ if ($chid > 0)
 		print "<td>";
 		if ($_GET['action'] == 'edit')
 		{
-			print $html->select_date($cha->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->select_date($cha->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
 		else
 		{
@@ -382,7 +382,7 @@ if ($chid > 0)
 		if ($_GET['action'] == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print $html->select_date($cha->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print $form->select_date($cha->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		}
 		else {

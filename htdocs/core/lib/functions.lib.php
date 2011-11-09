@@ -689,14 +689,6 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
     if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
 
-    // Parameters for edit in place
-    if (! empty($GLOBALS['object']))
-    {
-    	$out.='<div id="jeditable_element" class="hidden">'.$GLOBALS['object']->element.'</div>'."\n";
-    	$out.='<div id="jeditable_table_element" class="hidden">'.$GLOBALS['object']->table_element.'</div>'."\n";
-    	$out.='<div id="jeditable_fk_element" class="hidden">'.$GLOBALS['object']->id.'</div>'."\n";
-    }
-
     return $out;
 }
 
@@ -3070,7 +3062,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		Fonction utilisee dans les pdf et les pages html
  *
  *		@param	float		$amount			Montant a formater
- *		@param	string		$html			Type de formatage, html ou pas (par defaut)
+ *		@param	string		$form			Type de formatage, html ou pas (par defaut)
  *		@param	Translate	$outlangs		Objet langs pour formatage text
  *		@param	int			$trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
  *		@param	int			$rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
@@ -3079,7 +3071,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *
  *		@see	price2num					Revert function of price
  */
-function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
+function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
 {
     global $langs,$conf;
 
@@ -3098,7 +3090,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
     if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
     if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
     if ($thousand == 'None') $thousand='';
-    //print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
+    //print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
     //print "amount=".$amount."-";
     $amount = str_replace(',','.',$amount);	// should be useless
@@ -3126,7 +3118,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
     if ($forcerounding >= 0) $nbdecimal = $forcerounding;
 
     // Format number
-    if ($html)
+    if ($form)
     {
         $output=preg_replace('/\s/','&nbsp;',number_format($amount, $nbdecimal, $dec, $thousand));
     }
@@ -3165,7 +3157,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
     if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
     if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
     if ($thousand == 'None') $thousand='';
-    //print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
+    //print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
     // Convert value to universal number format (no thousand separator, '.' as decimal separator)
     if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format

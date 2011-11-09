@@ -167,7 +167,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
  *	View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 
 /*
@@ -194,7 +194,7 @@ if ($socid)
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
-	print $html->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom','','&type='.$type);
+	print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom','','&type='.$type);
 	print '</td></tr>';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -305,7 +305,7 @@ else if ($id || $ref)
 		// Ref
 		print "<tr>";
 		print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
-		print $html->showrefnav($product,'ref','',1,'ref');
+		print $form->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
 
@@ -367,7 +367,7 @@ else if ($id || $ref)
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td class="valeur">';
-		print $html->showrefnav($member,'rowid');
+		print $form->showrefnav($member,'rowid');
 		print '</td></tr>';
 
         // Login
@@ -379,7 +379,7 @@ else if ($id || $ref)
         // Morphy
         print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$member->getmorphylib().'</td>';
         /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-        print $html->showphoto('memberphoto',$member);
+        print $form->showphoto('memberphoto',$member);
         print '</td>';*/
         print '</tr>';
 
@@ -425,7 +425,7 @@ else if ($id || $ref)
  */
 function formCategory($db,$object,$typeid)
 {
-	global $user,$langs,$html,$bc;
+	global $user,$langs,$form,$bc;
 
 	if ($typeid == 0) $title = $langs->trans("ProductsCategoriesShort");
 	if ($typeid == 1) $title = $langs->trans("SuppliersCategoriesShort");
@@ -443,7 +443,7 @@ function formCategory($db,$object,$typeid)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="40%">';
 	print $langs->trans("ClassifyInCategory").' &nbsp;';
-	print $html->select_all_categories($typeid);
+	print $form->select_all_categories($typeid);
 	print '</td><td>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 	if ($user->rights->categorie->creer)

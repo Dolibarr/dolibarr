@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */

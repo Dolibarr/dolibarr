@@ -54,7 +54,7 @@ if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
  */
 
 llxHeader();
-$html=new Form($db);
+$form=new Form($db);
 
 // Affiche en-tete du rapport
 if ($modecompta=="CREANCES-DETTES")

@@ -283,7 +283,7 @@ if ($action == 'setforcedate')
 
 llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -409,7 +409,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
                             }
 
                             print '<td align="center">';
-                            print $html->textwithpicto('',$htmltooltip,1,0);
+                            print $form->textwithpicto('',$htmltooltip,1,0);
 
                             if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
                             {
@@ -563,7 +563,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 
 
 	                            print '<td align="center">';
-	                            print $html->textwithpicto('',$htmltooltip,1,0);
+	                            print $form->textwithpicto('',$htmltooltip,1,0);
 	                            print '</td>';
 
 	                            // Preview
@@ -708,7 +708,7 @@ print '<input type="hidden" name="action" value="setforcedate" />';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
-print $html->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
+print $form->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

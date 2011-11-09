@@ -87,7 +87,7 @@ if ($action == 'update' && $user->rights->ficheinter->creer)
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($fichinterid)
 {

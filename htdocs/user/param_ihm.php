@@ -70,7 +70,7 @@ $searchform=array("main_searchform_societe","main_searchform_contact","main_sear
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
 
-$html = new Form($db);
+$form = new Form($db);
 $formadmin=new FormAdmin($db);
 
 
@@ -126,7 +126,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
-print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 print '</td>';
 print '</tr>';
 

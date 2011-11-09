@@ -214,7 +214,7 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
 /* ************************************************************************** */
 if ($_GET["action"] == 'create')
 {
-	$htmls = new Form($db);
+	$form = new Form($db);
 
 	print_fiche_titre($langs->trans("NewMemberType"));
 
@@ -229,11 +229,11 @@ if ($_GET["action"] == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-	print $htmls->selectyesno("cotisation",1,1);
+	print $form->selectyesno("cotisation",1,1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-	print $htmls->selectyesno("vote",0,1);
+	print $form->selectyesno("vote",0,1);
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
@@ -581,7 +581,7 @@ if ($rowid > 0)
 
 	if ($_GET["action"] == 'edit')
 	{
-		$htmls = new Form($db);
+		$form = new Form($db);
 
 		$adht = new AdherentType($db);
 		$adht->id = $rowid;
@@ -609,11 +609,11 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.$adht->libelle.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print $htmls->selectyesno("cotisation",$adht->cotisation,1);
+		print $form->selectyesno("cotisation",$adht->cotisation,1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-		print $htmls->selectyesno("vote",$adht->vote,1);
+		print $form->selectyesno("vote",$adht->vote,1);
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';

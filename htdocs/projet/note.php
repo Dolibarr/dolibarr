@@ -88,7 +88,7 @@ if ($_POST['action'] == 'update_private' && $user->rights->projet->creer)
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 $userstatic=new User($db);
 
@@ -122,7 +122,7 @@ if ($id > 0 || ! empty($ref))
 		// Define a complementary filter for search of next/prev ref.
 		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
 		$project->next_prev_filter=" rowid in (".$projectsListId.")";
-		print $html->showrefnav($project,'ref','',1,'ref','ref');
+		print $form->showrefnav($project,'ref','',1,'ref','ref');
 		print '</td></tr>';
 
 		// Label

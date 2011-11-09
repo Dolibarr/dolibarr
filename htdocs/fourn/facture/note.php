@@ -84,7 +84,7 @@ if ($_POST["action"] == 'update' && $user->rights->fournisseur->facture->creer)
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
@@ -101,7 +101,7 @@ if ($_GET["facid"])
 
 	// Ref
 	print '<tr><td width="20%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $html->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
+	print $form->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
 	print '</td>';
 	print "</tr>\n";
 

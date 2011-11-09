@@ -228,8 +228,8 @@ else
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				$html = new Form($db);
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$entrepot->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$entrepot->libelle),"confirm_delete",'',0,2);
+				$form = new Form($db);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$entrepot->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$entrepot->libelle),"confirm_delete",'',0,2);
 				if ($ret == 'html') print '<br>';
 			}
 

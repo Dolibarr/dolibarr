@@ -74,7 +74,7 @@ if ($_POST["action"] == 'update' && $user->rights->adherent->creer && ! $_POST["
 
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($id)
 {
@@ -92,7 +92,7 @@ if ($id)
     // Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
-	print $html->showrefnav($adh,'id');
+	print $form->showrefnav($adh,'id');
 	print '</td>';
 	print '</tr>';
 
@@ -105,7 +105,7 @@ if ($id)
     // Morphy
     print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$adh->getmorphylib().'</td>';
     /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-    print $html->showphoto('memberphoto',$member);
+    print $form->showphoto('memberphoto',$member);
     print '</td>';*/
     print '</tr>';
 

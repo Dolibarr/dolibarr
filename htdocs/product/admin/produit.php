@@ -119,7 +119,7 @@ $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
-$html=new Form($db);
+$form=new Form($db);
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -139,7 +139,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"multiprix\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("MultiPricesAbility").'</td>';
 print '<td width="60" align="right">';
-print $html->selectyesno("activate_multiprix",$conf->global->PRODUIT_MULTIPRICES,1);
+print $form->selectyesno("activate_multiprix",$conf->global->PRODUIT_MULTIPRICES,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td>";
@@ -170,7 +170,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"sousproduits\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td width="60" align="right">';
-print $html->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
+print $form->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td>";
@@ -198,7 +198,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $html->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -228,7 +228,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInForm\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
-print $html->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td>";
@@ -244,7 +244,7 @@ print '</form>';
  print "<tr ".$bc[$var].">";
  print '<td>'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
  print '<td width="60" align="right">';
- print $html->selectyesno("activate_confirmDeleteProdLineInForm",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
+ print $form->selectyesno("activate_confirmDeleteProdLineInForm",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
  print '</td><td align="right">';
  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
  print "</td>";

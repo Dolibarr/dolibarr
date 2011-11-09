@@ -1111,7 +1111,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
 
@@ -1217,7 +1217,7 @@ if ($action == 'create' && $user->rights->commande->creer)
      * Contact de la commande
      */
     print "<tr><td>".$langs->trans("DefaultContact").'</td><td colspan="2">';
-    $html->select_contacts($soc->id,$setcontact,'contactidp',1,$srccontactslist);
+    $form->select_contacts($soc->id,$setcontact,'contactidp',1,$srccontactslist);
     print '</td></tr>';
 
     // Ligne info remises tiers
@@ -1233,7 +1233,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
     // Date
     print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
-    $html->select_date('','re','','','',"crea_commande",1,1);
+    $form->select_date('','re','','','',"crea_commande",1,1);
     print '</td></tr>';
 
     // Date de livraison
@@ -1246,37 +1246,37 @@ if ($action == 'create' && $user->rights->commande->creer)
     {
         $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
     }
-    $html->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
+    $form->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
     print "</td></tr>";
 
     // Delivery address
     if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
     {
-        // Link to edit: $html->form_address($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
+        // Link to edit: $form->form_address($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
         print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td colspan="2">';
-        $numaddress = $html->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
+        $numaddress = $form->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
         print ' &nbsp; <a href="../comm/address.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
         print '</td></tr>';
     }
 
     // Conditions de reglement
     print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-    $html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
+    $form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
     print '</td></tr>';
 
     // Mode de reglement
     print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-    $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+    $form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
     print '</td></tr>';
 
     // Delivery delay
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $html->select_availability($propal->availability,'availability_id','',1);
+    $form->select_availability($propal->availability,'availability_id','',1);
     print '</td></tr>';
 
     // What trigger creation
     print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
-    $html->select_demand_reason((GETPOST("origin")=='propal'?'SRC_COMM':''),'demand_reason_id','',1);
+    $form->select_demand_reason((GETPOST("origin")=='propal'?'SRC_COMM':''),'demand_reason_id','',1);
     print '</td></tr>';
 
     // Project
@@ -1303,7 +1303,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     // pdf
     include_once(DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php');
     $liste=ModelePDFCommandes::liste_modeles($db);
-    print $html->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
+    print $form->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
     print "</td></tr>";
 
     // Note publique
@@ -1382,9 +1382,9 @@ if ($action == 'create' && $user->rights->commande->creer)
                 print '<tr><td>';
                 // multiprix
                 if($conf->global->PRODUIT_MULTIPRICES)
-                print $html->select_produits('','idprod'.$i,'',$conf->product->limit_size,$soc->price_level);
+                print $form->select_produits('','idprod'.$i,'',$conf->product->limit_size,$soc->price_level);
                 else
-                print $html->select_produits('','idprod'.$i,'',$conf->product->limit_size);
+                print $form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
                 print '</td>';
                 print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
                 print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td></tr>';
@@ -1452,7 +1452,7 @@ else
              */
             if ($action == 'delete')
             {
-                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
             }
 
             /*
@@ -1491,7 +1491,7 @@ else
                     array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
                 }
 
-                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 240);
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 240);
             }
 
             /*
@@ -1499,7 +1499,7 @@ else
              */
             if ($action == 'close')
             {
-                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
             }
 
             /*
@@ -1507,7 +1507,7 @@ else
              */
             if ($action == 'cancel')
             {
-                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
             }
 
             /*
@@ -1515,7 +1515,7 @@ else
              */
             if ($action == 'ask_deleteline')
             {
-                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
             }
 
             // Clone confirmation
@@ -1526,10 +1526,10 @@ else
                 //'text' => $langs->trans("ConfirmClone"),
                 //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
                 //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-                array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $html->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
+                array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
                 );
                 // Paiement incomplet. On demande si motif = escompte ou autre
-                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
 
             if (! $formconfirm)
@@ -1559,7 +1559,7 @@ else
             // Ref
             print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
             print '<td colspan="3">';
-            print $html->showrefnav($object,'ref','',1,'ref','ref');
+            print $form->showrefnav($object,'ref','',1,'ref','ref');
             print '</td>';
             print '</tr>';
 
@@ -1613,7 +1613,7 @@ else
                     // Remise dispo de type non avoir
                     $filter='fk_facture_source IS NULL';
                     print '<br>';
-                    $html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
+                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
                 }
             }
             if ($absolute_creditnote)
@@ -1637,7 +1637,7 @@ else
                 print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="action" value="setdate">';
-                $html->select_date($object->date,'order_','','','',"setdate");
+                $form->select_date($object->date,'order_','','','',"setdate");
                 print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                 print '</form>';
             }
@@ -1662,7 +1662,7 @@ else
                 print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="action" value="setdate_livraison">';
-                $html->select_date($object->date_livraison?$object->date_livraison:-1,'liv_','','','',"setdate_livraison");
+                $form->select_date($object->date_livraison?$object->date_livraison:-1,'liv_','','','',"setdate_livraison");
                 print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                 print '</form>';
             }
@@ -1690,11 +1690,11 @@ else
 
                 if ($action == 'editdelivery_adress')
                 {
-                    $html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'fk_address','commande',$object->id);
+                    $form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'fk_address','commande',$object->id);
                 }
                 else
                 {
-                    $html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'none','commande',$object->id);
+                    $form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'none','commande',$object->id);
                 }
                 print '</td></tr>';
             }
@@ -1709,11 +1709,11 @@ else
             print '</td><td colspan="2">';
             if ($action == 'editconditions')
             {
-                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id',1);
+                $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id',1);
             }
             else
             {
-                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none',1);
+                $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none',1);
             }
             print '</td>';
 
@@ -1729,11 +1729,11 @@ else
             print '</td><td colspan="2">';
             if ($action == 'editmode')
             {
-                $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+                $form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
             }
             else
             {
-                $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
+                $form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
             }
             print '</td></tr>';
 
@@ -1747,11 +1747,11 @@ else
             print '</td><td colspan="2">';
             if ($action == 'editavailability')
             {
-                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id',1);
+                $form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id',1);
             }
             else
             {
-                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none',1);
+                $form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none',1);
             }
             print '</td></tr>';
 
@@ -1765,11 +1765,11 @@ else
             print '</td><td colspan="2">';
             if ($_GET['action'] == 'editdemandreason')
             {
-                $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
+                $form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
             }
             else
             {
-                $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
+                $form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
             }
             // Removed because using dictionnary is an admin feature, not a user feature. Ther is already the "star" to show info to admin users.
             // This is to avoid too heavy screens and have an uniform look and feel for all screens.
@@ -1791,11 +1791,11 @@ else
                 //print "$object->id, $object->socid, $object->fk_project";
                 if ($action == 'classify')
                 {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
+                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
                 }
                 else
                 {
-                    $html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
+                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
                 }
                 print '</td></tr>';
             }

@@ -103,7 +103,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
-$html =	new Form($db);
+$form =	new Form($db);
 $warehouse_static = new Entrepot($db);
 
 $now=dol_now();
@@ -138,7 +138,7 @@ if ($id > 0 || ! empty($ref))
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="2">';
-		print $html->showrefnav($commande,'ref','',1,'ref','ref');
+		print $form->showrefnav($commande,'ref','',1,'ref','ref');
 		print '</td>';
 		print '</tr>';
 
@@ -284,7 +284,7 @@ if ($id > 0 || ! empty($ref))
 						print '<td align="right">';
 						if (count($listwarehouses))
 						{
-							print $html->selectarray("entrepot_".$i, $listwarehouses, '', $disabled, 0, 0, '', 0, 0, $disabled);
+							print $form->selectarray("entrepot_".$i, $listwarehouses, '', $disabled, 0, 0, '', 0, 0, $disabled);
 						}
 						else
 						{

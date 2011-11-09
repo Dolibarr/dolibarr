@@ -242,7 +242,7 @@ if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader();
 
@@ -340,7 +340,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						}
 
 						print '<td align="center">';
-						print $html->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print '</tr>';
@@ -472,7 +472,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
 					$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
 					print '<td align="center">';
-					print $html->textwithpicto('',$htmltooltip,1,0);
+					print $form->textwithpicto('',$htmltooltip,1,0);
 					print '</td>';
 					print '<td align="center">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
@@ -604,7 +604,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
 					$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
 					print '<td align="center">';
-					print $html->textwithpicto('',$htmltooltip,1,0);
+					print $form->textwithpicto('',$htmltooltip,1,0);
 					print '</td>';
 					print '<td align="center">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimenfacture&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';

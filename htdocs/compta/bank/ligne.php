@@ -42,7 +42,7 @@ $orig_account=GETPOST("orig_account");
 $accountid=GETPOST('accountid');
 $confirm=GETPOST('confirm');
 
-$html = new Form($db);
+$form = new Form($db);
 
 /*
  * Actions
@@ -244,7 +244,7 @@ if ($result)
         // Confirmations
         if ($action == 'delete_categ')
         {
-            $ret=$html->form_confirm("ligne.php?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+            $ret=$form->form_confirm("ligne.php?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -259,7 +259,7 @@ if ($result)
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";
         print '<td colspan="4">';
-        print $html->showrefnav($bankline,'rowid','',1,'rowid','rowid');
+        print $form->showrefnav($bankline,'rowid','',1,'rowid','rowid');
         print '</td>';
         print '</tr>';
 
@@ -350,7 +350,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print $html->select_types_paiements($objp->fk_type,"value",'',2);
+            print $form->select_types_paiements($objp->fk_type,"value",'',2);
             print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
             if ($objp->receiptid)
             {
@@ -404,7 +404,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print $html->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
+            print $form->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
             print '</td>';
         }
         else
@@ -420,7 +420,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print $html->select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
+            print $form->select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';

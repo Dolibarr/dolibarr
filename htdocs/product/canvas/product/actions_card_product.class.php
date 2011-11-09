@@ -75,7 +75,7 @@ class ActionsCardProduct extends Product
 	function assign_values(&$action, $id=0, $ref='')
 	{
         global $conf, $langs, $user, $mysoc, $canvas;
-		global $html, $formproduct;
+		global $form, $formproduct;
 
    		$tmpobject = new Product($this->db);
    		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id,$ref);
@@ -116,21 +116,21 @@ class ActionsCardProduct extends Product
 			// Price
 			$this->tpl['price'] = $this->price;
 			$this->tpl['price_min'] = $this->price_min;
-			$this->tpl['price_base_type'] = $html->load_PriceBaseType($this->price_base_type, "price_base_type");
+			$this->tpl['price_base_type'] = $form->load_PriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
-			$this->tpl['tva_tx'] = $html->load_tva("tva_tx",-1,$mysoc,'');
+			$this->tpl['tva_tx'] = $form->load_tva("tva_tx",-1,$mysoc,'');
 		}
 
 		if ($action == 'create' || $action == 'edit')
 		{
 			// Status
 			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-			$this->tpl['status'] = $html->selectarray('statut',$statutarray,$this->status);
+			$this->tpl['status'] = $form->selectarray('statut',$statutarray,$this->status);
 
 			//To Buy
 			$statutarray=array('1' => $langs->trans("Yes"), '0' => $langs->trans("No"));
-			$this->tpl['tobuy'] = $html->selectarray('tobuy',$statutarray,$this->status_buy);
+			$this->tpl['tobuy'] = $form->selectarray('tobuy',$statutarray,$this->status_buy);
 
             $this->tpl['description'] = $this->description;
             $this->tpl['note'] = $this->note;
@@ -140,7 +140,7 @@ class ActionsCardProduct extends Product
 		{
             $head = product_prepare_head($this->object,$user);
 
-            $this->tpl['showrefnav'] = $html->showrefnav($this->object,'ref','',1,'ref');
+            $this->tpl['showrefnav'] = $form->showrefnav($this->object,'ref','',1,'ref');
 
     		$titre=$langs->trans("CardProduct".$this->object->type);
     		$picto=($this->object->type==1?'service':'product');
@@ -148,12 +148,12 @@ class ActionsCardProduct extends Product
             $this->tpl['showend']=dol_get_fiche_end();
 
             // Accountancy buy code
-			$this->tpl['accountancyBuyCodeKey'] = $html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,'id',$this->id,$user->rights->produit->creer);
-			$this->tpl['accountancyBuyCodeVal'] = $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,'id',$this->id,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
 
 			// Accountancy sell code
-			$this->tpl['accountancySellCodeKey'] = $html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
-			$this->tpl['accountancySellCodeVal'] = $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
 		}
 
 		$this->tpl['finished'] = $this->object->finished;
@@ -179,14 +179,14 @@ class ActionsCardProduct extends Product
 		{
     		// Status
     		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-    		$this->tpl['status'] = $html->selectarray('statut',$statutarray,$_POST["statut"]);
+    		$this->tpl['status'] = $form->selectarray('statut',$statutarray,$_POST["statut"]);
 
     		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-    		$this->tpl['status_buy'] = $html->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
+    		$this->tpl['status_buy'] = $form->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
 
 		    // Finished
 			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-			$this->tpl['finished'] = $html->selectarray('finished',$statutarray,$this->object->finished);
+			$this->tpl['finished'] = $form->selectarray('finished',$statutarray,$this->object->finished);
 
 			// Weight
 			$this->tpl['weight'] = $this->object->weight;

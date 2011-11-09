@@ -95,7 +95,7 @@ if ($mode == 'search')
  */
 
 $now=gmmktime();
-$html=new Form($db);
+$form=new Form($db);
 $htmlother=new FormOther($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');

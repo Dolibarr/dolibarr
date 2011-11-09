@@ -477,14 +477,14 @@ else
 
             // Date To Birth
             print '<tr><td width="20%">'.$langs->trans("DateToBirth").'</td><td width="30%">';
-            $html=new Form($db);
+            $form=new Form($db);
             if ($object->birthday)
             {
-                print $html->select_date($object->birthday,'birthday',0,0,0,"perso");
+                print $form->select_date($object->birthday,'birthday',0,0,0,"perso");
             }
             else
             {
-                print $html->select_date('','birthday',0,0,1,"perso");
+                print $form->select_date('','birthday',0,0,1,"perso");
             }
             print '</td>';
 

@@ -109,7 +109,7 @@ dol_htmloutput_errors($mesg);
 
 
 $categorie = new Categorie($db, $id);
-$html = new Form($db);
+$form = new Form($db);
 
 print '<table class="notopnoleft" border="0" width="100%">';
 
@@ -141,7 +141,7 @@ print '</td></tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
-print $html->select_all_categories($type,$categorie->id_mere,'catMere',64,$categorie->id);
+print $form->select_all_categories($type,$categorie->id_mere,'catMere',64,$categorie->id);
 print '</td></tr>';
 
 print '</table>';

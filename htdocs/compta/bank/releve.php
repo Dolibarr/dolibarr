@@ -70,7 +70,7 @@ $pagenext = $page + 1;
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 
 // Load account
@@ -113,7 +113,7 @@ if (! isset($_GET["num"]))
 		// Ref
 		print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
-		print $html->showrefnav($acct,'ref','',1,'ref');
+		print $form->showrefnav($acct,'ref','',1,'ref');
 		print '</td></tr>';
 
 		// Label

@@ -78,7 +78,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 
 $now=dol_now();
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $companystatic=new Societe($db);
 if ($conf->propal->enabled) $propalstatic=new Propal($db);

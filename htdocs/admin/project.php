@@ -171,7 +171,7 @@ if ($action == 'setmod')
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader();
 
@@ -264,7 +264,7 @@ if (is_resource($handle))
 				}
 
 				print '<td align="center">';
-				print $html->textwithpicto('',$htmltooltip,1,0);
+				print $form->textwithpicto('',$htmltooltip,1,0);
 				print '</td>';
 
 				print '</tr>';
@@ -385,7 +385,7 @@ if (is_resource($handle))
     		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
     		print '<td align="center">';
     		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
-    		print $html->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
+    		print $form->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
     		print '</td>';
 
     		print "</tr>\n";

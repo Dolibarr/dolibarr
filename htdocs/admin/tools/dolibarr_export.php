@@ -30,7 +30,7 @@ if (! $user->admin)
 accessforbidden();
 
 
-$html=new Form($db);
+$form=new Form($db);
 $formfile = new FormFile($db);
 
 

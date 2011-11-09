@@ -91,7 +91,7 @@ if ($_GET["action"] == 'dolibarr2ldap')
 
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-$html = new Form($db);
+$form = new Form($db);
 
 $head = member_prepare_head($adh);
 
@@ -103,7 +103,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 print '<td class="valeur">';
-print $html->showrefnav($adh,'id');
+print $form->showrefnav($adh,'id');
 print '</td></tr>';
 
 // Nom

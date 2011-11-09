@@ -179,7 +179,7 @@ $invoicesupplierstatic = new FactureFournisseur($db);
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 if ($action == 'create' || $action == 'add_paiement')
 {
@@ -228,11 +228,11 @@ if ($action == 'create' || $action == 'add_paiement')
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-            $html->select_date($dateinvoice,'','','','',"addpaiement",1,1);
+            $form->select_date($dateinvoice,'','','','',"addpaiement",1,1);
             print '</td>';
             print '<td>'.$langs->trans('Comments').'</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
-            $html->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
+            $form->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
             print '</td>';
             print '<td rowspan="3" valign="top">';
             print '<textarea name="comment" wrap="soft" cols="60" rows="'._ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
@@ -240,7 +240,7 @@ if ($action == 'create' || $action == 'add_paiement')
             if ($conf->banque->enabled)
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
-                $html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
+                $form->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
                 print '</td></tr>';
             }
             else
@@ -438,10 +438,10 @@ if (! $_GET['action'] && ! $_POST['action'])
         print '<input class="fat" type="text" size="6" name="search_company" value="'.$_REQUEST["search_company"].'">';
         print '</td>';
         print '<td>';
-        $html->select_types_paiements($_REQUEST["search_paymenttype"],'search_paymenttype','',2,1,1);
+        $form->select_types_paiements($_REQUEST["search_paymenttype"],'search_paymenttype','',2,1,1);
         print '</td>';
         print '<td>';
-        $html->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
+        $form->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
         print '</td>';
         print '<td align="right">';
         print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';

@@ -114,7 +114,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->fournisseur->facture->cree
 
 llxHeader('', $langs->trans("Bill"), "Facture");
 
-$html = new Form($db);
+$form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
@@ -146,7 +146,7 @@ if ($id > 0)
 
 		// Reference du facture
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $html->showrefnav($facture,'facid','',1,'rowid','ref',$morehtmlref);
+		print $form->showrefnav($facture,'facid','',1,'rowid','ref',$morehtmlref);
 		print "</td></tr>";
 
         // Ref supplier
@@ -200,7 +200,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			//$userAlreadySelected = $facture->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
-			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
+			$form->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($facture, '', 'type','internal');
@@ -230,7 +230,7 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid');
+			$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid');
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';

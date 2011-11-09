@@ -73,7 +73,7 @@
 // dullus for text Justification.
 // Bob Vincent (pillarsdotnet@users.sourceforge.net) for <li> value attribute.
 // Patrick Benny for text stretch suggestion on Cell().
-// Johannes Güntert for JavaScript support.
+// Johannes Gï¿½ntert for JavaScript support.
 // Denis Van Nuffelen for Dynamic Form.
 // Jacek Czekaj for multibyte justification
 // Anthony Ferrara for the reintroduction of legacy image methods.
@@ -84,7 +84,7 @@
 // Mohamad Ali Golkar, Saleh AlMatrafe, Charles Abbott for Arabic and Persian support.
 // Moritz Wagner and Andreas Wurmser for graphic functions.
 // Andrew Whitehead for core fonts support.
-// Esteban Joël Marín for OpenType font conversion.
+// Esteban Joï¿½l Marï¿½n for OpenType font conversion.
 // Teus Hagen for several suggestions and fixes.
 // Yukihiro Nakadaira for CID-0 CJK fonts fixes.
 // Kosmas Papachristos for some CSS improvements.
@@ -1029,7 +1029,7 @@ class TCPDF {
 	 * @access protected
 	 * @since 4.0.021 (2008-08-24)
 	 */
-	protected $htmlvspace = 0;
+	protected $formvspace = 0;
 
 	/**
 	 * Array of Spot colors
@@ -1129,14 +1129,14 @@ class TCPDF {
 	 * @access protected
 	 * @since 4.4.003 (2008-12-09)
 	 */
-	protected $htmlLinkColorArray = array(0, 0, 255);
+	protected $formLinkColorArray = array(0, 0, 255);
 
 	/**
 	 * Default font style to add to html links
 	 * @access protected
 	 * @since 4.4.003 (2008-12-09)
 	 */
-	protected $htmlLinkFontStyle = 'U';
+	protected $formLinkFontStyle = 'U';
 
 	/**
 	 * Counts the number of pages.
@@ -6322,7 +6322,7 @@ class TCPDF {
 	 * @param float $cellpadding Internal cell padding, if empty uses default cell padding.
 	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
 	 * @return float Return the minimal height needed for multicell method for printing the $txt param.
-	 * @author Alexander Escalona Fernández, Nicola Asuni
+	 * @author Alexander Escalona Fernï¿½ndez, Nicola Asuni
 	 * @access public
 	 * @since 4.5.011
 	 */
@@ -6426,7 +6426,7 @@ class TCPDF {
 	 * @param float $cellpadding Internal cell padding, if empty uses default cell padding.
 	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
 	 * @return float Return the minimal height needed for multicell method for printing the $txt param.
-	 * @author Nicola Asuni, Alexander Escalona Fernández
+	 * @author Nicola Asuni, Alexander Escalona Fernï¿½ndez
 	 * @access public
 	 */
 	public function getStringHeight($w, $txt, $reseth=false, $autopadding=true, $cellpadding='', $border=0) {
@@ -12597,7 +12597,7 @@ class TCPDF {
 	}
 
 	/**
-	 * Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x2, y2) as the Bézier control points.
+	 * Append a cubic Bï¿½zier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x2, y2) as the Bï¿½zier control points.
 	 * The new current point shall be (x3, y3).
 	 * @param float $x1 Abscissa of control point 1.
 	 * @param float $y1 Ordinate of control point 1.
@@ -12613,7 +12613,7 @@ class TCPDF {
 	}
 
 	/**
-	 * Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using the current point and (x2, y2) as the Bézier control points.
+	 * Append a cubic Bï¿½zier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using the current point and (x2, y2) as the Bï¿½zier control points.
 	 * The new current point shall be (x3, y3).
 	 * @param float $x2 Abscissa of control point 2.
 	 * @param float $y2 Ordinate of control point 2.
@@ -12627,7 +12627,7 @@ class TCPDF {
 	}
 
 	/**
-	 * Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x3, y3) as the Bézier control points.
+	 * Append a cubic Bï¿½zier curve to the current path. The curve shall extend from the current point to the point (x3, y3), using (x1, y1) and (x3, y3) as the Bï¿½zier control points.
 	 * The new current point shall be (x3, y3).
 	 * @param float $x1 Abscissa of control point 1.
 	 * @param float $y1 Ordinate of control point 1.
@@ -14021,7 +14021,7 @@ class TCPDF {
 	 * Adds a javascript
 	 * @param string $script Javascript code
 	 * @access public
-	 * @author Johannes Güntert, Nicola Asuni
+	 * @author Johannes Gï¿½ntert, Nicola Asuni
 	 * @since 2.1.002 (2008-02-12)
 	 */
 	public function IncludeJS($script) {
@@ -14046,7 +14046,7 @@ class TCPDF {
 	/**
 	 * Create a javascript PDF string.
 	 * @access protected
-	 * @author Johannes Güntert, Nicola Asuni
+	 * @author Johannes Gï¿½ntert, Nicola Asuni
 	 * @since 2.1.002 (2008-02-12)
 	 */
 	protected function _putjavascript() {
@@ -15784,7 +15784,7 @@ class TCPDF {
 	 * @param array $col1 first color (Grayscale, RGB or CMYK components).
 	 * @param array $col2 second color (Grayscale, RGB or CMYK components).
 	 * @param array $coords array of the form (x1, y1, x2, y2) which defines the gradient vector (see linear_gradient_coords.jpg). The default value is from left to right (x1=0, y1=0, x2=1, y2=0).
-	 * @author Andreas Würmser, Nicola Asuni
+	 * @author Andreas Wï¿½rmser, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @access public
 	 */
@@ -15802,7 +15802,7 @@ class TCPDF {
 	 * @param array $col1 first color (Grayscale, RGB or CMYK components).
 	 * @param array $col2 second color (Grayscale, RGB or CMYK components).
 	 * @param array $coords array of the form (fx, fy, cx, cy, r) where (fx, fy) is the starting point of the gradient with color1, (cx, cy) is the center of the circle with color2, and r is the radius of the circle (see radial_gradient_coords.jpg). (fx, fy) should be inside the circle, otherwise some areas will not be defined.
-	 * @author Andreas Würmser, Nicola Asuni
+	 * @author Andreas Wï¿½rmser, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @access public
 	 */
@@ -15825,7 +15825,7 @@ class TCPDF {
 	 * @param array $coords_min minimum value used by the coordinates. If a coordinate's value is smaller than this it will be cut to coords_min. default: 0
 	 * @param array $coords_max maximum value used by the coordinates. If a coordinate's value is greater than this it will be cut to coords_max. default: 1
 	 * @param boolean $antialias A flag indicating whether to filter the shading function to prevent aliasing artifacts.
-	 * @author Andreas Würmser, Nicola Asuni
+	 * @author Andreas Wï¿½rmser, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @access public
 	 */
@@ -15910,7 +15910,7 @@ class TCPDF {
 	 * @param float $y ordinate of the top left corner of the rectangle.
 	 * @param float $w width of the rectangle.
 	 * @param float $h height of the rectangle.
-	 * @author Andreas Würmser, Nicola Asuni
+	 * @author Andreas Wï¿½rmser, Nicola Asuni
 	 * @since 3.1.000 (2008-06-09)
 	 * @access protected
 	 */
@@ -17279,19 +17279,19 @@ class TCPDF {
 		// remove empty blocks
 		$cssdata = preg_replace('/([^\}\{]+)\{\}/', '', $cssdata);
 		// replace media type parenthesis
-		$cssdata = preg_replace('/@media[\s]+([^\{]*)\{/i', '@media \\1§', $cssdata);
-		$cssdata = preg_replace('/\}\}/si', '}§', $cssdata);
+		$cssdata = preg_replace('/@media[\s]+([^\{]*)\{/i', '@media \\1ï¿½', $cssdata);
+		$cssdata = preg_replace('/\}\}/si', '}ï¿½', $cssdata);
 		// trim string
 		$cssdata = trim($cssdata);
 		// find media blocks (all, braille, embossed, handheld, print, projection, screen, speech, tty, tv)
 		$cssblocks = array();
 		$matches = array();
-		if (preg_match_all('/@media[\s]+([^\§]*)§([^§]*)§/i', $cssdata, $matches) > 0) {
+		if (preg_match_all('/@media[\s]+([^\ï¿½]*)ï¿½([^ï¿½]*)ï¿½/i', $cssdata, $matches) > 0) {
 			foreach ($matches[1] as $key => $type) {
 				$cssblocks[$type] = $matches[2][$key];
 			}
 			// remove media blocks
-			$cssdata = preg_replace('/@media[\s]+([^\§]*)§([^§]*)§/i', '', $cssdata);
+			$cssdata = preg_replace('/@media[\s]+([^\ï¿½]*)ï¿½([^ï¿½]*)ï¿½/i', '', $cssdata);
 		}
 		// keep 'all' and 'print' media, other media types are discarded
 		if (isset($cssblocks['all']) AND !empty($cssblocks['all'])) {
@@ -17855,25 +17855,25 @@ class TCPDF {
 
 	/**
  	 * Returns the HTML DOM array.
-	 * @param string $html html code
+	 * @param string $form html code
 	 * @return array
 	 * @access protected
 	 * @since 3.2.000 (2008-06-20)
 	 */
-	protected function getHtmlDomArray($html) {
+	protected function getHtmlDomArray($form) {
 		// array of CSS styles ( selector => properties).
 		$css = array();
 		// get CSS array defined at previous call
 		$matches = array();
-		if (preg_match_all('/<cssarray>([^\<]*)<\/cssarray>/isU', $html, $matches) > 0) {
+		if (preg_match_all('/<cssarray>([^\<]*)<\/cssarray>/isU', $form, $matches) > 0) {
 			if (isset($matches[1][0])) {
 				$css = array_merge($css, unserialize($this->unhtmlentities($matches[1][0])));
 			}
-			$html = preg_replace('/<cssarray>(.*?)<\/cssarray>/isU', '', $html);
+			$form = preg_replace('/<cssarray>(.*?)<\/cssarray>/isU', '', $form);
 		}
 		// extract external CSS files
 		$matches = array();
-		if (preg_match_all('/<link([^\>]*)>/isU', $html, $matches) > 0) {
+		if (preg_match_all('/<link([^\>]*)>/isU', $form, $matches) > 0) {
 			foreach ($matches[1] as $key => $link) {
 				$type = array();
 				if (preg_match('/type[\s]*=[\s]*"text\/css"/', $link, $type)) {
@@ -17894,7 +17894,7 @@ class TCPDF {
 		}
 		// extract style tags
 		$matches = array();
-		if (preg_match_all('/<style([^\>]*)>([^\<]*)<\/style>/isU', $html, $matches) > 0) {
+		if (preg_match_all('/<style([^\>]*)>([^\<]*)<\/style>/isU', $form, $matches) > 0) {
 			foreach ($matches[1] as $key => $media) {
 				$type = array();
 				preg_match('/media[\s]*=[\s]*"([^"]*)"/', $media, $type);
@@ -17909,90 +17909,90 @@ class TCPDF {
 		// create a special tag to contain the CSS array (used for table content)
 		$csstagarray = '<cssarray>'.htmlentities(serialize($css)).'</cssarray>';
 		// remove head and style blocks
-		$html = preg_replace('/<head([^\>]*)>(.*?)<\/head>/siU', '', $html);
-		$html = preg_replace('/<style([^\>]*)>([^\<]*)<\/style>/isU', '', $html);
+		$form = preg_replace('/<head([^\>]*)>(.*?)<\/head>/siU', '', $form);
+		$form = preg_replace('/<style([^\>]*)>([^\<]*)<\/style>/isU', '', $form);
 		// define block tags
 		$blocktags = array('blockquote','br','dd','dl','div','dt','h1','h2','h3','h4','h5','h6','hr','li','ol','p','pre','ul','tcpdf','table','tr','td');
 		// define self-closing tags
 		$selfclosingtags = array('area','base','basefont','br','hr','input','img','link','meta');
 		// remove all unsupported tags (the line below lists all supported tags)
-		$html = strip_tags($html, '<marker/><a><b><blockquote><body><br><br/><dd><del><div><dl><dt><em><font><form><h1><h2><h3><h4><h5><h6><hr><hr/><i><img><input><label><li><ol><option><p><pre><s><select><small><span><strike><strong><sub><sup><table><tablehead><tcpdf><td><textarea><th><thead><tr><tt><u><ul>');
+		$form = strip_tags($form, '<marker/><a><b><blockquote><body><br><br/><dd><del><div><dl><dt><em><font><form><h1><h2><h3><h4><h5><h6><hr><hr/><i><img><input><label><li><ol><option><p><pre><s><select><small><span><strike><strong><sub><sup><table><tablehead><tcpdf><td><textarea><th><thead><tr><tt><u><ul>');
 		//replace some blank characters
-		$html = preg_replace('/<pre/', '<xre', $html); // preserve pre tag
-		$html = preg_replace('/<(table|tr|td|th|tcpdf|blockquote|dd|div|dl|dt|form|h1|h2|h3|h4|h5|h6|br|hr|li|ol|ul|p)([^\>]*)>[\n\r\t]+/', '<\\1\\2>', $html);
-		$html = preg_replace('@(\r\n|\r)@', "\n", $html);
+		$form = preg_replace('/<pre/', '<xre', $form); // preserve pre tag
+		$form = preg_replace('/<(table|tr|td|th|tcpdf|blockquote|dd|div|dl|dt|form|h1|h2|h3|h4|h5|h6|br|hr|li|ol|ul|p)([^\>]*)>[\n\r\t]+/', '<\\1\\2>', $form);
+		$form = preg_replace('@(\r\n|\r)@', "\n", $form);
 		$repTable = array("\t" => ' ', "\0" => ' ', "\x0B" => ' ', "\\" => "\\\\");
-		$html = strtr($html, $repTable);
+		$form = strtr($form, $repTable);
 		$offset = 0;
-		while (($offset < strlen($html)) AND ($pos = strpos($html, '</pre>', $offset)) !== false) {
-			$html_a = substr($html, 0, $offset);
-			$html_b = substr($html, $offset, ($pos - $offset + 6));
-			while (preg_match("'<xre([^\>]*)>(.*?)\n(.*?)</pre>'si", $html_b)) {
+		while (($offset < strlen($form)) AND ($pos = strpos($form, '</pre>', $offset)) !== false) {
+			$form_a = substr($form, 0, $offset);
+			$form_b = substr($form, $offset, ($pos - $offset + 6));
+			while (preg_match("'<xre([^\>]*)>(.*?)\n(.*?)</pre>'si", $form_b)) {
 				// preserve newlines on <pre> tag
-				$html_b = preg_replace("'<xre([^\>]*)>(.*?)\n(.*?)</pre>'si", "<xre\\1>\\2<br />\\3</pre>", $html_b);
+				$form_b = preg_replace("'<xre([^\>]*)>(.*?)\n(.*?)</pre>'si", "<xre\\1>\\2<br />\\3</pre>", $form_b);
 			}
-			while (preg_match("'<xre([^\>]*)>(.*?)".$this->re_space['p']."(.*?)</pre>'".$this->re_space['m'], $html_b)) {
+			while (preg_match("'<xre([^\>]*)>(.*?)".$this->re_space['p']."(.*?)</pre>'".$this->re_space['m'], $form_b)) {
 				// preserve spaces on <pre> tag
-				$html_b = preg_replace("'<xre([^\>]*)>(.*?)".$this->re_space['p']."(.*?)</pre>'".$this->re_space['m'], "<xre\\1>\\2&nbsp;\\3</pre>", $html_b);
+				$form_b = preg_replace("'<xre([^\>]*)>(.*?)".$this->re_space['p']."(.*?)</pre>'".$this->re_space['m'], "<xre\\1>\\2&nbsp;\\3</pre>", $form_b);
 			}
-			$html = $html_a.$html_b.substr($html, $pos + 6);
-			$offset = strlen($html_a.$html_b);
+			$form = $form_a.$form_b.substr($form, $pos + 6);
+			$offset = strlen($form_a.$form_b);
 		}
 		$offset = 0;
-		while (($offset < strlen($html)) AND ($pos = strpos($html, '</textarea>', $offset)) !== false) {
-			$html_a = substr($html, 0, $offset);
-			$html_b = substr($html, $offset, ($pos - $offset + 11));
-			while (preg_match("'<textarea([^\>]*)>(.*?)\n(.*?)</textarea>'si", $html_b)) {
+		while (($offset < strlen($form)) AND ($pos = strpos($form, '</textarea>', $offset)) !== false) {
+			$form_a = substr($form, 0, $offset);
+			$form_b = substr($form, $offset, ($pos - $offset + 11));
+			while (preg_match("'<textarea([^\>]*)>(.*?)\n(.*?)</textarea>'si", $form_b)) {
 				// preserve newlines on <textarea> tag
-				$html_b = preg_replace("'<textarea([^\>]*)>(.*?)\n(.*?)</textarea>'si", "<textarea\\1>\\2<TBR>\\3</textarea>", $html_b);
-				$html_b = preg_replace("'<textarea([^\>]*)>(.*?)[\"](.*?)</textarea>'si", "<textarea\\1>\\2''\\3</textarea>", $html_b);
+				$form_b = preg_replace("'<textarea([^\>]*)>(.*?)\n(.*?)</textarea>'si", "<textarea\\1>\\2<TBR>\\3</textarea>", $form_b);
+				$form_b = preg_replace("'<textarea([^\>]*)>(.*?)[\"](.*?)</textarea>'si", "<textarea\\1>\\2''\\3</textarea>", $form_b);
 			}
-			$html = $html_a.$html_b.substr($html, $pos + 11);
-			$offset = strlen($html_a.$html_b);
+			$form = $form_a.$form_b.substr($form, $pos + 11);
+			$offset = strlen($form_a.$form_b);
 		}
-		$html = preg_replace('/([\s]*)<option/si', '<option', $html);
-		$html = preg_replace('/<\/option>([\s]*)/si', '</option>', $html);
+		$form = preg_replace('/([\s]*)<option/si', '<option', $form);
+		$form = preg_replace('/<\/option>([\s]*)/si', '</option>', $form);
 		$offset = 0;
-		while (($offset < strlen($html)) AND ($pos = strpos($html, '</option>', $offset)) !== false) {
-			$html_a = substr($html, 0, $offset);
-			$html_b = substr($html, $offset, ($pos - $offset + 9));
-			while (preg_match("'<option([^\>]*)>(.*?)</option>'si", $html_b)) {
-				$html_b = preg_replace("'<option([\s]+)value=\"([^\"]*)\"([^\>]*)>(.*?)</option>'si", "\\2#!TaB!#\\4#!NwL!#", $html_b);
-				$html_b = preg_replace("'<option([^\>]*)>(.*?)</option>'si", "\\2#!NwL!#", $html_b);
+		while (($offset < strlen($form)) AND ($pos = strpos($form, '</option>', $offset)) !== false) {
+			$form_a = substr($form, 0, $offset);
+			$form_b = substr($form, $offset, ($pos - $offset + 9));
+			while (preg_match("'<option([^\>]*)>(.*?)</option>'si", $form_b)) {
+				$form_b = preg_replace("'<option([\s]+)value=\"([^\"]*)\"([^\>]*)>(.*?)</option>'si", "\\2#!TaB!#\\4#!NwL!#", $form_b);
+				$form_b = preg_replace("'<option([^\>]*)>(.*?)</option>'si", "\\2#!NwL!#", $form_b);
 			}
-			$html = $html_a.$html_b.substr($html, $pos + 9);
-			$offset = strlen($html_a.$html_b);
+			$form = $form_a.$form_b.substr($form, $pos + 9);
+			$offset = strlen($form_a.$form_b);
 		}
-		if (preg_match("'</select'si", $html)) {
-			$html = preg_replace("'<select([^\>]*)>'si", "<select\\1 opt=\"", $html);
-			$html = preg_replace("'#!NwL!#</select>'si", "\" />", $html);
+		if (preg_match("'</select'si", $form)) {
+			$form = preg_replace("'<select([^\>]*)>'si", "<select\\1 opt=\"", $form);
+			$form = preg_replace("'#!NwL!#</select>'si", "\" />", $form);
 		}
-		$html = str_replace("\n", ' ', $html);
+		$form = str_replace("\n", ' ', $form);
 		// restore textarea newlines
-		$html = str_replace('<TBR>', "\n", $html);
+		$form = str_replace('<TBR>', "\n", $form);
 		// remove extra spaces from code
-		$html = preg_replace('/[\s]+<\/(table|tr|ul|ol|dl)>/', '</\\1>', $html);
-		$html = preg_replace('/'.$this->re_space['p'].'+<\/(td|th|li|dt|dd)>/'.$this->re_space['m'], '</\\1>', $html);
-		$html = preg_replace('/[\s]+<(tr|td|th|li|dt|dd)/', '<\\1', $html);
-		$html = preg_replace('/'.$this->re_space['p'].'+<(ul|ol|dl|br)/'.$this->re_space['m'], '<\\1', $html);
-		$html = preg_replace('/<\/(table|tr|td|th|blockquote|dd|dt|dl|div|dt|h1|h2|h3|h4|h5|h6|hr|li|ol|ul|p)>[\s]+</', '</\\1><', $html);
-		$html = preg_replace('/<\/(td|th)>/', '<marker style="font-size:0"/></\\1>', $html);
-		$html = preg_replace('/<\/table>([\s]*)<marker style="font-size:0"\/>/', '</table>', $html);
-		$html = preg_replace('/'.$this->re_space['p'].'+<img/'.$this->re_space['m'], chr(32).'<img', $html);
-		$html = preg_replace('/<img([^\>]*)>/xi', '<img\\1><span><marker style="font-size:0"/></span>', $html);
-		$html = preg_replace('/<xre/', '<pre', $html); // restore pre tag
-		$html = preg_replace('/<textarea([^\>]*)>([^\<]*)<\/textarea>/xi', '<textarea\\1 value="\\2" />', $html);
-		$html = preg_replace('/<li([^\>]*)><\/li>/', '<li\\1>&nbsp;</li>', $html);
-		$html = preg_replace('/<li([^\>]*)>'.$this->re_space['p'].'*<img/'.$this->re_space['m'], '<li\\1><font size="1">&nbsp;</font><img', $html);
-		$html = preg_replace('/<([^\>\/]*)>[\s]/', '<\\1>&nbsp;', $html); // preserve some spaces
-		$html = preg_replace('/[\s]<\/([^\>]*)>/', '&nbsp;</\\1>', $html); // preserve some spaces
-		$html = preg_replace('/'.$this->re_space['p'].'+/'.$this->re_space['m'], chr(32), $html); // replace multiple spaces with a single space
+		$form = preg_replace('/[\s]+<\/(table|tr|ul|ol|dl)>/', '</\\1>', $form);
+		$form = preg_replace('/'.$this->re_space['p'].'+<\/(td|th|li|dt|dd)>/'.$this->re_space['m'], '</\\1>', $form);
+		$form = preg_replace('/[\s]+<(tr|td|th|li|dt|dd)/', '<\\1', $form);
+		$form = preg_replace('/'.$this->re_space['p'].'+<(ul|ol|dl|br)/'.$this->re_space['m'], '<\\1', $form);
+		$form = preg_replace('/<\/(table|tr|td|th|blockquote|dd|dt|dl|div|dt|h1|h2|h3|h4|h5|h6|hr|li|ol|ul|p)>[\s]+</', '</\\1><', $form);
+		$form = preg_replace('/<\/(td|th)>/', '<marker style="font-size:0"/></\\1>', $form);
+		$form = preg_replace('/<\/table>([\s]*)<marker style="font-size:0"\/>/', '</table>', $form);
+		$form = preg_replace('/'.$this->re_space['p'].'+<img/'.$this->re_space['m'], chr(32).'<img', $form);
+		$form = preg_replace('/<img([^\>]*)>/xi', '<img\\1><span><marker style="font-size:0"/></span>', $form);
+		$form = preg_replace('/<xre/', '<pre', $form); // restore pre tag
+		$form = preg_replace('/<textarea([^\>]*)>([^\<]*)<\/textarea>/xi', '<textarea\\1 value="\\2" />', $form);
+		$form = preg_replace('/<li([^\>]*)><\/li>/', '<li\\1>&nbsp;</li>', $form);
+		$form = preg_replace('/<li([^\>]*)>'.$this->re_space['p'].'*<img/'.$this->re_space['m'], '<li\\1><font size="1">&nbsp;</font><img', $form);
+		$form = preg_replace('/<([^\>\/]*)>[\s]/', '<\\1>&nbsp;', $form); // preserve some spaces
+		$form = preg_replace('/[\s]<\/([^\>]*)>/', '&nbsp;</\\1>', $form); // preserve some spaces
+		$form = preg_replace('/'.$this->re_space['p'].'+/'.$this->re_space['m'], chr(32), $form); // replace multiple spaces with a single space
 		// trim string
-		$html = $this->stringTrim($html);
+		$form = $this->stringTrim($form);
 		// pattern for generic tag
 		$tagpattern = '/(<[^>]+>)/';
 		// explodes the string
-		$a = preg_split($tagpattern, $html, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$a = preg_split($tagpattern, $form, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 		// count elements
 		$maxel = count($a);
 		$elkey = 0;
@@ -18643,7 +18643,7 @@ class TCPDF {
 	 * @param float $h Cell minimum height. The cell extends automatically if needed.
 	 * @param float $x upper-left corner X coordinate
 	 * @param float $y upper-left corner Y coordinate
-	 * @param string $html html text to print. Default value: empty string.
+	 * @param string $form html text to print. Default value: empty string.
 	 * @param mixed $border Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
 	 * @param int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL language)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul>
 Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
@@ -18655,15 +18655,15 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 	 * @uses MultiCell()
 	 * @see Multicell(), writeHTML()
 	 */
-	public function writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=false, $reseth=true, $align='', $autopadding=true) {
-		return $this->MultiCell($w, $h, $html, $border, $align, $fill, $ln, $x, $y, $reseth, 0, true, $autopadding, 0);
+	public function writeHTMLCell($w, $h, $x, $y, $form='', $border=0, $ln=0, $fill=false, $reseth=true, $align='', $autopadding=true) {
+		return $this->MultiCell($w, $h, $form, $border, $align, $fill, $ln, $x, $y, $reseth, 0, true, $autopadding, 0);
 	}
 
 	/**
 	 * Allows to preserve some HTML formatting (limited support).<br />
 	 * IMPORTANT: The HTML must be well formatted - try to clean-up it using an application like HTML-Tidy before submitting.
 	 * Supported tags are: a, b, blockquote, br, dd, del, div, dl, dt, em, font, h1, h2, h3, h4, h5, h6, hr, i, img, li, ol, p, pre, small, span, strong, sub, sup, table, tcpdf, td, th, thead, tr, tt, u, ul
-	 * @param string $html text to display
+	 * @param string $form text to display
 	 * @param boolean $ln if true add a new line after text (default = true)
 	 * @param boolean $fill Indicates if the background must be painted (true) or transparent (false).
 	 * @param boolean $reseth if true reset the last cell height (default false).
@@ -18671,7 +18671,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 	 * @param string $align Allows to center or align the text. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
 	 * @access public
 	 */
-	public function writeHTML($html, $ln=true, $fill=false, $reseth=false, $cell=false, $align='') {
+	public function writeHTML($form, $ln=true, $fill=false, $reseth=false, $cell=false, $align='') {
 		$gvars = $this->getGraphicVars();
 		// store current values
 		$prev_cell_margin = $this->cell_margin;
@@ -18760,7 +18760,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 			// reset row height
 			$this->resetLastH();
 		}
-		$dom = $this->getHtmlDomArray($html);
+		$dom = $this->getHtmlDomArray($form);
 		$maxel = count($dom);
 		$key = 0;
 		while ($key < $maxel) {
@@ -18783,7 +18783,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					// store current object
 					$this->startTransaction();
 					// save this method vars
-					$this_method_vars['html'] = $html;
+					$this_method_vars['html'] = $form;
 					$this_method_vars['ln'] = $ln;
 					$this_method_vars['fill'] = $fill;
 					$this_method_vars['reseth'] = $reseth;
@@ -21602,7 +21602,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 
 	/**
 	 * Convert HTML string containing value and unit of measure to user's units or points.
-	 * @param string $htmlval string containing values and unit
+	 * @param string $formval string containing values and unit
 	 * @param string $refsize reference value in points
 	 * @param string $defaultunit default unit (can be one of the following: %, em, ex, px, in, mm, pc, pt).
 	 * @param boolean $point if true returns points, otherwise returns value in user's units
@@ -21610,7 +21610,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 	 * @access public
 	 * @since 4.4.004 (2008-12-10)
 	 */
-	public function getHTMLUnitToUnits($htmlval, $refsize=1, $defaultunit='px', $points=false) {
+	public function getHTMLUnitToUnits($formval, $refsize=1, $defaultunit='px', $points=false) {
 		$supportedunits = array('%', 'em', 'ex', 'px', 'in', 'cm', 'mm', 'pc', 'pt');
 		$retval = 0;
 		$value = 0;
@@ -21622,11 +21622,11 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		if (in_array($defaultunit, $supportedunits)) {
 			$unit = $defaultunit;
 		}
-		if (is_numeric($htmlval)) {
-			$value = floatval($htmlval);
-		} elseif (preg_match('/([0-9\.\-\+]+)/', $htmlval, $mnum)) {
+		if (is_numeric($formval)) {
+			$value = floatval($formval);
+		} elseif (preg_match('/([0-9\.\-\+]+)/', $formval, $mnum)) {
 			$value = floatval($mnum[1]);
-			if (preg_match('/([a-z%]+)/', $htmlval, $munit)) {
+			if (preg_match('/([a-z%]+)/', $formval, $munit)) {
 				if (in_array($munit[1], $supportedunits)) {
 					$unit = $munit[1];
 				}
@@ -22826,8 +22826,8 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		$page_first = $this->getPage();
 		// get the font type used for numbers in each template
 		$current_font = $this->FontFamily;
-		foreach ($templates as $level => $html) {
-			$dom = $this->getHtmlDomArray($html);
+		foreach ($templates as $level => $form) {
+			$dom = $this->getHtmlDomArray($form);
 			foreach ($dom as $key => $value) {
 				if ($value['value'] == '#TOC_PAGE_NUMBER#') {
 					$this->SetFont($dom[($key - 1)]['fontname']);
@@ -24908,7 +24908,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					}
 					break;
 				}
-				case 'Q': { // quadratic Bézier curveto
+				case 'Q': { // quadratic Bï¿½zier curveto
 					foreach ($params as $ck => $cp) {
 						$params[$ck] = $cp;
 						if ((($ck + 1) % 4) == 0) {
@@ -24934,7 +24934,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					}
 					break;
 				}
-				case 'T': { // shorthand/smooth quadratic Bézier curveto
+				case 'T': { // shorthand/smooth quadratic Bï¿½zier curveto
 					foreach ($params as $ck => $cp) {
 						$params[$ck] = $cp;
 						if (($ck % 2) != 0) {

@@ -115,7 +115,7 @@ print_fiche_titre($langs->trans("ECMAutoOrg"));
  */
 if ($_GET['action'] == 'delete_file')
 {
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 	if ($ret == 'html') print '<br>';
 }
 

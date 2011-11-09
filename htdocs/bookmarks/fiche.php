@@ -124,7 +124,7 @@ if ($_GET["action"] == 'delete')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 if ($action == 'create')
@@ -149,11 +149,11 @@ if ($action == 'create')
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste=array(0=>$langs->trans("ReplaceWindow"),1=>$langs->trans("OpenANewWindow"));
-	print $html->selectarray('target',$liste,1);
+	print $form->selectarray('target',$liste,1);
 	print '</td><td>'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	$html->select_users(isset($_POST['userid'])?$_POST['userid']:$user->id,'userid',1);
+	$form->select_users(isset($_POST['userid'])?$_POST['userid']:$user->id,'userid',1);
 	print '</td><td>&nbsp;</td></tr>';
 
 	// Position
@@ -210,7 +210,7 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 	if ($_GET["action"] == 'edit')
 	{
 		$liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
-		print $html->selectarray('target',$liste,isset($_POST["target"])?$_POST["target"]:$bookmark->target);
+		print $form->selectarray('target',$liste,isset($_POST["target"])?$_POST["target"]:$bookmark->target);
 	}
 	else
 	{
@@ -222,7 +222,7 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
 	if ($_GET["action"] == 'edit' && $user->admin)
 	{
-		$html->select_users(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''),'userid',1);
+		$form->select_users(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''),'userid',1);
 	}
 	else
 	{

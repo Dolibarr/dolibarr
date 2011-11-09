@@ -138,7 +138,7 @@ if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
 
 llxHeader('',$title);
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 
 ?>

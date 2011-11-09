@@ -62,7 +62,7 @@ if ($_POST["action"] == 'updatenote' && $user->rights->fournisseur->commande->cr
 
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
-$html = new Form($db);
+$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -104,7 +104,7 @@ if ($id > 0 || ! empty($ref))
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
         print '<td colspan="2">';
-        print $html->showrefnav($commande,'ref','',1,'ref','ref');
+        print $form->showrefnav($commande,'ref','',1,'ref','ref');
         print '</td>';
         print '</tr>';
 

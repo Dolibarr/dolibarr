@@ -96,7 +96,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("StockSetup"),$linkback,'setup');
 print '<br>';
 
-$html=new Form($db);
+$form=new Form($db);
 $var=true;
 print '<table class="noborder" width="100%">';
 
@@ -118,7 +118,7 @@ print '<td width="160" align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
-print $html->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
+print $form->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print "</td>\n";
@@ -141,7 +141,7 @@ if ($conf->facture->enabled)
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_BILL\">";
-	print $html->selectyesno("STOCK_CALCULATE_ON_BILL",$conf->global->STOCK_CALCULATE_ON_BILL,1);
+	print $form->selectyesno("STOCK_CALCULATE_ON_BILL",$conf->global->STOCK_CALCULATE_ON_BILL,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
@@ -155,7 +155,7 @@ if ($conf->commande->enabled)
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_VALIDATE_ORDER\">";
-	print $html->selectyesno("STOCK_CALCULATE_ON_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1);
+	print $form->selectyesno("STOCK_CALCULATE_ON_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
@@ -169,7 +169,7 @@ if ($conf->expedition->enabled)
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SHIPMENT\">";
-	print $html->selectyesno("STOCK_CALCULATE_ON_SHIPMENT",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1);
+	print $form->selectyesno("STOCK_CALCULATE_ON_SHIPMENT",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
@@ -191,7 +191,7 @@ if ($conf->fournisseur->enabled)
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_BILL\">";
-	print $html->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_BILL",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL,1);
+	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_BILL",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
@@ -205,7 +205,7 @@ if ($conf->fournisseur->enabled)
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER\">";
-	print $html->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1);
+	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
@@ -218,7 +218,7 @@ if ($conf->fournisseur->enabled)
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER\">";
-	print $html->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1);
+	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }

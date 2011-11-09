@@ -537,7 +537,7 @@ if ($_GET["action"] == $acts[1])       // disable
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formadmin=new FormAdmin($db);
 
 llxHeader();
@@ -564,7 +564,7 @@ print "<br>\n";
  */
 if ($_GET['action'] == 'delete')
 {
-    $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&code='.$_GET["code"].'&id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&code='.$_GET["code"].'&id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
     if ($ret == 'html') print '<br>';
 }
 
@@ -980,10 +980,10 @@ llxFooter();
 function fieldList($fieldlist,$obj='')
 {
     global $conf,$langs,$db;
+    global $form;
     global $region_id;
     global $elementList,$sourceList;
 
-    $html = new Form($db);
     $formadmin = new FormAdmin($db);
     $formcompany = new FormCompany($db);
 
@@ -992,7 +992,7 @@ function fieldList($fieldlist,$obj='')
     	if ($fieldlist[$field] == 'pays') {
     		if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }	// For region page, we do not show the country input
             print '<td>';
-            print $html->select_country(($obj->pays_code?$obj->pays_code:$obj->pays),'pays');
+            print $form->select_country(($obj->pays_code?$obj->pays_code:$obj->pays),'pays');
             print '</td>';
         }
         elseif ($fieldlist[$field] == 'pays_id') {
@@ -1017,14 +1017,14 @@ function fieldList($fieldlist,$obj='')
         elseif ($fieldlist[$field] == 'element')
         {
             print '<td>';
-            print $html->selectarray('element', $elementList,$obj->$fieldlist[$field]);
+            print $form->selectarray('element', $elementList,$obj->$fieldlist[$field]);
             print '</td>';
         }
         // La source de l'element (pour les type de contact).'
         elseif ($fieldlist[$field] == 'source')
         {
             print '<td>';
-            print $html->selectarray('source', $sourceList,$obj->$fieldlist[$field]);
+            print $form->selectarray('source', $sourceList,$obj->$fieldlist[$field]);
             print '</td>';
         }
         elseif ($fieldlist[$field] == 'type' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX."c_actioncomm")
@@ -1035,7 +1035,7 @@ function fieldList($fieldlist,$obj='')
         }
         elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm') {
             print '<td>';
-            print $html->selectyesno($fieldlist[$field],$obj->$fieldlist[$field],1);
+            print $form->selectyesno($fieldlist[$field],$obj->$fieldlist[$field],1);
             print '</td>';
         }
         elseif (in_array($fieldlist[$field],array('nbjour','decalage','taux','localtax1','localtax2'))) {
@@ -1052,7 +1052,7 @@ function fieldList($fieldlist,$obj='')
         }
         elseif ($fieldlist[$field]=='unit') {
             print '<td>';
-            print $html->selectarray('unit',array('mm','cm','point','inch'),$obj->$fieldlist[$field],0,0,1);
+            print $form->selectarray('unit',array('mm','cm','point','inch'),$obj->$fieldlist[$field],0,0,1);
             print '</td>';
         }
         else

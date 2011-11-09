@@ -83,7 +83,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 $company_static=new Societe($db);
 
 $morequerystring='';
@@ -105,7 +105,7 @@ $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->transcountry("LT2ReportByCustomersInInputOutputMode",$mysoc->pays_code);
-    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $description=$langs->trans("RulesVATDue");
     if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
@@ -122,7 +122,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->transcountry("LT2ReportByCustomersInInputOutputMode",$mysoc->pays_code);
-    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $description=$langs->trans("RulesVATIn");
     if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;

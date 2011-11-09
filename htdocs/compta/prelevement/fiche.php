@@ -110,7 +110,7 @@ if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($id)
 {
@@ -128,7 +128,7 @@ if ($id)
 
 		if ($action == 'credite')
 		{
-			$ret=$html->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
+			$ret=$form->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -181,10 +181,10 @@ if ($id)
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
-			print $html->select_date('','','','','',"userfile");
+			print $form->select_date('','','','','',"userfile");
 			print '</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
-			print $html->selectarray("methode",$bon->methodes_trans);
+			print $form->selectarray("methode",$bon->methodes_trans);
 			print '</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 			print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
@@ -204,7 +204,7 @@ if ($id)
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
-			print $html->select_date('','','','','',"infocredit");
+			print $form->select_date('','','','','',"infocredit");
 			print '</td></tr>';
 			print '</table><br>';
 			print '<center><input type="submit" class="button" value="'.$langs->trans("ClassCredited").'">';

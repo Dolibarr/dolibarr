@@ -428,8 +428,8 @@ else
     // Confirmation delete
     if ($_GET["action"] == 'delete')
     {
-        $html = new Form($db);
-        $ret=$html->form_confirm($_SERVER['PHP_SELF']."?socid=".$address->socid."&amp;id=".$_GET["id"],$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
+        $form = new Form($db);
+        $ret=$form->form_confirm($_SERVER['PHP_SELF']."?socid=".$address->socid."&amp;id=".$_GET["id"],$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
         if ($ret == 'html') print '<br>';
     }
 

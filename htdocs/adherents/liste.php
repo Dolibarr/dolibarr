@@ -73,7 +73,7 @@ $search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["searc
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $form=new Form($db);
-$htmlother=new FormOther($db);
+$formother=new FormOther($db);
 
 $now=dol_now();
 
@@ -196,7 +196,7 @@ if ($resql)
 	if ($conf->categorie->enabled)
 	{
 		$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$htmlother->select_categories(3,$search_categ,'search_categ');
+		$moreforfilter.=$formother->select_categories(3,$search_categ,'search_categ');
 		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
 	if ($moreforfilter)

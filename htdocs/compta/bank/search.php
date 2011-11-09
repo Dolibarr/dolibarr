@@ -68,7 +68,7 @@ $bankaccountstatic=new Account($db);
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($vline) $viewline = $vline;
 else $viewline = 50;
@@ -168,7 +168,7 @@ if ($resql)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="center">';
-    $html->select_types_paiements(empty($_REQUEST["type"])?'':$_REQUEST["type"], 'type', '', 2, 0, 1, 8);
+    $form->select_types_paiements(empty($_REQUEST["type"])?'':$_REQUEST["type"], 'type', '', 2, 0, 1, 8);
     print '</td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="req_nb" value="'.GETPOST("req_nb").'" size="2"></td>';
     print '<td class="liste_titre">';

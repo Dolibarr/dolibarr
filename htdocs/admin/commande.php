@@ -215,7 +215,7 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
@@ -316,7 +316,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						}
 
 						print '<td align="center">';
-						print $html->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print '</tr>';
@@ -453,7 +453,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 
 		    		print '<td align="center">';
-		    		print $html->textwithpicto('',$htmltooltip,1,0);
+		    		print $form->textwithpicto('',$htmltooltip,1,0);
 		    		print '</td>';
 		    		print '<td align="center">';
 		    		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
@@ -490,7 +490,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalidorder">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ValidOrderAfterPropalClosed").'</td>';
-print '<td width="60" align="center">'.$html->selectyesno("validorder",$conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL,1).'</td>';
+print '<td width="60" align="center">'.$form->selectyesno("validorder",$conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL,1).'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
@@ -504,7 +504,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="deliverycostline">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("AddDeliveryCostLine").'</td>';
-print '<td width="60" align="center">'.$html->selectyesno("addline",$conf->global->COMMANDE_ADD_DELIVERY_COST_LINE,1).'</td>';
+print '<td width="60" align="center">'.$form->selectyesno("addline",$conf->global->COMMANDE_ADD_DELIVERY_COST_LINE,1).'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
@@ -518,7 +518,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_use_customer_contact_as_recipient">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UseCustomerContactAsOrderRecipientIfExist").'</td>';
-print '<td width="60" align="center">'.$html->selectyesno("use_customer_contact_as_recipient",$conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1).'</td>';
+print '<td width="60" align="center">'.$form->selectyesno("use_customer_contact_as_recipient",$conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1).'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';

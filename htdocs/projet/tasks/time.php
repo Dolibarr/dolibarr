@@ -145,7 +145,7 @@ $project=new Project($db);
 
 llxHeader("",$langs->trans("Task"));
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($_GET["id"] > 0)
 {
@@ -173,7 +173,7 @@ if ($_GET["id"] > 0)
 
 		if ($_GET["action"] == 'deleteline')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&lineid='.$_GET["lineid"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&lineid='.$_GET["lineid"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -185,7 +185,7 @@ if ($_GET["id"] > 0)
 		print '</td><td colspan="3">';
 		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
 		$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
-		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
+		print $form->showrefnav($task,'id','',1,'rowid','ref','','');
 		print '</td></tr>';
 
 		// Label
@@ -233,14 +233,14 @@ if ($_GET["id"] > 0)
 			// Date
 			print '<td nowrap="nowrap">';
 			$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
-			print $html->select_date($newdate,'time','','','',"timespent_date");
+			print $form->select_date($newdate,'time','','','',"timespent_date");
 			print '</td>';
 
 			// Contributor
 			print '<td nowrap="nowrap">';
 			$contactoftask=$task->getListContactId('internal');
 			print img_object('','user');
-			print $html->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
+			print $form->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
 			print '</td>';
 
 			// Note
@@ -250,7 +250,7 @@ if ($_GET["id"] > 0)
 
 			// Duration
 			print '<td nowrap="nowrap" align="right">';
-			print $html->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''));
+			print $form->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''));
 			print '</td>';
 
 			print '<td align="center">';
@@ -317,7 +317,7 @@ if ($_GET["id"] > 0)
   		    print '<td>';
   		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
-  		    	print $html->select_date($db->jdate($task_time->task_date),'timeline','','','',"timespent_date");
+  		    	print $form->select_date($db->jdate($task_time->task_date),'timeline','','','',"timespent_date");
   		    }
   		    else
   		    {
@@ -330,7 +330,7 @@ if ($_GET["id"] > 0)
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $html->select_users($user->id,'userid_line');
+				print $form->select_users($user->id,'userid_line');
 			}
 			else
 			{
@@ -357,7 +357,7 @@ if ($_GET["id"] > 0)
   		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
   		    	print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
-  		    	print $html->select_duration('new_duration',$task_time->task_duration);
+  		    	print $form->select_duration('new_duration',$task_time->task_duration);
   		    }
   		    else
   		    {

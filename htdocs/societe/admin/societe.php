@@ -565,7 +565,7 @@ print "</table><br>\n";
 print_titre($langs->trans("Other"));
 
 // Autres options
-$html=new Form($db);
+$form=new Form($db);
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -594,7 +594,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $html->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT",$arrval,$conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT",$arrval,$conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td>";

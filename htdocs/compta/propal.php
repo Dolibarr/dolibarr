@@ -110,7 +110,7 @@ $now=gmmktime();
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $societestatic=new Societe($db);
@@ -142,7 +142,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">';
-	print $html->showrefnav($object,'ref',$linkback,1,'ref','ref','');
+	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
 
 	// Ref client
@@ -216,11 +216,11 @@ if ($id > 0 || ! empty($ref))
 	print '</td><td colspan="3">';
 	if ($action == 'editconditions')
 	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
 	}
 	else
 	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
 	}
 	print '</td>';
 
@@ -235,11 +235,11 @@ if ($id > 0 || ! empty($ref))
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 	}
 	else
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 	}
 	print '</td></tr>';
 
@@ -257,11 +257,11 @@ if ($id > 0 || ! empty($ref))
 			print '</td><td colspan="3">';
 			if ($action == 'classify')
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
+				$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 			}
 			else
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
+				$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
 			}
 			print '</td></tr>';
 		}
@@ -385,7 +385,7 @@ if ($id > 0 || ! empty($ref))
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$objp->product_label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
-					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($objp->date_start,$objp->date_end);
@@ -624,7 +624,7 @@ else
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
 		print '</td>';
 		print '<td class="liste_titre" align="right">';
-		$html->select_propal_statut($viewstatut);
+		$form->select_propal_statut($viewstatut);
 		print '</td>';
 		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '</td>';

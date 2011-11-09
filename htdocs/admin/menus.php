@@ -97,7 +97,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 $htmladmin=new FormAdmin($db);
 
 $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
@@ -143,10 +143,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 	print '<td>';
-	print $html->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $form->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '<td>';
-	print $html->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $form->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '</tr>';
 
@@ -190,10 +190,10 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 	print '<td>';
-	print $html->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $form->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '<td>';
-	print $html->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $form->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '</tr>';
 

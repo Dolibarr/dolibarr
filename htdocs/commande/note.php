@@ -81,7 +81,7 @@ if ($_POST["action"] == 'update' && $user->rights->commande->creer)
 
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -96,7 +96,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Ref
 	print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $html->showrefnav($commande,'ref','',1,'ref','ref');
+	print $form->showrefnav($commande,'ref','',1,'ref','ref');
 	print "</td></tr>";
 
 	// Ref commande client

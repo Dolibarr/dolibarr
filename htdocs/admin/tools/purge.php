@@ -112,7 +112,7 @@ if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 print_fiche_titre($langs->trans("Purge"),'','setup');
 
@@ -165,7 +165,7 @@ if (preg_match('/^confirm/i',$_REQUEST["choice"]))
 {
 	print '<br>';
 	$formquestion=array();
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?choice=allfiles',$langs->trans('Purge'),$langs->trans('ConfirmPurge').' '.img_warning(),'purge',$formquestion,'no',2);
+	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?choice=allfiles',$langs->trans('Purge'),$langs->trans('ConfirmPurge').' '.img_warning(),'purge',$formquestion,'no',2);
 	if ($ret == 'html') print '<br>';
 }
 

@@ -39,28 +39,29 @@ $langs->load('orders');
 $langs->load('companies');
 $langs->load('commercial');
 
-// Security check
-$socid = GETPOST("socid");
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe&fournisseur', $socid, '');
+$action	= GETPOST('action');
 
+// Security check
+$id = (GETPOST("socid") ? GETPOST("socid") : GETPOST("id"));
+if ($user->societe_id) $id=$user->societe_id;
+$result = restrictedArea($user, 'societe&fournisseur', $id, '');
+
+$object = new Fournisseur($db);
 
 /*
  * Action
  */
 
-if ($_POST['action'] == 'setsupplieraccountancycode')
+if ($action == 'setsupplieraccountancycode')
 {
-    $societe = new Societe($db);
-    $result=$societe->fetch($_POST['socid']);
-    $societe->code_compta_fournisseur=$_POST["supplieraccountancycode"];
-    $result=$societe->update($societe->id,$user,1,0,1);
+    $result=$object->fetch($id);
+    $object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
+    $result=$object->update($object->id,$user,1,0,1);
     if ($result < 0)
     {
-        $mesg=join(',',$societe->errors);
+        $mesg=join(',',$object->errors);
     }
-    $POST["action"]="";
-    $socid=$_POST["socid"];
+    $action="";
 }
 
 
@@ -69,18 +70,17 @@ if ($_POST['action'] == 'setsupplieraccountancycode')
  * View
  */
 
-$societe = new Fournisseur($db);
 $contactstatic = new Contact($db);
 $form = new Form($db);
 
-if ( $societe->fetch($socid) )
+if ($object->fetch($id))
 {
 	llxHeader('',$langs->trans('SupplierCard'));
 
 	/*
 	 * Affichage onglets
 	 */
-	$head = societe_prepare_head($societe);
+	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"),0,'company');
 
@@ -90,97 +90,97 @@ if ( $societe->fetch($socid) )
 
 	print '<table width="100%" class="border">';
 	print '<tr><td width="20%">'.$langs->trans("ThirdPartyName").'</td><td width="80%" colspan="3">';
-	$societe->next_prev_filter="te.fournisseur = 1";
-	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom','','');
+	$object->next_prev_filter="te.fournisseur = 1";
+	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
-	if ($societe->fournisseur)
+	if ($object->fournisseur)
 	{
         print '<tr>';
         print '<td nowrap="nowrap">'.$langs->trans("SupplierCode"). '</td><td colspan="3">';
-        print $societe->code_fournisseur;
-        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td>';
         print '</tr>';
 
         print '<tr>';
         print '<td>';
-        print $form->editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$societe->code_compta_fournisseur,'socid',$societe->id,$user->rights->societe->creer);
+        print $form->editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
         print '</td><td colspan="3">';
-        print $form->editfieldval("SupplierAccountancyCode",'supplieraccountancycode',$societe->code_compta_fournisseur,'socid',$societe->id,$user->rights->societe->creer);
+        print $form->editfieldval("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
         print '</td>';
         print '</tr>';
 	}
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">';
-	dol_print_address($societe->address,'gmap','thirdparty',$societe->id);
+	dol_print_address($object->address,'gmap','thirdparty',$object->id);
 	print '</td></tr>';
 
 	// Zip / Town
-	print '<tr><td nowrap="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$societe->cp.(($societe->cp && $societe->ville)?' / ':'').$societe->ville.'</td>';
+	print '<tr><td nowrap="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td>';
 	print '</tr>';
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	$img=picto_from_langcode($societe->pays_code);
-	if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->pays,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$societe->pays;
+	$img=picto_from_langcode($object->country_code);
+	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+	else print ($img?$img.' ':'').$object->country;
 	print '</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
+	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
 
 	// Fax
-	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id,'AC_FAX').'</td></tr>';
+	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
     // EMail
-	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
+	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
 
 	// Web
-	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\">".dol_print_url($societe->url)."</td></tr>";
+	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\">".dol_print_url($object->url)."</td></tr>";
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
 	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-	print yn($societe->tva_assuj);
+	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
 
 	// Local Taxes
-	if($mysoc->pays_code=='ES')
+	if($mysoc->country_code=='ES')
 	{
 		if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
 		{
 			print '<tr><td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
-			print yn($societe->localtax1_assuj);
+			print yn($object->localtax1_assuj);
 			print '</td></tr>';
 			print '<tr><td nowrap="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
-			print yn($societe->localtax2_assuj);
+			print yn($object->localtax2_assuj);
 			print '</td></tr>';
 		}
 		elseif($mysoc->localtax1_assuj=="1")
 		{
 			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-			print yn($societe->localtax1_assuj);
+			print yn($object->localtax1_assuj);
 			print '</td></tr>';
 		}
 		elseif($mysoc->localtax2_assuj=="1")
 		{
 			print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-			print yn($societe->localtax2_assuj);
+			print yn($object->localtax2_assuj);
 			print '</td></tr>';
 		}
 	}
 
     // TVA Intra
     print '<tr><td nowrap>'.$langs->trans('VATIntraVeryShort').'</td><td colspan="3">';
-    print $objsoc->tva_intra;
+    print $object->tva_intra;
     print '</td></tr>';
 
     // Module Adherent
@@ -191,7 +191,7 @@ if ( $societe->fetch($socid) )
         print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
         print '<td colspan="3">';
         $adh=new Adherent($db);
-        $result=$adh->fetch('','',$societe->id);
+        $result=$adh->fetch('','',$object->id);
         if ($result > 0)
         {
             $adh->ref=$adh->getFullName($langs);
@@ -216,7 +216,7 @@ if ( $societe->fetch($socid) )
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$societe->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
 
@@ -229,7 +229,7 @@ if ( $societe->fetch($socid) )
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("All").' ('.$societe->NbProduct().')';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$object->id.'">'.$langs->trans("All").' ('.$object->NbProduct().')';
 		print '</a></td></tr></table>';
 	}
 
@@ -243,9 +243,10 @@ if ( $societe->fetch($socid) )
 
 	if ($user->rights->fournisseur->commande->lire)
 	{
+		// TODO move to DAO class
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
-		$sql.= " WHERE p.fk_soc =".$societe->id;
+		$sql.= " WHERE p.fk_soc =".$object->id;
 		$sql.= " ORDER BY p.date_commande DESC";
 		$sql.= " ".$db->plimit($MAXLIST);
 		$resql=$db->query($sql);
@@ -261,8 +262,8 @@ if ( $societe->fetch($socid) )
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
-    			print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td>';
-                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+    			print '<td align="right"><a href="commande/liste.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td>';
+                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
 			}
@@ -308,11 +309,12 @@ if ( $societe->fetch($socid) )
 
 	if ($user->rights->fournisseur->facture->lire)
 	{
+		// TODO move to DAO class
 		$sql = 'SELECT f.rowid,f.libelle,f.facnumber,f.fk_statut,f.datef as df,f.total_ttc as amount,f.paye,';
 		$sql.= ' SUM(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
-		$sql.= ' WHERE f.fk_soc = '.$societe->id;
+		$sql.= ' WHERE f.fk_soc = '.$object->id;
 		$sql.= ' GROUP BY f.rowid,f.libelle,f.facnumber,f.fk_statut,f.datef,f.total_ttc,f.paye';
 		$sql.= ' ORDER BY f.datef DESC';
 		$resql=$db->query($sql);
@@ -326,8 +328,8 @@ if ( $societe->fetch($socid) )
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="4">';
-    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td>';
-                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$object->id.'">'.$langs->trans('AllBills').' ('.$num.')</td>';
+                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
 			}
@@ -370,13 +372,13 @@ if ( $societe->fetch($socid) )
 	if ($user->rights->fournisseur->commande->creer)
 	{
 		$langs->load("orders");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddOrder").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
 	}
 
 	if ($user->rights->fournisseur->facture->creer)
 	{
 		$langs->load("bills");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
 	}
 
     // Add action
@@ -384,7 +386,7 @@ if ( $societe->fetch($socid) )
     {
         if ($user->rights->agenda->myactions->create)
         {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddAction").'</a>';
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
         }
         else
         {
@@ -404,16 +406,16 @@ if ( $societe->fetch($socid) )
     {
         print '<br>';
         // List of contacts
-        show_contacts($conf,$langs,$db,$societe,$_SERVER["PHP_SELF"].'?socid='.$societe->id);
+        show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?id='.$object->id);
     }
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
     {
         // List of todo actions
-        show_actions_todo($conf,$langs,$db,$societe);
+        show_actions_todo($conf,$langs,$db,$object);
 
         // List of done actions
-        show_actions_done($conf,$langs,$db,$societe);
+        show_actions_done($conf,$langs,$db,$object);
     }
 }
 else

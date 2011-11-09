@@ -244,9 +244,9 @@ if ($_REQUEST['action'] == 'builddoc')
 
 llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
 
-$html=new Form($db);
+$form=new Form($db);
 $formfile = new FormFile($db);
-$htmlcompany = new FormCompany($db);
+$formcompany = new FormCompany($db);
 
 
 /* ************************************************************************** */
@@ -272,7 +272,7 @@ if ($_GET["action"] == 'create')
 
     // Date
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$html->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
+	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
     print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
@@ -283,7 +283,7 @@ if ($_GET["action"] == 'create')
     print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.$_POST["amount"].'" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $html->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
+	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.$_POST["societe"].'" size="40"></td></tr>';
@@ -294,16 +294,16 @@ if ($_GET["action"] == 'create')
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-	print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$don->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+	print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$don->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
     print ' ';
-    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectpays_id','departement_id'));
     print '</tr>';
 
 	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" value="'.$_POST["pays"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.$_POST["email"].'" size="40"></td></tr>';
 
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-    $html->select_types_paiements('', 'modepaiement', 'CRDT', 0, 1);
+    $form->select_types_paiements('', 'modepaiement', 'CRDT', 0, 1);
     print "</td></tr>\n";
 
 	if ($conf->projet->enabled)
@@ -357,7 +357,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 
     // Date
 	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$html->select_date($don->date,'','','','',"update");
+	$form->select_date($don->date,'','','','',"update");
 	print '</td>';
 
     print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
@@ -368,7 +368,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $html->selectyesno("public",1,1);
+	print $form->selectyesno("public",1,1);
 	print "</td>";
 	print "</tr>\n";
 
@@ -381,16 +381,16 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$don->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+    print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$don->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
     print ' ';
-    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectpays_id','departement_id'));
     print '</tr>';
 
 	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
 
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-    $html->select_types_paiements('', 'modepaiement', 'CRDT', 0, 1);
+    $form->select_types_paiements('', 'modepaiement', 'CRDT', 0, 1);
     print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
@@ -443,7 +443,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
-	print $html->showrefnav($don,'rowid','',1,'rowid','ref','');
+	print $form->showrefnav($don,'rowid','',1,'rowid','ref','');
 	print '</td>';
 	print '</tr>';
 

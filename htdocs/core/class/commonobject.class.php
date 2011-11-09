@@ -1908,12 +1908,12 @@ abstract class CommonObject
      *  @param      int	    		$dateSelector       1=Show also date range input fields
      *  @param		Societe			$seller				Object thirdparty who sell
      *  @param		Societe			$buyer				Object thirdparty who buy
-     *	@param		HookManager		$hookmanager		Hook manager instance
-     */
-    function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
-    {
-        global $conf,$langs,$object;
-        global $html,$bcnd,$var;
+	 *	@param		HookManager		$hookmanager		Hook manager instance
+	 */
+	function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+	{
+		global $conf,$langs,$object;
+		global $form,$bcnd,$var;
 
         // Use global variables + $dateSelector + $seller and $buyer
         include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
@@ -1929,10 +1929,10 @@ abstract class CommonObject
      *  @param		Societe			$buyer				Object thirdparty who buy
      *	@param		HookManager		$hookmanager		Hook manager instance
      */
-    function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
-    {
-        global $conf,$langs,$object;
-        global $html,$bcnd,$var;
+	function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+	{
+		global $conf,$langs,$object;
+		global $form,$bcnd,$var;
 
         // Use global variables + $dateSelector + $seller and $buyer
         include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
@@ -2031,11 +2031,11 @@ abstract class CommonObject
      *  @param      $seller            Object of seller third party
      *  @param      $buyer             Object of buyer third party
      *  @param		$selected		   Object line selected
-     */
-    function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
-    {
-        global $conf,$langs,$user;
-        global $html,$bc,$bcdd;
+	 */
+	function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
+	{
+		global $conf,$langs,$user;
+		global $form,$bc,$bcdd;
 
         $element = $this->element;
         if ($element == 'propal') $element = 'propale';   // To work with non standard path

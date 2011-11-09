@@ -35,9 +35,12 @@ $langs->load('companies');
 $langs->load("suppliers");
 
 $mesg='';
-$action=GETPOST('action');
-$id=GETPOST('id');
 
+$id			= GETPOST('id');
+$action		= GETPOST('action');
+$confirm	= GETPOST('confirm');
+
+$object = new PaiementFourn($db);
 
 /*
  * Actions
@@ -46,9 +49,9 @@ $id=GETPOST('id');
 if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 {
     $db->begin();
-    $paiement = new PaiementFourn($db);
-    $paiement->fetch($id);
-    $result = $paiement->update_note(GETPOST('note'));
+    
+    $object->fetch($id);
+    $result = $object->update_note(GETPOST('note'));
     if ($result > 0)
     {
         $db->commit();
@@ -56,18 +59,17 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
     }
     else
     {
-        $mesg='<div class="error">'.$paiement->error.'</div>';
+        $mesg='<div class="error">'.$object->error.'</div>';
         $db->rollback();
     }
 }
 
-if ($action == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
 {
 	$db->begin();
-
-	$paiement = new PaiementFourn($db);
-	$paiement->fetch($id);
-	$result = $paiement->delete();
+	
+	$object->fetch($id);
+	$result = $object->delete();
 	if ($result > 0)
 	{
 		$db->commit();
@@ -76,35 +78,33 @@ if ($action == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 		$db->rollback();
 	}
 }
 
-if ($action == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->valider)
+if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider)
 {
 	$db->begin();
 
-	$paiement = new PaiementFourn($db);
-	$paiement->fetch($id);
-	if ($paiement->valide() >= 0)
+	$object->fetch($id);
+	if ($object->valide() >= 0)
 	{
 		$db->commit();
-		Header('Location: fiche.php?id='.$paiement->id);
+		Header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 		$db->rollback();
 	}
 }
 
-if ($action == 'setnum' && !empty($_POST['num']))
+if ($action == 'setnum' && ! empty($_POST['num']))
 {
-	$paiement = new PaiementFourn($db);
-	$paiement->fetch($id);
-    $res = $paiement->update_num($_POST['num']);
+	$object->fetch($id);
+    $res = $object->update_num($_POST['num']);
 	if ($res === 0)
 	{
 		$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
@@ -115,12 +115,11 @@ if ($action == 'setnum' && !empty($_POST['num']))
 	}
 }
 
-if ($action == 'setdate' && !empty($_POST['dateday']))
+if ($action == 'setdate' && ! empty($_POST['dateday']))
 {
-	$paiement = new PaiementFourn($db);
-	$paiement->fetch($id);
+	$object->fetch($id);
     $datepaye = dol_mktime(12, 0, 0, $_POST['datemonth'], $_POST['dateday'], $_POST['dateyear']);
-	$res = $paiement->update_date($datepaye);
+	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
 		$mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
@@ -138,7 +137,7 @@ if ($action == 'setdate' && !empty($_POST['dateday']))
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 $h=0;
 
@@ -154,8 +153,7 @@ $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans('SupplierPayment'), 0, 'payment');
 
-$paiement = new PaiementFourn($db);
-$result=$paiement->fetch($id);
+$result=$object->fetch($id);
 if ($result > 0)
 {
 	/*
@@ -163,7 +161,7 @@ if ($result > 0)
 	 */
 	if ($action == 'delete')
 	{
-		$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -172,48 +170,48 @@ if ($result > 0)
 	 */
 	if ($action == 'valide')
 	{
-		$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
 		if ($ret == 'html') print '<br>';
 	}
 
 	print '<table class="border" width="100%">';
 
 	print '<tr>';
-	print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+	print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">'.$object->id.'</td></tr>';
 
 	// Date payment
-    print '<tr><td valign="top" colspan="2">'.$html->editfieldkey("Date",'date',$paiement->date,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $html->editfieldval("Date",'date',$paiement->date,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
+    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Date",'date',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Date",'date',$object->date,'id',$object->id,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
     print '</td></tr>';
 
 	// Payment mode
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
+	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$object->type_libelle.'</td></tr>';
 
 	// Payment numero
-    print '<tr><td valign="top" colspan="2">'.$html->editfieldkey("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $html->editfieldval("Numero",'num',$paiement->numero,'id',$paiement->id,$paiement->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
+    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Numero",'num',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Numero",'num',$object->numero,'id',$object->id,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
     print '</td></tr>';
 
 	// Amount
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 	{
-		print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$paiement->getLibStatut(4).'</td></tr>';
+		print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 	}
 
 	// Note
-    print '<tr><td valign="top"" colspan="2">'.$html->editfieldkey("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $html->editfieldval("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->fournisseur->facture->creer,'text');
+    print '<tr><td valign="top"" colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Note",'note',$object->note,'id',$object->id,$user->rights->fournisseur->facture->creer,'text');
     print '</td></tr>';
 
     // Bank account
 	if ($conf->banque->enabled)
 	{
-		if ($paiement->bank_account)
+		if ($object->bank_account)
 		{
             $bankline=new AccountLine($db);
-            $bankline->fetch($paiement->bank_line);
+            $bankline->fetch($object->bank_line);
 
             print '<tr>';
             print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
@@ -237,7 +235,7 @@ if ($result > 0)
 	$sql = 'SELECT f.rowid as ref, f.facnumber as ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.rowid as socid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
-	$sql .= ' AND pf.fk_paiementfourn = '.$paiement->id;
+	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -310,20 +308,20 @@ if ($result > 0)
 	print '<div class="tabsAction">';
 	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 	{
-		if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
+		if ($user->societe_id == 0 && $object->statut == 0 && $action == '')
 		{
 			if ($user->rights->fournisseur->facture->valider)
 			{
-				print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 
 			}
 		}
 	}
-	if ($user->societe_id == 0 && $allow_delete && $paiement->statut == 0 && $_GET['action'] == '')
+	if ($user->societe_id == 0 && $allow_delete && $object->statut == 0 && $action == '')
 	{
 		if ($user->rights->fournisseur->facture->supprimer)
 		{
-			print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
 		}
 	}

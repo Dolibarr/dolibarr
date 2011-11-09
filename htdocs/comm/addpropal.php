@@ -62,7 +62,7 @@ llxHeader();
 
 print_fiche_titre($langs->trans("NewProp"));
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 // Add new proposal
@@ -137,7 +137,7 @@ if ($_GET["action"] == 'create')
 
 	// Contacts
 	print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
-	$html->select_contacts($soc->id,$setcontact,'contactidp',1);
+	$form->select_contacts($soc->id,$setcontact,'contactidp',1);
 	print '</td></tr>';
 
 	// Ligne info remises tiers
@@ -153,7 +153,7 @@ if ($_GET["action"] == 'create')
 
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
-	$html->select_date('','','','','',"addprop");
+	$form->select_date('','','','','',"addprop");
 	print '</td></tr>';
 
 	// Validaty duration
@@ -161,22 +161,22 @@ if ($_GET["action"] == 'create')
 
 	// Terms of payment
 	print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
+	$form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+	$form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
 
 	// What trigger creation
     print '<tr><td>'.$langs->trans('Source').'</td><td>';
-    $html->select_demand_reason($propal->demand_reason,'demand_reason_id',"SRC_PROP",1);
+    $form->select_demand_reason($propal->demand_reason,'demand_reason_id',"SRC_PROP",1);
     print '</td></tr>';
 
 	// Delivery delay
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $html->select_availability($propal->availability,'availability_id','',1);
+    $form->select_availability($propal->availability,'availability_id','',1);
     print '</td></tr>';
 
 	// Delivery date (or manufacturing)
@@ -188,12 +188,12 @@ if ($_GET["action"] == 'create')
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
-		$html->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
+		$form->select_date($syear."-".$smonth."-".$sday,'liv_','','','',"addprop");
 	}
 	else
 	{
 		$datepropal=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
-		$html->select_date($datepropal,'liv_','','','',"addprop");
+		$form->select_date($datepropal,'liv_','','','',"addprop");
 	}
 	print '</td></tr>';
 
@@ -202,7 +202,7 @@ if ($_GET["action"] == 'create')
 	{
 		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
 		print '<td colspan="3">';
-		$numaddress = $html->select_address($soc->fk_delivery_address, $_GET['socid'],'fk_address',1);
+		$numaddress = $form->select_address($soc->fk_delivery_address, $_GET['socid'],'fk_address',1);
 		if ($numaddress==0)
 		{
 			print ' &nbsp; <a href=../comm/address.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
@@ -215,7 +215,7 @@ if ($_GET["action"] == 'create')
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
 	$liste=ModelePDFPropales::liste_modeles($db);
-	print $html->selectarray('model',$liste,$conf->global->PROPALE_ADDON_PDF);
+	print $form->selectarray('model',$liste,$conf->global->PROPALE_ADDON_PDF);
 	print "</td></tr>";
 
 	// Project
@@ -284,7 +284,7 @@ if ($_GET["action"] == 'create')
 				$liste_propal[$row[0]]=$propalRefAndSocName;
 				$i++;
 			}
-			print $html->selectarray("copie_propal",$liste_propal, 0);
+			print $form->selectarray("copie_propal",$liste_propal, 0);
 		}
 		else
 		{
@@ -316,9 +316,9 @@ if ($_GET["action"] == 'create')
 				print '<tr><td>';
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-				$html->select_produits('',"idprod".$i,'',$conf->product->limit_size,$soc->price_level);
+				$form->select_produits('',"idprod".$i,'',$conf->product->limit_size,$soc->price_level);
 				else
-				$html->select_produits('',"idprod".$i,'',$conf->product->limit_size);
+				$form->select_produits('',"idprod".$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
 				print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_client.'">%</td>';

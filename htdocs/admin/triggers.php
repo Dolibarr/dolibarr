@@ -40,7 +40,7 @@ if (!$user->admin)
 
 llxHeader("","");
 
-$html = new Form($db);
+$form = new Form($db);
 
 print_fiche_titre($langs->trans("TriggersAvailable"),'','setup');
 

@@ -47,7 +47,7 @@ if ($user->societe_id > 0)
  */
 
 $commandestatic=new Commande($db);
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo Pedidos de clientes";
 
