@@ -503,6 +503,12 @@ foreach($mainmenuusedarray as $key => $val)
 
 /* Login */
 
+table.login {
+    -moz-box-shadow: 4px 4px 4px #CCC;
+    -webkit-box-shadow: 4px 4px 4px #CCC;
+    box-shadow: 4px 4px 4px #CCC;
+}
+
 div.login_block {
 	position: absolute;
 	<?php print $right; ?>: 5px;
