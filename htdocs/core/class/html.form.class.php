@@ -1315,11 +1315,12 @@ class Form
     /**
      *	Return list of products for customer in Ajax if Ajax activated or go to select_produits_fournisseurs_do
      *
-     *	@param		socid			Id third party
-     *	@param     	selected        Preselected product
-     *	@param     	htmlname        Name of HTML Select
-     *  @param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *	@param     	filtre          For a SQL filter
+     *	@param	int		$socid			Id third party
+     *	@param  string	$selected        Preselected product
+     *	@param  string	$htmlname        Name of HTML Select
+     *  @param	string	$filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+     *	@param  string	$filtre          For a SQL filter
+     *	@return	void
      */
     function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtertype='',$filtre)
     {
@@ -1327,7 +1328,7 @@ class Form
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=2 means suppliers products
-            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', ($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
             print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
             print '<br>';
         }
@@ -1385,7 +1386,7 @@ class Form
         $outselect='';
         $outjson=array();
 
-        dol_syslog("Form::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -1399,14 +1400,11 @@ class Form
             $i = 0;
             while ($i < $num)
             {
-                $outkey='';
-                $outval='';
-                $outref='';
-
                 $objp = $this->db->fetch_object($result);
 
                 $outkey=$objp->idprodfournprice;
                 $outref=$objp->ref;
+                $outval='';
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
                 if ($selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
