@@ -26,6 +26,8 @@ include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 $langs->load("admin");
 
 $action=GETPOST('action');
+$confirm=GETPOST('confirm');
+$choice=GETPOST('choice');
 
 if (! $user->admin) accessforbidden();
 
@@ -43,11 +45,11 @@ if ($conf->syslog->enabled)
 /*
  *	Actions
  */
-if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice"]) && ($_REQUEST["choice"] != 'allfiles' || $_REQUEST["confirm"] == 'yes') )
+if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allfiles' || $confirm == 'yes') )
 {
 	$filesarray=array();
 
-	if ($_REQUEST["choice"]=='tempfiles')
+	if ($choice=='tempfiles')
 	{
 		// Delete temporary files
 		if ($dolibarr_main_data_root)
@@ -56,16 +58,16 @@ if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice
 		}
 	}
 
-	if ($_REQUEST["choice"]=='allfiles')
+	if ($choice=='allfiles')
 	{
 		// Delete all files
 		if ($dolibarr_main_data_root)
 		{
-			$filesarray=dol_dir_list($dolibarr_main_data_root,"all",0);
+			$filesarray=dol_dir_list($dolibarr_main_data_root,"all",0,'','install\.lock$');
 		}
 	}
 
-	if ($_REQUEST["choice"]=='logfile')
+	if ($choice=='logfile')
 	{
 		$filesarray[]=array('fullname'=>$filelog,'type'=>'file');
 	}
@@ -84,7 +86,7 @@ if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice
 			elseif ($filesarray[$key]['type'] == 'file')
 			{
 				// If (file that is not logfile) or (if logfile with option logfile)
-				if ($filesarray[$key]['fullname'] != $filelog || $_POST["choice"]=='logfile')
+				if ($filesarray[$key]['fullname'] != $filelog || $choice=='logfile')
 				{
 					$count+=dol_delete_file($filesarray[$key]['fullname']);
 				}
@@ -92,7 +94,7 @@ if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice
 		}
 
 		// Update cachenbofdoc
-		if ($conf->ecm->enabled && $_REQUEST["choice"]=='allfiles')
+		if ($conf->ecm->enabled && $choice=='allfiles')
 		{
 			require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
 			$ecmdirstatic = new ECMDirectory($db);
@@ -132,21 +134,21 @@ print '<tr class="border"><td style="padding: 4px">';
 if ($conf->syslog->enabled)
 {
 	print '<input type="radio" name="choice" value="logfile"';
-	print ($_REQUEST["choice"] && $_REQUEST["choice"]=='logfile') ? ' checked="checked"' : '';
+	print ($choice && $choice=='logfile') ? ' checked="checked"' : '';
 	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br><br>';
 }
 
 print '<input type="radio" name="choice" value="tempfiles"';
-print (! $_REQUEST["choice"] || $_REQUEST["choice"]=='tempfiles' || $_REQUEST["choice"]=='allfiles') ? ' checked="checked"' : '';
+print (! $choice || $choice=='tempfiles' || $choice=='allfiles') ? ' checked="checked"' : '';
 print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
 
 print '<input type="radio" name="choice" value="confirm_allfiles"';
-print ($_REQUEST["choice"] && $_REQUEST["choice"]=='confirm_allfiles') ? ' checked="checked"' : '';
+print ($choice && $choice=='confirm_allfiles') ? ' checked="checked"' : '';
 print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
 
 print '</td></tr></table>';
 
-if ($_REQUEST['choice'] != 'confirm_allfiles')
+if ($choice != 'confirm_allfiles')
 {
 	print '<br>';
 	print '<center><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></center>';
@@ -161,7 +163,7 @@ if ($message)
 	print "\n";
 }
 
-if (preg_match('/^confirm/i',$_REQUEST["choice"]))
+if (preg_match('/^confirm/i',$choice))
 {
 	print '<br>';
 	$formquestion=array();

@@ -32,7 +32,7 @@ For developers:
 - New: Add webservice to get or create a product, service.
 - New: Add webservice to get a user.
 - New: Add hooks to change way of showing/editing lines into dictionnaries.
-- New: Add webservice to get or create a prodcut or service.
+- New: Add webservice to get or create a product or service.
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
 - New: Add trigger ACTION_DELETE and ACTION_MODIFY

@@ -62,7 +62,8 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	
 	if ($element == 'fichinter') $element = 'ficheinter';
 	
-	if ($user->rights->$element->lire || $user->rights->$element->read)
+	if ($user->rights->$element->lire || $user->rights->$element->read
+	|| $user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read)
 	{
 		if ($type == 'select')
 		{

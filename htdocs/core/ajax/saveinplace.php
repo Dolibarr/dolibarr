@@ -68,7 +68,8 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 
 	if ($element == 'fichinter') $element = 'ficheinter';
 
-	if ($user->rights->$element->creer || $user->rights->$element->write)
+	if ($user->rights->$element->creer || $user->rights->$element->write
+	|| $user->rights->$element->$subelement->creer || $user->rights->$element->$subelement->write)
 	{
 		// Clean parameters
 		$newvalue = trim($value);

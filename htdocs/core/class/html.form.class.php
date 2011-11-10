@@ -60,9 +60,9 @@ class Form
 	 *
 	 *  @param		DoliDB		$DB      Database handler
      */
-    function Form($DB)
+    public function __construct($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
     }
 
     /**
@@ -257,7 +257,9 @@ class Form
     		{
     		    $tmp=explode(':',$inputType);
     		    $inputType=$tmp[0]; $toolbar=$tmp[1];
-    		    if (! empty($tmp[2])) $savemethod=$tmp[2];
+    		    if (! empty($tmp[2])) $width=$tmp[2];
+    		    if (! empty($tmp[3])) $heigth=$tmp[3];
+    		    if (! empty($tmp[4])) $savemethod=$tmp[4];
     		    
     			if (! empty($conf->fckeditor->enabled))
     			{
