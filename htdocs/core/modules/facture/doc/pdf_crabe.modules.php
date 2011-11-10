@@ -710,7 +710,10 @@ class pdf_crabe extends ModelePDFFactures
 	{
 		global $conf,$mysoc;
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
+        $sign=1;
+        if ($object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
+
+        $default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$tab2_top = $posy;
 		$tab2_hl = 4;
@@ -727,7 +730,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($object->total_ht + $object->remise)), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -753,7 +756,7 @@ class pdf_crabe extends ModelePDFFactures
 					$totalvat.=vatrate($tvakey,1).$tvacompl;
 					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $tvaval), 0, 'R', 1);
 				}
 			}
 
@@ -763,7 +766,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_tva), 0, 'R', 1);
 
 				// Total LocalTax1
 				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on' && $object->total_localtax1>0)
@@ -772,7 +775,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), $useborder, 'L', 1);
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_localtax1), $useborder, 'R', 1);
 				}
 
 				// Total LocalTax2
@@ -782,7 +785,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), $useborder, 'L', 1);
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_localtax2), $useborder, 'R', 1);
 				}
 			}
 			else
@@ -810,7 +813,7 @@ class pdf_crabe extends ModelePDFFactures
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $tvaval), 0, 'R', 1);
 						}
 					}
 				}
@@ -838,7 +841,7 @@ class pdf_crabe extends ModelePDFFactures
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $tvaval), 0, 'R', 1);
 						}
 					}
 				}
@@ -856,7 +859,7 @@ class pdf_crabe extends ModelePDFFactures
 			if ($object->type == 2) $text=$outputlangs->transnoentities("TotalTTCToYourCredit");
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $text, $useborder, 'L', 1);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_ttc), $useborder, 'R', 1);
 		}
 		$pdf->SetTextColor(0,0,0);
 
