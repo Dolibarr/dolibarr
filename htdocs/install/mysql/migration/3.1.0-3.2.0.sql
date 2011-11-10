@@ -11,6 +11,8 @@
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
 
+ALTER TABLE llx_actioncomm ADD COLUMN ref_ext varchar(128) after id;
+
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_availability integer AFTER fk_product_fournisseur;
 
 ALTER TABLE llx_element_element MODIFY COLUMN sourcetype varchar(32) NOT NULL;
