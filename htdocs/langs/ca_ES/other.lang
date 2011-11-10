@@ -206,7 +206,8 @@ SupplierPaymentDoneInDolibarr=Pagament a proveïdor %s en Dolibarr
 MemberValidatedInDolibarr=Membre %s validat en Dolibarr
 MemberResiliatedInDolibarr=Membre %s donat de baixa en Dolibarr
 MemberDeletedInDolibarr=Membre %s eliminat de Dolibarr
-MemberSubscriptionAddedInDolibarr=Subscripció del membre %s afegida a Dolibar
+MemberSubscriptionAddedInDolibarr=Subscripció del membre %s afegida a Dolibarr
+ShipmentValidatedInDolibarr=Expedició %s validada en Dolibarr
 ##### Export #####
 Export=Exportació
 ExportsArea=Àrea d'exportacions
