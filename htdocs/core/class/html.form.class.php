@@ -245,7 +245,7 @@ class Form
 				$inputType=$tmp[0]; $inputOption=$tmp[1];
 				if (! empty($tmp[2])) $savemethod=$tmp[2];
 				
-				$out.= '<input id="timestamp_'.$htmlname.'" type="hidden"/>'."\n"; // Use for timestamp format
+				$out.= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format
 			}
 			else if (preg_match('/^select/',$inputType))
 			{

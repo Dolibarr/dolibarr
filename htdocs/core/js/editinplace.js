@@ -248,10 +248,10 @@ $(document).ready(function() {
 		var fk_element = $( '#fk_element_' + htmlname ).val();
 		var loadmethod = $( '#loadmethod_' + htmlname ).val();
 		var savemethod = $( '#savemethod_' + htmlname ).val();
-		var timestamp = $('#timestamp_' + htmlname ).val();
 		var ext_element = $( '#ext_element_' + htmlname ).val();
 		//var ext_table_element = $( '#ext_table_element_' + htmlname ).val();
 		//var ext_fk_element = $( '#ext_fk_element_' + htmlname ).val();
+		var timestamp = $('#timestamp').val();
 		
 		return {
 			type: type,

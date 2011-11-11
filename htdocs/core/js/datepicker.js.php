@@ -120,7 +120,7 @@ $(document).ready(function() {
 		autoSize: true,
 		changeMonth: true,
 		changeYear: true,
-		altField: '#timeStamp',
+		altField: '#timestamp',
 		altFormat: '@'			// Gives a timestamp dateformat
 	});
 });
