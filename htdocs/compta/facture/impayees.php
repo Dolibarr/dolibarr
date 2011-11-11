@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,21 +34,22 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 $langs->load("bills");
 
-$facid = isset($_GET["facid"])?$_GET["facid"]:'';
-$option = $_REQUEST["option"];
+$id = (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
+$action = GETPOST('action','alpha');
+$option = GETPOST('option');
 
 $diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user,'facture',$facid,'');
+$result = restrictedArea($user,'facture',$id,'');
 
 
 /*
  * Action
  */
 
-if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
+if ($action == "builddoc" && $user->rights->facture->lire)
 {
 	if (is_array($_POST['toGenerate']))
 	{
@@ -142,7 +143,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 ?>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#checkall").click(function() {
 		jQuery(".checkformerge").attr('checked', true);
@@ -161,6 +162,12 @@ jQuery(document).ready(function() {
  ***************************************************************************/
 
 $now=dol_now();
+
+$search_ref = GETPOST("search_ref");
+$search_societe = GETPOST("search_societe");
+$search_montant_ht = GETPOST("search_montant_ht");
+$search_montant_ttc = GETPOST("search_montant_ttc");
+$late = GETPOST("late");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -186,7 +193,7 @@ $sql.= ",".MAIN_DB_PREFIX."facture as f";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
-$sql.= " AND f.type in (0,1) AND f.fk_statut = 1";
+$sql.= " AND f.type IN (0,1) AND f.fk_statut = 1";
 $sql.= " AND f.paye = 0";
 if ($option == 'late')
 {
@@ -204,29 +211,29 @@ if ($_GET["filtre"])
 	}
 }
 
-if ($_REQUEST["search_ref"])
+if ($search_ref)
 {
-	$sql .= " AND f.facnumber like '%".$_REQUEST["search_ref"]."%'";
+	$sql .= " AND f.facnumber LIKE '%".$search_ref."%'";
 }
 
-if ($_REQUEST["search_societe"])
+if ($search_societe)
 {
-	$sql .= " AND s.nom like '%".$_REQUEST["search_societe"]."%'";
+	$sql .= " AND s.nom LIKE '%".$search_societe."%'";
 }
 
-if ($_REQUEST["search_montant_ht"])
+if ($search_montant_ht)
 {
-	$sql .= " AND f.total = '".$_REQUEST["search_montant_ht"]."'";
+	$sql .= " AND f.total = '".$search_montant_ht."'";
 }
 
-if ($_REQUEST["search_montant_ttc"])
+if ($search_montant_ttc)
 {
-	$sql .= " AND f.total_ttc = '".$_REQUEST["search_montant_ttc"]."'";
+	$sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
 }
 
 if (dol_strlen($_POST["sf_ref"]) > 0)
 {
-	$sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
+	$sql .= " AND f.facnumber LIKE '%".$_POST["sf_ref"] . "%'";
 }
 $sql.= " GROUP BY f.facnumber";
 
@@ -252,11 +259,11 @@ if ($result)
 	$param="";
 	$param.=($socid?"&amp;socid=".$socid:"");
 	$param.=($option?"&amp;option=".$option:"");
-	if ($_REQUEST["search_ref"])         $param.='&amp;search_ref='.urlencode($_REQUEST["search_ref"]);
-	if ($_REQUEST["search_societe"])     $param.='&amp;search_societe='.urlencode($_REQUEST["search_societe"]);
-	if ($_REQUEST["search_montant_ht"])  $param.='&amp;search_montant_ht='.urlencode($_REQUEST["search_montant_ht"]);
-	if ($_REQUEST["search_montant_ttc"]) $param.='&amp;search_montant_ttc='.urlencode($_REQUEST["search_montant_ttc"]);
-	if ($_REQUEST["late"])               $param.='&amp;late='.urlencode($_REQUEST["search_late"]);
+	if ($search_ref)         $param.='&amp;search_ref='.urlencode($search_ref);
+	if ($search_societe)     $param.='&amp;search_societe='.urlencode($search_societe);
+	if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
+	if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
+	if ($late)               $param.='&amp;late='.urlencode($late);
 
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource.=str_replace('&amp;','&',$param);
@@ -289,19 +296,19 @@ if ($result)
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 	// Ref
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'"></td>';
+	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$_REQUEST["search_societe"].'">';
+	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_REQUEST["search_montant_ht"].'">';
+	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_REQUEST["search_montant_ttc"].'">';
+	print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
 	print '</td><td class="liste_titre" colspan="2" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
@@ -311,18 +318,16 @@ if ($result)
 	print "</tr>\n";
 	print '</form>';
 
-
-	$facturestatic=new Facture($db);
-
-
 	if ($num > 0)
 	{
 		$var=True;
 		$total_ht=0;
 		$total_ttc=0;
 		$total_paid=0;
+		
+		$facturestatic=new Facture($db);
 
-		print '<form id="form_generate_pdf" method="post" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $_GET['sortfield'] .'&sortorder='. $_GET['sortorder'] .'">';
+		print '<form id="form_generate_pdf" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		while ($i < $num)
@@ -363,14 +368,14 @@ if ($result)
 
 			print "</td>\n";
 
-			print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->df),'day')."</td>\n";
-			print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->datelimite),'day')."</td>\n";
+			print '<td nowrap align="center">'.dol_print_date($db->jdate($objp->df),'day').'</td>'."\n";
+			print '<td nowrap align="center">'.dol_print_date($db->jdate($objp->datelimite),'day').'</td>'."\n";
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
 
-			print "<td align=\"right\">".price($objp->total_ht)."</td>";
-			print "<td align=\"right\">".price($objp->total_ttc)."</td>";
-			print "<td align=\"right\">".price($objp->am)."</td>";
+			print '<td align="right">'.price($objp->total_ht).'</td>';
+			print '<td align="right">'.price($objp->total_ttc).'</td>';
+			print '<td align="right">'.price($objp->am).'</td>';
 
 			// Affiche statut de la facture
 			print '<td align="right" nowrap="nowrap">';
@@ -392,10 +397,10 @@ if ($result)
 		}
 
 		print '<tr class="liste_total">';
-		print "<td colspan=\"4\" align=\"left\">".$langs->trans("Total")."</td>";
-		print "<td align=\"right\"><b>".price($total_ht)."</b></td>";
-		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-		print "<td align=\"right\"><b>".price($total_paid)."</b></td>";
+		print '<td colspan="4" align="left">'.$langs->trans("Total").'</td>';
+		print '<td align="right"><b>'.price($total_ht).'</b></td>';
+		print '<td align="right"><b>'.price($total_ttc).'</b></td>';
+		print '<td align="right"><b>'.price($total_paid).'</b></td>';
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
@@ -403,16 +408,15 @@ if ($result)
 
 	print "</table>";
 
-
 	/*
 	 * Show list of available documents
 	 */
 	$filedir=$diroutputpdf;
-	if ($_REQUEST["search_ref"])         print '<input type="hidden" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
-	if ($_REQUEST["search_societe"])     print '<input type="hidden" name="search_societe" value="'.$_REQUEST["search_societe"].'">';
-	if ($_REQUEST["search_montant_ht"])  print '<input type="hidden" name="search_montant_ht" value="'.$_REQUEST["search_montant_ht"].'">';
-	if ($_REQUEST["search_montant_ttc"]) print '<input type="hidden" name="search_montant_ttc" value="'.$_REQUEST["search_montant_ttc"].'">';
-	if ($_REQUEST["late"])               print '<input type="hidden" name="late" value="'.$_REQUEST["late"].'">';
+	if ($search_ref)         print '<input type="hidden" name="search_ref" value="'.$search_ref.'">';
+	if ($search_societe)     print '<input type="hidden" name="search_societe" value="'.$search_societe.'">';
+	if ($search_montant_ht)  print '<input type="hidden" name="search_montant_ht" value="'.$search_montant_ht.'">';
+	if ($search_montant_ttc) print '<input type="hidden" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
+	if ($late)               print '<input type="hidden" name="late" value="'.$late.'">';
 	$genallowed=$user->rights->facture->lire;
 	$delallowed=$user->rights->facture->lire;
 
@@ -423,8 +427,6 @@ if ($result)
 
 	$db->free();
 }
-
-
 
 $db->close();
 
