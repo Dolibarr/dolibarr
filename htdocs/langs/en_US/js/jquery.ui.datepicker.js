@@ -1,1 +1,0 @@
-/* US initialisation for the jQuery UI date picker plugin. */
