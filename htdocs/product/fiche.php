@@ -820,7 +820,7 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
  * Product card
  */
 
-if ($id || $ref)
+else if ($id || $ref)
 {
 	$product=new Product($db);
 
