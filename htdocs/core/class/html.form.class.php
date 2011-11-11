@@ -41,154 +41,154 @@
  */
 class Form
 {
-    var $db;
-    var $error;
-
-    // Cache arrays
-    var $cache_types_paiements=array();
-    var $cache_conditions_paiements=array();
-    var $cache_availability=array();
+	var $db;
+	var $error;
+	
+	// Cache arrays
+	var $cache_types_paiements=array();
+	var $cache_conditions_paiements=array();
+	var $cache_availability=array();
 	var $cache_demand_reason=array();
 	var $cache_type_fees=array();
-
-    var $tva_taux_value;
-    var $tva_taux_libelle;
-
-
-    /**
-	 *	Constructor
+	
+	var $tva_taux_value;
+	var $tva_taux_libelle;
+	
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+	
+	/**
+	 * Output key field for an editable field
+	 * 
+	 * @param   string	$text			Text of label or key to translate
+	 * @param   string	$htmlname		Name of select field
+	 * @param   string	$preselected	Name of Value to show/edit (not used in this function)
+	 * @param	object	$object			Object
+	 * @param	boolean	$perm			Permission to allow button to edit parameter
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
+	 * @return	string					HTML edit field
+	 */
+	function editfieldkey($text,$htmlname,$preselected,$object,$perm,$typeofdata='string')
+	{
+		global $conf,$langs;
+		
+		$ret='';
+		
+		if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+		{
+			if ($perm)
+			{
+				$tmp=explode(':',$typeofdata);
+				$ret.= '<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
+				$ret.= $langs->trans($text);
+				$ret.= '</div>'."\n";
+			}
+			else
+			{
+				$ret.= $langs->trans($text);
+			}
+		}
+		else
+		{
+			$ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+			$ret.=$langs->trans($text);
+			$ret.='</td>';
+			if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+			$ret.='</tr></table>';
+		}
+		
+		return $ret;
+	}
+	
+	/**
+	 * Output val field for an editable field
+	 * 
+	 * @param	string	$text			Text of label (not used in this function)
+	 * @param	string	$htmlname		Name of select field
+	 * @param	string	$value			Value to show/edit
+	 * @param	object	$object			Object
+	 * @param	boolean	$perm			Permission to allow button to edit parameter
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
+	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
+	 * @param	object	$extObject		External object
+	 * @return  string					HTML edit field
+	 */
+	function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=false)
+	{
+		global $conf,$langs,$db;
+		
+		$ret='';
+		
+		// When option to edit inline is activated
+		if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+		{
+			$ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $extObject);
+		}
+		else
+		{
+			if (GETPOST('action') == 'edit'.$htmlname)
+			{
+				$ret.="\n";
+				$ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+				$ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
+				$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$ret.='<input type="hidden" name="id" value="'.$object->id.'">';
+				$ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+				$ret.='<tr><td>';
+				if (preg_match('/^(string|email|numeric)/',$typeofdata))
+				{
+					$tmp=explode(':',$typeofdata);
+					$ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
+				}
+				else if ($typeofdata == 'text' || $typeofdata == 'textarea' || $typeofdata == 'note')
+				{
+					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
+				}
+				else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
+				{
+					$ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
+				}
+				else if (preg_match('/^ckeditor/',$typeofdata))
+				{
+					$tmp=explode(':',$typeofdata);
+					require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+					$doleditor=new DolEditor($htmlname,($editvalue?$editvalue:$value),($tmp[2]?$tmp[2]:''),($tmp[3]?$tmp[3]:'100'),($tmp[1]?$tmp[1]:'dolibarr_notes'),'In',false,true,true);
+					$ret.=$doleditor->Create(1);
+				}
+				$ret.='</td>';
+				if ($typeofdata != 'day' && $typeofdata != 'datepicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+				$ret.='</tr></table>'."\n";
+				$ret.='</form>'."\n";
+			}
+			else
+			{
+				if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
+				elseif ($typeofdata == 'text' || $typeofdata == 'textarea')  $ret.=dol_htmlentitiesbr($value);
+				else if (preg_match('/^ckeditor/',$typeofdata))
+				{
+					$tmpcontent=dol_htmlentitiesbr($value);
+					$firstline=preg_replace('/<br>.*/','',$tmpcontent);
+					$firstline=preg_replace('/[\n\r].*/','',$firstline);
+					$ret.=$firstline.((strlen($firstline) != strlen($tmpcontent))?'...':'');
+				}
+				else $ret.=$value;
+			}
+		}
+		return $ret;
+	}
+	
+	/**
+	 * Output edit in place form
 	 *
-	 *  @param		DoliDB		$DB      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
-
-    /**
-     * Output key field for an editable field
-     *
-     * @param   string	$text			Text of label or key to translate
-     * @param   string	$htmlname		Name of select field
-     * @param   string	$preselected	Name of Value to show/edit (not used in this function)
-     * @param	object	$object			Object
-     * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
-     * @return	string					HTML edit field
-     */
-    function editfieldkey($text,$htmlname,$preselected,$object,$perm,$typeofdata='string')
-    {
-    	global $conf,$langs;
-
-    	$ret='';
-
-    	if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
-    	{
-    		if ($perm)
-    		{
-    			$tmp=explode(':',$typeofdata);
-    			$ret.= '<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
-    			$ret.= $langs->trans($text);
-    			$ret.= '</div>'."\n";
-    		}
-    		else
-    		{
-    			$ret.= $langs->trans($text);
-    		}
-    	}
-    	else
-    	{
-    		$ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-    		$ret.=$langs->trans($text);
-    		$ret.='</td>';
-    		if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-    		$ret.='</tr></table>';
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Output val field for an editable field
-     *
-     * @param	string	$text			Text of label (not used in this function)
-     * @param	string	$htmlname		Name of select field
-     * @param	string	$value			Value to show/edit
-     * @param	object	$object			Object
-     * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
-     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
-     * @param	object	$extObject		External object
-     * @return  string					HTML edit field
-     */
-    function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=false)
-    {
-        global $conf,$langs,$db;
-        $ret='';
-
-        // When option to edit inline is activated
-        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
-        {
-            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $extObject);
-        }
-        else
-        {
-            if (GETPOST('action') == 'edit'.$htmlname)
-            {
-                $ret.="\n";
-                $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-                $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
-                $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                $ret.='<input type="hidden" name="id" value="'.$object->id.'">';
-                $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-                $ret.='<tr><td>';
-                if (preg_match('/^(string|email|numeric)/',$typeofdata))
-                {
-        		    $tmp=explode(':',$typeofdata);
-                    $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
-                }
-                else if ($typeofdata == 'text' || $typeofdata == 'textarea' || $typeofdata == 'note')
-                {
-                    $ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
-                }
-                else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
-                {
-                    $ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
-                }
-                else if (preg_match('/^ckeditor/',$typeofdata))
-                {
-        		    $tmp=explode(':',$typeofdata);
-                    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-                    $doleditor=new DolEditor($htmlname,($editvalue?$editvalue:$value),($tmp[2]?$tmp[2]:''),($tmp[3]?$tmp[3]:'100'),($tmp[1]?$tmp[1]:'dolibarr_notes'),'In',false,true,true);
-                    $ret.=$doleditor->Create(1);
-                    //$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
-                }
-                $ret.='</td>';
-                if ($typeofdata != 'day' && $typeofdata != 'datepicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-                $ret.='</tr></table>'."\n";
-                $ret.='</form>'."\n";
-            }
-            else
-            {
-                if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
-                elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
-                elseif ($typeofdata == 'text' || $typeofdata == 'textarea')  $ret.=dol_htmlentitiesbr($value);
-                else if (preg_match('/^ckeditor/',$typeofdata))
-                {
-                    $tmpcontent=dol_htmlentitiesbr($value);
-                    $firstline=preg_replace('/<br>.*/','',$tmpcontent);
-                    $firstline=preg_replace('/[\n\r].*/','',$firstline);
-                    $ret.=$firstline.((strlen($firstline) != strlen($tmpcontent))?'...':'');
-                }
-                else $ret.=$value;
-            }
-        }
-        return $ret;
-    }
-
-    /**
-     * Output edit in place form
-     *
      * @param	object	$object			Object
      * @param	string	$value			Value to show/edit
      * @param	string	$htmlname		DIV ID (field name)
@@ -197,139 +197,139 @@ class Form
      * @param	object	$extObject		External object
      * @return	string   		      	HTML edit in place
      */
-    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=false)
-    {
-    	global $conf;
-
-    	$out='';
-
-    	// Check parameters
-    	if ($inputType == 'textarea') $value = dol_nl2br($value);
-    	else if (preg_match('/^numeric/',$inputType)) $value = price($value);
-    	else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
-
-    	if ($condition)
-    	{
-    		$element = false;
-    		$table_element = false;
-    		$fk_element = false;
-    		$loadmethod = false;
-    		$savemethod = false;
-    		$ext_element = false;
-    		//$ext_table_element = false;
-    		//$ext_fk_element = false;
-    		
-    		if (is_object($object))
-    		{
-    			$element = $object->element;
-    			$table_element = $object->table_element;
-    			$fk_element = $object->id;
-    		}
-    		
-    		if (is_object($extObject))
-    		{
-    			$ext_element = $extObject->element;
-    			//$ext_table_element = $extObject->table_element;
-    			//$ext_fk_element = $extObject->id;
-    		}
-    		
-    		if (preg_match('/^(string|email|numeric)/',$inputType))
-    		{
-    		    $tmp=explode(':',$inputType);
-    		    $inputType=$tmp[0]; $inputOption=$tmp[1];
-    		    if (! empty($tmp[2])) $savemethod=$tmp[2];
-    		}
-    	    if (preg_match('/^datepicker/',$inputType))
-    		{
-    			$tmp=explode(':',$inputType);
-    			$inputType=$tmp[0]; $inputOption=$tmp[1];
-    			if (! empty($tmp[2])) $savemethod=$tmp[2];
-    			
-    			$out.= '<input id="timestamp_'.$htmlname.'" type="hidden"/>'."\n"; // Use for timestamp format
-    		}
-    		else if (preg_match('/^select/',$inputType))
-    		{
-    		    $tmp=explode(':',$inputType);
-    		    $inputType=$tmp[0]; $loadmethod=$tmp[1];
-    		    if (! empty($tmp[2])) $savemethod=$tmp[2];
-    		}
-    		else if (preg_match('/^ckeditor/',$inputType))
-    		{
-    		    $tmp=explode(':',$inputType);
-    		    $inputType=$tmp[0]; $toolbar=$tmp[1];
-    		    if (! empty($tmp[2])) $width=$tmp[2];
-    		    if (! empty($tmp[3])) $heigth=$tmp[3];
-    		    if (! empty($tmp[4])) $savemethod=$tmp[4];
-    		    
-    			if (! empty($conf->fckeditor->enabled))
-    			{
-    				$out.= '<input id="ckeditor_toolbar" value="'.$toolbar.'" type="hidden"/>'."\n";
-    			}
-    			else
-    			{
-    				$inputType = 'textarea';
-    			}
-    		}
+	private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=false)
+	{
+		global $conf;
+		
+		$out='';
+		
+		// Check parameters
+		if ($inputType == 'textarea') $value = dol_nl2br($value);
+		else if (preg_match('/^numeric/',$inputType)) $value = price($value);
+		else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
+		
+		if ($condition)
+		{
+			$element = false;
+			$table_element = false;
+			$fk_element = false;
+			$loadmethod = false;
+			$savemethod = false;
+			$ext_element = false;
+			//$ext_table_element = false;
+			//$ext_fk_element = false;
+			
+			if (is_object($object))
+			{
+				$element = $object->element;
+				$table_element = $object->table_element;
+				$fk_element = $object->id;
+			}
+			
+			if (is_object($extObject))
+			{
+				$ext_element = $extObject->element;
+				//$ext_table_element = $extObject->table_element;
+				//$ext_fk_element = $extObject->id;
+			}
+			
+			if (preg_match('/^(string|email|numeric)/',$inputType))
+			{
+				$tmp=explode(':',$inputType);
+				$inputType=$tmp[0]; $inputOption=$tmp[1];
+				if (! empty($tmp[2])) $savemethod=$tmp[2];
+			}
+			if (preg_match('/^datepicker/',$inputType))
+			{
+				$tmp=explode(':',$inputType);
+				$inputType=$tmp[0]; $inputOption=$tmp[1];
+				if (! empty($tmp[2])) $savemethod=$tmp[2];
+				
+				$out.= '<input id="timestamp_'.$htmlname.'" type="hidden"/>'."\n"; // Use for timestamp format
+			}
+			else if (preg_match('/^select/',$inputType))
+			{
+				$tmp=explode(':',$inputType);
+				$inputType=$tmp[0]; $loadmethod=$tmp[1];
+				if (! empty($tmp[2])) $savemethod=$tmp[2];
+			}
+			else if (preg_match('/^ckeditor/',$inputType))
+			{
+				$tmp=explode(':',$inputType);
+				$inputType=$tmp[0]; $toolbar=$tmp[1];
+				if (! empty($tmp[2])) $width=$tmp[2];
+				if (! empty($tmp[3])) $heigth=$tmp[3];
+				if (! empty($tmp[4])) $savemethod=$tmp[4];
+				
+				if (! empty($conf->fckeditor->enabled))
+				{
+					$out.= '<input id="ckeditor_toolbar" value="'.$toolbar.'" type="hidden"/>'."\n";
+				}
+				else
+				{
+					$inputType = 'textarea';
+				}
+			}
+			
+			$out.= '<input id="element_'.$htmlname.'" value="'.$element.'" type="hidden"/>'."\n";
+			$out.= '<input id="table_element_'.$htmlname.'" value="'.$table_element.'" type="hidden"/>'."\n";
+			$out.= '<input id="fk_element_'.$htmlname.'" value="'.$fk_element.'" type="hidden"/>'."\n";
+			$out.= '<input id="loadmethod_'.$htmlname.'" value="'.$loadmethod.'" type="hidden"/>'."\n";
+			$out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
+			$out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
+			//$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
+			//$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
+			
+			$out.= '<div id="val_'.$htmlname.'" class="editval_'.$inputType.'">'.$value.'</div>'."\n";
+		}
+		else
+		{
+			$out = $value;
+		}
+		
+		return $out;
+	}
 	
-    		$out.= '<input id="element_'.$htmlname.'" value="'.$element.'" type="hidden"/>'."\n";
-    		$out.= '<input id="table_element_'.$htmlname.'" value="'.$table_element.'" type="hidden"/>'."\n";
-    		$out.= '<input id="fk_element_'.$htmlname.'" value="'.$fk_element.'" type="hidden"/>'."\n";
-    		$out.= '<input id="loadmethod_'.$htmlname.'" value="'.$loadmethod.'" type="hidden"/>'."\n";
-    		$out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
-    		$out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
-    		//$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
-    		//$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
-    		
-    		$out.= '<div id="val_'.$htmlname.'" class="editval_'.$inputType.'">'.$value.'</div>'."\n";
-    	}
-    	else
-    	{
-    		$out = $value;
-    	}
-
-    	return $out;
-    }
-
-    /**
-     *	Show a text and picto with tooltip on text or picto
-     *
-     *	@param  text				Text to show
-     *	@param  htmltext	    	Content html of tooltip. Must be HTML/UTF8 encoded.
-     *	@param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
-     *	@param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
-     *	@param	img					Code img du picto (use img_xxx() function to get it)
-     *  @param  extracss            Add a CSS style to td tags
-     *  @param  notabs              Do not include table and tr tags
-     *  @param  incbefore			Include code before the text
-     *  @param  noencodehtmltext    Do not encode into html entity the htmltext
-     *	@return	string				Code html du tooltip (texte+picto)
-     * 	@see	Use function textwithpicto if you can.
-     */
-    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='',$noencodehtmltext=0)
-    {
-        global $conf;
-
-        if ($incbefore) $text = $incbefore.$text;
-        if (! $htmltext) return $text;
-
-        // Sanitize tooltip
-        $htmltext=str_replace("\\","\\\\",$htmltext);
-        $htmltext=str_replace("\r","",$htmltext);
-        $htmltext=str_replace("\n","",$htmltext);
-
-       	$htmltext=str_replace('"',"&quot;",$htmltext);
-       	if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
-        else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-       	if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
-        else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-
-       	$s="";
-        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
-        if ($direction > 0)
-        {
-        	if ($text != '')
-        	{
-        		$s.='<td'.$paramfortooltiptd.'>'.$text;
+	/**
+	 *	Show a text and picto with tooltip on text or picto
+	 *
+	 *	@param	string		$text				Text to show
+	 *	@param	string		$htmltext			Content html of tooltip. Must be HTML/UTF8 encoded.
+	 *	@param	int			$tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
+	 *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
+	 *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
+	 *	@param	string		$extracss			Add a CSS style to td tags
+	 *	@param	int			$notabs				Do not include table and tr tags
+	 *	@param	string		$incbefore			Include code before the text
+	 *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
+	 *	@return	string							Code html du tooltip (texte+picto)
+	 *	@see	Use function textwithpicto if you can.
+	 */
+	function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='',$noencodehtmltext=0)
+	{
+		global $conf;
+		
+		if ($incbefore) $text = $incbefore.$text;
+		if (! $htmltext) return $text;
+		
+		// Sanitize tooltip
+		$htmltext=str_replace("\\","\\\\",$htmltext);
+		$htmltext=str_replace("\r","",$htmltext);
+		$htmltext=str_replace("\n","",$htmltext);
+		
+		$htmltext=str_replace('"',"&quot;",$htmltext);
+		if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
+		else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
+		if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
+		else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
+		
+		$s="";
+		if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
+		if ($direction > 0)
+		{
+			if ($text != '')
+			{
+				$s.='<td'.$paramfortooltiptd.'>'.$text;
 				if ($direction) $s.='&nbsp;';
 				$s.='</td>';
 			}
@@ -346,9 +346,9 @@ class Form
 			}
 		}
 		if (empty($notabs)) $s.='</tr></table>';
-
-        return $s;
-    }
+		
+		return $s;
+	}
 
     /**
      *	Show a text with a picto and a tooltip on picto
