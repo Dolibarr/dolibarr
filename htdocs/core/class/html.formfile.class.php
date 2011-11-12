@@ -439,11 +439,16 @@ class FormFile
             $file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.($png?'|'.$png:''),'date',SORT_DESC);
 
             // Affiche en-tete tableau si non deja affiche
-            if (count($file_list) && ! $headershown && !$iconPDF)
+            if (! empty($file_list) && ! $headershown && ! $iconPDF)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>';
                 $out.= '<table class="border" summary="listofdocumentstable" width="100%">';
+            }
+            else if (empty($file_list) && ! empty($iconPDF))
+            {
+            	// For ajax treatment
+            	$out.= '<div id="gen_pdf_'.$filename.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
             }
 
             // Loop on each file found
@@ -458,15 +463,15 @@ class FormFile
                 if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
                 if ($modulepart == 'export')              { $relativepath = $file["name"]; }
 
-                if (!$iconPDF) $out.= "<tr ".$bc[$var].">";
+                if (! $iconPDF) $out.= "<tr ".$bc[$var].">";
 
                 // Show file name with link to download
-                if (!$iconPDF) $out.= '<td nowrap="nowrap">';
+                if (! $iconPDF) $out.= '<td nowrap="nowrap">';
                 $out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
                 $mime=dol_mimetype($relativepath,'',0);
                 if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
                 $out.= '>';
-                if (!$iconPDF)
+                if (! $iconPDF)
                 {
                     $out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
                 }
@@ -474,12 +479,15 @@ class FormFile
                 {
                     $out.= img_pdf($file["name"],2);
                 }
-                $out.= '</a>';
-                if (!$iconPDF) $out.= '</td>';
-                // Affiche taille fichier
-                if (!$iconPDF) $out.= '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
-                // Affiche date fichier
-                if (!$iconPDF) $out.= '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+                $out.= '</a>'."\n";
+                if (! $iconPDF)
+                {
+                	$out.= '</td>';
+                	// Show file size
+                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
+                	// Show file date
+                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+                }
 
                 if ($delallowed)
                 {
@@ -489,7 +497,7 @@ class FormFile
                     $out.= '">'.img_delete().'</a></td>';
                 }
 
-                if (!$iconPDF) $out.= '</tr>';
+                if (! $iconPDF) $out.= '</tr>';
 
                 $this->numoffiles++;
             }

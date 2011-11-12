@@ -144,12 +144,12 @@ $formfile = new FormFile($db);
 
 ?>
 <script type="text/javascript">
-jQuery(document).ready(function() {
-	jQuery("#checkall").click(function() {
-		jQuery(".checkformerge").attr('checked', true);
+$(document).ready(function() {
+	$("#checkall").click(function() {
+		$(".checkformerge").attr('checked', true);
 	});
-	jQuery("#checknone").click(function() {
-		jQuery(".checkformerge").attr('checked', false);
+	$("#checknone").click(function() {
+		$(".checkformerge").attr('checked', false);
 	});
 });
 </script>
