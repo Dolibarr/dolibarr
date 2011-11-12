@@ -111,7 +111,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
     	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
     	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    	dol_delete_file($file,0,0,0,'FILE_DELETE',$object);
+    	dol_delete_file($file,0,0,0,$object);
     	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
     }
 }
