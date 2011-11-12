@@ -9,8 +9,8 @@ Calendars=Calendarios
 AffectedTo=Asignada a
 DoneBy=Realizado por
 Events=Eventos
-ListOfActions=Listado de eventos
 EventOnFullDay=Evento para todo el día
+ListOfActions=Listado de eventos
 Location=Localización
 SearchAnAction=Buscar un evento/tarea
 MenuToDoActions=Eventos incompletos
@@ -37,7 +37,6 @@ PropalValidatedInDolibarr=Presupuesto %s validado
 InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceBackToDraftInDolibarr=Factura %s devuelta a borrador
 OrderValidatedInDolibarr=Pedido %s validado
-OrderApprovedInDolibarr=Pedido %s aprobado
 InterventionValidatedInDolibarr=Intervención %s validada
 ProposalSentByEMail=Presupuesto %s enviado por e-mail
 OrderSentByEMail=Pedido de cliente %s enviado por e-mail
@@ -60,8 +59,9 @@ AgendaUrlOptions4=<b>logint=%s</b> para restringir inserciones a acciones que af
 AgendaUrlOptions5=<b>logind=%s</b> para restringir inserciones a acciones realizadas por el usuario <b>%s</b>.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
+
+# External Sites ical
 ExtSites=Calendarios externos
-# External Sites ical=undefined
 ExtSitesEnableThisTool=Mostrar calendarios externos en la agenda
 ExtSitesNbOfAgenda=Número de calendarios
 AgendaExtNb=Calendario nº %s

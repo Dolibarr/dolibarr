@@ -366,7 +366,6 @@ elseif ($action == 'edit')
 
     $menu = new Menubase($db);
     $result=$menu->fetch($_GET['menuId']);
-    //var_dump($menu);
 
     // Id
     print '<tr><td>'.$langs->trans('Id').'</td><td>'.$menu->id.'</td><td>'.$langs->trans('DetailId').'</td></tr>';
