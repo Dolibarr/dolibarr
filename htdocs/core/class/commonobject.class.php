@@ -1356,14 +1356,13 @@ abstract class CommonObject
 	}
 
     /**
-     *	Fetch array of objects linked to current object. Links are loaded into this->linked_object array.
+     * 	   Fetch array of objects linked to current object. Links are loaded into this->linked_object array.
      *
-     *	@param	int		$sourceid		Object source id
-     *	@param  string	$sourcetype		Object source type
-     *	@param  int		$targetid		Object target id
-     *	@param  string	$targettype		Object target type
-     *	@param  string	$clause			OR, AND clause
-     *	@return	void
+     *     @param  sourceid
+     *     @param  sourcetype
+     *     @param  targetid
+     *     @param  targettype
+     *     @param  clause			OR, AND
      */
     function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
     {
@@ -1437,27 +1436,27 @@ abstract class CommonObject
                     if ($objecttype == 'facture')			{
                         $classpath = 'compta/facture/class';
                     }
-                    else if ($objecttype == 'propal')			{
+                    if ($objecttype == 'propal')			{
                         $classpath = 'comm/propal/class';
                     }
-                    else if ($objecttype == 'shipping')			{
+                    if ($objecttype == 'shipping')			{
                         $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
                     }
-                    else if ($objecttype == 'delivery')			{
+                    if ($objecttype == 'delivery')			{
                         $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
                     }
-                    else if ($objecttype == 'invoice_supplier')	{
+                    if ($objecttype == 'invoice_supplier')	{
                         $classpath = 'fourn/class';
                     }
-                    else if ($objecttype == 'order_supplier')	{
+                    if ($objecttype == 'order_supplier')	{
                         $classpath = 'fourn/class';
                     }
-                    else if ($objecttype == 'fichinter')			{
+                    if ($objecttype == 'fichinter')			{
                         $classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
                     }
 
                     // TODO ajout temporaire - MAXIME MANGIN
-                    else if ($objecttype == 'contratabonnement')	{
+                    if ($objecttype == 'contratabonnement')	{
                         $classpath = 'contrat/class'; $subelement = 'contrat'; $module = 'contratabonnement';
                     }
 
@@ -1465,7 +1464,7 @@ abstract class CommonObject
                     if ($objecttype == 'invoice_supplier') {
                         $classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
                     }
-                    else if ($objecttype == 'order_supplier')   {
+                    if ($objecttype == 'order_supplier')   {
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
 

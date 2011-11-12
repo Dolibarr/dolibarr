@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - other
+# Dolibarr language file - es_ES - other 
 CHARSET=UTF-8
 SecurityCode=Código seguridad
 Calendar=Calendario
@@ -45,6 +45,7 @@ AttachANewFile=Adjuntar nuevo archivo/documento
 LinkedObject=Objeto adjuntado
 Miscellanous=Diversos
 NbOfActiveNotifications=Número notificaciones
+
 PredefinedMailTest=Esto es un correo de prueba.\nLas 2 líneas están separadas por un retorno de carro a la línea.
 PredefinedMailTestHtml=Esto es un e-mail de <b>prueba</b>(la palabra prueba debe de estar en negrita).<br>Las 2 líneas están separadas por un retorno de carro en la línea
 PredefinedMailContentSendInvoice=Le adjuntamos la factura __FACREF__\n\nCordialmente\n\n
@@ -183,6 +184,11 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar un URL http externo o un URL
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elegir si debe abrirse la página en una nueva ventana o en la actual
 BookmarksManagement=Gestión de marcadores
 ListOfBookmarks=Listado de marcadores
+##### Webcal #####
+LoginWebcal=Login Webcalendar
+ErrorWebcalLoginNotDefined=El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
+##### Phenix #####
+ErrorPhenixLoginNotDefined=El login Phenix asociado a su cuenta Dolibarr <b>%s</b>  no está definido
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario
 NewCompanyToDolibarr=Empresa %s insertada en Dolibarr
@@ -202,7 +208,6 @@ MemberValidatedInDolibarr=Miembro %s validado en Dolibarr
 MemberResiliatedInDolibarr=Miembro %s dado de baja en Dolibarr
 MemberDeletedInDolibarr=Miembro %s eliminado de Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscripción del miembro % añadida en Dolibarr
-ShipmentValidatedInDolibarr=Expedición %s validada en Dolibarr
 ##### Export #####
 Export=Exportación
 ExportsArea=Área de exportaciones

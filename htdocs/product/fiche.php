@@ -809,7 +809,7 @@ else
      * Product card
      */
 
-    else if ($id || $ref)
+    if ($id || $ref)
     {
         $object=new Product($db);
         $object->fetch($id,$ref);
@@ -834,13 +834,13 @@ else
             print '<table class="border" width="100%">';
 
             // Ref
-            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$object->ref.'"></td></tr>';
+            print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$object->ref.'"></td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$object->libelle.'"></td></tr>';
+            print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$object->libelle.'"></td></tr>';
 
             // Status
-            print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
+            print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
             print '<select class="flat" name="statut">';
             if ($object->status)
             {
@@ -856,7 +856,7 @@ else
             print '</td></tr>';
 
             // To Buy
-            print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
+            print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
             print '<select class="flat" name="statut_buy">';
             if ($object->status_buy)
             {
