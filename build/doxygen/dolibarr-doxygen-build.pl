@@ -17,7 +17,7 @@ use Cwd;
 my $dir = getcwd;
     
 print "Current dir is: $dir\n";
-print "Running dir for doxygen must be: $DIR/doxygen\n";
+print "Running dir for doxygen must be: $DIR\n";
 
 if (! -s $CONFFILE)
 {
