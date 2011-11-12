@@ -73,7 +73,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 function test_sql_and_script_inject($val, $type)
 {
 	$sql_inj = 0;
-	// For SQL Injection (onyl GET and POST are used to be included into bad escaped SQL requests)
+	// For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
 	if ($type != 2)
 	{
     	$sql_inj += preg_match('/delete[\s]+from/i', $val);
