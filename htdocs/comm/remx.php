@@ -32,6 +32,8 @@ $langs->load("orders");
 $langs->load("bills");
 $langs->load("companies");
 
+$action=GETPOST('action');
+
 // Security check
 $socid = GETPOST("id");
 if ($user->societe_id > 0)
@@ -50,7 +52,7 @@ if (GETPOST('cancel') && GETPOST('backtopage'))
      exit;
 }
 
-if (GETPOST("action") == 'confirm_split' && GETPOST("confirm") == 'yes')
+if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -127,7 +129,7 @@ if (GETPOST("action") == 'confirm_split' && GETPOST("confirm") == 'yes')
 	}
 }
 
-if (GETPOST("action") == 'setremise')
+if ($action == 'setremise')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -145,13 +147,13 @@ if (GETPOST("action") == 'setremise')
 		{
 			$soc = new Societe($db);
 			$soc->fetch($_GET["id"]);
-			$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
+			$discountid=$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
 
-			if ($result > 0)
+			if ($discountid > 0)
 			{
 			    if (GETPOST("backtopage"))
 			    {
-			        Header("Location: ".GETPOST("backtopage"));
+			        Header("Location: ".GETPOST("backtopage").'&discountid='.$discountid);
 			        exit;
 			    }
 				else

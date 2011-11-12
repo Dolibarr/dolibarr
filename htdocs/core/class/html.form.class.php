@@ -43,31 +43,31 @@ class Form
 {
 	var $db;
 	var $error;
-	
+
 	// Cache arrays
 	var $cache_types_paiements=array();
 	var $cache_conditions_paiements=array();
 	var $cache_availability=array();
 	var $cache_demand_reason=array();
 	var $cache_type_fees=array();
-	
+
 	var $tva_taux_value;
 	var $tva_taux_libelle;
-	
-	
+
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param		DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
 	}
-	
+
 	/**
 	 * Output key field for an editable field
-	 * 
+	 *
 	 * @param   string	$text			Text of label or key to translate
 	 * @param   string	$htmlname		Name of select field
 	 * @param   string	$preselected	Name of Value to show/edit (not used in this function)
@@ -79,9 +79,9 @@ class Form
 	function editfieldkey($text,$htmlname,$preselected,$object,$perm,$typeofdata='string')
 	{
 		global $conf,$langs;
-		
+
 		$ret='';
-		
+
 		if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
 		{
 			if ($perm)
@@ -104,13 +104,13 @@ class Form
 			if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
 			$ret.='</tr></table>';
 		}
-		
+
 		return $ret;
 	}
-	
+
 	/**
 	 * Output val field for an editable field
-	 * 
+	 *
 	 * @param	string	$text			Text of label (not used in this function)
 	 * @param	string	$htmlname		Name of select field
 	 * @param	string	$value			Value to show/edit
@@ -124,9 +124,9 @@ class Form
 	function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=false)
 	{
 		global $conf,$langs,$db;
-		
+
 		$ret='';
-		
+
 		// When option to edit inline is activated
 		if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
 		{
@@ -185,7 +185,7 @@ class Form
 		}
 		return $ret;
 	}
-	
+
 	/**
 	 * Output edit in place form
 	 *
@@ -200,14 +200,14 @@ class Form
 	private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=false)
 	{
 		global $conf;
-		
+
 		$out='';
-		
+
 		// Check parameters
 		if ($inputType == 'textarea') $value = dol_nl2br($value);
 		else if (preg_match('/^numeric/',$inputType)) $value = price($value);
 		else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
-		
+
 		if ($condition)
 		{
 			$element = false;
@@ -218,21 +218,21 @@ class Form
 			$ext_element = false;
 			//$ext_table_element = false;
 			//$ext_fk_element = false;
-			
+
 			if (is_object($object))
 			{
 				$element = $object->element;
 				$table_element = $object->table_element;
 				$fk_element = $object->id;
 			}
-			
+
 			if (is_object($extObject))
 			{
 				$ext_element = $extObject->element;
 				//$ext_table_element = $extObject->table_element;
 				//$ext_fk_element = $extObject->id;
 			}
-			
+
 			if (preg_match('/^(string|email|numeric)/',$inputType))
 			{
 				$tmp=explode(':',$inputType);
@@ -244,7 +244,7 @@ class Form
 				$tmp=explode(':',$inputType);
 				$inputType=$tmp[0]; $inputOption=$tmp[1];
 				if (! empty($tmp[2])) $savemethod=$tmp[2];
-				
+
 				$out.= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format
 			}
 			else if (preg_match('/^select/',$inputType))
@@ -260,7 +260,7 @@ class Form
 				if (! empty($tmp[2])) $width=$tmp[2];
 				if (! empty($tmp[3])) $heigth=$tmp[3];
 				if (! empty($tmp[4])) $savemethod=$tmp[4];
-				
+
 				if (! empty($conf->fckeditor->enabled))
 				{
 					$out.= '<input id="ckeditor_toolbar" value="'.$toolbar.'" type="hidden"/>'."\n";
@@ -270,7 +270,7 @@ class Form
 					$inputType = 'textarea';
 				}
 			}
-			
+
 			$out.= '<input id="element_'.$htmlname.'" value="'.$element.'" type="hidden"/>'."\n";
 			$out.= '<input id="table_element_'.$htmlname.'" value="'.$table_element.'" type="hidden"/>'."\n";
 			$out.= '<input id="fk_element_'.$htmlname.'" value="'.$fk_element.'" type="hidden"/>'."\n";
@@ -279,17 +279,17 @@ class Form
 			$out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
 			//$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
 			//$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
-			
+
 			$out.= '<div id="val_'.$htmlname.'" class="editval_'.$inputType.'">'.$value.'</div>'."\n";
 		}
 		else
 		{
 			$out = $value;
 		}
-		
+
 		return $out;
 	}
-	
+
 	/**
 	 *	Show a text and picto with tooltip on text or picto
 	 *
@@ -308,21 +308,21 @@ class Form
 	function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='',$noencodehtmltext=0)
 	{
 		global $conf;
-		
+
 		if ($incbefore) $text = $incbefore.$text;
 		if (! $htmltext) return $text;
-		
+
 		// Sanitize tooltip
 		$htmltext=str_replace("\\","\\\\",$htmltext);
 		$htmltext=str_replace("\r","",$htmltext);
 		$htmltext=str_replace("\n","",$htmltext);
-		
+
 		$htmltext=str_replace('"',"&quot;",$htmltext);
 		if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
 		else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 		if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
 		else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-		
+
 		$s="";
 		if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
 		if ($direction > 0)
@@ -346,7 +346,7 @@ class Form
 			}
 		}
 		if (empty($notabs)) $s.='</tr></table>';
-		
+
 		return $s;
 	}
 
@@ -2701,17 +2701,17 @@ class Form
 
 
     /**
-     *    	Show a select box with available absolute discounts
+     *	Show a select box with available absolute discounts
      *
-     *    	@param      page        	Page URL where form is shown
-     *    	@param      selected    	Value pre-selected
-     *		@param      htmlname    	Nom du formulaire select. Si none, non modifiable
-     *		@param		socid			Third party id
-     * 		@param		amount			Total amount available
-     * 	  	@param		filter			SQL filter on discounts
-     * 	  	@param		maxvalue		Max value for lines that can be selected
-     *      @param      more            More string to add
-     *    @return	void
+     *  @param  string	$page        	Page URL where form is shown
+     *  @param  int		$selected    	Value pre-selected
+     *	@param  string	$htmlname    	Nom du formulaire select. Si none, non modifiable
+     *	@param	int		$socid			Third party id
+     * 	@param	float	$amount			Total amount available
+     * 	@param	string	$filter			SQL filter on discounts
+     * 	@param	int		$maxvalue		Max value for lines that can be selected
+     *  @param  string	$more            More string to add
+     *  @return	void
      */
     function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $amount, $filter='', $maxvalue=0, $more='')
     {
@@ -2725,10 +2725,9 @@ class Form
             print '<tr><td nowrap="nowrap">';
             if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
             else print $langs->trans("CompanyHasCreditNote",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
-            //			print $langs->trans("AvailableGlobalDiscounts").': ';
             $newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
             if ($filter) $newfilter.=' AND '.$filter;
-            $nbqualifiedlines=$this->select_remises('',$htmlname,$newfilter,$socid,$maxvalue);
+            $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
             print '</td>';
             print '<td>';
             if ($nbqualifiedlines > 0)

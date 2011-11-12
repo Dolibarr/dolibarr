@@ -1217,17 +1217,18 @@ class Societe extends CommonObject
 
     /**
      *    	Add a discount for third party
-     *    	@param      remise      Montant de la remise
-     *    	@param      user        Utilisateur qui accorde la remise
-     *    	@param      desc		Motif de l'avoir
-     *      @param      tva_tx      VAT rate
-     *		@return		int			<0 if KO, id or record if OK
+     *
+     *    	@param	float	$remise     Amount of discount
+     *    	@param  User	$user       User adding discount
+     *    	@param  string	$desc		Reason of discount
+     *      @param  float	$tva_tx     VAT rate
+     *		@return	int					<0 if KO, id of discount record if OK
      */
     function set_remise_except($remise, $user, $desc, $tva_tx=0)
     {
         global $langs;
 
-        // Nettoyage des parametres
+        // Clean parameters
         $remise = price2num($remise);
         $desc = trim($desc);
 
@@ -1269,11 +1270,12 @@ class Societe extends CommonObject
     }
 
     /**
-     *    	\brief      Renvoie montant TTC des reductions/avoirs en cours disponibles de la societe
-     *		\param		user		Filtre sur un user auteur des remises
-     * 		\param		filter		Filtre autre
-     * 		\param		maxvalue	Filter on max value for discount
-     *		\return		int			<0 if KO, Credit note amount otherwise
+     *  Renvoie montant TTC des reductions/avoirs en cours disponibles de la societe
+     *
+     *	@param	User	$user		Filtre sur un user auteur des remises
+     * 	@param	string	$filter		Filtre autre
+     * 	@param	string	$maxvalue	Filter on max value for discount
+     *	@return	int					<0 if KO, Credit note amount otherwise
      */
     function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
     {
@@ -1294,6 +1296,7 @@ class Societe extends CommonObject
 
     /**
      *      Return array of sales representatives
+     *
      *      @return     array       Array of sales representatives of third party
      */
     function getSalesRepresentatives($user='')
@@ -1331,8 +1334,8 @@ class Societe extends CommonObject
     /**
      * Set the price level
      *
-     * @param $price_level
-     * @param $user
+     * @param 	int		$price_level	Level of price
+     * @param 	User	$user			Use making change
      */
     function set_price_level($price_level, $user)
     {
