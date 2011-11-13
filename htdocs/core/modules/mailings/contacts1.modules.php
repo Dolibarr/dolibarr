@@ -42,12 +42,25 @@ class mailing_contacts1 extends MailingTargets
 	var $db;
 
 
-	function mailing_contacts1($DB)
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	function mailing_contacts1($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
+    /**
+	 *	On the main mailing area, there is a box with statistics.
+	 *	If you want to add a line in this report you must provide an
+	 *	array of SQL request that returns two field:
+	 *	One called "label", One called "nb".
+	 *
+	 *	@return		array		Array with SQL requests
+	 */
 	function getSqlArrayForStats()
 	{
 		global $conf, $langs;

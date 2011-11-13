@@ -40,11 +40,11 @@ class mailing_framboise extends MailingTargets
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function mailing_framboise($DB)
+	function mailing_framboise($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
@@ -117,12 +117,13 @@ class mailing_framboise extends MailingTargets
 	}
 
 
-	/**
-	 *		\brief		On the main mailing area, there is a box with statistics.
-	 *					If you want to add a line in this report you must provide an
-	 *					array of SQL request that returns two field:
-	 *					One called "label", One called "nb".
-	 *		\return		array
+    /**
+	 *	On the main mailing area, there is a box with statistics.
+	 *	If you want to add a line in this report you must provide an
+	 *	array of SQL request that returns two field:
+	 *	One called "label", One called "nb".
+	 *
+	 *	@return		array		Array with SQL requests
 	 */
 	function getSqlArrayForStats()
 	{

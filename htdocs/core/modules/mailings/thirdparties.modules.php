@@ -37,9 +37,14 @@ class mailing_thirdparties extends MailingTargets
 	var $db;
 
 
-	function mailing_thirdparties($DB)
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
+	 */
+	function mailing_thirdparties($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
@@ -112,12 +117,13 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 
-	/**
-	 *		\brief		On the main mailing area, there is a box with statistics.
-	 *					If you want to add a line in this report you must provide an
-	 *					array of SQL request that returns two field:
-	 *					One called "label", One called "nb".
-	 *		\return		array
+    /**
+	 *	On the main mailing area, there is a box with statistics.
+	 *	If you want to add a line in this report you must provide an
+	 *	array of SQL request that returns two field:
+	 *	One called "label", One called "nb".
+	 *
+	 *	@return		array		Array with SQL requests
 	 */
 	function getSqlArrayForStats()
 	{
