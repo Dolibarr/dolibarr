@@ -173,9 +173,7 @@ done >%{name}.lang
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
-%_datadir/dolibarr/htdocs/lib
 %_datadir/dolibarr/htdocs/livraison
-%_datadir/dolibarr/htdocs/mantis
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/product
