@@ -382,10 +382,11 @@ class CommandeFournisseur extends Commande
      *	Set draft status
      *  TODO This method seems to be never called.
      *
-     *	@param	User	$user		Object user that modify
-     *	@return	int					<0 if KO, >0 if OK
+     *	@param	User	$user			Object user that modify
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user)
+    function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
 
@@ -425,8 +426,7 @@ class CommandeFournisseur extends Commande
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
-                        $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }

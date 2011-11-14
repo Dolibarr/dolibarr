@@ -78,7 +78,7 @@ class MouvementStock
 		$movestock=0;
 		if ($product->type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
 
-		if ($movestock)	// Change stock for current product, change for subproduct is done after
+		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
 			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price)";

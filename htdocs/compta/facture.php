@@ -321,7 +321,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->v
     $object->fetch_thirdparty();
 
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
+    if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
     {
         if (! $idwarehouse || $idwarehouse == -1)
         {
@@ -356,7 +356,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->v
 }
 
 // Repasse la facture en mode brouillon (unvalidate)
-if ($action == 'modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate))
+if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate))
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -1985,7 +1985,7 @@ else
                     $text.=$notify->confirmMessage('NOTIFY_VAL_FAC',$object->socid);
                 }
                 $formquestion=array();
-                if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
+                if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
                 {
                     $langs->load("stocks");
                     require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
@@ -1998,6 +1998,26 @@ else
                 }
 
                 $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid',$formquestion,"yes",($conf->notification->enabled?0:2));
+            }
+
+            // Confirm back to draft status
+            if ($action == 'modif')
+            {
+                $text=$langs->trans('ConfirmUnvalidateBill',$object->ref);
+                $formquestion=array();
+                if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
+                {
+                    $langs->load("stocks");
+                    require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+                    $formproduct=new FormProduct($db);
+                    $formquestion=array(
+                    //'text' => $langs->trans("ConfirmClone"),
+                    //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+                    //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+                    array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+                }
+
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('UnvalidateBill'),$text,'confirm_modif',$formquestion,"yes",1);
             }
 
             // Confirmation du classement paye

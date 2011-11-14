@@ -317,10 +317,11 @@ class Commande extends CommonObject
     /**
      *	Set draft status
      *
-     *	@param	User	$user		Object user that modify
-     *	@return	int					<0 if KO, >0 if OK
+     *	@param	User	$user			Object user that modify
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user, $idwarehouse=1)
+    function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
 

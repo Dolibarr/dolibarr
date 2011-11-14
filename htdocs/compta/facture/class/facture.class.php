@@ -1481,6 +1481,7 @@ class Facture extends CommonObject
 
     /**
      * Tag invoice as validated + call trigger BILL_VALIDATE
+     * Object must have lines loaded with fetch_lines
      *
      * @param	User	$user           Object user that validate
      * @param   string	$force_number	Reference to force on invoice
@@ -1494,7 +1495,7 @@ class Facture extends CommonObject
 
         $error=0;
 
-        // Protection
+	    // Check parameters
         if (! $this->brouillon)
         {
             dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
@@ -1698,10 +1699,10 @@ class Facture extends CommonObject
      *	Set draft status
      *
      *	@param	User	$user			Object user that modify
-     *	@param	int		$idwarehouse	Id warehouse to use for stock change
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user,$idwarehouse=1)
+    function set_draft($user,$idwarehouse=-1)
     {
         global $conf,$langs;
 
@@ -1720,7 +1721,8 @@ class Facture extends CommonObject
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
-        if ($this->db->query($sql))
+        $result=$this->db->query($sql);
+        if ($result)
         {
             // Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
             if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
