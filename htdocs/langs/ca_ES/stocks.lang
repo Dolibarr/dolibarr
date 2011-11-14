@@ -3,6 +3,7 @@ CHARSET=UTF-8
 WarehouseCard=Fitxa magatzem
 Warehouse=Magatzem
 NewWarehouse=Nou magatzem o zona d'emmagatzematge
+WarehouseEdit=Edició magatzem
 MenuNewWarehouse=Nou magatzem
 WarehouseOpened=Magatzem obert
 WarehouseClosed=Magatzem tancat

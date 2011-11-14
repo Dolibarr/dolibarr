@@ -38,8 +38,7 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");

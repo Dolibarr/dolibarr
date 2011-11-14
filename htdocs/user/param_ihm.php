@@ -33,30 +33,31 @@ $langs->load("admin");
 $langs->load("users");
 $langs->load("languages");
 
+$id=GETPOST('id','int');
+
 // Defini si peux lire/modifier permisssions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 
-if ($_REQUEST["id"])
+if ($id)
 {
-    // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur edite
-    $caneditfield=( (($user->id == $_REQUEST["id"]) && $user->rights->user->self->creer)
-    || (($user->id != $_REQUEST["id"]) && $user->rights->user->user->creer));
+    // $user est le user qui edite, $id est l'id de l'utilisateur edite
+    $caneditfield=( (($user->id == $id) && $user->rights->user->self->creer)
+    || (($user->id != $id) && $user->rights->user->user->creer));
 }
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_REQUEST["id"])	// A user can always read its own card
+if ($user->id == $id)	// A user can always read its own card
 {
     $feature2='';
     $canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $_REQUEST["id"], '', $feature2);
-if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
+$result = restrictedArea($user, 'user', $id, '', $feature2);
+if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 
-$id=! empty($_GET["id"])?$_GET["id"]:$_POST["id"];
 $dirtop = "../includes/menus/standard";
 $dirleft = "../includes/menus/standard";
 

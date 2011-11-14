@@ -234,7 +234,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
             $url=$urltheme."/".$subdir."/thumb.png";
             if (! file_exists($file)) $url=$urltheme."/common/nophoto.jpg";
             print '<table><tr><td>';
-			print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
+			print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST("optioncss")?'&optioncss='.GETPOST("optioncss",'alpha',1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 			if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
 			else $title=$langs->trans("ShowPreview");
             print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'">';

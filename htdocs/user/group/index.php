@@ -33,7 +33,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 $langs->load("users");
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+$sall=GETPOST("sall");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -61,9 +61,9 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup =
 $sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 if ($_POST["search_group"])
 {
-    $sql .= " AND (g.nom like '%".$_POST["search_group"]."%' OR g.note like '%".$_POST["search_group"]."%')";
+    $sql .= " AND (g.nom like '%".$db->escape($_POST["search_group"])."%' OR g.note like '%".$db->escape($_POST["search_group"])."%')";
 }
-if ($sall) $sql.= " AND (g.nom like '%".$sall."%' OR g.note like '%".$sall."%')";
+if ($sall) $sql.= " AND (g.nom like '%".$db->escape($sall)."%' OR g.note like '%".$db->escape($sall)."%')";
 $sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -73,7 +73,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $param="search_group=$search_group&amp;sall=$sall";
+    $param="search_group=".$search_group."&amp;sall=".$sall;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);

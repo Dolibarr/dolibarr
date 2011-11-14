@@ -27,8 +27,8 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/usergroups.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
 
-$action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["action"]:"");
-$id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
+$action=GETPOST('action');
+$id=GETPOST('id','int');
 
 $langs->load("companies");
 $langs->load("members");

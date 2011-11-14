@@ -101,7 +101,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		{
         	$invoice_source->fetch($object->fk_facture_source);
 		}
-		$alreadypayed=price($object->getSommePaiement(),'MT');
+		$alreadypayed=price($object->getSommePaiement(),0,$outputlangs);
 
         return array(
             'object_id'=>$object->id,
@@ -117,15 +117,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
             'object_payment_mode'=>$object->mode_reglement,
             'object_payment_term'=>$object->cond_reglement,
-        	'object_total_ht'=>price($object->total_ht),
-            'object_total_vat'=>price($object->total_tva),
-            'object_total_ttc'=>price($object->total_ttc),
+        	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
+            'object_total_vat'=>price($object->total_tva,0,$outputlangs),
+            'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
             'object_vatrate'=>vatrate($object->tva),
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public,
         	// Payments
             'object_already_payed'=>$alreadypayed,
-            'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,'MT')
+            'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,0,$outputlangs)
         );
     }
 
