@@ -1318,8 +1318,8 @@ else
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
                     print '<input type="hidden" name="action" value="addgroup" />';
                     print '<table class="noborder" width="100%">'."\n";
-                    print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
-                    print '<td>';
+                    print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</th>'."\n";
+                    print '<th>';
                     print $form->select_dolgroups('','group',1,$exclude,0,'','',$fuser->entity);
                     print ' &nbsp; ';
                     // Multicompany
@@ -1341,7 +1341,7 @@ else
                     	print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
                     }
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
-                    print '</td></tr>'."\n";
+                    print '</th></tr>'."\n";
                     print '</table></form>'."\n";
 
                     print '<br>';
@@ -1516,7 +1516,7 @@ else
             print "</td></tr>\n";
 
             // Administrator
-            print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
+            print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
             if ($fuser->societe_id > 0)
             {
                 print '<td>';

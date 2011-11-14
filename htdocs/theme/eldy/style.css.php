@@ -91,7 +91,6 @@ a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; fo
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
 }
-
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
@@ -133,6 +132,9 @@ textarea:disabled {
 .button:hover   {
 	background: #dee7ec;
 }
+.button:disabled {
+	background: #ddd;
+}
 .buttonajax {
     font-family: <?php print $fontlist ?>;
 	border: 0px;
@@ -154,6 +156,14 @@ form {
 div.float
 {
     float:<?php print $left; ?>;
+}
+th .button {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+	-moz-border-radius:0px !important;
+	-webkit-border-radius:0px !important;
+	border-radius:0px !important;	
 }
 
 /* ============================================================================== */
@@ -954,10 +964,6 @@ a.tabTitle {
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
-
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
 }
 
 a.tab:link {
