@@ -752,11 +752,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if ( empty($hidedesc) ) $libelleproduitservice.=$desc;
+				if ( empty($hidedesc) ) $libelleproduitservice.=dol_htmlentitiesbr($desc,1);
 			}
 			else
 			{
-				$libelleproduitservice.=$desc;
+				$libelleproduitservice.=dol_htmlentitiesbr($desc,1);
 			}
 		}
 	}

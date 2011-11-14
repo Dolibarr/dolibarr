@@ -2225,12 +2225,12 @@ else
                     // Remise dispo de type remise fixe (not credit note)
                     $filter='fk_facture_source IS NULL';
                     print '<br>';
-                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' ('.$addabsolutediscount.')');
+                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOST('discountid'), 'remise_id', $soc->id, $absolute_discount, $filter, $resteapayer, ' ('.$addabsolutediscount.')');
                 }
             }
             else
             {
-                if ($absolute_creditnote > 0)    // If not linke will be added later
+                if ($absolute_creditnote > 0)    // If not, link will be added later
                 {
                     if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' ('.$addabsolutediscount.')<br>';
                     else print '.';
