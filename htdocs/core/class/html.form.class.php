@@ -2242,7 +2242,7 @@ class Form
 
         if (is_array($formquestion) && count($formquestion) > 0)
         {
-        	$more.='<table class="nobordernopadding" width="100%">'."\n";
+        	$more.='<table class="paddingrightonly" width="100%">'."\n";
             $more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
             {
@@ -2258,8 +2258,8 @@ class Form
 	                }
 	                else if ($input['type'] == 'select')
 	                {
-	                	$more.='<tr><td valign="top">';
-	                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+	                	$more.='<tr><td valign="top" style="padding: 4px !important;">';
+	                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left" style="padding: 4px !important;">';
 	                    $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
 	                    $more.='</td></tr>'."\n";
 	                }

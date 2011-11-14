@@ -166,6 +166,7 @@ div.float
 <?php } ?>
 .linkobject { cursor: pointer; }
 
+
 /* ============================================================================== */
 /* Styles for dragging lines                                                      */
 /* ============================================================================== */
@@ -1121,7 +1122,14 @@ background-repeat: repeat-x;
 }
 */
 
-
+.paddingrightonly {
+	border-collapse: collapse;
+	border: 0px;
+	margin-left: 0px;
+	spacing-left: 0px;
+	padding-left: 0px;
+	padding-right: 4px;
+}
 .nocellnopadd {
 list-style-type:none;
 margin: 0px;
