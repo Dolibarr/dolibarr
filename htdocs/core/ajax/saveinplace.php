@@ -66,7 +66,8 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 		$subelement = $regs[2];
 	}
 
-	if ($element == 'fichinter') $element = 'ficheinter';
+	if ($element == 'propal') $element = 'propale';
+	else if ($element == 'fichinter') $element = 'ficheinter';
 
 	if ($user->rights->$element->creer || $user->rights->$element->write
 	|| $user->rights->$element->$subelement->creer || $user->rights->$element->$subelement->write)
