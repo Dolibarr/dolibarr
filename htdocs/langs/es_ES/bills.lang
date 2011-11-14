@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - bills 
+# Dolibarr language file - es_ES - bills
 CHARSET=UTF-8
 Bill=Factura
 Bills=Facturas
@@ -140,6 +140,7 @@ SuppliersDraftInvoices=Facturas de proveedores borrador
 Unpaid=Pendientes
 ConfirmDeleteBill=¿Está seguro de querer eliminar esta factura?
 ConfirmValidateBill=¿Está seguro de querer validar esta factura con la referencia <b>%s</b> ?
+ConfirmUnvalidateBill=¿Está seguro de querer devolver la factura <b>%s</b> al estado borrador?
 ConfirmClassifyPaidBill=¿Esta seguro de querer clasificar la factura <b>%s</b> como pagada?
 ConfirmCancelBill=¿Está seguro de querer anular la factura <b>%s</b> ?
 ConfirmCancelBillQuestion=¿Por qué razón quiere abandonar la factura?
@@ -162,6 +163,7 @@ ConfirmClassifyAbandonReasonOtherDesc=Esta elección será para cualquier otro c
 ConfirmCustomerPayment=¿Confirma el proceso  de este pago de <b>%s</b> %s ?
 ConfirmValidatePayment=¿Está seguro de querer validar este pago (ninguna modificación es posible una vez el pago esté validado)?
 ValidateBill=Validar factura
+UnvalidateBill=Devolver factura a borrador
 NumberOfBills=Nº de facturas
 NumberOfBillsByMonth=Nº de facturas por mes
 AmountOfBills=Importe de las facturas
