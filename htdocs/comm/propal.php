@@ -1045,9 +1045,7 @@ if ($id > 0 || ! empty($ref))
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 	}
 
-	/*
-	 * Confirmation de la validation de la propale
-	 */
+	// Confirm validate proposal
 	if ($action == 'validate')
 	{
 	    $error=0;

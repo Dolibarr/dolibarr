@@ -382,7 +382,7 @@ if ($action == 'setremise' && $user->rights->commande->creer)
     $object->set_remise($user, $_POST['remise']);
 }
 
-if ($action == "setabsolutediscount" && $user->rights->commande->creer)
+if ($action == 'setabsolutediscount' && $user->rights->commande->creer)
 {
     if ($_POST["remise_id"])
     {
@@ -775,6 +775,45 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->command
     }
 }
 
+// Go back to draft status
+if ($action == 'confirm_modif' && $user->rights->commande->creer)
+{
+    $idwarehouse=GETPOST('idwarehouse');
+
+    $object->fetch($id);		// Load order and lines
+    $object->fetch_thirdparty();
+
+    // Check parameters
+    if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+    {
+        if (! $idwarehouse || $idwarehouse == -1)
+        {
+            $error++;
+            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $action='';
+        }
+    }
+
+	if (! $error)
+	{
+	    $result = $object->set_draft($user,$idwarehouse);
+	    if ($result	>= 0)
+	    {
+	        // Define output language
+	        $outputlangs = $langs;
+	        $newlang='';
+	        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	        if (! empty($newlang))
+	        {
+	            $outputlangs = new Translate("",$conf);
+	            $outputlangs->setDefaultLang($newlang);
+	        }
+	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	    }
+	}
+}
+
 if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->cloturer)
 {
     $object->fetch($id);		// Load order and lines
@@ -790,30 +829,6 @@ if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande-
     $result = $object->cancel($user);
 }
 
-if ($action == 'modif' && $user->rights->commande->creer)
-{
-    /*
-     *  Repasse la commande en mode brouillon
-     */
-    $object->fetch($id);		// Load order and lines
-    $object->fetch_thirdparty();
-
-    $result = $object->set_draft($user);
-    if ($result	>= 0)
-    {
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-        if (! empty($newlang))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
-        }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
-    }
-}
 
 /*
  * Ordonnancement des lignes
@@ -1492,8 +1507,29 @@ else
                     array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
                 }
 
-                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 240);
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
             }
+
+            // Confirm back to draft status
+            if ($action == 'modif')
+            {
+                $text=$langs->trans('ConfirmUnvalidateOrder',$object->ref);
+                $formquestion=array();
+                if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+                {
+                    $langs->load("stocks");
+                    require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+                    $formproduct=new FormProduct($db);
+                    $formquestion=array(
+                    //'text' => $langs->trans("ConfirmClone"),
+                    //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+                    //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+                    array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+                }
+
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
+            }
+
 
             /*
              * Confirmation de la cloture
