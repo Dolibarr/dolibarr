@@ -102,7 +102,7 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("Parameters")."</td>\n";
-print "  <td align=\"right\" width=\"160\">".$langs->trans("Value")."</td>\n";
+print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 
 /*
@@ -128,7 +128,7 @@ print "</tr>\n";
 // Title rule for stock decrease
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
-print "  <td align=\"right\" width=\"160\">".$langs->trans("Value")."</td>\n";
+print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 $var=true;
 
@@ -178,7 +178,7 @@ if ($conf->expedition->enabled)
 // Title rule for stock increase
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
-print "  <td align=\"right\" width=\"160\">".$langs->trans("Value")."</td>\n";
+print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 $var=true;
 
