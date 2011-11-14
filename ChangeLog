@@ -26,6 +26,7 @@ For users:
 - New: Add hidden option MAIN_DISABLE_PDF_AUTOUPDATE to avoid generating pdf each time data change.
 - New: Add hidden option PROJECT_HIDE_UNSELECTABLES to hide project you can't select into combo list.
 - New: Add option INVOICE_POSITIVE_CREDIT_NOTE.
+- New: Support zip/town autocompletion into warehouses.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:

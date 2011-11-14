@@ -133,6 +133,9 @@ class Entrepot extends CommonObject
 		$this->cp=trim($this->cp);
 		$this->ville=$this->db->escape(trim($this->ville));
 		$this->pays_id=trim($this->pays_id?$this->pays_id:0);
+		$this->zip=trim($this->cp);
+		$this->town=$this->db->escape(trim($this->ville));
+		$this->country_id=trim($this->pays_id?$this->pays_id:0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET label = '" . $this->libelle ."'";
@@ -140,9 +143,9 @@ class Entrepot extends CommonObject
 		$sql .= ",statut = " . $this->statut ;
 		$sql .= ",lieu = '" . $this->lieu ."'";
 		$sql .= ",address = '" . $this->address ."'";
-		$sql .= ",cp = '" . $this->cp ."'";
-		$sql .= ",ville = '" . $this->ville ."'";
-		$sql .= ",fk_pays = " . $this->pays_id;
+		$sql .= ",cp = '" . $this->zip ."'";
+		$sql .= ",ville = '" . $this->town ."'";
+		$sql .= ",fk_pays = " . $this->country_id;
 		$sql .= " WHERE rowid = " . $id;
 
 		$this->db->begin();
@@ -221,7 +224,7 @@ class Entrepot extends CommonObject
 	 */
 	function fetch($id)
 	{
-		$sql  = "SELECT rowid, label, description, statut, lieu, address, cp, ville, fk_pays";
+		$sql  = "SELECT rowid, label, description, statut, lieu, address, cp as zip, ville as town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		$sql .= " WHERE rowid = ".$id;
 
@@ -238,13 +241,16 @@ class Entrepot extends CommonObject
 			$this->statut         = $obj->statut;
 			$this->lieu           = $obj->lieu;
 			$this->address        = $obj->address;
-			$this->cp             = $obj->cp;
-			$this->ville          = $obj->ville;
-			$this->pays_id        = $obj->fk_pays;
+			$this->cp             = $obj->zip;
+			$this->ville          = $obj->town;
+			$this->pays_id        = $obj->country_id;
+			$this->zip            = $obj->zip;
+			$this->town           = $obj->town;
+			$this->country_id     = $obj->country_id;
 
-			if ($this->pays_id)
+			if ($this->country_id)
 			{
-				$sqlp = "SELECT code,libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
+				$sqlp = "SELECT code,libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->country_id;
 				$resql=$this->db->query($sqlp);
 				if ($resql)
 				{
@@ -256,6 +262,8 @@ class Entrepot extends CommonObject
 				}
 				$this->pays=$objp->libelle;
 				$this->pays_code=$objp->code;
+				$this->country=$objp->libelle;
+				$this->country_code=$objp->code;
 			}
 
 			$this->db->free($result);
@@ -269,9 +277,10 @@ class Entrepot extends CommonObject
 	}
 
 
-	/*
-	 * \brief     Charge les informations d'ordre info dans l'objet entrepot
-	 * \param     id      id de l'entrepot a charger
+	/**
+	 * 	Charge les informations d'ordre info dans l'objet entrepot
+	 *
+	 *  @param	int		$id      id de l'entrepot a charger
 	 */
 	function info($id)
 	{

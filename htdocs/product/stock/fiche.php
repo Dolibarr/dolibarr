@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/stock.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
 $langs->load("products");
 $langs->load("stocks");
@@ -51,20 +52,23 @@ $mesg = '';
 // Ajout entrepot
 if ($action == 'add' && $user->rights->stock->creer)
 {
-	$entrepot = new Entrepot($db);
+	$object = new Entrepot($db);
 
-	$entrepot->ref         = $_POST["ref"];
-	$entrepot->libelle     = $_POST["libelle"];
-	$entrepot->description = $_POST["desc"];
-	$entrepot->statut      = $_POST["statut"];
-	$entrepot->lieu        = $_POST["lieu"];
-	$entrepot->address     = $_POST["address"];
-	$entrepot->cp          = $_POST["cp"];
-	$entrepot->ville       = $_POST["ville"];
-	$entrepot->pays_id     = $_POST["pays_id"];
+	$object->ref         = $_POST["ref"];
+	$object->libelle     = $_POST["libelle"];
+	$object->description = $_POST["desc"];
+	$object->statut      = $_POST["statut"];
+	$object->lieu        = $_POST["lieu"];
+	$object->address     = $_POST["address"];
+	$object->cp          = $_POST["zipcode"];
+	$object->ville       = $_POST["town"];
+	$object->pays_id     = $_POST["pays_id"];
+	$object->zip         = $_POST["zipcode"];
+	$object->town        = $_POST["town"];
+	$object->country_id  = $_POST["pays_id"];
 
-	if ($entrepot->libelle) {
-		$id = $entrepot->create($user);
+	if ($object->libelle) {
+		$id = $object->create($user);
 		if ($id > 0)
 		{
 			header("Location: fiche.php?id=".$id);
@@ -72,7 +76,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 		}
 
 		$action = 'create';
-		$mesg='<div class="error">'.$entrepot->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 	}
 	else {
 		$mesg='<div class="error">'.$langs->trans("ErrorWarehouseRefRequired").'</div>';
@@ -83,9 +87,9 @@ if ($action == 'add' && $user->rights->stock->creer)
 // Delete warehouse
 if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->stock->supprimer)
 {
-	$entrepot = new Entrepot($db);
-	$entrepot->fetch($_REQUEST["id"]);
-	$result=$entrepot->delete($user);
+	$object = new Entrepot($db);
+	$object->fetch($_REQUEST["id"]);
+	$result=$object->delete($user);
 	if ($result > 0)
 	{
 		header("Location: ".DOL_URL_ROOT.'/product/stock/liste.php');
@@ -93,7 +97,7 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->right
 	}
 	else
 	{
-		$mesg='<div class="error">'.$entrepot->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 		$action='';
 	}
 }
@@ -101,19 +105,22 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->right
 // Modification entrepot
 if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-	$entrepot = new Entrepot($db);
-	if ($entrepot->fetch($_POST["id"]))
+	$object = new Entrepot($db);
+	if ($object->fetch($_POST["id"]))
 	{
-		$entrepot->libelle     = $_POST["libelle"];
-		$entrepot->description = $_POST["desc"];
-		$entrepot->statut      = $_POST["statut"];
-		$entrepot->lieu        = $_POST["lieu"];
-		$entrepot->address     = $_POST["address"];
-		$entrepot->cp          = $_POST["cp"];
-		$entrepot->ville       = $_POST["ville"];
-		$entrepot->pays_id     = $_POST["pays_id"];
+		$object->libelle     = $_POST["libelle"];
+		$object->description = $_POST["desc"];
+		$object->statut      = $_POST["statut"];
+		$object->lieu        = $_POST["lieu"];
+		$object->address     = $_POST["address"];
+		$object->cp          = $_POST["zipcode"];
+		$object->ville       = $_POST["town"];
+		$object->pays_id     = $_POST["pays_id"];
+		$object->zip         = $_POST["zipcode"];
+		$object->town        = $_POST["town"];
+		$object->country_id  = $_POST["pays_id"];
 
-		if ( $entrepot->update($_POST["id"], $user) > 0)
+		if ( $object->update($_POST["id"], $user) > 0)
 		{
 			$action = '';
 			$_GET["id"] = $_POST["id"];
@@ -123,14 +130,14 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		{
 			$action = 'edit';
 			$_GET["id"] = $_POST["id"];
-			$mesg = '<div class="error">'.$entrepot->error.'</div>';
+			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
 	else
 	{
 		$action = 'edit';
 		$_GET["id"] = $_POST["id"];
-		$mesg = '<div class="error">'.$entrepot->error.'</div>';
+		$mesg = '<div class="error">'.$object->error.'</div>';
 	}
 }
 
@@ -148,6 +155,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 
 $productstatic=new Product($db);
 $form=new Form($db);
+$formcompany=new FormCompany($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("WarehouseCard"),$help_url);
@@ -169,25 +177,31 @@ if ($action == 'create')
 	// Ref
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
 
-	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
+	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
 
 	// Description
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 	// Editeur wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-	$doleditor=new DolEditor('desc',$entrepot->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+	$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
 	$doleditor->Create();
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
-	print $entrepot->address;
+	print $object->address;
 	print '</textarea></td></tr>';
 
-	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%"><input size="6" type="text" name="cp" value="'.$entrepot->cp.'"></td>';
-	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%"><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
+	// Zip / Town
+	print '<tr><td>'.$langs->trans('Zip').'</td><td>';
+	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
+	print '</td><td>'.$langs->trans('Town').'</td><td>';
+	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectpays_id','departement_id'));
+	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-	$form->select_pays($entrepot->pays_id?$entrepot->pays_id:$mysoc->pays_code, 'pays_id');
+	// Country
+	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+	$form->select_pays($object->country_id?$object->country_id:$mysoc->country_code,'pays_id');
+	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
@@ -209,8 +223,8 @@ else
 	{
 		dol_htmloutput_mesg($mesg);
 
-		$entrepot = new Entrepot($db);
-		$result = $entrepot->fetch($_GET["id"]);
+		$object = new Entrepot($db);
+		$result = $object->fetch($_GET["id"]);
 		if ($result < 0)
 		{
 			dol_print_error($db);
@@ -221,7 +235,7 @@ else
 		 */
 		if ($action <> 'edit' && $action <> 're-edit')
 		{
-			$head = stock_prepare_head($entrepot);
+			$head = stock_prepare_head($object);
 
 			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
@@ -229,7 +243,7 @@ else
 			if ($action == 'delete')
 			{
 				$form = new Form($db);
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$entrepot->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$entrepot->libelle),"confirm_delete",'',0,2);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -237,34 +251,34 @@ else
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-			print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
+			print $form->showrefnav($object,'id','',1,'rowid','libelle');
 			print '</td>';
 
-			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
+			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';
 
 			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description).'</td></tr>';
 
 			// Address
 			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
-			print $entrepot->address;
+			print $object->address;
 			print '</td></tr>';
 
 			// Ville
-			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->cp.'</td>';
-			print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
+			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$object->zip.'</td>';
+			print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$object->town.'</td></tr>';
 
 			// Country
 			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-			$img=picto_from_langcode($entrepot->pays_code);
+			$img=picto_from_langcode($object->country_code);
 			print ($img?$img.' ':'');
-			print $entrepot->pays;
+			print $object->country;
 			print '</td></tr>';
 
 			// Statut
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
-			$calcproducts=$entrepot->nb_products();
+			$calcproducts=$object->nb_products();
 
 			// Nb of products
 			print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
@@ -279,7 +293,7 @@ else
 			// Last movement
 			$sql = "SELECT max(m.datem) as datem";
 			$sql .= " FROM llx_stock_mouvement as m";
-			$sql .= " WHERE m.fk_entrepot = '".$entrepot->id."'";
+			$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
 			$resqlbis = $db->query($sql);
 			if ($resqlbis)
 			{
@@ -294,7 +308,7 @@ else
 			if ($lastmovementdate)
 			{
 			    print dol_print_date($lastmovementdate,'dayhour').' ';
-			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id.'">'.$langs->trans("FullList").'</a>)';
+			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
 			}
 			else
 			{
@@ -318,12 +332,12 @@ else
 			if ($action == '')
 			{
 				if ($user->rights->stock->creer)
-				print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$entrepot->id."\">".$langs->trans("Modify")."</a>";
+				print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
 				else
 				print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</a>";
 
 				if ($user->rights->stock->supprimer)
-				print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&id=".$entrepot->id."\">".$langs->trans("Delete")."</a>";
+				print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 				else
 				print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
 			}
@@ -359,7 +373,7 @@ else
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p";
 			$sql.= " WHERE ps.fk_product = p.rowid";
 			$sql.= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
-			$sql.= " AND ps.fk_entrepot = ".$entrepot->id;
+			$sql.= " AND ps.fk_entrepot = ".$object->id;
 			$sql.= $db->order($sortfield,$sortorder);
 
 			dol_syslog('List products sql='.$sql);
@@ -426,14 +440,14 @@ else
 
                     if ($user->rights->stock->mouvement->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$entrepot->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';
+						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';
 						print img_picto($langs->trans("StockMovement"),'uparrow.png').' '.$langs->trans("StockMovement");
 						print "</a></td>";
 					}
 
 					if ($user->rights->stock->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$entrepot->id.'&amp;id='.$objp->rowid.'&amp;action=correction">';
+						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=correction">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
 					}
@@ -475,44 +489,52 @@ else
 			print '<form action="fiche.php" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
-			print '<input type="hidden" name="id" value="'.$entrepot->id.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$entrepot->libelle.'"></td></tr>';
+			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
 
-			print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
+			print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
 
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 			// Editeur wysiwyg
 			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-			$doleditor=new DolEditor('desc',$entrepot->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+			$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
 			$doleditor->Create();
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
-			print $entrepot->address;
+			print $object->address;
 			print '</textarea></td></tr>';
 
-			print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$entrepot->cp.'"></td>';
-			print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
+			// Zip / Town
+			print '<tr><td>'.$langs->trans('Zip').'</td><td>';
+			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
+			print '</td><td>'.$langs->trans('Town').'</td><td>';
+			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectpays_id','departement_id'));
+			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-			$form->select_pays($entrepot->pays_id, 'pays_id');
+			// Country
+			print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+			$form->select_pays($object->country_id?$object->country_id:$mysoc->country_code,'pays_id');
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 			print '</td></tr>';
 
 			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
 			print '<select name="statut" class="flat">';
-			print '<option value="0" '.($entrepot->statut == 0?'selected="selected"':'').'>'.$langs->trans("WarehouseClosed").'</option>';
-			print '<option value="1" '.($entrepot->statut == 0?'':'selected="selected"').'>'.$langs->trans("WarehouseOpened").'</option>';
+			print '<option value="0" '.($object->statut == 0?'selected="selected"':'').'>'.$langs->trans("WarehouseClosed").'</option>';
+			print '<option value="1" '.($object->statut == 0?'':'selected="selected"').'>'.$langs->trans("WarehouseOpened").'</option>';
 			print '</select>';
 			print '</td></tr>';
 
-			print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 			print '</table>';
+
+			print '<center><br><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+			
 			print '</form>';
 
 		}
