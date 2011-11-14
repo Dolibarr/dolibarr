@@ -38,6 +38,7 @@ InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceBackToDraftInDolibarr=Factura %s devuelta a borrador
 OrderValidatedInDolibarr=Pedido %s validado
 OrderApprovedInDolibarr=Pedido %s aprobado
+OrderBackToDraftInDolibarr=Pedido %s devuelto a borrador
 InterventionValidatedInDolibarr=Intervención %s validada
 ProposalSentByEMail=Presupuesto %s enviado por e-mail
 OrderSentByEMail=Pedido de cliente %s enviado por e-mail
@@ -61,7 +62,7 @@ AgendaUrlOptions5=<b>logind=%s</b> para restringir inserciones a acciones realiz
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 ExtSites=Calendarios externos
-# External Sites ical=undefined
+# External Sites ical=
 ExtSitesEnableThisTool=Mostrar calendarios externos en la agenda
 ExtSitesNbOfAgenda=Número de calendarios
 AgendaExtNb=Calendario nº %s

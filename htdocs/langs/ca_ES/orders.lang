@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - orders 
+# Dolibarr language file - ca_ES - orders
 CHARSET=UTF-8
 OrdersArea=Àrea comandes de clients
 SuppliersOrdersArea=Àrea comandes a proveïdors
@@ -59,6 +59,7 @@ CreateOrder=Crear comanda
 RefuseOrder=Rebutjar la comanda
 ApproveOrder=Acceptar la comanda
 ValidateOrder=Validar la comanda
+UnvalidateOrder=Desvalidar la comanda
 DeleteOrder=Eliminar la comanda
 CancelOrder=Anul·lar la comanda
 AddOrder=Crear comanda
@@ -83,6 +84,7 @@ ConfirmCloseOrder=Esteu segur de voler tancar aquesta comanda? Un cop tancat, ha
 ConfirmCloseOrderIfSending=Esteu segur de voler tancar aquesta comanda? No ha de tancar una comanda que encara no té els seus productes enviats
 ConfirmDeleteOrder=Esteu segur de voler eliminar aquest comanda?
 ConfirmValidateOrder=Esteu segur de voler validar aquesta comanda sota la referència <b>%s</b> ?
+ConfirmUnvalidateOrder=Esteu segur de voler restaurar la comanda <b>%s</b> a l'estat esborrany?
 ConfirmCancelOrder=Esteu segur de voler anul lar aquesta comanda?
 ConfirmMakeOrder=Esteu segur de voler confirmar aquest comanda a data de <b>%s</b> ?
 GenerateBill=Facturar
