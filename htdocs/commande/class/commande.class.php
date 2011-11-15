@@ -315,11 +315,13 @@ class Commande extends CommonObject
     }
 
     /**
-     *		\brief		Set draft status
-     *		\param		user		Object user that modify
-     *		\return		int			<0 if KO, >0 if OK
+     *	Set draft status
+     *
+     *	@param	User	$user			Object user that modify
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user)
+    function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
 
@@ -343,7 +345,7 @@ class Commande extends CommonObject
         $sql.= " SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("Commande::set_draft sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             // If stock is decremented on validate order, we must reincrement it
@@ -359,8 +361,7 @@ class Commande extends CommonObject
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
-                        $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }

@@ -369,12 +369,12 @@ class FormFile
             $out.= '<div class="titre">'.$titletoshow.'</div>';
             $out.= '<table class="border formdoc" summary="listofdocumentstable" width="100%">';
 
-            $out.= '<tr '.$bc[$var].'>';
+            $out.= '<tr class="liste_titre">';
 
             // Model
             if (! empty($modellist))
             {
-                $out.= '<td align="center" class="formdoc">';
+                $out.= '<th align="center" class="formdoc liste_titre">';
                 $out.= $langs->trans('Model').' ';
                 if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
                 {
@@ -382,17 +382,17 @@ class FormFile
                     $modelselected=$arraykeys[0];
                 }
                 $out.= $form->selectarray('model',$modellist,$modelselected,$showempty,0,0);
-                $out.= '</td>';
+                $out.= '</th>';
             }
             else
             {
-                $out.= '<td align="left" class="formdoc">';
+                $out.= '<th align="left" class="formdoc liste_titre">';
                 $out.= $langs->trans("Files");
-                $out.= '</td>';
+                $out.= '</th>';
             }
 
             // Language code (if multilang)
-            $out.= '<td align="center" class="formdoc">';
+            $out.= '<th align="center" class="formdoc liste_titre">';
             if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
             {
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php');
@@ -404,10 +404,10 @@ class FormFile
             {
                 $out.= '&nbsp;';
             }
-            $out.= '</td>';
+            $out.= '</th>';
 
             // Button
-            $out.= '<td align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton">';
+            $out.= '<th align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton liste_titre">';
             $out.= '<input class="button" id="'.$forname.'_generatebutton"';
             $out.= ' type="submit" value="'.$buttonlabel.'"';
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $out.= ' disabled="disabled"';
@@ -417,7 +417,7 @@ class FormFile
                 $langs->load("errors");
                 $out.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
             }
-            $out.= '</td>';
+            $out.= '</th>';
 
             $out.= '</tr>';
 

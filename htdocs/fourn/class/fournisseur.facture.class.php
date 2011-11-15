@@ -835,11 +835,13 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *		Set draft status
-     *		@param		user		Object user that modify
-     *		@param		int			<0 if KO, >0 if OK
+     *	Set draft status
+     *
+     *	@param	User	$user			Object user that modify
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user)
+    function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
 
@@ -847,7 +849,7 @@ class FactureFournisseur extends Facture
 
         if ($this->statut == 0)
         {
-            dol_syslog("FactureFournisseur::set_draft already draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
             return 0;
         }
 
@@ -857,8 +859,9 @@ class FactureFournisseur extends Facture
         $sql.= " SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("FactureFournisseur::set_draft sql=".$sql, LOG_DEBUG);
-        if ($this->db->query($sql))
+        dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
+        $result=$this->db->query($sql);
+        if ($result)
         {
             // Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
             if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
@@ -873,8 +876,7 @@ class FactureFournisseur extends Facture
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increase stock for product
-                        $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
+                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
                     }
                 }
             }
@@ -901,10 +903,10 @@ class FactureFournisseur extends Facture
 
     /**
      *	Ajoute une ligne de facture (associe a aucun produit/service predefini)
-     *		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-     *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-     *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
-     *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+     *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+     *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+     *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
+     *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      *
      *	@param    	desc            Description de la ligne
      *	@param    	pu              Prix unitaire (HT ou TTC selon price_base_type)

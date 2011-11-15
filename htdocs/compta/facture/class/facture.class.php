@@ -1249,6 +1249,7 @@ class Facture extends CommonObject
     /**
      *	Renvoi une date limite de reglement de facture en fonction des
      *	conditions de reglements de la facture et date de facturation
+     *
      *	@param      cond_reglement_id   Condition de reglement a utiliser, 0=Condition actuelle de la facture
      *	@return     date                Date limite de reglement si ok, <0 si ko
      */
@@ -1308,11 +1309,12 @@ class Facture extends CommonObject
     }
 
     /**
-     *      Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
-     *      @param      user      	Objet utilisateur qui modifie
-     *		@param      close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
-     *	   	@param      close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
-     *      @return     int         <0 si ok, >0 si ok
+     *  Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
+     * 
+     *  @param	User	$user      	Objet utilisateur qui modifie
+     *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
+     *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
+     *  @return int         		<0 if KO, >0 if OK
      */
     function set_paid($user,$close_code='',$close_note='')
     {
@@ -1367,11 +1369,12 @@ class Facture extends CommonObject
 
 
     /**
-     *      \brief      Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
-     *				   	Fonction utilisee quand un paiement prelevement est refuse,
-     * 					ou quand une facture annulee et reouverte.
-     *      \param      user        Object user that change status
-     *      \return     int         <0 si ok, >0 si ok
+     *  Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
+     *	Fonction utilisee quand un paiement prelevement est refuse,
+     * 	ou quand une facture annulee et reouverte.
+     * 
+     *  @param	User	$user       Object user that change status
+     *  @return int         		<0 if KO, >0 if OK
      */
     function set_unpaid($user)
     {
@@ -1416,17 +1419,20 @@ class Facture extends CommonObject
 
 
     /**
-     *	\brief      Tag la facture comme abandonnee, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCEL
-     *	\param      user        Objet utilisateur qui modifie
-     *	\param		close_code	Code de fermeture
-     *	\param		close_note	Commentaire de fermeture
-     *	\return     int         <0 si ok, >0 si ok
+     *	Tag invoice as canceled, with no payment on it (example for replacement invoice or payment never received) + call trigger BILL_CANCEL
+     *	Warning, if option to decrease stock on invoice was set, this function does not change stock (it might be a cancel because
+     *  of no payment even if merchandises were sent).
+     *
+     *	@param	User	$user        	Object user making change
+     *	@param	string	$close_code		Code de fermeture
+     *	@param	string	$close_note		Comment
+     *	@return int         			<0 if KO, >0 if OK
      */
     function set_canceled($user,$close_code='',$close_note='')
     {
         global $conf,$langs;
 
-        dol_syslog("Facture::set_canceled rowid=".$this->id, LOG_DEBUG);
+        dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
 
         $this->db->begin();
 
@@ -1475,6 +1481,7 @@ class Facture extends CommonObject
 
     /**
      * Tag invoice as validated + call trigger BILL_VALIDATE
+     * Object must have lines loaded with fetch_lines
      *
      * @param	User	$user           Object user that validate
      * @param   string	$force_number	Reference to force on invoice
@@ -1488,7 +1495,7 @@ class Facture extends CommonObject
 
         $error=0;
 
-        // Protection
+	    // Check parameters
         if (! $this->brouillon)
         {
             dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
@@ -1602,7 +1609,7 @@ class Facture extends CommonObject
                 $result=$this->client->set_as_client();
 
                 // Si active on decremente le produit principal et ses composants a la validation de facture
-                if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
+                if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
                 {
                     require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
                     $langs->load("agenda");
@@ -1615,7 +1622,8 @@ class Facture extends CommonObject
                         {
                             $mouvP = new MouvementStock($this->db);
                             // We decrease stock for product
-                            $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
+                            if ($this->type == 2) $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
+                            else $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -1692,10 +1700,10 @@ class Facture extends CommonObject
      *	Set draft status
      *
      *	@param	User	$user			Object user that modify
-     *	@param	int		$idwarehouse	Id warehouse to use for stock change
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user,$idwarehouse=0)
+    function set_draft($user,$idwarehouse=-1)
     {
         global $conf,$langs;
 
@@ -1714,10 +1722,11 @@ class Facture extends CommonObject
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
-        if ($this->db->query($sql))
+        $result=$this->db->query($sql);
+        if ($result)
         {
             // Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
-            if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
+            if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
                 $langs->load("agenda");
@@ -1729,8 +1738,8 @@ class Facture extends CommonObject
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We decrease stock for product
-                        $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
+                        if ($this->type == 2) $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
+                        else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
                     }
                 }
             }
