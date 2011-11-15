@@ -217,7 +217,7 @@ switch ($action)
 			$resultcreate=$invoice->create($user,0,0);
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->validate($user,$obj_facturation->num_facture());
+				$resultvalid=$invoice->validate($user, $obj_facturation->num_facture(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
 
 				$id = $invoice->id;
 
@@ -235,7 +235,7 @@ switch ($action)
 				{
                     if (! $error)
                     {
-                        $result=$payment->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$bankaccountid,'','');
+                        $result=$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
                         if (! $result > 0)
                         {
                             $errmsg=$paiement->error;

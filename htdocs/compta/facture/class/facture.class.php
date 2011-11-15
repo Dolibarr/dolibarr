@@ -1310,7 +1310,7 @@ class Facture extends CommonObject
 
     /**
      *  Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
-     * 
+     *
      *  @param	User	$user      	Objet utilisateur qui modifie
      *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
      *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
@@ -1372,7 +1372,7 @@ class Facture extends CommonObject
      *  Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
      *	Fonction utilisee quand un paiement prelevement est refuse,
      * 	ou quand une facture annulee et reouverte.
-     * 
+     *
      *  @param	User	$user       Object user that change status
      *  @return int         		<0 if KO, >0 if OK
      */
@@ -1494,6 +1494,7 @@ class Facture extends CommonObject
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $error=0;
+        dol_syslog(get_class($this).'::validate force_number='.$force_number,' idwarehouse='.$idwarehouse, LOG_WARNING);
 
 	    // Check parameters
         if (! $this->brouillon)
