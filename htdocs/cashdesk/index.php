@@ -77,8 +77,15 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 	</tr>
 	<tr>
 		<td class="label1"><?php echo $langs->trans("Password"); ?></td>
-		<td><input name="pwdPassword" class="texte_login" type="password"	value="" /></td>
+		<td><input name="pwdPassword" class="texte_login" type="password" value="" /></td>
 	</tr>
+
+	<tr>
+		<td colspan="2">
+		&nbsp;
+		</td>
+	</tr>
+
 <?php
 print "<tr>";
 print '<td class="label1">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
@@ -105,7 +112,16 @@ if ($conf->stock->enabled)
 	print "</tr>\n";
 }
 ?>
+
+	<tr>
+		<td colspan="2">
+		&nbsp;
+		</td>
+	</tr>
+
+
 </table>
+<br>
 
 <center><span class="bouton_login"><input name="sbmtConnexion" type="submit" value=<?php echo $langs->trans("Connection"); ?> /></span></center>
 
@@ -113,20 +129,21 @@ if ($conf->stock->enabled)
 </fieldset>
 
 <?php
-if ($_GET['err'] < 0) {
-
+if ($_GET['err'] < 0)
+{
 	echo ('<script type="text/javascript">');
 	echo ('	document.getElementById(\'frmLogin\').pwdPassword.focus();');
 	echo ('</script>');
-
-} else {
-
+}
+else
+{
 	echo ('<script type="text/javascript">');
 	echo ('	document.getElementById(\'frmLogin\').txtUsername.focus();');
 	echo ('</script>');
-
 }
-?></div>
+?>
+
+</div>
 </div>
 
 <?php include('affPied.php'); ?></div>
