@@ -98,3 +98,8 @@ ALTER TABLE llx_commande MODIFY ref_client varchar(255);
 ALTER TABLE llx_facture MODIFY ref_int varchar(255);
 ALTER TABLE llx_facture MODIFY ref_ext varchar(255);
 ALTER TABLE llx_facture MODIFY ref_client varchar(255);
+
+
+UPDATE llx_societe SET fk_stcomm = 0 WHERE fk_stcomm IS NULL;
+ALTER TABLE llx_societe MODIFY COLUMN fk_stcomm integer NOT NULL;
+
