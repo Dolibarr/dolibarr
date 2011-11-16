@@ -2710,7 +2710,7 @@ class Form
      * 	@param	float	$amount			Total amount available
      * 	@param	string	$filter			SQL filter on discounts
      * 	@param	int		$maxvalue		Max value for lines that can be selected
-     *  @param  string	$more            More string to add
+     *  @param  string	$more           More string to add
      *  @return	void
      */
     function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $amount, $filter='', $maxvalue=0, $more='')
@@ -2723,19 +2723,19 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td nowrap="nowrap">';
-            if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
+            //if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';    // If we want deposit to be substracted to payments only and not to total of final invoice
+            if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
             else print $langs->trans("CompanyHasCreditNote",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
             $newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
-            if ($filter) $newfilter.=' AND '.$filter;
+            if ($filter) $newfilter.=' AND ('.$filter.')';
             $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
             print '</td>';
             print '<td>';
             if ($nbqualifiedlines > 0)
             {
-                print ' &nbsp; <input type="submit" class="button" value="';
-                if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("UseDiscount");
-                else print $langs->trans("UseCredit");
-                print '" title="'.$langs->trans("UseCreditNoteInInvoicePayment").'">';
+                print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("UseLine").'"';
+                if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print '" title="'.$langs->trans("UseCreditNoteInInvoicePayment");
+                print '">';
             }
             if ($more) print $more;
             print '</td>';

@@ -359,7 +359,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->v
 if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate))
 {
     $idwarehouse=GETPOST('idwarehouse');
-	
+
     $object->fetch($id);
     $object->fetch_thirdparty();
 
@@ -380,13 +380,13 @@ if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS
 	    $sql = 'SELECT pf.amount';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 	    $sql.= ' WHERE pf.fk_facture = '.$object->id;
-	
+
 	    $result = $db->query($sql);
 	    if ($result)
 	    {
 	        $i = 0;
 	        $num = $db->num_rows($result);
-	
+
 	        while ($i < $num)
 	        {
 	            $objp = $db->fetch_object($result);
@@ -398,17 +398,17 @@ if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS
 	    {
 	        dol_print_error($db,'');
 	    }
-	
+
 	    $resteapayer = $object->total_ttc - $totalpaye;
-	
+
 	    // On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 	    $ventilExportCompta = $object->getVentilExportCompta();
-	
+
 	    // On verifie si aucun paiement n'a ete effectue
 	    if ($resteapayer == $object->total_ttc	&& $object->paye == 0 && $ventilExportCompta == 0)
 	    {
 	        $object->set_draft($user, $idwarehouse);
-	
+
 	        // Define output language
 	        $outputlangs = $langs;
 	        $newlang='';
@@ -1937,8 +1937,13 @@ else
             if ($object->paye) $resteapayer=0;
             $resteapayeraffiche=$resteapayer;
 
-            $absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
-            $absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+            //$filterabsolutediscount="fk_facture_source IS NULL";  // If we want deposit to be substracted to payments only and not to total of final invoice
+            //$filtercreditnote="fk_facture_source IS NOT NULL";    // If we want deposit to be substracted to payments only and not to total of final invoice
+            $filterabsolutediscount="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')";
+            $filtercreditnote="fk_facture_source IS NOT NULL AND description <> '(DEPOSIT)'";
+
+            $absolute_discount=$soc->getAvailableDiscounts('',$filterabsolutediscount);
+            $absolute_creditnote=$soc->getAvailableDiscounts('',$filtercreditnote);
             $absolute_discount=price2num($absolute_discount,'MT');
             $absolute_creditnote=price2num($absolute_creditnote,'MT');
 
@@ -2259,9 +2264,8 @@ else
                 else
                 {
                     // Remise dispo de type remise fixe (not credit note)
-                    $filter='fk_facture_source IS NULL';
                     print '<br>';
-                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOST('discountid'), 'remise_id', $soc->id, $absolute_discount, $filter, $resteapayer, ' ('.$addabsolutediscount.')');
+                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOST('discountid'), 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, $resteapayer, ' ('.$addabsolutediscount.')');
                 }
             }
             else
@@ -2291,9 +2295,8 @@ else
                 else
                 {
                     // Remise dispo de type avoir
-                    $filter='fk_facture_source IS NOT NULL';
                     if (! $absolute_discount) print '<br>';
-                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
+                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer);
                 }
             }
             if (! $absolute_discount && ! $absolute_creditnote)

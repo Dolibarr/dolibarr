@@ -23,29 +23,47 @@
 	<td><a name="<?php echo $line->rowid; ?>"></a>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
-		<?php echo img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount"); ?>
+		<?php
+		$txt='';
+		print img_object($langs->trans("ShowReduc"),'reduc').' ';
+		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
+		//else $txt=$langs->trans("Discount");
+		print $txt;
+		?>
 		</a>
-		<?php if ($line->description) {
-				if ($line->description == '(CREDIT_NOTE)') {
+		<?php
+		if ($line->description)
+		{
+				if ($line->description == '(CREDIT_NOTE)')
+				{
 					$discount=new DiscountAbsolute($this->db);
 					$discount->fetch($line->fk_remise_except);
-					echo ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
-				} elseif ($line->description == '(DEPOSIT)') {
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+				}
+				elseif ($line->description == '(DEPOSIT)')
+				{
 					$discount=new DiscountAbsolute($this->db);
 					$discount->fetch($line->fk_remise_except);
-					echo ' - '.$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
-				} else {
-					echo ' - '.dol_htmlentitiesbr($line->description,1,true);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+					// Add date of deposit
+					if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+				}
+				else
+				{
+					echo ($txt?' - ':'').dol_htmlentitiesbr($line->description,1,true);
 				}
 			}
-		} else {
+		}
+		else
+		{
 			if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
 			echo $text.' '.dol_htmlentitiesbr($line->description,1,true);
 			// Show range
 			print_date_range($line->date_start,$line->date_end);
-		} ?>
+		}
+		?>
 	</td>
 
 	<td align="right" nowrap="nowrap"><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>

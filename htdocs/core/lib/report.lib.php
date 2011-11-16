@@ -24,15 +24,17 @@
 
 /**
 *    Show header of a VAT report
-*    @param      nom             Name of report
-*    @param      variante        Link for alternate report
-*    @param      period          Period of report
-*    @param      periodlink      Link to switch period
-*    @param      description     Description
-*    @param      builddate       Date generation
-*    @param      exportlink      Link for export or ''
+*
+*    @param     $nom            Name of report
+*    @param     $variante       Link for alternate report
+*    @param     $period         Period of report
+*    @param     $periodlink     Link to switch period
+*    @param     $description    Description
+*    @param     $builddate      Date generation
+*    @param     $exportlink     Link for export or ''
+*    @param		$moreparam		Array with list of params to add into form
 */
-function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink='')
+function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array())
 {
 	global $langs;
 
@@ -44,6 +46,10 @@ function report_header($nom,$variante='',$period,$periodlink,$description,$build
 	dol_fiche_head($head, $hselected, $societe->nom);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	foreach($moreparam as $key => $value)
+	{
+	     print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+	}
 	print '<table width="100%" class="border">';
 
 	// Ligne de titre
