@@ -822,9 +822,9 @@ if ($step == 4 && $datatoimport)
 				if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchfromref') $htmltext.=$langs->trans("DataComeFromIdFoundFromRef",$filecolumn,$langs->transnoentitiesnoconv($entitylang)).'<br>';
 			}
 		}
-		$htmltext.=$langs->trans("SourceRequired").': <b>'.yn(preg_match('/\*$/',$label)).'</b>';
+		$htmltext.=$langs->trans("SourceRequired").': <b>'.yn(preg_match('/\*$/',$label)).'</b><br>';
 		$example=$objimport->array_import_examplevalues[0][$code];
-		if ($example) $htmltext.='<br>'.$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
+		if ($example) $htmltext.=$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
 		$htmltext.='<br>';
 		// Target field info
 		$htmltext.='<b><u>'.$langs->trans("FieldTarget").'</u></b><br>';
