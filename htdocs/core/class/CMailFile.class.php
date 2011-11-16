@@ -63,10 +63,10 @@ class CMailFile
 	var $bodyCSS;
 
 	// Image
-	var $form;
+	var $html;
 	var $image_boundary;
 	var $atleastoneimage=0;
-	var $form_images=array();
+	var $html_images=array();
 	var $images_encoded=array();
 	var $image_types = array('gif'  => 'image/gif',
                            'jpg'  => 'image/jpeg',
@@ -137,6 +137,7 @@ class CMailFile
 		{
 			$this->html = $msg;
 			$findimg = $this->findHtmlImages($conf->fckeditor->dir_output);
+
 			// Define if there is at least one file
 			if ($findimg)
 			{
@@ -856,6 +857,7 @@ class CMailFile
 	{
 		// Build the list of image extensions
 		$extensions = array_keys($this->image_types);
+
 
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches);
 
