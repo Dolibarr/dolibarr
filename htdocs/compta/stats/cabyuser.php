@@ -35,8 +35,8 @@ if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->compta
 accessforbidden();
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->compta->mode;
-if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+$modecompta = $conf->global->COMPTA_MODE;
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
@@ -122,7 +122,10 @@ else {
     $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+$moreparam=array();
+if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
+
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam);
 
 
 // Charge tableau
@@ -137,7 +140,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " f.type = 0";          // Standard
     $sql.= " OR f.type = 1";       // Replacement
     $sql.= " OR f.type = 2";       // Credit note
-    //$sql.= " OR f.type = 3";       // We do not include deposit
+    $sql.= " OR f.type = 3";       // Deposit
     $sql.= ")";
 	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }

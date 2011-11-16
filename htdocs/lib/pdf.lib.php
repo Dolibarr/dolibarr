@@ -727,6 +727,14 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
             $discount->fetch($object->lines[$i]->fk_remise_except);
             $libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
         }
+    	elseif ($desc == '(DEPOSIT)' && $object->lines[$i]->fk_remise_except)
+		{
+		    $discount=new DiscountAbsolute($db);
+		    $discount->fetch($object->lines[$i]->fk_remise_except);
+		    $libelleproduitservice=$outputlangs->transnoentities("DiscountFromDeposit",$discount->ref_facture_source);
+		    // Add date of deposit
+		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
+		}
         else
         {
             if ($idprod)

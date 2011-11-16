@@ -88,7 +88,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= " f.type = 0";          // Standard
 	$sql.= " OR f.type = 1";       // Replacement
 	$sql.= " OR f.type = 2";       // Credit note
-	//$sql.= " OR f.type = 3";       // We do not include deposit
+	$sql.= " OR f.type = 3";       // Deposit
 	$sql.= ")";
 } else {
 	/*
@@ -222,7 +222,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		if ($cum[$case])
 		{
 			$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
-			print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price($cum[$case],1).'</a>';
+			print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum[$case],1).'</a>';
 		}
 		else
 		{
