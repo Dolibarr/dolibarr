@@ -114,5 +114,3 @@ This is features that Dolibarr does not support completely yet:
 - Dolibarr can manage only one currency.
 - Dolibarr does not support the double Canadian Tax.
 - Dolibarr does not make coffee (not yet).
-- Stock management with option increase/decrease on invoice works on warehouse number one only (no way to choose warehouse).
-- Stock management with option increase/decrease on orders works on warehouse number one only (no way to choose warehouse).
