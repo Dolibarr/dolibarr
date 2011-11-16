@@ -48,7 +48,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 
 $req_nb=GETPOST("req_nb",'',3);
-$thirdarty=GETPOST("thirdparty",'',3);
+$thirdparty=GETPOST("thirdparty",'',3);
 $account=GETPOST("account");
 $vline=GETPOST("vline");
 $action=GETPOST("action");
@@ -211,7 +211,7 @@ if ($account || $_GET["ref"])
     }
     if ($thirdparty)
     {
-        $sql_rech.=" AND s.nom LIKE '%".$db->escape($thirdparty)."%')";
+        $sql_rech.=" AND s.nom LIKE '%".$db->escape($thirdparty)."%'";
         $param.='&amp;thirdparty='.urlencode($thirdparty);
         $mode_search = 1;
     }
