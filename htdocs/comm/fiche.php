@@ -105,7 +105,7 @@ if ($action == 'setconditions' && $user->rights->societe->creer)
 // mode de reglement
 if ($action == 'setmode' && $user->rights->societe->creer)
 {
-	$obejct->fetch($id);
+	$object->fetch($id);
 	$object->mode_reglement=$_POST['mode_reglement_id'];
 	
 	// TODO move to DAO class
