@@ -846,7 +846,7 @@ class Form
                     if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected="selected"';
 
                     $disabled='';
-                    if ($maxvalue && $obj->amount_ttc > $maxvalue)
+                    if ($maxvalue > 0 && $obj->amount_ttc > $maxvalue)
                     {
                         $qualifiedlines--;
                         $disabled=' disabled="disabled"';
