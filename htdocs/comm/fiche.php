@@ -105,7 +105,7 @@ if ($action == 'setconditions' && $user->rights->societe->creer)
 // mode de reglement
 if ($action == 'setmode' && $user->rights->societe->creer)
 {
-	$obejct->fetch($id);
+	$object->fetch($id);
 	$object->mode_reglement=$_POST['mode_reglement_id'];
 	
 	// TODO move to DAO class
@@ -502,7 +502,7 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
-				print '<td nowrap><a href="propal.php?id=$objp->propalid">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
+				print '<td nowrap><a href="propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
 				if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 )
 				{
 					print " ".img_warning();
