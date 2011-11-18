@@ -1881,25 +1881,25 @@ class Facture extends CommonObject
             $this->line=new FactureLigne($this->db);
             $this->line->fk_facture=$facid;
             $this->line->desc=$desc;
-            $this->line->qty=$qty;
+            $this->line->qty=            ($this->type==2?abs($qty):$qty);  // For credit note, quantity is always positive and unit price negative
             $this->line->tva_tx=$txtva;
             $this->line->localtax1_tx=$txlocaltax1;
             $this->line->localtax2_tx=$txlocaltax2;
             $this->line->fk_product=$fk_product;
             $this->line->product_type=$product_type;
             $this->line->remise_percent=$remise_percent;
-            $this->line->subprice=       ($this->type==2?-1:1)*abs($pu_ht);
+            $this->line->subprice=       ($this->type==2?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
             $this->line->ventil=$ventil;
             $this->line->rang=$rangtouse;
             $this->line->info_bits=$info_bits;
             $this->line->fk_remise_except=$fk_remise_except;
-            $this->line->total_ht=       ($this->type==2?-1:1)*abs($total_ht);
-            $this->line->total_tva=      ($this->type==2?-1:1)*abs($total_tva);
-            $this->line->total_localtax1=($this->type==2?-1:1)*abs($total_localtax1);
-            $this->line->total_localtax2=($this->type==2?-1:1)*abs($total_localtax2);
-            $this->line->total_ttc=      ($this->type==2?-1:1)*abs($total_ttc);
+            $this->line->total_ht=       (($this->type==2||$qty<0)?-1:1)*abs($total_ht);  // For credit note and if qty is negative, total is negative
+            $this->line->total_tva=      (($this->type==2||$qty<0)?-1:1)*abs($total_tva);
+            $this->line->total_localtax1=(($this->type==2||$qty<0)?-1:1)*abs($total_localtax1);
+            $this->line->total_localtax2=(($this->type==2||$qty<0)?-1:1)*abs($total_localtax2);
+            $this->line->total_ttc=      (($this->type==2||$qty<0)?-1:1)*abs($total_ttc);            
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
             $this->line->origin=$origin;
