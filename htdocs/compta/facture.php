@@ -1010,7 +1010,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
             }
             else
             {
-                // Insert line
+            	// Insert line
                 $result = $object->addline(
                     $id,
                     $desc,
