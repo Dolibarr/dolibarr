@@ -49,7 +49,7 @@ $langs->load('main');
 
 if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['message'];
 
-$sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
+$sall=trim(GETPOST('sall'));
 $projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
 
 $id=(GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility

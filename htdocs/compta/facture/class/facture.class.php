@@ -833,12 +833,14 @@ class Facture extends CommonObject
 
 
     /**
-     *	Recupere les lignes de factures dans this->lines
+     *	Load all detailed lines into this->lines
      *
      *	@return     int         1 if OK, < 0 if KO
      */
     function fetch_lines()
     {
+        $this->lines=array();
+
         $sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
         $sql.= ' l.localtax1_tx, l.localtax2_tx, l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
         $sql.= ' l.rang, l.special_code,';
@@ -850,7 +852,7 @@ class Facture extends CommonObject
         $sql.= ' WHERE l.fk_facture = '.$this->id;
         $sql.= ' ORDER BY l.rang';
 
-        dol_syslog('Facture::fetch_lines sql='.$sql, LOG_DEBUG);
+        dol_syslog(get_class($this).'::fetch_lines sql='.$sql, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -906,7 +908,7 @@ class Facture extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog('Facture::fetch_lines: Error '.$this->error,LOG_ERR);
+            dol_syslog(get_class($this).'::fetch_lines '.$this->error,LOG_ERR);
             return -3;
         }
     }
@@ -1149,7 +1151,7 @@ class Facture extends CommonObject
     /**
      *	Delete invoice
      *
-     *	@param     	int		$rowid      	Id of invoice to delete
+     *	@param     	int		$rowid      	Id of invoice to delete. If empty, we delete current instance of invoice
      *	@return		int						<0 if KO, >0 if OK
      */
     function delete($rowid=0)
@@ -1158,7 +1160,7 @@ class Facture extends CommonObject
 
         if (! $rowid) $rowid=$this->id;
 
-        dol_syslog("Facture::delete rowid=".$rowid, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
         // TODO Test if there is at least on payment. If yes, refuse to delete.
 
@@ -1178,31 +1180,31 @@ class Facture extends CommonObject
             $resql=$this->db->query($sql);
 
             // If invoice has consumned discounts
+            $this->fetch_lines();
             $list_rowid_det=array();
-            $sql = 'SELECT fd.rowid FROM '.MAIN_DB_PREFIX.'facturedet as fd WHERE fk_facture = '.$rowid;
-            $resql=$this->db->query($sql);
-            while ($obj = $this->db->fetch_object($resql))
+            foreach($this->lines as $key => $invoiceline)
             {
-                $list_rowid_det[]=$obj->rowid;
+                $list_rowid_det[]=$invoiceline->rowid;
             }
 
             // Consumned discounts are freed
             if (count($list_rowid_det))
             {
                 $sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-                $sql.= ' SET fk_facture = NULL';
-                $sql.= ' WHERE fk_facture IN ('.join(',',$list_rowid_det).')';
+                $sql.= ' SET fk_facture = NULL, fk_facture_line = NULL';
+                $sql.= ' WHERE fk_facture_line IN ('.join(',',$list_rowid_det).')';
 
-                dol_syslog("Facture.class::delete sql=".$sql);
+                dol_syslog(get_class($this)."::delete sql=".$sql);
                 if (! $this->db->query($sql))
                 {
                     $this->error=$this->db->error()." sql=".$sql;
-                    dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                     $this->db->rollback();
                     return -5;
                 }
             }
 
+            // Delete invoice line
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
             if ($this->db->query($sql) && $this->delete_linked_contact())
             {
@@ -1223,7 +1225,7 @@ class Facture extends CommonObject
                 else
                 {
                     $this->error=$this->db->error()." sql=".$sql;
-                    dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                     $this->db->rollback();
                     return -6;
                 }
@@ -1231,7 +1233,7 @@ class Facture extends CommonObject
             else
             {
                 $this->error=$this->db->error()." sql=".$sql;
-                dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -4;
             }
@@ -1239,7 +1241,7 @@ class Facture extends CommonObject
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }
@@ -1892,7 +1894,7 @@ class Facture extends CommonObject
             $this->line->total_tva=      (($this->type==2||$qty<0)?-abs($total_tva):$total_tva);
             $this->line->total_localtax1=(($this->type==2||$qty<0)?-abs($total_localtax1):$total_localtax1);
             $this->line->total_localtax2=(($this->type==2||$qty<0)?-abs($total_localtax2):$total_localtax2);
-            $this->line->total_ttc=      (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);            
+            $this->line->total_ttc=      (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
             $this->line->origin=$origin;
@@ -2026,7 +2028,7 @@ class Facture extends CommonObject
             $this->line->total_tva=      (($this->type==2||$qty<0)?-abs($total_tva):$total_tva);
             $this->line->total_localtax1=(($this->type==2||$qty<0)?-abs($total_localtax1):$total_localtax1);
             $this->line->total_localtax2=(($this->type==2||$qty<0)?-abs($total_localtax2):$total_localtax2);
-            $this->line->total_ttc=      (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);            
+            $this->line->total_ttc=      (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);
             $this->line->info_bits			= $info_bits;
             $this->line->product_type		= $type;
             $this->line->fk_parent_line		= $fk_parent_line;
