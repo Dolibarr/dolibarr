@@ -359,7 +359,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Loop on each credit note included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source,";
+		$sql.= " re.description, re.fk_facture_source,";
 		$sql.= " f.type, f.datef";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re, ".MAIN_DB_PREFIX ."facture as f";
 		$sql.= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$object->id;
