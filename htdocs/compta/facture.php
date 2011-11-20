@@ -3052,20 +3052,21 @@ else
 
         $facturestatic=new Facture($db);
 
-        $sql = 'SELECT ';
+        if (! $sall) $sql = 'SELECT';
+        else $sql = 'SELECT DISTINCT';
         $sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
         $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
         $sql.= ' f.paye as paye, f.fk_statut,';
         $sql.= ' s.nom, s.rowid as socid';
-        if (! $sall) $sql.= ' ,SUM(pf.amount) as am';   // To be able to sort on status
+        if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
         $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-        if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
-        if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
         if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
+        else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
         $sql.= ' WHERE f.fk_soc = s.rowid';
         $sql.= " AND f.entity = ".$conf->entity;
-        if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($socid) $sql.= ' AND s.rowid = '.$socid;
         if ($userid)
         {
@@ -3112,16 +3113,16 @@ else
         {
             $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
         }
-        if ($sall)
-        {
-            $sql.= ' AND (s.nom LIKE \'%'.$db->escape($sall).'%\' OR f.facnumber LIKE \'%'.$db->escape($sall).'%\' OR f.note LIKE \'%'.$db->escape($sall).'%\' OR fd.description LIKE \'%'.$db->escape($sall).'%\')';
-        }
         if (! $sall)
         {
             $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
             $sql.= ' f.datef, f.date_lim_reglement,';
             $sql.= ' f.paye, f.fk_statut,';
             $sql.= ' s.nom, s.rowid';
+        }
+        else
+        {
+        	$sql.= ' AND (s.nom LIKE \'%'.$db->escape($sall).'%\' OR f.facnumber LIKE \'%'.$db->escape($sall).'%\' OR f.note LIKE \'%'.$db->escape($sall).'%\' OR fd.description LIKE \'%'.$db->escape($sall).'%\')';
         }
         $sql.= ' ORDER BY ';
         $listfield=explode(',',$sortfield);
