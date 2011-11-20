@@ -475,13 +475,12 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
 {
     $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','400'=>'<= 1 500 000','750'=>'<= 3 000 000','1500'=>'<= 5 000 000','2000'=>'5 000 000+');
     print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <FONT COLOR="red">*</FONT></td><td>';
-    print $form->select_array('budget', $arraybudget, GETPOST('budget'), 1);
+    print $form->selectarray('budget', $arraybudget, GETPOST('budget'), 1);
     print ' € or $';
 
     print '<script type="text/javascript">
     jQuery(document).ready(function () {
         initturnover();
-        jQuery(".morphy").hide();
         jQuery("#morphy").click(function() {
             initturnover();
         });
@@ -489,13 +488,13 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
                 if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
         });
-        jQuery("#type").change(function() {
+        /*jQuery("#type").change(function() {
             if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'mor\'); }
             if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); }
             if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); }
             if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); }
             initturnover();
-        });
+        });*/
         function initturnover() {
             if (jQuery("#morphy").val()==\'phy\') {
                 jQuery(".amount").val(20);
