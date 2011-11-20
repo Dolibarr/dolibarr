@@ -132,6 +132,12 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             dol_print_error($db,$object->error);
             exit;
         }
+        	
+		if ($object->socid)
+		{
+			$societe=new Societe($db);
+			$societe->fetch($object->socid);
+		}
 
         // Ecrase $pu par celui	du produit
         // Ecrase $desc	par	celui du produit
@@ -143,12 +149,12 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             $productsupplier = new ProductFournisseur($db);
             $idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);
 
-            //$societe='';
-            if ($object->socid)
-            {
-                $societe=new Societe($db);
-                $societe->fetch($object->socid);
-            }
+			//$societe='';
+			/*if ($object->socid)
+			{
+				$societe=new Societe($db);
+				$societe->fetch($object->socid);
+			}*/
 
             if ($idprod > 0)
             {

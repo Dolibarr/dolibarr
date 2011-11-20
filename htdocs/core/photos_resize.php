@@ -39,6 +39,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 $langs->load("products");
+$langs->load("other");
 
 $modulepart=$_REQUEST['modulepart']?$_REQUEST['modulepart']:'produit|service';
 if (isset($_GET["id"]))
