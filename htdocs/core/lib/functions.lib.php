@@ -1602,56 +1602,32 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 			//                 'seriestype'=>array('bar','line',...),
 			//                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
 			//                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
-			// serieX is array('label'=>'label', values=>array(0=>y1,1=>y2,...)) with same nb of value than into xlabel
+			// serieX is array('label'=>'label', data=>array(0=>y1,1=>y2,...)) with same nb of value than into xlabel
 			print '
 			<script type="text/javascript">
 			$(function () {
 				var data = [';
-				$i=1; $outputserie=0;
+				$i=0; $outputserie=0;
 				foreach($data['series'] as $serie)
 				{
-					if ($data['seriestype'][$i-1]=='line') { $i++; continue; };
+					if ($data['seriestype'][$i]=='line') { $i++; continue; };
 					if ($outputserie > 0) print ',';
-					print '{ bars: { stack: 0, show: true, barWidth: 0.9, align: \'center\' }, label: \''.dol_escape_js($serie['label']).'\', data: [';
-					$j=1;
-					foreach($serie['values'] as $val)
-					{
-						print '['.$j.','.$val.']';
-						if ($j < count($serie['values'])) print ', ';
-						$j++;
-					}
-					print ']}'."\n";
+					print '{ bars: { stack: 0, show: true, barWidth: 0.9, align: \'center\' }, label: \''.dol_escape_js($serie['label']).'\', data: '.json_encode($serie['data']).'}'."\n";
 					$outputserie++; $i++;
 				}
 				if ($outputserie) print ', ';
 				//print '];
 				//var datalines = [';
-				$i=1; $outputserie=0;
+				$i=0; $outputserie=0;
 				foreach($data['series'] as $serie)
 				{
-					if (empty($data['seriestype'][$i-1]) || $data['seriestype'][$i-1]=='bar') { $i++; continue; };
+					if (empty($data['seriestype'][$i]) || $data['seriestype'][$i]=='bar') { $i++; continue; };
 					if ($outputserie > 0) print ',';
-					print '{ lines: { show: true }, label: \''.dol_escape_js($serie['label']).'\', data: [';
-					$j=1;
-					foreach($serie['values'] as $val)
-					{
-						print '['.$j.','.$val.']';
-						if ($j < count($serie['values'])) print ', ';
-						$j++;
-					}
-					print ']}'."\n";
+					print '{ lines: { show: true }, label: \''.dol_escape_js($serie['label']).'\', data: '.json_encode($serie['data']).'}'."\n";
 					$outputserie++; $i++;
 				}
 				print '];
-				var dataticks = [';
-				$i=1;
-				foreach($data['xlabel'] as $label)
-				{
-					print '['.$i.',\''.$label.'\']';
-					if ($i < count($data['xlabel'])) print ',';
-					$i++;
-				}
-				print '];
+				var dataticks = '.json_encode($data['xlabel']).'
 				
 				function plotWithOptions() {
 					$.plot(jQuery("#'.$htmlid.'"), data,
