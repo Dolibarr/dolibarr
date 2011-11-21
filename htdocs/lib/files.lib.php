@@ -694,6 +694,34 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 
 
 /**
+ * Init $_SESSION with uploaded files
+ *
+ * @param	string	$pathtoscan				Path to scan
+ * @return	void
+ */
+function dol_init_file_process($pathtoscan='')
+{
+	$listofpaths=array();
+	$listofnames=array();
+	$listofmimes=array();
+
+	if ($pathtoscan)
+	{
+		$listoffiles=dol_dir_list($pathtoscan,'files');
+		foreach($listoffiles as $key => $val)
+		{
+			$listofpaths[]=$val['fullname'];		
+			$listofnames[]=$val['name'];
+			$listofmimes[]=dol_mimetype($val['name']);
+		}
+	}
+	$_SESSION["listofpaths"]=join(';',$listofpaths);
+	$_SESSION["listofnames"]=join(';',$listofnames);
+	$_SESSION["listofmimes"]=join(';',$listofmimes);
+}
+
+
+/**
  * Get and save an upload file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
  * @param	upload_dir				Directory to store upload files
