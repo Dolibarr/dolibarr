@@ -902,6 +902,11 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
 {
     $result=0;
 
+    if ($_POST['np_price'] < 0 && $_POST["qty"] < 0)
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorBothFieldCantBeNegative",$langs->transnoentitiesnoconv("UnitPriceHT"),$langs->transnoentitiesnoconv("Qty")).'</div>';
+        $result = -1 ;
+    }
     if (empty($_POST['idprod']) && $_POST["type"] < 0)
     {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
