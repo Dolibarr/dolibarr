@@ -430,7 +430,7 @@ if (! empty($force_install_message))
 
 </table>
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 jQuery(document).ready(function() {
 	function init_needroot()
 	{

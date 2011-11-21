@@ -650,7 +650,7 @@ if (! $error && $db->connected && $action == "set")
 
 ?>
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 function jsinfo()
 {
 	ok=true;
