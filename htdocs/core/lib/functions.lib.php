@@ -1500,213 +1500,161 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
 
 /**
  *  Show a javascript graph
- *  @param      htmlid          Html id name
- *  @param      width           Width in pixel
- *  @param      height          Height in pixel
- *  @param      data            Data array
- *  @param      showlegend      1 to show legend, 0 otherwise
- *  @param      type            Type of graph ('pie', 'barline')
- *  @param      showpercent     Show percent (with type='pie' only)
- *  @param      url             Param to add an url to click values
+ *  
+ *  @param		string	$htmlid			Html id name
+ *  @param		int		$width			Width in pixel
+ *  @param		int		$height			Height in pixel
+ *  @param		array	$data			Data array
+ *  @param		int		$showlegend		1 to show legend, 0 otherwise
+ *  @param		string	$type			Type of graph ('pie', 'barline')
+ *  @param		int		$showpercent	Show percent (with type='pie' only)
+ *  @param		string	$url			Param to add an url to click values
+ *  @return		void
  */
 function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='')
 {
-    global $conf,$langs;
-    global $theme_datacolor;    // To have var kept when function is called several times
-    if (empty($conf->use_javascript_ajax)) return;
-    $jsgraphlib='flot';
-    $datacolor=array();
-
+	global $conf,$langs;
+	global $theme_datacolor;    // To have var kept when function is called several times
+	if (empty($conf->use_javascript_ajax)) return;
+	$jsgraphlib='flot';
+	$datacolor=array();
+	
 	// Load colors of theme into $datacolor array
-    $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
-    if (is_readable($color_file))
-    {
-        include_once($color_file);
-        if (isset($theme_datacolor))
-        {
-            $datacolor=array();
-            foreach($theme_datacolor as $val)
-            {
-                $datacolor[]="#".sprintf("%02x",$val[0]).sprintf("%02x",$val[1]).sprintf("%02x",$val[2]);
-            }
-        }
-    }
-    print '<div id="'.$htmlid.'" style="width:'.$width.'px;height:'.$height.'px;"></div>';
-
-    // We use Flot js lib
-    if ($jsgraphlib == 'flot')
-    {
-        if ($type == 'pie')
-        {
-            // data is   array('series'=>array(serie1,serie2,...),
-            //                 'seriestype'=>array('bar','line',...),
-            //                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
-            //                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
-            // serieX is array('label'=>'label', values=>array(0=>val))
-        	print '
-        	<script type="text/javascript">
-			jQuery(function () {
-        	var data = ['."\n";
-            $i=0;
-            foreach($data['series'] as $serie)
-            {
-                //print '{ label: "'.($showlegend?$serie['values'][0]:$serie['label'].'<br>'.$serie['values'][0]).'", data: '.$serie['values'][0].' }';
-                print '{ label: "'.dol_escape_js($serie['label']).'", data: '.$serie['values'][0].' }';
-                if ($i < count($data['series'])) print ',';
-                print "\n";
-                $i++;
-            }
-            print '];
-
-            function plotWithOptions() {
-                jQuery.plot(jQuery("#'.$htmlid.'"), data,
-                {
-                    series: {
-                            pie: {
-                            show: true,
-                            radius: 3/4,
-                            label: {
-                                show: true,
-                                radius: 3/4,
-                                formatter: function(label, series) {
-                                    var percent=Math.round(series.percent);
-                                    var number=series.data[0][1];
-                                    return \'';
-                            print '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">';
-                            if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'=">';
-                            print '\'+'.($showlegend?'number':'label+\'<br/>\'+number');
-                            if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
-                            print '+\'';
-                            if ($url) print '</a>';
-                            print '</div>\';
-                                },
-                                background: {
-                                    opacity: 0.5,
-                                    color: \'#000000\'
-                                }
-                            }
-                    } },
-                    zoom: {
-                        interactive: true
-                    },
-                    pan: {
-                        interactive: true
-                    },
-                    ';
-                    $i=0; $outputserie=0;
-            		if (count($datacolor))
-            		{
-	                    print 'colors: [';
-	                    foreach($datacolor as $val)
-	                    {
-                            if ($outputserie > 0) print ',';
-	                        print '"'.(empty($data['seriescolor'][$i])?$val:$data['seriescolor'][$i]).'"';
-	                        $outputserie++;
-	                        $i++;
-	                    }
-            			print '], ';
-            		}
-                    print 'legend: {show: '.($showlegend?'true':'false').', position: \'ne\' }
-                });
-            }
-            plotWithOptions();
-            });
-            </script>';
-        }
-        else if ($type == 'barline')
-        {
-            // data is   array('series'=>array(serie1,serie2,...),
-            //                 'seriestype'=>array('bar','line',...),
-            //                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
-            //                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
-            // serieX is array('label'=>'label', values=>array(0=>y1,1=>y2,...)) with same nb of value than into xlabel
-            print '
-            <script type="text/javascript">
-            jQuery(function () {
-            var data = [';
-            $i=1; $outputserie=0;
-            foreach($data['series'] as $serie)
-            {
-                if ($data['seriestype'][$i-1]=='line') { $i++; continue; };
-                if ($outputserie > 0) print ',';
-                print '{ bars: { stack: 0, show: true, barWidth: 0.9, align: \'center\' }, label: \''.dol_escape_js($serie['label']).'\', data: [';
-                $j=1;
-                foreach($serie['values'] as $val)
-                {
-                    print '['.$j.','.$val.']';
-                    if ($j < count($serie['values'])) print ', ';
-                    $j++;
-                }
-                print ']}'."\n";
-                $outputserie++;
-                $i++;
-            }
-            if ($outputserie) print ', ';
-            //print '];
-            //var datalines = [';
-            $i=1; $outputserie=0;
-            foreach($data['series'] as $serie)
-            {
-                if (empty($data['seriestype'][$i-1]) || $data['seriestype'][$i-1]=='bar') { $i++; continue; };
-                if ($outputserie > 0) print ',';
-                print '{ lines: { show: true }, label: \''.dol_escape_js($serie['label']).'\', data: [';
-                $j=1;
-                foreach($serie['values'] as $val)
-                {
-                    print '['.$j.','.$val.']';
-                    if ($j < count($serie['values'])) print ', ';
-                    $j++;
-                }
-                print ']}'."\n";
-                $outputserie++;
-                $i++;
-            }
-            print '];
-            var dataticks = [';
-            $i=1;
-            foreach($data['xlabel'] as $label)
-            {
-                print '['.$i.',\''.$label.'\']';
-                if ($i < count($data['xlabel'])) print ',';
-                $i++;
-            }
-            print '];
-
-            function plotWithOptions() {
-                jQuery.plot(jQuery("#'.$htmlid.'"), data,
-                {
-                    series: {
-                            stack: 0
-                    },
-                    zoom: {
-                        interactive: true
-                    },
-                    pan: {
-                        interactive: true
-                    },
-                    ';
-                    if (count($datacolor))
-                    {
-                        print 'colors: [';
-                        $j=0;
-                        foreach($datacolor as $val)
-                        {
-                            print '"'.$val.'"';
-                            if ($j < count($datacolor)) print ',';
-                            $j++;
-                        }
-                        print '], ';
-                    }
-                    print 'legend: {show: '.($showlegend?'true':'false').'},
-                    xaxis: {ticks: dataticks},
-                });
-            }
-            plotWithOptions();
-            });
-            </script>';
-        }
-        else print 'BadValueForPArameterType';
-    }
+	$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+	if (is_readable($color_file))
+	{
+		include_once($color_file);
+		if (isset($theme_datacolor))
+		{
+			$datacolor=array();
+			foreach($theme_datacolor as $val)
+			{
+				$datacolor[]="#".sprintf("%02x",$val[0]).sprintf("%02x",$val[1]).sprintf("%02x",$val[2]);
+			}
+		}
+	}
+	print '<div id="'.$htmlid.'" style="width:'.$width.'px;height:'.$height.'px;"></div>';
+	
+	// We use Flot js lib
+	if ($jsgraphlib == 'flot')
+	{
+		if ($type == 'pie')
+		{
+			// data is   array('series'=>array(serie1,serie2,...),
+			//                 'seriestype'=>array('bar','line',...),
+			//                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
+			//                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
+			// serieX is array('label'=>'label', data=>val)
+			print '
+			<script type="text/javascript">
+			$(function () {
+				var data = '.json_encode($data['series']).';
+				
+				function plotWithOptions() {
+					$.plot($("#'.$htmlid.'"), data,
+					{
+						series: {
+							pie: {
+								show: true,
+								radius: 3/4,
+								label: {
+									show: true,
+									radius: 3/4,
+									formatter: function(label, series) {
+										var percent=Math.round(series.percent);
+										var number=series.data[0][1];
+										return \'';
+										print '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">';
+										if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'=">';
+										print '\'+'.($showlegend?'number':'label+\'<br/>\'+number');
+										if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
+										print '+\'';
+										if ($url) print '</a>';
+										print '</div>\';
+									},
+									background: {
+										opacity: 0.5,
+										color: \'#000000\'
+									}
+								}
+							}
+						},
+						zoom: {
+							interactive: true
+						},
+						pan: {
+							interactive: true
+						},';
+						if (count($datacolor))
+						{
+							print 'colors: '.(! empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor)).',';
+						}
+						print 'legend: {show: '.($showlegend?'true':'false').', position: \'ne\' }
+					});
+				}
+				plotWithOptions();
+			});
+			</script>';
+		}
+		else if ($type == 'barline')
+		{
+			// data is   array('series'=>array(serie1,serie2,...),
+			//                 'seriestype'=>array('bar','line',...),
+			//                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
+			//                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
+			// serieX is array('label'=>'label', data=>array(0=>y1,1=>y2,...)) with same nb of value than into xlabel
+			print '
+			<script type="text/javascript">
+			$(function () {
+				var data = [';
+				$i=0; $outputserie=0;
+				foreach($data['series'] as $serie)
+				{
+					if ($data['seriestype'][$i]=='line') { $i++; continue; };
+					if ($outputserie > 0) print ',';
+					print '{ bars: { stack: 0, show: true, barWidth: 0.9, align: \'center\' }, label: \''.dol_escape_js($serie['label']).'\', data: '.json_encode($serie['data']).'}'."\n";
+					$outputserie++; $i++;
+				}
+				if ($outputserie) print ', ';
+				//print '];
+				//var datalines = [';
+				$i=0; $outputserie=0;
+				foreach($data['series'] as $serie)
+				{
+					if (empty($data['seriestype'][$i]) || $data['seriestype'][$i]=='bar') { $i++; continue; };
+					if ($outputserie > 0) print ',';
+					print '{ lines: { show: true }, label: \''.dol_escape_js($serie['label']).'\', data: '.json_encode($serie['data']).'}'."\n";
+					$outputserie++; $i++;
+				}
+				print '];
+				var dataticks = '.json_encode($data['xlabel']).'
+				
+				function plotWithOptions() {
+					$.plot(jQuery("#'.$htmlid.'"), data,
+					{
+						series: {
+							stack: 0
+						},
+						zoom: {
+							interactive: true
+						},
+						pan: {
+							interactive: true
+						},';
+						if (count($datacolor))
+						{
+							print 'colors: '.json_encode($datacolor).',';
+						}
+						print 'legend: {show: '.($showlegend?'true':'false').'},
+						xaxis: {ticks: dataticks}
+					});
+				}
+				plotWithOptions();
+			});
+			</script>';
+		}
+		else print 'BadValueForPArameterType';
+	}
 }
 
 /**

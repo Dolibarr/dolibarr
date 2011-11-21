@@ -121,7 +121,7 @@ if ($resql)
     $bool=false;
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,1),'values'=>array(0=>(isset($vals[$status.$bool])?$vals[$status.$bool]:0)));
+        $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,1),'data'=>(isset($vals[$status.$bool])?$vals[$status.$bool]:0));
         if ($status==3 && $bool==false) $bool=true;
         else $bool=false;
     }
