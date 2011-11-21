@@ -3090,7 +3090,6 @@ class OrderLine
         $sql.= " , remise_percent=".price2num($this->remise_percent)."";
         $sql.= " , price=".price2num($this->price)."";					// TODO A virer
         $sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
-        $sql.= " , info_bits='".$this->info_bits."'";
         if (empty($this->skip_update_total))
         {
             $sql.= " , total_ht=".price2num($this->total_ht)."";
