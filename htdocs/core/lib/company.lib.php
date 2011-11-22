@@ -480,11 +480,12 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
 
 /**
  * 		Show html area for list of contacts
- *		@param		conf		Object conf
- * 		@param		langs		Object langs
- * 		@param		db			Database handler
- * 		@param		object		Third party object
- *      @param      backtopage  Url to go once contact is created
+ * 
+ *		@param	Conf		$conf		Object conf
+ * 		@param	Translate	$langs		Object langs
+ * 		@param	DoliDB		$db			Database handler
+ * 		@param	Object		$object		Third party object
+ *      @param  string		$backtopage	Url to go once contact is created
  */
 function show_contacts($conf,$langs,$db,$object,$backtopage='')
 {
@@ -743,6 +744,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
 /**
  *    	Show html area with actions done
+ * 
  * 		@param		conf		Object conf
  * 		@param		langs		Object langs
  * 		@param		db			Object db
@@ -837,6 +839,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 $numaction++;
                 $i++;
             }
+	        $db->free($resql);
         }
         else
         {
@@ -967,8 +970,6 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         }
         $out.="</table>\n";
         $out.="<br>\n";
-
-        $db->free($result);
     }
 
     if ($noprint) return $out;

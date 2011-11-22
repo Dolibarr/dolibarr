@@ -570,6 +570,7 @@ class Facture extends CommonObject
 			if (is_object($hookmanager))
 			{
 			    $parameters=array('objFrom'=>$objFrom);
+			    $action='';
 				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
@@ -665,6 +666,7 @@ class Facture extends CommonObject
             $hookmanager->callHooks(array('invoicedao'));
 
             $parameters=array('objFrom'=>$object);
+            $action='';
 			$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) $error++;
 

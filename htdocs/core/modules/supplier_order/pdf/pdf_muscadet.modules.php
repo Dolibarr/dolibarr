@@ -358,7 +358,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
-					$this->_tableau_versements($pdf, $fac, $posy);
+					$this->_tableau_versements($pdf, $object, $posy);
 				}
 
                 // Pied de page

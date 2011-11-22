@@ -1810,7 +1810,7 @@ class Form
                 $tmparray[$obj->rowid]['label']=$label;
                 $i++;
             }
-            $this->cache_demand_reason=dol_sort_array($tmparray,'label', $order='asc', $natsort, $case_sensitive);
+            $this->cache_demand_reason=dol_sort_array($tmparray,'label', $order='asc');
 
             unset($tmparray);
             return 1;
