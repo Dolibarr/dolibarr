@@ -226,8 +226,8 @@ if (dol_strlen($_POST["sf_ref"]) > 0)
 {
 	$sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
 }
-$sql.= " GROUP BY f.facnumber";
-
+$sql.= " GROUP BY f.facnumber,f.increment,f.total,f.total_ttc,f.datef, f.date_lim_reglement,f.paye, f.rowid, f.fk_statut, f.type,s.nom, s.rowid";
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
