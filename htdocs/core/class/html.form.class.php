@@ -1209,7 +1209,7 @@ class Form
         {
             $num = $this->db->num_rows($result);
 
-            $outselect.='<select class="flat" name="'.$htmlname.'">';
+            $outselect.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			$outselect.='<option value="0" selected="selected">&nbsp;</option>';
 
             $i = 0;

@@ -47,6 +47,14 @@
 <input type="hidden" name="action" value="addline">
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
 
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	jQuery('#idprod').change(function() {
+		  jQuery('#np_desc').focus();
+	});
+}); 
+</script>
+
 <tr <?php echo $bcnd[$var]; ?>>
 	<td colspan="3">
 	<?php
