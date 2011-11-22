@@ -195,10 +195,7 @@ $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND f.type IN (0,1) AND f.fk_statut = 1";
 $sql.= " AND f.paye = 0";
-if ($option == 'late')
-{
-	$sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
-}
+if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($_GET["filtre"])
@@ -210,33 +207,13 @@ if ($_GET["filtre"])
 		$sql .= " AND " . $filt[0] . " = " . $filt[1];
 	}
 }
-
-if ($search_ref)
-{
-	$sql .= " AND f.facnumber LIKE '%".$search_ref."%'";
-}
-
-if ($search_societe)
-{
-	$sql .= " AND s.nom LIKE '%".$search_societe."%'";
-}
-
-if ($search_montant_ht)
-{
-	$sql .= " AND f.total = '".$search_montant_ht."'";
-}
-
-if ($search_montant_ttc)
-{
-	$sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
-}
-
-if (dol_strlen($_POST["sf_ref"]) > 0)
-{
-	$sql .= " AND f.facnumber LIKE '%".$_POST["sf_ref"] . "%'";
-}
-$sql.= " GROUP BY f.facnumber";
-
+if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$search_ref."%'";
+if ($search_societe)     $sql .= " AND s.nom LIKE '%".$search_societe."%'";
+if ($search_montant_ht)  $sql .= " AND f.total = '".$search_montant_ht."'";
+if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
+if (dol_strlen($_POST["sf_ref"]) > 0) $sql .= " AND f.facnumber LIKE '%".$_POST["sf_ref"] . "%'";
+$sql.= " GROUP BY f.facnumber,f.increment,f.total,f.total_ttc,f.datef, f.date_lim_reglement,f.paye, f.rowid, f.fk_statut, f.type,s.nom, s.rowid";
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
@@ -244,11 +221,10 @@ $sql.= " f.facnumber DESC";
 
 //$sql .= $db->plimit($limit+1,$offset);
 
-$result = $db->query($sql);
-
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows($result);
+	$num = $db->num_rows($resql);
 
 	if ($socid)
 	{
@@ -332,7 +308,7 @@ if ($result)
 
 		while ($i < $num)
 		{
-			$objp = $db->fetch_object($result);
+			$objp = $db->fetch_object($resql);
 
 			$var=!$var;
 
@@ -425,10 +401,11 @@ if ($result)
 	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,0,0,48,1,$param,'',$langs->trans("PDFMerge"));
 	print '</form>';
 
-	$db->free();
+	$db->free($resql);
 }
-
-$db->close();
+else dol_print_error($db,'');
 
 llxFooter();
+
+if (is_object($db)) $db->close();
 ?>

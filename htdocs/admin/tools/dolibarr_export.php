@@ -41,7 +41,7 @@ $formfile = new FormFile($db);
 llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
 
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 jQuery(document).ready(function() {
 
 	function hideoptions () {

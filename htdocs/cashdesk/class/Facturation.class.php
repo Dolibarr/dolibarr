@@ -144,15 +144,14 @@ class Facturation {
         $newcartarray[$i]['price']=$product->price;
         $newcartarray[$i]['price_ttc']=$product->price_ttc;
 
-        /** add Ditto for MultiPrix*/
         if ($conf->global->PRODUIT_MULTIPRICES)
         {
-            if(isset($product->multiprices[$societe->price_level]))
+            if (isset($product->multiprices[$societe->price_level]))
             {
-                $newcartarray[$i]['price'] = $product->multiprices_ttc[$societe->price_level];
+                $newcartarray[$i]['price'] = $product->multiprices[$societe->price_level];
+                $newcartarray[$i]['price_ttc'] = $product->multiprices_ttc[$societe->price_level];
             }
         }
-        /** end add Ditto */
 
         $newcartarray[$i]['fk_article']=$this->id;
         $newcartarray[$i]['qte']=$this->qte();
