@@ -142,6 +142,10 @@ switch ($action)
 		$user->fetch($_SESSION['uid']);
 		$user->getrights();
 
+		$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+		$societe = new Societe($db);
+		$societe->fetch($thirdpartyid);
+		
 		$invoice=new Facture($db);
 
 		// Get content of cart
@@ -152,13 +156,17 @@ switch ($action)
 		for ($i=0;$i < $tab_liste_size;$i++)
 		{
 			// Recuperation de l'article
-			$res = $db->query('SELECT label, tva_tx, price FROM '.MAIN_DB_PREFIX.'product WHERE rowid = '.$tab_liste[$i]['fk_article']);
-			$ret=array();
-			$tab = $db->fetch_array($res);
-			foreach ( $tab as $cle => $valeur )
-			{
-				$ret[$cle] = $valeur;
-			}
+			$product = new Product($db);
+			$product->fetch($tab_liste[$i]['fk_article']);
+			$ret=array('label'=>$product->label,'tva_tx'=>$product->tva_tx,'price'=>$product->price);
+
+	        if ($conf->global->PRODUIT_MULTIPRICES)
+	        {
+	            if (isset($product->multiprices[$societe->price_level]))
+	            {
+	                $ret['price'] = $product->multiprices[$societe->price_level];
+	            }
+	        }
 			$tab_article = $ret;
 
 			$res = $db->query('SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$tab_liste[$i]['fk_tva']);
