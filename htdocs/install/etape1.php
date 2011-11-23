@@ -84,6 +84,11 @@ if (empty($_POST["db_name"]))
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseName")).'</div>';
     $error++;
 }
+if (empty($_POST["db_prefix"]))
+{
+	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabasePrefix")).'</div>';
+	$error++;
+}
 if (empty($_POST["db_user"]))
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login")).'</div>';
@@ -365,12 +370,15 @@ if (! $error && $db->connected && $action == "set")
             }
         }
     }
+    
+    // Table prefix
+    $main_db_prefix = ((GETPOST("db_prefix") && GETPOST("db_prefix") != '') ? GETPOST("db_prefix") : 'llx_');
 
     // Force https
-    $main_force_https = ((GETPOST("main_force_https") && ( GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1) ) ? '1' : '0');
+    $main_force_https = ((GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
 
     // Use alternative directory
-    $main_use_alt_dir = ((GETPOST("main_use_alt_dir") && ( GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1) ) ? '' : '#');
+    $main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1)) ? '' : '#');
 
     // Alternative root directory name
     $main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
@@ -724,7 +732,7 @@ function write_master_file($masterfile,$main_dir)
 function write_conf_file($conffile)
 {
     global $conf,$langs;
-    global $_POST,$main_dir,$main_data_dir,$main_force_https,$main_use_alt_dir,$main_alt_dir_name;
+    global $_POST,$main_dir,$main_data_dir,$main_force_https,$main_use_alt_dir,$main_alt_dir_name,$main_db_prefix;
     global $dolibarr_main_url_root,$dolibarr_main_document_root,$dolibarr_main_data_root,$dolibarr_main_db_host;
     global $dolibarr_main_db_port,$dolibarr_main_db_name,$dolibarr_main_db_user,$dolibarr_main_db_pass;
     global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
@@ -776,6 +784,9 @@ function write_conf_file($conffile)
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_main_db_name=\''.addslashes($_POST["db_name"]).'\';');
+		fputs($fp,"\n");
+		
+		fputs($fp, '$dolibarr_main_db_prefix=\''.addslashes($main_db_prefix).'\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_main_db_user=\''.addslashes($_POST["db_user"]).'\';');
