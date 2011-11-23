@@ -1953,6 +1953,8 @@ class Facture extends CommonObject
      * 	   	@param     	price_base_type HT or TTC
      * 	   	@param     	info_bits       Miscellanous informations
      * 		@param		type			Type of line (0=product, 1=service)
+     * 		@param		fk_parent_line		???
+     * 		@param		skip_update_total	???
      *      @return    	int             < 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0)
