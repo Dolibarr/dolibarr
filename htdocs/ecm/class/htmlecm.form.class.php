@@ -34,21 +34,22 @@ class FormEcm
 
 
 	/**
-	 * 	\brief     Constructeur
-	 * 	\param     DB      handler d'acces base de donnee
+	 * 	Constructor
+	 *
+	 * 	@param	DoliDB	$db		Database handler
 	 */
-	function FormEcm($DB)
+	function FormEcm($db)
 	{
-		$this->db = $DB;
-
-		return 1;
+		$this->db = $db;
 	}
 
 
 	/**
-	 *	\brief    Retourne la liste des categories du type choisi
-	 *  \param    selected    		Id categorie preselectionnee
-	 *  \param    select_name		Nom formulaire HTML
+	 *	Retourne la liste des categories du type choisi
+	 *
+	 *  @param	int		$selected    		Id categorie preselectionnee
+	 *  @param  string	$select_name		Nom formulaire HTML
+	 *  @return	string						String with HTML select
 	 */
 	function select_all_sections($selected='',$select_name='')
 	{
