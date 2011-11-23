@@ -420,7 +420,7 @@ class FormCompany
 
 		// On recherche les formes juridiques actives des pays actifs
 		$sql  = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays";
-		$sql .= " FROM llx_c_forme_juridique as f, llx_c_pays as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p";
 		$sql .= " WHERE f.fk_pays=p.rowid";
 		$sql .= " AND f.active = 1 AND p.active = 1";
 		if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";

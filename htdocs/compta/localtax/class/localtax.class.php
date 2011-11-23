@@ -551,7 +551,7 @@ class localtax extends CommonObject
      */
 	function update_fk_bank($id)
 	{
-		$sql = 'UPDATE llx_localtax set fk_bank = '.$id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'localtax SET fk_bank = '.$id;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
 		if ($result)

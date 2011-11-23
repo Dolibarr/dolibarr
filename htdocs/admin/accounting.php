@@ -101,7 +101,7 @@ print "<br>\n";
 // Cas des autres param�tres COMPTA_*
 /*
 $sql ="SELECT rowid, name, value, type, note";
-$sql.=" FROM llx_const";
+$sql.=" FROM ".MAIN_DB_PREFIX."const";
 $sql.=" WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
 $result = $db->query($sql);
 if ($result)
