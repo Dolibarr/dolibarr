@@ -1189,7 +1189,6 @@ class SMTPs
             //$content = 'Content-Type: multipart/related; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
             $content = 'Content-Type: multipart/mixed; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
 
-            // TODO Restore
             //                     . "\r\n"
             //                     . 'This is a multi-part message in MIME format.' . "\r\n";
             $content .= "Content-Transfer-Encoding: 8bit" . "\r\n";
@@ -1203,8 +1202,6 @@ class SMTPs
                     // loop through all attachments
                     foreach ( $_content as $_file => $_data )
                     {
-
-                        // TODO Restore "\r\n"
                         $content .= "--" . $this->_getBoundary() . "\r\n"
                         .  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
                         .  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
@@ -1225,7 +1222,6 @@ class SMTPs
                     // loop through all images
                     foreach ( $_content as $_image => $_data )
                     {
-                        // TODO Restore "\r\n"
                         $content .= "--" . $this->_getBoundary() . "\r\n";
 
                         $content .= 'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['imageName'] . '"' . "\r\n"
@@ -1242,13 +1238,11 @@ class SMTPs
                 }
                 else
                 {
-                    // TODO Restore "\r\n"
                     $content .= "--" . $this->_getBoundary() . "\r\n"
                     . 'Content-Type: ' . $_content['mimeType'] . '; '
                     //                             . 'charset="' . $this->getCharSet() . '"';
                     . 'charset=' . $this->getCharSet() . '';
 
-                    // TODO Restore
                     //                    $content .= ( $type == 'html') ? '; name="HTML Part"' : '';
                     $content .=  "\r\n";
                     //                    $content .= 'Content-Transfer-Encoding: ';

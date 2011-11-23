@@ -168,7 +168,7 @@ if ($id > 0 || ! empty($ref))
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	$absolute_discount=$societe->getAvailableDiscounts();
 	print '. ';
-	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	print '.';
 	print '</td></tr>';
@@ -289,10 +289,10 @@ if ($id > 0 || ! empty($ref))
 	// Amount
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 	print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
-	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2">'.price($object->total_tva).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->pays_code=='ES')
@@ -301,19 +301,19 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
 			print '<td align="right" colspan="2">'.price($object->total_localtax1).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 		{
 			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
 			print '<td align="right" colspan="2">'.price($object->total_localtax2).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 	}
 
 
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($object->total_ttc).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 
 	// Statut

@@ -61,14 +61,14 @@ else
 
         $remise = $tab[$i]['remise'];
 
-        echo ('<p>'.$tab[$i]['qte'].' x '.price2num($tab[$i]['price'], 'MT').$remise_percent.' = '.price2num($tab[$i]['total_ht'], 'MT').' '.$conf->monnaie.' '.$langs->trans("HT").' ('.price2num($tab[$i]['total_ttc'], 'MT').' '.$conf->monnaie.' '.$langs->trans("TTC").')</p>'."\n");
+        echo ('<p>'.$tab[$i]['qte'].' x '.price2num($tab[$i]['price'], 'MT').$remise_percent.' = '.price2num($tab[$i]['total_ht'], 'MT').' '.$conf->currency.' '.$langs->trans("HT").' ('.price2num($tab[$i]['total_ttc'], 'MT').' '.$conf->currency.' '.$langs->trans("TTC").')</p>'."\n");
         echo ('</div>'."\n");
     }
 }
 
 $obj_facturation->calculTotaux();
 $total_ttc = $obj_facturation->prix_total_ttc();
-echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price2num($total_ttc, 'MT').' '.$conf->monnaie.'<br></p>'."\n");
+echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price2num($total_ttc, 'MT').' '.$conf->currency.'<br></p>'."\n");
 
 ?></div>
 </div>

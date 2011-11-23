@@ -1249,10 +1249,10 @@ class Form
                 $outval.=$objRef.' - '.dol_trunc($label,32).' - ';
 
                 $found=0;
-                $currencytext=$langs->trans("Currency".$conf->monnaie);
-                $currencytextnoent=$langs->transnoentities("Currency".$conf->monnaie);
-                if (dol_strlen($currencytext) > 10) $currencytext=$conf->monnaie;	// If text is too long, we use the short code
-                if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->monnaie;   // If text is too long, we use the short code
+                $currencytext=$langs->trans("Currency".$conf->currency);
+                $currencytextnoent=$langs->transnoentities("Currency".$conf->currency);
+                if (dol_strlen($currencytext) > 10) $currencytext=$conf->currency;	// If text is too long, we use the short code
+                if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->currency;   // If text is too long, we use the short code
 
                 // Multiprice
                 if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
@@ -1464,10 +1464,10 @@ class Form
 
                 if ($objp->fprice != '') 	// Keep != ''
                 {
-                    $currencytext=$langs->trans("Currency".$conf->monnaie);
-                    $currencytextnoent=$langs->transnoentities("Currency".$conf->monnaie);
-                    if (dol_strlen($currencytext) > 10) $currencytext=$conf->monnaie;   // If text is too long, we use the short code
-                    if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->monnaie;   // If text is too long, we use the short code
+                    $currencytext=$langs->trans("Currency".$conf->currency);
+                    $currencytextnoent=$langs->transnoentities("Currency".$conf->currency);
+                    if (dol_strlen($currencytext) > 10) $currencytext=$conf->currency;   // If text is too long, we use the short code
+                    if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->currency;   // If text is too long, we use the short code
 
                     $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
                     $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
@@ -1578,7 +1578,7 @@ class Form
                     if ($objp->quantity == 1)
                     {
                         $opt.= price($objp->fprice);
-                        $opt.= $langs->trans("Currency".$conf->monnaie)."/";
+                        $opt.= $langs->trans("Currency".$conf->currency)."/";
                     }
 
                     $opt.= $objp->quantity.' ';
@@ -1594,7 +1594,7 @@ class Form
                     if ($objp->quantity > 1)
                     {
                         $opt.=" - ";
-                        $opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
+                        $opt.= price($objp->unitprice).$langs->trans("Currency".$conf->currency)."/".strtolower($langs->trans("Unit"));
                     }
                     if ($objp->duration) $opt .= " - ".$objp->duration;
                     $opt .= "</option>\n";
@@ -2723,9 +2723,9 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td nowrap="nowrap">';
-            //if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';    // If we want deposit to be substracted to payments only and not to total of final invoice
-            if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
-            else print $langs->trans("CompanyHasCreditNote",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
+            //if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->currency)).': ';    // If we want deposit to be substracted to payments only and not to total of final invoice
+            if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->currency)).': ';
+            else print $langs->trans("CompanyHasCreditNote",price($amount),$langs->transnoentities("Currency".$conf->currency)).': ';
             $newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
             if ($filter) $newfilter.=' AND ('.$filter.')';
             $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);

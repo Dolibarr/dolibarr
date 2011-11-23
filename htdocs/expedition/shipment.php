@@ -214,7 +214,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			if ($commande->statut > 0)
 			{
-				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
 			}
 			else
 			{
@@ -226,7 +226,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		if ($absolute_creditnote)
 		{
-			print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+			print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'. ';
 		}
 		if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 		print '</td></tr>';
@@ -360,15 +360,15 @@ if ($id > 0 || ! empty($ref))
 		// Total HT
 		print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 		print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-		print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 		// Total TVA
 		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
-		print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 		// Total TTC
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
-		print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 		// Statut
 		print '<tr><td>'.$langs->trans('Status').'</td>';

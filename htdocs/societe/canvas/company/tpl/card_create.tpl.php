@@ -140,7 +140,7 @@
 
 <tr>
 	<td><?php echo $langs->trans('Capital'); ?></td>
-	<td colspan="3"><input type="text" name="capital" size="10" value="<?php echo $this->control->tpl['capital']; ?>"> <?php echo $langs->trans("Currency".$conf->monnaie); ?></td>
+	<td colspan="3"><input type="text" name="capital" size="10" value="<?php echo $this->control->tpl['capital']; ?>"> <?php echo $langs->trans("Currency".$conf->currency); ?></td>
 </tr>
 
 <?php

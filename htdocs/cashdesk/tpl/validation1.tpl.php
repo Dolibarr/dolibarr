@@ -22,12 +22,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<table class="table_resume">
 
 		<tr><td class="resume_label"><?php echo $langs->trans("Invoice"); ?></td><td><?php  echo $obj_facturation->num_facture(); ?></td></tr>
-		<tr><td class="resume_label"><?php echo $langs->trans("TotalHT"); ?></td><td><?php echo price2num($obj_facturation->prix_total_ht(),'MT').' '.$conf->monnaie; ?></td></tr>
+		<tr><td class="resume_label"><?php echo $langs->trans("TotalHT"); ?></td><td><?php echo price2num($obj_facturation->prix_total_ht(),'MT').' '.$conf->currency; ?></td></tr>
 		<?php
 			// Affichage de la tva par taux
 			if ( $obj_facturation->montant_tva() ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price2num($obj_facturation->montant_tva(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price2num($obj_facturation->montant_tva(),'MT').' '.$conf->currency.'</td></tr>');
 
 			}
 			else
@@ -37,7 +37,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 			}
 		?>
-		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->monnaie; ?></td></tr>
+		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->currency; ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
 		<?php
 		switch ($obj_facturation->mode_reglement())
@@ -81,14 +81,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 			} else {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price2num($obj_facturation->montant_encaisse(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price2num($obj_facturation->montant_encaisse(),'MT').' '.$conf->currency.'</td></tr>');
 
 			}
 
 			// Affichage du montant rendu (reglement en especes)
 			if ( $obj_facturation->montant_rendu() ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price2num($obj_facturation->montant_rendu(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price2num($obj_facturation->montant_rendu(),'MT').' '.$conf->currency.'</td></tr>');
 
 			}
 

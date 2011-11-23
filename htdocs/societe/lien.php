@@ -184,7 +184,7 @@ if ($socid)
 
 
 	// Capital
-	print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3">'.$soc->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3">'.$soc->capital.' '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Societe mere
 	print '<tr><td>'.$langs->trans("ParentCompany").'</td><td colspan="3">';

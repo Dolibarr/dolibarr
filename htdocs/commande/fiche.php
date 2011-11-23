@@ -573,7 +573,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
             if($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
             {
                 //print "CantBeLessThanMinPrice ".$up_ht." - ".GETPOST('remise_percent')." - ".$product->price_min;
-                $mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+                $mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency)).'</div>' ;
             }
             else
             {
@@ -676,7 +676,7 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
     }
     if ($price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
     {
-        $mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+        $mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency)).'</div>' ;
         $result=-1;
     }
 
@@ -1241,7 +1241,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     else print $langs->trans("CompanyHasNoRelativeDiscount");
     print '. ';
     $absolute_discount=$soc->getAvailableDiscounts();
-    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
     else print $langs->trans("CompanyHasNoAbsoluteDiscount");
     print '.';
     print '</td></tr>';
@@ -1643,7 +1643,7 @@ else
             {
                 if ($object->statut > 0)
                 {
-                    print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                    print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                 }
                 else
                 {
@@ -1655,7 +1655,7 @@ else
             }
             if ($absolute_creditnote)
             {
-                print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+                print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'. ';
             }
             if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
             print '</td></tr>';
@@ -1846,11 +1846,11 @@ else
             // Total HT
             print '<tr><td>'.$langs->trans('AmountHT').'</td>';
             print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
-            print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+            print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
             // Total TVA
             print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td>';
-            print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+            print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
             // Amount Local Taxes
             if ($mysoc->pays_code=='ES')
@@ -1859,19 +1859,19 @@ else
                 {
                     print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
                     print '<td align="right">'.price($object->total_localtax1).'</td>';
-                    print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+                    print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
                 }
                 if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
                 {
                     print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
                     print '<td align="right">'.price($object->total_localtax2).'</td>';
-                    print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+                    print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
                 }
             }
 
             // Total TTC
             print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc).'</td>';
-            print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+            print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
             // Statut
             print '<tr><td>'.$langs->trans('Status').'</td>';

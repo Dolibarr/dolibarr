@@ -148,19 +148,19 @@ if ($id > 0 || ! empty($ref))
             {
                 if ($object->statut == 0)
                 {
-                    print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                    print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                     print '. ';
                 }
                 else
                 {
                     if ($object->statut < 1 || $object->type == 2 || $object->type == 3)
                     {
-                        $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                        $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         print '<br>'.$text.'.<br>';
                     }
                     else
                     {
-                        $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                        $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         $text2=$langs->trans("AbsoluteDiscountUse");
                         print $form->textwithpicto($text,$text2);
                     }
@@ -190,12 +190,12 @@ if ($id > 0 || ! empty($ref))
             {
                 if ($object->statut == 0 && $object->type != 3)
                 {
-                    $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie));
+                    $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
                     print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
                 }
                 else
                 {
-                    print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'.';
+                    print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'.';
                 }
             }
             else
@@ -344,12 +344,12 @@ if ($id > 0 || ! empty($ref))
 
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
         print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';

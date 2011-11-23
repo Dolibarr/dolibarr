@@ -146,7 +146,7 @@ for ($i=1; $i<=4; $i++) {
 	<td><?php echo $langs->trans('Capital'); ?></td>
 	<td colspan="3">
 	<?php
-	if ($this->control->tpl['capital']) echo $this->control->tpl['capital'].' '.$langs->trans("Currency".$conf->monnaie);
+	if ($this->control->tpl['capital']) echo $this->control->tpl['capital'].' '.$langs->trans("Currency".$conf->currency);
 	else echo '&nbsp;';
 	?>
 	</td>

@@ -127,8 +127,8 @@ if ($result)
 
         print '<tr class="liste_total">';
         print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-        print '<td align="right">'.price(price2num($total,'MT')).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
-        print '<td align="right">'.price(price2num($totalsell,'MT')).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
+        print '<td align="right">'.price(price2num($total,'MT')).' '.$langs->trans('Currency'.$conf->currency).'</td>';
+        print '<td align="right">'.price(price2num($totalsell,'MT')).' '.$langs->trans('Currency'.$conf->currency).'</td>';
         print '<td align="right">&nbsp;</td>';
         print "</tr>\n";
 

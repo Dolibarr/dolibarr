@@ -1028,10 +1028,10 @@ if ($id > 0 || ! empty($ref))
         // Ligne de	3 colonnes
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
         print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         // Amount Local Taxes
         if ($mysoc->pays_code=='ES')
@@ -1040,17 +1040,17 @@ if ($id > 0 || ! empty($ref))
             {
                 print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
                 print '<td align="right">'.price($object->total_localtax1).'</td>';
-                print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+                print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
             }
             if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
             {
                 print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
                 print '<td align="right">'.price($object->total_localtax2).'</td>';
-                print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+                print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
             }
         }
         print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         print "</table><br>";
 

@@ -478,7 +478,7 @@ if ($result)
         if ($user->rights->banque->modifier)
         {
             print '<td colspan="3">';
-            print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled="disabled"':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->monnaie);
+            print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled="disabled"':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->currency);
             print '</td>';
         }
         else
