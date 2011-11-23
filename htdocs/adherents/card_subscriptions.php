@@ -403,7 +403,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         }
 
                         // Update fk_bank for subscriptions
-                        $sql = 'UPDATE llx_cotisation set fk_bank='.$bank_line_id;
+                        $sql = 'UPDATE '.MAIN_DB_PREFIX.'cotisation SET fk_bank='.$bank_line_id;
                         $sql.= ' WHERE rowid='.$crowid;
                         dol_syslog('sql='.$sql);
                         $result = $db->query($sql);

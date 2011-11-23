@@ -579,7 +579,7 @@ class Tva extends CommonObject
      */
 	function update_fk_bank($id_bank)
 	{
-		$sql = 'UPDATE llx_tva set fk_bank = '.$id_bank;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
 		if ($result)

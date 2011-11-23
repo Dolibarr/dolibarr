@@ -63,14 +63,17 @@ class mailing_thirdparties extends MailingTargets
 		// CHANGE THIS
 		// Select the third parties from category
 		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname,";
-		if ($_POST['filter']) $sql.= " llx_categorie.label as label";
+		if ($_POST['filter']) $sql.= " c.label";
 		else $sql.=" null as label";
-		$sql.= " FROM llx_societe as s";
-		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie_societe ON llx_categorie_societe.fk_societe=s.rowid";
-		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie ON llx_categorie.rowid = llx_categorie_societe.fk_categorie";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+		if ($_POST['filter'])
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON cs.fk_societe = s.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cs.fk_categorie";
+		}
 		$sql.= " WHERE s.email != ''";
 		$sql.= " AND s.entity = ".$conf->entity;
-		if ($_POST['filter']) $sql.= " AND llx_categorie.rowid='".$_POST['filter']."'";
+		if ($_POST['filter']) $sql.= " AND c.rowid='".$_POST['filter']."'";
 		$sql.= " ORDER BY s.email";
 
 		// Stocke destinataires dans cibles
