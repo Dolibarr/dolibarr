@@ -282,7 +282,7 @@ class ActionsCardService extends Product
 		}
 		else
 		{
-			dol_print_error($db,$sql);
+			dol_print_error($this->db,$sql);
 		}
 	}
 
@@ -298,6 +298,7 @@ class ActionsCardService extends Product
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
 		global $conf;
+		global $search_categ,$sall,$sref,$sbarcode,$snom,$catid;
 
         $this->getFieldList();
 

@@ -2127,6 +2127,7 @@ abstract class CommonObject
                 if (empty($line->fk_parent_line))
                 {
                     $parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+                    $action='';
                     $reshook=$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 }
             }

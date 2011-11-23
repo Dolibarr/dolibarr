@@ -28,13 +28,18 @@ $user->getrights('ecm');
 /**
  * Replace the default llxHeader function
  *
- * @param 	string $head		Optionnal head lines
- * @param 	string $title		HTML title
- * @param 	string $help_url	Link to online url help
- * @param 	string $morehtml	More content into html header
+ * @param 	string	$head			Optionnal head lines
+ * @param 	string	$title			HTML title
+ * @param 	string	$help_url		Link to online url help
+ * @param 	string	$morehtml		More content into html header
+ * @param 	string 	$target			Force target on menu links
+ * @param 	int    	$disablejs		More content into html header
+ * @param 	int    	$disablehead	More content into html header
+ * @param 	array  	$arrayofjs		Array of complementary js files
+ * @param 	array  	$arrayofcss		Array of complementary css files
  * @return	none
  */
-function llxHeader($head = '', $title='', $help_url='', $morehtml='')
+function llxHeader($head = '', $title='', $help_url='', $morehtml='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $conf,$langs,$user;
 	$langs->load("ftp");

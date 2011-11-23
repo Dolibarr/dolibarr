@@ -829,6 +829,7 @@ class Commande extends CommonObject
             if (is_object($hookmanager))
             {
                 $parameters=array('objFrom'=>$objFrom);
+                $action='';
                 $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
@@ -924,6 +925,7 @@ class Commande extends CommonObject
                 $hookmanager->callHooks(array('orderdao'));
 
                 $parameters=array('objFrom'=>$object);
+                $action='';
                 $reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
 
@@ -1580,7 +1582,8 @@ class Commande extends CommonObject
         $this->stocks = array();
 
         // Tableau des id de produit de la commande
-
+		$array_of_product=array();
+		
 
         // Recherche total en stock pour chaque produit
         if (count($array_of_product))

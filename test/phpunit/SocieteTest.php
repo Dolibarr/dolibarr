@@ -227,10 +227,6 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->factures_impayes();
-    	print __METHOD__." id=".$localobject->id." result=".join(',',$result)."\n";
-    	//$this->assertLessThan($result, 0);
-
         $result=$localobject->set_as_client();
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
