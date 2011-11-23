@@ -279,7 +279,7 @@ if ($action == 'add' && $user->rights->fournisseur->facture->creer)
                 $element = 'fourn'; $subelement = 'fournisseur.commande';
             }
 
-            $object->origin 	= $_POST['origin'];
+            $object->origin    = $_POST['origin'];
             $object->origin_id = $_POST['originid'];
 
             $id = $object->create($user);
@@ -314,20 +314,20 @@ if ($action == 'add' && $user->rights->fournisseur->facture->creer)
                         if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
                         $result = $object->addline(
-                        $desc,
-                        $lines[$i]->subprice,
-                        $lines[$i]->tva_tx,
-                        $lines[$i]->localtax1_tx,
-                        $lines[$i]->localtax2_tx,
-                        $lines[$i]->qty,
-                        $lines[$i]->fk_product,
-                        $lines[$i]->remise_percent,
-                        $date_start,
-                        $date_end,
-                        0,
-                        $lines[$i]->info_bits,
+                            $desc,
+                            $lines[$i]->subprice,
+                            $lines[$i]->tva_tx,
+                            $lines[$i]->localtax1_tx,
+                            $lines[$i]->localtax2_tx,
+                            $lines[$i]->qty,
+                            $lines[$i]->fk_product,
+                            $lines[$i]->remise_percent,
+                            $date_start,
+                            $date_end,
+                            0,
+                            $lines[$i]->info_bits,
         					'HT',
-                        $product_type
+                            $product_type
                         );
 
                         if ($result < 0)
@@ -1149,6 +1149,22 @@ if ($action == 'create')
     print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
 
     print "</form>\n";
+
+
+    // Show origin lines
+    if (is_object($objectsrc))
+    {
+        print '<br>';
+
+        $title=$langs->trans('ProductsAndServices');
+        print_titre($title);
+
+        print '<table class="noborder" width="100%">';
+
+        $objectsrc->printOriginLinesList($hookmanager);
+
+        print '</table>';
+    }
 }
 else
 {
@@ -1806,7 +1822,7 @@ else
 
                 /*
                  * Linked object block
-                 */
+                */
                 $somethingshown=$object->showLinkedObjectBlock();
 
                 print '</td><td valign="top" width="50%">';
