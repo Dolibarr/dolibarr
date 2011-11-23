@@ -552,7 +552,7 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
-		$sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank sql=".$sql);
 		$result = $this->db->query($sql);
