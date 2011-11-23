@@ -1898,6 +1898,8 @@ if ($action == 'create')
     // Show origin lines
     if (is_object($objectsrc))
     {
+        print '<br>';
+
         $title=$langs->trans('ProductsAndServices');
         print_titre($title);
 
