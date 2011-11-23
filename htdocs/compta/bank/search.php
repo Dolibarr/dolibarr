@@ -33,19 +33,20 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/bankcateg.class.php");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque');
 
-$description=$_REQUEST["description"];
-$debit=$_REQUEST["debit"];
-$credit=$_REQUEST["credit"];
-$type=$_REQUEST["type"];
-$account=$_REQUEST["account"];
+$description=GETPOST("description");
+$debit=GETPOST("debit");
+$credit=GETPOST("credit");
+$type=GETPOST("type");
+$account=GETPOST("account");
+$bid=GETPOST("bid");
 
 $param='';
-if (! empty($_REQUEST["description"])) $param.='&description='.$_REQUEST["description"];
-if (! empty($_REQUEST["type"])) $param.='&type='.$_REQUEST["type"];
-if (! empty($_REQUEST["debit"])) $param.='&debit='.$_REQUEST["debit"];
-if (! empty($_REQUEST["credit"])) $param.='&credit='.$_REQUEST["credit"];
-if (! empty($_REQUEST["account"])) $param.='&account='.$_REQUEST["account"];
-if (! empty($_REQUEST["bid"]))  $param.='&bid='.$_REQUEST["bid"];
+if ($description) $param.='&description='.$description;
+if ($type) $param.='&type='.$type;
+if ($debit) $param.='&debit='.$debit;
+if ($credit) $param.='&credit='.$credit;
+if ($account) $param.='&account='.$account;
+if ($bid)  $param.='&bid='.$bid;
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');

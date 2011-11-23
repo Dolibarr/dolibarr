@@ -85,6 +85,7 @@ ConfirmMoveToAnotherContractQuestion=Choisissez vers quel autre contrat de ce m�
 PaymentRenewContractId=Renouvellement service (numéro %s)
 ExpiredSince=Expiré le
 RelatedContracts=Contrats associés
+NoExpiredServices=Pas de services actifs expirés
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat

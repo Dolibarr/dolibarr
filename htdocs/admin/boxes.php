@@ -267,7 +267,7 @@ $sql = "SELECT rowid, file, note, tms";
 $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql.= " WHERE entity = ".$conf->entity;
 $resql = $db->query($sql);
-$var=True;
+$var=true;
 
 if ($resql)
 {
@@ -325,6 +325,7 @@ if ($resql)
 					$logo=preg_replace("/^object_/i","",$box->boximg);
 				}
 
+				print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<tr '.$bc[$var].'>';
@@ -421,6 +422,7 @@ if ($resql)
 			$logo=preg_replace("/^object_/i","",$box->boximg);
 		}
 
+        print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
 		print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';

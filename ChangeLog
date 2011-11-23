@@ -27,6 +27,7 @@ For users:
 - New: Add hidden option PROJECT_HIDE_UNSELECTABLES to hide project you can't select into combo list.
 - New: Add option INVOICE_POSITIVE_CREDIT_NOTE.
 - New: Support zip/town autocompletion into warehouses.
+- New: Add box for last expired services.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:

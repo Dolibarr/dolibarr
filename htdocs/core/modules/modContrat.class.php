@@ -79,6 +79,7 @@ class modContrat extends DolibarrModules
 		// Boxes
 		$this->boxes = array();
 		$this->boxes[0][1] = "box_contracts.php";
+		$this->boxes[1][1] = "box_services_expired.php";
 
 		// Permissions
 		$this->rights = array();
