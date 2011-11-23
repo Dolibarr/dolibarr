@@ -57,7 +57,7 @@ class FormEcm
 
 		if ($select_name=="") $select_name="catParent";
 
-		$cat = new ECMDirectory($this->db);
+		$cat = new EcmDirectory($this->db);
 		$cate_arbo = $cat->get_full_arbo();
 
 		$output = '<select class="flat" name="'.$select_name.'">';

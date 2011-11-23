@@ -72,7 +72,7 @@ if (! $urlfile)
 }
 
 // Load ecm object
-$ecmdir = new ECMDirectory($db);
+$ecmdir = new EcmDirectory($db);
 $result=$ecmdir->fetch(GETPOST("section"));
 if (! $result > 0)
 {
@@ -176,7 +176,7 @@ if ($_GET["action"] == 'edit')
 print '<table class="border" width="100%">';
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 $s='';
-$tmpecmdir=new ECMDirectory($db);	// Need to create a new one
+$tmpecmdir=new EcmDirectory($db);	// Need to create a new one
 $tmpecmdir->fetch($ecmdir->id);
 $result = 1;
 $i=0;

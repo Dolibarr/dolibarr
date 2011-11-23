@@ -65,7 +65,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$ecmdir = new ECMDirectory($db);
+$ecmdir = new EcmDirectory($db);
 if (! empty($_REQUEST["section"]))
 {
 	$result=$ecmdir->fetch($_REQUEST["section"]);
@@ -96,7 +96,7 @@ if (! empty($_REQUEST["section"]))
 llxHeader();
 
 $form=new Form($db);
-$ecmdirstatic = new ECMDirectory($db);
+$ecmdirstatic = new EcmDirectory($db);
 $userstatic = new User($db);
 
 

@@ -61,7 +61,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$ecmdir = new ECMDirectory($db);
+$ecmdir = new EcmDirectory($db);
 if (! empty($_GET["section"]))
 {
 	$result=$ecmdir->fetch($_GET["section"]);
