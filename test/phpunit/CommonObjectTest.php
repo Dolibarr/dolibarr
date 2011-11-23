@@ -173,7 +173,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
     /**
      *
      */
-    public function testFetchClient()
+    public function testFetchThirdParty()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
