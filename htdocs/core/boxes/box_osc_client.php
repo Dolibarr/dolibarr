@@ -39,7 +39,7 @@ class box_osc_clients extends ModeleBoxes {
     var $info_box_contents = array();
 
     /**
-     *      \brief      Constructeur de la classe
+     *  Constructor
      */
     function box_osc_clients()
     {
@@ -50,8 +50,10 @@ class box_osc_clients extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
+	 *  Load data into info_box_contents array to show array later.
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+     *  @return	void
      */
     function loadBox($max=5)
     {
@@ -97,6 +99,13 @@ class box_osc_clients extends ModeleBoxes {
 
     }
 
+	/**
+	 *	Method to show box
+	 *
+	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$contents   Array with properties of box lines
+	 *	@return	void
+	 */
     function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);

@@ -88,9 +88,11 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 
 
 	/**
-	 *	\brief      Standard method to show a box (usage by boxes not mandatory, a box can still use its own function)
-	 *	\param      $head       tableau des caracteristiques du titre
-	 *	\param      $contents   tableau des lignes de contenu
+	 *	Standard method to show a box (usage by boxes not mandatory, a box can still use its own function)
+	 *
+	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$contents   Array with properties of box lines
+	 *	@return	void
 	 */
 	function showBox($head, $contents)
 	{

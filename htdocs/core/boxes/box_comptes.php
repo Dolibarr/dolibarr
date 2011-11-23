@@ -54,7 +54,8 @@ class box_comptes extends ModeleBoxes {
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
-	 *  @param      $max        Maximum number of records to load
+	 *  @param	int		$max        Maximum number of records to load
+     *  @return	void
 	 */
 	function loadBox($max=5)
 	{
@@ -147,6 +148,13 @@ class box_comptes extends ModeleBoxes {
 
 	}
 
+	/**
+	 *	Method to show box
+	 *
+	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$contents   Array with properties of box lines
+	 *	@return	void
+	 */
 	function showBox($head = null, $contents = null)
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);
