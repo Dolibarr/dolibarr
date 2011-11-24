@@ -1,8 +1,7 @@
-# Dolibarr language file - es_ES - errors 
+# Dolibarr language file - es_ES - errors
 CHARSET=UTF-8
 MenuManager=Gestor de menú
-
-# Errors
+# Errors=undefined
 Error=Error
 Errors=Errores
 ErrorBadEMail=e-mail %s no correcto
@@ -71,7 +70,7 @@ ErrorFileIsInfectedWithAVirus=¡El antivirus no ha podido validar este archivo (
 ErrorSpecialCharNotAllowedForField=Los caracteres especiales no son admitidos por el campo "%s"
 ErrorDatabaseParameterWrong=El parámetro de configuración de la base de datos '<b>%s</b>' tiene un valor no compatible para una instalación de Dolibarr (debe tener el valor '<b>%s</b>').
 ErrorNumRefModel=Hay una referencia en la base de datos (%s) y es incompatible con esta numeración. Elimine la línea o renombre la referencia para activar este módulo.
-ErrorQtyTooLowForThisSupplier= Cantidad insuficiente para este proveedor
+ErrorQtyTooLowForThisSupplier=Cantidad insuficiente para este proveedor
 ErrorModuleSetupNotComplete=La configuración del módulo parece incompleta. Vaya al área Configuración - Módulos para corregir
 ErrorBadMask=Error en la máscara
 ErrorBadMaskFailedToLocatePosOfSequence=Error, sin número de secuencia en la máscara
@@ -98,7 +97,7 @@ ErrorFailedToChangePassword=Error en la modificación de la contraseña
 ErrorLoginDoesNotExists=La cuenta de usuario de <b>%s</b> no se ha encontrado.
 ErrorLoginHasNoEmail=Este usuario no tiene e-mail. Imposible continuar.
 ErrorBadValueForCode=Valor incorrecto para el código. Vuelva a intentar con un nuevo valor...
-
+ErrorBothFieldCantBeNegative=Los campos %s y %s no pueden ser negativos
 # Warnings
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.
 WarningAllowUrlFopenMustBeOn=El parámetro <b>allow_url_fopen</b> debe ser especificado a <b>on</b> en el archivo <b>php.ini</b> para disponer de este módulo completamente activo. Debe modificar este archivo manualmente
