@@ -35,6 +35,7 @@ $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
 $langs->load("install");
+$langs->load("errors");
 
 // Recuparation des information de connexion
 $userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";

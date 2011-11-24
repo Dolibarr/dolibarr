@@ -51,6 +51,7 @@ ServerAddressDescription=Nom ou adresse ip du serveur de base de données, gén�
 ServerPortDescription=Port du serveur. Ne rien mettre si inconnu.
 DatabaseServer=Serveur de la base de données
 DatabaseName=Nom de la base de données
+DatabasePrefix=Préfixe des tables
 Login=Login
 AdminLogin=Login du propriétaire de la base de données Dolibarr.
 Password=Mot de passe
