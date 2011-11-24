@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - contracts 
+# Dolibarr language file - ca_ES - contracts
 CHARSET=UTF-8
 ContractsArea=Àrea contractes
 ListOfContracts=Llistat de contractes
@@ -84,6 +84,7 @@ ConfirmMoveToAnotherContractQuestion=Escolliu qualsevol altre contracte del mate
 PaymentRenewContractId=Renovació servei (número %s)
 ExpiredSince=Expirat des del
 RelatedContracts=Contractes associats
+NoExpiredServices=Sense serveis actius expirats
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial signant del contracte
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguiment del contracte
