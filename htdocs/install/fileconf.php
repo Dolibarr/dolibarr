@@ -81,7 +81,7 @@ if (! empty($force_install_message))
 }
 
 ?>
-<table border="0" cellpadding="1" cellspacing="0">
+<table class="nobordernopadding">
 
 	<tr>
 		<td colspan="3" class="label" align="center">
