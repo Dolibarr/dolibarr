@@ -84,11 +84,6 @@ if (empty($_POST["db_name"]))
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseName")).'</div>';
     $error++;
 }
-if (empty($_POST["db_prefix"]))
-{
-	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabasePrefix")).'</div>';
-	$error++;
-}
 if (empty($_POST["db_user"]))
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login")).'</div>';
@@ -98,6 +93,11 @@ if (! empty($_POST["db_port"]) && ! is_numeric($_POST["db_port"]))
 {
     print '<div class="error">'.$langs->trans("ErrorBadValueForParameter",$_POST["db_port"],$langs->transnoentities("Port")).'</div>';
     $error++;
+}
+if (! empty($_POST["db_prefix"]) && ! preg_match('/^[a-z0-9]+_$/i', $_POST["db_prefix"]))
+{
+	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter",$_POST["db_prefix"],$langs->transnoentities("DatabasePrefix")).'</div>';
+	$error++;
 }
 
 
