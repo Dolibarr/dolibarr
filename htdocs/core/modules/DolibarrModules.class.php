@@ -408,7 +408,7 @@ abstract class DolibarrModules
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules";
         $sql.= " WHERE numero = ".$this->numero;
-        $sql.= " AND entity in (0, ".$conf->entity.")";
+        $sql.= " AND entity IN (0, ".$conf->entity.")";
 
         dol_syslog(get_class($this)."::_dbunactive sql=".$sql, LOG_DEBUG);
         $this->db->query($sql);
