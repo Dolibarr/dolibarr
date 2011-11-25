@@ -74,15 +74,15 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " sp.name as name, sp.firstname as firstname, sp.civilite,";
         $sql.= " s.nom as companyname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
-        $sql.= " ".MAIN_DB_PREFIX."societe as s,";
-    	$sql.= " ".MAIN_DB_PREFIX."categorie as c,";
-    	$sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c,";
+    	if ($filtersarray[0] <> 'all') $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
         $sql.= " WHERE s.rowid = sp.fk_soc";
     	$sql.= " AND sp.email != ''";     // Note that null != '' is false
     	$sql.= " AND sp.entity = ".$conf->entity;
-    	$sql.= " AND cs.fk_categorie = c.rowid";
-    	$sql.= " AND cs.fk_societe = sp.fk_soc";
-    	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$filtersarray[0]."'";
+    	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
+    	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
+    	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db>escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.name, sp.firstname";
 
     	$resql = $this->db->query($sql);
