@@ -280,7 +280,7 @@ if ($_GET["action"] == 'create')
     print "</tr>";
 
     // Amount
-    print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.$_POST["amount"].'" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.$_POST["amount"].'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
 	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
@@ -365,7 +365,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     print "</tr>";
 
 	// Amount
-    print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
 	print $form->selectyesno("public",1,1);
@@ -455,7 +455,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
     print '<td rowspan="'.$nbrows.'" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
 	print nl2br($don->note).'</td></tr>';
 
-    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
 	print yn($don->public);

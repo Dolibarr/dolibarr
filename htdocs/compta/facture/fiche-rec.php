@@ -373,12 +373,12 @@ else
 
 			print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 			print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 			if ($fac->note)
 			{
 				print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";

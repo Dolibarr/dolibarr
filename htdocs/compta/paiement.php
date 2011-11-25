@@ -598,7 +598,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $preselectedchoice=$addwarning?'no':'yes';
 
             print '<br>';
-            $text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->monnaie));
+            $text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->currency));
             if (GETPOST('closepaidinvoices'))
             {
                 $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");

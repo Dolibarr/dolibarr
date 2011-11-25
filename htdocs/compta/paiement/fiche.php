@@ -233,7 +233,7 @@ print $form->editfieldval("Numero",'num',$paiement->numero,$paiement,$paiement->
 print '</td></tr>';
 
 // Amount
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 // Note
 print '<tr><td valign="top">'.$form->editfieldkey("Note",'note',$paiement->note,$paiement,$user->rights->facture->paiement).'</td><td colspan="3">';

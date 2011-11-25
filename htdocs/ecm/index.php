@@ -68,7 +68,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$ecmdir = new ECMDirectory($db);
+$ecmdir = new EcmDirectory($db);
 if (GETPOST("section"))
 {
 	$result=$ecmdir->fetch(GETPOST("section"));
@@ -80,7 +80,7 @@ if (GETPOST("section"))
 }
 
 $form=new Form($db);
-$ecmdirstatic = new ECMDirectory($db);
+$ecmdirstatic = new EcmDirectory($db);
 $userstatic = new User($db);
 
 
@@ -253,7 +253,7 @@ if (GETPOST("action") == 'refreshmanual')
 
             if ($fk_parent >= 0)
             {
-                $ecmdirtmp=new ECMDirectory($db);
+                $ecmdirtmp=new EcmDirectory($db);
                 $ecmdirtmp->ref                = 'NOTUSEDYET';
                 $ecmdirtmp->label              = basename($dirdesc['fullname']);
                 $ecmdirtmp->description        = '';
@@ -445,7 +445,7 @@ else
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
 	$userstatic = new User($db);
-	$ecmdirstatic = new ECMDirectory($db);
+	$ecmdirstatic = new EcmDirectory($db);
 
 	// Confirmation de la suppression d'une ligne categorie
 	if ($_GET['action'] == 'delete_section')

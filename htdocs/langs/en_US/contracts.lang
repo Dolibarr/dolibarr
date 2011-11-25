@@ -85,6 +85,7 @@ ConfirmMoveToAnotherContractQuestion=Choose in which existing contract (of same 
 PaymentRenewContractId=Renew contract line (number %s)
 ExpiredSince=Expiration date
 RelatedContracts=Related contracts
+NoExpiredServices=No expired active services
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sales representative signing contract
 TypeContact_contrat_internal_SALESREPFOLL=Sales representative following-up contract

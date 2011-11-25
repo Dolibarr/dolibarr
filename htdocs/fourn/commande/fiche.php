@@ -126,18 +126,8 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 {
     if (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice']))
     {
-        $ret=$object->fetch($id);
-        if ($ret < 0)
-        {
-            dol_print_error($db,$object->error);
-            exit;
-        }
-        	
-		if ($object->socid)
-		{
-			$societe=new Societe($db);
-			$societe->fetch($object->socid);
-		}
+        if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
+        if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
 
         // Ecrase $pu par celui	du produit
         // Ecrase $desc	par	celui du produit
@@ -148,13 +138,6 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
             $productsupplier = new ProductFournisseur($db);
             $idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);
-
-			//$societe='';
-			/*if ($object->socid)
-			{
-				$societe=new Societe($db);
-				$societe->fetch($object->socid);
-			}*/
 
             if ($idprod > 0)
             {
@@ -170,12 +153,12 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
                 $remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
-                $tva_tx	= get_default_tva($societe,$mysoc,$productsupplier->id);
+                $tva_tx	= get_default_tva($object->thirdparty,$mysoc,$productsupplier->id);
                 $type = $productsupplier->type;
 
                 // Local Taxes
-                $localtax1_tx= get_localtax($tva_tx, 1, $societe);
-                $localtax2_tx= get_localtax($tva_tx, 2, $societe);
+                $localtax1_tx= get_localtax($tva_tx, 1, $object->thirdparty);
+                $localtax2_tx= get_localtax($tva_tx, 2, $object->thirdparty);
 
                 $result=$object->addline(
                 $desc,
@@ -206,8 +189,8 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             $tva_tx = price2num($_POST['tva_tx']);
 
             // Local Taxes
-            $localtax1_tx= get_localtax($tva_tx, 1, $societe);
-            $localtax2_tx= get_localtax($tva_tx, 2, $societe);
+            $localtax1_tx= get_localtax($tva_tx, 1, $object->thirdparty);
+            $localtax2_tx= get_localtax($tva_tx, 2, $object->thirdparty);
 
             if (! $_POST['dp_desc'])
             {
@@ -271,13 +254,11 @@ if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$
         if ($product->fetch($_POST["elrowid"]) < 0) dol_print_error($db);
     }
 
-    if ($object->fetch($id) < 0) dol_print_error($db);
+    if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
+    if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
 
-    $societe=new Societe($db);
-    $societe->fetch($object->socid);
-
-    $localtax1_tx=get_localtax($_POST['tva_tx'],1,$societe);
-    $localtax2_tx=get_localtax($_POST['tva_tx'],2,$societe);
+    $localtax1_tx=get_localtax($_POST['tva_tx'],1,$object->thirdparty);
+    $localtax2_tx=get_localtax($_POST['tva_tx'],2,$object->thirdparty);
 
     $result	= $object->updateline(
         $_POST['elrowid'],
@@ -1047,10 +1028,10 @@ if ($id > 0 || ! empty($ref))
         // Ligne de	3 colonnes
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
         print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         // Amount Local Taxes
         if ($mysoc->pays_code=='ES')
@@ -1059,17 +1040,17 @@ if ($id > 0 || ! empty($ref))
             {
                 print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
                 print '<td align="right">'.price($object->total_localtax1).'</td>';
-                print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+                print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
             }
             if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
             {
                 print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
                 print '<td align="right">'.price($object->total_localtax2).'</td>';
-                print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+                print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
             }
         }
         print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         print "</table><br>";
 

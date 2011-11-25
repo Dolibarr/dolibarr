@@ -358,7 +358,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
-					$this->_tableau_versements($pdf, $fac, $posy);
+					$this->_tableau_versements($pdf, $object, $posy);
 				}
 
                 // Pied de page
@@ -591,7 +591,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         // Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 2);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 

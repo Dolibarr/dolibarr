@@ -403,7 +403,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         }
 
                         // Update fk_bank for subscriptions
-                        $sql = 'UPDATE llx_cotisation set fk_bank='.$bank_line_id;
+                        $sql = 'UPDATE '.MAIN_DB_PREFIX.'cotisation SET fk_bank='.$bank_line_id;
                         $sql.= ' WHERE rowid='.$crowid;
                         dol_syslog('sql='.$sql);
                         $result = $db->query($sql);
@@ -854,7 +854,7 @@ if ($rowid)
         if ($adht->cotisation)
         {
             // Amount
-            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Label
             print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';

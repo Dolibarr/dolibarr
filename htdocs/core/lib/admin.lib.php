@@ -220,6 +220,12 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
     {
         if ($sql)
         {
+        	// Replace the prefix tables
+        	if (MAIN_DB_PREFIX != 'llx_')
+        	{
+        		$sql=preg_replace('/llx_/i',MAIN_DB_PREFIX,$sql);
+        	}
+        	
             if (!empty($handler)) $sql=preg_replace('/__HANDLER__/i',"'".$handler."'",$sql);
 
             $newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
@@ -448,7 +454,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
     if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
     {
-        $sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity)";
         $sql.= " VALUES (";
         $sql.= $db->encrypt($name,1);
         $sql.= ", ".$db->encrypt($value,1);

@@ -146,7 +146,7 @@ if ($_GET["action"] == 'create')
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	$absolute_discount=$soc->getAvailableDiscounts();
 	print '. ';
-	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	print '.';
 	print '</td></tr>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,20 +16,20 @@
  */
 
 /**
- * 		\file       htdocs/core/boxes/box_contracts.php
+ * 		\file       htdocs/core/boxes/box_services_expired.php
  * 		\ingroup    contracts
- * 		\brief      Module de generation de l'affichage de la box contracts
+ * 		\brief      Module to show the box of last expired services
  */
 
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 
-class box_contracts extends ModeleBoxes {
+class box_services_expired extends ModeleBoxes {
 
-    var $boxcode="lastcontracts";
+    var $boxcode="expiredservices";
     var $boximg="object_contract";
     var $boxlabel;
-    var $depends = array("contrat");	// conf->contrat->enabled
+    var $depends = array("contrat");	// conf->propal->enabled
 
     var $db;
     var $param;
@@ -41,13 +41,13 @@ class box_contracts extends ModeleBoxes {
     /**
      *  Constructor
      */
-    function box_contracts()
+    function box_services_expired()
     {
     	global $langs;
 
     	$langs->load("contracts");
 
-    	$this->boxlabel=$langs->trans("BoxLastContracts");
+    	$this->boxlabel=$langs->trans("BoxOldestExpiredServices");
     }
 
     /**
@@ -62,46 +62,42 @@ class box_contracts extends ModeleBoxes {
 
     	$this->max=$max;
 
-    	include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-    	$contractstatic=new Contrat($db);
+    	$now=dol_now('tzref');
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts",$max));
+    	$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices",$max));
 
     	if ($user->rights->contrat->lire)
     	{
-    		$sql = "SELECT s.nom, s.rowid as socid,";
-    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE c.fk_soc = s.rowid";
-    		$sql.= " AND c.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-    		$sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+    	    // Select contracts with at least one expired service
+			$sql = "SELECT ";
+    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat,";
+			$sql.= " s.nom, s.rowid as socid,";
+			$sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
+    		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    		$sql.= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$db->idate($now)."'";
+    		$sql.= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
+            if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+            if (!$user->rights->societe->client->voir  && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    		$sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, s.nom, s.rowid";
+    		$sql.= " ORDER BY date_line ASC";
     		$sql.= $db->plimit($max, 0);
 
     		$resql = $db->query($sql);
     		if ($resql)
     		{
     			$num = $db->num_rows($resql);
-    			$now=gmmktime();
 
     			$i = 0;
 
     			while ($i < $num)
     			{
+    			    $late='';
+
     				$objp = $db->fetch_object($resql);
-    				$datec=$db->jdate($objp->datec);
-    				$dateterm=$db->jdate($objp->fin_validite);
-    				$dateclose=$db->jdate($objp->date_cloture);
-    				$late = '';
 
-    				$contractstatic->statut=$objp->fk_statut;
-    				$contractstatic->id=$objp->rowid;
-    				$result=$contractstatic->fetch_lines();
-
-    				// fin_validite is no more on contract but on services
-    				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
+					$dateline=$db->jdate($objp->date_line);
+					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
 
     				$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
     				'logo' => $this->boximg,
@@ -109,7 +105,6 @@ class box_contracts extends ModeleBoxes {
 
     				$this->info_box_contents[$i][1] = array('td' => 'align="left"',
     				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-    				'text2'=> $late,
     				'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
 
     				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
@@ -120,23 +115,25 @@ class box_contracts extends ModeleBoxes {
     				'text' => dol_trunc($objp->nom,40),
     				'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-    				$this->info_box_contents[$i][4] = array('td' => 'align="right"',
-    				'text' => dol_print_date($datec,'day'));
+    				$this->info_box_contents[$i][4] = array('td' => 'align="center"',
+    				'text' => dol_print_date($dateline,'day'),
+    				'text2'=> $late);
 
-    				$this->info_box_contents[$i][5] = array('td' => 'align="right" nowrap="nowrap"',
-    				'text' => $contractstatic->getLibStatut(6),
-    				'asis'=>1
-    				);
+    				$this->info_box_contents[$i][5] = array('td' => 'align="right"',
+    				'text' => $objp->nb_services);
+
 
     				$i++;
     			}
 
-    			if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
+    			if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoExpiredServices"));
     		}
     		else
     		{
     			dol_print_error($db);
     		}
+
+
     	}
     	else
     	{

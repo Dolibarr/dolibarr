@@ -1011,7 +1011,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
         {
             if($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
             {
-                $object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie));
+                $object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency));
                 $result = -1 ;
             }
             else
@@ -1118,7 +1118,7 @@ if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] 
     if ($object->type!=2 && $price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
     {
         //print "CantBeLessThanMinPrice ".$up_ht." - ".GETPOST('remise_percent')." - ".$product->price_min;
-        $mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>';
+        $mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency)).'</div>';
         $result=-1;
     }
 
@@ -1726,7 +1726,7 @@ if ($action == 'create')
     print ' <a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditRelativeDiscount").')</a>';
     print '. ';
     print '<br>';
-    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.price($absolute_discount).'</a>',$langs->trans("Currency".$conf->monnaie));
+    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.price($absolute_discount).'</a>',$langs->trans("Currency".$conf->currency));
     else print $langs->trans("CompanyHasNoAbsoluteDiscount");
     print ' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditGlobalDiscounts").')</a>';
     print '.';
@@ -2064,8 +2064,8 @@ else
                 $close[$i]['label']=$langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");$i++;
                 // Texte
                 $i=0;
-                $close[$i]['reason']=$form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
-                $close[$i]['reason']=$form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+                $close[$i]['reason']=$form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->currency)),$close[$i]['label'],1);$i++;
+                $close[$i]['reason']=$form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->currency)),$close[$i]['label'],1);$i++;
                 // arrayreasons[code]=reason
                 foreach($close as $key => $val)
                 {
@@ -2249,19 +2249,19 @@ else
                 {
                     if ($object->statut == 0)
                     {
-                        print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                        print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         print '. ';
                     }
                     else
                     {
                         if ($object->statut < 1 || $object->type == 2 || $object->type == 3)
                         {
-                            $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                            $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                             print '<br>'.$text.'.<br>';
                         }
                         else
                         {
-                            $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                            $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                             $text2=$langs->trans("AbsoluteDiscountUse");
                             print $form->textwithpicto($text,$text2);
                         }
@@ -2290,12 +2290,12 @@ else
                 {
                     if ($object->statut == 0 && $object->type != 3)
                     {
-                        $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie));
+                        $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
                         print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
                     }
                     else
                     {
-                        print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'.';
+                        print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'.';
                     }
                 }
                 else
@@ -2588,9 +2588,9 @@ else
             // Amount
             print '<tr><td>'.$langs->trans('AmountHT').'</td>';
             print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';
-            print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+            print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
             print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-            print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+            print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
             // Amount Local Taxes
             if ($mysoc->pays_code=='ES')
@@ -2599,18 +2599,18 @@ else
                 {
                     print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
                     print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
-                    print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+                    print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
                 }
                 if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
                 {
                     print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
                     print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
-                    print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+                    print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
                 }
             }
 
             print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
-            print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+            print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
             // Statut
             print '<tr><td>'.$langs->trans('Status').'</td>';

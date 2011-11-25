@@ -40,16 +40,17 @@ $langs->load("errors");
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
-if (! isset($force_install_noedit))            $force_install_noedit='';
-if (! isset($force_install_type))              $force_install_type='';
-if (! isset($force_install_dbserver))          $force_install_dbserver='';
-if (! isset($force_install_port))              $force_install_port='';
-if (! isset($force_install_database))          $force_install_database='';
-if (! isset($force_install_createdatabase))    $force_install_createdatabase='';
-if (! isset($force_install_databaselogin))     $force_install_databaselogin='';
-if (! isset($force_install_databasepass))      $force_install_databasepass='';
-if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
-if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
+if (! isset($force_install_noedit))				$force_install_noedit='';
+if (! isset($force_install_type))				$force_install_type='';
+if (! isset($force_install_dbserver))			$force_install_dbserver='';
+if (! isset($force_install_port))				$force_install_port='';
+if (! isset($force_install_database))			$force_install_database='';
+if (! isset($force_install_prefix))				$force_install_prefix='';
+if (! isset($force_install_createdatabase))		$force_install_createdatabase='';
+if (! isset($force_install_databaselogin))		$force_install_databaselogin='';
+if (! isset($force_install_databasepass))		$force_install_databasepass='';
+if (! isset($force_install_databaserootlogin))	$force_install_databaserootlogin='';
+if (! isset($force_install_databaserootpass))	$force_install_databaserootpass='';
 // Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
 if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
@@ -80,8 +81,7 @@ if (! empty($force_install_message))
 }
 
 ?>
-<table
-	border="0" cellpadding="1" cellspacing="0">
+<table class="nobordernopadding">
 
 	<tr>
 		<td colspan="3" class="label" align="center">
@@ -347,6 +347,16 @@ if (! empty($force_install_message))
 			name="db_name"
 			value="<?php echo (! empty($dolibarr_main_db_name))?$dolibarr_main_db_name:($force_install_database?$force_install_database:'dolibarr'); ?>"></td>
 		<td class="comment"><?php echo $langs->trans("DatabaseName"); ?></td>
+	</tr>
+	
+	<tr>
+		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabasePrefix"); ?>
+		</b></td>
+
+		<td class="label" valign="top"><input type="text" id="db_prefix"
+			name="db_prefix"
+			value="<?php echo (! empty($dolibarr_main_db_prefix))?$dolibarr_main_db_prefix:($force_install_prefix?$force_install_prefix:'llx_'); ?>"></td>
+		<td class="comment"><?php echo $langs->trans("DatabasePrefix"); ?></td>
 	</tr>
 
 	<tr>

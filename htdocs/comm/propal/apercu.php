@@ -101,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		$absolute_discount=$soc->getAvailableDiscounts();
 		print '. ';
-		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->currency));
 		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 		print '.';
 		print '</td></tr>';
@@ -171,7 +171,7 @@ if ($id > 0 || ! empty($ref))
 
 		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 		print '<td align="right" colspan="2"><b>'.price($object->price).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		print '</table>';
 	}
 	else

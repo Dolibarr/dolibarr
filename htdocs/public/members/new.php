@@ -533,7 +533,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
         print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled="disabled" size="6" value="'.$amount.'">';
         print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }
-    print ' '.$langs->trans("Currency".$conf->monnaie);
+    print ' '.$langs->trans("Currency".$conf->currency);
     print '</td></tr>';
 }
 print "</table>\n";

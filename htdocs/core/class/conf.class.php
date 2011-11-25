@@ -326,9 +326,8 @@ class Conf
 			$this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
 		}
 
-		// conf->monnaie
+		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
-		$this->monnaie=$this->global->MAIN_MONNAIE;	// TODO deprecated
 		$this->currency=$this->global->MAIN_MONNAIE;
 
 		// $this->global->COMPTA_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)

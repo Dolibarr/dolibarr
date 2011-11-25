@@ -895,7 +895,7 @@ else
         print '</td></tr>';
 
         // Capital
-        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         // Local Taxes
         // TODO add specific function by country
@@ -1358,7 +1358,7 @@ else
             print '</td></tr>';
 
             // Capital
-            print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+            print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Default language
             if ($conf->global->MAIN_MULTILANGS)
@@ -1693,7 +1693,7 @@ else
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
-        if ($object->capital) print $object->capital.' '.$langs->trans("Currency".$conf->monnaie);
+        if ($object->capital) print $object->capital.' '.$langs->trans("Currency".$conf->currency);
         else print '&nbsp;';
         print '</td></tr>';
 

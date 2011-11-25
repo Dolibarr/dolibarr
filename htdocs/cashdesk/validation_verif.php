@@ -114,8 +114,8 @@ switch ($action)
 				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement');
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
-				$note .= $langs->trans("Received").' : '.$obj_facturation->montant_encaisse()." ".$conf->monnaie."\n";
-				$note .= $langs->trans("Rendu").' : '.$obj_facturation->montant_rendu()." ".$conf->monnaie."\n";
+				$note .= $langs->trans("Received").' : '.$obj_facturation->montant_encaisse()." ".$conf->currency."\n";
+				$note .= $langs->trans("Rendu").' : '.$obj_facturation->montant_rendu()." ".$conf->currency."\n";
 				$note .= "\n";
 				$note .= '--------------------------------------'."\n\n";
 				break;

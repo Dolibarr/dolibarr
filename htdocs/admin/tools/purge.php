@@ -97,7 +97,7 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 		if ($conf->ecm->enabled && $choice=='allfiles')
 		{
 			require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
-			$ecmdirstatic = new ECMDirectory($db);
+			$ecmdirstatic = new EcmDirectory($db);
 			$result = $ecmdirstatic->refreshcachenboffile(1);
 		}
 	}

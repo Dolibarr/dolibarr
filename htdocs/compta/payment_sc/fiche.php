@@ -182,7 +182,7 @@ print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$lan
 print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->num_paiement.'</td></tr>';
 
 // Montant
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->amount).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->amount).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 
 // Note

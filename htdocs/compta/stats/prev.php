@@ -56,7 +56,7 @@ function pt ($db, $sql, $title) {
 	  $total = $total + $obj->amount;
 	  $i++;
 	}
-      print "<tr class=\"total\"><td colspan=\"2\" align=\"right\"><b>".$langs->trans("TotalHT").": ".price($total)."</b> ".$langs->trans("Currency".$conf->monnaie)."</td></tr>";
+      print "<tr class=\"total\"><td colspan=\"2\" align=\"right\"><b>".$langs->trans("TotalHT").": ".price($total)."</b> ".$langs->trans("Currency".$conf->currency)."</td></tr>";
 
       $db->free();
     }

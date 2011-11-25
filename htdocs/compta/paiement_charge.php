@@ -185,7 +185,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$charge->lib."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("AmountTTC")."</td><td colspan=\"2\"><b>".price($charge->amount).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AmountTTC")."</td><td colspan=\"2\"><b>".price($charge->amount).'</b> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -197,8 +197,8 @@ if ($_GET["action"] == 'create')
 		$sumpaid = $obj->total;
 		$db->free();
 	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2"><b>'.price($sumpaid).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")."</td><td colspan=\"3\"><b>".price($total - $sumpaid).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2"><b>'.price($sumpaid).'</b> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")."</td><td colspan=\"3\"><b>".price($total - $sumpaid).'</b> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment").'</td>';
 

@@ -191,7 +191,7 @@ if ($id > 0 || ! empty($ref))
 		// partie Gauche
 		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 		print '<td align="right" colspan="1"><b>'.price($object->total_ht).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		print '</table>';
 	}
 	else

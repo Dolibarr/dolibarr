@@ -208,7 +208,7 @@ if ($resql)
 
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";
-		$sql .= " FROM llx_stock_mouvement as m";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 		$sql .= " WHERE m.fk_entrepot = '".$entrepot->id."'";
 		$resqlbis = $db->query($sql);
 		if ($resqlbis)

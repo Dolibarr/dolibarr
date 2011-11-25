@@ -125,11 +125,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				</td>
 				<!-- Affichage du prix unitaire -->
 				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" disabled="disabled" /></td>
-				<td><?php echo $conf->monnaie; ?></td>
+				<td><?php echo $conf->currency; ?></td>
     			<!-- Choix de la remise -->
     			<td><input class="texte1" type="text" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/></td>
     			<!-- Affichage du total HT -->
-    			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td><?php echo $conf->monnaie; ?></td>
+    			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td><?php echo $conf->currency; ?></td>
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva">
                 <select name="selTva" onchange="javascript: modif();" >

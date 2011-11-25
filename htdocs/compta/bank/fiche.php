@@ -244,10 +244,10 @@ if ($action == 'create')
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Currency").'</td>';
 	print '<td colspan="3">';
 	$selectedcode=$account->account_currency_code;
-	if (! $selectedcode) $selectedcode=$conf->monnaie;
+	if (! $selectedcode) $selectedcode=$conf->currency;
 	$form->select_currency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
-	//print $langs->trans("Currency".$conf->monnaie);
-	//print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
+	//print $langs->trans("Currency".$conf->currency);
+	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 	print '</td></tr>';
 
 	// Status
@@ -386,7 +386,7 @@ else
 		print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
 		print '<td colspan="3">';
 		$selectedcode=$account->account_currency_code;
-		if (! $selectedcode) $selectedcode=$conf->monnaie;
+		if (! $selectedcode) $selectedcode=$conf->currency;
 		print $langs->trans("Currency".$selectedcode);
 		print '</td></tr>';
 
@@ -517,10 +517,10 @@ else
 		print '</td>';
 		print '<td colspan="3">';
 		$selectedcode=$account->account_currency_code;
-		if (! $selectedcode) $selectedcode=$conf->monnaie;
+		if (! $selectedcode) $selectedcode=$conf->currency;
 		$form->select_currency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
-		//print $langs->trans("Currency".$conf->monnaie);
-		//print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
+		//print $langs->trans("Currency".$conf->currency);
+		//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 		print '</td></tr>';
 
 		// Status

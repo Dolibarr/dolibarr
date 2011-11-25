@@ -96,6 +96,14 @@ $dolibarr_main_db_port='';
 $dolibarr_main_db_name='';
 
 
+# dolibarr_main_db_prefix
+# This parameter contains prefix of Dolibarr database.
+# Examples:
+# $dolibarr_main_db_prefix='llx_';
+#
+$dolibarr_main_db_prefix='';
+
+
 # dolibarr_main_db_user
 # This parameter contains user name used to read and write into
 # Dolibarr database.
