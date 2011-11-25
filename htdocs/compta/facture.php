@@ -50,19 +50,22 @@ $langs->load('main');
 if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['message'];
 
 $sall=trim(GETPOST('sall'));
-$projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
+$projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
 
-$id=(GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
-$ref=GETPOST('ref');
-$socid=GETPOST('socid');
-$action=GETPOST('action');
-$confirm=GETPOST('confirm');
-$lineid=GETPOST('lineid');
-$userid=GETPOST('userid');
-$search_ref=GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
+$id=(GETPOST('id')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
+$ref=GETPOST('ref','alpha');
+$socid=GETPOST('socid','int');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$lineid=GETPOST('lineid','int');
+$userid=GETPOST('userid','int');
+$search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
+$search_societe=GETPOST('search_societe','alpha');
+$search_montant_ht=GETPOST('search_montant_ht','alpha');
+$search_montant_ttc=GETPOST('search_montant_ttc','alpha');
 
 // Security check
-$fieldid = isset($_GET["ref"])?'facnumber':'rowid';
+$fieldid = (! empty($ref)?'facnumber':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
@@ -3055,8 +3058,8 @@ else
         $pageprev = $page - 1;
         $pagenext = $page + 1;
 
-        $month    =GETPOST('month','int');
-        $year     =GETPOST('year','int');
+        $month	= GETPOST('month','int');
+        $year	= GETPOST('year','int');
 
         $facturestatic=new Facture($db);
 
@@ -3090,21 +3093,21 @@ else
                 $sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
             }
         }
-        if ($_GET['search_ref'])
+        if ($search_ref)
         {
-            $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($_GET['search_ref'])).'%\'';
+            $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($search_ref)).'%\'';
         }
-        if ($_GET['search_societe'])
+        if ($search_societe)
         {
-            $sql.= ' AND s.nom LIKE \'%'.$db->escape(trim($_GET['search_societe'])).'%\'';
+            $sql.= ' AND s.nom LIKE \'%'.$db->escape(trim($search_societe)).'%\'';
         }
-        if ($_GET['search_montant_ht'])
+        if ($search_montant_ht)
         {
-            $sql.= ' AND f.total = \''.$db->escape(trim($_GET['search_montant_ht'])).'\'';
+            $sql.= ' AND f.total = \''.$db->escape(trim($search_montant_ht)).'\'';
         }
-        if ($_GET['search_montant_ttc'])
+        if ($search_montant_ttc)
         {
-            $sql.= ' AND f.total_ttc = \''.$db->escape(trim($_GET['search_montant_ttc'])).'\'';
+            $sql.= ' AND f.total_ttc = \''.$db->escape(trim($search_montant_ttc)).'\'';
         }
         if ($month > 0)
         {
@@ -3116,10 +3119,6 @@ else
         else if ($year > 0)
         {
             $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
-        }
-        if (trim($search_ref) != '')
-        {
-            $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
         }
         if (! $sall)
         {
@@ -3185,11 +3184,11 @@ else
             print '</td>';
             print '<td class="liste_titre" align="left">&nbsp;</td>';
             print '<td class="liste_titre" align="left">';
-            print '<input class="flat" type="text" name="search_societe" value="'.$_GET['search_societe'].'">';
+            print '<input class="flat" type="text" name="search_societe" value="'.$search_societe.'">';
             print '</td><td class="liste_titre" align="right">';
-            print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
+            print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
             print '</td><td class="liste_titre" align="right">';
-            print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET['search_montant_ttc'].'">';
+            print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
             print '</td>';
             print '<td class="liste_titre" align="right">';
             print '&nbsp;';

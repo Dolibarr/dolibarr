@@ -220,6 +220,12 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
     {
         if ($sql)
         {
+        	// Replace the prefix tables
+        	if (MAIN_DB_PREFIX != 'llx_')
+        	{
+        		$sql=preg_replace('/llx_/i',MAIN_DB_PREFIX,$sql);
+        	}
+        	
             if (!empty($handler)) $sql=preg_replace('/__HANDLER__/i',"'".$handler."'",$sql);
 
             $newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
