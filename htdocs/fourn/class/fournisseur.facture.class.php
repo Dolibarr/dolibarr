@@ -908,7 +908,7 @@ class FactureFournisseur extends Facture
      *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      *
      *	@param    	desc            Description de la ligne
-     *	@param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
+     *	@param    	pu              Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
      *	@param    	txtva           Taux de tva force, sinon -1
      *	@param		txlocaltax1		LocalTax1 Rate
      *	@param		txlocaltax2		LocalTax2 Rate
@@ -921,16 +921,30 @@ class FactureFournisseur extends Facture
      *	@param    	info_bits		Bits de type de lines
      *	@param    	price_base_type HT ou TTC
      *	@param		type			Type of line (0=product, 1=service)
+     *  @param      rang            Position of line
      *	@return    	int             >0 if OK, <0 if KO
      */
-    function addline($desc, $pu, $txtva, $txlocaltax1=0, $txlocaltax2=0, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
+    function addline($desc, $pu, $txtva, $txlocaltax1=0, $txlocaltax2=0, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1)
     {
-        dol_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
+        dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         // Clean parameters
-        if ($txtva == '') $txtva=0;
+        if (empty($remise_percent)) $remise_percent=0;
+        if (empty($qty)) $qty=0;
+        if (empty($info_bits)) $info_bits=0;
+        if (empty($rang)) $rang=0;
+        if (empty($ventil)) $ventil=0;
+        if (empty($txtva)) $txtva=0;
+        if (empty($txlocaltax1)) $txlocaltax1=0;
+        if (empty($txlocaltax2)) $txlocaltax2=0;
+
+        $remise_percent=price2num($remise_percent);
+        $qty=price2num($qty);
+        $pu=price2num($pu);
         $txtva=price2num($txtva);
+        $txlocaltax1=price2num($txlocaltax1);
+        $txlocaltax2=price2num($txlocaltax2);
 
         // Check parameters
         if ($type < 0) return -1;
@@ -939,7 +953,7 @@ class FactureFournisseur extends Facture
         $this->db->begin();
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
-        $sql .= ' VALUES ('.$this->id.');';
+        $sql .= ' VALUES ('.$this->id.')';
         dol_syslog("Fournisseur.facture::addline sql=".$sql);
 
         $resql = $this->db->query($sql);
@@ -947,7 +961,7 @@ class FactureFournisseur extends Facture
         {
             $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type);
+            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type, $remise_percent);
             if ($result > 0)
             {
                 $this->db->commit();
@@ -955,8 +969,7 @@ class FactureFournisseur extends Facture
             }
             else
             {
-                $this->error=$this->db->error();
-                dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
+                dol_syslog("Error error=".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -982,10 +995,12 @@ class FactureFournisseur extends Facture
      * @param	  	price_base_type	HT or TTC
      * @param	  	info_bits		Miscellanous informations of line
      * @param		type			Type of line (0=product, 1=service)
+     * @param     	remise_percent  Pourcentage de remise de la ligne
      * @return    	int           	<0 if KO, >0 if OK
      */
-    function updateline($id, $label, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0)
+    function updateline($id, $label, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0)
     {
+        dol_syslog(get_class($this)."::updateline $id,$label,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         $pu = price2num($pu);
@@ -1007,7 +1022,7 @@ class FactureFournisseur extends Facture
         // qty, pu, remise_percent et txtva
         // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-        $tabprice = calcul_price_total($qty, $pu, 0, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];
