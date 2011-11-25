@@ -51,7 +51,7 @@
 				}
 				else
 				{
-					echo ($txt?' - ':'').dol_htmlentitiesbr($line->description,1,true);
+					echo ($txt?' - ':'').dol_htmlentitiesbr($line->description);
 				}
 			}
 		}
@@ -60,7 +60,7 @@
 			if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
-			echo $text.' '.dol_htmlentitiesbr($line->description,1,true);
+			echo $text.' '.dol_htmlentitiesbr($line->description);
 			// Show range
 			print_date_range($line->date_start,$line->date_end);
 		}
