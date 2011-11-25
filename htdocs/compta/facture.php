@@ -50,22 +50,22 @@ $langs->load('main');
 if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['message'];
 
 $sall=trim(GETPOST('sall'));
-$projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
+$projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
 
-$id=(GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
-$ref=GETPOST('ref');
-$socid=GETPOST('socid');
-$action=GETPOST('action');
-$confirm=GETPOST('confirm');
-$lineid=GETPOST('lineid');
-$userid=GETPOST('userid');
+$id=(GETPOST('id')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
+$ref=GETPOST('ref','alpha');
+$socid=GETPOST('socid','int');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$lineid=GETPOST('lineid','int');
+$userid=GETPOST('userid','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
-$search_montant_ttc=GETPOST('search_montant_ht','alpha');
+$search_montant_ttc=GETPOST('search_montant_ttc','alpha');
 
 // Security check
-$fieldid = isset($_GET["ref"])?'facnumber':'rowid';
+$fieldid = (! empty($ref)?'facnumber':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 

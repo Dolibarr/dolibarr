@@ -52,6 +52,10 @@ $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 $lineid=GETPOST('lineid');
 
+$search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
+$search_societe=GETPOST('search_societe','alpha');
+$search_montant_ht=GETPOST('search_montant_ht','alpha');
+
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
@@ -1744,23 +1748,23 @@ else
 	{
 		$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	}
-	if (GETPOST('search_ref'))
+	if ($search_ref)
 	{
-		$sql.= " AND p.ref LIKE '%".$db->escape(GETPOST('search_ref'))."%'";
+		$sql.= " AND p.ref LIKE '%".$db->escape(trim($search_ref))."%'";
 	}
-	if (!empty($_GET['search_societe']))
+	if ($search_societe)
 	{
-		$sql.= " AND s.nom LIKE '%".$db->escape(GETPOST('search_societe'))."%'";
+		$sql.= " AND s.nom LIKE '%".$db->escape(trim($search_societe))."%'";
 	}
-	if (!empty($_GET['search_montant_ht']))
+	if ($search_montant_ht)
 	{
-		$sql.= " AND p.total_ht='".$db->escape(GETPOST('search_montant_ht'))."'";
+		$sql.= " AND p.total_ht='".$db->escape(trim($search_montant_ht))."'";
 	}
-	if ($sall) $sql.= " AND (s.nom like '%".$db->escape($sall)."%' OR p.note like '%".$db->escape($sall)."%' OR pd.description like '%".$db->escape($sall)."%')";
+	if ($sall) $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%' OR pd.description LIKE '%".$db->escape($sall)."%')";
 	if ($socid) $sql.= ' AND s.rowid = '.$socid;
 	if ($viewstatut <> '')
 	{
-		$sql.= ' AND p.fk_statut in ('.$viewstatut.')';
+		$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
 	}
 	if ($month > 0)
 	{
@@ -1772,10 +1776,6 @@ else
 	if ($year > 0)
 	{
 		$sql.= " AND date_format(p.datep, '%Y') = '".$year."'";
-	}
-	if (dol_strlen($_POST['sf_ref']) > 0)
-	{
-		$sql.= " AND p.ref like '%".$db->escape($_POST["sf_ref"]) . "%'";
 	}
 
 	$sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
@@ -1817,10 +1817,10 @@ else
 
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="10" type="text" name="search_ref" value="'.GETPOST('search_ref').'">';
+		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
 		print '</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="16" name="search_societe" value="'.GETPOST('search_societe').'">';
+		print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
 		print '</td>';
 		print '<td class="liste_titre" colspan="1" align="center">';
 		print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -1831,7 +1831,7 @@ else
 		print '</td>';
 		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.GETPOST('search_montant_ht').'">';
+		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';

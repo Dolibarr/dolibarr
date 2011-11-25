@@ -37,16 +37,16 @@ $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
-$sref=GETPOST('sref');
-$sref_client=GETPOST('sref_client');
-$snom=GETPOST('snom');
+$sref=GETPOST('sref','alpha');
+$sref_client=GETPOST('sref_client','alpha');
+$snom=GETPOST('snom','alpha');
 $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
 
 // Security check
-$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+$id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id'));
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande', $orderid,'');
+$result = restrictedArea($user, 'commande', $id,'');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -111,19 +111,19 @@ if ($viewstatut <> '')
 		$sql .= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 	}
 }
-if ($_GET['ordermonth'] > 0)
+if ($ordermonth > 0)
 {
 	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '".$orderyear."-".$ordermonth."'";
 }
-if ($_GET['orderyear'] > 0)
+if ($orderyear > 0)
 {
 	$sql.= " AND date_format(c.date_valid, '%Y') = '".$orderyear."'";
 }
-if ($_GET['deliverymonth'] > 0)
+if ($deliverymonth > 0)
 {
 	$sql.= " AND date_format(c.date_livraison, '%Y-%m') = '".$deliveryyear."-".$deliverymonth."'";
 }
-if ($_GET['deliveryyear'] > 0)
+if ($deliveryyear > 0)
 {
 	$sql.= " AND date_format(c.date_livraison, '%Y') = '".$deliveryyear."'";
 }
@@ -153,23 +153,23 @@ if ($resql)
 	{
 		$title = $langs->trans('ListOfOrders');
 	}
-	if (strval($_GET['viewstatut']) == '0')
+	if (strval($viewstatut) == '0')
 	$title.=' - '.$langs->trans('StatusOrderDraftShort');
-	if ($_GET['viewstatut'] == 1)
+	if ($viewstatut == 1)
 	$title.=' - '.$langs->trans('StatusOrderValidatedShort');
-	if ($_GET['viewstatut'] == 2)
+	if ($viewstatut == 2)
 	$title.=' - '.$langs->trans('StatusOrderOnProcessShort');
-	if ($_GET['viewstatut'] == 3)
+	if ($viewstatut == 3)
 	$title.=' - '.$langs->trans('StatusOrderToBillShort');
-	if ($_GET['viewstatut'] == 4)
+	if ($viewstatut == 4)
 	$title.=' - '.$langs->trans('StatusOrderProcessedShort');
-	if ($_GET['viewstatut'] == -1)
+	if ($viewstatut == -1)
 	$title.=' - '.$langs->trans('StatusOrderCanceledShort');
-	if ($_GET['viewstatut'] == -2)
+	if ($viewstatut == -2)
 	$title.=' - '.$langs->trans('StatusOrderToProcessShort');
 
 	$num = $db->num_rows($resql);
-	print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
+	print_barre_liste($title, $page, 'liste.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
 	$i = 0;
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
