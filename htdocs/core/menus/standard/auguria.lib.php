@@ -42,11 +42,12 @@ function print_auguria_menu($db,$atarget,$type_user)
 	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
 	$_SESSION["leftmenuopened"]="";
 
+	$tabMenu=array();
 	$menuArbo = new Menubase($db,'auguria','top');
-	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'], '', $type_user, 'auguria');
+	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'], '', $type_user, 'auguria',$tabMenu);
 
 	print_start_menu_array_auguria();
-	
+
 	$num = count($newTabMenu);
 	for($i = 0; $i < $num; $i++)
 	{
@@ -218,8 +219,9 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
     {
         require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
+        $tabMenu=array();
         $menuArbo = new Menubase($db,'auguria','left');
-        $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria');
+        $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
         //var_dump($newmenu);
     }
 
