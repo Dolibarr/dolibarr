@@ -403,7 +403,7 @@ class Menubase
      * 		@param      tabMenu         If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 		@return		array			Return array with menu entries for top menu
      */
-    function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
+    function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf;
         global $leftmenu,$rights;	// To export to dol_eval function
@@ -454,7 +454,7 @@ class Menubase
      * @param  $tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * @return array           Menu array for particular mainmenu value or full tabArray
      */
-    function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
+    function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
         global $leftmenu,$rights; // To export to dol_eval function
@@ -496,10 +496,10 @@ class Menubase
      * @param  $myleftmenu     Value for left that defined leftmenu
      * @param  $type_user      0=Internal,1=External,2=All
      * @param  $menu_handler   Name of menu_handler used (auguria, eldy...)
-     * @param  $tabMenu        If array with menu entries already load, we put this array here (in most cases, it's empty)
+     * @param  &$tabMenu       If array with menu entries already load, we put this array here (in most cases, it's empty)
      * @return int             >0 if OK, <0 if KO
      */
-    function menuLoad($myleftmenu, $type_user, $menu_handler, &$tabMenu=array())
+    function menuLoad($myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
         global $leftmenu, $rights; // To export to dol_eval function

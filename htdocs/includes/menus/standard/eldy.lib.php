@@ -439,9 +439,9 @@ function print_eldy_menu($db,$atarget,$type_user)
 	// Show personalized menus
 	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
+    $tabMenu=array();
 	$menuArbo = new Menubase($db,'eldy','top');
-
-	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'],'',$type_user,'eldy');
+	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'],'',$type_user,'eldy',$tabMenu);
 
 	for($i=0; $i<count($newTabMenu); $i++)
 	{
@@ -1311,8 +1311,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
         // Affichage des menus personnalises
         require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
+        $tabMenu=array();
         $menuArbo = new Menubase($db,'eldy','left');
-        $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'eldy');
+        $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'eldy',$tabMenu);
     }
 
 
