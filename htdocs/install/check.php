@@ -74,7 +74,7 @@ if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to tr
 else if (versioncompare(versionphparray(),array(5,0,0)) < 0)    // Minimum supported (warning if lower)
 {
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.0.0');
-    $checksok=0;
+    $checksok=1;
 }
 else
 {
