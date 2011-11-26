@@ -42,7 +42,8 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 	/**
 	 *  Return list of active generation modules
-	 *  @param		$db		Database handler
+	 *  
+	 *  @param	DoliDB		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -71,7 +72,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Return if a module can be used or not
 	 *
-	 *   @return		boolean     true if module can be used
+	 *   @return	boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
@@ -80,7 +81,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Renvoie la description par defaut du modele de numerotation
 	 *
-	 *   @return     string      Texte descripif
+	 *   @return    string      Texte descripif
 	 */
 	function info()
 	{
@@ -91,7 +92,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**   Renvoie un exemple de numerotation
 	 *
-	 *    @return     string      Example
+	 *    @return   string      Example
 	 */
 	function getExample()
 	{
@@ -102,7 +103,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
 	 *
-	 *   @return     boolean     false si conflit, true si ok
+	 *   @return	boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -141,7 +142,7 @@ abstract class ModeleNumRefSuppliersOrders
  *
  *  @param	    DoliDB		$db  			data base object
  *  @param	    Object		$object			object order
- *  @param	    string		$modele			force le modele a utiliser ('' to not force)
+ *  @param	    string		$model			force le modele a utiliser ('' to not force)
  *  @param		Translate	$outputlangs	Objet lang a utiliser pour traduction
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description

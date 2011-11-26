@@ -64,7 +64,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 }
 
 /**
- * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF)
+ * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
  * @param		string		$val		Value
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
@@ -103,7 +103,7 @@ function test_sql_and_script_inject($val, $type)
 }
 
 /**
- * Security: Return true if OK, false otherwise
+ * Security: Return true if OK, false otherwise.
  *
  * @param		string		&$var		Variable name
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
@@ -1563,7 +1563,7 @@ if (! function_exists("llxFooter"))
 {
     /**
      * Show HTML footer
-     * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML
+     * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML.
      *
      * @param	string	$foot    		A text to add in HTML generated page
      * @return	void

@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/admin/societe.php
+ *	\file       htdocs/societe/admin/societe.php
  *	\ingroup    company
  *	\brief      Third party module setup page
  */

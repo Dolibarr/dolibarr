@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/admin/societe_extrafields.php
+ *      \file       htdocs/societe/admin/societe_extrafields.php
  *		\ingroup    societe
  *		\brief      Page to setup extra fields of third party
  */
