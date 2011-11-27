@@ -28,7 +28,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
 
 $langs->load("admin");
 

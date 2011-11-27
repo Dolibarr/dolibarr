@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 */
 
 /**
- *      \file       htdocs/includes/barcode/html.formbarcode.class.php
+ *      \file       htdocs/core/class/html.formbarcode.class.php
  *      \brief      Fichier de la classe des fonctions predefinie de composants html
  */
 
