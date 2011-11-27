@@ -18,6 +18,7 @@ with format .DEB (for Debian, Ubuntu, ...).
 # gpg --gen-key                          Generate a GPG key
 #
 # debconf-updatepo					     To run into po dir to regenate templates.pot 
+# podebconf-report-po --from eldy@destailleur.fr	To send email to ask translations
 #
 # lintian --pedantic -E -I package.deb   To test a package   
 #

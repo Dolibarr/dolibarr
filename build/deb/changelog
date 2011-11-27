@@ -1,6 +1,6 @@
-dolibarr (3.2.0-1.1) unstable; urgency=low
+dolibarr (3.2.0+nmu1) unstable; urgency=low
 
-  * Non-maintainer upload
+  * Non-maintainer upload.
   * New upstream release.
     closes: bug#634783
     
