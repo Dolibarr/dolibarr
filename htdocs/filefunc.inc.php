@@ -193,8 +193,8 @@ if (! defined('ARTICHOW_PATH'))        { define('ARTICHOW_PATH',        (!isset(
 // Other required path
 if (! defined('ARTICHOW_FONT'))        { define('ARTICHOW_FONT',        (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/artichow/font':dirname($dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
 if (! defined('ARTICHOW_FONT_NAMES'))  { define('ARTICHOW_FONT_NAMES',  (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?'Tuffy,TuffyBold,TuffyBoldItalic,TuffyItalic':'DejaVuSans,DejaVuSans-Bold,DejaVuSans-BoldOblique,DejaVuSans-Oblique'); }
-if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/Aerial.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
-if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
+if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
+if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
 // Old path to root deprecated (no more used).
 //if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
 

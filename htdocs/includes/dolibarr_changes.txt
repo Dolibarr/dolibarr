@@ -41,22 +41,3 @@ with
 //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
 window.location.href=pRef
 * Replace hard coded string with i18n["String"];
-
-
-
-PHP-BARCODE:
-------------
-If files are replaced by new version, following changes must be done:
-
-* Restore changes done into php-barcode.php marked with DOL_CHANGE LDR
-
-* Add lines into barcode_outimage function:
-	// DOLCHANGE LDR
-    global $filebarcode;
-
-
-	// Begin DOLCHANGE LDR
-    } else if (! empty($filebarcode))
-    {
-		imagepng($im,$filebarcode);
-	// End DOLCHANGE LDR

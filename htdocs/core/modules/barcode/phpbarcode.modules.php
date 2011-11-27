@@ -120,7 +120,7 @@ class modPhpbarcode extends ModeleBarCode
 		$_GET["scale"]=$scale;
 		$_GET["mode"]=$mode;
 
-		require_once(DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/php-barcode.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/lib/phpbarcode.php');
 		dol_syslog("modPhpbarcode::buildBarCode $code,$encoding,$scale,$mode");
 		if ($code) $result=barcode_print($code,$encoding,$scale,$mode);
 

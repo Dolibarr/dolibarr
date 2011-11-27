@@ -176,6 +176,11 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 {
     global $bar_color, $bg_color, $text_color;
     global $font_loc;
+
+    //var_dump($text);
+    //var_dump($bars);
+    //var_dump($font_loc);
+
     /* set defaults */
     if ($scale<1) $scale=2;
     $total_y=(int)($total_y);
@@ -204,25 +209,9 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
     /* allocate the image */
     $total_x=( $xpos )+$space['right']+$space['right'];
     $xpos=$space['left'];
-    if (!function_exists("imagecreate")){
+    if (!function_exists("imagecreate"))
+    {
         print "You don't have the gd2 extension enabled<BR>\n";
-        print "<BR>\n";
-        print "<BR>\n";
-        print "Short HOWTO<BR>\n";
-        print "<BR>\n";
-        print "Debian: # apt-get install php4-gd2<BR>\n";
-        print "<BR>\n";
-        print "SuSE: ask YaST<BR>\n";
-        print "<BR>\n";
-        print "OpenBSD: # pkg_add /path/php4-gd-4.X.X.tgz (read output, you have to enable it)<BR>\n";
-        print "<BR>\n";
-        print "Windows: Download the PHP zip package from <A href=\"http://www.php.net/downloads.php\">php.net</A>, NOT the windows-installer, unzip the php_gd2.dll to C:\PHP (this is the default install dir) and uncomment 'extension=php_gd2.dll' in C:\WINNT\php.ini (or where ever your os is installed)<BR>\n";
-        print "<BR>\n";
-        print "<BR>\n";
-        print "The author of php-barcode will give not support on this topic!<BR>\n";
-        print "<BR>\n";
-        print "<BR>\n";
-        print "<A HREF=\"http://www.ashberg.de/bar/\">Folke Ashberg's OpenSource PHP-Barcode</A><BR>\n";
         return "";
     }
     $im=imagecreate($total_x, $total_y);
@@ -232,7 +221,6 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
     $col_text=ImageColorAllocate($im,$text_color[0],$text_color[1],$text_color[2]);
     $height=round($total_y-($scale*10));
     $height2=round($total_y-$space['bottom']);
-
 
     /* paint the bars */
     $width=true;
@@ -310,20 +298,29 @@ function barcode_encode_genbarcode($code,$encoding)
     $code=preg_replace("/[\\\|]/", "_", $code);
     $cmd=$genbarcode_loc." \""
     .str_replace("\"", "\\\"",$code)."\" \""
-    .str_replace("\"", "\\\"",strtoupper($encoding))."\"";
+    .str_replace("\"", "\\\"",strtoupper($encoding))."\" 2>&1";
     //print "'$cmd'<BR>\n";
+
     $fp=popen($cmd, "r");
-    if ($fp){
+    if ($fp)
+    {
         $bars=fgets($fp, 1024);
         $text=fgets($fp, 1024);
         $encoding=fgets($fp, 1024);
         pclose($fp);
-    } else return false;
+    }
+    else
+    {
+        dol_syslog("phpbarcode::barcode_encode_genbarcode failed to run popen ".$cmd, LOG_ERR);
+        return false;
+    }
+    //var_dump($bars);
     $ret=array(
 		"encoding" => trim($encoding),
 		"bars" => trim($bars),
 		"text" => trim($text)
     );
+    //var_dump($ret);
     if (!$ret['encoding']) return false;
     if (!$ret['bars']) return false;
     if (!$ret['text']) return false;
@@ -358,6 +355,7 @@ function barcode_encode_genbarcode($code,$encoding)
 function barcode_encode($code,$encoding)
 {
     global $genbarcode_loc;
+
     if (
     ((preg_match("/^ean$/i", $encoding)
     && ( strlen($code)==12 || strlen($code)==13)))
@@ -369,24 +367,29 @@ function barcode_encode($code,$encoding)
 
     || (( !isset($encoding) || !$encoding || (preg_match("/^ANY$/i", $encoding) ))
     && (preg_match("/^[0-9]{12,13}$/", $code)))
-
-    ){
+    )
+    {
         /* use built-in EAN-Encoder */
+        dol_syslog("phpbarcode.php::barcode_encode Use barcode_encode_ean");
         $bars=barcode_encode_ean($code, $encoding);
-    } else if (file_exists($genbarcode_loc)){
+    }
+    else if (file_exists($genbarcode_loc))
+    {
         /* use genbarcode */
+        dol_syslog("phpbarcode.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
         $bars=barcode_encode_genbarcode($code, $encoding);
-    } else {
-        print "php-barcode needs an external programm for encodings other then EAN/ISBN<BR>\n";
+    }
+    else
+    {
+        print "barcode_encode needs an external programm for encodings other then EAN/ISBN<BR>\n";
         print "<UL>\n";
         print "<LI>download gnu-barcode from <A href=\"http://www.gnu.org/software/barcode/\">www.gnu.org/software/barcode/</A>\n";
         print "<LI>compile and install them\n";
         print "<LI>download genbarcode from <A href=\"http://www.ashberg.de/bar/\">www.ashberg.de/bar/</A>\n";
         print "<LI>compile and install them\n";
-        print "<LI>specify path the genbarcode in php-barcode.php\n";
+        print "<LI>specify path the genbarcode in barcode module setup\n";
         print "</UL>\n";
         print "<BR>\n";
-        print "<A HREF=\"http://www.ashberg.de/bar/\">Folke Ashberg's OpenSource PHP-Barcode</A><BR>\n";
         return false;
     }
     return $bars;
@@ -402,17 +405,17 @@ function barcode_encode($code,$encoding)
  *    array[bars]     : the bars
  *    array[text]     : text-positioning info
  */
-function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png" )
+function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
 {
     // DOLCHANGE LDR Add log
-    dol_syslog("php-barcode.php:barcode_print $code $encoding $scale $mode");
+    dol_syslog("phpbarcode.php::barcode_print $code $encoding $scale $mode");
 
     $bars=barcode_encode($code,$encoding);
     if (!$bars)
     {
         // DOLCHANGE LDR Return error message instead of array
         $error='Bad Value '.$code.' for encoding '.$encoding;
-        dol_syslog('php-barcode.php:barcode_print '.$error, LOG_ERR);
+        dol_syslog('phpbarcode.php::barcode_print '.$error, LOG_ERR);
         return $error;
     }
     if (!$mode) $mode="png";
