@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Regis Houssin <regis@dolibarr.fr>
+ * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,7 +219,7 @@ jQuery(document).ready(function () {
 
 <td valign="bottom"> &nbsp; <strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong> &nbsp; </td>
 <td valign="bottom" nowrap="nowrap">
-<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo $login; ?>" tabindex="1" /></td>
+<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo GETPOST('username')?GETPOST('username'):$login; ?>" tabindex="1" /></td>
 
 <td rowspan="<?php echo $rowspan; ?>" align="center" valign="top">
 <img alt="Logo" title="" src="<?php echo $urllogo; ?>" />
