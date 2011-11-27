@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,10 @@ class modPhpbarcode extends ModeleBarCode
 	var $error='';
 
 
-	/**     \brief     	Return if a module can be used or not
-	 *      \return		boolean     true if module can be used
+	/**
+	 * 	Return if a module can be used or not
+	 *
+	 *  @return		boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
@@ -43,19 +45,23 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
 
-	/**     \brief      Return description
-	 *      \return     string      Texte descripif
+	/**
+	 * 	Return description
+	 *
+	 * 	@return     string      Texte descripif
 	 */
 	function info()
 	{
 		global $langs;
 
-		return 'Php-barcode';
+		return 'Internal engine';
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *
+	 *	@return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -66,8 +72,9 @@ class modPhpbarcode extends ModeleBarCode
 
 
 	/**
-	 *	\brief		Return true if encodinf is supported
-	 *	\return		int		>0 if supported, 0 if not
+	 *	Return true if encodinf is supported
+	 *
+	 *	@return		int		>0 if supported, 0 if not
 	 */
 	function encodingIsSupported($encoding)
 	{
