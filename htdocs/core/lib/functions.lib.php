@@ -189,7 +189,7 @@ function GETPOST($paramname,$check='',$method=0)
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
-	
+
 	if (! empty($check))
 	{
 		// Check if numeric
@@ -199,7 +199,7 @@ function GETPOST($paramname,$check='',$method=0)
 		// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 		if ($check == 'alpha' && preg_match('/"/',trim($out))) $out='';
 	}
-	
+
 	return $out;
 }
 
@@ -1500,7 +1500,7 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
 
 /**
  *  Show a javascript graph
- *  
+ *
  *  @param		string	$htmlid			Html id name
  *  @param		int		$width			Width in pixel
  *  @param		int		$height			Height in pixel
@@ -1518,7 +1518,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 	if (empty($conf->use_javascript_ajax)) return;
 	$jsgraphlib='flot';
 	$datacolor=array();
-	
+
 	// Load colors of theme into $datacolor array
 	$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
 	if (is_readable($color_file))
@@ -1534,7 +1534,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 		}
 	}
 	print '<div id="'.$htmlid.'" style="width:'.$width.'px;height:'.$height.'px;"></div>';
-	
+
 	// We use Flot js lib
 	if ($jsgraphlib == 'flot')
 	{
@@ -1549,7 +1549,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 			<script type="text/javascript">
 			$(function () {
 				var data = '.json_encode($data['series']).';
-				
+
 				function plotWithOptions() {
 					$.plot($("#'.$htmlid.'"), data,
 					{
@@ -1628,7 +1628,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 				}
 				print '];
 				var dataticks = '.json_encode($data['xlabel']).'
-				
+
 				function plotWithOptions() {
 					$.plot(jQuery("#'.$htmlid.'"), data,
 					{
@@ -4475,6 +4475,20 @@ function printCommonFooter($zone='private')
         print "End of log output -->\n";
     }
 
+}
+
+
+if (! function_exists('getmypid'))
+{
+    /**
+     * Return PID
+     *
+     * @return	void
+     */
+    function getmypid()
+    {
+        return rand(1,32768);
+    }
 }
 
 ?>

@@ -26,14 +26,6 @@
  * @since 2004-10-27
  */
 
-// DOLCHANGE RH
-if (! function_exists('getmypid')) {
-	function getmypid() {
-		return rand(1,32768);
-	}
-}
-// END DOLCHANGE
-
 // If you define the constant K_TCPDF_EXTERNAL_CONFIG, the following settings will be ignored.
 
 if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {

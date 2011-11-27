@@ -30,14 +30,6 @@ public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=
 by
 public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=false, $maxh=0, $valign='T', $fitcell=false) {
 
-* Open /tcpdf/config/tcpdf_config.php and add this function :
-
-if (! function_exists('getmypid')) {
-	function getmypid() {
-		return rand(1,32768);
-	}
-}
-
 
 
 JSGANTT:
@@ -68,65 +60,3 @@ If files are replaced by new version, following changes must be done:
     {
 		imagepng($im,$filebarcode);
 	// End DOLCHANGE LDR
-	
-
-
-FCKEDITOR:
-----------
-If files are replaced by new version, following changes must be done:
-
-* Edit file fckeditor/editor/filemanager/browser/default/browser.css
-**********************************************************
-Edit this file to put neutral colors (this theme is used for all themes)
-
-* Replace files and images in themes/fckeditor directories
-**********************************************************
-Replace in themes, files in fckeditor by new ones. Then edit them
-to get back colors that match the theme.
-
-* Edit fckconfig.js to set:
-***************************
-(Rem: Not required as already in the managed file fckconfig.js which is in the directory of the theme)
-FCKConfig.LinkUpload = false ;
-FCKConfig.ImageUpload = false ;
-FCKConfig.FlashUpload = false ;
-
-* Edit htdocs\includes\fckeditor\editor\filemanager\connectors\php\config.php to set:
-*****************************************************************************************************
-
-define('NOTOKENRENEWAL',1); // Disables token renewal
-
-// We must include the main because this page is
-// a web page that require security controls and
-// is a security hole if anybody can access without
-// being an authenticated user.
-require_once("../../../../../../main.inc.php");	
-$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
-$pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
-if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
-define('DOL_URL_ROOT', $pos);
-
-// SECURITY: You must explicitelly enable this "connector". (Set it to "true").
-$Config['Enabled'] = true ;
-
-// Path to user files relative to the document root.
-$Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=fckeditor&file=' ;
-
-// Fill the following value it you prefer to specify the absolute path for the
-// user files directory. Usefull if you are using a virtual directory, symbolic
-// link or alias. Examples: 'C:\\MySite\\UserFiles\\' or '/root/mysite/UserFiles/'.
-// Attention: The above 'UserFilesPath' must point to the same directory.
-
-//$Config['UserFilesAbsolutePath'] = $conf->fckeditor->dir_output; // ne fonctionne pas
-$Config['UserFilesAbsolutePath'] = $dolibarr_main_data_root.'/fckeditor/';
-
-// After file is uploaded, sometimes it is required to change its permissions
-// so that it was possible to access it at the later time.
-// If possible, it is recommended to set more restrictive permissions, like 0755.
-// Set to 0 to disable this feature.
-// Note: not needed on Windows-based servers.
-$Config['ChmodOnUpload'] = 0775 ;
-
-// See comments above.
-// Used when creating folders that does not exist.
-$Config['ChmodOnFolderCreate'] = 0775 ;
