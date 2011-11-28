@@ -30,11 +30,18 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
 $langs->load("members");
 
-$rowid=GETPOST("rowid");
+$rowid		= GETPOST('rowid','int');
+$action		= GETPOST('action','alpha');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$search_lastname	= GETPOST('search_nom','alpha');
+$search_login		= GETPOST('search_login','alpha');
+$search_email		= GETPOST('search_email','alpha');
+$type				= GETPOST('type','alpha');
+$status				= GETPOST('status','alpha');
+
+$sortfield	= GETPOST('sortfield','alpha');
+$sortorder	= GETPOST('sortorder','alpha');
+$page		= GETPOST('page','int');
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -45,16 +52,12 @@ if (! $sortfield) {  $sortfield="d.nom"; }
 // Security check
 if (! $user->rights->adherent->lire) accessforbidden();
 
-if ($_REQUEST["button_removefilter"])
+if (GETPOST('button_removefilter'))
 {
-    $_GET["search_nom"]="";
-    $_REQUEST["search_nom"]="";
-    $_GET["search_prenom"]="";
-    $_REQUEST["search_prenom"]="";
-    $_GET["type"]="";
-    $_REQUEST["type"]="";
-    $_GET["search_email"]="";
-    $_REQUEST["search_email"]="";
+    $search_lastname="";
+    $search_login="";
+    $search_email="";
+    $type="";
     $sall="";
 }
 
@@ -63,7 +66,7 @@ if ($_REQUEST["button_removefilter"])
 /*
  *	Actions
  */
-if ($user->rights->adherent->configurer && $_POST["action"] == 'add')
+if ($action == 'add' && $user->rights->adherent->configurer)
 {
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
@@ -80,24 +83,24 @@ if ($user->rights->adherent->configurer && $_POST["action"] == 'add')
 			$id=$adht->create($user->id);
 			if ($id > 0)
 			{
-				Header("Location: type.php");
+				Header("Location: ".$_SERVER["PHP_SELF"]);
 				exit;
 			}
 			else
 			{
 				$mesg=$adht->error;
-				$_GET["action"] = 'create';
+				$action = 'create';
 			}
 		}
 		else
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-			$_GET["action"] = 'create';
+			$action = 'create';
 		}
 	}
 }
 
-if ($user->rights->adherent->configurer && $_POST["action"] == 'update')
+if ($action == 'update' && $user->rights->adherent->configurer)
 {
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
@@ -111,12 +114,12 @@ if ($user->rights->adherent->configurer && $_POST["action"] == 'update')
 
 		$adht->update($user->id);
 
-		Header("Location: type.php?rowid=".$_POST["rowid"]);
+		Header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$_POST["rowid"]);
 		exit;
 	}
 }
 
-if ($user->rights->adherent->configurer && $_GET["action"] == 'delete')
+if ($action == 'delete' && $user->rights->adherent->configurer)
 {
 	$adht = new AdherentType($db);
 	$adht->delete($rowid);
@@ -124,7 +127,7 @@ if ($user->rights->adherent->configurer && $_GET["action"] == 'delete')
 	exit;
 }
 
-if ($user->rights->adherent->configurer && $_GET["action"] == 'commentaire')
+if ($action == 'commentaire' && $user->rights->adherent->configurer)
 {
 	$don = new Don($db);
 	$don->fetch($rowid);
@@ -143,7 +146,7 @@ $form=new Form($db);
 
 // Liste of members type
 
-if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
+if (! $rowid && $action != 'create' && $action != 'edit')
 {
 
 	print_fiche_titre($langs->trans("MembersTypes"));
@@ -199,7 +202,7 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
 	// New type
 	if ($user->rights->adherent->configurer)
 	{
-		print "<a class=\"butAction\" href=\"type.php?action=create\">".$langs->trans("NewType")."</a>";
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans("NewType").'</a>';
 	}
 
 	print "</div>";
@@ -212,7 +215,7 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
 /* Creation d'un type adherent                                                */
 /*                                                                            */
 /* ************************************************************************** */
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	$form = new Form($db);
 
@@ -220,7 +223,7 @@ if ($_GET["action"] == 'create')
 
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
-	print "<form action=\"type.php\" method=\"post\">";
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
@@ -237,7 +240,7 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-	print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
+	print '<textarea name="comment" wrap="soft" cols="60" rows="3"></textarea></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
@@ -261,7 +264,7 @@ if ($_GET["action"] == 'create')
 /* ************************************************************************** */
 if ($rowid > 0)
 {
-	if ($_GET["action"] != 'edit')
+	if ($action != 'edit')
 	{
 		$adht = new AdherentType($db);
 		$adht->id = $rowid;
@@ -316,16 +319,16 @@ if ($rowid > 0)
 		// Edit
 		if ($user->rights->adherent->configurer)
 		{
-			print "<a class=\"butAction\" href=\"type.php?action=edit&amp;rowid=".$adht->id."\">".$langs->trans("Modify")."</a>";
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$adht->id.'">'.$langs->trans("Modify").'</a>';
 		}
 
 		// Add
-		print "<a class=\"butAction\" href=\"fiche.php?action=create&typeid=".$adht->id."\">".$langs->trans("AddMember")."</a>";
+		print '<a class="butAction" href="fiche.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a>';
 
 		// Delete
 		if ($user->rights->adherent->configurer)
 		{
-			print "<a class=\"butActionDelete\" href=\"type.php?action=delete&rowid=".$adht->id."\">".$langs->trans("DeleteType")."</a>";
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$adht->id.'">'.$langs->trans("DeleteType").'</a>';
 		}
 
 		print "</div>";
@@ -342,38 +345,35 @@ if ($rowid > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
 		$sql.= " AND d.entity = ".$conf->entity;
+		$sql.= " AND t.rowid = ".$adht->id;
 		if ($sall)
 		{
-		    $sql.=" AND (d.prenom like '%".$sall."%' OR d.nom like '%".$sall."%' OR d.societe like '%".$sall."%'";
-		    $sql.=" OR d.email like '%".$sall."%' OR d.login like '%".$sall."%' OR d.adresse like '%".$sall."%'";
-		    $sql.=" OR d.ville like '%".$sall."%' OR d.note like '%".$sall."%')";
+		    $sql.= " AND (d.prenom LIKE '%".$sall."%' OR d.nom LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
+		    $sql.= " OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.adresse LIKE '%".$sall."%'";
+		    $sql.= " OR d.ville LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
 		}
-		//if ($_REQUEST["type"] > 0)
-		//{
-		    //$sql.=" AND t.rowid=".$_REQUEST["type"];
-		    $sql.=" AND t.rowid=".$adht->id;
-		//}
-		if (isset($_GET["statut"]))
+		if ($status != '')
 		{
-		    $sql.=" AND d.statut in ($statut)";     // Peut valoir un nombre ou liste de nombre separes par virgules
+		    $sql.= " AND d.statut IN (".$status.")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 		}
-		if ( $_POST["action"] == 'search')
+		if ($action == 'search')
 		{
-		  if (isset($_POST['search']) && $_POST['search'] != ''){
+		  if (isset($_POST['search']) && $_POST['search'] != '')
+		  {
 		    $sql.= " AND (d.prenom LIKE '%".$_POST['search']."%' OR d.nom LIKE '%".$_POST['search']."%')";
 		  }
 		}
-		if ($_GET["search_nom"])
+		if (! empty($search_lastname))
 		{
-		    $sql.= " AND (d.prenom LIKE '%".$_GET["search_nom"]."%' OR d.nom LIKE '%".$_GET["search_nom"]."%')";
+			$sql.= " AND (d.prenom LIKE '%".$search_lastname."%' OR d.nom LIKE '%".$search_lastname."%')";
 		}
-		if ($_GET["search_login"])
+		if (! empty($search_login))
 		{
-		    $sql.= " AND d.login LIKE '%".$_GET["search_login"]."%'";
+		    $sql.= " AND d.login LIKE '%".$search_login."%'";
 		}
-		if ($_GET["search_email"])
+		if (! empty($search_email))
 		{
-		    $sql.= " AND (d.email LIKE '%".$_GET["search_email"]."%')";
+		    $sql.= " AND d.email LIKE '%".$search_email."%'";
 		}
 		if ($filter == 'uptodate')
 		{
@@ -402,32 +402,34 @@ if ($rowid > 0)
 		    $i = 0;
 
 		    $titre=$langs->trans("MembersList");
-		    if (isset($_GET["statut"]))
+		    if ($status != '')
 		    {
-		        if ($statut == '-1,1') { $titre=$langs->trans("MembersListQualified"); }
-		        if ($statut == '-1')   { $titre=$langs->trans("MembersListToValid"); }
-		        if ($statut == '1' && ! $filter)    		{ $titre=$langs->trans("MembersListValid"); }
-		        if ($statut == '1' && $filter=='uptodate')  { $titre=$langs->trans("MembersListUpToDate"); }
-		        if ($statut == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
-		        if ($statut == '0')    { $titre=$langs->trans("MembersListResiliated"); }
+		        if ($status == '-1,1')								{ $titre=$langs->trans("MembersListQualified"); }
+		        else if ($status == '-1')							{ $titre=$langs->trans("MembersListToValid"); }
+		        else if ($status == '1' && ! $filter)				{ $titre=$langs->trans("MembersListValid"); }
+		        else if ($status == '1' && $filter=='uptodate')		{ $titre=$langs->trans("MembersListUpToDate"); }
+		        else if ($status == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
+		        else if ($status == '0')							{ $titre=$langs->trans("MembersListResiliated"); }
 		    }
-		    elseif ($_POST["action"] == 'search') {
+		    elseif ($action == 'search')
+		    {
 		        $titre=$langs->trans("MembersListQualified");
 		    }
 
-		    if ($_REQUEST["type"] > 0)
+		    if ($type > 0)
 		    {
 				$membertype=new AdherentType($db);
-		        $result=$membertype->fetch($_REQUEST["type"]);
+		        $result=$membertype->fetch($type);
 				$titre.=" (".$membertype->libelle.")";
 		    }
 
 		    $param="&rowid=".$rowid;
-		    if (isset($_GET["statut"]))       $param.="&statut=".$_GET["statut"];
-		    if (isset($_GET["search_nom"]))   $param.="&search_nom=".$_GET["search_nom"];
-		    if (isset($_GET["search_login"])) $param.="&search_login=".$_GET["search_login"];
-		    if (isset($_GET["search_email"])) $param.="&search_email=".$_GET["search_email"];
-		    if (isset($_GET["filter"]))       $param.="&filter=".$_GET["filter"];
+		    if (! empty($status))			$param.="&status=".$status;
+		    if (! empty($search_lastname))	$param.="&search_nom=".$search_lastname;
+		    if (! empty($search_firstname))	$param.="&search_prenom=".$search_firstname;
+		    if (! empty($search_login))		$param.="&search_login=".$search_login;
+		    if (! empty($search_email))		$param.="&search_email=".$search_email;
+		    if (! empty($filter))			$param.="&filter=".$filter;
 
 		    if ($sall)
 		    {
@@ -436,7 +438,7 @@ if ($rowid > 0)
 
 		    print '<br>';
             print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-		    print "<table class=\"noborder\" width=\"100%\">";
+		    print '<table class="noborder" width="100%">';
 
 		    print '<tr class="liste_titre">';
 		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.nom",$param,"","",$sortfield,$sortorder);
@@ -455,15 +457,15 @@ if ($rowid > 0)
 			print '<tr class="liste_titre">';
 
 			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_nom" value="'.$_REQUEST["search_nom"].'" size="12"></td>';
+			print '<input class="flat" type="text" name="search_nom" value="'.$search_lastname.'" size="12"></td>';
 
 			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="7"></td>';
+			print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
 			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_email" value="'.$_REQUEST["search_email"].'" size="12"></td>';
+			print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
@@ -487,14 +489,14 @@ if ($rowid > 0)
 
 		        // Nom
 		        $var=!$var;
-		        print "<tr $bc[$var]>";
+		        print '<tr '.$bc[$var].'>';
 		        if ($objp->societe != '')
 		        {
-		            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom." ".dol_trunc($objp->nom,12)." / ".dol_trunc($objp->societe,12)."</a></td>\n";
+		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom.' '.dol_trunc($objp->nom,12).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
 		        }
 		        else
 		        {
-		            print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom." ".dol_trunc($objp->nom)."</a></td>\n";
+		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom.' '.dol_trunc($objp->nom).'</a></td>'."\n";
 		        }
 
 		        // Login
@@ -552,12 +554,12 @@ if ($rowid > 0)
 		        print '<td align="center">';
 				if ($user->rights->adherent->creer)
 				{
-					print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit&return=liste.php\">".img_edit()."</a>";
+					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=edit&return=liste.php">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)
 				{
-					print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign&return=liste.php\">".img_picto($langs->trans("Resiliate"),'disable.png')."</a>";
+					print '<a href="fiche.php?rowid='.$objp->rowid.'&action=resign&return=liste.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
 		        }
 				print "</td>";
 
@@ -579,7 +581,7 @@ if ($rowid > 0)
 
 	}
 
-	if ($_GET["action"] == 'edit')
+	if ($action == 'edit')
 	{
 		$form = new Form($db);
 
@@ -596,7 +598,6 @@ if ($rowid > 0)
 		$h++;
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
-
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -617,7 +618,7 @@ if ($rowid > 0)
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-		print "<textarea name=\"comment\" wrap=\"soft\" cols=\"90\" rows=\"3\">".$adht->note."</textarea></td></tr>";
+		print '<textarea name="comment" wrap="soft" cols="90" rows="3">'.$adht->note.'</textarea></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");

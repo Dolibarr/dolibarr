@@ -70,7 +70,7 @@ class box_members extends ModeleBoxes {
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.rowid, s.nom, s.prenom, s.datec, s.tms, s.statut as status, s.datefin as date_end_subscription,";
+			$sql = "SELECT s.rowid, s.nom as lastname, s.prenom as firstname, s.datec, s.tms, s.statut as status, s.datefin as date_end_subscription,";
 			$sql.= " t.cotisation";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s, ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql.= " WHERE s.entity = ".$conf->entity;
@@ -91,12 +91,15 @@ class box_members extends ModeleBoxes {
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
+					$memberstatic->nom=$objp->lastname;
+					$memberstatic->prenom=$objp->firstname;
+					
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/adherents/fiche.php?rowid=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->nom,
+                    'text' => $memberstatic->getFullName($langs),
                     'url' => DOL_URL_ROOT."/adherents/fiche.php?rowid=".$objp->rowid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',

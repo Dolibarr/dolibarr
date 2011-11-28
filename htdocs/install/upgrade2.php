@@ -3491,7 +3491,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
         $file='init_menu_'.$key.'.sql';
         if (file_exists($dir.$file))
         {
-            $result=run_sql($dir.$file,1,'',1);
+            $result=run_sql($dir.$file,1,'',1,$key);
         }
 
         print '</td></tr>';
