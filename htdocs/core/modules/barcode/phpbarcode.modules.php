@@ -23,7 +23,9 @@
  *	\brief      Fichier contenant la classe du modele de generation code barre phpbarcode
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/barcode/modules_barcode.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/barcode/modules_barcode.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/phpbarcode.php");    // This is to include def like $genbarcode_loc and $font_loc
+
 
 /**		\class      modPhpbarcode
  *		\brief      Classe du modele de numerotation de generation code barre phpbarcode
@@ -79,6 +81,7 @@ class modPhpbarcode extends ModeleBarCode
 	function encodingIsSupported($encoding)
 	{
 		global $genbarcode_loc;
+        //print 'genbarcode_loc='.$genbarcode_loc.' encoding='.$encoding;exit;
 
 		$supported=0;
 		if ($encoding == 'EAN13') $supported=1;
