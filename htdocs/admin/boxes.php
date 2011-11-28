@@ -42,6 +42,7 @@ $boxes = array();
 /*
  * Actions
  */
+
 if ($action == 'addconst')
 
 {
@@ -249,9 +250,8 @@ if ($resql)
 }
 
 
-/*
- * Boites disponibles
- */
+// Available boxes
+
 print "<br>\n";
 print_titre($langs->trans("BoxesAvailable"));
 
@@ -354,10 +354,8 @@ if ($resql)
 
 print '</table>';
 
-/*
- * Boites activees
- *
- */
+
+// Activated boxes
 
 print "<br>\n\n";
 print_titre($langs->trans("BoxesActivated"));
@@ -457,6 +455,7 @@ print '</table><br>';
 
 
 // Other parameters
+
 print_titre($langs->trans("Other"));
 print '<table class="noborder" width="100%">';
 
@@ -464,11 +463,19 @@ $var=false;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addconst">';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("MaxNbOfLinesForBoxes")."</td>\n";
+print '<tr class="liste_titre">';
+print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
+print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
+print '<td class="liste_titre"></td>';
+print '</tr>';
+print '<tr '.$bc[$var].'>';
+print '<td>';
+print $langs->trans("MaxNbOfLinesForBoxes");
+print '</td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.$conf->global->MAIN_BOXES_MAXLINES.'">';
-print '</td><td align="right">';
+print '</td>';
+print '<td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button">';
 print '</td>'."\n";
 print '</tr>';
