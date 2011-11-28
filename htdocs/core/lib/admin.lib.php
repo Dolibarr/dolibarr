@@ -114,7 +114,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 {
     global $db, $conf, $langs, $user;
 
-    dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile, LOG_DEBUG);
+    dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler, LOG_DEBUG);
 
     $ok=0;
     $error=0;
