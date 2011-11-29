@@ -239,7 +239,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$adh->naiss       = $datenaiss;
 
 		$adh->typeid      = $_POST["typeid"];
-		$adh->note        = trim($_POST["comment"]);
+		//$adh->note        = trim($_POST["comment"]);
 		$adh->morphy      = $_POST["morphy"];
 
 		$adh->amount      = $_POST["amount"];
@@ -363,7 +363,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $login=$_POST["member_login"];
     $pass=$_POST["password"];
     $photo=$_POST["photo"];
-    $comment=$_POST["comment"];
+    //$comment=$_POST["comment"];
     $morphy=$_POST["morphy"];
     $cotisation=$_POST["cotisation"];
     $public=$_POST["public"];
@@ -392,7 +392,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $adh->naiss       = $datenaiss;
     $adh->photo       = $photo;
     $adh->typeid      = $typeid;
-    $adh->note        = $comment;
+    //$adh->note        = $comment;
     $adh->morphy      = $morphy;
     $adh->user_id     = $userid;
     $adh->fk_soc      = $socid;
@@ -696,7 +696,7 @@ if ($action == 'create')
     print '</tr>';
 
     // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
     print '</tr>';
 
     // Password
@@ -921,7 +921,7 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Firstname
-	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
 	print '</tr>';
 
 	// Password
