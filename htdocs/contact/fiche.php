@@ -98,7 +98,7 @@ if (empty($reshook))
 
             if ($result > 0)
             {
-                $result2=$nuser->setPassword($user,$_POST["password"],0,1,1);
+                $result2=$nuser->setPassword($user,$_POST["password"],0,0,1);
                 if ($result2)
                 {
                     $db->commit();

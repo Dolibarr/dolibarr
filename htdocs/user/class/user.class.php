@@ -730,7 +730,7 @@ class User extends CommonObject
 			return -1;
 		}
 
-		$now=dol_now();
+		$this->datec = dol_now();
 
 		$error=0;
 		$this->db->begin();
@@ -756,7 +756,7 @@ class User extends CommonObject
 			else
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid,entity)";
-				$sql.= " VALUES('".$this->db->idate($now)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->entity.")";
+				$sql.= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->entity.")";
 				$result=$this->db->query($sql);
 
 				dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
