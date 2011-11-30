@@ -77,46 +77,54 @@ Voir fichier ChangeLog.
 IV - CE QUE DOLIBARR PEUT FAIRE
 -------------------------------
 
-Main modules:
-- Products and services catalog
-- Stock management
-- Bank accounts management
-- Customers, Suppliers or Prospects directory
-- Contacts directory
-- Commercial actions management
-- Orders management
-- Commercial proposals management with PDF export
-- Contracts management
-- Invoices management with PDF export
-- Payments management
-- Standing orders management
-- Shipping management
+Modules principaux:
+- Gestion de catalogue de produits et services
+- Gestion de stock
+- Gestion des comptes bancaires
+- Annuaires des prospects et/ou client et/ou fournisseurs
+- Annuaires des contacts
+- Gestion des actions/taches avec un agenda intégré (ou lien avec webcalendar)
+- Gestion des commandes
+- Gestion des propositions commerciales
+- Gestion de contrats de services
+- Gestion des factures clients et fournisseurs
+- Gestion des paiements
+- Gestion des virements bancaires
+- Gestion des expéditions
 
-Other modules:
-- Management for fundation members
-- Bookmarks management
-- EMailing
-- Can reports Dolibarr events inside Webcalendar
-- Reporting
-- Data export tools
-- LDAP connectivity
-- Donations management
+Autres modules:
+- Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
+- Gestion des adhérents d'association
+- Gestion des dons
+- Gestion de marque-pages
+- Agenda
+- Point de vente/Caisse enregistreuse
+- Fonctions d'EMailing de masses vers les clients, prospect ou utilisateurs Dolibarr
+- Rapports
+- Fonctions d'exports
+- Connectivité LDAP
+- Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
+- De nombreuses autres fonctionnalités issues de modules officiels ou non (AWStats, Bittorrent, Gravatar, Google, Webcalendar...) 
 
 Miscellanous:
-- Mutli-user, with several permissions levels for each feature.
-- Serveral menu managers (can be used by internal users, as a back-office,
-  with a particular menu, or by external users, as a front-office, with
-  another menu and permissions).
-- Very user friendly and easy to use.
-- Several skins.
-- Code is highly customizable (a lot of use of modules).
-- Works with Mysql 4.1 or higher, or PostgreSql 8.14 or higher.
-- Works with PHP 5.0 or higher.
+- Application multi-utilisateurs avec différents niveaux de permissions par module.
+- Plusieurs gestionnaires de menus (possibilité de différencier les menus pour les utilisateurs internes ou externes comme les clients ou fournisseurs)
+- Application simple à utiliser.
+- Plusieurs thèmes visuels.
+- Code simple et facilement personnalisable.
+- Fonctionne avec MySQL 4.1+ ou PostgreSql 8.1.4+.
+- Fonctionne avec PHP 5.0+.
+- Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP. 
 
 
 V - CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
 ------------------------------------------------------
-Voici un liste de fonctionnalites pas encore gerees par Dolibarr:
-- Pas de comptabilité (uniquement gestion de tresorerie).
-- Dolibarr ne gere qu'une seule monnaie.
-- Dolibarr ne fait pas le cafe (pas encore).
+Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
+- Pas de compta analytique (uniquement gestion de trésorerie).
+- Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
+- Dolibarr ne gère en standard qu'une société/institution/association (mono-société). Pour en gérer plusieurs (comme vos filiales), il faut, soit faire plusieurs installations de Dolibarr, soit installer le module MutliCompany qui permet de gérer n société/institutions/associations dans une seule instance par une isolation logique des données.
+- Ne gère pas la double tva (Fédérale / provinciale) du canada.
+- Dolibarr ne contient pas de module de Gestion de la paie.
+- Les taches du module de gestion de projets n'ont pas de dépendance entre elle.
+- Dolibarr ne contient pas de Webmail.
+- Dolibarr ne fait pas le café (pas encore). 
