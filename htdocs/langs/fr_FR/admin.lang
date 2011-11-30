@@ -1273,7 +1273,7 @@ EndPointIs=Les clients SOAP doivent envoyer leur requêtes vers l'endpoint Dolib
 ##### Bank #####
 BankSetupModule=Configuration du module Banque
 FreeLegalTextOnChequeReceipts=Mention complémentaire sur les bordereaux de remises de chèques
-BankOrderShow=Ordre d'affichage des information bancaires pour les pays les détaillant
+BankOrderShow=Ordre d'affichage des informations bancaires (pour les pays les détaillant)
 BankOrderGlobal=Général
 BankOrderGlobalDesc=Ordre d'affichage général
 BankOrderES=Espagnole
