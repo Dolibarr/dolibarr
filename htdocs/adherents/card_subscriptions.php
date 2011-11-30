@@ -713,9 +713,16 @@ if ($rowid)
         {
             dol_print_error($db);
         }
+
+
+        // Link for paypal payment
+        if ($conf->paypal->enabled)
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
+            print showPaypalPaymentUrl('membersubscription',$adh->ref);
+        }
+
     }
-
-
 
     /*
      * Add new subscription form

@@ -165,6 +165,29 @@ function paypaladmin_prepare_head()
 }
 
 
+
+/**
+ * Return string with full Url
+ *
+ * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param	string	$ref		Ref of object
+ * @return	string				Url string
+ */
+function showPaypalPaymentUrl($type,$ref)
+{
+	global $conf, $langs;
+
+	$langs->load("paypal");
+    $langs->load("paybox");
+    $servicename='PayPal';
+    $out='<br><br>';
+    $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
+    $url=getPaypalPaymentUrl(0,$type,$ref);
+    $out.='<input type="text" id="paypalurl" value="'.$url.'" size="60"><br>';
+    return $out;
+}
+
+
 /**
  * Return string with full Url
  *
