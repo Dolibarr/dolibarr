@@ -2935,6 +2935,20 @@ else
                  */
                 $somethingshown=$object->showLinkedObjectBlock();
 
+                // Link for paypal payment
+                if ($conf->paypal->enabled)
+                {
+                    $langs->load("paypal");
+                    $langs->load("paybox");
+                    $servicename='PayPal';
+                    include_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
+
+                    print '<br>';
+                    print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
+                    $url=getPaypalPaymentUrl(0,'invoice',$object->ref);
+                    print '<input type="text" id="paypalurl" value="'.$url.'" size="60"><br>';
+                }
+
                 print '</td><td valign="top" width="50%">';
 
                 print '<br>';
