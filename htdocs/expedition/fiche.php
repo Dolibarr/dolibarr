@@ -29,7 +29,6 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/pdf/ModelePdfExpedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
@@ -53,6 +52,7 @@ $origin_id 	= GETPOST("id")?GETPOST("id"):'';
 if (empty($origin_id)) $origin_id  = GETPOST("origin_id");    // Id of order or propal
 if (empty($origin_id)) $origin_id  = GETPOST("object_id");    // Id of order or propal
 $id = $origin_id;
+$ref=GETPOST('ref');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -252,7 +252,7 @@ if ($action == 'settrackingnumber' || $action == 'settrackingurl'
  */
 if ($action == 'builddoc')	// En get ou en post
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/pdf/ModelePdfExpedition.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/doc/ModelePdfExpedition.class.php");
 
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$shipment = new Expedition($db);
@@ -768,15 +768,6 @@ if ($action == 'create')
 					}
 					print '</td>';
 				}
-				/*else
-				{
-					// Quantity
-					print '<td align="center" '.$colspan.'>';
-					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$quantityToBeDelivered.'">';
-					print '</td>';
-					if ($line->product_type == 1) print '<td>&nbsp;</td>';
-				}*/
 
 				print "</tr>\n";
 
