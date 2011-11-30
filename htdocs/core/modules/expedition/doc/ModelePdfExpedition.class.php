@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/core/modules/expedition/pdf/ModelePdfExpedition.class.php
+ *  \file       htdocs/core/modules/expedition/doc/ModelePdfExpedition.class.php
  *  \ingroup    shipping
  *  \brief      Fichier contenant la classe mere de generation des expeditions
  */
@@ -65,46 +65,60 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 function expedition_pdf_create($db, $object, $modele, $outputlangs)
 {
 	global $conf,$langs;
+
 	$langs->load("sendings");
 
-	$dir = "/core/modules/expedition/pdf/";
-	$modelisok=0;
+	// Increase limit for PDF build
+	$err=error_reporting();
+	error_reporting(0);
+	@set_time_limit(120);
+	error_reporting($err);
 
-	// Positionne modele sur le nom du modele de commande a utiliser
-	$file = "pdf_expedition_".$modele.".modules.php";
+	$dir = "/core/modules/expedition/";
+	$srctemplatepath='';
 
-	// On verifie l'emplacement du modele
-	$file = dol_buildpath($dir.$file);
-
-	if ($modele && file_exists($file)) $modelisok=1;
-
-    // Si model pas encore bon
-	if (! $modelisok)
+	// Positionne le modele sur le nom du modele a utiliser
+	if (! dol_strlen($modele))
 	{
-		if ($conf->global->EXPEDITION_ADDON_PDF) $modele = $conf->global->EXPEDITION_ADDON_PDF;
-      	$file = "pdf_expedition_".$modele.".modules.php";
-      	// On verifie l'emplacement du modele
-		$file = dol_buildpath($dir.$file);
-    	if (file_exists($file)) $modelisok=1;
-    }
+	    if (! empty($conf->global->EXPEDITION_ADDON_PDF))
+	    {
+	        $modele = $conf->global->EXPEDITION_ADDON_PDF;
+	    }
+	    else
+	    {
+	        $modele = 'rouget';
+	    }
+	}
 
-    // Si model pas encore bon
-	if (! $modelisok)
+	// If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+	if (! empty($tmp[1]))
 	{
-		$liste=ModelePDFExpedition::liste_modeles($db);
-        $modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
-      	$file = "pdf_expedition_".$modele.".modules.php";
-      	// On verifie l'emplacement du modele
-		$file = dol_buildpath($dir.$file);
-    	if (file_exists($file)) $modelisok=1;
+	    $modele=$tmp[0];
+	    $srctemplatepath=$tmp[1];
+	}
+
+	// Search template file
+	$file=''; $classname=''; $filefound=0;
+	foreach(array('doc','pdf') as $prefix)
+	{
+	    $file = $prefix."_expedition_".$modele.".modules.php";
+
+	    // On verifie l'emplacement du modele
+	    $file = dol_buildpath($dir.'doc/'.$file);
+
+	    if (file_exists($file))
+	    {
+	        $filefound=1;
+	        $classname=$prefix.'_expedition_'.$modele;
+	        break;
+	    }
 	}
 
 	// Charge le modele
-    if ($modelisok)
+	if ($filefound)
 	{
-	    dol_syslog("expedition_pdf_create ".$modele);
-		$classname = "pdf_expedition_".$modele;
-		require_once($file);
+	    require_once($file);
 
 		$obj = new $classname($db);
 
@@ -132,16 +146,9 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	}
 	else
 	{
-        if (! $conf->global->EXPEDITION_ADDON_PDF)
-        {
-			print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_PDF_NotDefined");
-        }
-        else
-        {
-    		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
-        }
-		return 0;
-   }
+		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
+		return -1;
+    }
 }
 
 ?>

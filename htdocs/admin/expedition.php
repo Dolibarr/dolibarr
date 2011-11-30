@@ -58,7 +58,7 @@ if ($action == 'specimen')
 	//$exp->fetch_commande();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/expedition/pdf/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/expedition/doc/";
 	$file = "pdf_expedition_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -483,7 +483,7 @@ clearstatcache();
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/core/modules/expedition/pdf/";
+	$dir = $dirroot . "/core/modules/expedition/doc/";
 
 	if (is_dir($dir))
 	{

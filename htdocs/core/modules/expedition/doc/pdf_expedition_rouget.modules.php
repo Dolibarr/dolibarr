@@ -19,12 +19,12 @@
  */
 
 /**
- *	\file       htdocs/core/modules/expedition/pdf/pdf_expedition_rouget.modules.php
+ *	\file       htdocs/core/modules/expedition/doc/pdf_expedition_rouget.modules.php
  *	\ingroup    expedition
  *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Rouget
  */
 
-require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/pdf/ModelePdfExpedition.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/doc/ModelePdfExpedition.class.php";
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
