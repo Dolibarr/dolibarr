@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,10 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/events.class.php');
-if (! $user->admin)
-accessforbidden();
+
+$action=GETPOST('action');
+
+if (! $user->admin) accessforbidden();
 
 // Security check
 if ($user->societe_id > 0)
@@ -55,6 +57,7 @@ $search_user = GETPOST("search_user");
 $search_desc = GETPOST("search_desc");
 $search_ua   = GETPOST("search_ua");
 
+
 /*
  * Actions
  */
@@ -62,7 +65,7 @@ $search_ua   = GETPOST("search_ua");
 $now=dol_now();
 
 // Purge audit events
-if ($_REQUEST['action'] == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $user->admin)
+if ($action == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $user->admin)
 {
 	$error=0;
 
@@ -72,12 +75,15 @@ if ($_REQUEST['action'] == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $
 	// Delete events
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 	$sql.= " WHERE entity = ".$conf->entity;
+
+	dol_syslog("listevents purge sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql)
 	{
 		$error++;
 		$mesg='<div class="error">'.$db->lasterror().'</div>';
 	}
+
 	// Add event purge
 	$text=$langs->trans("SecurityEventsPurged");
 	$securityevent=new Events($db);
@@ -87,6 +93,7 @@ if ($_REQUEST['action'] == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $
 	$result=$securityevent->create($user);
 	if ($result > 0)
 	{
+	    $db->commit();
 		dol_syslog($text, LOG_WARNING);
 	}
 	else

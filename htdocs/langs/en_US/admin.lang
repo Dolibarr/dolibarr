@@ -789,6 +789,7 @@ LogEvents=Security audit events
 Audit=Audit
 ListEvents=Audit events
 ListOfSecurityEvents=List of Dolibarr security events
+SecurityEventsPurged=Security events purged
 LogEventDesc=You can enable here the logging for Dolibarr security events. Administrators can then see its content via menu <b>System tools - Audit</b>. Warning, this feature can consume a large amount of data in database.
 AreaForAdminOnly=Those features can be used by <b>administrator users</b> only.
 SystemInfoDesc=System information is miscellaneous technical information you get in read only mode and visible for administrators only.

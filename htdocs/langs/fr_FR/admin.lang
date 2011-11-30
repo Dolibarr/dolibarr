@@ -797,6 +797,7 @@ LogEvents= Événements d'audit de sécurité
 Audit= Audit
 ListEvents= Audit événements
 ListOfSecurityEvents= Liste des événements de sécurité Dolibarr
+SecurityEventsPurged=Evenement de sécurité purgés
 LogEventDesc= Vous pouvez activer ici, le traçage des événements d'audit de sécurité. Cet historique est consultable aux administrateurs dans le menu <b>Outils systèmes - Audit</b>. Attention, cette fonctionnalité peut consommer un gros volume de données.
 AreaForAdminOnly= Ces fonctions ne sont accessibles qu'à un utilisateur administrateur.
 SystemInfoDesc= Les informations systèmes sont des informations techniques diverses accessibles en lecture seule aux administrateurs uniquement.
