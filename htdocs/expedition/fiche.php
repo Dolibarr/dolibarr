@@ -54,6 +54,7 @@ $origin_id 	= GETPOST("id")?GETPOST("id"):'';
 if (empty($origin_id)) $origin_id  = GETPOST("origin_id");    // Id of order or propal
 if (empty($origin_id)) $origin_id  = GETPOST("object_id");    // Id of order or propal
 $id = $origin_id;
+$ref=GETPOST('ref');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
