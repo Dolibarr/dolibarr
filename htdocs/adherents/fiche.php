@@ -247,7 +247,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$object->naiss       = $datenaiss;
 
 		$object->typeid      = $_POST["typeid"];
-		$object->note        = trim($_POST["comment"]);
+		//$object->note        = trim($_POST["comment"]);
 		$object->morphy      = $_POST["morphy"];
 
 		$object->amount      = $_POST["amount"];
@@ -371,7 +371,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $login=$_POST["member_login"];
     $pass=$_POST["password"];
     $photo=$_POST["photo"];
-    $comment=$_POST["comment"];
+    //$comment=$_POST["comment"];
     $morphy=$_POST["morphy"];
     $cotisation=$_POST["cotisation"];
     $public=$_POST["public"];
@@ -400,7 +400,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $object->naiss       = $datenaiss;
     $object->photo       = $photo;
     $object->typeid      = $typeid;
-    $object->note        = $comment;
+    //$object->note        = $comment;
     $object->morphy      = $morphy;
     $object->user_id     = $userid;
     $object->fk_soc      = $socid;
@@ -704,7 +704,7 @@ if ($action == 'create')
     print '</tr>';
 
     // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
     print '</tr>';
 
     // Password
@@ -932,7 +932,7 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Firstname
-	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
 	print '</tr>';
 
 	// Password
