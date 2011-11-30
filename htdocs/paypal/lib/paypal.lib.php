@@ -279,6 +279,7 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
     global $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum;
+    global $email, $desc;
 
     //'------------------------------------
     //' Calls the SetExpressCheckout API call
@@ -325,13 +326,10 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
         $shipToCountryCode,
         $shipToZip,
         $shipToStreet2,
-        $phoneNum
+        $phoneNum,
+        $email,
+        $desc
     );
-    /* For direct payment with credit card
-    {
-        //$resArray = DirectPayment (...);
-    }
-    */
 
     $ack = strtoupper($resArray["ACK"]);
     if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
@@ -377,9 +375,11 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  '      shipToZip:          the Ship to ZipCode entered on the merchant's site
  '      shipToStreet2:      the Ship to Street2 entered on the merchant's site
  '      phoneNum:           the phoneNum  entered on the merchant's site
+ '      email:              the buyer email
+ '      desc:               Product description
  '--------------------------------------------------------------------------------------------------------------------------------------------
  */
-function CallSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum)
+function CallSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email='', $desc='')
 {
     //------------------------------------------------------------------------------------------------------------------------------------
     // Construct the parameter string that describes the SetExpressCheckout API call in the shortcut implementation
@@ -389,15 +389,16 @@ function CallSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
-    $nvpstr="&AMT=". urlencode($paymentAmount);
-    $nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);
+    $nvpstr = '';
+    $nvpstr = $nvpstr . "&AMT=". urlencode($paymentAmount);                // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+    $nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);       // PAYMENTACTION deprecated by paypal -> PAYMENTREQUEST_n_PAYMENTACTION
     $nvpstr = $nvpstr . "&RETURNURL=" . urlencode($returnURL);
     $nvpstr = $nvpstr . "&CANCELURL=" . urlencode($cancelURL);
-    $nvpstr = $nvpstr . "&CURRENCYCODE=" . urlencode($currencyCodeType);
+    $nvpstr = $nvpstr . "&CURRENCYCODE=" . urlencode($currencyCodeType);    // CURRENCYCODE deprecated by paypal -> PAYMENTREQUEST_n_CURRENCYCODE
     $nvpstr = $nvpstr . "&ADDROVERRIDE=1";
     //$nvpstr = $nvpstr . "&ALLOWNOTE=0";
-    $nvpstr = $nvpstr . "&SHIPTONAME=" . urlencode($shipToName);
-    $nvpstr = $nvpstr . "&SHIPTOSTREET=" . urlencode($shipToStreet);
+    $nvpstr = $nvpstr . "&SHIPTONAME=" . urlencode($shipToName);            // SHIPTONAME deprecated by paypal -> PAYMENTREQUEST_n_SHIPTONAME
+    $nvpstr = $nvpstr . "&SHIPTOSTREET=" . urlencode($shipToStreet);        //
     $nvpstr = $nvpstr . "&SHIPTOSTREET2=" . urlencode($shipToStreet2);
     $nvpstr = $nvpstr . "&SHIPTOCITY=" . urlencode($shipToCity);
     $nvpstr = $nvpstr . "&SHIPTOSTATE=" . urlencode($shipToState);
@@ -406,9 +407,10 @@ function CallSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     $nvpstr = $nvpstr . "&PHONENUM=" . urlencode($phoneNum);
     $nvpstr = $nvpstr . "&SOLUTIONTYPE=" . urlencode($solutionType);
     $nvpstr = $nvpstr . "&LANDINGPAGE=" . urlencode($landingPage);
-    //$nvpstr = $nvpstr . "&CUSTOMERSERVICENUMBER=" . urlencode($tag);
+    //$nvpstr = $nvpstr . "&CUSTOMERSERVICENUMBER=" . urlencode($tag);    // Hotline phone number
     $nvpstr = $nvpstr . "&INVNUM=" . urlencode($tag);
-
+    if (! empty($email)) $nvpstr = $nvpstr . "&EMAIL=" . urlencode($email);
+    if (! empty($desc))  $nvpstr = $nvpstr . "&DESC=" . urlencode($desc);        // DESC deprecated by paypal -> PAYMENTREQUEST_n_DESC
 
 
     $_SESSION["currencyCodeType"] = $currencyCodeType;
@@ -491,9 +493,13 @@ function ConfirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipad
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
-    $nvpstr  = '&TOKEN=' . urlencode($token) . '&PAYERID=' . urlencode($payerID) . '&PAYMENTACTION=' . urlencode($paymentType) . '&AMT=' . urlencode($FinalPaymentAmt);
-    $nvpstr .= '&CURRENCYCODE=' . urlencode($currencyCodeType) . '&IPADDRESS=' . urlencode($ipaddress);
-    //$nvpstr .= '&CUSTOM=' . urlencode($tag);
+    $nvpstr = '';
+    $nvpstr .= '&TOKEN=' . urlencode($token);
+    $nvpstr .= '&PAYERID=' . urlencode($payerID);
+    $nvpstr .= '&PAYMENTACTION=' . urlencode($paymentType);
+    $nvpstr .= '&AMT=' . urlencode($FinalPaymentAmt);
+    $nvpstr .= '&CURRENCYCODE=' . urlencode($currencyCodeType);
+    $nvpstr .= '&IPADDRESS=' . urlencode($ipaddress);
     $nvpstr .= '&INVNUM=' . urlencode($tag);
 
     /* Make the call to PayPal to finalize payment
@@ -529,6 +535,7 @@ function ConfirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipad
  *  cvv2:               Card Verification Value
  *	@return		array	The NVP Collection object of the DoDirectPayment Call Response.
  */
+/*
 function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCardNumber, $expDate, $cvv2, $firstName, $lastName, $street, $city, $state, $zip, $countryCode, $currencyCode, $tag)
 {
     //declaring of global variables
@@ -537,9 +544,10 @@ function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCar
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
     //Construct the parameter string that describes DoDirectPayment
-    $nvpstr = "&AMT=" . urlencode($paymentAmount);
+    $nvpstr = '';
+    $nvpstr = $nvpstr . "&AMT=" . urlencode($paymentAmount);              // deprecated by paypal
     $nvpstr = $nvpstr . "&CURRENCYCODE=" . urlencode($currencyCode);
-    $nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);
+    $nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);      // deprecated by paypal
     $nvpstr = $nvpstr . "&CREDITCARDTYPE=" . urlencode($creditCardType);
     $nvpstr = $nvpstr . "&ACCT=" . urlencode($creditCardNumber);
     $nvpstr = $nvpstr . "&EXPDATE=" . urlencode($expDate);
@@ -557,6 +565,7 @@ function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCar
 
     return $resArray;
 }
+*/
 
 
 /**
@@ -627,7 +636,7 @@ function hash_call($methodName,$nvpStr)
 
     //NVPRequest for submitting to server
     $nvpreq ="METHOD=" . urlencode($methodName) . "&VERSION=" . urlencode($API_version) . "&PWD=" . urlencode($PAYPAL_API_PASSWORD) . "&USER=" . urlencode($PAYPAL_API_USER) . "&SIGNATURE=" . urlencode($PAYPAL_API_SIGNATURE) . $nvpStr;
-    $nvpreq.="&LOCALE=".strtoupper($langs->getDefaultLang(1));
+    $nvpreq.="&LOCALECODE=".strtoupper($langs->getDefaultLang(1));
     //$nvpreq.="&BRANDNAME=".urlencode();       // Override merchant name
     //$nvpreq.="&NOTIFYURL=".urlencode();       // For Instant Payment Notification url
 
@@ -664,6 +673,7 @@ function hash_call($methodName,$nvpStr)
     return $nvpResArray;
 }
 
+
 /**
  * Get API errors
  *
@@ -695,7 +705,6 @@ function GetApiError()
  *
  * @param	string	$nvpstr 		NVPString
  * @return	array					nvpArray = Associative Array
- * ----------------------------------------------------------------------------------
  */
 function deformatNVP($nvpstr)
 {

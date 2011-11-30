@@ -169,7 +169,6 @@ if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 if (GETPOST("action") == 'dopayment')
 {
 	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
-	//$EMAIL=GETPOST("EMAIL");
     $PAYPAL_PAYMENT_TYPE='Sale';
 
     $shipToName=GETPOST("shipToName");
@@ -180,6 +179,8 @@ if (GETPOST("action") == 'dopayment')
     $shipToZip=GETPOST("shipToZip");
     $shipToStreet2=GETPOST("shipToStreet2");
     $phoneNum=GETPOST("phoneNum");
+    $email=GETPOST("email");
+    $desc=GETPOST("desc");
 
 	$mesg='';
 	if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
@@ -214,6 +215,8 @@ if (GETPOST("action") == 'dopayment')
         dol_syslog("shipToZip: $shipToZip", LOG_DEBUG);
         dol_syslog("shipToStreet2: $shipToStreet2", LOG_DEBUG);
         dol_syslog("phoneNum: $phoneNum", LOG_DEBUG);
+        dol_syslog("email: $email", LOG_DEBUG);
+        dol_syslog("desc: $desc", LOG_DEBUG);
 
 	    /*header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -366,13 +369,6 @@ if (! GETPOST("source") && $valid)
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	// EMail
-	/*$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
-	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.GETPOST("EMAIL").'"></td></tr>'."\n";
-    */
-
     // We do not add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
     // as they don't exists (buyer is unknown, tag is free).
 }
@@ -452,15 +448,6 @@ if (GETPOST("source") == 'order' && $valid)
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	// EMail
-	/*$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
-	print ' ('.$langs->trans("ToComplete").')';
-	$email=$order->client->email;
-	$email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
-    */
-
 	// Shipping address
 	$shipToName=$order->client->nom;
     $shipToStreet=$order->client->address;
@@ -485,6 +472,8 @@ if (GETPOST("source") == 'order' && $valid)
     {
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
+    print '<input type="hidden" name="email" value="'.$order->client->email.'">'."\n";
+    print '<input type="hidden" name="desc" value="'.$langs->trans("Order").' '.$order->ref.'">'."\n";
 }
 
 
@@ -562,15 +551,6 @@ if (GETPOST("source") == 'invoice' && $valid)
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	// EMail
-	/*$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
-	print ' ('.$langs->trans("ToComplete").')';
-    $email=$invoice->client->email;
-    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
-    */
-
     // Shipping address
     $shipToName=$invoice->client->nom;
     $shipToStreet=$invoice->client->address;
@@ -595,6 +575,8 @@ if (GETPOST("source") == 'invoice' && $valid)
     {
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
+    print '<input type="hidden" name="email" value="'.$invoice->client->email.'">'."\n";
+    print '<input type="hidden" name="desc" value="'.$langs->trans("Invoice").' '.$invoice->ref.'">'."\n";
 }
 
 // Payment on contract line
@@ -760,15 +742,6 @@ if (GETPOST("source") == 'contractline' && $valid)
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	// EMail
-	/*$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
-	print ' ('.$langs->trans("ToComplete").')';
-    $email=$contract->client->email;
-    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
-    */
-
     // Shipping address
     $shipToName=$contract->client->nom;
     $shipToStreet=$contract->client->address;
@@ -793,6 +766,8 @@ if (GETPOST("source") == 'contractline' && $valid)
     {
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
+    print '<input type="hidden" name="email" value="'.$contract->client->email.'">'."\n";
+    print '<input type="hidden" name="desc" value="'.$langs->trans("Contract").' '.$contract->ref.'">'."\n";
 }
 
 // Payment on member subscription
@@ -886,15 +861,6 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	// EMail
-	/*$var=!$var;
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
-	print ' ('.$langs->trans("ToComplete").')';
-    $email=$member->email;
-    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
-    */
-
     // Shipping address
     $shipToName=$member->getFullName($langs);
     $shipToStreet=$member->address;
@@ -919,6 +885,8 @@ if (GETPOST("source") == 'membersubscription' && $valid)
     {
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
+    print '<input type="hidden" name="email" value="'.$member->email.'">'."\n";
+    print '<input type="hidden" name="desc" value="'.$langs->trans("PaymentSubscription").'">'."\n";
 }
 
 
