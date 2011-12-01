@@ -256,6 +256,8 @@ class Adherent extends CommonObject
     {
         global $conf,$langs;
 
+		$error=0;
+		
         $now=dol_now();
 
         // Check parameters
@@ -655,14 +657,17 @@ class Adherent extends CommonObject
 
     /**
      *  Fonction qui supprime l'adherent et les donnees associees
+     * 
      *  @param		rowid		Id de l'adherent a effacer
      *  @return		int			<0 si KO, 0=rien a effacer, >0 si OK
      */
     function delete($rowid)
     {
         global $conf, $langs, $user;
-        $result = 0;
 
+        $result = 0;
+		$error=0;
+		
         $this->db->begin();
 
         // Suppression options
@@ -721,9 +726,6 @@ class Adherent extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
-        return $result;
-
     }
 
 
@@ -1139,6 +1141,8 @@ class Adherent extends CommonObject
     {
         global $conf,$langs,$user;
 
+		$error=0;
+		
         // Clean parameters
         if (! $montant) $montant=0;
 
@@ -1172,7 +1176,7 @@ class Adherent extends CommonObject
             if ($result > 0)
             {
                 // Change properties of object (used by triggers)
-                $this->last_subscription_date=$dateop;
+                $this->last_subscription_date=dol_now();
                 $this->last_subscription_amount=$montant;
                 $this->last_subscription_date_start=$date;
                 $this->last_subscription_date_end=$datefin;
@@ -1203,13 +1207,17 @@ class Adherent extends CommonObject
 
     /**
      *		Function that validate a member
-     *		@param		user		user adherent qui valide
-     *		@return		int			<0 if KO, 0 if nothing done, >0 if OK
+     *
+     *		@param	User	$user		user adherent qui valide
+     *		@return	int					<0 if KO, 0 if nothing done, >0 if OK
      */
     function validate($user)
     {
         global $langs,$conf;
 
+		$error=0;
+		
+		// Check parameters
         if ($this->statut == 1)
         {
             dol_syslog(get_class($this)."::validate statut of member does not allow this", LOG_WARNING);
@@ -1251,13 +1259,17 @@ class Adherent extends CommonObject
 
     /**
      *		Fonction qui resilie un adherent
-     *		@param		user		user adherent qui resilie
-     *		@return		int			<0 si ko, >0 si ok
+     *
+     *		@param	User	$user		User making change
+     *		@return	int					<0 if KO, >0 if OK
      */
     function resiliate($user)
     {
         global $langs,$conf;
 
+		$error=0;
+		
+		// Check paramaters
         if ($this->statut == 0)
         {
             dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);

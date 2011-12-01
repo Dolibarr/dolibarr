@@ -100,13 +100,6 @@ if ($db->type == 'pgsql')
 		$langs->load("errors");
 		//print '<div class="error">'.$langs->trans("ErrorDatabaseParameterWrong",'standard_conforming_strings','on').'</div>';
 	}
-	// Check option backslash_quote is on
-	/*$paramarray=$db->getServerParametersValues('backslash_quote');
-	if ($paramarray['backslash_quote'] != 'on' && $paramarray['backslash_quote'] != 1)
-	{
-		$langs->load("errors");
-		print '<div class="error">'.$langs->trans("ErrorDatabaseParameterWrong",'backslash_quote','on').'</div>';
-	}*/
 }
 print '<br>';
 

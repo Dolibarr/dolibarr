@@ -1200,12 +1200,12 @@ class DoliDBMysqli
      * 	\param		filter		Filter list on a particular value
      * 	\return		string		Value for parameter
      */
-    function getServerParametersValues($key,$filter='')
+    function getServerParametersValues($filter='')
     {
         $result=array();
 
         $sql='SHOW VARIABLES';
-        if ($filter) $sql.=" LIKE '".addslashes($key)."'";
+        if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
         $resql=$this->query($sql);
         if ($resql)
         {
@@ -1226,7 +1226,7 @@ class DoliDBMysqli
         $result=array();
 
         $sql='SHOW STATUS';
-        if ($filter) $sql.=" LIKE '".addslashes($key)."'";
+        if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
         $resql=$this->query($sql);
         if ($resql)
         {

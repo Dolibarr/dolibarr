@@ -544,7 +544,7 @@ class DolGraph
 		$paddleft=50;
 		$paddright=10;
 		$strl=dol_strlen(max(abs($this->MaxValue),abs($this->MinValue)));
-		if ($strl > 6) $paddleft += ($strln * 4);
+		if ($strl > 6) $paddleft += ($strl * 4);
 		$group->setPadding($paddleft, $paddright);		// Width on left and right for Y axis values
 		$group->legend->setSpace(0);
 		$group->legend->setPadding(2,2,2,2);

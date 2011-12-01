@@ -765,7 +765,7 @@ if ($_GET["id"])
                     $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
                     
-                    if (empty($reshook)) fieldList($fieldlist,$obj);
+                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$_GET["id"]]);
                     
                     print '<td colspan="3" align="right"><a name="'.($obj->rowid?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
@@ -975,9 +975,10 @@ llxFooter();
  *
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
+ *  @param		string	$tabname		Name of SQL table
  *	@return		void
  */
-function fieldList($fieldlist,$obj='')
+function fieldList($fieldlist,$obj='',$tabname='')
 {
     global $conf,$langs,$db;
     global $form;
@@ -1027,7 +1028,7 @@ function fieldList($fieldlist,$obj='')
             print $form->selectarray('source', $sourceList,$obj->$fieldlist[$field]);
             print '</td>';
         }
-        elseif ($fieldlist[$field] == 'type' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX."c_actioncomm")
+        elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX."c_actioncomm")
         {
             print '<td>';
             print 'user<input type="hidden" name="type" value="user">';

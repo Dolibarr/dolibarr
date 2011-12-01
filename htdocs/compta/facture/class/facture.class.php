@@ -207,7 +207,7 @@ class Facture extends CommonObject
         //$amount = $this->amount;
         //$remise = $this->remise;
 
-        $totalht = ($amount - $remise);
+        //$totalht = ($amount - $remise);
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture (";
         $sql.= " facnumber";
