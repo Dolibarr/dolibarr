@@ -1276,8 +1276,8 @@ FreeLegalTextOnChequeReceipts=Mention complémentaire sur les bordereaux de remi
 BankOrderShow=Ordre d'affichage des informations bancaires (pour les pays les détaillant)
 BankOrderGlobal=Général
 BankOrderGlobalDesc=Ordre d'affichage général
-BankOrderES=Espagnole
-BankOrderESDesc=Ordre d'affichage Espagnole
+BankOrderES=Espagnol
+BankOrderESDesc=Ordre d'affichage Espagnol
 ##### Multicompany #####
 MultiCompanySetup=Configuration du module Multi-société
 ##### Suppliers #####
