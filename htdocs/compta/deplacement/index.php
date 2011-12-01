@@ -105,7 +105,7 @@ print "</tr>\n";
 $listoftype=$tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label)
 {
-    $dataseries[]=array('label'=>$label,'data'=>(isset($nb[$code])?$nb[$code]:0));
+    $dataseries[]=array('label'=>$label,'data'=>(isset($nb[$code])?(int) $nb[$code]:0));
 }
 
 if ($conf->use_javascript_ajax)

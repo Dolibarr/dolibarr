@@ -171,10 +171,10 @@ if ($conf->use_javascript_ajax)
 
     /*
     $dataseries=array();
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'data'=> $dataval['draft']);
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'data'=> $dataval['notuptodate']);
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'data'=> $dataval['uptodate']);
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'data'=> $dataval['resiliated']);
+    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'data'=>(int) $dataval['draft']);
+    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'data'=>(int) $dataval['notuptodate']);
+    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'data'=>(int) $dataval['uptodate']);
+    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'data'=>(int) $dataval['resiliated']);
     $data=array('series'=>$dataseries,'seriestype'=>array('bar','bar','bar','bar'),'xlabel'=>$datalabels);
     dol_print_graph('stats2',300,180,$data,1,'barline');
     */
