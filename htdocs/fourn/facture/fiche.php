@@ -434,7 +434,7 @@ if ($action == 'update_line')
         {
             $prod = new Product($db);
             $prod->fetch($_POST['idprod']);
-            $label = $prod->libelle;
+            $label = $prod->description;
             if (trim($_POST['label']) != trim($label)) $label=$_POST['label'];
 
             $type = $prod->type;
@@ -488,7 +488,7 @@ if ($action == 'addline')
 
             // cas special pour lequel on a les meme reference que le fournisseur
             // $label = '['.$product->ref.'] - '. $product->libelle;
-            $label = $product->libelle;
+            $label = $product->description;
 
             $tvatx=get_default_tva($societe,$mysoc,$product->id);
 
