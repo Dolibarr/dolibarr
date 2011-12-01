@@ -77,6 +77,12 @@ if (! function_exists('json_encode'))
     	return $output;
     }
 
+    /**
+     * Return text according to type
+     *
+     * @param 	mixed	$val	Value to show
+     * @return	string			Formated value
+     */
     function _val($val)
     {
     	if (is_string($val)) return '"'.rawurlencode($val).'"';
@@ -401,19 +407,21 @@ function dol_string_unaccent($str)
     }
     else
     {
-        $string = strtr($str,
-		"\xC0\xC1\xC2\xC3\xC5\xC7
+        $string = strtr(
+            $str,
+			"\xC0\xC1\xC2\xC3\xC5\xC7
 	        \xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF\xD0\xD1
 	        \xD2\xD3\xD4\xD5\xD8\xD9\xDA\xDB\xDD
 	        \xE0\xE1\xE2\xE3\xE5\xE7\xE8\xE9\xEA\xEB
 	        \xEC\xED\xEE\xEF\xF0\xF1\xF2\xF3\xF4\xF5\xF8
 	        \xF9\xFA\xFB\xFD\xFF",
-		"AAAAAC
+			"AAAAAC
 	        EEEEIIIIDN
 	        OOOOOUUUY
 	        aaaaaceeee
 	        iiiidnooooo
-	        uuuyy");
+	        uuuyy"
+        );
         $string = strtr($string, array("\xC4"=>"Ae", "\xC6"=>"AE", "\xD6"=>"Oe", "\xDC"=>"Ue", "\xDE"=>"TH", "\xDF"=>"ss", "\xE4"=>"ae", "\xE6"=>"ae", "\xF6"=>"oe", "\xFC"=>"ue", "\xFE"=>"th"));
         return $string;
     }
@@ -603,6 +611,7 @@ function dol_syslog($message, $level=LOG_INFO)
             }
             catch(Exception $e)
             {
+                // Do not use dol_syslog to avoid infinite loop
             }
         }
     }
@@ -1020,17 +1029,17 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  * 	Replace function mktime not available under Windows if year < 1970
  *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *
- * 	@param		hour			Hour	(can be -1 for undefined)
- *	@param		minute			Minute	(can be -1 for undefined)
- *	@param		second			Second	(can be -1 for undefined)
- *	@param		month			Month (1 to 12)
- *	@param		day				Day (1 to 31)
- *	@param		year			Year
- *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
- *	@param		check			0=No check on parameters (Can use day 32, etc...)
- *  @param		isdst			Dayling saving time
- *	@return		timestamp		Date as a timestamp, '' if error
- * 	@see 		dol_print_date, dol_stringtotime
+ * 	@param	int		$hour			Hour	(can be -1 for undefined)
+ *	@param	int		$minute			Minute	(can be -1 for undefined)
+ *	@param	int		$second			Second	(can be -1 for undefined)
+ *	@param	int		$month			Month (1 to 12)
+ *	@param	int		$day			Day (1 to 31)
+ *	@param	int		$year			Year
+ *	@param	int		$gm				1=Input informations are GMT values, otherwise local to server TZ
+ *	@param	int		$check			0=No check on parameters (Can use day 32, etc...)
+ *  @param	int		$isdst			Dayling saving time
+ *	@return	timestamp				Date as a timestamp, '' if error
+ * 	@see 							dol_print_date, dol_stringtotime
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$isdst=true)
 {
@@ -1372,12 +1381,12 @@ function dol_user_country()
  *  Format address string
  *
  *  @param	string	$address     Address
- *  @param  int		$htmlid      Html ID
+ *  @param  int		$htmlid      Html ID (for example 'gmap')
  *  @param  int		$mode        thirdparty|contact|member|other
  *  @param  int		$id          Id of object
  *  @return void
  */
-function dol_print_address($address, $htmlid='gmap', $mode, $id)
+function dol_print_address($address, $htmlid, $mode, $id)
 {
     global $conf,$user,$langs;
 
@@ -1662,11 +1671,11 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
- *	@param      string				String to truncate
- *	@param      size				Max string size. 0 for no limit.
- *	@param		trunc				Where to trunc: right, left, middle, wrap
- * 	@param		stringencoding		Tell what is source string encoding
- *	@return     string				Truncated string
+ *	@param	string	$string				String to truncate
+ *	@param  int		$size				Max string size. 0 for no limit.
+ *	@param	string	$trunc				Where to trunc: right, left, middle, wrap
+ * 	@param	string	$stringencoding		Tell what is source string encoding
+ *	@return string						Truncated string
  */
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
 {
@@ -1821,9 +1830,9 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 /**
  *	Show logo action
  *
- *	@param      alt         Text for image alt and title
- *	@param      numaction   Action to show
- *	@return     string      Return an img tag
+ *	@param	string	$alt         	Text for image alt and title
+ *	@param  int		$numaction   	Action to show
+ *	@return string      			Return an img tag
  */
 function img_action($alt = "default", $numaction)
 {
@@ -1841,9 +1850,9 @@ function img_action($alt = "default", $numaction)
 /**
  *  Show pdf logo
  *
- *  @param      alt         Texte sur le alt de l'image
- *  @param      $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
- *  @return     string      Retourne tag img
+ *  @param	string		$alt        Texte sur le alt de l'image
+ *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
+ *  @return string      			Retourne tag img
  */
 function img_pdf($alt = "default",$size=3)
 {
