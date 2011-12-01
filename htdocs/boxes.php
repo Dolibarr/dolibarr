@@ -156,11 +156,11 @@ class InfoBox
 	/**
 	 *      Constructor
 	 *
-	 *      @param      DoliDb     $DB        Database handler
+	 *      @param      DoliDb     $db        Database handler
 	 */
-	function InfoBox($DB)
+	function InfoBox($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
@@ -275,7 +275,7 @@ class InfoBox
 					}
 
 					dol_include_once($sourcefile);
-					$box=new $boxname($db,$obj->note);
+					$box=new $boxname($this->db,$obj->note);
 
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;
@@ -325,6 +325,8 @@ class InfoBox
 	{
 		global $conf;
 
+		$error=0;
+		
 		require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 		dol_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);

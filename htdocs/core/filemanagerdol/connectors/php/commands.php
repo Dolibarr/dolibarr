@@ -290,7 +290,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
     //issue the CKEditor Callback
     SendCKEditorResults ($CKEcallback, $sFileUrl,
     ($sErrorNumber != 0
-      ? 'Error '. $sErrorNumber. ' upload failed. '. $sErrorMsg
+      ? 'Error '. $sErrorNumber. ' upload failed.'
       : 'Upload Successful'));
   }
 

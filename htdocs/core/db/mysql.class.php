@@ -1193,7 +1193,7 @@ class DoliDBMysql
 		$result=array();
 
 		$sql='SHOW VARIABLES';
-		if ($filter) $sql.=" LIKE '".addslashes($key)."'";
+		if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
 		$resql=$this->query($sql);
 		if ($resql)
 		{
@@ -1209,12 +1209,12 @@ class DoliDBMysql
 	 * 	\param		filter		Filter list on a particular value
 	 * 	\return		string		Value for parameter
 	 */
-	function getServerStatusValues($key,$filter='')
+	function getServerStatusValues($filter='')
 	{
 		$result=array();
 
 		$sql='SHOW STATUS';
-		if ($filter) $sql.=" LIKE '".addslashes($key)."'";
+		if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
 		$resql=$this->query($sql);
 		if ($resql)
 		{

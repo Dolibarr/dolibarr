@@ -1218,7 +1218,7 @@ function pdf_getCurrencySymbol(&$pdf, $currency_code)
 			$currency_sign = " ".utf8_encode('£');
 			break;
 		default:
-			$currency_sign = " ".$currency;
+			$currency_sign = " ".$currency_code;
 			break;
 	}
 	return $currency_sign;

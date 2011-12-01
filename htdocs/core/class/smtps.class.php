@@ -565,8 +565,7 @@ class SMTPs
 		// This feature is not yet implemented
 		return true;
 
-		if ( $_path )
-		$this->_mailPath = $_path;
+		//if ( $_path ) $this->_mailPath = $_path;
 	}
 
 	/**
@@ -913,7 +912,7 @@ class SMTPs
 		/**
 		 * An array of bares addresses for use with 'RCPT TO:'
 		 */
-		unset ($_RCPT_list);
+		$_RCPT_list=array();
 
 		// walk down Recipients array and pull just email addresses
 		foreach ( $this->_msgRecipients as $_host => $_list )
@@ -1324,7 +1323,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
 
 			if ( $this->getMD5flag() )
-			$this->_msgContent['image'][$strFileName]['md5']      = dol_hash($strContent);
+			$this->_msgContent['image'][$strImageName]['md5']      = dol_hash($strContent);
 		}
 	}
 	// END DOL_CHANGE LDR

@@ -66,7 +66,7 @@ class DolEditor
     {
     	global $conf,$langs;
 
-    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
+    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." toolbarname=".$toolbarname);
 
     	if (! $rows) $rows=round($height/20);
     	if (! $cols) $cols=($width?round($width/6):80);
