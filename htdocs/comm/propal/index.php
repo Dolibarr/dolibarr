@@ -30,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT ."/comm/propal/class/propal.class.php");
 if (!$user->rights->propale->lire) accessforbidden();
 
 $langs->load("propal");
+$langs->load("companies");
 
 // Security check
 $socid='';
