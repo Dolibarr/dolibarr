@@ -471,7 +471,7 @@ class CMailFile
 	 */
 	function _encode_file($sourcefile)
 	{
-		$newsourcefile=utf8_check($sourcefile)?utf8_decode($sourcefile):$sourcefile;	// is_readable and file_get_contents need ISO filename
+		$newsourcefile=dol_osencode($sourcefile);
 
 		if (is_readable($newsourcefile))
 		{
