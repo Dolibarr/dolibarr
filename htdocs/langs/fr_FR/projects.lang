@@ -52,7 +52,7 @@ ListOrdersAssociatedProject=Liste des commandes clients associées au projet
 ListInvoicesAssociatedProject=Liste des factures clients associées au projet
 ListPredefinedInvoicesAssociatedProject=Liste des factures clients prédéfinies associées au projet
 ListSupplierOrdersAssociatedProject=Liste des commandes fournisseurs associées au projet
-ListSupplierInvoicesAssociatedProject=Liste des factures fournisseur associées au projet
+ListSupplierInvoicesAssociatedProject=Liste des factures fournisseurs associées au projet
 ListContractAssociatedProject=Liste des contrats associés au projet
 ListFichinterAssociatedProject=Liste des interventions associées au projet
 ListTripAssociatedProject=Liste des notes de frais associés au projet
@@ -83,7 +83,7 @@ NoTasks=Aucune tâche pour ce projet
 LinkedToAnotherCompany=Liés à autre société
 TaskIsNotAffectedToYou=Tâche qui ne vous est pas affectée
 ErrorTimeSpentIsEmpty=Le temps consommé n'est pas renseigné
-ThisWillAlsoRemoveTasks=Cette opération détruira également les taches du projet (<b>%s</b> taches actuellement) et le suivi des consommés.
+ThisWillAlsoRemoveTasks=Cette opération détruira également les tâches du projet (<b>%s</b> tâches actuellement) et le suivi des consommés.
 IfNeedToUseOhterObjectKeepEmpty=Si des objets (facture, commande, ...), appartenant à un autre tiers que celui choisi, doivent être liés au projet à créer, laisser vide afin de laisser le projet multi-tiers.
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Chef de projet
