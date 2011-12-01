@@ -403,7 +403,7 @@ if ($_REQUEST['action'] == 'update_line')
         {
             $prod = new Product($db);
             $prod->fetch($_POST['idprod']);
-            $label = $prod->libelle;
+            $label = $prod->description;
             if (trim($_POST['label']) != trim($label)) $label=$_POST['label'];
 
             $type = $prod->type;
@@ -457,9 +457,7 @@ if ($_GET['action'] == 'addline')
 
             // cas special pour lequel on a les meme reference que le fournisseur
             // $label = '['.$product->ref.'] - '. $product->libelle;
-            $label = $product->libelle;
-
-
+            $label = $product->description;
 
             $tvatx=get_default_tva($societe,$mysoc,$product->id);
 
@@ -903,7 +901,7 @@ if ($_GET['action'] == 'create')
     		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
     		if ($element == 'contract') { $element = $subelement = 'contrat'; }
     		if ($element == 'order_supplier') { $element = 'fourn'; $subelement = 'fournisseur.commande'; }
-            
+
             require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
             $classname = ucfirst($subelement);
             if ($classname == 'Fournisseur.commande') $classname='CommandeFournisseur';
