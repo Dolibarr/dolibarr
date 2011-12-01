@@ -64,7 +64,7 @@ class PropaleStats extends Stats
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
 		$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 
-		$this->field='total';
+		$this->field='total_ht';
 
 		$this->where.= " fk_statut > 0";
 		$this->where.= " AND p.fk_soc = s.rowid AND s.entity = ".$conf->entity;
