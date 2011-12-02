@@ -165,7 +165,11 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+            $ret=$object->fetch($id);    // Reload to get new records
+		    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		}
 
 		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
@@ -195,7 +199,11 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->propale
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+            $ret=$object->fetch($id);    // Reload to get new records
+		    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		}
 	}
 	else
 	{
@@ -760,7 +768,11 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 					$outputlangs = new Translate("",$conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+                    $ret=$object->fetch($id);    // Reload to get new records
+				    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+				}
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
@@ -843,7 +855,11 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+            $ret=$object->fetch($id);    // Reload to get new records
+		    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		}
 	}
 }
 

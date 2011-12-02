@@ -223,8 +223,11 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($_REQUEST['lang_id']);
             }
-            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
-
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+            {
+                $ret=$object->fetch($id);    // Reload to get new records
+                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+            }
             unset($_POST['qty']);
             unset($_POST['type']);
             unset($_POST['idprodfournprice']);
@@ -282,7 +285,11 @@ if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+            $ret=$object->fetch($id);    // Reload to get new records
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        }
     }
     else
     {
@@ -304,7 +311,11 @@ if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->rights
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+            $ret=$object->fetch($id);    // Reload to get new records
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        }
     }
     else
     {
@@ -333,7 +344,11 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseu
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+            $ret=$object->fetch($id);    // Reload to get new records
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        }
     }
     else
     {

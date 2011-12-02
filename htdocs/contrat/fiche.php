@@ -326,7 +326,11 @@ if ($action == 'addline' && $user->rights->contrat->creer)
              $outputlangs = new Translate("",$conf);
              $outputlangs->setDefaultLang($newlang);
              }
-             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+             {
+	            $ret=$object->fetch($id);    // Reload to get new records
+             	contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+             }
              */
         }
         else

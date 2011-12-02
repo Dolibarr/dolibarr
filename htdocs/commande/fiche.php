@@ -158,7 +158,11 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+            {
+                $ret=$object->fetch($id);    // Reload to get new records
+                commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            }
         }
         else
         {
@@ -612,7 +616,11 @@ if ($action == 'addline' && $user->rights->commande->creer)
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+                    {
+                        $ret=$object->fetch($id);    // Reload to get new records
+                        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    }
 
                     unset($_POST['qty']);
                     unset($_POST['type']);
@@ -721,7 +729,11 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+            {
+                $ret=$object->fetch($id);    // Reload to get new records
+                commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            }
         }
         else
         {
@@ -809,7 +821,11 @@ if ($action == 'confirm_modif' && $user->rights->commande->creer)
 	            $outputlangs = new Translate("",$conf);
 	            $outputlangs->setDefaultLang($newlang);
 	        }
-	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	        {
+                $ret=$object->fetch($id);    // Reload to get new records
+	            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	        }
 	    }
 	}
 }

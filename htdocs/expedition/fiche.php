@@ -164,7 +164,11 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	{
+        $ret=$object->fetch($id);    // Reload to get new records
+	    $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+	}
 	if ($result < 0)
 	{
 		dol_print_error($db,$result);

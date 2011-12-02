@@ -101,23 +101,27 @@ if ($_POST["action"] == 'add')
 
 if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $user->rights->expedition->livraison->valider)
 {
-	$delivery = new Livraison($db);
-	$delivery->fetch($_GET["id"]);
-	$delivery->fetch_thirdparty();
+	$object = new Livraison($db);
+	$object->fetch($_GET["id"]);
+	$object->fetch_thirdparty();
 
-	$result = $delivery->valid($user);
+	$result = $object->valid($user);
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$delivery->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=delivery_order_pdf_create($db, $delivery,$_REQUEST['model'],$outputlangs);
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	{
+        $ret=$object->fetch($id);    // Reload to get new records
+	    $result=delivery_order_pdf_create($db, $object,$_REQUEST['model'],$outputlangs);
+	}
    	if ($result < 0)
    	{
    		dol_print_error($db,$result);
@@ -127,11 +131,11 @@ if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->expedition->livraison->supprimer)
 {
-	$delivery = new Livraison($db);
-	$delivery->fetch($_GET["id"]);
+	$object = new Livraison($db);
+	$object->fetch($_GET["id"]);
 
 	$db->begin();
-	$result=$delivery->delete();
+	$result=$object->delete();
 
 	if ($result > 0)
 	{
@@ -150,27 +154,30 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	$delivery = new Livraison($db);
-	$delivery->fetch($_REQUEST['id']);
+	$object = new Livraison($db);
+	$object->fetch($_REQUEST['id']);
 
 	if ($_REQUEST['model'])
 	{
-		$delivery->setDocModel($user, $_REQUEST['model']);
+		$object->setDocModel($user, $_REQUEST['model']);
 	}
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$delivery->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-
-	$result=delivery_order_pdf_create($db, $delivery,$_REQUEST['model'],$outputlangs);
-	if ($result <= 0)
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	{
+	    $ret=$object->fetch($id);    // Reload to get new records
+    	$result=delivery_order_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	}
+	if ($result < 0)
 	{
 		dol_print_error($db,$result);
 		exit;
