@@ -225,7 +225,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
         	{
         		$sql=preg_replace('/llx_/i',MAIN_DB_PREFIX,$sql);
         	}
-        	
+
             if (!empty($handler)) $sql=preg_replace('/__HANDLER__/i',"'".$handler."'",$sql);
 
             $newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
@@ -636,16 +636,13 @@ function Activate($value,$withdeps=1)
     $ret='';
     $modName = $value;
     $modFile = $modName . ".class.php";
-    $modulesdir = array();
 
-    // Loop on each directory
-    $found=false;
+    // Loop on each directory to fill $modulesdir
+    $modulesdir = array();
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         $modulesdir[] = $dirroot."/core/modules/";
 
-        if ($type == 'alt')
-        {
             $handle=@opendir(dol_osencode($dirroot));
             if (is_resource($handle))
             {
@@ -661,9 +658,10 @@ function Activate($value,$withdeps=1)
                 }
                 closedir($handle);
             }
-        }
     }
 
+    // Loop on each directory
+    $found=false;
     foreach ($modulesdir as $dir)
     {
         if (file_exists($dir.$modFile))
@@ -751,16 +749,13 @@ function UnActivate($value, $requiredby=1)
     $ret='';
     $modName = $value;
     $modFile = $modName . ".class.php";
-    $modulesdir=array();
 
-    // Loop on each directory
-    $found=false;
+    // Loop on each directory to fill $modulesdir
+    $modulesdir = array();
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         $modulesdir[] = $dirroot."/core/modules/";
 
-        if ($type == 'alt')
-        {
             $handle=@opendir(dol_osencode($dirroot));
             if (is_resource($handle))
             {
@@ -776,9 +771,10 @@ function UnActivate($value, $requiredby=1)
                 }
                 closedir($handle);
             }
-        }
     }
 
+    // Loop on each directory
+    $found=false;
     foreach ($modulesdir as $dir)
     {
         if (file_exists($dir.$modFile))

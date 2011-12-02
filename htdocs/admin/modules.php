@@ -34,8 +34,7 @@ $langs->load("admin");
 $mode=isset($_GET["mode"])?GETPOST("mode"):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
 $mesg=GETPOST("mesg");
 
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) accessforbidden();
 
 
 /*
@@ -87,8 +86,6 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
 	$modulesdir[] = $dirroot . "/core/modules/";
 
-	if ($type == 'alt')
-	{
 		$handle=@opendir($dirroot);
 		if (is_resource($handle))
 		{
@@ -104,7 +101,6 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 			}
 			closedir($handle);
 		}
-	}
 }
 //var_dump($modulesdir);
 
