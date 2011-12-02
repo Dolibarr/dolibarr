@@ -796,6 +796,7 @@ LogEvents=Auditoria de la seguretat d'esdeveniments
 Audit=Auditoria
 ListEvents=Auditoria d'esdeveniments
 ListOfSecurityEvents=Llistat d'esdeveniments de seguretat Dolibarr
+SecurityEventsPurged=Esdeveniments de seguretat purgats
 LogEventDesc=Podeu habilitar el registre d'esdeveniments de seguretat Dolibarr aquí. Els administradors poden veure el seu contingut a través de menú <b>Eines del sistema->Auditoria</b>. Atenció, aquesta característica pot consumir una gran quantitat de dades a la base de dades.
 AreaForAdminOnly=Aquestes funcions només són accessibles a un usuari administrador.
 SystemInfoDesc=La informació del sistema és informació tècnica accessible només en només lectura als administradors.
