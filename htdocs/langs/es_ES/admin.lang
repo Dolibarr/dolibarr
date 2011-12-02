@@ -317,7 +317,7 @@ UrlGenerationParameters=Seguridad de las URLs
 SecurityTokenIsUnique=¿Usar un parámetro securekey único para cada URL?
 EnterRefToBuildUrl=Introduzca la referencia del objeto %s
 GetSecuredUrl=Obtener la URL calculada
-# Modules
+# Modules= undefined=
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -796,6 +796,7 @@ LogEvents=Auditoría de la seguridad de eventos
 Audit=Auditoría
 ListEvents=Auditoría de eventos
 ListOfSecurityEvents=Listado de eventos de seguridad Dolibarr
+SecurityEventsPurged=Eventos de seguridad purgados
 LogEventDesc=Puede habilitar el registro de eventos de seguridad Dolibarr aquí. Los administradores pueden ver su contenido a través de menú <b>Herramientas del sistema - Auditoría</b>.Atención, esta característica puede consumir una gran cantidad de datos en la base de datos.
 AreaForAdminOnly=Estas funciones solo son accesibles a un usuario administrador.
 SystemInfoDesc=La información del sistema es información técnica accesible solamente en solo lectura a los administradores.
@@ -863,7 +864,9 @@ DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales
 ExtraFields=Atributos adicionales
 SendingMailSetup=Configuració de l'enviament per mail
 SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters=-ba</b>.
-##### Module password generation
+PathToDocuments=Rutas de acceso a documentos
+PathDirectory=Catálogo
+##### Module password generation= undefined=
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
@@ -935,8 +938,6 @@ WatermarkOnDraftInvoices=Marca de agua en las facturas borrador (en caso de esta
 PropalSetup=Configuración del módulo Presupuestos
 CreateForm=Creación formulario
 NumberOfProductLines=Numero de líneas de productos
-PathToDocuments=Rutas de acceso a documentos
-PathDirectory=Catálogo
 ProposalsNumberingModules=Módulos de numeración de presupuestos
 ProposalsPDFModules=Modelos de documentos de presupuestos
 ClassifiedInvoiced=Clasificar facturado
@@ -1174,12 +1175,9 @@ FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de recepción
 ##### FCKeditor #####
 AdvancedEditor=Editor avanzado
 ActivateFCKeditor=Activar editor avanzado para :
-FCKeditorForUsers=Creación/edición WYSIWIG de la descripción y notas de los usuarios
 FCKeditorForCompany=Creación/edición WYSIWIG de la descripción y notas de los terceros
 FCKeditorForProduct=Creación/edición WYSIWIG de la descripción y notas de los productos/servicios
-FCKeditorForMembers=Creación/edición WYSIWIG de la descripción y notas de los miembros
 FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, presupuestos, facturas, etc.)
-FCKeditorForProductDetailsPerso=Creación/edición WYSIWIG de las líneas de detalle en los productos personalizadas (en pedidos, presupuestos, facturas, etc.)<font class="warning">Advertencia: El uso para este caso no es aconsejable ya que puede causar problemas en la gestión de los caracteres y el diseño de los archivos PDF generados.</font>
 FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
