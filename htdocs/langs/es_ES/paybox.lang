@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - paybox 
+# Dolibarr language file - es_ES - paybox
 CHARSET=UTF-8
 PayBoxSetup=Configuración módulo PayBox
 PayBoxDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paybox.com" target="_blank">Paybox</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
@@ -15,6 +15,7 @@ PayBoxDoPayment=Continuar el pago con tarjeta
 YouWillBeRedirectedOnPayBox=Va a ser redirigido a la página segura de  Paybox para indicar su tarjeta de crédito
 PleaseBePatient=Espere unos segundos
 Continue=Continuar
+ToOfferALinkForOnlinePayment=URL de pago %s
 ToOfferALinkForOnlinePaymentOnOrder=URL que ofrece una interfaz de pago en línea %s basada en el importe de un pedido de cliente
 ToOfferALinkForOnlinePaymentOnInvoice=URL que ofrece una interfaz de pago en línea %s basada en el importe de una factura a client
 ToOfferALinkForOnlinePaymentOnContractLine=URL que ofrece una interfaz de pago en línea %s basada en el importe de una línea de contrato
