@@ -71,14 +71,15 @@ $search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["searc
  * View
  */
 
-llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
 $form=new Form($db);
 $htmlother=new FormOther($db);
+$membertypestatic=new AdherentType($db);
+$memberstatic=new Adherent($db);
+
+llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+
 
 $now=dol_now();
-
-$membertypestatic=new AdherentType($db);
 
 $sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe, ";
 $sql.= " d.datefin,";
@@ -256,18 +257,18 @@ if ($resql)
 
 		$datefin=$db->jdate($objp->datefin);
 
-		$adh=new Adherent($db);
-
 		// Nom
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
+		$memberstatic->nom=$objp->nom;
+		$memberstatic->prenom=$objp->prenom;
 		if ($objp->societe != '')
 		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom." ".dol_trunc($objp->nom,12)." / ".dol_trunc($objp->societe,12)."</a></td>\n";
+			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.dol_trunc($memberstatic->getFullName($langs))." / ".dol_trunc($objp->societe,12)."</a></td>\n";
 		}
 		else
 		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom." ".dol_trunc($objp->nom)."</a></td>\n";
+			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.dol_trunc($memberstatic->getFullName($langs))."</a></td>\n";
 		}
 
 		// Login
@@ -281,14 +282,14 @@ if ($resql)
 		print '</td>';
 
 		// Moral/Physique
-		print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+		print "<td>".$memberstatic->getmorphylib($objp->morphy)."</td>\n";
 
 		// EMail
 		print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
 
 		// Statut
 		print '<td nowrap="nowrap">';
-		print $adh->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
+		print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
 		print "</td>";
 
 		// End of subscription date
