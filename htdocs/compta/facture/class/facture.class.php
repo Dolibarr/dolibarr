@@ -663,10 +663,11 @@ class Facture extends CommonObject
     /**
      *      Return clicable link of object (with eventually picto)
      *
-     *      @param      withpicto       Add picto into link
-     *      @param      option          Where point the link
-     *      @param      max             Maxlength of ref
-     *      @return     string          String with URL
+     *      @param	int		$withpicto       Add picto into link
+     *      @param  string	$option          Where point the link
+     *      @param  int		$max             Maxlength of ref
+     *      @param  int		$short           1=Return just URL
+     *      @return string 			         String with URL
      */
     function getNomUrl($withpicto=0,$option='',$max=0,$short=0)
     {
@@ -688,9 +689,9 @@ class Facture extends CommonObject
         if ($this->type == 3) $picto.='d';	// Deposit invoice
 
         $label=$langs->trans("ShowInvoice").': '.$this->ref;
-        if ($this->type == 1) $label=$langs->trans("ShowInvoiceReplace").': '.$this->ref;
-        if ($this->type == 2) $label=$langs->trans("ShowInvoiceAvoir").': '.$this->ref;
-        if ($this->type == 3) $label=$langs->trans("ShowInvoiceDeposit").': '.$this->ref;
+        if ($this->type == 1) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
+        if ($this->type == 2) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
+        if ($this->type == 3) $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
 
         if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
