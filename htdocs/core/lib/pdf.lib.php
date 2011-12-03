@@ -971,6 +971,33 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0,$hookmanage
 }
 
 /**
+ *	Return line unit price including tax
+ *	@param		object				Object
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
+ */
+function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
+{
+    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    {
+        $special_code = $object->lines[$i]->special_code;
+    	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+    	foreach($object->hooks as $hook)
+    	{
+    		if (method_exists($hook['modules'][$special_code],'pdf_getlineupwithtax')) return $hook['modules'][$special_code]->pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails);
+		}
+    }
+    else
+    {
+        if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->subprice) + ($object->lines[$i]->subprice)*($object->lines[$i]->tva_tx)/100);
+    }
+}
+
+/**
  *	Return line quantity
  *
  *	@param		Object		$object				Object
@@ -1152,6 +1179,41 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0,$hookman
 			if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->total_ht);
 		}
 	}
+}
+
+/**
+ *	Return line total including tax
+ *	@param		object				Object
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
+ */
+function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
+{
+    if ($object->lines[$i]->special_code == 3)
+    {
+        return $outputlangs->transnoentities("Option");
+    }
+    else
+    {
+        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        {
+        	$special_code = $object->lines[$i]->special_code;
+        	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+        	foreach($object->hooks as $hook)
+	    	{
+	    		if (method_exists($hook['modules'][$special_code],'pdf_getlinetotalwithtax')) return $hook['modules'][$special_code]->pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails);
+			}
+        }
+        else
+        {
+            if (empty($hidedetails) || $hidedetails > 1) return 
+				price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100);
+        }
+    }
 }
 
 /**
