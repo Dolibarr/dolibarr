@@ -70,13 +70,12 @@ $search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["searc
  * View
  */
 
+$form=new Form($db);
+$formother=new FormOther($db);
 $membertypestatic=new AdherentType($db);
 $memberstatic=new Adherent($db);
 
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
-$form=new Form($db);
-$formother=new FormOther($db);
 
 $now=dol_now();
 
