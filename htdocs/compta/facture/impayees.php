@@ -326,6 +326,7 @@ if ($result)
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
+			$date_limit=$db->jdate($objp->datelimite);
 
 			$var=!$var;
 
@@ -347,7 +348,7 @@ if ($result)
 
 			// Warning picto
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-			if ($objp->datelimite < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+			if ($date_limit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 			print '</td>';
 
 			// PDF Picto
