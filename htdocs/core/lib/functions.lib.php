@@ -373,8 +373,8 @@ function dol_now($mode='gmt')
  */
 function dol_sanitizeFileName($str,$newstr='_')
 {
-    global $conf;
-    return dol_string_nospecial(dol_string_unaccent($str),$newstr,$conf->filesystem_forbidden_chars);
+	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+    return dol_string_nospecial(dol_string_unaccent($str), $newstr, $filesystem_forbidden_chars);
 }
 
 /**

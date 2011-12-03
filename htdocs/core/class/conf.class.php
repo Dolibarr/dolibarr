@@ -34,41 +34,40 @@
 class Conf
 {
 	/** \public */
-	//! Object with database handler
-	var $db;
 	//! To store properties found in conf file
 	var $file;
+	//! Object with database handler
+	var $db;
 	//! To store properties found into database
 	var $global;
 
 	//! To store if javascript/ajax is enabked
-	var $use_javascript_ajax;
+	public $use_javascript_ajax;
 
 	//! Used to store current currency
-	var $monnaie;
+	public $currency;
 	//! Used to store current css (from theme)
-	var $theme;        // Contains current theme ("eldy", "auguria", ...)
-	var $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+	public $theme;        // Contains current theme ("eldy", "auguria", ...)
+	public $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
     //! Used to store current menu handlers
-	var $top_menu;
-	var $smart_menu;
+	public $top_menu;
+	public $smart_menu;
 
 	//! To store properties of multi-company
-	var $multicompany;
-	//! Used to store instance for multi-company (default 1)
-	var $entity=1;
-
-	var $css_modules			= array();
-	var $tabs_modules			= array();
-	var $triggers_modules		= array();
-	var $hooks_modules			= array();
-	public $login_method_modules	= array();
-	var $modules				= array();
-	var $entities				= array();
-
-	var $logbuffer				= array();
-
-	var $filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+	public $multicompany;
+	//! Used to store running instance for multi-company (default 1)
+	public $entity=1;
+	//! Used to store list of entities to use for each element
+	public $entities		 	 = array();
+	
+	public $modules				 = array();	// List of modules	
+	public $css_modules			 = array();
+	public $tabs_modules		 = array();
+	public $triggers_modules	 = array('/core/triggers');
+	public $hooks_modules		 = array();
+	public $login_method_modules = array();
+	
+	var $logbuffer = array();
 
 
 	/**
@@ -98,10 +97,7 @@ class Conf
 	 */
 	function setValues($db)
 	{
-		dol_syslog("Conf::setValues");
-
-		// Directory of core triggers
-		$this->triggers_modules[] = "/core/triggers";	// Default relative path to triggers file
+		dol_syslog(get_class($this)."::setValues");
 
 		// Avoid warning if not defined
 		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
@@ -128,10 +124,10 @@ class Conf
 		$result = $db->query($sql);
 		if ($result)
 		{
-			$numr = $db->num_rows($result);
 			$multicompany_sharing=array();
+			
 			$i = 0;
-
+			$numr = $db->num_rows($result);
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($result);
@@ -207,7 +203,7 @@ class Conf
 			}
 
 			// Sharings between entities
-			if (isset($this->multicompany->enabled) && $this->multicompany->enabled && ! empty($multicompany_sharing))
+			if (! empty($this->multicompany->enabled) && ! empty($multicompany_sharing))
 			{
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret)
@@ -291,7 +287,7 @@ class Conf
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
-		$this->contrat->dir_temp=$rootfordata."/contracts/temp";
+		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
 
 
 		/*
@@ -299,23 +295,15 @@ class Conf
 		 */
 
 		// societe
-		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))      $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
-		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON)) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
-		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))      $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
+		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
+		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON))  $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
+		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
         if (empty($this->global->COMPANY_AQUARIUM_MASK_SUPPLIER)) $this->global->COMPANY_AQUARIUM_MASK_SUPPLIER='401';
 		if (empty($this->global->COMPANY_AQUARIUM_MASK_CUSTOMER)) $this->global->COMPANY_AQUARIUM_MASK_CUSTOMER='411';
 
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
         if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK='0664';         // Default mask
-
-		// conf->box_max_lines
-		$this->box_max_lines=5;
-		if (isset($this->global->MAIN_BOXES_MAXLINES)) $this->box_max_lines=$this->global->MAIN_BOXES_MAXLINES;
-
-		// conf->use_preview_tabs
-		$this->use_preview_tabs=0;
-		if (isset($this->global->MAIN_USE_PREVIEW_TABS)) $this->use_preview_tabs=$this->global->MAIN_USE_PREVIEW_TABS;
 
 		// conf->use_javascript_ajax
 		$this->use_javascript_ajax=1;

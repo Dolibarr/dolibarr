@@ -46,13 +46,15 @@ function printBoxesArea($user,$areacode)
 		print '<table width="100%" class="notopnoleftnoright">';
 		print '<tr><td class="notopnoleftnoright">'."\n";
 
-
         print '<div class="fichehalfleft">';
-
 
 		print "\n<!-- Box left container -->\n";
 		print '<div id="left" class="connectedSortable">'."\n";
 
+		// Define $box_max_lines
+		$box_max_lines=5;
+		if (! empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines=$conf->global->MAIN_BOXES_MAXLINES;
+		
 		$ii=0;
 		foreach ($boxarray as $key => $box)
 		{
@@ -62,7 +64,7 @@ function printBoxesArea($user,$areacode)
 				//print 'box_id '.$boxarray[$ii]->box_id.' ';
 				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 				// Affichage boite key
-				$box->loadBox($conf->box_max_lines);
+				$box->loadBox($box_max_lines);
 				$box->showBox();
 			}
 		}
@@ -90,7 +92,7 @@ function printBoxesArea($user,$areacode)
 				//print 'box_id '.$boxarray[$ii]->box_id.' ';
 				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 				// Affichage boite key
-				$box->loadBox($conf->box_max_lines);
+				$box->loadBox($box_max_lines);
 				$box->showBox();
 			}
 		}
