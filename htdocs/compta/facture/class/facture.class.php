@@ -64,14 +64,14 @@ class Facture extends CommonObject
     var $ref_ext;
     var $ref_int;
     //! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proforma invoice
-    var $type;
+    var $type=0;
 
     //var $amount;
     var $remise_absolue;
     var $remise_percent;
-    var $total_ht;
-    var $total_tva;
-    var $total_ttc;
+    var $total_ht=0;
+    var $total_tva=0;
+    var $total_ttc=0;
     var $note;
     var $note_public;
     //! 0=draft,
@@ -114,16 +114,6 @@ class Facture extends CommonObject
     function Facture($db)
     {
         $this->db = $db;
-
-        //$this->amount = 0;
-        //$this->remise = 0;
-        $this->remise_percent = 0;
-        $this->remise_absolue = 0;
-        $this->total_ht = 0;
-        $this->total_tva = 0;
-        $this->total_ttc = 0;
-        $this->propalid = 0;
-        $this->fk_project = 0;
     }
 
     /**
@@ -141,11 +131,10 @@ class Facture extends CommonObject
         $error=0;
 
         // Clean parameters
-        if (! $this->type) $this->type = 0;
+        if (empty($this->type)) $this->type = 0;
         $this->ref_client=trim($this->ref_client);
         $this->note=trim($this->note);
         $this->note_public=trim($this->note_public);
-        //if (! $this->remise) $this->remise = 0;
         if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
         if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
         $this->brouillon = 1;
@@ -184,10 +173,8 @@ class Facture extends CommonObject
             $this->cond_reglement_id = $_facrec->cond_reglement_id;
             $this->mode_reglement    = $_facrec->mode_reglement_id;
             $this->mode_reglement_id = $_facrec->mode_reglement_id;
-            //$this->amount            = $_facrec->amount;
             $this->remise_absolue    = $_facrec->remise_absolue;
             $this->remise_percent    = $_facrec->remise_percent;
-            //$this->remise		     = $_facrec->remise;
 
             // Clean parametres
             if (! $this->type) $this->type = 0;
@@ -204,10 +191,6 @@ class Facture extends CommonObject
 
         // Insert into database
         $socid  = $this->socid;
-        //$amount = $this->amount;
-        //$remise = $this->remise;
-
-        //$totalht = ($amount - $remise);
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture (";
         $sql.= " facnumber";
@@ -215,7 +198,6 @@ class Facture extends CommonObject
         $sql.= ", type";
         $sql.= ", fk_soc";
         $sql.= ", datec";
-        //$sql.= ", amount";
         $sql.= ", remise_absolue";
         $sql.= ", remise_percent";
         $sql.= ", datef";
@@ -231,7 +213,6 @@ class Facture extends CommonObject
         $sql.= ", '".$this->type."'";
         $sql.= ", '".$socid."'";
         $sql.= ", '".$this->db->idate($now)."'";
-        //$sql.= ", '".$totalht."'";
         $sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
         $sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
         $sql.= ", '".$this->db->idate($this->date)."'";
@@ -472,7 +453,6 @@ class Facture extends CommonObject
         $facture->fk_project        = $this->fk_project;
         $facture->cond_reglement_id = $this->cond_reglement_id;
         $facture->mode_reglement_id = $this->mode_reglement_id;
-        $facture->amount            = $this->amount;
         $facture->remise_absolue    = $this->remise_absolue;
         $facture->remise_percent    = $this->remise_percent;
 
@@ -772,7 +752,6 @@ class Facture extends CommonObject
                 $this->date_creation		= $this->db->jdate($obj->datec);
                 $this->date_validation		= $this->db->jdate($obj->datev);
                 $this->datem				= $this->db->jdate($obj->datem);
-                $this->amount				= $obj->amount;
                 $this->remise_percent		= $obj->remise_percent;
                 $this->remise_absolue		= $obj->remise_absolue;
                 //$this->remise				= $obj->remise;
@@ -930,31 +909,12 @@ class Facture extends CommonObject
         $error=0;
 
         // Clean parameters
-
+        if (empty($this->type)) $this->type=0;
         if (isset($this->facnumber)) $this->facnumber=trim($this->ref);
-        if (isset($this->type)) $this->type=trim($this->type);
         if (isset($this->ref_client)) $this->ref_client=trim($this->ref_client);
         if (isset($this->increment)) $this->increment=trim($this->increment);
-        if (isset($this->socid)) $this->socid=trim($this->socid);
-        if (isset($this->paye)) $this->paye=trim($this->paye);
-        if (isset($this->amount)) $this->amount=trim($this->amount);
-        if (isset($this->remise_percent)) $this->remise_percent=trim($this->remise_percent);
-        if (isset($this->remise_absolue)) $this->remise_absolue=trim($this->remise_absolue);
-        //if (isset($this->remise)) $this->remise=trim($this->remise);
         if (isset($this->close_code)) $this->close_code=trim($this->close_code);
         if (isset($this->close_note)) $this->close_note=trim($this->close_note);
-        if (isset($this->total_tva)) $this->tva=trim($this->total_tva);
-        if (isset($this->total_localtax1)) $this->tva=trim($this->total_localtax1);
-        if (isset($this->total_localtax2)) $this->tva=trim($this->total_localtax2);
-        if (isset($this->total_ht)) $this->total_ht=trim($this->total_ht);
-        if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);
-        if (isset($this->statut)) $this->statut=trim($this->statut);
-        if (isset($this->user_author)) $this->user_author=trim($this->user_author);
-        if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
-        if (isset($this->fk_facture_source)) $this->fk_facture_source=trim($this->fk_facture_source);
-        if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
-        if (isset($this->cond_reglement_id)) $this->cond_reglement_id=trim($this->cond_reglement_id);
-        if (isset($this->mode_reglement_id)) $this->mode_reglement_id=trim($this->mode_reglement_id);
         if (isset($this->note)) $this->note=trim($this->note);
         if (isset($this->note_public)) $this->note_public=trim($this->note_public);
         if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
@@ -975,7 +935,6 @@ class Facture extends CommonObject
         $sql.= " datef=".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null').",";
         $sql.= " date_valid=".(strval($this->date_validation)!='' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
         $sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
-        $sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
         $sql.= " remise_percent=".(isset($this->remise_percent)?$this->remise_percent:"null").",";
         $sql.= " remise_absolue=".(isset($this->remise_absolue)?$this->remise_absolue:"null").",";
         //$sql.= " remise=".(isset($this->remise)?$this->remise:"null").",";
@@ -1077,10 +1036,6 @@ class Facture extends CommonObject
             $facligne->remise_percent=0;
             $facligne->rang=-1;
             $facligne->info_bits=2;
-
-            // Ne plus utiliser
-            //$facligne->price=-$remise->amount_ht;
-            //$facligne->remise=0;
 
             $facligne->total_ht  = -$remise->amount_ht;
             $facligne->total_tva = -$remise->amount_tva;
@@ -1255,16 +1210,18 @@ class Facture extends CommonObject
      *	Renvoi une date limite de reglement de facture en fonction des
      *	conditions de reglements de la facture et date de facturation
      *
-     *	@param      cond_reglement_id   Condition de reglement a utiliser, 0=Condition actuelle de la facture
-     *	@return     date                Date limite de reglement si ok, <0 si ko
+     *	@param      string	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
+     *	@return     date     			       	Date limite de reglement si ok, <0 si ko
      */
-    function calculate_date_lim_reglement($cond_reglement_id=0)
+    function calculate_date_lim_reglement($cond_reglement=0)
     {
-        if (! $cond_reglement_id)
-        $cond_reglement_id=$this->cond_reglement_id;
+        if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
+        if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
+
         $sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
         $sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
-        $sqltemp.= ' WHERE c.rowid='.$cond_reglement_id;
+        if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
+        else $sqltemp.= " WHERE c.code='".$this->db->escape($cond_reglement)."'";
         $resqltemp=$this->db->query($sqltemp);
         if ($resqltemp)
         {
@@ -1498,6 +1455,8 @@ class Facture extends CommonObject
         global $conf,$langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
+        $now=dol_now();
+
         $error=0;
         dol_syslog(get_class($this).'::validate force_number='.$force_number,' idwarehouse='.$idwarehouse, LOG_WARNING);
 
@@ -1586,7 +1545,7 @@ class Facture extends CommonObject
 
             // Validate
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-            $sql.= " SET facnumber='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
+            $sql.= " SET facnumber='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
             if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
             {
                 $sql.= ', datef='.$this->db->idate($this->date);
@@ -1671,6 +1630,7 @@ class Facture extends CommonObject
             	$this->ref = $num;
                 $this->facnumber=$num;
                 $this->statut=1;
+                $this->date_validation=$now;
             }
 
             // Trigger calls
@@ -2138,7 +2098,8 @@ class Facture extends CommonObject
      */
     function set_remise($user, $remise)
     {
-        $remise=trim($remise)?trim($remise):0;
+        // Clean parameters
+        if (empty($remise)) $remise=0;
 
         if ($user->rights->facture->creer)
         {
@@ -2172,7 +2133,7 @@ class Facture extends CommonObject
      */
     function set_remise_absolue($user, $remise)
     {
-        $remise=trim($remise)?trim($remise):0;
+        if (empty($remise)) $remise=0;
 
         if ($user->rights->facture->creer)
         {
@@ -2202,6 +2163,7 @@ class Facture extends CommonObject
 
     /**
      * 	Return amount of payments already done
+     *
      *	@return		int		Amount of payment already done, <0 if KO
      */
     function getSommePaiement()
@@ -2235,6 +2197,7 @@ class Facture extends CommonObject
 
     /**
      *  Return list of payments
+     *
      *  @return     Array with list of payments
      */
     function getListOfPayments($filtertype='')
@@ -2657,10 +2620,11 @@ class Facture extends CommonObject
     }
 
     /**
-     *  \brief      Change les conditions de reglement de la facture
-     *  \param      cond_reglement_id      	Id de la nouvelle condition de reglement
-     * 	\param		date					Date to force payment term
-     *  \return     int                    	>0 si ok, <0 si ko
+     *  Change les conditions de reglement de la facture
+     *
+     *  @param      cond_reglement_id      	Id de la nouvelle condition de reglement
+     * 	@param		date					Date to force payment term
+     *  @return     int                    	>0 si ok, <0 si ko
      */
     function cond_reglement($cond_reglement_id,$date='')
     {
@@ -3075,6 +3039,8 @@ class Facture extends CommonObject
         global $user,$langs,$conf;
 
         $now=dol_now();
+        $arraynow=dol_getdate($now);
+        $nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
         $prodids = array();
         $sql = "SELECT rowid";
@@ -3098,12 +3064,12 @@ class Facture extends CommonObject
         $this->ref = 'SPECIMEN';
         $this->specimen=1;
         $this->socid = 1;
-        $this->date = $now;
-        $this->date_lim_reglement=$this->date+3600*24*30;
+        $this->date = $nownotime;
         $this->cond_reglement_id   = 1;
         $this->cond_reglement_code = 'RECEP';
+        $this->date_lim_reglement=$this->calculate_date_lim_reglement();
         $this->mode_reglement_id   = 7;
-        $this->mode_reglement_code = '';  // No particular payment mode defined
+        $this->mode_reglement_code = 'CHQ';
         $this->note_public='This is a comment (public)';
         $this->note='This is a comment (private)';
         // Lines
