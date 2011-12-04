@@ -52,7 +52,7 @@ class mod_contract_magre extends ModelNumRefContracts
 		$texte.= '<input type="hidden" name="maskconstcontract" value="CONTRACT_MAGRE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Contract"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Contract"),$langs->transnoentities("Contract"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Contract"),$langs->transnoentities("Contract"));

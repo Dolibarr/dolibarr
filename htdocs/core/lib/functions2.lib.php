@@ -435,9 +435,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // Define $sqlwhere
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
-    if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))  $maskraz=preg_replace('/^@/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))  $maskraz=preg_replace('/^@/','',$reg[3]);
-    if ($maskraz >= 0)
+    if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$maskraz=preg_replace('/^@/','',$reg[2]);
+    if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))	$maskraz=preg_replace('/^@/','',$reg[3]);
+    if ($maskraz == 0) $maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
+    if ($maskraz > 0)
     {
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 

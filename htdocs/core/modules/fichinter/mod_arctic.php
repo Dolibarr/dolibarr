@@ -61,7 +61,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$texte.= '<input type="hidden" name="maskconst" value="FICHINTER_ARTIC_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("InterventionCard"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));

@@ -52,7 +52,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$texte.= '<input type="hidden" name="maskconstexpedition" value="EXPEDITION_RIBERA_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Sending"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Sending"),$langs->transnoentities("Sending"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Sending"),$langs->transnoentities("Sending"));
