@@ -125,17 +125,17 @@ if (! defined('NOREQUIREUSER'))
 if (! defined('NOREQUIREDB'))
 {
 	// By default conf->entity is 1, but we change this if we ask another value.
-	if (session_id() && ! empty($_SESSION["dol_entity"]))					// Entity inside an opened session
+	if (session_id() && ! empty($_SESSION["dol_entity"]))			// Entity inside an opened session
 	{
 		$conf->entity = $_SESSION["dol_entity"];
 	}
-	elseif (! empty($_ENV["dol_entity"]))									// Entity inside a CLI script
+	elseif (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 	{
 		$conf->entity = $_ENV["dol_entity"];
 	}
-	elseif (isset($_POST["loginfunction"]) && ! empty($_POST["entity"]))	// Just after a login page
+	elseif (isset($_POST["loginfunction"]) && GETPOST("entity"))	// Just after a login page
 	{
-		$conf->entity = $_POST["entity"];
+		$conf->entity = GETPOST("entity",'int');
 	}
 	else	// TODO Does this "else" still usefull ?
 	{
