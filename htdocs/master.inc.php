@@ -56,16 +56,12 @@ $conf->db->dolibarr_main_db_encryption	= $dolibarr_main_db_encryption;
 $conf->db->dolibarr_main_db_cryptkey	= $dolibarr_main_db_cryptkey;
 $conf->file->main_limit_users			= $dolibarr_main_limit_users;
 $conf->file->mailing_limit_sendbyweb	= $dolibarr_mailing_limit_sendbyweb;
-if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');	// For test purpose
-// Identifiant autres
+// Identification mode
 $conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
 // Force https
 $conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
-// Define charset for HTML Output (can set hidden value force_charset in conf file)
-$conf->file->character_set_client		= strtoupper($force_charset_do_notuse);
 // Cookie cryptkey
 $conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
-
 // Define array of document root directories
 $conf->file->dol_document_root			= array('main' => DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
@@ -77,6 +73,8 @@ if (! empty($dolibarr_main_document_root_alt))
 		$conf->file->dol_document_root['alt']=$value;
 	}
 }
+// Force db type (for test purpose)
+if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');
 
 // Multi-Company transverse mode
 $conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;
@@ -91,7 +89,7 @@ if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe/class/
  */
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs = new Translate("",$conf);	// A mettre apres lecture de la conf
+	$langs = new Translate('',$conf);	// A mettre apres lecture de la conf
 }
 
 /*
@@ -107,9 +105,10 @@ if (! defined('NOREQUIREDB'))
 		exit;
 	}
 }
+
 // Now database connexion is known, so we can forget password
-//$dolibarr_main_db_pass=''; 	// Comment this because this constant is used in a lot of pages
-$conf->db->pass='';				// This is to avoid password to be shown in memory/swap dump
+//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in a lot of pages
+unset($conf->db->pass);				// This is to avoid password to be shown in memory/swap dump
 
 /*
  * Creation objet $user

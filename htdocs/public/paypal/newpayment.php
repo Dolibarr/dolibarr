@@ -218,24 +218,10 @@ if (GETPOST("action") == 'dopayment')
         dol_syslog("email: $email", LOG_DEBUG);
         dol_syslog("desc: $desc", LOG_DEBUG);
 
-	    /*header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
-	    print '<html>'."\n";
-	    print '<head>'."\n";
-	    print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
-	    print '</head>'."\n";
-	    print '<body>'."\n";
-	    print "\n";
-		*/
-
 	    $_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
 
 	    // A redirect is added if API call successfull
         print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
-
-	    /*print '</body></html>'."\n";
-	    print "\n";
-		*/
 
 		exit;
 	}

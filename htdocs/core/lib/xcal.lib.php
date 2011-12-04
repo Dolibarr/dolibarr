@@ -386,7 +386,6 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
 
 /**
  * 	Encode for cal export
- * 	string must be encoded in conf->file->character_set_client
  *
  * 	@param		string	$format		vcal or ical
  * 	@param 		string	$string		string to encode
@@ -396,10 +395,8 @@ function format_cal($format,$string)
 {
 	global $conf;
 
-	if ($conf->file->character_set_client == 'ISO-8859-1') $newstring=utf8_encode($string);
-	else $newstring=$string;
+	$newstring=$string;
 
-	// Now newstring is always UTF8 string
 	if ($format == 'vcal')
 	{
 		$newstring=quotedPrintEncode($newstring);

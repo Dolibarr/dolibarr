@@ -54,11 +54,7 @@ llxHeader();
 
 $form = new Form($db);
 
-// If lib forced
-if (! empty($_GET["lib"])) $conf->global->MAIN_GRAPH_LIBRARY=$_GET["lib"];
-
-
-$datetime = time();
+$datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");

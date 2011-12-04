@@ -66,15 +66,15 @@ class DolGraph
 	var $Legend=array();
 	var $LegendWidthMin=0;
 
-	var $graph;     		// Objet Graph (Artichow, Phplot...)
+	var $graph;     			// Objet Graph (Artichow, Phplot...)
 	var $error;
 
-	var $library='';		// Par defaut on utiliser PHPlot
+	var $library='artichow';	// Graphic library to use
 
-	var $bordercolor;		// array(R,G,B)
-	var $bgcolor;			// array(R,G,B)
-	var $bgcolorgrid;		// array(R,G,B)
-	var $datacolor;			// array(array(R,G,B),...)
+	var $bordercolor;			// array(R,G,B)
+	var $bgcolor;				// array(R,G,B)
+	var $bgcolorgrid;			// array(R,G,B)
+	var $datacolor;				// array(array(R,G,B),...)
 
 
 	/**
@@ -84,7 +84,6 @@ class DolGraph
 	{
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
-
 
 		// Test si module GD present
 		$modules_list = get_loaded_extensions();
@@ -99,15 +98,11 @@ class DolGraph
 			return -1;
 		}
 
-
-		// Defini proprietes de l'objet graphe
-		$this->library=$conf->global->MAIN_GRAPH_LIBRARY;
-
 		$this->bordercolor = array(235,235,224);
 		$this->datacolor = array(array(120,130,150), array(160,160,180), array(190,190,220));
 		$this->bgcolor = array(235,235,224);
 
-		$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+		$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
 		if (is_readable($color_file))
 		{
 			include_once($color_file);

@@ -255,15 +255,15 @@ class Conf
 			$this->$module->dir_temp=$rootfordata."/".$module."/temp";
 		}
 
-		// For mycompany setup
+		// For mycompany storage
 		$this->mycompany->dir_output=$rootfordata."/mycompany";
 		$this->mycompany->dir_temp=$rootfordata."/mycompany/temp";
 
-		// For admin features
+		// For admin storage
 		$this->admin->dir_output=$rootfordata.'/admin';
 		$this->admin->dir_temp=$rootfordata.'/admin/temp';
 
-		// Module user
+		// For user storage
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
 
@@ -309,10 +309,7 @@ class Conf
 		$this->use_javascript_ajax=1;
 		if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) $this->use_javascript_ajax=! $this->global->MAIN_DISABLE_JAVASCRIPT;
 		// If no javascript_ajax, Ajax features are disabled.
-		if (! $this->use_javascript_ajax)
-		{
-			$this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
-		}
+		if (! $this->use_javascript_ajax) $this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
 
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
@@ -345,9 +342,6 @@ class Conf
 		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
 		$this->mailing->email_from=$this->email_from;
 		if (! empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
-
-		// Defini MAIN_GRAPH_LIBRARY
-		if (empty($this->global->MAIN_GRAPH_LIBRARY)) $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 
         if (! isset($this->global->FCKEDITOR_EDITORNAME)) $this->global->FCKEDITOR_EDITORNAME='ckeditor';  // fckeditor to switch
 
