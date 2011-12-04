@@ -139,14 +139,15 @@ class DolEditor
      *		Output edit area inside the HTML stream.
      *		Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
      *
-     *      @param      noprint     1=Return HTML string instead of printing it to output
+     *      @param	int		$noprint     1=Return HTML string instead of printing it to output
+     *      @return	void
      */
     function Create($noprint=0)
     {
     	global $conf;
 
         $found=0;
-        $out='';
+		$out='';
 
         if ($this->tool == 'fckeditor')
         {
