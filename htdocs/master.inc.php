@@ -125,11 +125,11 @@ if (! defined('NOREQUIREUSER'))
 if (! defined('NOREQUIREDB'))
 {
 	// By default conf->entity is 1, but we change this if we ask another value.
-	if (session_id() && ! empty($_SESSION["dol_entity"]))				// Entity inside an opened session
+	if (session_id() && ! empty($_SESSION["dol_entity"]))					// Entity inside an opened session
 	{
 		$conf->entity = $_SESSION["dol_entity"];
 	}
-	elseif (! empty($_ENV["dol_entity"]))								// Entity inside a CLI script
+	elseif (! empty($_ENV["dol_entity"]))									// Entity inside a CLI script
 	{
 		$conf->entity = $_ENV["dol_entity"];
 	}
@@ -137,24 +137,22 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = $_POST["entity"];
 	}
-	else
+	else	// TODO Does this "else" still usefull ?
 	{
 		$prefix=dol_getprefix();
 	    $entityCookieName = 'DOLENTITYID_'.$prefix;
-		if (! empty($_COOKIE[$entityCookieName]) && ! empty($conf->file->cookie_cryptkey)) 						// Just for view specific login page
+		if (! empty($_COOKIE[$entityCookieName]) && ! empty($conf->file->cookie_cryptkey)) 	// Just for view specific login page
 		{
 			include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
-
 			$lastuser = '';
 			$lastentity = '';
-
 			$entityCookie = new DolCookie($conf->file->cookie_cryptkey);
 			$cookieValue = $entityCookie->_getCookie($entityCookieName);
 			list($lastuser, $lastentity) = explode('|', $cookieValue);
 			$conf->entity = $lastentity;
 		}
 	}
-
+	
 	//print "Will work with data into entity instance number '".$conf->entity."'";
 
 	// Here we read database (llx_const table) and define $conf->global->XXX var.
