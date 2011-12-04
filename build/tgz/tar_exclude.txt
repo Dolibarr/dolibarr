@@ -42,6 +42,8 @@ htdocs/core/triggers/interface_contractfrombill.class.php-NORUN
 htdocs/core/triggers/interface_modEditeur_Editeur.class.php-NORUN
 htdocs/custom
 htdocs/custom2
+htdocs/customleave
+htdocs/customgoogle
 htdocs/document
 htdocs/documents
 htdocs/includes/jpgraph2
@@ -63,7 +65,6 @@ htdocs/postnuke
 htdocs/public/bplc
 htdocs/rapport
 htdocs/theme/rodolphe
-htdocs/theme/eldy/img/menus/tango*
 htdocs/telephonie
 htdocs/voyage
 mssql
@@ -107,5 +108,3 @@ huitre
 pdf_huitre.modules.php
 doxygen_warnings.log
 dolibarr_install.log
-doc_generic_invoice_odt.modules.php
-htdocs/theme/bureau2crea
