@@ -252,6 +252,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 
 /**
  * Output a task line
+ *
  * @param   $inc
  * @param   $parent
  * @param   $lines
@@ -287,7 +288,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
                 $lastprojectid=$lines[$i]->fk_project;
             }
 
-            print "<tr $bc[$var]>\n";
+            print "<tr ".$bc[$var].">\n";
 
             // Project
             print "<td>";
@@ -366,6 +367,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
 
 /**
  * Show task lines with a particular parent
+ *
  * @param 	$inc				Counter that count number of lines legitimate to show (for return)
  * @param 	$parent				Id of parent task to start
  * @param 	$lines				Array of all tasks
@@ -512,6 +514,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
     if ($total>0)
     {
         print '<tr class="liste_total"><td class="liste_total">'.$langs->trans("Total").'</td>';
+        if ($showproject) print '<td></td>';
         print '<td></td>';
         print '<td></td>';
         print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td></tr>';
