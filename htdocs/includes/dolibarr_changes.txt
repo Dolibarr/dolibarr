@@ -30,7 +30,7 @@ public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=
 by
 public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=false, $maxh=0, $valign='T', $fitcell=false) {
 
-* Removed all fonts except dejavu*, helvetica*, stsongstdlight* and useless directories (fonts/utils, docs, cache, images)
+* Removed all fonts except dejavu* (greek, arab, persan, romanian, turkish), freemono* (russian), stsongstdlight* (chinese), helvetica* (all other) and useless directories (fonts/utils, docs, cache, images)
 
 
 
