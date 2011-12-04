@@ -82,7 +82,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte.= '<input type="hidden" name="param2" value="COMPANY_ELEPHANT_MASK_SUPPLIER">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("ThirdParty"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("ThirdParty"),$langs->transnoentities("ThirdParty"));
 		//$tooltip.=$langs->trans("GenericMaskCodes2");	Not required for third party numbering
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4b");

@@ -57,7 +57,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_FOURNISSEUR_ORCHIDEE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
