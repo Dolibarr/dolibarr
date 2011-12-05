@@ -130,6 +130,8 @@ class Categorie
 		global $conf,$langs;
 		$langs->load('categories');
 
+		$error=0;
+		
 		// Clean parameters
 		if (empty($this->visible)) $this->visible=0;
 		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;
@@ -209,6 +211,8 @@ class Categorie
 	{
 		global $conf, $langs;
 
+		$error=0;
+		
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);

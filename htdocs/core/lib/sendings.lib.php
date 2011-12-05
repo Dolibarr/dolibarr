@@ -131,8 +131,6 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 		if ($num)
 		{
-			if ($somethingshown) print '<br>';
-
 			if ($filter) print_titre($langs->trans("OtherSendingsForSameOrder"));
 			else print_titre($langs->trans("SendingsAndReceivingForSameOrder"));
 
@@ -191,7 +189,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				else
 				{
 					print "<td>";
-					if ($type==1) $text = img_object($langs->trans('Service'),'service');
+					if ($objp->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
 					print $text.' '.nl2br($objp->description);
 

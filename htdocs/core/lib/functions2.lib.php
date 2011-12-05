@@ -936,7 +936,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
     foreach ($tab as $key => $value)
     {
         // Set new parameters
-        if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
+        if ($value)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";

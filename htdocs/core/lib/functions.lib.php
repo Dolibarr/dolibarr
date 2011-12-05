@@ -4417,7 +4417,8 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 function printCommonFooter($zone='private')
 {
     global $conf;
-
+	global $micro_start_time;
+	
     if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
     else print "\n".'<!-- Common footer for public page -->'."\n";
 
