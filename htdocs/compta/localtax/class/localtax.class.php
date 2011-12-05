@@ -63,6 +63,8 @@ class localtax extends CommonObject
     {
     	global $conf, $langs;
 
+		$error=0;
+		
 		// Clean parameters
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
@@ -128,6 +130,8 @@ class localtax extends CommonObject
     {
     	global $conf, $langs;
 
+		$error=0;
+		
 		// Clean parameters
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
@@ -245,6 +249,8 @@ class localtax extends CommonObject
 	{
 		global $conf, $langs;
 
+		$error=0;
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -493,7 +499,7 @@ class localtax extends CommonObject
 
                     $acc = new Account($this->db);
 					$result=$acc->fetch($this->accountid);
-					if ($result <= 0) dol_print_error($db);
+					if ($result <= 0) dol_print_error($this->db);
 
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
 

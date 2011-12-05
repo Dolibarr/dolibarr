@@ -1395,6 +1395,8 @@ class Facture extends CommonObject
     {
         global $conf,$langs;
 
+		$error=0;
+		
         dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
 
         $this->db->begin();
@@ -1515,7 +1517,7 @@ class Facture extends CommonObject
             $result=$facreplaced->set_canceled($user,'replaced','');
             if ($result < 0)
             {
-                $this->error=$facreplaced->error." sql=".$sql;
+                $this->error=$facreplaced->error;
                 $this->db->rollback();
                 return -13;
             }
@@ -3420,6 +3422,8 @@ class FactureLigne
     {
         global $langs,$user,$conf;
 
+		$error=0;
+		
         dol_syslog(get_class($this)."::Insert rang=".$this->rang, LOG_DEBUG);
 
         // Clean parameters
@@ -3562,12 +3566,16 @@ class FactureLigne
     /**
      *	Update line into database
      *
-     *	@return		int		<0 if KO, >0 if OK
+     *	@param		User	$user		User object
+     *	@param		int		$notrigger	Disable triggers
+     *	@return		int					<0 if KO, >0 if OK
      */
-    function update()
+    function update($user='',$notrigger=0)
     {
         global $user,$langs,$conf;
 
+		$error=0;
+		
         // Clean parameters
         $this->desc=trim($this->desc);
 		if (empty($this->tva_tx)) $this->tva_tx=0;
@@ -3651,6 +3659,8 @@ class FactureLigne
 	{
 		global $conf,$langs,$user;
 
+		$error=0;
+		
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;

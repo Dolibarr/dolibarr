@@ -864,7 +864,6 @@ class Account extends CommonObject
             {
                 $this->nbtodo++;
                 if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) $this->nbtodolate++;
-                if ($obj->rappro) $foundaccounttoconciliate++;
             }
             return $num;
         }

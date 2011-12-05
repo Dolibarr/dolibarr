@@ -43,13 +43,15 @@ class box_external_rss extends ModeleBoxes {
 
     /**
      *  Constructor
+     * 
+     * 	@param	DoliDB	$db		Database handler
      */
-    function box_external_rss($DB,$param)
+    function box_external_rss($db,$param)
     {
         global $langs;
         $langs->load("boxes");
 
-		$this->db=$DB;
+		$this->db=$db;
 		$this->param=$param;
 
         $this->boxlabel=$langs->trans("BoxLastRssInfos");
@@ -80,7 +82,7 @@ class box_external_rss extends ModeleBoxes {
 		// Get RSS feed
         $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
 
-        $rssparser=new RssParser($db);
+        $rssparser=new RssParser($this->db);
 		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
 
 		// INFO on channel

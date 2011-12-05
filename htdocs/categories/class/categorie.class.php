@@ -121,11 +121,12 @@ class Categorie
 	/**
 	 * 	Add category into database
 	 *
-	 * 	@return	int 	-1 : erreur SQL
-	 *          		-2 : nouvel ID inconnu
-	 *          		-3 : categorie invalide
+	 * 	@param	User	$user		Object user
+	 * 	@return	int 				-1 : erreur SQL
+	 *          					-2 : nouvel ID inconnu
+	 *          					-3 : categorie invalide
 	 */
-	function create()
+	function create($user='')
 	{
 		global $conf,$langs;
 		$langs->load('categories');
@@ -203,11 +204,12 @@ class Categorie
 	/**
 	 * 	Update category
 	 *
-	 * 	@return	int		 1 : OK
-	 *          		-1 : SQL error
-	 *          		-2 : invalid category
+	 *	@param	User	$user		Object user
+	 * 	@return	int		 			1 : OK
+	 *          					-1 : SQL error
+	 *          					-2 : invalid category
 	 */
-	function update()
+	function update($user='')
 	{
 		global $conf, $langs;
 
@@ -883,12 +885,12 @@ class Categorie
 			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
 		}
 		dol_syslog("Categorie::already_exists sql=".$sql);
-		$res  = $this->db->query($sql);
-		if ($res)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			if($this->db->num_rows($resql) > 0)						// Checking for empty resql
+			if ($this->db->num_rows($resql) > 0)						// Checking for empty resql
 			{
-				$obj = $this->db->fetch_array($res);
+				$obj = $this->db->fetch_array($resql);
 				/* If object called create, obj cannot have is id.
 				 * If object called update, he mustn't have the same label as an other category for this mother.
 				 * So if the result have the same id, update is not for label, and if result have an other one,

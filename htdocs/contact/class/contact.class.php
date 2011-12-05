@@ -867,13 +867,13 @@ class Contact extends CommonObject
 
 		$code=$this->civilite_id;
         return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : '';
-		if (empty($ret))
+		/*if (empty($ret))
 		{
 		    $ret=$code;
-		    $langs->getLabelFromKey($db,$reg[1],'c_civilite','code','civilite');
+		    $langs->getLabelFromKey($this->db,$reg[1],'c_civilite','code','civilite');
 		     //$ret=dol_getIdFromCode($this->db,$code,'c_civilite',
 		}
-		return $ret;
+		return $ret;*/
 	}
 
 
