@@ -58,7 +58,7 @@ class MouvementStock
 	 */
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$error = 0;
 		dol_syslog("MouvementStock::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");

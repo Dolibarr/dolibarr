@@ -128,7 +128,7 @@ abstract class ModeleNumRefPropales
 
 
 /**
- *  Create a document onto disk accordign to template module.
+ *  Create a document onto disk according to template module.
  *
  * 	@param	    DoliDB		$db  			Database handler
  * 	@param	    Object		$object			Object proposal
@@ -145,6 +145,8 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	global $conf,$user,$langs;
 	$langs->load("propale");
 
+	$error=0;
+	
 	$dir = "/core/modules/propale/";
 	$srctemplatepath='';
 	$modelisok=0;
@@ -181,7 +183,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	}
 
 	// Si model pas encore bon
-	if (! $modelisok && is_array($liste))
+	if (! $modelisok)
 	{
 		$liste=ModelePDFPropales::liste_modeles($db);
 		$modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau

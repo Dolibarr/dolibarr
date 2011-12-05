@@ -72,7 +72,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		$langs->load("companies");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

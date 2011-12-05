@@ -187,7 +187,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         print __METHOD__." encodedstring=".$encodedstring." ".base64_encode($stringtotest)."\n";
         $this->assertEquals($stringtotest,$decodedstring);
 
-        return $result;
+        return 0;
     }
 
     /**
@@ -210,7 +210,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         print __METHOD__." genpass3=".$genpass3."\n";
         $this->assertEquals(strlen($genpass3),8);
 
-        return $result;
+        return 0;
     }
 }
 ?>

@@ -706,6 +706,8 @@ class CommandeFournisseur extends Commande
     {
         global $conf, $langs;
 
+		$error=0;
+		
         dol_syslog("CommandeFournisseur::Refuse");
         $result = 0;
         if ($user->rights->fournisseur->commande->approuver)
@@ -750,6 +752,8 @@ class CommandeFournisseur extends Commande
     {
         global $langs,$conf;
 
+		$error=0;
+		
         //dol_syslog("CommandeFournisseur::Cancel");
         $result = 0;
         if ($user->rights->fournisseur->commande->commander)
@@ -847,7 +851,8 @@ class CommandeFournisseur extends Commande
         global $langs,$conf;
 
         $this->db->begin();
-
+	
+		$error=0;
         $now=dol_now();
 
         /* On positionne en mode brouillon la commande */
@@ -919,6 +924,7 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Add order line
+     *
      *	@param      desc            	Description
      *	@param      pu_ht              	Unit price
      *	@param      qty             	Quantity
@@ -934,7 +940,7 @@ class CommandeFournisseur extends Commande
      *	@param		type				Type of line (0=product, 1=service)
      *	@return     int             	<=0 if KO, >0 if OK
      */
-    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0)
+    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0, $info_bits=0)
     {
         global $langs,$mysoc;
 
@@ -1134,7 +1140,6 @@ class CommandeFournisseur extends Commande
                         $error++;
                     }
                 }
-                $i++;
             }
 
             if ($error == 0)
@@ -1188,13 +1193,14 @@ class CommandeFournisseur extends Commande
     /**
      *  Delete an order
      *
-     *	@return	int		<0 if KO, >0 if OK
+     *	@param	User	$user		Object user
+     *	@return	int					<0 if KO, >0 if OK
      */
-    function delete()
+    function delete($user='')
     {
         global $langs,$conf;
 
-        $err = 0;
+        $error = 0;
 
         $this->db->begin();
 
@@ -1202,7 +1208,7 @@ class CommandeFournisseur extends Commande
         dol_syslog("FournisseurCommande::delete sql=".$sql, LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
-            $err++;
+            $error++;
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
@@ -1211,15 +1217,15 @@ class CommandeFournisseur extends Commande
         {
             if ($this->db->affected_rows($resql) < 1)
             {
-                $err++;
+                $error++;
             }
         }
         else
         {
-            $err++;
+            $error++;
         }
 
-        if ($err == 0)
+        if ($error == 0)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1630,10 +1636,10 @@ class CommandeFournisseur extends Commande
             $sql.= ",localtax1_tx='".price2num($txlocaltax1)."'";
             $sql.= ",localtax2_tx='".price2num($txlocaltax2)."'";
             $sql.= ",qty='".price2num($qty)."'";
-            if ($date_end) { $sql.= ",date_start='$date_end'"; }
+            /*if ($date_end) { $sql.= ",date_start='$date_end'"; }
             else { $sql.=',date_start=null'; }
             if ($date_end) { $sql.= ",date_end='$date_end'"; }
-            else { $sql.=',date_end=null'; }
+            else { $sql.=',date_end=null'; }*/
             $sql.= ",info_bits='".$info_bits."'";
             $sql.= ",total_ht='".price2num($total_ht)."'";
             $sql.= ",total_tva='".price2num($total_tva)."'";

@@ -47,7 +47,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$langs->load("projects");
 		$langs->load("admin");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

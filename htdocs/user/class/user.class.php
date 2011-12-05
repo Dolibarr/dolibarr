@@ -654,6 +654,8 @@ class User extends CommonObject
 	{
 		global $user,$conf,$langs;
 
+		$error=0;
+		
 		$this->db->begin();
 
 		$this->fetch($this->id);
@@ -845,6 +847,8 @@ class User extends CommonObject
 	{
 		global $conf,$user,$langs;
 
+		$error=0;
+		
 		// Positionne parametres
 		$this->admin = 0;
 		$this->nom = $contact->nom;			// TODO deprecated
@@ -1358,7 +1362,8 @@ class User extends CommonObject
 	function send_password($user, $password='', $changelater=0)
 	{
 		global $conf,$langs;
-
+		global $dolibarr_main_url_root;
+		
 		require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 
 		$subject = $langs->trans("SubjectNewPassword");
