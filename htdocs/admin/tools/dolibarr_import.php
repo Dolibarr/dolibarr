@@ -73,7 +73,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
     {
     ?>
     <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"	<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?> />
+        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?> />
         <label for="radio_dump_mysql">MySQL (mysql)</label>
     </div>
     <?php
@@ -82,7 +82,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
     {
     ?>
     <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_postgresql" <?php echo ($_GET["radio_dump"]=='postgresql_options'?' checked':''); ?> />
+        <input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($_GET["radio_dump"]=='postgresql_options'?' checked':''); ?> />
         <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore)</label>
     </div>
     <?php
