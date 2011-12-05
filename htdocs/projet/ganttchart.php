@@ -26,7 +26,7 @@
 <div id="principal_content" style="margin-left: 0px;">
 <div style="margin-left: 0; position: relative;" class="gantt" id="GanttChartDIV"></div>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 
 function DisplayHideRessources(boxName) {
 	graphFormat = g.getFormat();

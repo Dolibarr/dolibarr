@@ -187,7 +187,7 @@ if (GETPOST("action") == 'gotodemo')
 llxHeaderVierge($langs->trans("DolibarrDemo"));
 
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 var openedId='';
 jQuery(document).ready(function () {
     jQuery('tr.moduleline').hide();
