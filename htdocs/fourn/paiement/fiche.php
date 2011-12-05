@@ -49,7 +49,7 @@ $object = new PaiementFourn($db);
 if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 {
     $db->begin();
-    
+
     $object->fetch($id);
     $result = $object->update_note(GETPOST('note'));
     if ($result > 0)
@@ -67,7 +67,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
 {
 	$db->begin();
-	
+
 	$object->fetch($id);
 	$result = $object->delete();
 	if ($result > 0)
@@ -177,11 +177,13 @@ if ($result > 0)
 	print '<table class="border" width="100%">';
 
 	print '<tr>';
-	print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">'.$object->id.'</td></tr>';
+	print '<td valign="top" width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
+    print $form->showrefnav($object,'id','',1,'rowid','ref');
+	print '</td></tr>';
 
 	// Date payment
     print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Date",'date',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Date",'date',$object->date,'id',$object->id,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
+    print $form->editfieldval("Date",'date',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
     print '</td></tr>';
 
 	// Payment mode
@@ -189,7 +191,7 @@ if ($result > 0)
 
 	// Payment numero
     print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Numero",'num',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Numero",'num',$object->numero,'id',$object->id,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
+    print $form->editfieldval("Numero",'num',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
     print '</td></tr>';
 
 	// Amount
@@ -202,7 +204,7 @@ if ($result > 0)
 
 	// Note
     print '<tr><td valign="top"" colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Note",'note',$object->note,'id',$object->id,$user->rights->fournisseur->facture->creer,'text');
+    print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'text');
     print '</td></tr>';
 
     // Bank account
