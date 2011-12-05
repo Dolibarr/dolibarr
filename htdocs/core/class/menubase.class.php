@@ -395,7 +395,7 @@ class Menubase
                         //print 'name='.$tab[$x][3].' pere='.$pere." ".$tab[$x][6];
 
                         $this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5], $tab[$x][8]);
-                        $this->recur($tab, $tab[$x][0], $rang +1, $lelfmenu);
+                        $this->recur($tab, $tab[$x][0], $rang +1, $leftmenu);
                     }
                 }
             }

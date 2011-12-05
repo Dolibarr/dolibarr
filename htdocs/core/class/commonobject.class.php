@@ -352,7 +352,7 @@ abstract class CommonObject
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
 
-        dol_syslog(get_class($object)."::swapContactStatus sql=".$sql);
+        dol_syslog(get_class($this)."::swapContactStatus sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {

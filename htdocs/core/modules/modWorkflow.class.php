@@ -147,7 +147,10 @@ class modWorkflow extends DolibarrModules
      */
     function init()
     {
-        //$result=$this->load_tables();
+		// Permissions
+		$this->remove();
+		
+		$sql = array();
 
         return $this->_init($sql);
     }

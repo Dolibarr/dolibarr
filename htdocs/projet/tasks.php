@@ -132,6 +132,8 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 $form=new Form($db);
 $formother=new FormOther($db);
+$projectstatic = new Project($db);
+$taskstatic = new Task($db);
 
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Tasks"),$help_url);

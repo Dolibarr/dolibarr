@@ -265,12 +265,9 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
 {
     global $user, $bc, $langs;
-    global $form;
+    global $form, $projectstatic, $taskstatic;
 
     $lastprojectid=0;
-
-    $projectstatic = new Project($db);
-    $taskstatic = new Task($db);
 
     $var=true;
 
@@ -380,11 +377,9 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
 function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
 {
     global $user, $bc, $langs;
-
+	global $projectstatic, $taskstatic;
+	
     $lastprojectid=0;
-
-    $projectstatic = new Project($db);
-    $taskstatic = new Task($db);
 
     $projectsArrayId=explode(',',$projectsListId);
 

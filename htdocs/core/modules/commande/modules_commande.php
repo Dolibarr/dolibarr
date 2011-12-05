@@ -155,6 +155,8 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 	global $conf,$user,$langs;
 	$langs->load("orders");
 
+	$error=0;
+	
 	$dir = "/core/modules/commande/";
 	$srctemplatepath='';
 	$modelisok=0;
