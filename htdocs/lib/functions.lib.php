@@ -47,7 +47,7 @@ if (! function_exists('json_encode'))
     function json_encode($elements)
     {
     	$num = count($elements);
-    	
+
     	// determine type
     	if (is_numeric(key($elements)))
     	{
@@ -77,11 +77,11 @@ if (! function_exists('json_encode'))
     		}
     		$output.= '}';
     	}
-    	
+
     	// return
     	return $output;
     }
-    
+
     function _val($val)
     {
     	if (is_string($val)) return '"'.rawurlencode($val).'"';
@@ -104,7 +104,7 @@ if (! function_exists('json_decode'))
 	function json_decode($json, $assoc=false)
 	{
 		$comment = false;
-		
+
 		for ($i=0; $i<strlen($json); $i++)
 		{
 			if (! $comment)
@@ -117,28 +117,28 @@ if (! function_exists('json_decode'))
 			else $out.= $json[$i];
 			if ($json[$i] == '"' && $json[($i-1)]!="\\") $comment = !$comment;
 		}
-		
+
 		// Return an array
 		eval('$array = '.$out.';');
-		
+
 		// Return an object
 		if (! $assoc)
 		{
 			if (! empty($array))
 			{
 				$object = false;
-				
+
 				foreach ($array as $key => $value)
 				{
 					$object->{$key} = $value;
 				}
-				
+
 				return $object;
 			}
-			
+
 			return false;
 		}
-		
+
 		return $array;
 	}
 }
@@ -3937,7 +3937,8 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     	unset($_SESSION['mesgarray']);
     }
 
-    if (! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! preg_match('/<div class=".*">/i',$out))
+    // If inline message with no format, we add it.
+    if ((empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))
     {
         $divstart='<div class="'.$style.'">';
         $divend='</div>';
@@ -3967,7 +3968,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 
     if ($out)
     {
-        if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
+        if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
         {
             $return = '<script type="text/javascript">
     				jQuery(document).ready(function() {
