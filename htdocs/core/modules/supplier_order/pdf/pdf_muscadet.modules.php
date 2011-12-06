@@ -356,6 +356,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				// Affiche zone totaux
 				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
+				$amount_credit_notes_included=0;
+				$amount_deposits_included=0;
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
 					$this->_tableau_versements($pdf, $object, $posy);
@@ -426,6 +428,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		// Affichage des totaux de TVA par taux (conformement a reglementation)
 		$pdf->SetFillColor(248,248,248);
 
+		$index=0;
 		foreach( $this->tva as $tvakey => $tvaval )
 		{
 			if ($tvakey > 0)    // On affiche pas taux 0
@@ -465,9 +468,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), 0, 'R', 1);
 			}
 
 			// Total LocalTax2
@@ -475,9 +478,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), 0, 'R', 1);
 			}
 		}
 		else

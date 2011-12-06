@@ -234,7 +234,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 						$tab_height_in_current_page=$tab_height_newpage;
 					}
 
-					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
+					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblines - 1))
 					{
 						if ($pagenb == 1)
 						{

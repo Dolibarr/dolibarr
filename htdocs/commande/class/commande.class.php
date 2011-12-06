@@ -99,15 +99,13 @@ class Commande extends CommonObject
     /**
      *	Constructor
      *
-     *  @param		DoliDB		$DB      Database handler
+     *  @param		DoliDB		$db      Database handler
      */
-    function Commande($DB)
+    function Commande($db)
     {
         global $langs;
         $langs->load('orders');
-        $this->db = $DB;
-        $this->socid = $socid;
-        $this->id = $commandeid;
+        $this->db = $db;
 
         $this->remise = 0;
         $this->remise_percent = 0;
@@ -447,9 +445,10 @@ class Commande extends CommonObject
     }
 
     /**
-     *    	Close order
-     * 		@param      user        Objet user that close
-     *		@return		int			<0 if KO, >0 if OK
+     *  Close order
+     * 
+     * 	@param      user        Objet user that close
+     *	@return		int			<0 if KO, >0 if OK
      */
     function cloture($user)
     {
@@ -501,13 +500,15 @@ class Commande extends CommonObject
     }
 
     /**
-     * 	\brief		Cancel an order
-     *	\return		int			<0 if KO, >0 if OK
-     * 	\remarks	If stock is decremented on order validation, we must reincrement it
+     * 	Cancel an order
+     * 	If stock is decremented on order validation, we must reincrement it
+     * 
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function cancel($user)
+    function cancel($user, $idwarehouse=-1)
     {
-        global $conf;
+        global $conf,$langs;
 
         $error=0;
 
@@ -526,17 +527,20 @@ class Commande extends CommonObject
                 // If stock is decremented on validate order, we must reincrement it
                 if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
-                    $langs->load("agenda");
-
-                    if ($this->lines[$i]->fk_product > 0)
-                    {
-                        $mouvP = new MouvementStock($this->db);
-                        // We increment stock of product (and sub-products)
-                        $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
-                        if ($result < 0) { $error++; }
-                    }
+	                require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+	                $langs->load("agenda");
+	
+	                $num=count($this->lines);
+	                for ($i = 0; $i < $num; $i++)
+	                {
+	                    if ($this->lines[$i]->fk_product > 0)
+	                    {
+	                        $mouvP = new MouvementStock($this->db);
+	                        // We increment stock of product (and sub-products)
+	                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
+	                        if ($result < 0) { $error++; }
+	                    }
+	                }
                 }
 
                 if (! $error)
@@ -604,7 +608,6 @@ class Commande extends CommonObject
             dol_syslog("Commande::create ".$this->error, LOG_ERR);
             return -1;
         }
-        if (! $remise) $remise=0;
         if (! $this->fk_project) $this->fk_project = 0;
 
         // $date_commande is deprecated
@@ -1299,14 +1302,14 @@ class Commande extends CommonObject
             }
             else
             {
-                dol_syslog('Commande::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
-                $this->error='Order with id '.$rowid.' not found sql='.$sql;
+                dol_syslog('Commande::Fetch Error rowid='.$id.' numrows=0 sql='.$sql);
+                $this->error='Order with id '.$id.' not found sql='.$sql;
                 return -2;
             }
         }
         else
         {
-            dol_syslog('Commande::Fetch Error rowid='.$rowid.' Erreur dans fetch de la commande');
+            dol_syslog('Commande::Fetch Error rowid='.$id.' Erreur dans fetch de la commande');
             $this->error=$this->db->error();
             return -1;
         }
@@ -2194,8 +2197,8 @@ class Commande extends CommonObject
             $qty=price2num($qty);
             $pu = price2num($pu);
             $txtva=price2num($txtva);
-            $txlocaltax1=price2num($txtlocaltax1);
-            $txlocaltax2=price2num($txtlocaltax2);
+            $txlocaltax1=price2num($txlocaltax1);
+            $txlocaltax2=price2num($txlocaltax2);
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
@@ -2287,15 +2290,16 @@ class Commande extends CommonObject
 
     /**
      *	Delete the customer order
-     *	@param		user		User object
-     * 	@return		int		<=0 if KO, >0 if OK
+     *
+     *	@param	User	$user		User object
+     * 	@return	int					<=0 if KO, >0 if OK
      */
     function delete($user)
     {
         global $conf, $langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-        $err = 0;
+        $error = 0;
 
         $this->db->begin();
 
@@ -2305,7 +2309,7 @@ class Commande extends CommonObject
         if (! $this->db->query($sql) )
         {
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $err++;
+            $error++;
         }
 
         // Delete order
@@ -2314,7 +2318,7 @@ class Commande extends CommonObject
         if (! $this->db->query($sql) )
         {
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $err++;
+            $error++;
         }
 
         // Delete linked object
@@ -2326,7 +2330,7 @@ class Commande extends CommonObject
         if (! $this->db->query($sql) )
         {
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $err++;
+            $error++;
         }
 
         // Delete linked contacts
@@ -2334,7 +2338,7 @@ class Commande extends CommonObject
         if ($res < 0)
         {
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $err++;
+            $error++;
         }
 
         // On efface le repertoire de pdf provisoire
@@ -2365,7 +2369,7 @@ class Commande extends CommonObject
             }
         }
 
-        if ($err == 0)
+        if ($error == 0)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -2387,6 +2391,7 @@ class Commande extends CommonObject
 
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     * 
      *      @param          user    Objet user
      *      @return         int     <0 if KO, >0 if OK
      */
@@ -2935,6 +2940,8 @@ class OrderLine
     {
         global $conf, $user, $langs;
 
+		$error=0;
+		
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->rowid."';";
 
         dol_syslog("OrderLine::delete sql=".$sql);
@@ -2968,6 +2975,8 @@ class OrderLine
     {
         global $langs, $conf, $user;
 
+		$error=0;
+		
         dol_syslog("OrderLine::insert rang=".$this->rang);
 
         // Clean parameters
@@ -3065,6 +3074,8 @@ class OrderLine
     {
         global $conf,$langs,$user;
 
+		$error=0;
+		
         // Clean parameters
         if (empty($this->tva_tx)) $this->tva_tx=0;
         if (empty($this->localtax1_tx)) $this->localtax1_tx=0;

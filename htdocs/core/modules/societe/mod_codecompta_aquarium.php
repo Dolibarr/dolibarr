@@ -61,7 +61,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 		$langs->load("companies");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
         $tooltip='';
 		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

@@ -1036,7 +1036,7 @@ class Form
             if ($num)
             {
             	$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
-            	if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+            	if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
 
             	$userstatic=new User($this->db);
 
@@ -1364,6 +1364,8 @@ class Form
     function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtertype='',$filtre)
     {
         global $langs,$conf;
+        global $price_level, $status, $finished;
+        
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=2 means suppliers products
@@ -1521,7 +1523,7 @@ class Form
         }
         else
         {
-            dol_print_error($db);
+            dol_print_error($this->db);
         }
     }
 
@@ -1610,7 +1612,7 @@ class Form
         }
         else
         {
-            dol_print_error($db);
+            dol_print_error($this->db);
         }
     }
 
@@ -3806,7 +3808,7 @@ class Form
             if ($num)
             {
             	$out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
-            	if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+            	if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
 
                 while ($i < $num)
                 {

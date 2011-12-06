@@ -495,6 +495,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	global $conf, $user, $langs, $db;
 	global $object;
 
+	$error=0;
+	
 	$file_name = $dest_file;
 	// If an upload error has been reported
 	if ($uploaderrorcode)
@@ -606,8 +608,6 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		dol_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
 		return -3;	// Unknown error
 	}
-
-	return 1;
 }
 
 /**
@@ -623,6 +623,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$object=null)
 {
 	global $db, $conf, $user, $langs;
+
+	$error=0;
 
     //print "x".$file." ".$disableglob;
     $ok=true;
@@ -1003,8 +1005,6 @@ function dol_convert_file($file,$ext='png')
 	{
 		return -1;
 	}
-
-	return 1;
 }
 
 

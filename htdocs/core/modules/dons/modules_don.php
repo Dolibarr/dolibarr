@@ -177,7 +177,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 
 			// we delete preview files
         	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-            dol_delete_preview($object);
+            dol_delete_preview($obj);
             return 1;
         }
         else

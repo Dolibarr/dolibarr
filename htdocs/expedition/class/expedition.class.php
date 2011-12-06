@@ -398,14 +398,14 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_syslog('Expedition::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
-				$this->error='Delivery with id '.$rowid.' not found sql='.$sql;
+				dol_syslog('Expedition::Fetch Error -2');
+				$this->error='Delivery with id '.$id.' not found sql='.$sql;
 				return -2;
 			}
 		}
 		else
 		{
-			dol_syslog('Expedition::Fetch Error rowid='.$rowid.' Erreur dans fetch de l\'expedition');
+			dol_syslog('Expedition::Fetch Error -1');
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -768,8 +768,10 @@ class Expedition extends CommonObject
 	function delete()
 	{
 		global $conf, $langs, $user;
-
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+		$error=0;
+		
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";

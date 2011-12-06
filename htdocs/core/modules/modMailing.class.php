@@ -111,6 +111,8 @@ class modMailing extends DolibarrModules
 		// Permissions
 		$this->remove();
 
+		$sql = array();
+
 		return $this->_init($sql);
 	}
 

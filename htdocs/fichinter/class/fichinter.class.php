@@ -309,7 +309,9 @@ class Fichinter extends CommonObject
 	function setValid($user, $outputdir)
 	{
 		global $langs, $conf;
-
+		
+		$error=0;
+		
 		if ($this->statut != 1)
 		{
 			$this->db->begin();
@@ -578,6 +580,7 @@ class Fichinter extends CommonObject
 		if (! $this->db->query($sql) )
 		{
 			dol_syslog("Fichinter::delete error", LOG_ERR);
+			$this->error=$this->db->lasterror();
 			$error++;
 		}
 
@@ -589,7 +592,7 @@ class Fichinter extends CommonObject
 			$error++;
 		}
 
-		if ($err > 0)
+		if ($error)
 		{
 			$this->db->rollback();
 			return -1;

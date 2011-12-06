@@ -308,10 +308,7 @@ $login='';
 if (! defined('NOLOGIN'))
 {
 	// $authmode lists the different means of identification to be tested in order of preference.
-	// Example: 'http'
-	// Example: 'dolibarr'
-	// Example: 'ldap'
-	// Example: 'http,forceuser'
+	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser'
 
 	// Authentication mode
 	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
@@ -545,7 +542,7 @@ if (! defined('NOLOGIN'))
 		$_SESSION["dol_screenwidth"]=isset($dol_screenwidth)?$dol_screenwidth:'';
 		$_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
 		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
-		if (! empty($conf->multicompany->enabled)) $_SESSION["dol_entity"]=$conf->entity;
+		$_SESSION["dol_entity"]=$conf->entity;
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 		$db->begin();
@@ -944,7 +941,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js"></script>'."\n";
 			}
             // CKEditor
-            if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
+            if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";

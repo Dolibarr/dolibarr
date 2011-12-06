@@ -23,6 +23,7 @@
 
 /**
  *  Return array head with list of tabs to view object informations
+ * 
  *  @param      object          Member
  *  @return     array           head
  */

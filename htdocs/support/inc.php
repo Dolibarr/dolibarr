@@ -193,7 +193,6 @@ function conf($dolibarr_main_document_root)
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($conf->file->character_set_client))     	  $conf->file->character_set_client="UTF-8";
 	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
 
 	return 1;
@@ -201,7 +200,12 @@ function conf($dolibarr_main_document_root)
 
 
 /**
- *	\brief		Show HTML header
+ *	Show HTML header
+ *
+ *	@param	string	$soutitre	Title
+ *	@param	string	$next		Next
+ *	@param	string	$action		Action
+ *	@return	void
  */
 function pHeader($soutitre,$next,$action='none')
 {

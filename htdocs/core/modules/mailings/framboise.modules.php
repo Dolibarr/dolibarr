@@ -202,7 +202,7 @@ class mailing_framboise extends MailingTargets
 		}
 		else
 		{
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		$s.='</select>';

@@ -190,9 +190,10 @@ class FactureRec extends Facture
 
 
 	/**
-	 *	\brief      Recupere l'objet facture et ses lignes de factures
-	 *	\param      rowid       id de la facture a recuperer
-	 *	\return     int         >0 si ok, <0 si ko
+	 *	Recupere l'objet facture et ses lignes de factures
+	 *
+	 *	@param	int		$rowid      Id de la facture a recuperer
+	 *	@return int         		>0 si ok, <0 si ko
 	 */
 	function fetch($rowid)
 	{
@@ -209,7 +210,7 @@ class FactureRec extends Facture
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'"; // TODO remplacer par une fonction
 		$sql.= ' WHERE f.rowid='.$rowid;
 
-        dol_syslog("FactureRec::Fetch rowid=".$rowid.", societe_id=".$socid." sql=".$sql, LOG_DEBUG);
+        dol_syslog("FactureRec::Fetch rowid=".$rowid." sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -404,7 +405,9 @@ class FactureRec extends Facture
 
 
 	/**
-	 *		\brief		Add a line to invoice
+	 *	Add a line to invoice
+	 *
+	 *	@return	int				<0 if KO, >0 if OK
 	 */
 	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0)
 	{
@@ -420,7 +423,6 @@ class FactureRec extends Facture
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
-			if (! $ventil) $ventil=0;
 			if (! $info_bits) $info_bits=0;
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);

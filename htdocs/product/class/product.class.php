@@ -144,14 +144,13 @@ class Product extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDB		$DB      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
-	function Product($DB)
+	function Product($db)
 	{
 		global $langs;
 
-		$this->db = $DB;
-		$this->id = $id ;
+		$this->db = $db;
 		$this->status = 0;
 		$this->status_buy = 0;
 		$this->nbphoto = 0;
@@ -403,6 +402,8 @@ class Product extends CommonObject
 	{
 		global $langs, $conf;
 
+		$error=0;
+		
 		// Verification parametres
 		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
 
@@ -881,7 +882,6 @@ class Product extends CommonObject
 			dol_syslog("Product:get_buyprice ".$this->error, LOG_ERR);
 			return -2;
 		}
-		return $result;
 	}
 
 
@@ -2555,11 +2555,12 @@ class Product extends CommonObject
 	 *    	@param      nbbyrow     	Nombre vignettes par ligne (si mode vignette)
 	 * 		@param		showfilename	1=Show filename
 	 * 		@param		showaction		1=Show icon with action links (resize, delete)
-	 * 		@param		maxheight		Max height of image when size=1
+	 * 		@param		maxHeight		Max height of image when size=1
+	 * 		@param		maxWidth		Max width of image when size=1
 	 *    	@return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 *		TODO Move this into html.formproduct.class.php
 	 */
-	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxheight=120)
+	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160)
 	{
 		global $conf,$user,$langs;
 
@@ -2629,17 +2630,17 @@ class Product extends CommonObject
     						$return.= "\n";
     						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" class="lightbox" target="_blank">';
 
-    						// Show image (width height=$maxheight)
+    						// Show image (width height=$maxHeight)
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
     						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
     						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-    						if ($photo_vignette && $imgarray['height'] > $maxheight) {
+    						if ($photo_vignette && $imgarray['height'] > $maxHeight) {
     							$return.= '<!-- Show thumb -->';
-    							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
     						}
     						else {
     							$return.= '<!-- Show original file -->';
-    							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
     						}
 
     						$return.= '</a>'."\n";

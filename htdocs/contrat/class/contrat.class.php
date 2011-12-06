@@ -145,6 +145,8 @@ class Contrat extends CommonObject
 	{
 		global $langs,$conf;
 
+		$error=0;
+		
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
@@ -191,6 +193,8 @@ class Contrat extends CommonObject
 	{
 		global $langs,$conf;
 
+		$error=0;
+		
 		// statut actif : 4
 
 		$this->db->begin();
@@ -225,11 +229,12 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *    \brief      Close all lines of a contract
-	 *    \param      user      Object User making action
-	 *    \param      langs     Object Lang
-	 *    \param      conf      Object Conf
-	 *
+	 *  Close all lines of a contract
+	 * 
+	 *  @param      user      Object User making action
+	 *  @param      langs     Object Lang
+	 *  @param      conf      Object Conf
+	 *	@return		void
 	 */
 	function cloture($user,$langs='',$conf='')
 	{
@@ -268,7 +273,7 @@ class Contrat extends CommonObject
         }
         else
         {
-            dol_print_error($db,'Error in cloture function');
+            dol_print_error($this->db,'Error in cloture function');
             $this->db->rollback();
         }
 	}
@@ -282,6 +287,8 @@ class Contrat extends CommonObject
 	 */
 	function validate($user,$langs,$conf)
 	{
+		$error=0;
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
 		$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
@@ -835,7 +842,6 @@ class Contrat extends CommonObject
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
-			if (! $ventil) $ventil=0;
 			if (! $info_bits) $info_bits=0;
 			if (! $pu_ht)  $pu_ht=0;
 			if (! $pu_ttc) $pu_ttc=0;
@@ -883,7 +889,7 @@ class Contrat extends CommonObject
 			$sql.= " price_ht, remise";								// TODO A virer
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
 			if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
-			$sql.= ") VALUES ($this->id, '" . $this->db->escape($label) . "','" . $this->db->escape($desc) . "',";
+			$sql.= ") VALUES ($this->id, '', '" . $this->db->escape($desc) . "',";
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
 			$sql.= " '".$qty."',";
 			$sql.= " '".$txtva."',";
@@ -1031,6 +1037,8 @@ class Contrat extends CommonObject
 	{
 		global $conf, $langs;
 
+		$error=0;
+		
 		if ($this->statut >= 0)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
@@ -1105,9 +1113,9 @@ class Contrat extends CommonObject
 		$langs->load("contracts");
 		if ($mode == 0)
 		{
-			if ($statut == 0) { return $langs->trans("ContractStatusDraft").$text; }
-			if ($statut == 1) { return $langs->trans("ContractStatusValidated").$text; }
-			if ($statut == 2) { return $langs->trans("ContractStatusClosed").$text; }
+			if ($statut == 0) { return $langs->trans("ContractStatusDraft"); }
+			if ($statut == 1) { return $langs->trans("ContractStatusValidated"); }
+			if ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
 		}
 		if ($mode == 1)
 		{
@@ -1762,6 +1770,8 @@ class ContratLigne
 	{
 		global $conf, $langs;
 
+		$error=0;
+		
 		// Clean parameters
 		$this->fk_contrat=trim($this->fk_contrat);
 		$this->fk_product=trim($this->fk_product);

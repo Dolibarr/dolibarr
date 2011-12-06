@@ -381,7 +381,6 @@ class Propal extends CommonObject
 			$this->line->subprice=$pu_ht;
 			$this->line->rang=$rangtouse;
 			$this->line->info_bits=$info_bits;
-			$this->line->fk_remise_except=$fk_remise_except;
 			$this->line->total_ht=$total_ht;
 			$this->line->total_tva=$total_tva;
 			$this->line->total_localtax1=$total_localtax1;
@@ -1149,6 +1148,7 @@ class Propal extends CommonObject
 	{
 		global $conf,$langs;
 
+		$error=0;
 		$now=dol_now();
 
 		if ($user->rights->propale->valider)
@@ -1477,7 +1477,8 @@ class Propal extends CommonObject
 		global $langs,$conf;
 
 		$this->statut = $statut;
-
+		$error=0;
+		
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -2536,13 +2537,17 @@ class PropaleLigne
 	}
 
 	/**
-	 *      \brief     	Insert object line propal in database
-	 *		\return		int		<0 if KO, >0 if OK
+	 *  Insert object line propal in database
+	 * 
+	 *	@param		int		$notrigger		1=no trigger ran
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function insert($notrigger=0)
 	{
 		global $conf,$langs,$user;
 
+		$error=0;
+		
 		dol_syslog("PropaleLigne::insert rang=".$this->rang);
 
 		// Clean parameters
@@ -2599,8 +2604,6 @@ class PropaleLigne
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$this->rang=$rangmax;
-
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
 			if (! $notrigger)
 			{
@@ -2632,6 +2635,7 @@ class PropaleLigne
 	{
 		global $conf,$langs,$user;
 
+		$error=0;
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$this->rowid;
@@ -2667,6 +2671,8 @@ class PropaleLigne
 	{
 		global $conf,$langs,$user;
 
+		$error=0;
+		
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx=0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;

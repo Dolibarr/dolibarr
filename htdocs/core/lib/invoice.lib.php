@@ -44,7 +44,7 @@ function facture_prepare_head($object)
 	$head[$h][2] = 'contact';
 	$h++;
 
-	if ($conf->use_preview_tabs)
+	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('Preview');

@@ -34,41 +34,40 @@
 class Conf
 {
 	/** \public */
-	//! Object with database handler
-	var $db;
 	//! To store properties found in conf file
 	var $file;
+	//! Object with database handler
+	var $db;
 	//! To store properties found into database
 	var $global;
 
 	//! To store if javascript/ajax is enabked
-	var $use_javascript_ajax;
+	public $use_javascript_ajax;
 
 	//! Used to store current currency
-	var $monnaie;
+	public $currency;
 	//! Used to store current css (from theme)
-	var $theme;        // Contains current theme ("eldy", "auguria", ...)
-	var $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+	public $theme;        // Contains current theme ("eldy", "auguria", ...)
+	public $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
     //! Used to store current menu handlers
-	var $top_menu;
-	var $smart_menu;
+	public $top_menu;
+	public $smart_menu;
 
 	//! To store properties of multi-company
-	var $multicompany;
-	//! Used to store instance for multi-company (default 1)
-	var $entity=1;
-
-	var $css_modules			= array();
-	var $tabs_modules			= array();
-	var $triggers_modules		= array();
-	var $hooks_modules			= array();
-	public $login_method_modules	= array();
-	var $modules				= array();
-	var $entities				= array();
-
-	var $logbuffer				= array();
-
-	var $filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+	public $multicompany;
+	//! Used to store running instance for multi-company (default 1)
+	public $entity=1;
+	//! Used to store list of entities to use for each element
+	public $entities		 	 = array();
+	
+	public $modules				 = array();	// List of modules	
+	public $css_modules			 = array();
+	public $tabs_modules		 = array();
+	public $triggers_modules	 = array('/core/triggers');
+	public $hooks_modules		 = array();
+	public $login_method_modules = array();
+	
+	var $logbuffer = array();
 
 
 	/**
@@ -98,10 +97,7 @@ class Conf
 	 */
 	function setValues($db)
 	{
-		dol_syslog("Conf::setValues");
-
-		// Directory of core triggers
-		$this->triggers_modules[] = "/core/triggers";	// Default relative path to triggers file
+		dol_syslog(get_class($this)."::setValues");
 
 		// Avoid warning if not defined
 		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
@@ -125,21 +121,21 @@ class Conf
 		}
 		$sql.= " ORDER BY entity";	// This is to have entity 0 first, then entity 1 that overwrite.
 
-		$result = $db->query($sql);
-		if ($result)
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			$numr = $db->num_rows($result);
 			$multicompany_sharing=array();
+			
 			$i = 0;
-
+			$numr = $db->num_rows($resql);
 			while ($i < $numr)
 			{
-				$objp = $db->fetch_object($result);
+				$objp = $db->fetch_object($resql);
 				$key=$objp->name;
 				$value=$objp->value;
 				if ($key)
 				{
-					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE_ON and SYSLOG_FILE during install)
+					if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE_ON and SYSLOG_FILE during install)
 					$this->global->$key=$value;
 
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
@@ -154,7 +150,6 @@ class Conf
 						{
 							$params=explode(':',$value,2);
 							$this->tabs_modules[$params[0]][]=$value;
-							//print 'xxx'.$params[0].'-'.$value;
 						}
 						// If this is constant for triggers activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
@@ -207,7 +202,7 @@ class Conf
 			}
 
 			// Sharings between entities
-			if (isset($this->multicompany->enabled) && $this->multicompany->enabled && ! empty($multicompany_sharing))
+			if (! empty($this->multicompany->enabled) && ! empty($multicompany_sharing))
 			{
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret)
@@ -221,7 +216,7 @@ class Conf
 				}
 			}
 		}
-		$db->free($result);
+		$db->free($resql);
 		//var_dump($this->modules);
 
 		// Clean some variables
@@ -259,15 +254,15 @@ class Conf
 			$this->$module->dir_temp=$rootfordata."/".$module."/temp";
 		}
 
-		// For mycompany setup
+		// For mycompany storage
 		$this->mycompany->dir_output=$rootfordata."/mycompany";
 		$this->mycompany->dir_temp=$rootfordata."/mycompany/temp";
 
-		// For admin features
+		// For admin storage
 		$this->admin->dir_output=$rootfordata.'/admin';
 		$this->admin->dir_temp=$rootfordata.'/admin/temp';
 
-		// Module user
+		// For user storage
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
 
@@ -291,17 +286,15 @@ class Conf
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
-		$this->contrat->dir_temp=$rootfordata."/contracts/temp";
+		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
 
 
-		/*
-		 * Set some default values
-		 */
+		// Set some default values
 
 		// societe
-		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))      $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
-		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON)) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
-		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))      $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
+		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
+		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON))  $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
+		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
         if (empty($this->global->COMPANY_AQUARIUM_MASK_SUPPLIER)) $this->global->COMPANY_AQUARIUM_MASK_SUPPLIER='401';
 		if (empty($this->global->COMPANY_AQUARIUM_MASK_CUSTOMER)) $this->global->COMPANY_AQUARIUM_MASK_CUSTOMER='411';
 
@@ -309,59 +302,43 @@ class Conf
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
         if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK='0664';         // Default mask
 
-		// conf->box_max_lines
-		$this->box_max_lines=5;
-		if (isset($this->global->MAIN_BOXES_MAXLINES)) $this->box_max_lines=$this->global->MAIN_BOXES_MAXLINES;
-
-		// conf->use_preview_tabs
-		$this->use_preview_tabs=0;
-		if (isset($this->global->MAIN_USE_PREVIEW_TABS)) $this->use_preview_tabs=$this->global->MAIN_USE_PREVIEW_TABS;
-
 		// conf->use_javascript_ajax
 		$this->use_javascript_ajax=1;
 		if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) $this->use_javascript_ajax=! $this->global->MAIN_DISABLE_JAVASCRIPT;
 		// If no javascript_ajax, Ajax features are disabled.
-		if (! $this->use_javascript_ajax)
-		{
-			$this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
-		}
+		if (! $this->use_javascript_ajax) $this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
 
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->currency=$this->global->MAIN_MONNAIE;
 
-		// $this->global->COMPTA_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
+		// conf->global->COMPTA_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
         if (empty($this->global->COMPTA_MODE)) $this->global->COMPTA_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 
-		// $this->liste_limit = constante de taille maximale des listes
+		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;
 
-		// $this->product->limit_size = constante de taille maximale des select de produit
+		// conf->product->limit_size = constante de taille maximale des select de produit
 		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=100;
 		$this->product->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
 
-		// $this->theme et $this->css
+		// conf->theme et $this->css
 		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="eldy";
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "/theme/".$this->theme."/style.css.php";
 
-		// $this->email_from = email pour envoi par dolibarr des mails automatiques
+		// conf->email_from = email pour envoi par dolibarr des mails automatiques
 		$this->email_from = "dolibarr-robot@domain.com";
 		if (! empty($this->global->MAIN_MAIL_EMAIL_FROM)) $this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
 
-		// $this->notification->email_from = email pour envoi par Dolibarr des notifications
+		// conf->notification->email_from = email pour envoi par Dolibarr des notifications
 		$this->notification->email_from=$this->email_from;
 		if (! empty($this->global->NOTIFICATION_EMAIL_FROM)) $this->notification->email_from=$this->global->NOTIFICATION_EMAIL_FROM;
 
-		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
+		// conf->mailing->email_from = email pour envoi par Dolibarr des mailings
 		$this->mailing->email_from=$this->email_from;
 		if (! empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
-
-		// Defini MAIN_GRAPH_LIBRARY
-		if (empty($this->global->MAIN_GRAPH_LIBRARY)) $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
-
-        if (! isset($this->global->FCKEDITOR_EDITORNAME)) $this->global->FCKEDITOR_EDITORNAME='ckeditor';  // fckeditor to switch
 
         // Format for date (used by default when not found or searched in lang)
         $this->format_date_short="%d/%m/%Y";            // Format of day with PHP/C tags (strftime functions)

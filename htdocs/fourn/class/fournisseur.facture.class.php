@@ -82,14 +82,11 @@ class FactureFournisseur extends Facture
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
      */
-    function FactureFournisseur($DB)
+    function FactureFournisseur($db)
     {
-        $this->db = $DB ;
-
-        $this->id = $facid;
-        $this->socid = $socid;
+        $this->db = $db;
 
         $this->amount = 0;
         $this->remise = 0;
@@ -115,6 +112,7 @@ class FactureFournisseur extends Facture
     {
         global $langs,$conf;
 
+		$error=0;
         $now=dol_now();
 
         // Clear parameters
@@ -255,6 +253,7 @@ class FactureFournisseur extends Facture
     function fetch($id='',$ref='')
     {
         global $langs;
+        
         $sql = "SELECT";
         $sql.= " t.rowid,";
         $sql.= " t.facnumber,";
@@ -356,8 +355,8 @@ class FactureFournisseur extends Facture
             }
             else
             {
-                $this->error='Bill with id '.$rowid.' not found sql='.$sql;
-                dol_syslog(get_class($this).'::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
+                $this->error='Bill with id '.$id.' not found sql='.$sql;
+                dol_syslog(get_class($this).'::Fetch rowid='.$id.' numrows=0 sql='.$sql);
                 return -2;
             }
 

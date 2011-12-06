@@ -198,7 +198,8 @@ class CSMSFile
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
 		{
-			$fp = fopen($dolibarr_main_data_root."/dolibarr_sms.log","w");
+			$outputfile=$dolibarr_main_data_root."/dolibarr_sms.log";
+			$fp = fopen($outputfile,"w");
 
 			fputs($fp, $this->message);
 
@@ -218,7 +219,8 @@ class CSMSFile
 
         if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
         {
-            $fp = fopen($dolibarr_main_data_root."/dolibarr_sms.log","a+");
+        	$outputfile=$dolibarr_main_data_root."/dolibarr_sms.log";
+            $fp = fopen($outputfile,"a+");
 
             fputs($fp, "\nResult id=".$result);
 

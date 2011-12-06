@@ -84,9 +84,9 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		if ($ldapdebug)
 		{
 			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
-			dol_syslog("functions_ldap::check_user_password_ldap uid/samacountname=".$ldapuserattr.", dn=".$ladpdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
+			dol_syslog("functions_ldap::check_user_password_ldap uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
 			print "DEBUG: Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."\n";
-			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ladpdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."\n";
+			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."\n";
 		}
 
 		$resultFetchLdapUser=0;

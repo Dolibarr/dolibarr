@@ -92,10 +92,11 @@ abstract class ActionsContactCardCommon
     /**
      *  Load data control
      *
-     *	@param	int		$id		Id of object
+	 *  @param	string	&$action    Type of action
+	 *  @param	int		$id			Id of object
      *	@return	void
      */
-    function doActions(&$action)
+    function doActions(&$action, $id)
     {
         global $conf, $user, $langs;
 
@@ -397,11 +398,7 @@ abstract class ActionsContactCardCommon
         	include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
         	$login=dol_buildlogin($this->object->nom, $this->object->prenom);
         	
-        	$generated_password='';
-        	if (! $ldap_sid)
-        	{
-        		$generated_password=getRandomPassword('');
-        	}
+       		$generated_password=getRandomPassword('');
         	$password=$generated_password;
         	
         	// Create a form array

@@ -41,12 +41,11 @@ class BoutiqueCommande
     /**
      * Constructor
      *
-     * @param	DoliDB	$DB		Database handler
+     * @param	DoliDB	$db		Database handler
      */
-    function BoutiqueCommande($DB)
+    function BoutiqueCommande($db)
     {
-        $this->db = $DB;
-        $this->id = $id;
+        $this->db = $db;
 
         $this->billing_adr = new Address();
         $this->delivry_adr = new Address();
@@ -107,7 +106,8 @@ class BoutiqueCommande
             if ( $result )
             {
                 $num = $this->db->num_rows($result);
-
+				
+				$i=0;
                 while ($i < $num)
                 {
                     $array = $this->db->fetch_array($result);

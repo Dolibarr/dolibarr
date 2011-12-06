@@ -136,7 +136,6 @@ print '</table>'."\n";
 
 
 print '<br>'."\n";
-print '<!-- Editor name = '.$conf->global->FCKEDITOR_EDITORNAME.' -->';
 print_fiche_titre($langs->trans("TestSubmitForm"),'','');
 print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 $uselocalbrowser=true;

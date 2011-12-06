@@ -70,6 +70,7 @@ class EcmDirectory // extends CommonObject
 	{
 		global $conf, $langs;
 
+		$error=0;
 		$now=dol_now();
 
 		// Clean parameters
@@ -328,6 +329,8 @@ class EcmDirectory // extends CommonObject
 		global $conf, $langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
+		$error=0;
+		
 		$relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
 
 		dol_syslog("EcmDirectories::delete remove directory ".$relativepath);

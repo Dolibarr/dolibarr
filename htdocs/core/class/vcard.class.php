@@ -184,7 +184,7 @@ class vCard
         $key = "ADR";
         if ($type!="") $key.= ";$type";
         $key.= ";CHARSET=".$this->encoding;
-        $this->properties[$key] = encode($name).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
+        $this->properties[$key] = ";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
         if ($this->properties["LABEL;$type;CHARSET=".$this->encoding] == "")
         {

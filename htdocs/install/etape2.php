@@ -197,10 +197,6 @@ if ($action == "set")
 
                 //print "<tr><td>Creation de la table $name/td>";
                 $requestnb++;
-                if ($conf->file->character_set_client == "UTF-8")
-                {
-                    $buffer=utf8_encode($buffer);
-                }
 
                 dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
                 $resql=$db->query($buffer,0,'dml');
@@ -344,10 +340,6 @@ if ($action == "set")
                     	
                         //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
                         $requestnb++;
-                        if ($conf->file->character_set_client == "UTF-8")
-                        {
-                            $buffer=utf8_encode($buffer);
-                        }
 
                         dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
                         $resql=$db->query($buffer,0,'dml');

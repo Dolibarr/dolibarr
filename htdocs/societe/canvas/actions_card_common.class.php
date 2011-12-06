@@ -546,7 +546,7 @@ abstract class ActionsCardCommon
         {
             $head = societe_prepare_head($this->object);
 
-            $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'company');
+            $this->tpl['showhead']=dol_get_fiche_head($head, 'card', '', 0, 'company');
             $this->tpl['showend']=dol_get_fiche_end();
 
             $this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'socid','',($user->societe_id?0:1),'rowid','nom');
@@ -595,7 +595,7 @@ abstract class ActionsCardCommon
             }
             else if ($nbofsalesrepresentative > 0)
             {
-            	$userstatic=new User($db);
+            	$userstatic=new User($this->db);
             	$i=0;
             	foreach($listsalesrepresentatives as $val)
             	{

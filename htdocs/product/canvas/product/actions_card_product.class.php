@@ -303,7 +303,7 @@ class ActionsCardProduct extends Product
 		}
 		else
 		{
-			dol_print_error($db,$sql);
+			dol_print_error($this->db,$sql);
 		}
 	}
 
@@ -441,7 +441,7 @@ class ActionsCardProduct extends Product
 		}
 		else
 		{
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 	}
 

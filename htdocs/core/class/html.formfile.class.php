@@ -358,7 +358,7 @@ class FormFile
 
             $headershown=1;
 
-            $form = new Form($db);
+            $form = new Form($this->db);
             $buttonlabeltoshow=$buttonlabel;
             if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
@@ -537,7 +537,7 @@ class FormFile
     {
         global $user, $conf, $langs;
         global $bc;
-        global $sortfield, $sortorder;
+        global $sortfield, $sortorder, $maxheightmini;
 
         // Show list of existing files
         if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));

@@ -54,7 +54,7 @@ function commande_prepare_head($object)
 		$h++;
 	}
 
-	if ($conf->use_preview_tabs)
+	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Preview");

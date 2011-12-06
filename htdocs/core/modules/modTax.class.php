@@ -149,6 +149,8 @@ class modTax extends DolibarrModules
 		// Nettoyage avant activation
 		$this->remove();
 
+		$sql = array();
+
 		return $this->_init($sql);
 	}
 

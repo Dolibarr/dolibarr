@@ -320,7 +320,7 @@ class BonPrelevement extends CommonObject
     {
         global $user,$conf;
 
-        $error == 0;
+        $error = 0;
 
         if ($this->db->begin())
         {
@@ -401,7 +401,7 @@ class BonPrelevement extends CommonObject
     {
         global $conf,$langs;
 
-        $error == 0;
+        $error = 0;
 
         if ($this->_fetched == 1)
         {
@@ -525,7 +525,8 @@ class BonPrelevement extends CommonObject
     {
         global $conf,$langs;
 
-        $error == 0;
+        $error = 0;
+        
         dol_syslog("bon-prelevement::set_infotrans Start",LOG_INFO);
         if ($this->db->begin())
         {

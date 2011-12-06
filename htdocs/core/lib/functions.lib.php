@@ -373,8 +373,8 @@ function dol_now($mode='gmt')
  */
 function dol_sanitizeFileName($str,$newstr='_')
 {
-    global $conf;
-    return dol_string_nospecial(dol_string_unaccent($str),$newstr,$conf->filesystem_forbidden_chars);
+	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+    return dol_string_nospecial(dol_string_unaccent($str), $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -4417,7 +4417,8 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 function printCommonFooter($zone='private')
 {
     global $conf;
-
+	global $micro_start_time;
+	
     if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
     else print "\n".'<!-- Common footer for public page -->'."\n";
 

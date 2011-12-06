@@ -149,6 +149,8 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 
 	$langs->load("bills");
 
+	$error=0;
+	
 	// Increase limit for PDF build
     $err=error_reporting();
     error_reporting(0);

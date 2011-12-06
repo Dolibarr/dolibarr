@@ -311,7 +311,6 @@ class FormOther
  				$moreforfilter.='>';
  				$moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')';
  				$moreforfilter.='</option>';
- 				$i++;
  			}
  			$this->db->free($resql_usr);
  		}

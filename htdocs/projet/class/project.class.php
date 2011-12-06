@@ -74,7 +74,7 @@ class Project extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-        global $conf;
+        global $conf, $langs;
 
         $error = 0;
         $ret = 0;
@@ -170,7 +170,9 @@ class Project extends CommonObject
     function update($user, $notrigger=0)
     {
         global $langs, $conf;
-
+		
+		$error=0;
+		
         // Clean parameters
         $this->title = trim($this->title);
         $this->description = trim($this->description);
@@ -496,6 +498,8 @@ class Project extends CommonObject
     {
         global $langs, $conf;
 
+		$error=0;
+		
         if ($this->statut != 1)
         {
             $this->db->begin();
@@ -553,6 +557,8 @@ class Project extends CommonObject
     {
         global $langs, $conf;
 
+		$error=0;
+		
         if ($this->statut != 2)
         {
             $this->db->begin();
