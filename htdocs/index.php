@@ -33,6 +33,10 @@ require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
 
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('index'));
+
 
 /*
  * Actions
@@ -249,6 +253,11 @@ if ($user->societe_id == 0)
             //print $includes[$key].' '.memory_get_usage()."<br>";
         }
     }
+
+    $object=(object) array();
+    $parameters=array();
+    $action='';
+    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
     print '</table>';
 }
