@@ -1611,7 +1611,7 @@ function pdf_getCurrencySymbol(&$pdf, $currency_code)
 			$currency_sign = " ".$pdf->unichr(90).$pdf->unichr(36);
 			break;
 		default:
-			$currency_sign = " ".$currency;
+			$currency_sign = " ".$currency_code;
 			break;
 	}
 	return $currency_sign;
