@@ -82,7 +82,7 @@ abstract class CommonObject
         global $user,$conf,$langs;
 
 		$error=0;
-		
+
         dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source");
 
         // Check parameters
@@ -203,7 +203,7 @@ abstract class CommonObject
         global $user,$langs,$conf;
 
 		$error=0;
-		
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
 
@@ -508,6 +508,54 @@ abstract class CommonObject
         }
 
         return $result;
+    }
+
+
+    /**
+     *		Load data for barcode
+     *
+     *		@return		int			<0 if KO, >=0 if OK
+     */
+    function fetch_barcode()
+    {
+        global $conf;
+
+        dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
+
+        $idtype=$this->barcode_type;
+        if (! $idtype)
+        {
+            if ($this->element == 'product')      $idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+            else if ($this->element == 'societe') $idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+            else dol_print_error('','Call fetch_barcode with barcode_type not defined and cant be guessed');
+        }
+
+        if ($idtype > 0)
+        {
+            if (empty($this->barcode_type) || empty($this->barcode_type_code) || empty($this->barcode_type_label) || empty($this->barcode_type_coder))    // If data not already loaded
+            {
+                $sql = "SELECT rowid, code, libelle as label, coder";
+                $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+                $sql.= " WHERE rowid = ".$idtype;
+                dol_syslog(get_class($this).'::fetch_barcode sql='.$sql);
+                $resql = $this->db->query($sql);
+            	if ($resql)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $this->barcode_type       = $obj->rowid;
+                    $this->barcode_type_code  = $obj->code;
+                    $this->barcode_type_label = $obj->label;
+                    $this->barcode_type_coder = $obj->coder;
+                    return 1;
+                }
+                else
+                {
+                    dol_print_error($this->db);
+                    return -1;
+                }
+            }
+        }
+        else return 0;
     }
 
     /**

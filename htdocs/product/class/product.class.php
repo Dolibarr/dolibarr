@@ -105,12 +105,12 @@ class Product extends CommonObject
 	var $accountancy_code_buy;
 	var $accountancy_code_sell;
 
-	//! Codes barres
-	var $barcode;
-	var $barcode_type;
-	var $barcode_type_code;
-	var $barcode_type_label;
-	var $barcode_type_coder;
+	//! barcode
+	var $barcode;               // value
+	var $barcode_type;          // id
+	var $barcode_type_code;     // code (loaded by fetch_barcode)
+	var $barcode_type_label;    // label (loaded by fetch_barcode)
+	var $barcode_type_coder;    // coder (loaded by fetch_barcode)
 
 	var $stats_propale=array();
 	var $stats_commande=array();
@@ -1099,35 +1099,6 @@ class Product extends CommonObject
 
 				// multilangs
 				if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
-
-				// Barcode
-				if ($conf->global->MAIN_MODULE_BARCODE)
-				{
-					if ($this->barcode_type == 0)
-					{
-						$this->barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
-					}
-
-					if ($this->barcode_type > 0)
-					{
-						$sql = "SELECT code, libelle, coder";
-						$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-						$sql.= " WHERE rowid = ".$this->barcode_type;
-						$resql = $this->db->query($sql);
-						if ($resql)
-						{
-							$result = $this->db->fetch_array($resql);
-							$this->barcode_type_code = $result["code"];
-							$this->barcode_type_label = $result["libelle"];
-							$this->barcode_type_coder = $result["coder"];
-						}
-						else
-						{
-							dol_print_error($this->db);
-							return -1;
-						}
-					}
-				}
 
 				// Load multiprices array
 				if ($conf->global->PRODUIT_MULTIPRICES)
@@ -2547,7 +2518,7 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Show photos of a product (nbmax maximum)
+	 *  Show photos of a product (nbmax maximum), into several columns
 	 *	TODO Move this into html.formproduct.class.php
 	 *
 	 *  @param      sdir        	Directory to scan
@@ -2712,22 +2683,6 @@ class Product extends CommonObject
 		$this->nbphoto = $nbphoto;
 
 		return $return;
-	}
-
-
-	/**
-	 *  Show barcode of a product (nbmax maximum)
-	 *
-	 *  @return     string			Html code to show barcode.
-	 *	TODO Move this into html.formproduct.class.php
-	 */
-	function show_barcode()
-	{
-	    // Barcode image
-	    $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($this->barcode_type_coder).'&code='.urlencode($this->barcode).'&encoding='.urlencode($this->barcode_type_code);
-	    $out='<!-- url barcode = '.$url.' -->';
-	    $out.='<img src="'.$url.'">';
-	    return $out;
 	}
 
 

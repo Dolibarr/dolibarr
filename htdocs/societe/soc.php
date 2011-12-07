@@ -1193,17 +1193,17 @@ else
                 }
             }
 
-            // Status
-            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-            print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$object->status);
-            print '</td></tr>';
-
             // Barcode
             if ($conf->global->MAIN_MODULE_BARCODE)
             {
                 print '<tr><td valign="top">'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="barcode" value="'.$object->barcode.'">';
                 print '</td></tr>';
             }
+
+            // Status
+            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+            print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$object->status);
+            print '</td></tr>';
 
             // Address
             print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
@@ -1442,6 +1442,9 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
+        $showlogo=$object->logo;
+        $showbarcode=($conf->barcode->enabled && $user->rights->barcode->lire);
+
         print '<table class="border" width="100%">';
 
         // Ref
@@ -1460,84 +1463,89 @@ else
         print '</td>';
         print '</tr>';
 
-        // Logo
+        // Logo+barcode
         $rowspan=4;
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
         if ($object->client) $rowspan++;
         if ($conf->fournisseur->enabled && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
         if ($conf->global->MAIN_MODULE_BARCODE) $rowspan++;
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
-        $showlogo='';
-        if ($object->logo)
+        $htmllogobar='';
+        if ($showlogo || $showbarcode)
         {
-            $showlogo.='<td rowspan="'.$rowspan.'" style="text-align: center;" width="25%">';
-            $showlogo.=$form->showphoto('societe',$object,50);
-            $showlogo.='</td>';
+            $htmllogobar.='<td rowspan="'.$rowspan.'" style="text-align: center;" width="25%">';
+            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object,50);
+            if ($showlogo && $showbarcode) $htmllogobar.='<br><br>';
+            if ($showbarcode) $htmllogobar.=$form->showbarcode($object,50);
+            $htmllogobar.='</td>';
         }
 
+        // Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
-            print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->prefix_comm.'</td>';
-            print $showlogo; $showlogo='';
+            print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->prefix_comm.'</td>';
+            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
+        // Customer code
         if ($object->client)
         {
             print '<tr><td>';
-            print $langs->trans('CustomerCode').'</td><td colspan="'.(2+($object->logo?0:1)).'">';
+            print $langs->trans('CustomerCode').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
             print $object->code_client;
             if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
             print '</td>';
-            print $showlogo; $showlogo='';
+            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
+        // Supplier code
         if ($conf->fournisseur->enabled && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
         {
             print '<tr><td>';
-            print $langs->trans('SupplierCode').'</td><td colspan="'.(2+($object->logo?0:1)).'">';
+            print $langs->trans('SupplierCode').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
             print $object->code_fournisseur;
             if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
             print '</td>';
-            print $showlogo; $showlogo='';
+            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
-
-        // Status
-        print '<tr><td>'.$langs->trans("Status").'</td>';
-        print '<td colspan="'.(2+($object->logo?0:1)).'">';
-        print $object->getLibStatut(2);
-        print '</td>';
-        print $showlogo; $showlogo='';
-        print '</tr>';
 
         // Barcode
         if ($conf->global->MAIN_MODULE_BARCODE)
         {
-            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->barcode.'</td></tr>';
+            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->barcode.'</td></tr>';
         }
 
+        // Status
+        print '<tr><td>'.$langs->trans("Status").'</td>';
+        print '<td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
+        print $object->getLibStatut(2);
+        print '</td>';
+        print $htmllogobar; $htmllogobar='';
+        print '</tr>';
+
         // Address
-        print "<tr><td valign=\"top\">".$langs->trans('Address').'</td><td colspan="'.(2+($object->logo?0:1)).'">';
+        print "<tr><td valign=\"top\">".$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         dol_print_address($object->address,'gmap','thirdparty',$object->id);
         print "</td></tr>";
 
         // Zip / Town
-        print '<tr><td width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="'.(2+($object->logo?0:1)).'">';
+        print '<tr><td width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print $object->cp.($object->cp && $object->ville?" / ":"").$object->ville;
         print "</td>";
         print '</tr>';
 
         // Country
-        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+($object->logo?0:1)).'" nowrap="nowrap">';
+        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" nowrap="nowrap">';
         $img=picto_from_langcode($object->pays_code);
         if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->pays,$langs->trans("CountryIsInEEC"),1,0);
         else print ($img?$img.' ':'').$object->pays;
         print '</td></tr>';
 
         // State
-        if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->state.'</td>';
+        if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
         print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->pays_code,0,$object->id,'AC_TEL').'</td>';
         print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->pays_code,0,$object->id,'AC_FAX').'</td></tr>';

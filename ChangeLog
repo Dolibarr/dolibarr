@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.2 compared to 3.1 *****
 
 For users:
+- New: show thirdparty barcode on main tab.
 - New: Can input note (private and public) during note and expenses creation.
 - New: Print ticket show invoice ref into POS module.
 - New: Can edit customer discounts from invoice create and edit card.

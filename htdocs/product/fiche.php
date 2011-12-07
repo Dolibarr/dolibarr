@@ -1029,7 +1029,7 @@ else
                 print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
                 if ($showphoto)   print $object->show_photos($conf->product->dir_output,1,1,0,0,0,80);
                 if ($showphoto && $showbarcode) print '<br><br>';
-                if ($showbarcode) print $object->show_barcode();
+                if ($showbarcode) print $form->showbarcode($object);
                 print '</td>';
             }
 
@@ -1037,9 +1037,6 @@ else
 
             if ($showbarcode)
             {
-                require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
-                $formbarcode = new FormBarCode($db);
-
                 // Barcode type
                 print '<tr><td nowrap>';
                 print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
@@ -1050,10 +1047,13 @@ else
                 print '</td><td colspan="2">';
                 if ($_GET['action'] == 'editbarcodetype')
                 {
+                    require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
+                    $formbarcode = new FormBarCode($db);
                     $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'barcodetype_id');
                 }
                 else
                 {
+                    $object->fetch_barcode();
                     print $object->barcode_type_label?$object->barcode_type_label:'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>';
                 }
                 print '</td></tr>'."\n";

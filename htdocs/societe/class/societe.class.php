@@ -74,7 +74,13 @@ class Societe extends CommonObject
     var $fax;
     var $email;
     var $url;
-    var $barcode;
+
+	//! barcode
+	var $barcode;               // value
+	var $barcode_type;          // id
+	var $barcode_type_code;     // code (loaded by fetch_barcode)
+	var $barcode_type_label;    // label (loaded by fetch_barcode)
+	var $barcode_type_coder;    // coder (loaded by fetch_barcode)
 
     // 4 identifiants professionnels (leur utilisation depend du pays)
     var $siren;		// IdProf1 - Deprecated
@@ -142,13 +148,13 @@ class Societe extends CommonObject
     /**
      *    Constructor
      *
-     *    @param	DoliDB		$DB		Database handler
+     *    @param	DoliDB		$db		Database handler
      */
-    public function Societe($DB)
+    public function Societe($db)
     {
         global $conf;
 
-        $this->db = $DB;
+        $this->db = $db;
 
         $this->client = 0;
         $this->prospect = 0;
@@ -176,7 +182,7 @@ class Societe extends CommonObject
         global $langs,$conf;
 
 		$error=0;
-		
+
         // Clean parameters
         if (empty($this->status)) $this->status=0;
         $this->name=$this->name?trim($this->name):trim($this->nom);
@@ -2357,7 +2363,7 @@ class Societe extends CommonObject
 
     /**
      *      Create a third party into database from a member object
-     * 
+     *
      *      @param      member		Object member
      * 		@param		socname		Name of third party to force
      *      @return     int			<0 if KO, id of created account if OK

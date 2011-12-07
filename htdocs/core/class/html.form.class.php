@@ -1365,7 +1365,7 @@ class Form
     {
         global $langs,$conf;
         global $price_level, $status, $finished;
-        
+
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=2 means suppliers products
@@ -3660,12 +3660,38 @@ class Form
 
 
     /**
+    *    	Return HTML code to output a barcode
+    *
+    *     	@param	Object	&$object		Object containing data to retrieve file name
+    * 		@param	int		$width			Width of photo
+    * 	  	@return string    				HTML code to output barcode
+    */
+    function showbarcode(&$object,$width=100)
+    {
+        global $conf;
+
+        if (empty($object->barcode)) return '';
+
+        // Complete object if not complete
+        if (empty($object->barcode_type_code) || empty($object->barcode_type_coder))
+        {
+            $object->fetch_barcode();
+        }
+
+        // Barcode image
+        $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
+        $out ='<!-- url barcode = '.$url.' -->';
+        $out.='<img src="'.$url.'">';
+        return $out;
+    }
+
+    /**
      *    	Return HTML code to output a photo
      *
-     *    	@param      modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-     *     	@param      object			Object containing data to retrieve file name
-     * 		@param		width			Width of photo
-     * 	  	@return     string    		HTML code to output photo
+     *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+     *     	@param  Object		$object			Object containing data to retrieve file name
+     * 		@param	int			$width			Width of photo
+     * 	  	@return string    					HTML code to output photo
      */
     function showphoto($modulepart,$object,$width=100)
     {
