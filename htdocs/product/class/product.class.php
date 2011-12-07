@@ -403,7 +403,7 @@ class Product extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
-		
+
 		// Verification parametres
 		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
 
@@ -2547,18 +2547,18 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	Show photos of a product (nbmax maximum)
+	 *  Show photos of a product (nbmax maximum)
+	 *	TODO Move this into html.formproduct.class.php
 	 *
-	 *    	@param      sdir        	Directory to scan
-	 *    	@param      size        	0=original size, 1 use thumbnail if possible
-	 *    	@param      nbmax       	Nombre maximum de photos (0=pas de max)
-	 *    	@param      nbbyrow     	Nombre vignettes par ligne (si mode vignette)
-	 * 		@param		showfilename	1=Show filename
-	 * 		@param		showaction		1=Show icon with action links (resize, delete)
-	 * 		@param		maxHeight		Max height of image when size=1
-	 * 		@param		maxWidth		Max width of image when size=1
-	 *    	@return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
-	 *		TODO Move this into html.formproduct.class.php
+	 *  @param      sdir        	Directory to scan
+	 *  @param      size        	0=original size, 1 use thumbnail if possible
+	 *  @param      nbmax       	Nombre maximum de photos (0=pas de max)
+	 *  @param      nbbyrow     	Nombre vignettes par ligne (si mode vignette)
+	 * 	@param		showfilename	1=Show filename
+	 * 	@param		showaction		1=Show icon with action links (resize, delete)
+	 * 	@param		maxHeight		Max height of image when size=1
+	 * 	@param		maxWidth		Max width of image when size=1
+	 *  @return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160)
 	{
@@ -2571,7 +2571,6 @@ class Product extends CommonObject
 		$dir = $sdir . '/'. $pdir;
 		$dirthumb = $dir.'thumbs/';
 		$pdirthumb = $pdir.'thumbs/';
-
 
 		$return ='<!-- Photo -->'."\n";
         /*$return.="<script type=\"text/javascript\">
@@ -2714,6 +2713,23 @@ class Product extends CommonObject
 
 		return $return;
 	}
+
+
+	/**
+	 *  Show barcode of a product (nbmax maximum)
+	 *
+	 *  @return     string			Html code to show barcode.
+	 *	TODO Move this into html.formproduct.class.php
+	 */
+	function show_barcode()
+	{
+	    // Barcode image
+	    $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($this->barcode_type_coder).'&code='.urlencode($this->barcode).'&encoding='.urlencode($this->barcode_type_code);
+	    $out='<!-- url barcode = '.$url.' -->';
+	    $out.='<img src="'.$url.'">';
+	    return $out;
+	}
+
 
 	/**
 	 *  Retourne tableau de toutes les photos du produit
