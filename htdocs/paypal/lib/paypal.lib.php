@@ -86,7 +86,7 @@ function html_print_paypal_footer($fromcompany,$langs)
 	$line1="";
 	if ($fromcompany->forme_juridique_code)
 	{
-		$line1.=($line1?" - ":"").$langs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
+		$line1.=($line1?" - ":"").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
 	}
 	// Capital
 	if ($fromcompany->capital)
@@ -98,14 +98,14 @@ function html_print_paypal_footer($fromcompany,$langs)
 	{
 		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$langs->convToOutputCharset($fromcompany->idprof1);
+		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
 	}
 	// Prof Id 2
 	if ($fromcompany->idprof2)
 	{
 		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$langs->convToOutputCharset($fromcompany->idprof2);
+		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
 	}
 
 	// Second line of company infos
@@ -115,19 +115,19 @@ function html_print_paypal_footer($fromcompany,$langs)
 	{
 		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$langs->convToOutputCharset($fromcompany->idprof3);
+		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
 	}
 	// Prof Id 4
 	if ($fromcompany->idprof4)
 	{
 		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$langs->convToOutputCharset($fromcompany->idprof4);
+		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
 	}
 	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '')
 	{
-		$line2.=($line2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$langs->convToOutputCharset($fromcompany->tva_intra);
+		$line2.=($line2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
 	}
 
 	print '<br><br><hr>'."\n";
@@ -156,7 +156,7 @@ function paypaladmin_prepare_head()
 	$h++;
 
 	$object=(object) array();
-	
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

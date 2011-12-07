@@ -49,8 +49,8 @@ class Translate {
 	/**
 	 *	Constructor
 	 *
-	 *  @param      dir             Force directory that contains /langs subdirectory (value is sometine '..' like into install/* pages or support/* pages).
-	 *  @param      conf			Object with Dolibarr configuration
+	 *  @param	string	$dir            Force directory that contains /langs subdirectory (value is sometine '..' like into install/* pages or support/* pages).
+	 *  @param  Conf	$conf			Object with Dolibarr configuration
 	 */
 	function Translate($dir = "",$conf)
 	{
@@ -63,7 +63,7 @@ class Translate {
 	/**
 	 *  Set accessor for this->defaultlang
 	 *
-	 *  @param      srclang     	Language to use
+	 *  @param	string	$srclang     	Language to use
 	 */
 	function setDefaultLang($srclang='fr_FR')
 	{
@@ -129,8 +129,8 @@ class Translate {
 	 *  Return active language code for current user
 	 * 	It's an accessor for this->defaultlang
 	 *
-	 *  @param     mode        0=Long language code, 1=Short language code
-	 *  @return    string      Language code used (en_US, en_AU, fr_FR, ...)
+	 *  @param	int		$mode       0=Long language code, 1=Short language code
+	 *  @return string      		Language code used (en_US, en_AU, fr_FR, ...)
 	 */
 	function getDefaultLang($mode=0)
 	{
@@ -337,8 +337,8 @@ class Translate {
 	 * WARNING: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), getLabelFromKey must
 	 * not be called with same value than input.
 	 *
-	 * @param  key
-	 * @return string
+	 * @param	string		$key		Key to translate
+	 * @return 	string					Translated string
 	 */
 	function getTradFromKey($key)
 	{
@@ -379,13 +379,13 @@ class Translate {
 	 *              et si toujours pas trouve, il est retourne tel quel
 	 *              Les parametres de cette methode peuvent contenir de balises HTML.
 	 *
-	 *  @param      key         cle de chaine a traduire
-	 *  @param      param1      chaine de param1
-	 *  @param      param2      chaine de param2
-	 *  @param      param3      chaine de param3
-	 *  @param      param4      chaine de param4
-	 *	@param		maxsize		taille max
-	 *  @return     string      Chaine traduite et code en HTML
+	 *  @param	string	$key        Key to translate
+	 *  @param  string	$param1     chaine de param1
+	 *  @param  string	$param2     chaine de param2
+	 *  @param  string	$param3     chaine de param3
+	 *  @param  string	$param4     chaine de param4
+	 *	@param	int		$maxsize	taille max
+	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
 	 */
 	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
 	{
@@ -400,7 +400,7 @@ class Translate {
 			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities
             $str=str_replace(array('<','>','"',),array('__lt__','__gt__','__quot__'),$str);
 
-			$str=$this->convToOutputCharset($str);	// Convert string to $this->charset_output
+			//$str=$this->convToOutputCharset($str);	// Convert string to $this->charset_output
 
 			// Crypt string into HTML
 			// $str est une chaine stockee en memoire au format $this->charset_output
@@ -413,7 +413,7 @@ class Translate {
 		else								// Translation is not available
 		{
 			$str=$this->getTradFromKey($key);
-			return $this->convToOutputCharset($str);
+			//return $this->convToOutputCharset($str);
 		}
 	}
 
