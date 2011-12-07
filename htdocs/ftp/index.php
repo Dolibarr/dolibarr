@@ -361,7 +361,7 @@ llxHeader();
 if ($conf->use_javascript_ajax)
 {
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
 	jQuery(".checkboxfordelete").click(function() {
