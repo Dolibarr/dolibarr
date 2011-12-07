@@ -1242,7 +1242,7 @@ class Form
                     }
                 }
                 $opt.= '>';
-                $opt.= $langs->convToOutputCharset($objp->ref).' - '.$langs->convToOutputCharset(dol_trunc($label,32)).' - ';
+                $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
 
                 $objRef = $objp->ref;
                 if ($filterkey && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
@@ -1459,9 +1459,9 @@ class Form
                 $label = $objp->label;
                 if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
-                $opt.=$langs->convToOutputCharset($objp->ref).' ('.$langs->convToOutputCharset($objp->ref_fourn).') - ';
+                $opt.=$objp->ref.' ('.$objp->ref_fourn.') - ';
                 $outval.=$objRef.' ('.$objRefFourn.') - ';
-                $opt.=$langs->convToOutputCharset(dol_trunc($objp->label,18)).' - ';
+                $opt.=dol_trunc($objp->label,18).' - ';
                 $outval.=dol_trunc($label,18).' - ';
 
                 if ($objp->fprice != '') 	// Keep != ''

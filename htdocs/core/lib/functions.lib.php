@@ -735,34 +735,33 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
 /**
  *      Return a formated address (part address/zip/town/state) according to country rules
  *
- *      @param      outputlangs     Output langs object
- *      @param      object          A company or contact object
- *      @return     string          Formated string
+ *      @param  Object		$object         A company or contact object
+ *      @return string          			Formated string
  */
-function dol_format_address($outputlangs,$object)
+function dol_format_address($object)
 {
 	$ret='';
 	$countriesusingstate=array('US','IN');
 
 	// Address
-	$ret .= $outputlangs->convToOutputCharset($object->address);
+	$ret .= $object->address;
 	// Zip/Town/State
 	if (in_array($object->country_code,array('US')))   // US: town, state, zip
 	{
-		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->town);
+		$ret .= ($ret ? "\n" : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$outputlangs->convToOutputCharset($object->departement);
+			$ret.=", ".$object->departement;
 		}
-		if ($object->zip) $ret .= ', '.$outputlangs->convToOutputCharset($object->zip);
+		if ($object->zip) $ret .= ', '.$object->zip;
 	}
 	else                                        // Other: zip town, state
 	{
-		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->zip);
-		$ret .= ' '.$outputlangs->convToOutputCharset($object->town);
+		$ret .= ($ret ? "\n" : '' ).$object->zip;
+		$ret .= ' '.$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$outputlangs->convToOutputCharset($object->state);
+			$ret.=", ".$object->state;
 		}
 	}
 
@@ -4418,7 +4417,7 @@ function printCommonFooter($zone='private')
 {
     global $conf;
 	global $micro_start_time;
-	
+
     if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
     else print "\n".'<!-- Common footer for public page -->'."\n";
 

@@ -190,7 +190,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'source')
 	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$sourcecompany)."\n";
+		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany))."\n";
 
 		// Tel
 		if ($sourcecompany->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);
@@ -207,13 +207,13 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		if ($usecontact)
 		{
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1));
-			$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$targetcontact)."\n";
+			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
 			// Country
 			if ($targetcontact->pays_code && $targetcontact->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
 		}
 		else
 		{
-			$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$targetcompany)."\n";
+			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
 			// Country
 			if ($targetcompany->pays_code && $targetcompany->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
 		}
@@ -250,7 +250,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'delivery')	// for a delivery address (address + phone/fax)
 	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$deliverycompany)."\n";
+		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($deliverycompany))."\n";
 
 		// Tel
 		if ($deliverycompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($deliverycompany->phone);
@@ -1213,7 +1213,7 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
         }
         else
         {
-            if (empty($hidedetails) || $hidedetails > 1) return 
+            if (empty($hidedetails) || $hidedetails > 1) return
 				price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100);
         }
     }

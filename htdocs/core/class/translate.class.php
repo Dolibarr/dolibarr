@@ -384,7 +384,7 @@ class Translate {
 	 *  @param  string	$param2     chaine de param2
 	 *  @param  string	$param3     chaine de param3
 	 *  @param  string	$param4     chaine de param4
-	 *	@param	int		$maxsize	taille max
+	 *	@param	int		$maxsize	Max length of text
 	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
 	 */
 	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
@@ -412,8 +412,9 @@ class Translate {
 		}
 		else								// Translation is not available
 		{
-			$str=$this->getTradFromKey($key);
+			//$str=$this->getTradFromKey($key);
 			//return $this->convToOutputCharset($str);
+			return $this->getTradFromKey($key);
 		}
 	}
 
@@ -424,25 +425,16 @@ class Translate {
 	 *               et si toujours pas trouve, il est retourne tel quel.
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
-	 *  @param       key         key of string to translate
-	 *  @param       param1      chaine de param1
-	 *  @param       param2      chaine de param2
-	 *  @param       param3      chaine de param3
-	 *  @param       param4      chaine de param4
-	 *  @return      string      chaine traduite
+	 *  @param	string	$key        Key to translate
+	 *  @param  string	$param1     chaine de param1
+	 *  @param  string	$param2     chaine de param2
+	 *  @param  string	$param3     chaine de param3
+	 *  @param  string	$param4     chaine de param4
+	 *  @return string      		Translated string (encoded into UTF8)
 	 */
 	function transnoentities($key, $param1='', $param2='', $param3='', $param4='')
 	{
-		if (! empty($this->tab_translate[$key]))
-		{
-			// Si la traduction est disponible
-			$newstr=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
-		}
-		else
-		{
-			$newstr=$this->getTradFromKey($key);
-		}
-		return $this->convToOutputCharset($newstr);
+		return $this->convToOutputCharset($this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4));
 	}
 
 
@@ -453,25 +445,26 @@ class Translate {
 	 *               No convert to encoding charset of lang object is done.
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
-	 *  @param       key         key of string to translate
-	 *  @param       param1      chaine de param1
-	 *  @param       param2      chaine de param1
-	 *  @param       param3      chaine de param1
-	 *  @param       param4      chaine de param1
-	 *  @return      string      chaine traduite
+	 *  @param	string	$key        Key to translate
+	 *  @param  string	$param1     chaine de param1
+	 *  @param  string	$param2     chaine de param2
+	 *  @param  string	$param3     chaine de param3
+	 *  @param  string	$param4     chaine de param4
+	 *  @return string      		Translated string
 	 */
 	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
 	{
-		if (! empty($this->tab_translate[$key]))
+		if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
-			// Si la traduction est disponible
-			$newstr=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
+		    $str=$this->tab_translate[$key];
+
+			$str=sprintf($str,$param1,$param2,$param3,$param4);
 		}
 		else
 		{
-			$newstr=$this->getTradFromKey($key);
+			$str=$this->getTradFromKey($key);
 		}
-		return $newstr;
+		return $str;
 	}
 
 
@@ -650,7 +643,7 @@ class Translate {
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 		$sql.= " WHERE ".$fieldkey." = '".$key."'";
-		dol_syslog('Translate::getLabelFromKey sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::getLabelFromKey sql='.$sql,LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -664,7 +657,7 @@ class Translate {
 		else
 		{
 			$this->error=$db->lasterror();
-			dol_syslog("Translate::getLabelFromKey error=".$this->error,LOG_ERR);
+			dol_syslog(get_class($this).'::getLabelFromKey error='.$this->error,LOG_ERR);
 			return -1;
 		}
 	}
