@@ -135,7 +135,7 @@ if (empty($reshook))
         $object->code_client           = $_POST["code_client"];
         $object->code_fournisseur      = $_POST["code_fournisseur"];
         $object->capital               = $_POST["capital"];
-        $object->gencod                = $_POST["gencod"];
+        $object->barcode                = $_POST["barcode"];
 
         $object->tva_intra             = $_POST["tva_intra"];
         $object->tva_assuj             = $_POST["assujtva_value"];
@@ -535,7 +535,7 @@ else
         $object->email				= $_POST["email"];
         $object->url				= $_POST["url"];
         $object->capital			= $_POST["capital"];
-        $object->gencod				= $_POST["gencod"];
+        $object->barcode				= $_POST["barcode"];
         $object->idprof1			= $_POST["idprof1"];
         $object->idprof2			= $_POST["idprof2"];
         $object->idprof3			= $_POST["idprof3"];
@@ -757,7 +757,7 @@ else
         // Barcode
         if ($conf->global->MAIN_MODULE_BARCODE)
         {
-            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod" value="'.$object->gencod.'">';
+            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
         }
 
@@ -1040,7 +1040,7 @@ else
                 $object->idprof4=$_POST["idprof4"];
                 $object->typent_id=$_POST["typent_id"];
                 $object->effectif_id=$_POST["effectif_id"];
-                $object->gencod=$_POST["gencod"];
+                $object->barcode=$_POST["barcode"];
                 $object->forme_juridique_code=$_POST["forme_juridique_code"];
                 $object->default_lang=$_POST["default_lang"];
 
@@ -1201,7 +1201,7 @@ else
             // Barcode
             if ($conf->global->MAIN_MODULE_BARCODE)
             {
-                print '<tr><td valign="top">'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod" value="'.$object->gencod.'">';
+                print '<tr><td valign="top">'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="barcode" value="'.$object->barcode.'">';
                 print '</td></tr>';
             }
 
@@ -1515,7 +1515,7 @@ else
         // Barcode
         if ($conf->global->MAIN_MODULE_BARCODE)
         {
-            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->gencod.'</td></tr>';
+            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->barcode.'</td></tr>';
         }
 
         // Address

@@ -66,7 +66,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["c
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["gencod"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["barcode"],'chaine',0,'',$conf->entity);
     if ($_FILES["logo"]["tmp_name"])
     {
         if (preg_match('/([^\\/:]+)$/i',$_FILES["logo"]["name"],$reg))
@@ -346,7 +346,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td>'.$langs->trans("Gencod").'</td><td>';
-        print '<input name="gencod" size="40" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
+        print '<input name="barcode" size="40" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
         print '</td></tr>';
     }
 

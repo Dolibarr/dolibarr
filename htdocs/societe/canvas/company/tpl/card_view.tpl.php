@@ -72,7 +72,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 <?php if ($conf->global->MAIN_MODULE_BARCODE) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['gencod']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['barcode']; ?></td>
 </tr>
 <?php } ?>
 

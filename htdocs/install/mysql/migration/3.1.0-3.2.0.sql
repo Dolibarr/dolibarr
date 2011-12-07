@@ -103,3 +103,6 @@ ALTER TABLE llx_facture MODIFY ref_client varchar(255);
 UPDATE llx_societe SET fk_stcomm = 0 WHERE fk_stcomm IS NULL;
 ALTER TABLE llx_societe MODIFY COLUMN fk_stcomm integer NOT NULL;
 
+ALTER TABLE llx_societe CHANGE COLUMN gencod barcode varchar(255);
+ALTER TABLE llx_societe ADD COLUMN fk_barcode_type integer DEFAULT 0;
+
