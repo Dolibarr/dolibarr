@@ -37,7 +37,7 @@ class Product extends CommonObject
 	public $element='product';
 	public $table_element='product';
 	public $fk_element='fk_product';
-	public $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur_price');
+	protected $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur_price');
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 

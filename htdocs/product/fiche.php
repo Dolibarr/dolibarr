@@ -649,6 +649,7 @@ llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
+
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------

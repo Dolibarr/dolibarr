@@ -1731,8 +1731,8 @@ abstract class CommonObject
     /**
      *  Function to check if an object is used by others
      *
-     *  @param		id				Id of object
-     *  @return		int				<0 if KO, 0 if not used, >0 if already used
+     *  @param	int		$id			Id of object
+     *  @return	int					<0 if KO, 0 if not used, >0 if already used
      */
     function isObjectUsed($id)
     {
@@ -1807,8 +1807,7 @@ abstract class CommonObject
 
 
     /**
-     *
-     * Enter description here ...
+     * List urls of elemùent
      *
      * @param unknown_type $objectid
      * @param unknown_type $objecttype

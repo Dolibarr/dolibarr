@@ -2230,7 +2230,7 @@ class Form
      *     @param 	string	$action      	   	Action
      *	   @param  	array	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
      * 	   @param  	string	$selectedchoice  	"" or "no" or "yes"
-     * 	   @param  	int		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
+     * 	   @param  	int		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int		$height          	Force height of box
      *     @return 	string          			'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
@@ -2313,7 +2313,8 @@ class Form
         {
         	$autoOpen=true;
         	$dialogconfirm='dialog-confirm';
-        	if (! is_int($useajax)) {
+        	if (! is_int($useajax))
+        	{
         		$button=$useajax;
         		$useajax=1;
         		$autoOpen=false;
