@@ -124,6 +124,7 @@ function envoi_mail($oldemail,$message,$total)
     $subject = "[Dolibarr] List of unpaid invoices";
     $sendto = $oldemail;
     $from = $conf->global->MAIN_EMAIL_FROM;
+    $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = 0;
 
     print "Envoi mail pour $oldemail, total: $total\n";

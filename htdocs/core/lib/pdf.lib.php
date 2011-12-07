@@ -809,6 +809,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 
 	if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
 	{
+		$format='day';
 		// Show duration if exists
 		if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{
@@ -1272,14 +1273,344 @@ function pdf_getTotalQty($object,$type='',$outputlangs,$hookmanager=false)
 function pdf_getCurrencySymbol(&$pdf, $currency_code)
 {
 	switch ($currency_code) {
+		case "ALL":
+			$currency_sign = " ".$pdf->unichr(76).$pdf->unichr(101).$pdf->unichr(107);
+			break;
+		case "AFN":
+			$currency_sign = " ".$pdf->unichr(1547);
+			break;
+		case "ARS":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "AWG":
+			$currency_sign = " ".$pdf->unichr(402);
+			break;
+		case "AUD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "AZN":
+			$currency_sign = " ".$pdf->unichr(1084).$pdf->unichr(1072).$pdf->unichr(1085);
+			break;
+		case "BSD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "BBD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "BYR":
+			$currency_sign = " ".$pdf->unichr(112).$pdf->unichr(46);
+			break;
+		case "BZD":
+			$currency_sign = " ".$pdf->unichr(66).$pdf->unichr(90).$pdf->unichr(36);
+			break;
+		case "BMD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "BOB":
+			$currency_sign = " ".$pdf->unichr(36).$pdf->unichr(98);
+			break;
+		case "BAM":
+			$currency_sign = " ".$pdf->unichr(75).$pdf->unichr(77);
+			break;
+		case "BWP":
+			$currency_sign = " ".$pdf->unichr(80);
+			break;
+		case "BGN":
+			$currency_sign = " ".$pdf->unichr(1083).$pdf->unichr(1074);
+			break;
+		case "BRL":
+			$currency_sign = " ".$pdf->unichr(82).$pdf->unichr(36);
+			break;
+		case "BND":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "KHR":
+			$currency_sign = " ".$pdf->unichr(6107);
+			break;
+		case "CAD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "KYD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "CLP":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "CNY":
+			$currency_sign = " ".$pdf->unichr(165);
+			break;
+		case "COP":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "CRC":
+			$currency_sign = " ".$pdf->unichr(8353);
+			break;
+		case "HRK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(110);
+			break;
+		case "CUP":
+			$currency_sign = " ".$pdf->unichr(8369);
+			break;
+		case "CZK":
+			$currency_sign = " ".$pdf->unichr(75).$pdf->unichr(269);
+			break;
+		case "DKK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
+		case "DOP":
+			$currency_sign = " ".$pdf->unichr(82).$pdf->unichr(68).$pdf->unichr(36);
+			break;
+		case "XCD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "EGP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "SVC":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "EEK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
 		case "EUR":
 			$currency_sign = " ".$pdf->unichr(8364);
 			break;
-		case "USD":
-			$currency_sign = " ".utf8_encode('$');
+		case "FKP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "FJD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "GHC":
+			$currency_sign = " ".$pdf->unichr(162);
+			break;
+		case "GIP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "GTQ":
+			$currency_sign = " ".$pdf->unichr(81);
+			break;
+		case "GGP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "GYD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "HNL":
+			$currency_sign = " ".$pdf->unichr(76);
+			break;
+		case "HKD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "HUF":
+			$currency_sign = " ".$pdf->unichr(70).$pdf->unichr(116);
+			break;
+		case "ISK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
+		case "INR":
+			$currency_sign = " ".$pdf->unichr(8377);
+			break;
+		case "IDR":
+			$currency_sign = " ".$pdf->unichr(82).$pdf->unichr(112);
+			break;
+		case "IRR":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "IMP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "ILS":
+			$currency_sign = " ".$pdf->unichr(8362);
+			break;
+		case "JMD":
+			$currency_sign = " ".$pdf->unichr(74).$pdf->unichr(36);
+			break;
+		case "JPY":
+			$currency_sign = " ".$pdf->unichr(165);
+			break;
+		case "JEP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "KZT":
+			$currency_sign = " ".$pdf->unichr(1083).$pdf->unichr(1074);
+			break;
+		case "KPW":
+			$currency_sign = " ".$pdf->unichr(8361);
+			break;
+		case "KRW":
+			$currency_sign = " ".$pdf->unichr(8361);
+			break;
+		case "KGS":
+			$currency_sign = " ".$pdf->unichr(1083).$pdf->unichr(1074);
+			break;
+		case "LAK":
+			$currency_sign = " ".$pdf->unichr(8365);
+			break;
+		case "LVL":
+			$currency_sign = " ".$pdf->unichr(76).$pdf->unichr(115);
+			break;
+		case "LBP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "LRD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "LTL":
+			$currency_sign = " ".$pdf->unichr(76).$pdf->unichr(116);
+			break;
+		case "MKD":
+			$currency_sign = " ".$pdf->unichr(1076).$pdf->unichr(1077).$pdf->unichr(1085);
+			break;
+		case "MYR":
+			$currency_sign = " ".$pdf->unichr(82).$pdf->unichr(77);
+			break;
+		case "MUR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "MXN":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "MNT":
+			$currency_sign = " ".$pdf->unichr(8366);
+			break;
+		case "MZN":
+			$currency_sign = " ".$pdf->unichr(77).$pdf->unichr(84);
+			break;
+		case "NAD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "NPR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "ANG":
+			$currency_sign = " ".$pdf->unichr(402);
+			break;
+		case "NZD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "NIO":
+			$currency_sign = " ".$pdf->unichr(67).$pdf->unichr(36);
+			break;
+		case "NGN":
+			$currency_sign = " ".$pdf->unichr(8358);
+			break;
+		case "NOK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
+		case "OMR":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "PKR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "PAB":
+			$currency_sign = " ".$pdf->unichr(66).$pdf->unichr(47).$pdf->unichr(46);
+			break;
+		case "PYG":
+			$currency_sign = " ".$pdf->unichr(71).$pdf->unichr(115);
+			break;
+		case "PEN":
+			$currency_sign = " ".$pdf->unichr(83).$pdf->unichr(47).$pdf->unichr(46);
+			break;
+		case "PHP":
+			$currency_sign = " ".$pdf->unichr(8369);
+			break;
+		case "PLN":
+			$currency_sign = " ".$pdf->unichr(122).$pdf->unichr(322);
+			break;
+		case "QAR":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "RON":
+			$currency_sign = " ".$pdf->unichr(108).$pdf->unichr(101).$pdf->unichr(105);
+			break;
+		case "RUB":
+			$currency_sign = " ".$pdf->unichr(1088).$pdf->unichr(1091).$pdf->unichr(1073);
+			break;
+		case "SHP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "SAR":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "RSD":
+			$currency_sign = " ".$pdf->unichr(1044).$pdf->unichr(1080).$pdf->unichr(1085).$pdf->unichr(46);
+			break;
+		case "SCR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "SGD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "SBD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "SOS":
+			$currency_sign = " ".$pdf->unichr(83);
+			break;
+		case "ZAR":
+			$currency_sign = " ".$pdf->unichr(82);
+			break;
+		case "LKR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "SEK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
+		case "CHF":
+			$currency_sign = " ".$pdf->unichr(67).$pdf->unichr(72).$pdf->unichr(70);
+			break;
+		case "SRD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "SYP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "TWD":
+			$currency_sign = " ".$pdf->unichr(78).$pdf->unichr(84).$pdf->unichr(36);
+			break;
+		case "THB":
+			$currency_sign = " ".$pdf->unichr(3647);
+			break;
+		case "TTD":
+			$currency_sign = " ".$pdf->unichr(84).$pdf->unichr(84).$pdf->unichr(36);
+			break;
+		case "TRY":
+			$currency_sign = " ".$pdf->unichr(84).$pdf->unichr(76);
+			break;
+		case "TRL":
+			$currency_sign = " ".$pdf->unichr(8356);
+			break;
+		case "TVD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "UAH":
+			$currency_sign = " ".$pdf->unichr(8372);
 			break;
 		case "GBP":
-			$currency_sign = " ".utf8_encode('£');
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "USD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "UYU":
+			$currency_sign = " ".$pdf->unichr(36).$pdf->unichr(85);
+			break;
+		case "UZS":
+			$currency_sign = " ".$pdf->unichr(1083).$pdf->unichr(1074);
+			break;
+		case "VEF":
+			$currency_sign = " ".$pdf->unichr(66).$pdf->unichr(115);
+			break;
+		case "VND":
+			$currency_sign = " ".$pdf->unichr(8363);
+			break;
+		case "YER":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "ZWD":
+			$currency_sign = " ".$pdf->unichr(90).$pdf->unichr(36);
 			break;
 		default:
 			$currency_sign = " ".$currency_code;

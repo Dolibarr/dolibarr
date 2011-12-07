@@ -74,8 +74,9 @@ class Tva extends CommonObject
     {
     	global $conf, $langs;
 
+		$error=0;
+		
 		// Clean parameters
-
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
@@ -83,14 +84,11 @@ class Tva extends CommonObject
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tva(";
-
 		$sql.= "tms,";
 		$sql.= "datep,";
 		$sql.= "datev,";
@@ -148,16 +146,15 @@ class Tva extends CommonObject
     {
     	global $conf, $langs;
 
+		$error=0;
+		
 		// Clean parameters
-
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
-
-
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -275,6 +272,8 @@ class Tva extends CommonObject
 	{
 		global $conf, $langs;
 
+		$error=0;
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -522,7 +521,7 @@ class Tva extends CommonObject
 
                     $acc = new Account($this->db);
 					$result=$acc->fetch($this->accountid);
-					if ($result <= 0) dol_print_error($db);
+					if ($result <= 0) dol_print_error($this->db);
 
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
 

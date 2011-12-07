@@ -633,8 +633,8 @@ class Ldap
 		//Create file
 		$result=create_exdir($conf->ldap->dir_temp);
 
-		$file=$conf->ldap->dir_temp.'/ldapinput.in';
-		$fp=fopen($file,"w");
+		$outputfile=$conf->ldap->dir_temp.'/ldapinput.in';
+		$fp=fopen($outputfile,"w");
 		if ($fp)
 		{
 			fputs($fp, $content);

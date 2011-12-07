@@ -182,8 +182,8 @@ class Don extends CommonObject
         $this->specimen=1;
         $this->nom = 'Doe';
         $this->prenom = 'John';
-        $this->socid = $socids[$socid];
-        $this->date = time();
+        $this->socid = 1;
+        $this->date = dol_now();
         $this->amount = 100;
         $this->public = 1;
         $this->societe = 'The Company';

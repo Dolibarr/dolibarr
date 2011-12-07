@@ -654,9 +654,9 @@ class pdf_propale_azur extends ModelePDFPropales
 				{
 					$index++;
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), $useborder, 'L', 1);
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), 0, 'L', 1);
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), 0, 'R', 1);
 				}
 
 				// Total LocalTax2
@@ -664,9 +664,9 @@ class pdf_propale_azur extends ModelePDFPropales
 				{
 					$index++;
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), $useborder, 'L', 1);
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), 0, 'L', 1);
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), 0, 'R', 1);
 				}
 			}
 			else

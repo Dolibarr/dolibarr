@@ -81,6 +81,8 @@ abstract class CommonObject
     {
         global $user,$conf,$langs;
 
+		$error=0;
+		
         dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source");
 
         // Check parameters
@@ -200,6 +202,8 @@ abstract class CommonObject
     {
         global $user,$langs,$conf;
 
+		$error=0;
+		
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
 
@@ -348,7 +352,7 @@ abstract class CommonObject
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
 
-        dol_syslog(get_class($object)."::swapContactStatus sql=".$sql);
+        dol_syslog(get_class($this)."::swapContactStatus sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2055,7 +2059,7 @@ abstract class CommonObject
             // Produit
             if ($line->fk_product > 0)
             {
-                $product_static = new Product($db);
+                $product_static = new Product($this->db);
 
                 $product_static->type=$line->fk_product_type;
                 $product_static->id=$line->fk_product;
@@ -2164,7 +2168,7 @@ abstract class CommonObject
 
         if (($line->info_bits & 2) == 2)  // TODO Not sure this is used for source object
         {
-            $discount=new DiscountAbsolute($db);
+            $discount=new DiscountAbsolute($this->db);
             $discount->fk_soc = $this->socid;
             $this->tpl['label'].= $discount->getNomUrl(0,'discount');
         }

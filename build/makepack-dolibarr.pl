@@ -336,11 +336,9 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/license.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PDF`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-20100919`;
+        #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33`;
+        #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-20100919`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/free*.ctg.z`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/free*.z`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jstree`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/langs/*/html`;
@@ -652,7 +650,6 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/rpm`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/zip`;
             # We remove embedded libraries or fonts
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/artichow/font`,
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/fonts`,
 	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/geoip`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip`;
@@ -767,7 +764,8 @@ if ($nboftargetok) {
         	next;
         }
         
-    	if ($target eq 'APS') {
+    	if ($target eq 'APS') 
+    	{
 			$NEWDESTI=$DESTI;
 			if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; } 
 			

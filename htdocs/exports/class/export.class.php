@@ -267,7 +267,7 @@ class Export
 		$file = "export_".$model.".modules.php";
 		$classname = "Export".$model;
 		require_once($dir.$file);
-		$objmodel = new $classname($db);
+		$objmodel = new $classname($this->db);
 
 		if ($sqlquery) $sql = $sqlquery;
         else $sql=$this->build_sql($indice,$array_selected);

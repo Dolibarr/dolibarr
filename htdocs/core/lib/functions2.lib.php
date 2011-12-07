@@ -675,7 +675,7 @@ function check_value($mask,$value)
         $maskrefclient_maskclientcode=$regClientRef[1];
         $maskrefclient_maskcounter=$regClientRef[2];
         $maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
-        $maskrefclient_clientcode=substr($valueforccc,0,dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
+        $maskrefclient_clientcode=substr('',0,dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
         $maskrefclient_clientcode=str_pad($maskrefclient_clientcode,dol_strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
         $maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
@@ -936,7 +936,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
     foreach ($tab as $key => $value)
     {
         // Set new parameters
-        if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
+        if ($value)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";

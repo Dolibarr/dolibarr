@@ -480,6 +480,8 @@ class UserGroup extends CommonObject
 	{
 		global $user,$conf,$langs;
 
+		$error=0;
+		
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
@@ -523,6 +525,7 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf, $langs;
 
+		$error=0;
 		$now=dol_now();
 
 		$entity=$conf->entity;

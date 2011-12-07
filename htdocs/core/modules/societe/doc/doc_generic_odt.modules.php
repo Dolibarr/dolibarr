@@ -88,7 +88,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$langs->load("companies");
 		$langs->load("errors");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -187,11 +187,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			{
 				$id = $object;
 				$object = new Societe($this->db);
-				$object->fetch($id);
-
+				$result=$object->fetch($id);
 				if ($result < 0)
 				{
-					dol_print_error($db,$object->error);
+					dol_print_error($this->db,$object->error);
 					return -1;
 				}
 			}

@@ -175,6 +175,8 @@ class Societe extends CommonObject
     {
         global $langs,$conf;
 
+		$error=0;
+		
         // Clean parameters
         if (empty($this->status)) $this->status=0;
         $this->name=$this->name?trim($this->name):trim($this->nom);
@@ -373,9 +375,10 @@ class Societe extends CommonObject
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update')
     {
+        global $langs,$conf;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
-        global $langs,$conf;
+		$error=0;
 
         dol_syslog("Societe::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
@@ -544,7 +547,7 @@ class Societe extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                 $hookmanager=new HookManager($this->db);
                 $hookmanager->callHooks(array('thirdpartydao'));
-                $parameters=array('socid'=>$socid);
+                $parameters=array('socid'=>$this->id);
                 $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if (empty($reshook))
                 {
@@ -2353,33 +2356,8 @@ class Societe extends CommonObject
 
 
     /**
-     * Add a line in log table to save status change.
-     *
-     * @param $id_status
-     */
-    function set_status($id_status)
-    {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_log (datel, fk_soc, fk_statut, fk_user, author, label)";
-        $sql.= " VALUES ('".$dateaction."', ".$socid.", ".$id_status.",";
-        $sql.= "'".$user->id."',";
-        $sql.= "'".$this->db->escape($user->login)."',";
-        $sql.= "'Change statut from ".$oldstcomm." to ".$stcommid."'";
-        $sql.= ")";
-        $result = $thi->db->query($sql);
-        if ($result)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$stcommid." WHERE rowid=".$socid;
-            $result = $this->db->query($sql);
-        }
-        else
-        {
-            $errmesg = $this->db->lasterror();
-        }
-    }
-
-
-    /**
      *      Create a third party into database from a member object
+     * 
      *      @param      member		Object member
      * 		@param		socname		Name of third party to force
      *      @return     int			<0 if KO, id of created account if OK

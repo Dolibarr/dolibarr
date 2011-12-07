@@ -1231,7 +1231,7 @@ else
                 array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
             }
 
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $object->ref), 'confirm_valid', $formquestion, 0, 1, 240);
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $object->ref), 'confirm_valid', $formquestion, 1, 1, 240);
             if ($ret == 'html') print '<br>';
         }
 

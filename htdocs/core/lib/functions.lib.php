@@ -3977,7 +3977,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     }
 
     // If inline message with no format, we add it.
-    if ((! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))
+    if ((empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))
     {
         $divstart='<div class="'.$style.'">';
         $divend='</div>';
@@ -4007,7 +4007,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 
     if ($out)
     {
-        if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
+        if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
         {
             $return = '<script type="text/javascript">
     				jQuery(document).ready(function() {
@@ -4046,7 +4046,7 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 /**
  *	Print formated messages to output (Used to show messages on html output).
  *
- *	@param	string	$mesgstring		Message
+ *	@param	string	$mesgstring		 Message
  *	@param	array	$mesgarray       Messages array
  *  @param  string	$style           Which style to use ('ok', 'error')
  *  @param  int		$keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
@@ -4417,7 +4417,8 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 function printCommonFooter($zone='private')
 {
     global $conf;
-
+	global $micro_start_time;
+	
     if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
     else print "\n".'<!-- Common footer for public page -->'."\n";
 

@@ -47,16 +47,17 @@ class FormOrder
 
 
 	/**
-	 *   	\brief      Renvoie la liste des sources de commandes
-	 *		\param      selected		Id de la source pre-selectionnee
-	 *    	\param     	htmlname 		Nom de la liste deroulante
-	 *      \param     	addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *      \return		array			Tableau des sources de commandes
+	 *  Renvoie la liste des sources de commandes
+	 * 
+	 *	@param      selected		Id de la source pre-selectionnee
+	 *  @param     	htmlname 		Nom de la liste deroulante
+	 *  @param     	addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @return		array			Tableau des sources de commandes
 	 */
 	function selectSourcesCommande($selected='',$htmlname='source_id',$addempty=0)
 	{
 		global $conf,$langs;
-		print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
+		print '<select class="flat" name="'.$htmlname.'">';
 		if ($addempty) print '<option value="-1" selected="selected">&nbsp;</option>';
 
 		// TODO Use a table called llx_c_input_reason

@@ -36,7 +36,7 @@
 */
 function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array())
 {
-	global $langs;
+	global $langs, $hselected;
 
 	print "\n\n<!-- debut cartouche rapport -->\n";
 

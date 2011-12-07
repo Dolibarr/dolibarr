@@ -1354,13 +1354,11 @@ function migrate_price_propal($db,$langs,$conf)
                  else
                  {
                  print "Error id=".$propal->id;
-                 $err++;
                  }
                  }
                  else
                  {
                  print "Error #3";
-                 $err++;
                  }
                  */
                 $i++;
@@ -1378,7 +1376,6 @@ function migrate_price_propal($db,$langs,$conf)
     else
     {
         print "Error #1 ".$db->error();
-        $err++;
 
         $db->rollback();
     }
@@ -1458,13 +1455,11 @@ function migrate_price_contrat($db,$langs,$conf)
                  else
                  {
                  print "Error id=".$propal->id;
-                 $err++;
                  }
                  }
                  else
                  {
                  print "Error #3";
-                 $err++;
                  }
                  */
                 $i++;
@@ -1482,7 +1477,6 @@ function migrate_price_contrat($db,$langs,$conf)
     else
     {
         print "Error #1 ".$db->error();
-        $err++;
 
         $db->rollback();
     }
@@ -1560,13 +1554,11 @@ function migrate_price_commande($db,$langs,$conf)
                  else
                  {
                  print "Error id=".$commande->id;
-                 $err++;
                  }
                  }
                  else
                  {
                  print "Error #3";
-                 $err++;
                  }
                  */
                 $i++;
@@ -1594,7 +1586,6 @@ function migrate_price_commande($db,$langs,$conf)
     else
     {
         print "Error #1 ".$db->error();
-        $err++;
 
         $db->rollback();
     }
@@ -1672,13 +1663,11 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                  else
                  {
                  print "Error id=".$commande->id;
-                 $err++;
                  }
                  }
                  else
                  {
                  print "Error #3";
-                 $err++;
                  }
                  */
                 $i++;
@@ -1706,7 +1695,6 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
     else
     {
         print "Error #1 ".$db->error();
-        $err++;
 
         $db->rollback();
     }

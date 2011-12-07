@@ -218,7 +218,7 @@ class mailing_thirdparties extends MailingTargets
 		}
 		else
 		{
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		$s.='</select>';

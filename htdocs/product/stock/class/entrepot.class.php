@@ -258,7 +258,7 @@ class Entrepot extends CommonObject
 				}
 				else
 				{
-					dol_print_error($db);
+					dol_print_error($this->db);
 				}
 				$this->pays=$objp->libelle;
 				$this->pays_code=$objp->code;

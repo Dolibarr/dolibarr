@@ -293,7 +293,7 @@ class Livraison extends CommonObject
 			}
 			else
 			{
-				$this->error='Delivery with id '.$rowid.' not found sql='.$sql;
+				$this->error='Delivery with id '.$id.' not found sql='.$sql;
 				dol_syslog('Livraison::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
@@ -308,12 +308,13 @@ class Livraison extends CommonObject
 
 	/**
 	 *        Validate object and update stock if option enabled
-     *        @param      user        Object user that validate
-     *        @return     int
+	 * 
+     *        @param 	User	$user        Object user that validate
+     *        @return   int
 	 */
 	function valid($user)
 	{
-		global $conf;
+		global $conf, $langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 		dol_syslog("livraison.class.php::valid begin");
@@ -375,11 +376,11 @@ class Livraison extends CommonObject
 					if ($resql)
 					{
 						// On efface le repertoire de pdf provisoire
-						$livraisonref = dol_sanitizeFileName($this->ref);
+						$numref = dol_sanitizeFileName($this->ref);
 						if ($conf->expedition->dir_output)
 						{
-							$dir = $conf->livraison->dir_output . "/" . $livraisonref ;
-							$file = $dir . "/" . $livraisonref . ".pdf";
+							$dir = $conf->livraison->dir_output . "/" . $numref ;
+							$file = $dir . "/" . $numref . ".pdf";
 							if (file_exists($file))
 							{
 								if (!dol_delete_file($file))

@@ -500,7 +500,8 @@ class CMailFile
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
 		{
-			$fp = fopen($dolibarr_main_data_root."/dolibarr_mail.log","w");
+			$outputfile=$dolibarr_main_data_root."/dolibarr_mail.log";
+			$fp = fopen($outputfile,"w");
 
 			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 			{

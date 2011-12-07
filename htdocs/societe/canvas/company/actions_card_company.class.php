@@ -75,8 +75,9 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 * 	Execute actions
 	 *
-	 * 	@param		int		$socid 		Id of object (may be empty for creation)
-	 * 	@return		int					<0 if KO, >0 if OK
+	 *  @param	string	&$action    Type of action
+	 *  @param	int		$id			Id of object
+	 * 	@return	int					<0 if KO, >0 if OK
 	 */
 	function doActions(&$action, $id)
 	{
