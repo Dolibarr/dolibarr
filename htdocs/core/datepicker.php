@@ -143,11 +143,11 @@ function displayBox($selectedDate,$month,$year){
 		$xyz=0;
 	}
 	?>
-<table class="dp" cellspacing="0" cellpadding="0" border="0">
+<table class="dp">
 	<tr>
 		<td colspan="6" class="dpHead"><?php
-		$selectMonth = dol_date("F", $thedate);
-		$selectYear = dol_date("Y", $thedate);
+		$selectMonth = dol_print_date($thedate, '%m');
+		$selectYear = dol_print_date($thedate, '%Y');
 		echo $langs->trans($selectMonth).", ".$selectYear;
 		?></td>
 		<td class="dpHead">
