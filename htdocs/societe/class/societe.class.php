@@ -174,8 +174,8 @@ class Societe extends CommonObject
     /**
      *    Create third party in database
      *
-     *    @param      user        Object of user that ask creation
-     *    @return     int         >= 0 if OK, < 0 if KO
+     *    @param	User	$user       Object of user that ask creation
+     *    @return   int         		>= 0 if OK, < 0 if KO
      */
     function create($user='')
     {
@@ -371,13 +371,13 @@ class Societe extends CommonObject
     /**
      *      Update parameters of third party
      *
-     *      @param      id              			id societe
-     *      @param      user            			Utilisateur qui demande la mise a jour
-     *      @param      call_trigger    			0=non, 1=oui
-     *		@param		allowmodcodeclient			Inclut modif code client et code compta
-     *		@param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
-     *		@param		action						'create' or 'update'
-     *      @return     int             			<0 if KO, >=0 if OK
+     *      @param	int		$id              			id societe
+     *      @param  User	$user            			Utilisateur qui demande la mise a jour
+     *      @param  int		$call_trigger    			0=non, 1=oui
+     *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
+     *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
+     *		@param	string	$action						'create' or 'update'
+     *      @return int  			           			<0 if KO, >=0 if OK
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update')
     {
@@ -616,6 +616,7 @@ class Societe extends CommonObject
 
     /**
      *    Load a third party from database into memory
+     *
      *    @param      rowid			Id of third party to load
      *    @param      ref			Reference of third party, name (Warning, this can return several records)
      *    @param      ref_ext       External reference of third party (Warning, this information is a free field not provided by Dolibarr)
@@ -809,65 +810,12 @@ class Societe extends CommonObject
         return $result;
     }
 
-    /**
-     * Lit une adresse
-     * TODO: utiliser la classe address
-     */
-    function fetch_address($id)
-    {
-        global $conf,$langs;
-
-        $sql = "SELECT l.rowid, l.label, l.fk_soc, l.name, l.address, l.cp";
-        $sql .= ", l.tms as dm, l.datec as dc";
-        $sql .= ", l.ville, l.fk_pays, l.note, l.tel, l.fax";
-        $sql .= ", p.libelle as pays, p.code as pays_code";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_address as l";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
-        $sql .= " WHERE l.rowid = ".$id;
-
-        $result = $this->db->query($sql);
-
-        if ( $result )
-        {
-            $obj = $this->db->fetch_object($result);
-
-            $this->id			= $obj->rowid;
-            $this->datec		= $this->db->jdate($obj->dc);
-            $this->datem		= $this->db->jdate($obj->dm);
-            $this->label		= $obj->label;
-            $this->socid		= $obj->fk_soc;
-            $this->name			= $obj->name;
-            $this->address		= $obj->address;
-            $this->cp			= $obj->cp;			// TODO deprecated
-            $this->zip			= $obj->cp;
-            $this->ville		= $obj->ville;		// TODO deprecated
-            $this->town			= $obj->ville;
-            $this->pays_id		= $obj->fk_pays;
-            $this->pays_code	= $obj->fk_pays?$obj->pays_code:'';
-            $this->pays			= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):''; // TODO deprecated
-            $this->country		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
-            $this->tel			= $obj->tel;		// TODO deprecated
-            $this->phone		= $obj->tel;
-            $this->fax			= $obj->fax;
-            $this->note			= $obj->note;
-
-
-            $this->db->free($result);
-
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
 
     /**
      *    Delete a third party from database and all its dependencies (contacts, rib...)
      *
-     *    @param    	id      id of third party to delete
-     *    @return		int		<0 if KO, 0 if nothing done, >0 if OK
+     *    @param	int		$id     Id of third party to delete
+     *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
      */
     function delete($id)
     {

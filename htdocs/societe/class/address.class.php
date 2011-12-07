@@ -27,6 +27,7 @@
 /**
  *  \class 		Address
  *  \brief 		Class to manage addresses
+ *  @deprecated
  */
 class Address
 {
@@ -48,18 +49,13 @@ class Address
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB     handler acces base de donnees
-	 *    \param  id     id societe (0 par defaut)
+	 *  Constructeur de la classe
+	 *
+	 *  @param	DoliDB		$db     handler acces base de donnees
 	 */
-	function Address($DB, $id=0)
+	function Address($db)
 	{
-		global $conf;
-
-		$this->db = $DB;
-
-		$this->id = $id;
-
+		$this->db = $db;
 		return 1;
 	}
 
@@ -242,12 +238,13 @@ class Address
 	}
 
 	/**
-	 *    \brief      Charge depuis la base toutes les adresses d'une societe
-	 *    \param      socid       Id de la societe a charger en memoire
-	 *    \param      user        Objet de l'utilisateur
-	 *    \return     int         >0 si ok, <0 si ko
+	 *  Charge depuis la base toutes les adresses d'une societe
+	 *
+	 *  @param	int		$socid       Id de la societe a charger en memoire
+	 *  @param  User	$user        Objet de l'utilisateur
+	 *  @return int 			     >0 si ok, <0 si ko
 	 */
-	function fetch($socid, $user=0)
+	function fetch_lines($socid, $user=0)
 	{
 		global $langs, $conf;
 
@@ -337,10 +334,11 @@ class Address
 	}
 
 	/**
-	 *    \brief      Charge depuis la base l'objet adresse
-	 *    \param      id       Id de l'adresse a charger en memoire
-	 *    \param      user        Objet de l'utilisateur
-	 *    \return     int         >0 si ok, <0 si ko
+	 *  Charge depuis la base l'objet adresse
+	 *
+	 *  @param	int		$id       	Id de l'adresse a charger en memoire
+	 *  @param  User	$user       Objet de l'utilisateur
+	 *  @return int 				>0 si ok, <0 si ko
 	 */
 	function fetch_address($id, $user=0)
 	{

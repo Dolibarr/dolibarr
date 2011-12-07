@@ -2841,14 +2841,15 @@ class Form
     }
 
     /**
-     *    	Affiche formulaire de selection de l'adresse
+     *  Show form to select addresse
      *
-     *    	@param      page        	Page
-     *    	@param      selected    	Id condition pre-selectionne
-     *    	@param      htmlname    	Nom du formulaire select
-     *		@param		origin        	Origine de l'appel pour pouvoir creer un retour
-     *      @param      originid      	Id de l'origine
-     *    @return	void
+     *  @param  page        	Page
+     *  @param  selected    	Id condition pre-selectionne
+     *  @param  htmlname    	Nom du formulaire select
+     *	@param	origin        	Origine de l'appel pour pouvoir creer un retour
+     *  @param  originid      	Id de l'origine
+     *  @return	void
+     *  @deprecated
      */
     function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
     {

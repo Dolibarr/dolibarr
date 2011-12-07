@@ -214,7 +214,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $address->pays		=	$obj->libelle;
         }
 
-        print_titre($langs->trans("NewAddress"));
+        print_titre($langs->trans("AddAddress"));
         print "<br>\n";
 
         if ($address->error)
@@ -258,7 +258,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 
         print '<table class="border" width="100%">';
 
-        print '<tr><td class="fieldrequired">'.$langs->trans('AddressLabel').'</td><td><input type="text" size="30" name="label" id="label" value="'.($address->label?$address->label:$langs->trans('RequiredField')).'"></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td><td><input type="text" size="30" name="label" id="label" value="'.($address->label?$address->label:$langs->trans('RequiredField')).'"></td></tr>';
         print '<tr><td class="fieldrequired">'.$langs->trans('Name').'</td><td><input type="text" size="30" name="name" id="name" value="'.($address->name?$address->name:$langs->trans('RequiredField')).'"></td></tr>';
 
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
@@ -287,10 +287,11 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print $address->note;
         print '</textarea></td></tr>';
 
-        print '<tr><td colspan="4" align="center">';
-        print '<input type="submit" class="button" value="'.$langs->trans('AddAddress').'"></td></tr>'."\n";
-
         print '</table>'."\n";
+
+        print '<br><center>';
+        print '<input type="submit" class="button" value="'.$langs->trans('AddAddress').'"></center>'."\n";
+
         print '</form>'."\n";
 
     }
@@ -411,7 +412,7 @@ else
      * Fiche societe en mode visu
      */
     $address = new Address($db);
-    $result=$address->fetch($socid);
+    $result=$address->fetch_lines($socid);
     if ($result < 0)
     {
         dol_print_error($db,$address->error);

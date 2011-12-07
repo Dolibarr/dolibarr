@@ -588,22 +588,6 @@ abstract class CommonObject
     }
 
     /**
-     *		Load delivery adresse id into $this->fk_address
-     *
-     *		@param      fk_address 		Id of address
-     *		@return		int				<0 if KO, >0 if OK
-     */
-    function fetch_address($fk_address)
-    {
-        $object = new Societe($this->db);
-        $result=$object->fetch_address($fk_address);
-        $this->deliveryaddress = $object;	// TODO obsolete
-        $this->adresse = $object; 			// TODO obsolete
-        $this->address = $object;
-        return $result;
-    }
-
-    /**
      *		Read linked origin object
      */
     function fetch_origin()
