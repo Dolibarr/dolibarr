@@ -1837,11 +1837,11 @@ function img_action($alt = "default", $numaction)
 {
     global $conf,$langs;
     if ($alt=="default") {
-        if ($numaction == -1) $alt=$langs->trans("ChangeDoNotContact");
-        if ($numaction == 0)  $alt=$langs->trans("ChangeNeverContacted");
-        if ($numaction == 1)  $alt=$langs->trans("ChangeToContact");
-        if ($numaction == 2)  $alt=$langs->trans("ChangeContactInProcess");
-        if ($numaction == 3)  $alt=$langs->trans("ChangeContactDone");
+        if ($numaction == -1) $alt=$langs->transnoentitiesnoconv("ChangeDoNotContact");
+        if ($numaction == 0)  $alt=$langs->transnoentitiesnoconv("ChangeNeverContacted");
+        if ($numaction == 1)  $alt=$langs->transnoentitiesnoconv("ChangeToContact");
+        if ($numaction == 2)  $alt=$langs->transnoentitiesnoconv("ChangeContactInProcess");
+        if ($numaction == 3)  $alt=$langs->transnoentitiesnoconv("ChangeContactDone");
     }
     return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
 }
