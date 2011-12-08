@@ -71,7 +71,7 @@ DROP TABLE IF EXISTS llx_pos_tmp;
 
 ALTER TABLE llx_deplacement ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
-CREATE TABLE IF NOT EXISTS llx_localtax
+CREATE TABLE llx_localtax
 (
 	rowid			integer		AUTO_INCREMENT PRIMARY KEY,
 	entity			integer			NOT NULL DEFAULT '1',
