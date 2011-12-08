@@ -82,7 +82,7 @@ abstract class CommonObject
         global $user,$conf,$langs;
 
 		$error=0;
-		
+
         dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source");
 
         // Check parameters
@@ -203,7 +203,7 @@ abstract class CommonObject
         global $user,$langs,$conf;
 
 		$error=0;
-		
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
 
@@ -510,6 +510,54 @@ abstract class CommonObject
         return $result;
     }
 
+
+    /**
+     *		Load data for barcode
+     *
+     *		@return		int			<0 if KO, >=0 if OK
+     */
+    function fetch_barcode()
+    {
+        global $conf;
+
+        dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
+
+        $idtype=$this->barcode_type;
+        if (! $idtype)
+        {
+            if ($this->element == 'product')      $idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+            else if ($this->element == 'societe') $idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+            else dol_print_error('','Call fetch_barcode with barcode_type not defined and cant be guessed');
+        }
+
+        if ($idtype > 0)
+        {
+            if (empty($this->barcode_type) || empty($this->barcode_type_code) || empty($this->barcode_type_label) || empty($this->barcode_type_coder))    // If data not already loaded
+            {
+                $sql = "SELECT rowid, code, libelle as label, coder";
+                $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+                $sql.= " WHERE rowid = ".$idtype;
+                dol_syslog(get_class($this).'::fetch_barcode sql='.$sql);
+                $resql = $this->db->query($sql);
+            	if ($resql)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $this->barcode_type       = $obj->rowid;
+                    $this->barcode_type_code  = $obj->code;
+                    $this->barcode_type_label = $obj->label;
+                    $this->barcode_type_coder = $obj->coder;
+                    return 1;
+                }
+                else
+                {
+                    dol_print_error($this->db);
+                    return -1;
+                }
+            }
+        }
+        else return 0;
+    }
+
     /**
      *		Charge le projet d'id $this->fk_project dans this->projet
      *
@@ -536,22 +584,6 @@ abstract class CommonObject
         $user = new User($this->db);
         $result=$user->fetch($userid);
         $this->user = $user;
-        return $result;
-    }
-
-    /**
-     *		Load delivery adresse id into $this->fk_address
-     *
-     *		@param      fk_address 		Id of address
-     *		@return		int				<0 if KO, >0 if OK
-     */
-    function fetch_address($fk_address)
-    {
-        $object = new Societe($this->db);
-        $result=$object->fetch_address($fk_address);
-        $this->deliveryaddress = $object;	// TODO obsolete
-        $this->adresse = $object; 			// TODO obsolete
-        $this->address = $object;
         return $result;
     }
 
@@ -1699,8 +1731,8 @@ abstract class CommonObject
     /**
      *  Function to check if an object is used by others
      *
-     *  @param		id				Id of object
-     *  @return		int				<0 if KO, 0 if not used, >0 if already used
+     *  @param	int		$id			Id of object
+     *  @return	int					<0 if KO, 0 if not used, >0 if already used
      */
     function isObjectUsed($id)
     {
@@ -1775,8 +1807,7 @@ abstract class CommonObject
 
 
     /**
-     *
-     * Enter description here ...
+     * List urls of elemùent
      *
      * @param unknown_type $objectid
      * @param unknown_type $objecttype

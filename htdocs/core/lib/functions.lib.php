@@ -199,7 +199,7 @@ function GETPOST($paramname,$check='',$method=0)
 	if (! empty($check))
 	{
 		// Check if numeric
-		if ($check == 'int' && ! preg_match('/^[\.,0-9]+$/i',trim($out))) $out='';
+		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',trim($out))) $out='';
 		// Check if alpha
 		//if ($check == 'alpha' && ! preg_match('/^[ =:@#\/\\\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
 		// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
@@ -735,34 +735,33 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
 /**
  *      Return a formated address (part address/zip/town/state) according to country rules
  *
- *      @param      outputlangs     Output langs object
- *      @param      object          A company or contact object
- *      @return     string          Formated string
+ *      @param  Object		$object         A company or contact object
+ *      @return string          			Formated string
  */
-function dol_format_address($outputlangs,$object)
+function dol_format_address($object)
 {
 	$ret='';
 	$countriesusingstate=array('US','IN');
 
 	// Address
-	$ret .= $outputlangs->convToOutputCharset($object->address);
+	$ret .= $object->address;
 	// Zip/Town/State
 	if (in_array($object->country_code,array('US')))   // US: town, state, zip
 	{
-		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->town);
+		$ret .= ($ret ? "\n" : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$outputlangs->convToOutputCharset($object->departement);
+			$ret.=", ".$object->departement;
 		}
-		if ($object->zip) $ret .= ', '.$outputlangs->convToOutputCharset($object->zip);
+		if ($object->zip) $ret .= ', '.$object->zip;
 	}
 	else                                        // Other: zip town, state
 	{
-		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->zip);
-		$ret .= ' '.$outputlangs->convToOutputCharset($object->town);
+		$ret .= ($ret ? "\n" : '' ).$object->zip;
+		$ret .= ' '.$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$outputlangs->convToOutputCharset($object->state);
+			$ret.=", ".$object->state;
 		}
 	}
 
@@ -1838,11 +1837,11 @@ function img_action($alt = "default", $numaction)
 {
     global $conf,$langs;
     if ($alt=="default") {
-        if ($numaction == -1) $alt=$langs->trans("ChangeDoNotContact");
-        if ($numaction == 0)  $alt=$langs->trans("ChangeNeverContacted");
-        if ($numaction == 1)  $alt=$langs->trans("ChangeToContact");
-        if ($numaction == 2)  $alt=$langs->trans("ChangeContactInProcess");
-        if ($numaction == 3)  $alt=$langs->trans("ChangeContactDone");
+        if ($numaction == -1) $alt=$langs->transnoentitiesnoconv("ChangeDoNotContact");
+        if ($numaction == 0)  $alt=$langs->transnoentitiesnoconv("ChangeNeverContacted");
+        if ($numaction == 1)  $alt=$langs->transnoentitiesnoconv("ChangeToContact");
+        if ($numaction == 2)  $alt=$langs->transnoentitiesnoconv("ChangeContactInProcess");
+        if ($numaction == 3)  $alt=$langs->transnoentitiesnoconv("ChangeContactDone");
     }
     return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
 }
@@ -4418,7 +4417,7 @@ function printCommonFooter($zone='private')
 {
     global $conf;
 	global $micro_start_time;
-	
+
     if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
     else print "\n".'<!-- Common footer for public page -->'."\n";
 

@@ -87,6 +87,26 @@ $error=$hookmanager->error; $errors=$hookmanager->errors;
 
 if (empty($reshook))
 {
+    // Barcode type
+    if ($action ==	'setbarcodetype' && $user->rights->barcode->creer)
+    {
+    	$object->fetch($id);
+    	$object->barcode_type = $_POST['barcodetype_id'];
+    	$result = $object->update_barcode_type($user);
+    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+    	exit;
+    }
+
+    // Barcode value
+    if ($action ==	'setbarcode' && $user->rights->barcode->creer)
+    {
+    	$object->fetch($id);
+    	$object->barcode = $_POST['barcode']; //Todo: ajout verification de la validite du code barre en fonction du type
+    	$result = $object->update_barcode($user);
+    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+    	exit;
+    }
+
     if ($action == 'setproductaccountancycodebuy')
     {
         $product = new Product($db);
@@ -629,6 +649,7 @@ llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
+
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
@@ -981,13 +1002,14 @@ else
                 if ($ret == 'html') print '<br>';
             }
 
-            $isphoto=$object->is_photo_available($conf->product->dir_output);
+            $showphoto=$object->is_photo_available($conf->product->dir_output);
+            $showbarcode=$conf->barcode->enabled && $user->rights->barcode->lire;
 
             // En mode visu
             print '<table class="border" width="100%"><tr>';
 
             // Ref
-            print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="'.(2+($isphoto?1:0)).'">';
+            print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">';
             print $form->showrefnav($object,'ref','',1,'ref');
             print '</td>';
 
@@ -1000,16 +1022,65 @@ else
             if ($object->type!=1) $nblignes++;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
+            if ($showbarcode) $nblignes+=2;
 
             // Photo
-            if ($isphoto)
+            if ($showphoto || $showbarcode)
             {
                 print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
-                print $object->show_photos($conf->product->dir_output,1,1,0,0,0,80);
+                if ($showphoto)   print $object->show_photos($conf->product->dir_output,1,1,0,0,0,80);
+                if ($showphoto && $showbarcode) print '<br><br>';
+                if ($showbarcode) print $form->showbarcode($object);
                 print '</td>';
             }
 
             print '</tr>';
+
+            if ($showbarcode)
+            {
+                // Barcode type
+                print '<tr><td nowrap>';
+                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print $langs->trans("BarcodeType");
+                print '<td>';
+                if (($_GET['action'] != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBarcodeType'),1).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="2">';
+                if ($_GET['action'] == 'editbarcodetype')
+                {
+                    require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
+                    $formbarcode = new FormBarCode($db);
+                    $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'barcodetype_id');
+                }
+                else
+                {
+                    $object->fetch_barcode();
+                    print $object->barcode_type_label?$object->barcode_type_label:'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>';
+                }
+                print '</td></tr>'."\n";
+
+                // Barcode value
+                print '<tr><td nowrap>';
+                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print $langs->trans("BarcodeValue");
+                print '<td>';
+                if (($_GET['action'] != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBarcode'),1).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="2">';
+                if ($_GET['action'] == 'editbarcode')
+                {
+                    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    print '<input type="hidden" name="action" value="setbarcode">';
+                    print '<input size="40" type="text" name="barcode" value="'.$object->barcode.'">';
+                    print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+                }
+                else
+                {
+                    print $object->barcode;
+                }
+                print '</td></tr>'."\n";
+            }
 
             // Accountancy sell code
             print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,$object,$user->rights->produit->creer|$user->rights->service->creer).'</td><td colspan="2">';

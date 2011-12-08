@@ -115,7 +115,7 @@ if ($this->control->tpl['fournisseur']) {
 <?php if ($conf->global->MAIN_MODULE_BARCODE) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
-	<td colspan="3"><input type="text" name="gencod" value="<?php echo $this->control->tpl['gencod']; ?>"></td>
+	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
 </tr>
 <?php } ?>
 

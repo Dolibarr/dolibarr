@@ -3,17 +3,17 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -133,7 +133,7 @@ class ActionComm extends CommonObject
             }
             else if ($result == 0)
             {
-                $this->error='Failed to get record with code AC_OTH from dictionnary "type of events"';
+                $this->error='Failed to get record with code '.$this->type_code.' from dictionnary "type of events"';
                 return -1;
             }
             else
@@ -864,17 +864,17 @@ class ActionComm extends CommonObject
                     //print $datestart.'x'; exit;
                     $dateend=$this->db->jdate($obj->datep2);
                     $duration=$obj->durationp;
-                    $event['summary']=$langs->convToOutputCharset($obj->label.($obj->socname?" (".$obj->socname.")":""));
-                    $event['desc']=$langs->convToOutputCharset($obj->note);
+                    $event['summary']=$obj->label.($obj->socname?" (".$obj->socname.")":"");
+                    $event['desc']=$obj->note;
                     $event['startdate']=$datestart;
                     $event['duration']=$duration;	// Not required with type 'journal'
                     $event['enddate']=$dateend;		// Not required with type 'journal'
                     $event['author']=$obj->firstname.($obj->name?" ".$obj->name:"");
                     $event['priority']=$obj->priority;
                     $event['fulldayevent']=$obj->fulldayevent;
-                    $event['location']=$langs->convToOutputCharset($obj->location);
+                    $event['location']=$obj->location;
                     $event['transparency']='TRANSPARENT';		// OPAQUE (busy) or TRANSPARENT (not busy)
-                    $event['category']=$langs->convToOutputCharset($obj->libelle);	// libelle type action
+                    $event['category']=$obj->libelle;	// libelle type action
                     $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
                     $url=$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id;
                     $event['url']=$url;
@@ -898,21 +898,21 @@ class ActionComm extends CommonObject
 
             // Define title and desc
             $more='';
-            if ($login)  $more=$langs->transnoentities("User").' '.$langs->convToOutputCharset($login);
-            if ($logina) $more=$langs->transnoentities("ActionsAskedBy").' '.$langs->convToOutputCharset($logina);
-            if ($logint) $more=$langs->transnoentities("ActionsToDoBy").' '.$langs->convToOutputCharset($logint);
-            if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$langs->convToOutputCharset($logind);
+            if ($login)  $more=$langs->transnoentities("User").' '.$login;
+            if ($logina) $more=$langs->transnoentities("ActionsAskedBy").' '.$logina;
+            if ($logint) $more=$langs->transnoentities("ActionsToDoBy").' '.$logint;
+            if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$logind;
             if ($more)
             {
-                $title=$langs->convToOutputCharset('Dolibarr actions '.$mysoc->name).' - '.$more;
+                $title='Dolibarr actions '.$mysoc->name.' - '.$more;
                 $desc=$more;
-                $desc.=$langs->convToOutputCharset(' ('.$mysoc->name.' - built by Dolibarr)');
+                $desc.=' ('.$mysoc->name.' - built by Dolibarr)';
             }
             else
             {
-                $title=$langs->convToOutputCharset('Dolibarr actions '.$mysoc->name);
+                $title='Dolibarr actions '.$mysoc->name;
                 $desc=$langs->transnoentities('ListOfActions');
-                $desc.=$langs->convToOutputCharset(' ('.$mysoc->name.' - built by Dolibarr)');
+                $desc.=' ('.$mysoc->name.' - built by Dolibarr)';
             }
 
             // Create temp file

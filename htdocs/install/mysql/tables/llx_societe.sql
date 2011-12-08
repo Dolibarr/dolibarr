@@ -80,7 +80,7 @@ create table llx_societe
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
-  gencod                   varchar(255),                        		-- barcode
+  barcode                  varchar(255),                        		-- barcode
   price_level              integer NULL,                        		-- level of price for multiprices
   default_lang             varchar(6),									-- default language
   logo                     varchar(255),

@@ -37,7 +37,7 @@ class Product extends CommonObject
 	public $element='product';
 	public $table_element='product';
 	public $fk_element='fk_product';
-	public $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur_price');
+	protected $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur_price');
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -105,12 +105,12 @@ class Product extends CommonObject
 	var $accountancy_code_buy;
 	var $accountancy_code_sell;
 
-	//! Codes barres
-	var $barcode;
-	var $barcode_type;
-	var $barcode_type_code;
-	var $barcode_type_label;
-	var $barcode_type_coder;
+	//! barcode
+	var $barcode;               // value
+	var $barcode_type;          // id
+	var $barcode_type_code;     // code (loaded by fetch_barcode)
+	var $barcode_type_label;    // label (loaded by fetch_barcode)
+	var $barcode_type_coder;    // coder (loaded by fetch_barcode)
 
 	var $stats_propale=array();
 	var $stats_commande=array();
@@ -403,7 +403,7 @@ class Product extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
-		
+
 		// Verification parametres
 		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
 
@@ -1099,35 +1099,6 @@ class Product extends CommonObject
 
 				// multilangs
 				if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
-
-				// Barcode
-				if ($conf->global->MAIN_MODULE_BARCODE)
-				{
-					if ($this->barcode_type == 0)
-					{
-						$this->barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
-					}
-
-					if ($this->barcode_type > 0)
-					{
-						$sql = "SELECT code, libelle, coder";
-						$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-						$sql.= " WHERE rowid = ".$this->barcode_type;
-						$resql = $this->db->query($sql);
-						if ($resql)
-						{
-							$result = $this->db->fetch_array($resql);
-							$this->barcode_type_code = $result["code"];
-							$this->barcode_type_label = $result["libelle"];
-							$this->barcode_type_coder = $result["coder"];
-						}
-						else
-						{
-							dol_print_error($this->db);
-							return -1;
-						}
-					}
-				}
 
 				// Load multiprices array
 				if ($conf->global->PRODUIT_MULTIPRICES)
@@ -2547,18 +2518,18 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	Show photos of a product (nbmax maximum)
+	 *  Show photos of a product (nbmax maximum), into several columns
+	 *	TODO Move this into html.formproduct.class.php
 	 *
-	 *    	@param      sdir        	Directory to scan
-	 *    	@param      size        	0=original size, 1 use thumbnail if possible
-	 *    	@param      nbmax       	Nombre maximum de photos (0=pas de max)
-	 *    	@param      nbbyrow     	Nombre vignettes par ligne (si mode vignette)
-	 * 		@param		showfilename	1=Show filename
-	 * 		@param		showaction		1=Show icon with action links (resize, delete)
-	 * 		@param		maxHeight		Max height of image when size=1
-	 * 		@param		maxWidth		Max width of image when size=1
-	 *    	@return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
-	 *		TODO Move this into html.formproduct.class.php
+	 *  @param      sdir        	Directory to scan
+	 *  @param      size        	0=original size, 1 use thumbnail if possible
+	 *  @param      nbmax       	Nombre maximum de photos (0=pas de max)
+	 *  @param      nbbyrow     	Nombre vignettes par ligne (si mode vignette)
+	 * 	@param		showfilename	1=Show filename
+	 * 	@param		showaction		1=Show icon with action links (resize, delete)
+	 * 	@param		maxHeight		Max height of image when size=1
+	 * 	@param		maxWidth		Max width of image when size=1
+	 *  @return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160)
 	{
@@ -2571,7 +2542,6 @@ class Product extends CommonObject
 		$dir = $sdir . '/'. $pdir;
 		$dirthumb = $dir.'thumbs/';
 		$pdirthumb = $pdir.'thumbs/';
-
 
 		$return ='<!-- Photo -->'."\n";
         /*$return.="<script type=\"text/javascript\">
@@ -2714,6 +2684,7 @@ class Product extends CommonObject
 
 		return $return;
 	}
+
 
 	/**
 	 *  Retourne tableau de toutes les photos du produit

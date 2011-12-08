@@ -646,7 +646,7 @@ else
 		else
 		{
 			print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
-			if ($mail->error) print ' - '.$langs->convToOutputCharset($mail->error,'ISO-8859-1');
+			if ($mail->error) print ' - '.$mail->error;
 			print '</div>';
 		}
 		print '<br>';

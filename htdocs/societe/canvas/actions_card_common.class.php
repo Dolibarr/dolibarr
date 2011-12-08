@@ -153,7 +153,7 @@ abstract class ActionsCardCommon
             $this->object->code_client			= $_POST["code_client"];
             $this->object->code_fournisseur		= $_POST["code_fournisseur"];
             $this->object->capital				= $_POST["capital"];
-            $this->object->gencod				= $_POST["gencod"];
+            $this->object->barcode				= $_POST["barcode"];
             $this->object->canvas				= GETPOST("canvas");
 
             $this->object->tva_assuj			= $_POST["assujtva_value"];
@@ -686,7 +686,7 @@ abstract class ActionsCardCommon
         $this->object->idprof4				=	$_POST["idprof4"];
         $this->object->typent_id			=	$_POST["typent_id"];
         $this->object->effectif_id			=	$_POST["effectif_id"];
-        $this->object->gencod				=	$_POST["gencod"];
+        $this->object->barcode				=	$_POST["barcode"];
         $this->object->forme_juridique_code	=	$_POST["forme_juridique_code"];
         $this->object->default_lang			=	$_POST["default_lang"];
         $this->object->commercial_id		=	$_POST["commercial_id"];

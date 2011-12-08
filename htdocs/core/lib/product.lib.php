@@ -64,15 +64,6 @@ function product_prepare_head($object, $user)
 		$h++;
 	}
 
-	// Show barcode tab
-	if ($conf->global->MAIN_MODULE_BARCODE && $user->rights->barcode->lire)
-	{
-		$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("BarCode");
-		$head[$h][2] = 'barcode';
-		$h++;
-	}
-
 	// Multilangs
 	if($conf->global->MAIN_MULTILANGS)
 	{

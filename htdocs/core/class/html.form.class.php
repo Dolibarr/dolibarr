@@ -1242,7 +1242,7 @@ class Form
                     }
                 }
                 $opt.= '>';
-                $opt.= $langs->convToOutputCharset($objp->ref).' - '.$langs->convToOutputCharset(dol_trunc($label,32)).' - ';
+                $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
 
                 $objRef = $objp->ref;
                 if ($filterkey && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
@@ -1365,7 +1365,7 @@ class Form
     {
         global $langs,$conf;
         global $price_level, $status, $finished;
-        
+
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=2 means suppliers products
@@ -1459,9 +1459,9 @@ class Form
                 $label = $objp->label;
                 if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
-                $opt.=$langs->convToOutputCharset($objp->ref).' ('.$langs->convToOutputCharset($objp->ref_fourn).') - ';
+                $opt.=$objp->ref.' ('.$objp->ref_fourn.') - ';
                 $outval.=$objRef.' ('.$objRefFourn.') - ';
-                $opt.=$langs->convToOutputCharset(dol_trunc($objp->label,18)).' - ';
+                $opt.=dol_trunc($objp->label,18).' - ';
                 $outval.=dol_trunc($label,18).' - ';
 
                 if ($objp->fprice != '') 	// Keep != ''
@@ -2230,7 +2230,7 @@ class Form
      *     @param 	string	$action      	   	Action
      *	   @param  	array	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
      * 	   @param  	string	$selectedchoice  	"" or "no" or "yes"
-     * 	   @param  	int		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
+     * 	   @param  	int		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int		$height          	Force height of box
      *     @return 	string          			'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
@@ -2313,7 +2313,8 @@ class Form
         {
         	$autoOpen=true;
         	$dialogconfirm='dialog-confirm';
-        	if (! is_int($useajax)) {
+        	if (! is_int($useajax))
+        	{
         		$button=$useajax;
         		$useajax=1;
         		$autoOpen=false;
@@ -2841,14 +2842,15 @@ class Form
     }
 
     /**
-     *    	Affiche formulaire de selection de l'adresse
+     *  Show form to select addresse
      *
-     *    	@param      page        	Page
-     *    	@param      selected    	Id condition pre-selectionne
-     *    	@param      htmlname    	Nom du formulaire select
-     *		@param		origin        	Origine de l'appel pour pouvoir creer un retour
-     *      @param      originid      	Id de l'origine
-     *    @return	void
+     *  @param  page        	Page
+     *  @param  selected    	Id condition pre-selectionne
+     *  @param  htmlname    	Nom du formulaire select
+     *	@param	origin        	Origine de l'appel pour pouvoir creer un retour
+     *  @param  originid      	Id de l'origine
+     *  @return	void
+     *  @deprecated
      */
     function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
     {
@@ -3660,12 +3662,38 @@ class Form
 
 
     /**
+    *    	Return HTML code to output a barcode
+    *
+    *     	@param	Object	&$object		Object containing data to retrieve file name
+    * 		@param	int		$width			Width of photo
+    * 	  	@return string    				HTML code to output barcode
+    */
+    function showbarcode(&$object,$width=100)
+    {
+        global $conf;
+
+        if (empty($object->barcode)) return '';
+
+        // Complete object if not complete
+        if (empty($object->barcode_type_code) || empty($object->barcode_type_coder))
+        {
+            $object->fetch_barcode();
+        }
+
+        // Barcode image
+        $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
+        $out ='<!-- url barcode = '.$url.' -->';
+        $out.='<img src="'.$url.'">';
+        return $out;
+    }
+
+    /**
      *    	Return HTML code to output a photo
      *
-     *    	@param      modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-     *     	@param      object			Object containing data to retrieve file name
-     * 		@param		width			Width of photo
-     * 	  	@return     string    		HTML code to output photo
+     *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+     *     	@param  Object		$object			Object containing data to retrieve file name
+     * 		@param	int			$width			Width of photo
+     * 	  	@return string    					HTML code to output photo
      */
     function showphoto($modulepart,$object,$width=100)
     {

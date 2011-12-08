@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,18 +48,13 @@ class Address
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB     handler acces base de donnees
-	 *    \param  id     id societe (0 par defaut)
+	 *  Constructeur de la classe
+	 *
+	 *  @param	DoliDB		$db     handler acces base de donnees
 	 */
-	function Address($DB, $id=0)
+	function Address($db)
 	{
-		global $conf;
-
-		$this->db = $DB;
-
-		$this->id = $id;
-
+		$this->db = $db;
 		return 1;
 	}
 
@@ -242,12 +237,13 @@ class Address
 	}
 
 	/**
-	 *    \brief      Charge depuis la base toutes les adresses d'une societe
-	 *    \param      socid       Id de la societe a charger en memoire
-	 *    \param      user        Objet de l'utilisateur
-	 *    \return     int         >0 si ok, <0 si ko
+	 *  Charge depuis la base toutes les adresses d'une societe
+	 *
+	 *  @param	int		$socid       Id de la societe a charger en memoire
+	 *  @param  User	$user        Objet de l'utilisateur
+	 *  @return int 			     >0 si ok, <0 si ko
 	 */
-	function fetch($socid, $user=0)
+	function fetch_lines($socid, $user=0)
 	{
 		global $langs, $conf;
 
@@ -337,10 +333,11 @@ class Address
 	}
 
 	/**
-	 *    \brief      Charge depuis la base l'objet adresse
-	 *    \param      id       Id de l'adresse a charger en memoire
-	 *    \param      user        Objet de l'utilisateur
-	 *    \return     int         >0 si ok, <0 si ko
+	 *  Charge depuis la base l'objet adresse
+	 *
+	 *  @param	int		$id       	Id de l'adresse a charger en memoire
+	 *  @param  User	$user       Objet de l'utilisateur
+	 *  @return int 				>0 si ok, <0 si ko
 	 */
 	function fetch_address($id, $user=0)
 	{

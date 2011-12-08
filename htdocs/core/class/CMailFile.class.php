@@ -81,19 +81,19 @@ class CMailFile
 	/**
 	 *	CMailFile
 	 *
-	 *	@param 	subject             Topic/Subject of mail
-	 *	@param 	to                  Recipients emails (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	@param 	from                Sender email      (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	@param 	msg                 Message
-	 *	@param 	filename_list       List of files to attach (full path of filename on file system)
-	 *	@param 	mimetype_list       List of MIME type of attached files
-	 *	@param 	mimefilename_list   List of attached file name in message
-	 *	@param 	addr_cc             Email cc
-	 *	@param 	addr_bcc            Email bcc
-	 *	@param 	deliveryreceipt		Ask a delivery receipt
-	 *	@param 	msgishtml       	1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *	@param 	errors_to      		Email errors
-	 *	@param	css			        Css option
+	 *	@param 	string	$subject             Topic/Subject of mail
+	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	string	$from                Sender email      (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	string	$msg                 Message
+	 *	@param 	array	$filename_list       List of files to attach (full path of filename on file system)
+	 *	@param 	array	$mimetype_list       List of MIME type of attached files
+	 *	@param 	array	$mimefilename_list   List of attached file name in message
+	 *	@param 	string	$addr_cc             Email cc
+	 *	@param 	string	$addr_bcc            Email bcc
+	 *	@param 	int		$deliveryreceipt		Ask a delivery receipt
+	 *	@param 	int		$msgishtml       	1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *	@param 	string	$errors_to      		Email errors
+	 *	@param	string	$css			        Css option
 	 */
 	function CMailFile($subject,$to,$from,$msg,
 	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
@@ -524,8 +524,8 @@ class CMailFile
     /**
      * Correct an uncomplete html string
      *
-     * @param       $msg
-     * @return
+     * @param	string	$msg	String
+     * @return	string			Completed string
      */
     function checkIfHTML($msg)
     {
@@ -615,9 +615,9 @@ class CMailFile
 	/**
 	 * Create header MIME (mode = 'mail')
 	 *
-	 * @param 		filename_list
-	 * @param 		mimefilename_list
-	 * @return		mime headers
+	 * @param	array	$filename_list			Array of filenames
+	 * @param 	array	$mimefilename_list		Array of mime types
+	 * @return	array							mime headers
 	 */
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{
@@ -644,7 +644,8 @@ class CMailFile
 	/**
 	 * Return email content (mode = 'mail')
 	 *
-	 * @param 		msgtext
+	 * @param	string		$msgtext		Message string
+	 * @return	string						String content
 	 */
 	function write_body($msgtext)
 	{
@@ -675,7 +676,7 @@ class CMailFile
 		}
 
 		// Make RFC821 Compliant, replace bare linefeeds
-		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
+		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent);
 
         //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems bugged
         $strContent = rtrim(wordwrap($strContent));
@@ -708,10 +709,10 @@ class CMailFile
 	/**
 	 * Attach file to email (mode = 'mail')
 	 *
-	 * @param 		filename_list		Tableau
-	 * @param 		mimetype_list		Tableau
-	 * @param 		mimefilename_list	Tableau
-	 * @return		out					Chaine fichiers encodes
+	 * @param	array	$filename_list		Tableau
+	 * @param	array	$mimetype_list		Tableau
+	 * @param 	array	$mimefilename_list	Tableau
+	 * @return	string						Chaine fichiers encodes
 	 */
 	function write_files($filename_list,$mimetype_list,$mimefilename_list)
 	{
@@ -753,8 +754,8 @@ class CMailFile
 	/**
 	 * Attach an image to email (mode = 'mail')
 	 *
-	 * @param 		images_list		Tableau
-	 * @return		out				Chaine images encodees
+	 * @param	array	$images_list	Tableau
+	 * @return	string					Chaine images encodees
 	 */
 	function write_images($images_list)
 	{
@@ -784,9 +785,9 @@ class CMailFile
 	/**
 	 * Try to create a socket connection
 	 *
-	 * @param 		$host		Add ssl:// for SSL/TLS.
-	 * @param 		$port		Example: 25, 465
-	 * @return 		Socket id if ok, 0 if KO
+	 * @param 	string		$host		Add ssl:// for SSL/TLS.
+	 * @param 	int			$port		Example: 25, 465
+	 * @return	int						Socket id if ok, 0 if KO
 	 */
 	function check_server_port($host,$port)
 	{
@@ -797,11 +798,13 @@ class CMailFile
 		{
 			dol_syslog("Try socket connection to host=".$host." port=".$port);
 			//See if we can connect to the SMTP server
-			if ( $socket = @fsockopen($host,       // Host to test, IP or domain. Add ssl:// for SSL/TLS.
-			$port,       // which Port number to use
-			$errno,      // actual system level error
-			$errstr,     // and any text that goes with the error
-			$timeout) )  // timeout for reading/writing data over the socket
+			if ($socket = @fsockopen(
+			    $host,       // Host to test, IP or domain. Add ssl:// for SSL/TLS.
+			    $port,       // which Port number to use
+			    $errno,      // actual system level error
+			    $errstr,     // and any text that goes with the error
+			    $timeout
+			))  // timeout for reading/writing data over the socket
 			{
 				// Windows still does not have support for this timeout function
 				if (function_exists('stream_set_timeout')) stream_set_timeout($socket, $timeout, 0);
@@ -813,7 +816,7 @@ class CMailFile
 			}
 			else
 			{
-				$this->error = 'Error '.$errno.' - '.$errstr;
+				$this->error = utf8_check('Error '.$errno.' - '.$errstr)?'Error '.$errno.' - '.$errstr:utf8_encode('Error '.$errno.' - '.$errstr);
 			}
 		}
 		return $_retVal;
@@ -823,9 +826,9 @@ class CMailFile
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions.
 	 *
-	 * @param      socket
-	 * @param      response
-	 * @return     boolean
+	 * @param	Socket	$socket			Socket
+	 * @param   string	$response		Response string
+	 * @return  boolean					true if success
 	 */
 	function server_parse($socket, $response)
 	{
@@ -853,8 +856,8 @@ class CMailFile
 	/**
 	 * Seearch images into html message and init array this->images_encoded if found
 	 *
-	 * @param 		images_dir		Location of physical images files
-	 * @return		int         	>0 if OK, <0 if KO
+	 * @param	string	$images_dir		Location of physical images files
+	 * @return	int 		        	>0 if OK, <0 if KO
 	 */
 	function findHtmlImages($images_dir)
 	{
@@ -943,11 +946,11 @@ class CMailFile
 	/**
 	 * Return an address for SMTP protocol
 	 *
-	 * @param       adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
-	 * @param		format			0=Auto, 1=emails with <>, 2=emails without <>
-	 * @param		encode			1=Encode name to RFC2822
-	 * @return	    string			If format 1: '<john@doe.com>' or 'John Doe <john@doe.com>'
-	 *								If format 2: 'john@doe.com'
+	 * @param	string		$adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
+	 * @param	int			$format			0=Auto, 1=emails with <>, 2=emails without <>
+	 * @param	int			$encode			1=Encode name to RFC2822
+	 * @return	string						If format 1: '<john@doe.com>' or 'John Doe <john@doe.com>'
+	 *										If format 2: 'john@doe.com'
 	 */
 	function getValidAddress($adresses,$format,$encode='')
 	{

@@ -98,7 +98,7 @@ body {
 </div>
 <div class="infos">
 <p class="address"><?php echo $mysoc->name; ?><br>
-<?php print dol_nl2br(dol_format_address($langs,$mysoc)); ?><br>
+<?php print dol_nl2br(dol_format_address($mysoc)); ?><br>
 </p>
 
 <p class="date_heure"><?php
