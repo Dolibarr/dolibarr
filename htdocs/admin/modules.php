@@ -84,23 +84,23 @@ $j = 0;	// j is module number. Automatically affected if module number not defin
 
 foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
-	$modulesdir[] = $dirroot . "/core/modules/";
+	$modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
 
-		$handle=@opendir($dirroot);
-		if (is_resource($handle))
+	$handle=@opendir($dirroot);
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle))!==false)
 		{
-			while (($file = readdir($handle))!==false)
-			{
-			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-			    {
-			    	if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-			    	{
-			    		$modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-			    	}
-			    }
-			}
-			closedir($handle);
+		    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+		    {
+		    	if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+		    	{
+		    		$modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
+		    	}
+		    }
 		}
+		closedir($handle);
+	}
 }
 //var_dump($modulesdir);
 
