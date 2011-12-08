@@ -3618,9 +3618,9 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *              Because writeHTMLCell convert also \n into <br>, if function
  *              is used to build PDF, nl2brmode must be 1
  *
- *	@param		stringtoencode		String to encode
- *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
- *  @param      pagecodefrom        Pagecode stringtoencode is encoded
+ *	@param	string	$stringtoencode		String to encode
+ *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
+ *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
  */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
@@ -3634,11 +3634,12 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
         $newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
         //$newstring=strtr($newstring,array('__li__'=>"<li>\n")); // Restore <li>\n
     }
-    else {
+    else
+    {
         $newstring=dol_nl2br(dol_htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
     }
     // Other substitutions that htmlentities does not do
-    $newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.
+    //$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.     // Seems useles with TCPDF. Make bug with UTF8 languages
     return $newstring;
 }
 
