@@ -62,7 +62,7 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function pdf_crabe($db)
 	{
