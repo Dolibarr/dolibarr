@@ -3084,6 +3084,7 @@ else
         $pageprev = $page - 1;
         $pagenext = $page + 1;
 
+        $day	= GETPOST('day','int');
         $month	= GETPOST('month','int');
         $year	= GETPOST('year','int');
 
@@ -3137,8 +3138,10 @@ else
         }
         if ($month > 0)
         {
-            if ($year > 0)
+            if ($year > 0 && empty($day))
             $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+            else if ($year > 0 && ! empty($day))
+            $sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
             else
             $sql.= " AND date_format(f.datef, '%m') = '".$month."'";
         }
@@ -3202,11 +3205,9 @@ else
             print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
             print '</td>';
             print '<td class="liste_titre" align="center">';
+            if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
             print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-            //print '&nbsp;'.$langs->trans('Year').': '.$syear;
-            //print 'xx'.$syear.'zz';
-            //if ($syear == '') $syear = date("Y");
-            $htmlother->select_year($syear?$syear:-1,'year',1, 20, 5);
+            $htmlother->select_year($year?$year:-1,'year',1, 20, 5);
             print '</td>';
             print '<td class="liste_titre" align="left">&nbsp;</td>';
             print '<td class="liste_titre" align="left">';
