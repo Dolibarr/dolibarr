@@ -24,7 +24,7 @@
  *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Rouget
  */
 
-require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/expedition/modules_expedition.php";
+require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/modules_expedition.php";
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
