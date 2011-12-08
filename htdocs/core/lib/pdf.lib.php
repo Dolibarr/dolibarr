@@ -694,7 +694,6 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 	else
 	{
 		$labelproductservice=pdf_getlinedesc($object,$i,$outputlangs,$hideref,$hidedesc,$issupplierline);
-
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1);
 
@@ -764,11 +763,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if ( empty($hidedesc) ) $libelleproduitservice.=dol_htmlentitiesbr($desc,1);
+				if ( empty($hidedesc) ) $libelleproduitservice.=$desc;
 			}
 			else
 			{
-				$libelleproduitservice.=dol_htmlentitiesbr($desc,1);
+				$libelleproduitservice.=$desc;
 			}
 		}
 	}
@@ -805,8 +804,6 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		}
 	}
 
-	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
-
 	if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
 	{
 		$format='day';
@@ -824,7 +821,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
+		$libelleproduitservice.="\n".$period;
 		//print $libelleproduitservice;
 	}
 
@@ -840,6 +837,9 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$tmptxt.=')';
 	$libelleproduitservice.="<br>".$tmptxt;
 	}*/
+
+	// Now we convert \n into br
+	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
 
 	return $libelleproduitservice;
 }
