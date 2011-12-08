@@ -51,7 +51,7 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/modules_comm
 require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/modules_propale.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_project.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/ModelePdfExpedition.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/modules_expedition.php';
 
 if (empty($user->id))
 {
