@@ -203,10 +203,11 @@ class FormAdmin
     }
 
     /**
-     *    Return combo list of available menu families
-     *    @param      selected        Menu pre-selected
-     *    @param      htmlname        Name of html select
-     *    @param      dirmenuarray    Directories to scan
+     *  Return combo list of available menu families
+     *
+     *  @param	string	$selected        Menu pre-selected
+     *  @param  string	$htmlname        Name of html select
+     *  @param	string	$dirmenuarray    Directories to scan
      */
     function select_menu_families($selected='',$htmlname,$dirmenuarray)
     {
@@ -232,6 +233,7 @@ class FormAdmin
 	        				if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 	        				{
 	        					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
+	        					if (preg_match('/^index/i',$filelib)) continue;
 	        					if (preg_match('/^default/i',$filelib)) continue;
 	        					if (preg_match('/^empty/i',$filelib)) continue;
 	        					if (preg_match('/\.lib/i',$filelib)) continue;
