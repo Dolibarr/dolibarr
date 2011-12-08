@@ -3575,7 +3575,7 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
         $newstring=dol_nl2br(dol_htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
     }
     // Other substitutions that htmlentities does not do
-    $newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.
+    //$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.
     return $newstring;
 }
 
