@@ -210,7 +210,8 @@ print_fiche_titre($langs->trans("Menus"),'','setup');
 print $langs->trans("MenusEditorDesc")."<br>\n";
 print "<br>\n";
 
-if ($mesg) print '<div class="ok">'.$mesg.'.</div><br>';
+
+dol_htmloutput_mesg($mesg);
 
 
 $h = 0;
