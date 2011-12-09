@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - install
+# Dolibarr language file - ca_ES - install 
 CHARSET=UTF-8
 InstallEasy=Hem procurat que la instal·lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
 MiscellanousChecks=Comprovació dels Prerequisits
@@ -154,8 +154,8 @@ MigrationShippingDelivery2=Actualització de les dades expedicions 2
 MigrationFinished=Acabada l'actualització
 LastStepDesc=<strong>Últim pas</strong>: Indiqueu aquí el compte i la contrasenya del primer usuari que fareu servir per connectar-se a l'aplicació. No perdi aquests identificadors, és el compte que permet administrar la resta.
 ActivateModule=Activació del mòdul %s
-#########=undefined
-# upgrade=undefined
+#########=
+# upgrade=
 MigrationFixData=Correcció de dades desnormalitzades
 MigrationOrder=Migració de dades de les comandes clients
 MigrationSupplierOrder=Migració de dades de les comandes a proveïdors
@@ -216,5 +216,7 @@ MigrationProjectTaskActors=Migració de la taula llx_projet_task_actors
 MigrationProjectUserResp=Migració del camp fk_user_resp de llx_projet a llx_element_contact
 # Migration project task time
 MigrationProjectTaskTime=Actualització de temps dedicat en segons
-# Migration Acctioncom=undefined
+# Migration Acctioncom
 MigrationActioncommElement=Actualització de les dades de accions sobre elements
+# Migration payment mode
+MigrationPaymentMode=Actualització de les formes de pagament
