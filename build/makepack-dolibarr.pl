@@ -331,6 +331,8 @@ if ($nboftargetok) {
    	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/fckeditor`;
    	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/lightbox`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jstree`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/license.txt`;
@@ -340,7 +342,6 @@ if ($nboftargetok) {
         #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-20100919`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jstree`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/langs/*/html`;
 		# Removed because not stable yet
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
