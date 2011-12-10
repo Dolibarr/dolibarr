@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2011 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011 	   Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2011 	   Philippe Grand			    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,12 +107,13 @@ if ($action == 'specimen')
 	$inter->initAsSpecimen();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
+	$dir = "/core/modules/fichinter/";
 	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	$file = dol_buildpath($dir.$file);
+	if (file_exists($file))
 	{
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 
