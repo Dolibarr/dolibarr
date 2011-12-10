@@ -39,6 +39,7 @@ For developers:
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
 - New: Add trigger ACTION_DELETE and ACTION_MODIFY
+- New: Can define different requests according to database type into migration files.
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.
 - Qual: Cleaned a lot of dead code.

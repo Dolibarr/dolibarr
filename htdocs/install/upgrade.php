@@ -321,7 +321,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             }
         }
 
-        // Boucle sur chaque fichier
+        // Loop on each migrate files
         foreach($filelist as $file)
         {
             print '<tr><td nowrap>';

@@ -1,13 +1,19 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 2.8.0 or higher. 
+-- when current version is 3.1.0 or higher. 
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
---
+-- To restrict request to Mysql version x.y use -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y use -- VPGSQLx.y
+
+
+-- V4.1      DELETE FROM llx_product_fournisseur WHERE fk_product   NOT IN (SELECT rowid from llx_product);
+-- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
+-- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
 
@@ -57,7 +63,8 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_soc integer after fk_pro
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN ref_fourn varchar(30) after fk_soc;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
-UPDATE llx_product_fournisseur_price as a, llx_product_fournisseur as b SET a.fk_product = b.fk_product, a.fk_soc = b.fk_soc, a.ref_fourn = b.ref_fourn, a.entity = b.entity WHERE a.fk_product_fournisseur = b.rowid AND (a.fk_product IS NULL OR a.fk_soc IS NULL OR a.fk_product = 0 OR a.fk_soc = 0);
+-- VMYSQL4.1 UPDATE llx_product_fournisseur_price as a, llx_product_fournisseur as b SET a.fk_product = b.fk_product, a.fk_soc = b.fk_soc, a.ref_fourn = b.ref_fourn, a.entity = b.entity WHERE a.fk_product_fournisseur = b.rowid AND (a.fk_product IS NULL OR a.fk_soc IS NULL OR a.fk_product = 0 OR a.fk_soc = 0);
+-- VPGSQL8.1 UPDATE llx_product_fournisseur_price as a SET fk_product = b.fk_product, fk_soc = b.fk_soc, ref_fourn = b.ref_fourn, entity = b.entity FROM llx_product_fournisseur as b WHERE a.fk_product_fournisseur = b.rowid AND (a.fk_product IS NULL OR a.fk_soc IS NULL OR a.fk_product = 0 OR a.fk_soc = 0);
 
 ALTER TABLE llx_product_fournisseur_price DROP INDEX uk_product_fournisseur_price_ref;
 ALTER TABLE llx_product_fournisseur_price ADD UNIQUE INDEX uk_product_fournisseur_price_ref (ref_fourn, fk_soc, quantity, entity);

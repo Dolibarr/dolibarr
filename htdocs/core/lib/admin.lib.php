@@ -132,17 +132,33 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
         {
             $buf = fgets($fp, 4096);
 
-            // Cas special de lignes autorisees pour certaines versions uniquement
-            if (preg_match('/^--\sV([0-9\.]+)/i',$buf,$reg))
+            // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
+            if (preg_match('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i',$buf,$reg))
             {
-                $versioncommande=explode('.',$reg[1]);
-                //print var_dump($versioncommande);
-                //print var_dump($versionarray);
-                if (count($versioncommande) && count($versionarray)
-                && versioncompare($versioncommande,$versionarray) <= 0)
+            	$qualified=1;
+            	
+            	// restrict on database type
+            	if (! empty($reg[1]))
+            	{
+            		if (strtolower($reg[1]) != $db->type) $qualified=0;            		
+            	}
+            	
+            	// restrict on version
+            	if ($qualified)
+            	{
+	                $versionrequest=explode('.',$reg[2]);
+	                //print var_dump($versionrequest);
+	                //print var_dump($versionarray);
+	                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
+	                {
+	                	$qualified=0;
+	                }
+            	}
+            	                
+                if ($qualified)
                 {
                     // Version qualified, delete SQL comments
-                    $buf=preg_replace('/^--\sV([0-9\.]+)/i','',$buf);
+                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i','',$buf);
                     //print "Ligne $i qualifi?e par version: ".$buf.'<br>';
                 }
             }
