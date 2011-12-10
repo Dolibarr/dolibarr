@@ -58,12 +58,13 @@ if ($action == 'specimen')
 	//$exp->fetch_commande();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/expedition/doc/";
+	$dir = "/core/modules/expedition/doc/";
 	$file = "pdf_expedition_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	$file = dol_buildpath($dir.$file);
+	if (file_exists($file))
 	{
 		$classname = "pdf_expedition_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 
