@@ -1089,6 +1089,8 @@ abstract class DolibarrModules
      */
     function insert_menus()
     {
+    	global $user;
+    	
         require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
         $err=0;
@@ -1149,7 +1151,7 @@ abstract class DolibarrModules
 
             if (! $err)
             {
-                $result=$menu->create();
+                $result=$menu->create($user);
                 if ($result > 0)
                 {
                     $this->menu[$key]['rowid']=$result;
