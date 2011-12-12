@@ -571,10 +571,9 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
     }
 }
 
+llxFooter();
 
 $db->close();
-
-llxFooter();
 
 
 /**

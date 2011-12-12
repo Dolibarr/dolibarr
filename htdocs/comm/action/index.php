@@ -755,7 +755,7 @@ else    // View by day
     if ($today) $style='cal_today';
 
     $timestamp=dol_mktime(12,0,0,$month,$day,$year);
-    $arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$day,$year));
+    $arraytimestamp=dol_getdate($timestamp);
     echo '<table width="100%" class="nocellnopadd">';
     echo ' <tr class="liste_titre">';
     echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";

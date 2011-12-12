@@ -1085,41 +1085,6 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$
 }
 
 
-/* For backward compatibility */
-function dolibarr_date($fmt, $timestamp, $gm=false)
-{
-    return dol_date($fmt, $timestamp, $gm);
-}
-
-/**
- *	Returns formated date
- *
- *	@param		string		$fmt			Format (Exemple: 'Y-m-d H:i:s')
- *	@param		timestamp	$timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
- *	@param		boolean		$gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
- *	@return		string						Formated date
- *
- *  @deprecated Replaced by dol_print_date
- */
-function dol_date($fmt, $timestamp, $gm=false)
-{
-    $usealternatemethod=false;
-    if ($timestamp <= 0) $usealternatemethod=true;
-    if ($timestamp >= 2145913200) $usealternatemethod=true;
-
-    if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
-    {
-        $string=adodb_date($fmt,$timestamp,$gm);
-    }
-    else
-    {
-        $string=date($fmt,$timestamp);
-    }
-
-    return $string;
-}
-
-
 /**
  * Return string with formated size
  *

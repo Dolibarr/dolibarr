@@ -163,21 +163,6 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
 $sql.= " ORDER BY s.nom";
 
-/*
- print dol_print_date($date_end,'dayhour',true).'<br>';
- print $db->idate($date_end).'<br>';
-
- print adodb_get_gmt_diff();
- print adodb_date('Y-d-m H:i',$date_end,true).'<br>';
- print adodb_date('Y-d-m H:i',$date_end,false).'<br>';
-
- $date_end=0;
- print dol_print_date($date_end,'dayhour',true).'<br>';
- print $db->idate($date_end).'<br>';
- print adodb_gmstrftime('%Y-%d-%m %H:%M',$date_end).'<br>';
- print $sql;
- */
-
 dol_syslog("get customer invoices sql=".$sql);
 $result = $db->query($sql);
 if ($result) {
