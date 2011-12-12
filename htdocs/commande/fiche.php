@@ -79,23 +79,26 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
 {
-    if ( 1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers') )
+    if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
     {
         $mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
     }
     else
     {
-        $result=$object->createFromClone($id, 0, GETPOST('socid'), $hookmanager);
-        if ($result > 0)
-        {
-            header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
-            exit;
-        }
-        else
-        {
-            $mesg='<div class="error">'.$object->error.'</div>';
-            $action='';
-        }
+    	if ($object->fetch($id) > 0)
+    	{
+    		$result=$object->createFromClone($socid, $hookmanager);
+    		if ($result > 0)
+    		{
+    			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+    			exit;
+    		}
+    		else
+    		{
+    			$mesg='<div class="error">'.$object->error.'</div>';
+    			$action='';
+    		}
+    	}
     }
 }
 
