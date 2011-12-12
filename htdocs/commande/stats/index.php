@@ -228,7 +228,7 @@ print '<td align="center" valign="top">';
 print '<table class="border" width="100%"><tr valign="top"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
-    print '<img src="'.$fileurlnb.'" title="'.$langs->trans("NbOfOrders").'" alt="'.$langs->trans("NbOfProposals").'">';
+    print '<img src="'.$fileurlnb.'" title="'.$langs->trans("NbOfOrders").'" alt="'.$langs->trans("NbOfOrders").'">';
     print "<br>\n";
     print '<img src="'.$fileurlamount.'" title="'.$langs->trans("AmountTotal").'" alt="'.$langs->trans("AmountTotal").'">';
 }
