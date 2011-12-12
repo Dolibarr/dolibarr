@@ -149,7 +149,7 @@ if (($action == 'setref_supplier' || $action == 'set_ref_supplier') && $user->ri
     $result=$object->set_ref_supplier($user, $_POST['ref_supplier']);
 }
 
-// Set supplier ref
+// Set label
 if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
@@ -217,9 +217,8 @@ if ($action == 'update' && ! $_POST['cancel'])
         $result = $db->query($sql);
     }
 }
-/*
- * Action creation
-*/
+
+// Create
 if ($action == 'add' && $user->rights->fournisseur->facture->creer)
 {
     $error=0;
@@ -640,9 +639,7 @@ if ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
     }
 }
 
-/*
- * Add file in email form
-*/
+// Add file in email form
 if ($_POST['addfile'])
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -656,9 +653,7 @@ if ($_POST['addfile'])
     $action='presend';
 }
 
-/*
- * Remove file in email form
-*/
+// Remove file in email form
 if (! empty($_POST['removedfile']))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -672,9 +667,7 @@ if (! empty($_POST['removedfile']))
     $action='presend';
 }
 
-/*
- * Send mail
-*/
+// Send mail
 if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
 {
     $langs->load('mails');
@@ -830,10 +823,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
     //$action = 'presend';
 }
 
-/*
- * Build document
-*/
-
+// Build document
 if ($action	== 'builddoc')
 {
     // Save modele used
@@ -879,7 +869,7 @@ if ($action == 'remove_file')
 
 /*
  *	View
-*/
+ */
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1311,7 +1301,6 @@ else
             print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
         }
         print '</td></tr>';
-
 
         // Label
         print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="3">';
