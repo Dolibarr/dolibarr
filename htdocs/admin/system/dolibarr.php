@@ -198,7 +198,7 @@ if ($_SESSION['dol_dst']>0)
     print ($_SESSION['dol_dst']>0?'+':'').($_SESSION['dol_dst']).' ('.($_SESSION['dol_dst']>0?'+':'').($_SESSION['dol_dst']*60*60).')';
 }
 else print yn(0);
-if (isset($_SESSION['dol_dst_first'])) print ' &nbsp; &nbsp; ('.dol_print_date(dol_stringtotime($_SESSION['dol_dst_first']),'dayhour','gmt').' - '.dol_print_date(dol_stringtotime($_SESSION['dol_dst_second']),'dayhour','gmt').')';
+if (! empty($_SESSION['dol_dst_first'])) print ' &nbsp; &nbsp; ('.dol_print_date(dol_stringtotime($_SESSION['dol_dst_first']),'dayhour','gmt').' - '.dol_print_date(dol_stringtotime($_SESSION['dol_dst_second']),'dayhour','gmt').')';
 print '</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzuser').'</td></tr>'."\n";
