@@ -769,62 +769,51 @@ class Commande extends CommonObject
     /**
      *		Load an object from its id and create a new one in database
      *
-     *		@param      int			$fromid     	Id of object to clone
-     *		@param		int			$invertdetail	Reverse sign of amounts for lines
      *		@param		int			$socid			Id of thirdparty
      *		@param		HookManager	$hookmanager	Hook manager instance
      * 	 	@return		int							New id of clone
      */
-    function createFromClone($fromid,$invertdetail=0,$socid=0,$hookmanager=false)
+    function createFromClone($socid=0,$hookmanager=false)
     {
         global $conf,$user,$langs;
 
         $error=0;
 
-        $object=new Commande($this->db);
-
         $this->db->begin();
 
         // Load source object
-        $object->fetch($fromid);
-        $objFrom = $object;
+        $objFrom = dol_clone($this);
 
         // Change socid if needed
-        if (! empty($socid) && $socid != $object->socid)
+        if (! empty($socid) && $socid != $this->socid)
         {
             $objsoc = new Societe($this->db);
 
             if ($objsoc->fetch($socid)>0)
             {
-                $object->socid 					= $objsoc->id;
-                $object->cond_reglement_id		= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-                $object->mode_reglement_id		= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-                $object->fk_project				= '';
-                $object->fk_delivery_address	= '';
+                $this->socid 				= $objsoc->id;
+                $this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+                $this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+                $this->fk_project			= '';
+                $this->fk_delivery_address	= '';
             }
 
             // TODO Change product price if multi-prices
         }
 
-        $object->id=0;
-        $object->statut=0;
+        $this->id=0;
+        $this->statut=0;
 
         // Clear fields
-        $object->user_author_id     = $user->id;
-        $object->user_valid         = '';
-        $object->date_creation      = '';
-        $object->date_validation    = '';
-        $object->ref_client         = '';
+        $this->user_author_id     = $user->id;
+        $this->user_valid         = '';
+        $this->date_creation      = '';
+        $this->date_validation    = '';
+        $this->ref_client         = '';
 
         // Create clone
-        $result=$object->create($user);
-
-        // Other options
-        if ($result < 0)
-        {
-            $this->error=$object->error;
-            $error++;
-        }
+        $result=$this->create($user);
+        if ($result < 0) $error++;
 
         if (! $error)
         {
@@ -833,14 +822,14 @@ class Commande extends CommonObject
             {
                 $parameters=array('objFrom'=>$objFrom);
                 $action='';
-                $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
 
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_CLONE',$object,$user,$langs,$conf);
+            $result=$interface->run_triggers('ORDER_CLONE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
         }
@@ -849,7 +838,7 @@ class Commande extends CommonObject
         if (! $error)
         {
             $this->db->commit();
-            return $object->id;
+            return $this->id;
         }
         else
         {

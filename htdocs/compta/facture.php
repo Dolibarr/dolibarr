@@ -98,17 +98,20 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
     else
     {
-        $result=$object->createFromClone($id,0,$hookmanager);
-        if ($result > 0)
-        {
-            header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
-            exit;
-        }
-        else
-        {
-            $mesg=$object->error;
-            $action='';
-        }
+    	if ($object->fetch($id) > 0)
+    	{
+    		$result=$object->createFromClone($socid, $hookmanager);
+    		if ($result > 0)
+    		{
+    			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
+    			exit;
+    		}
+    		else
+    		{
+    			$mesg=$object->error;
+    			$action='';
+    		}
+    	}
     }
 }
 
