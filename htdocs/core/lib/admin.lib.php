@@ -136,13 +136,13 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
             if (preg_match('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i',$buf,$reg))
             {
             	$qualified=1;
-            	
+
             	// restrict on database type
             	if (! empty($reg[1]))
             	{
-            		if (strtolower($reg[1]) != $db->type) $qualified=0;            		
+            		if (strtolower($reg[1]) != $db->type) $qualified=0;
             	}
-            	
+
             	// restrict on version
             	if ($qualified)
             	{
@@ -154,7 +154,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 	                	$qualified=0;
 	                }
             	}
-            	                
+
                 if ($qualified)
                 {
                     // Version qualified, delete SQL comments
@@ -856,19 +856,40 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
     $orders = array();
     $categ = array();
     $dirmod = array();
+    $modulesdir = array();
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
-    foreach ($conf->file->dol_document_root as $dirroot)
-    {
-        $dir = $dirroot . "/core/modules/";
 
-        // Load modules attributes in arrays (name, numero, orders) from dir directory
-        //print $dir."\n<br>";
-        dol_syslog("Scan directory ".$dir." for modules");
+    foreach ($conf->file->dol_document_root as $type => $dirroot)
+    {
+        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
+
+        $handle=@opendir($dirroot);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+                {
+                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+                    {
+                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
+                    }
+                }
+            }
+            closedir($handle);
+        }
+    }
+    //var_dump($modulesdir);
+
+    foreach ($modulesdir as $dir)
+    {
+    	// Load modules attributes in arrays (name, numero, orders) from dir directory
+    	//print $dir."\n<br>";
+    	dol_syslog("Scan directory ".$dir." for modules");
         $handle=@opendir(dol_osencode($dir));
         if (is_resource($handle))
         {
-
             while (($file = readdir($handle))!==false)
             {
                 //print "$i ".$file."\n<br>";
