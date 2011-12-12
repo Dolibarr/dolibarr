@@ -146,5 +146,79 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 		return $result;
     }
 
+    /**
+    */
+    public function testDolPrintDate()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+    	// Check %Y-%m-%d %H:%M:%S format
+        $result=dol_print_date(0,'%Y-%m-%d %H:%M:%S',true);
+       	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('1970-01-01 00:00:00',$result);
+
+    	// Check dayhour format for fr_FR
+    	$outputlangs=new Translate('',$conf);
+    	$outputlangs->setDefaultLang('fr_FR');
+    	$outputlangs->load("main");
+
+    	$result=dol_print_date(0+24*3600,'dayhour',true,$outputlangs);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('02/01/1970 00:00',$result);
+
+    	// Check day format for en_US
+    	$outputlangs=new Translate('',$conf);
+    	$outputlangs->setDefaultLang('en_US');
+    	$outputlangs->load("main");
+
+    	$result=dol_print_date(0+24*3600,'day',true,$outputlangs);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('01/02/1970',$result);
+
+    	// Check %a and %b format for en_US
+    	$result=dol_print_date(0,'%a %b',true,$outputlangs);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('Thu jan',$result);
+
+    	return $result;
+    }
+
+    /**
+    */
+    public function testDolTimePlusDuree()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        // Check dayhour format for fr_FR
+        $outputlangs=new Translate('',$conf);
+        $outputlangs->setDefaultLang('fr_FR');
+        $outputlangs->load("main");
+
+        $result=dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0,1,'m'),1,'y'),1,'d'),'dayhour',true,$outputlangs);
+       	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('02/02/1971 00:00',$result);
+
+    	return $result;
+    }
+
+    /**
+    */
+    public function testDolGetFirstDay()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+    }
 }
 ?>
