@@ -1568,7 +1568,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Send
-			if ($object->statut == 1)
+			if ($object->statut == 1 || $object->statut == 2)
 			{
 				$propref = dol_sanitizeFileName($object->ref);
 				$file = $conf->propale->dir_output . '/'.$propref.'/'.$propref.'.pdf';
