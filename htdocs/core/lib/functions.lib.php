@@ -804,13 +804,13 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
                 $to_gmt=false;
                 $offsettz=$offsetdst=0;
             }
-            if ($tzoutput == 'tzuser')
+            elseif ($tzoutput == 'tzuser')
             {
                 $to_gmt=true;
                 $offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
                 $offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
             }
-            if ($tzoutput == 'tzcompany')
+            elseif ($tzoutput == 'tzcompany')
             {
                 $to_gmt=false;
                 $offsettz=$offsetdst=0;	// TODO Define this and use it later

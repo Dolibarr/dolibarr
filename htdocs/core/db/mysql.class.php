@@ -542,7 +542,7 @@ class DoliDBMysql
 	 */
 	function idate($param)
 	{
-		return dol_print_date($param,"%Y%m%d%H%M%S",true);
+		return dol_print_date($param,"%Y%m%d%H%M%S");
 	}
 
 	/**

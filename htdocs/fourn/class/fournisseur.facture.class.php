@@ -253,7 +253,7 @@ class FactureFournisseur extends Facture
     function fetch($id='',$ref='')
     {
         global $langs;
-        
+
         $sql = "SELECT";
         $sql.= " t.rowid,";
         $sql.= " t.facnumber,";
@@ -461,9 +461,9 @@ class FactureFournisseur extends Facture
         if (isset($this->tva)) $this->tva=trim($this->tva);
         if (isset($this->localtax1)) $this->localtax1=trim($this->localtax1);
         if (isset($this->localtax2)) $this->localtax2=trim($this->localtax2);
-        if (isset($this->total)) $this->total=trim($this->total);
-        if (isset($this->total_ht)) $this->total_ht=trim($this->total_ht);
-        if (isset($this->total_tva)) $this->total_tva=trim($this->total_tva);
+        if (empty($this->total)) $this->total=0;
+        if (empty($this->total_ht)) $this->total_ht=0;
+        if (empty($this->total_tva)) $this->total_tva=0;
         //	if (isset($this->total_localtax1)) $this->total_localtax1=trim($this->total_localtax1);
         //	if (isset($this->total_localtax2)) $this->total_localtax2=trim($this->total_localtax2);
         if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);

@@ -29,27 +29,27 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
-if (!$user->rights->fournisseur->facture->lire)
-accessforbidden();
+if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 
 $langs->load("companies");
 $langs->load("bills");
 
-$socid = $_GET["socid"];
+$socid = GETPOST("socid");
 
 // Security check
 if ($user->societe_id > 0)
 {
-	$_GET["action"] = '';
+	$action='';
+    $_GET["action"] = '';
 	$socid = $user->societe_id;
 }
 
 $mode=GETPOST("mode");
 $modesearch=GETPOST("mode_search");
 
-$page=$_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
+$page=GETPOST("page");
+$sortorder = GETPOST("sortorder");
+$sortfield = GETPOST("sortfield");
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
@@ -59,8 +59,8 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="fac.datef";
 
-$month    =$_GET['month'];
-$year     =$_GET['year'];
+$month    = GETPOST('month','int');
+$year     = GETPOST('year','int');
 
 
 /*
@@ -122,13 +122,13 @@ if ($_GET["filtre"])
 	}
 }
 
-if ($_REQUEST["search_ref"])
+if (GETPOST("search_ref"))
 {
-	$sql .= " AND fac.rowid like '%".$db->escape($_REQUEST["search_ref"])."%'";
+	$sql .= " AND fac.rowid like '%".$db->escape(GETPOST("search_ref"))."%'";
 }
-if ($_REQUEST["search_ref_supplier"])
+if (GETPOST("search_ref_supplier"))
 {
-	$sql .= " AND fac.facnumber like '%".$db->escape($_REQUEST["search_ref_supplier"])."%'";
+	$sql .= " AND fac.facnumber like '%".$db->escape(GETPOST("search_ref_supplier"))."%'";
 }
 if ($month > 0)
 {
@@ -141,24 +141,24 @@ else if ($year > 0)
 {
 	$sql.= " AND fac.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if ($_GET["search_libelle"])
+if (GETPOST("search_libelle"))
 {
-	$sql .= " AND fac.libelle like '%".$db->escape($_GET["search_libelle"])."%'";
+	$sql .= " AND fac.libelle like '%".$db->escape(GETPOST("search_libelle"))."%'";
 }
 
-if ($_GET["search_societe"])
+if (GETPOST("search_societe"))
 {
-	$sql .= " AND s.nom like '%".$db->escape($_GET["search_societe"])."%'";
+	$sql .= " AND s.nom like '%".$db->escape(GETPOST("search_societe"))."%'";
 }
 
-if ($_GET["search_montant_ht"])
+if (GETPOST("search_montant_ht"))
 {
-	$sql .= " AND fac.total_ht = '".$db->escape($_GET["search_montant_ht"])."'";
+	$sql .= " AND fac.total_ht = '".$db->escape(GETPOST("search_montant_ht"))."'";
 }
 
-if ($_GET["search_montant_ttc"])
+if (GETPOST("search_montant_ttc"))
 {
-	$sql .= " AND fac.total_ttc = '".$db->escape($_GET["search_montant_ttc"])."'";
+	$sql .= " AND fac.total_ttc = '".$db->escape(GETPOST("search_montant_ttc"))."'";
 }
 
 $sql.= $db->order($sortfield,$sortorder);
@@ -175,11 +175,15 @@ if ($resql)
 		$soc->fetch($socid);
 	}
 
-
 	$param='&amp;socid='.$socid;
-	if ($month) $param.='&amp;month='.$month;
-	if ($year)  $param.='&amp;year=' .$year;
-
+	if ($month) $param.='&amp;month='.urlencode($month);
+	if ($year)  $param.='&amp;year=' .urlencode($year);
+	if (GETPOST("search_ref"))          $param.='&amp;search_ref='.urlencode(GETPOST("search_ref"));
+	if (GETPOST("search_ref_supplier")) $param.='&amp;search_ref_supplier'.urlencode(GETPOST("search_ref_supplier"));
+	if (GETPOST("search_libelle"))      $param.='&amp;search_libelle='.urlencode(GETPOST("search_libelle"));
+	if (GETPOST("search_societe"))      $param.='&amp;search_societe='.urlencode(GETPOST("search_societe"));
+	if (GETPOST("search_montant_ht"))   $param.='&amp;search_montant_ht='.urlencode(GETPOST("search_montant_ht"));
+	if (GETPOST("search_montant_ttc"))  $param.='&amp;search_montant_ttc='.urlencode(GETPOST("search_montant_ttc"));
 
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php",$param,$sortfield,$sortorder,'',$num);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -200,10 +204,10 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
+	print '<input class="flat" size="6" type="text" name="search_ref" value="'.GETPOST("search_ref").'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.$_REQUEST["search_ref_supplier"].'">';
+	print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.GETPOST("search_ref_supplier").'">';
 	print '</td>';
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -214,14 +218,14 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="16" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
+	print '<input class="flat" size="16" type="text" name="search_libelle" value="'.GETPOST("search_libelle").'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="8" name="search_societe" value="'.$_GET["search_societe"].'">';
+	print '<input class="flat" type="text" size="8" name="search_societe" value="'.GETPOST("search_societe").'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+	print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.GETPOST("search_montant_ht").'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+	print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.GETPOST("search_montant_ttc").'">';
 	print '</td><td class="liste_titre" colspan="2" align="center">';
 	print '<input type="image" class="liste_titre" align="right" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
@@ -238,16 +242,16 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
-		print '<td nowrap>';
+		print "<tr ".$bc[$var].">";
+		print '<td nowrap="nowrap">';
 		$facturestatic->id=$obj->facid;
 		$facturestatic->ref=$obj->ref;
 		$facturestatic->ref_supplier=$obj->facnumber;
 		print $facturestatic->getNomUrl(1);
 		print "</td>\n";
-		print '<td nowrap>'.dol_trunc($obj->facnumber,10)."</td>";
-		print '<td align="center" nowrap="1">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
-		print '<td align="center" nowrap="1">'.dol_print_date($db->jdate($obj->date_echeance),'day');
+		print '<td nowrap="nowrap">'.dol_trunc($obj->facnumber,10)."</td>";
+		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
+		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
 		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
