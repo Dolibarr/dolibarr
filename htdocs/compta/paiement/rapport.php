@@ -25,10 +25,12 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/rapport/pdf_paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 // Security check
-if (! $user->rights->facture->lire)
-accessforbidden();
+if (! $user->rights->facture->lire) accessforbidden();
+
+$action=GETPOST('action');
 
 $dir = $conf->facture->dir_output.'/payments';
 
@@ -48,7 +50,7 @@ if (! $year) { $year=date("Y"); }
  * Actions
  */
 
-if ($_POST["action"] == 'builddoc')
+if ($action == 'builddoc')
 {
     $rap = new pdf_paiement($db);
 
@@ -80,6 +82,8 @@ if ($_POST["action"] == 'builddoc')
  * View
  */
 
+$formother=new FormOther($db);
+
 llxHeader();
 
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
@@ -92,33 +96,10 @@ print '<input type="hidden" name="action" value="builddoc">';
 $cmonth = GETPOST("remonth")?GETPOST("remonth"):date("n", time());
 $syear = GETPOST("reyear")?GETPOST("reyear"):date("Y", time());
 
-print '<select class="flat" name="remonth">';
-for ($month = 1 ; $month < 13 ; $month++)
-{
-    if ($month == $cmonth)
-    {
-        print "<option value=\"$month\" selected=\"true\">" . dol_print_date(mktime(0,0,0,$month),"%B");
-    }
-    else
-    {
-        print "<option value=\"$month\">" . dol_print_date(mktime(0,0,0,$month),"%B");
-    }
-}
-print "</select>";
-print '<select class="flat" name="reyear">';
+print $formother->select_month($cmonth,'remonth');
 
-for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
-{
-    if ($formyear == $syear)
-    {
-        print "<option value=\"$formyear\" selected=\"true\">".$formyear."</option>";
-    }
-    else
-    {
-        print "<option value=\"$formyear\">".$formyear."</option>";
-    }
-}
-print "</select>\n";
+print $formother->select_year($syear,'reyear');
+
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 print '</form>';
 print '<br>';
@@ -183,7 +164,8 @@ if ($year)
         print '</table>';
     }
 }
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
