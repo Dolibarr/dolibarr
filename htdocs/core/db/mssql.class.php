@@ -542,6 +542,7 @@ class DoliDBMssql
 
 	/**
 	 *     Escape a string to insert data.
+	 *
 	 *     @param	    stringtoencode		String to escape
 	 *     @return	    string				String escaped
 	 */
@@ -554,19 +555,21 @@ class DoliDBMssql
 	/**
 	 *   Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
-	 *   @param	    param       Date TMS to convert
-	 *   @return	string      Date in a string YYYYMMDDHHMMSS
+	 *
+	 *   @param	    string	$param      Date TMS to convert
+	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
-		return adodb_strftime("%Y-%m-%d %H:%M:%S",$param);
+		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
 	}
 
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
 	 * 	19700101020000 -> 3600 with TZ+1
-	 * 	@param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@return		date			Date TMS
+	 *
+	 * 	@param		string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@return		date				Date TMS
 	 */
 	function jdate($string)
 	{

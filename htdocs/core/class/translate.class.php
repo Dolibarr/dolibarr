@@ -159,7 +159,6 @@ class Translate {
 	{
 		global $conf;
 
-		//var_dump($this->dir);exit;
 		// Check parameters
 		if (empty($domain))
 		{
@@ -266,9 +265,6 @@ class Translate {
 									}
 									else
 									{
-										// On stocke toujours dans le tableau Tab en UTF-8
-										//if (! empty($this->charset_inputfile[$newdomain]) && $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
-
 										$this->tab_translate[$key]=$value;
 										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
@@ -289,7 +285,6 @@ class Translate {
 							    dol_syslog($error, LOG_ERR);
 							}
 						}
-						//exit;
 
 						if (empty($conf->global->MAIN_FORCELANGDIR)) break;		// Break loop on each root dir. If a module has forced dir, we do not stop loop.
 					}
@@ -389,6 +384,8 @@ class Translate {
 	 */
 	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
 	{
+        global $conf;
+
 	    if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
             $str=$this->tab_translate[$key];
@@ -400,14 +397,23 @@ class Translate {
 			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities
             $str=str_replace(array('<','>','"',),array('__lt__','__gt__','__quot__'),$str);
 
-			//$str=$this->convToOutputCharset($str);	// Convert string to $this->charset_output
-
 			// Crypt string into HTML
-			// $str est une chaine stockee en memoire au format $this->charset_output
 			$str=htmlentities($str,ENT_QUOTES,$this->charset_output);
 
 			// Restore HTML tags
             $str=str_replace(array('__lt__','__gt__','__quot__'),array('<','>','"',),$str);
+
+            // Overwrite translation
+            if (! empty($conf->global->MAIN_OVERWRITE_TRANS))    // Overwrite translation with string1:newstring1,string2:newstring2
+            {
+                $tmparray=explode(',', $conf->global->MAIN_OVERWRITE_TRANS);
+                foreach($tmparray as $tmp)
+                {
+                    $tmparray2=explode(':',$tmp);
+                    if ($tmparray2[0]==$str) { $str=$tmparray2[1]; break; }
+                }
+            }
+
 			return $str;
 		}
 		else								// Translation is not available
@@ -458,7 +464,7 @@ class Translate {
 		{
 		    $str=$this->tab_translate[$key];
 
-			$str=sprintf($str,$param1,$param2,$param3,$param4);
+            if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
 		}
 		else
 		{

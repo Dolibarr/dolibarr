@@ -23,7 +23,7 @@
 
 /**
  *  Return array head with list of tabs to view object informations
- * 
+ *
  *  @param      object          Member
  *  @return     array           head
  */
@@ -113,7 +113,7 @@ function member_admin_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'member_admin');
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
@@ -123,7 +123,7 @@ function member_admin_prepare_head($object)
     $head[$h][1] = $langs->trans("BlankSubscriptionForm");
     $head[$h][2] = 'public';
     $h++;
-    
+
     complete_head_from_modules($conf,$langs,$object,$head,$h,'member_admin','remove');
 
     return $head;
@@ -132,8 +132,9 @@ function member_admin_prepare_head($object)
 
 /**
  *  Return array head with list of tabs to view object stats informations
- *  @param      object          Member
- *  @return     array           head
+ *
+ *  @param	Object	$object         Member or null
+ *  @return	array           		head
  */
 function member_stats_prepare_head($object)
 {

@@ -154,99 +154,96 @@ function task_prepare_head($object)
  */
 function select_projects($socid=-1, $selected='', $htmlname='projectid')
 {
-    global $db,$user,$conf,$langs;
-
-    $hideunselectables = false;
-    if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
-
-    $projectstatic=new Project($db);
-    $projectsListId = '';
-    if (empty($user->rights->projet->all->lire))
-    {
-        $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
-    }
-
-    // On recherche les projets
-    $sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
-    $sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-    $sql.= " WHERE p.entity = ".$conf->entity;
-    if ($projectsListId) $sql.= " AND p.rowid in (".$projectsListId.")";
-    if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
-    //if ($socid > 0) $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc='0' OR p.fk_soc IS NULL)";	// We will filter later
-    $sql.= " ORDER BY p.title ASC";
-
-    //print $sql;
-    //var_dump($user->rights);
-    dol_syslog("project.lib::select_projects sql=".$sql);
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        print '<select class="flat" name="'.$htmlname.'">';
-        print '<option value="0">&nbsp;</option>';
-        $num = $db->num_rows($resql);
-        $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                // If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-                if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && ! $user->rights->societe->lire)
-                {
-                    // Do nothing
-                }
-                else
-                {
-                    $labeltoshow=dol_trunc($obj->ref,16);
-                    //if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
-                    //else $labeltoshow.=' ('.$langs->trans("Private").')';
-                    if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
-                    {
-                        print '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
-                    }
-                    else
-                    {
-                        $disabled=0;
-                        if (! $obj->fk_statut > 0)
-                        {
-                            $disabled=1;
-                            $labeltoshow.=' - '.$langs->trans("Draft");
-                        }
-                        if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
-                        {
-                            $disabled=1;
-                            $labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
-                        }
-
-                        if ($hideunselectables && $disabled)
-                        {
-                            $resultat='';
-                        }
-                        else
-                        {
-                            $resultat='<option value="'.$obj->rowid.'"';
-                            if ($disabled) $resultat.=' disabled="disabled"';
-                            //if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
-                            //else $labeltoshow.=' ('.$langs->trans("Private").')';
-                            $resultat.='>'.$labeltoshow;
-                            if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,12);
-                            $resultat.='</option>';
-                        }
-                        print $resultat;
-                    }
-                }
-                $i++;
-            }
-        }
-        print '</select>';
-        $db->free($resql);
-        return $num;
-    }
-    else
-    {
-        dol_print_error($db);
-        return -1;
-    }
+	global $db,$user,$conf,$langs;
+	
+	$hideunselectables = false;
+	if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+	
+	$projectsListId = false;
+	if (empty($user->rights->projet->all->lire))
+	{
+		$projectstatic=new Project($db);
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+	}
+	
+	// On recherche les projets
+	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
+	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
+	$sql.= " WHERE p.entity = ".$conf->entity;
+	if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
+	if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
+	$sql.= " ORDER BY p.title ASC";
+	
+	dol_syslog("project.lib::select_projects sql=".$sql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		print '<select class="flat" name="'.$htmlname.'">';
+		print '<option value="0">&nbsp;</option>';
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
+				if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && ! $user->rights->societe->lire)
+				{
+					// Do nothing
+				}
+				else
+				{
+					$labeltoshow=dol_trunc($obj->ref,16);
+					//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
+					//else $labeltoshow.=' ('.$langs->trans("Private").')';
+					if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
+					{
+						print '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+					}
+					else
+					{
+						$disabled=0;
+						if (! $obj->fk_statut > 0)
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Draft");
+						}
+						if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+						}
+						
+						if ($hideunselectables && $disabled)
+						{
+							$resultat='';
+						}
+						else
+						{
+							$resultat='<option value="'.$obj->rowid.'"';
+							if ($disabled) $resultat.=' disabled="disabled"';
+							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+							//else $labeltoshow.=' ('.$langs->trans("Private").')';
+							$resultat.='>'.$labeltoshow;
+							if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,12);
+							$resultat.='</option>';
+						}
+						print $resultat;
+					}
+				}
+				$i++;
+			}
+		}
+		print '</select>';
+		$db->free($resql);
+		return $num;
+	}
+	else
+	{
+		dol_print_error($db);
+		return -1;
+	}
 }
 
 
