@@ -609,11 +609,11 @@ if ($id)
 {
 	if ($error)
 	{
-		print '<div class="error">'.$error.'</div><br>';
+		dol_htmloutput_errors($error);
 	}
 	if ($mesg)
 	{
-		print $mesg.'<br>';
+		dol_htmloutput_mesg($mesg);
 	}
 
 	$act = new ActionComm($db);
