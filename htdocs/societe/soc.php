@@ -121,7 +121,7 @@ if (empty($reshook))
         $object->address               = $_POST["adresse"];
         $object->zip                   = $_POST["zipcode"];
         $object->town                  = $_POST["town"];
-        $object->country_id            = $_POST["pays_id"];
+        $object->country_id            = $_POST["country_id"];
         $object->state_id              = $_POST["departement_id"];
         $object->tel                   = $_POST["tel"];
         $object->fax                   = $_POST["fax"];
@@ -135,7 +135,7 @@ if (empty($reshook))
         $object->code_client           = $_POST["code_client"];
         $object->code_fournisseur      = $_POST["code_fournisseur"];
         $object->capital               = $_POST["capital"];
-        $object->barcode                = $_POST["barcode"];
+        $object->barcode               = $_POST["barcode"];
 
         $object->tva_intra             = $_POST["tva_intra"];
         $object->tva_assuj             = $_POST["assujtva_value"];
@@ -228,22 +228,22 @@ if (empty($reshook))
                         dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
                         $contact=new Contact($db);
 
-     					$contact->civilite_id=$object->civilite_id;
-                        $contact->name=$object->nom_particulier;
-                        $contact->firstname=$object->prenom;
-                        $contact->address=$object->address;
-                        $contact->zip=$object->zip;
-                        $contact->cp=$object->cp;
-                        $contact->town=$object->town;
-                        $contact->ville=$object->ville;
-                        $contact->fk_departement=$object->state_id;
-                        $contact->fk_pays=$object->pays_id;
-                        $contact->socid=$object->id;                   // fk_soc
-                        $contact->status=1;
-                        $contact->email=$object->email;
-						$contact->phone_pro=$object->tel;
-						$contact->fax=$object->fax;
-                        $contact->priv=0;
+     					$contact->civilite_id		= $object->civilite_id;
+                        $contact->name				= $object->nom_particulier;
+                        $contact->firstname			= $object->prenom;
+                        $contact->address			= $object->address;
+                        $contact->zip				= $object->zip;
+                        $contact->cp				= $object->cp;		// TODO obsolete
+                        $contact->town				= $object->town;
+                        $contact->ville				= $object->ville;	// TODO obsolete
+                        $contact->fk_departement	= $object->state_id;
+                        $contact->fk_pays			= $object->country_id;
+                        $contact->socid				= $object->id;	// fk_soc
+                        $contact->status			= 1;
+                        $contact->email				= $object->email;
+						$contact->phone_pro			= $object->tel;
+						$contact->fax				= $object->fax;
+                        $contact->priv				= 0;
 
                         $result=$contact->create($user);
                         if (! $result >= 0)
@@ -520,7 +520,7 @@ else
 
         $object->name				= $_POST["nom"];
         $object->prenom				= $_POST["prenom"];
-        $object->particulier		= $_REQUEST["private"];
+        $object->particulier		= GETPOST('private', 'int');
         $object->prefix_comm		= $_POST["prefix_comm"];
         $object->client				= $_POST["client"]?$_POST["client"]:$object->client;
         $object->code_client		= $_POST["code_client"];
@@ -535,7 +535,7 @@ else
         $object->email				= $_POST["email"];
         $object->url				= $_POST["url"];
         $object->capital			= $_POST["capital"];
-        $object->barcode				= $_POST["barcode"];
+        $object->barcode			= $_POST["barcode"];
         $object->idprof1			= $_POST["idprof1"];
         $object->idprof2			= $_POST["idprof2"];
         $object->idprof3			= $_POST["idprof3"];
@@ -590,11 +590,11 @@ else
         }
 
         // We set country_id, country_code and country for the selected country
-        $object->country_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->country_id;
-        $object->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->country_id;
-        if ($object->pays_id)
+        $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        $object->pays_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        if ($object->country_id)
         {
-            $tmparray=getCountry($object->pays_id,'all',$db,$langs,0);
+            $tmparray=getCountry($object->country_id,'all',$db,$langs,0);
             $object->pays_code=$tmparray['code'];
             $object->pays=$tmparray['label'];
             $object->country_code=$tmparray['code'];
@@ -608,33 +608,33 @@ else
         if ($conf->use_javascript_ajax)
         {
             print "\n".'<script type="text/javascript" language="javascript">';
-            print 'jQuery(document).ready(function () {
+            print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
                         is_private='.(GETPOST("private")?GETPOST("private"):0).';
 						if (is_private) {
-							jQuery(".individualline").show();
+							$(".individualline").show();
 						} else {
-							jQuery(".individualline").hide();
+							$(".individualline").hide();
 						}
-                         jQuery("#radiocompany").click(function() {
-                               jQuery(".individualline").hide();
-                               jQuery("#typent_id").val(0);
-                               jQuery("#effectif_id").val(0);
-                               jQuery("#TypeName").html(document.formsoc.ThirdPartyName.value);
-                               document.formsoc.private.value=0;
-                         });
-                          jQuery("#radioprivate").click(function() {
-                               jQuery(".individualline").show();
-                               jQuery("#typent_id").val(id_te_private);
-                               jQuery("#effectif_id").val(id_ef15);
-                               jQuery("#TypeName").html(document.formsoc.LastName.value);
-                               document.formsoc.private.value=1;
-                         });
-                         jQuery("#selectpays_id").change(function() {
-                           document.formsoc.action.value="create";
-                           document.formsoc.submit();
-                         });
+                        $("#radiocompany").click(function() {
+                        	$(".individualline").hide();
+                        	$("#typent_id").val(0);
+                        	$("#effectif_id").val(0);
+                        	$("#TypeName").html(document.formsoc.ThirdPartyName.value);
+                        	document.formsoc.private.value=0;
+                        });
+                        $("#radioprivate").click(function() {
+                        	$(".individualline").show();
+                        	$("#typent_id").val(id_te_private);
+                        	$("#effectif_id").val(id_ef15);
+                        	$("#TypeName").html(document.formsoc.LastName.value);
+                        	document.formsoc.private.value=1;
+                        });
+                        $("#selectcountry_id").change(function() {
+                        	document.formsoc.action.value="create";
+                        	document.formsoc.submit();
+                        });
                      });';
             print '</script>'."\n";
 
@@ -768,14 +768,14 @@ else
 
         // Zip / Town
         print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
+        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
         print '</td><td>'.$langs->trans('Town').'</td><td>';
-        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectpays_id','departement_id'));
+        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
         print '</td></tr>';
 
         // Country
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($object->country_id,'pays_id');
+        $form->select_pays($object->country_id,'country_id');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
@@ -884,7 +884,7 @@ else
         // Legal Form
         print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
         print '<td colspan="3">';
-        if ($object->pays_id)
+        if ($object->country_id)
         {
             $formcompany->select_forme_juridique($object->forme_juridique_code,$object->pays_code);
         }
@@ -1018,44 +1018,45 @@ else
             if (! empty($_POST["nom"]))
             {
                 // We overwrite with values if posted
-                $object->name=$_POST["nom"];
-                $object->prefix_comm=$_POST["prefix_comm"];
-                $object->client=$_POST["client"];
-                $object->code_client=$_POST["code_client"];
-                $object->fournisseur=$_POST["fournisseur"];
-                $object->code_fournisseur=$_POST["code_fournisseur"];
-                $object->address=$_POST["adresse"];
-                $object->zip=$_POST["zipcode"];
-                $object->town=$_POST["town"];
-                $object->country_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-                $object->state_id=$_POST["departement_id"];
-                $object->tel=$_POST["tel"];
-                $object->fax=$_POST["fax"];
-                $object->email=$_POST["email"];
-                $object->url=$_POST["url"];
-                $object->capital=$_POST["capital"];
-                $object->siren=$_POST["idprof1"];
-                $object->siret=$_POST["idprof2"];
-                $object->ape=$_POST["idprof3"];
-                $object->idprof4=$_POST["idprof4"];
-                $object->typent_id=$_POST["typent_id"];
-                $object->effectif_id=$_POST["effectif_id"];
-                $object->barcode=$_POST["barcode"];
-                $object->forme_juridique_code=$_POST["forme_juridique_code"];
-                $object->default_lang=$_POST["default_lang"];
+                $object->name					= $_POST["nom"];
+                $object->prefix_comm			= $_POST["prefix_comm"];
+                $object->client					= $_POST["client"];
+                $object->code_client			= $_POST["code_client"];
+                $object->fournisseur			= $_POST["fournisseur"];
+                $object->code_fournisseur		= $_POST["code_fournisseur"];
+                $object->address				= $_POST["adresse"];
+                $object->zip					= $_POST["zipcode"];
+                $object->town					= $_POST["town"];
+                $object->country_id				= $_POST["country_id"]?$_POST["country_id"]:$mysoc->pays_id;
+                $object->state_id				= $_POST["departement_id"];
+                $object->tel					= $_POST["tel"];
+                $object->fax					= $_POST["fax"];
+                $object->email					= $_POST["email"];
+                $object->url					= $_POST["url"];
+                $object->capital				= $_POST["capital"];
+                $object->siren					= $_POST["idprof1"];
+                $object->siret					= $_POST["idprof2"];
+                $object->ape					= $_POST["idprof3"];
+                $object->idprof4				= $_POST["idprof4"];
+                $object->typent_id				= $_POST["typent_id"];
+                $object->effectif_id			= $_POST["effectif_id"];
+                $object->barcode				= $_POST["barcode"];
+                $object->forme_juridique_code	= $_POST["forme_juridique_code"];
+                $object->default_lang			= $_POST["default_lang"];
 
-                $object->tva_assuj = $_POST["assujtva_value"];
-                $object->tva_intra=$_POST["tva_intra"];
-                $object->status=$_POST["status"];
+                $object->tva_assuj				= $_POST["assujtva_value"];
+                $object->tva_intra				= $_POST["tva_intra"];
+                $object->status					= $_POST["status"];
 
                 //Local Taxes
-                $object->localtax1_assuj       = $_POST["localtax1assuj_value"];
-                $object->localtax2_assuj       = $_POST["localtax2assuj_value"];
+                $object->localtax1_assuj		= $_POST["localtax1assuj_value"];
+                $object->localtax2_assuj		= $_POST["localtax2assuj_value"];
 
-                // We set pays_id, and pays_code label of the chosen country
-                if ($object->pays_id)
+                // We set country_id, and pays_code label of the chosen country
+                // TODO move to DAO class
+                if ($object->country_id)
                 {
-                    $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$object->pays_id;
+                    $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$object->country_id;
                     $resql=$db->query($sql);
                     if ($resql)
                     {
@@ -1065,8 +1066,8 @@ else
                     {
                         dol_print_error($db);
                     }
-                    $object->pays_code=$obj->code;
-                    $object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+                    $object->country_code	= $obj->code;
+                    $object->country		= $langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
                 }
             }
 
@@ -1075,11 +1076,11 @@ else
             if ($conf->use_javascript_ajax)
             {
                 print "\n".'<script type="text/javascript" language="javascript">';
-                print 'jQuery(document).ready(function () {
-                            jQuery("#selectpays_id").change(function() {
-                                document.formsoc.action.value="edit";
-                                document.formsoc.submit();
-                            });
+                print '$(document).ready(function () {
+                			$("#selectcountry_id").change(function() {
+                				document.formsoc.action.value="edit";
+                				document.formsoc.submit();
+                			});
                        })';
                 print '</script>'."\n";
             }
@@ -1212,14 +1213,14 @@ else
 
             // Zip / Town
             print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-            print $formcompany->select_ziptown($object->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
+            print $formcompany->select_ziptown($object->cp,'zipcode',array('town','selectcountry_id','departement_id'),6);
             print '</td><td>'.$langs->trans('Town').'</td><td>';
-            print $formcompany->select_ziptown($object->ville,'town',array('zipcode','selectpays_id','departement_id'));
+            print $formcompany->select_ziptown($object->ville,'town',array('zipcode','selectcountry_id','departement_id'));
             print '</td></tr>';
 
             // Country
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-            $form->select_pays($object->pays_id,'pays_id');
+            $form->select_pays($object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
 
@@ -1227,7 +1228,7 @@ else
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
                 print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-                $formcompany->select_departement($object->state_id,$object->pays_code);
+                $formcompany->select_departement($object->state_id,$object->country_code);
                 print '</td></tr>';
             }
 
@@ -1241,40 +1242,40 @@ else
 
             print '<tr>';
             // IdProf1 (SIREN for France)
-            $idprof=$langs->transcountry('ProfId1',$object->pays_code);
+            $idprof=$langs->transcountry('ProfId1',$object->country_code);
             if ($idprof!='-')
             {
                 print '<td>'.$idprof.'</td><td>';
-                print $formcompany->get_input_id_prof(1,'idprof1',$object->siren,$object->pays_code);
+                print $formcompany->get_input_id_prof(1,'idprof1',$object->siren,$object->country_code);
                 print '</td>';
             }
             else print '<td>&nbsp;</td><td>&nbsp;</td>';
             // IdProf2 (SIRET for France)
-            $idprof=$langs->transcountry('ProfId2',$object->pays_code);
+            $idprof=$langs->transcountry('ProfId2',$object->country_code);
             if ($idprof!='-')
             {
                 print '<td>'.$idprof.'</td><td>';
-                print $formcompany->get_input_id_prof(2,'idprof2',$object->siret,$object->pays_code);
+                print $formcompany->get_input_id_prof(2,'idprof2',$object->siret,$object->country_code);
                 print '</td>';
             }
             else print '<td>&nbsp;</td><td>&nbsp;</td>';
             print '</tr>';
             print '<tr>';
             // IdProf3 (APE for France)
-            $idprof=$langs->transcountry('ProfId3',$object->pays_code);
+            $idprof=$langs->transcountry('ProfId3',$object->country_code);
             if ($idprof!='-')
             {
                 print '<td>'.$idprof.'</td><td>';
-                print $formcompany->get_input_id_prof(3,'idprof3',$object->ape,$object->pays_code);
+                print $formcompany->get_input_id_prof(3,'idprof3',$object->ape,$object->country_code);
                 print '</td>';
             }
             else print '<td>&nbsp;</td><td>&nbsp;</td>';
             // IdProf4 (NU for France)
-            $idprof=$langs->transcountry('ProfId4',$object->pays_code);
+            $idprof=$langs->transcountry('ProfId4',$object->country_code);
             if ($idprof!='-')
             {
                 print '<td>'.$idprof.'</td><td>';
-                print $formcompany->get_input_id_prof(4,'idprof4',$object->idprof4,$object->pays_code);
+                print $formcompany->get_input_id_prof(4,'idprof4',$object->idprof4,$object->country_code);
                 print '</td>';
             }
             else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1317,7 +1318,7 @@ else
 
             // Local Taxes
             // TODO add specific function by country
-            if($mysoc->pays_code=='ES')
+            if($mysoc->country_code=='ES')
             {
                 if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
                 {
