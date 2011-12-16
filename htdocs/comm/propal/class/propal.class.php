@@ -116,17 +116,17 @@ class Propal extends CommonObject
 
 
 	/**
-	 *	Class Constructor
+	 *	Constructor
 	 *
-	 *	@param      DoliDB	$DB         Database handler
+	 *	@param      DoliDB	$db         Database handler
 	 *	@param      int		$socid		Id third party
 	 *	@param      int		$propalid   Id proposal
 	 */
-	function Propal($DB, $socid="", $propalid=0)
+	function Propal($db, $socid="", $propalid=0)
 	{
 		global $conf,$langs;
 
-		$this->db = $DB ;
+		$this->db = $db;
 		$this->socid = $socid;
 		$this->id = $propalid;
 		$this->products = array();
@@ -157,7 +157,7 @@ class Propal extends CommonObject
 	 * 	@param     	int		$idproduct       	Product Id to add
 	 * 	@param     	int		$qty             	Quantity
 	 * 	@param      int		$remise_percent  	Discount effected on Product
-	 *	
+	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
 	 *			insere dans tableau $this->products
 	 */
@@ -295,7 +295,7 @@ class Propal extends CommonObject
 	 *  	@param		double		$txlocaltax2		Local tax 2 rate
 	 *		@param    	int			$fk_product      	Id du produit/service predefini
 	 * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
-	 * 		@param    	double		$price_base_type	HT or TTC
+	 * 		@param    	string		$price_base_type	HT or TTC
 	 * 		@param    	dobule		$pu_ttc             Prix unitaire TTC
 	 * 		@param    	int			$info_bits			Bits de type de lignes
 	 *      @param      int			$type               Type of line (product, service)
@@ -303,7 +303,7 @@ class Propal extends CommonObject
 	 *      @param		int			$special_code		Special code
 	 *      @param		int			$fk_parent_line		Id of parent line
 	 *    	@return    	int         	    			>0 if OK, <0 if KO
-	 *    
+	 *
 	 *    	@see       	add_product
 	 */
 	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0)
@@ -828,7 +828,7 @@ class Propal extends CommonObject
 
 	/**
 	 *	Insert into DB a proposal object completely defined by its data members (ex, results from copy).
-	 *	@param 		User	$user	User that create    
+	 *	@param 		User	$user	User that create
 	 *	@return    	int				Id of the new object if ok, <0 if ko
 	 *	@see       	create
 	 */
@@ -1249,7 +1249,7 @@ class Propal extends CommonObject
 
 	/**
 	 *	Set delivery date
-	 *	
+	 *
 	 *	@param      User 		$user        		Object user that modify
 	 *	@param      timestamp	$date_livraison     Delivery date
 	 *	@return     int         					<0 if ko, >0 if ok
@@ -1463,13 +1463,44 @@ class Propal extends CommonObject
 		}
 	}
 
+	
+	
+	/**
+	*	Close the commercial proposal
+	*
+	*	@param      User	$user		Object user that close
+	*	@param      int		$statut		Statut
+	*	@param      text	$note		Comment
+	*	@return     int         		<0 if KO, >0 if OK
+	*/
+	function reopen($user, $statut, $note)
+	{
+	    global $langs,$conf;
+	
+	    $this->statut = $statut;
+	    $error=0;
+	
+	    $this->db->begin();
+	
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+			$sql.= " SET fk_statut = ".$statut.", note = '".$this->db->escape($note)."', date_cloture=".$this->db->idate(mktime()).", fk_user_cloture=".$user->id;
+	    $sql.= " WHERE rowid = ".$this->id;
+	
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+
+	    }
+	}
+	
 
 	/**
-	 *	Closure of the commercial proposal
-	 *	@param      User	$user		Object user that closure
+	 *	Close the commercial proposal
+	 *
+	 *	@param      User	$user		Object user that close
 	 *	@param      int		$statut		Statut
-	 *	@param      text	$note		Commentaire
-	 *	@return     int         		<0 si ko, >0 si ok
+	 *	@param      text	$note		Comment
+	 *	@return     int         		<0 if KO, >0 if OK
 	 */
 	function cloture($user, $statut, $note)
 	{
@@ -1477,7 +1508,7 @@ class Propal extends CommonObject
 
 		$this->statut = $statut;
 		$error=0;
-		
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -1929,7 +1960,7 @@ class Propal extends CommonObject
 
 	/**
 	 *	Change source demand
-	 *   
+	 *
 	 *	@param	int $demand_reason_id 	Id of new source demand
 	 *	@return int						>0 si ok, <0 si ko
 	 */
@@ -2021,7 +2052,7 @@ class Propal extends CommonObject
 
 	/**
 	 *    	Return label of status of proposal (draft, validated, ...)
-	 *    
+	 *
 	 *    	@param      int			$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *    	@return     string		Label
 	 */
@@ -2032,7 +2063,7 @@ class Propal extends CommonObject
 
 	/**
 	 *    	Return label of a status (draft, validated, ...)
-	 *    
+	 *
 	 *    	@param      int			$statut		id statut
 	 *    	@param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *    	@return     string		Label
@@ -2087,7 +2118,7 @@ class Propal extends CommonObject
 
 	/**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *      
+     *
      *      @param          User	$user   Object user
      *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
      *      @return         int     		<0 if KO, >0 if OK
@@ -2273,7 +2304,7 @@ class Propal extends CommonObject
 	}
 
 
-	/**  
+	/**
 	 *  Returns the reference to the following non used Proposal used depending on the active numbering module
 	 *  defined into PROPALE_ADDON
 	 *
@@ -2321,7 +2352,7 @@ class Propal extends CommonObject
 
 	/**
 	 *	Return clicable link of object (with eventually picto)
-	 *      
+	 *
 	 *	@param      int		$withpicto		Add picto into link
 	 *	@param      string	$option			Where point the link
 	 *	@param      string	$get_params    	Parametres added to url
@@ -2357,7 +2388,7 @@ class Propal extends CommonObject
 
 	/**
 	 * 	Retrieve an array of propal lines
-	 * 
+	 *
 	 *	@return	int	<0 if ko, >0 if ok
 	 */
 	function getLinesArray()
@@ -2485,7 +2516,7 @@ class PropaleLigne
 
 	/**
 	 * 	Class line Contructor
-	 * 
+	 *
 	 * 	@param	DoliDB	$DB	Database handler
 	 */
 	function PropaleLigne($DB)
@@ -2495,7 +2526,7 @@ class PropaleLigne
 
 	/**
 	 *	Retrieve the propal line object
-	 *      
+	 *
 	 *	@param	int	$rowid	propal line id
 	 */
 	function fetch($rowid)
@@ -2551,7 +2582,7 @@ class PropaleLigne
 
 	/**
 	 *  Insert object line propal in database
-	 * 
+	 *
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
@@ -2560,7 +2591,7 @@ class PropaleLigne
 		global $conf,$langs,$user;
 
 		$error=0;
-		
+
 		dol_syslog("PropaleLigne::insert rang=".$this->rang);
 
 		// Clean parameters
@@ -2686,7 +2717,7 @@ class PropaleLigne
 		global $conf,$langs,$user;
 
 		$error=0;
-		
+
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx=0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;

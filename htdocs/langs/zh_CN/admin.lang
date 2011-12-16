@@ -781,6 +781,7 @@ UserMailRequired=电子邮件要求创建一个新用户
 CompanySetup=公司模块设置
 CompanyCodeChecker=对第三方代码生成和检查（客户或供应商模块）
 AccountCodeManager=代码生成的会计（模块客户或供应商）
+ModuleCompanyCodeAquarium=返回一个会计代码“401代码由第三方供应商的供应商遵循会计守则”和“411”由第三方客户代码之后为客户建立会计代码。
 ModuleCompanyCodePanicum=返回一个空的会计代码。
 ModuleCompanyCodeDigitaria=会计代码依赖于第三方的代码。该代码是字符组成的“C”的第一个位置的前5第三方代码字符之后。
 UseNotifications=使用通知

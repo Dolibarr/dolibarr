@@ -85,6 +85,7 @@ class FactureStats extends Stats
 
 	/**
 	 * 	Renvoie le nombre de facture par annee
+	 * 
 	 *	@return		array	Array of values
 	 */
 	function getNbByYear()
@@ -101,8 +102,9 @@ class FactureStats extends Stats
 
 	/**
 	 * 	Renvoie le nombre de facture par mois pour une annee donnee
-	 *	@param	year	Year to scan
-	 *	@return	array	Array of values
+	 * 
+	 *	@param	int		$year	Year to scan
+	 *	@return	array			Array of values
 	 */
 	function getNbByMonth($year)
 	{
@@ -121,6 +123,7 @@ class FactureStats extends Stats
 
 	/**
 	 * 	Renvoie le montant de facture par mois pour une annee donnee
+	 * 
 	 *	@param	year	Year to scan
 	 *	@return	array	Array of values
 	 */
@@ -139,9 +142,10 @@ class FactureStats extends Stats
 	}
 
 	/**
-	 *	\brief	Return average amount
-	 *	\param	year	Year to scan
-	 *	\return	array	Array of values
+	 *	Return average amount
+	 *
+	 *	@param	int		$year	Year to scan
+	 *	@return	array			Array of values
 	 */
 	function getAverageByMonth($year)
 	{
@@ -156,8 +160,9 @@ class FactureStats extends Stats
 	}
 
 	/**
-	 *	\brief	Return nb, total and average
-	 *	\return	array	Array of values
+	 *	Return nb, total and average
+	 *
+	 *	@return	array	Array of values
 	 */
 	function getAllByYear()
 	{
