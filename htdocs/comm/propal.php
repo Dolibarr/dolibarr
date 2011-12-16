@@ -89,6 +89,7 @@ $hookmanager=new HookManager($db);
 $hookmanager->callHooks(array('propalcard'));
 
 
+
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
@@ -246,9 +247,7 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 	$object->set_ref_client($user, $_POST['ref_client']);
 }
 
-/*
- * Creation propale
- */
+// Create proposal
 if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 {
 	$object->socid=$_POST['socid'];
@@ -382,31 +381,42 @@ if ($action == 'classifybilled')
 	$object->cloture($user, 4, '');
 }
 
-/*
- *  Cloture de la propale
- */
-if (GETPOST('action') == 'setstatut' && $user->rights->propale->cloturer)
+// Reopen proposal
+if ($action == 'confirm_reopen' && $user->rights->propale->cloturer)
 {
 	if (! $_POST['cancel'])
 	{
-		if (! GETPOST('statut'))
+		$object->fetch($id);
+		// prevent browser refresh from reopening proposal several times
+		if ($object->statut==2 || $object->statut==3)
 		{
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
-			$action='statut';
-			$action='statut';
-		}
-		else
-		{
-			$object->fetch($id);
-			// prevent browser refresh from closing proposal several times
-			if ($object->statut==1)
-			{
-				$object->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
-			}
+			$object->setStatut(1);
 		}
 	}
 }
 
+// Close proposal
+if ($action == 'setstatut' && $user->rights->propale->cloturer)
+{
+    if (! $_POST['cancel'])
+    {
+        if (! GETPOST('statut'))
+        {
+            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
+            $action='statut';
+            $action='statut';
+        }
+        else
+        {
+            $object->fetch($id);
+            // prevent browser refresh from closing proposal several times
+            if ($object->statut==1)
+            {
+                $object->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
+            }
+        }
+    }
+}
 
 /*
  * Add file in email form
@@ -1051,17 +1061,19 @@ if ($id > 0 || ! empty($ref))
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
 	}
 
-	/*
-	 * Confirmation de la suppression de la propale
-	 */
+	// Confirm delete
 	if ($action == 'delete')
 	{
-		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete','',0,1);
+		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp',$object->ref), 'confirm_delete','',0,1);
 	}
 
-	/*
-	 * Confirmation de la suppression d'une ligne produit/service
-	 */
+	// Confirm reopen
+	if ($action == 'reopen')
+	{
+		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp',$object->ref), 'confirm_reopen','',0,1);
+	}
+
+	// Confirmation delete product/service line
 	if ($action == 'ask_deleteline')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
@@ -1569,6 +1581,13 @@ if ($id > 0 || ! empty($ref))
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
 			}
 
+			// ReOpen
+			if (($object->statut == 2 || $object->statut == 3) && $user->rights->propale->cloturer)
+			{
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#reopen').'"';
+				print '>'.$langs->trans('ReOpen').'</a>';
+			}
+
 			// Send
 			if ($object->statut == 1 || $object->statut == 2)
 			{
@@ -1594,9 +1613,9 @@ if ($id > 0 || ! empty($ref))
             }
 
             // Create an invoice and classify billed
-			if ($conf->facture->enabled && $object->statut == 2 && $user->societe_id == 0)
+			if ($object->statut == 2 && $user->societe_id == 0)
 			{
-				if ($user->rights->facture->creer)
+				if ($conf->facture->enabled && $user->rights->facture->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a>';
 				}
