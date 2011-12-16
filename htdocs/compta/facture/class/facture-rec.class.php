@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -302,8 +302,9 @@ class FactureRec extends Facture
 
 
 	/**
-	 *	\brief      Recupere les lignes de factures predefinies dans this->lines
-	 *	\return     int         1 if OK, < 0 if KO
+	 *	Recupere les lignes de factures predefinies dans this->lines
+	 *
+	 *	@return     int         1 if OK, < 0 if KO
  	 */
 	function fetch_lines()
 	{
@@ -405,9 +406,24 @@ class FactureRec extends Facture
 
 
 	/**
-	 *	Add a line to invoice
-	 *
-	 *	@return	int				<0 if KO, >0 if OK
+	 * 
+	 * Add a line to invoice
+	 * 
+	 *	@param    	int			$facid           	Id de la facture
+     *	@param    	string		$desc            	Description de la ligne
+     *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
+     *	@param    	double		$qty             	Quantite
+     *	@param    	double		$txtva           	Taux de tva force, sinon -1
+     *	@param    	int			$fk_product      	Id du produit/service predefini
+     *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     *	@param		string		$price_base_type	HT or TTC
+     *	@param    	int			$info_bits			Bits de type de lignes
+     *	@param    	int			$fk_remise_except	Id remise
+     *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+     *	@param		int			$type				Type of line (0=product, 1=service)
+     *	@param      int			$rang               Position of line
+     *	@param		int			$special_code
+     *	@return    	int             				<0 if KO, Id of line if OK
 	 */
 	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0)
 	{
@@ -513,10 +529,12 @@ class FactureRec extends Facture
 
 
 	/**
-	 *		Rend la facture automatique
-	 *		@param		user
-	 *		@param		freq
-	 *		@param		courant
+	 *	Rend la facture automatique
+	 *
+	 *	@param		User	$user
+	 *	@param		int		$freq
+	 *	@param		string	$courant
+	 *	@return		int		0 if OK, <0 if KO
 	 */
 	function set_auto($user, $freq, $courant)
 	{
@@ -547,10 +565,10 @@ class FactureRec extends Facture
 	}
 
 	/**
-	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\param		option			Sur quoi pointe le lien ('', 'withdraw')
-	 *	\return		string			Chaine avec URL
+	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		string	$option			Sur quoi pointe le lien ('', 'withdraw')
+	 *	@return		string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{

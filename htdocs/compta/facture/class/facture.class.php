@@ -433,9 +433,9 @@ class Facture extends CommonObject
     /**
      *	Create a new invoice in database from current invoice
      *
-     *	@param      user    		Object user that ask creation
-     *	@param		invertdetail	Reverse sign of amounts for lines
-     *	@return		int				<0 if KO, >0 if OK
+     *	@param      User	$user    		Object user that ask creation
+     *	@param		int		$invertdetail	Reverse sign of amounts for lines
+     *	@return		int						<0 if KO, >0 if OK
      */
     function createFromCurrent($user,$invertdetail=0)
     {
@@ -708,11 +708,11 @@ class Facture extends CommonObject
     /**
      *	Get object and lines from database
      *
-     *	@param      rowid       Id of object to load
-     * 	@param		ref			Reference of invoice
-     * 	@param		ref_ext		External reference of invoice
-     * 	@param		ref_int		Internal reference of other object
-     *	@return     int         >0 if OK, <0 if KO
+     *	@param      int		$rowid       	Id of object to load
+     * 	@param		string	$ref			Reference of invoice
+     * 	@param		string	$ref_ext		External reference of invoice
+     * 	@param		int		$ref_int		Internal reference of other object
+     *	@return     int         			>0 if OK, <0 if KO
      */
     function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
     {
@@ -905,9 +905,9 @@ class Facture extends CommonObject
     /**
      *      Update database
      *
-     *      @param      user        	User that modify
-     *      @param      notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return     int         	<0 if KO, >0 if OK
+     *      @param      User	$user        	User that modify
+     *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *      @return     int      			   	<0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -1745,25 +1745,25 @@ class Facture extends CommonObject
      *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      *
-     * 		@param    	facid           	Id de la facture
-     * 		@param    	desc            	Description de la ligne
-     * 		@param    	pu_ht              	Prix unitaire HT (> 0 even for credit note)
-     * 		@param    	qty             	Quantite
-     * 		@param    	txtva           	Taux de tva force, sinon -1
-     * 		@param		txlocaltax1			Local tax 1 rate
-     *  	@param		txlocaltax2			Local tax 2 rate
-     *		@param    	fk_product      	Id du produit/service predefini
-     * 		@param    	remise_percent  	Pourcentage de remise de la ligne
-     * 		@param    	date_start      	Date de debut de validite du service
-     * 		@param    	date_end        	Date de fin de validite du service
-     * 		@param    	ventil          	Code de ventilation comptable
-     * 		@param    	info_bits			Bits de type de lignes
-     *		@param    	fk_remise_except	Id remise
-     *		@param		price_base_type		HT or TTC
-     * 		@param    	pu_ttc             	Prix unitaire TTC (> 0 even for credit note)
-     * 		@param		type				Type of line (0=product, 1=service)
-     *      @param      rang                Position of line
-     *    	@return    	int             	<0 if KO, Id of line if OK
+     * 		@param    	int			$facid           	Id de la facture
+     * 		@param    	string		$desc            	Description de la ligne
+     * 		@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
+     * 		@param    	double		$qty             	Quantite
+     * 		@param    	double		$txtva           	Taux de tva force, sinon -1
+     * 		@param		double		$txlocaltax1		Local tax 1 rate
+     *  	@param		double		$txlocaltax2		Local tax 2 rate
+     *		@param    	int			$fk_product      	Id du produit/service predefini
+     * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     * 		@param    	timestamp	$date_start      	Date de debut de validite du service
+     * 		@param    	timestamp	$date_end        	Date de fin de validite du service
+     * 		@param    	int			$ventil          	Code de ventilation comptable
+     * 		@param    	int			$info_bits			Bits de type de lignes
+     *		@param    	int			$fk_remise_except	Id remise
+     *		@param		string		$price_base_type	HT or TTC
+     * 		@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+     * 		@param		int			$type				Type of line (0=product, 1=service)
+     *      @param      int			$rang               Position of line
+     *    	@return    	int             				<0 if KO, Id of line if OK
      */
     function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0)
     {
@@ -1908,22 +1908,23 @@ class Facture extends CommonObject
 
     /**
      *      Update a detail line
-     *      @param     	rowid           Id of line to update
-     *      @param     	desc            Description of line
-     *      @param     	pu              Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
-     *      @param     	qty             Quantity
-     *      @param     	remise_percent  Pourcentage de remise de la ligne
-     *      @param     	date_start      Date de debut de validite du service
-     *      @param     	date_end        Date de fin de validite du service
-     *      @param     	tva_tx          VAT Rate
-     * 		@param		txlocaltax1		Local tax 1 rate
-     *  	@param		txlocaltax2		Local tax 2 rate
-     * 	   	@param     	price_base_type HT or TTC
-     * 	   	@param     	info_bits       Miscellanous informations
-     * 		@param		type			Type of line (0=product, 1=service)
-     * 		@param		fk_parent_line		???
-     * 		@param		skip_update_total	???
-     *      @return    	int             < 0 if KO, > 0 if OK
+     *      
+     *      @param     	int			$rowid           	Id of line to update
+     *      @param     	string		$desc            	Description of line
+     *      @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
+     *      @param     	double		$qty             	Quantity
+     *      @param     	double		$remise_percent  	Pourcentage de remise de la ligne
+     *      @param     	date		$date_start      	Date de debut de validite du service
+     *      @param     	date		$date_end        	Date de fin de validite du service
+     *      @param     	double		$tva_tx          	VAT Rate
+     * 		@param		double		$txlocaltax1		Local tax 1 rate
+     *  	@param		double		$txlocaltax2		Local tax 2 rate
+     * 	   	@param     	string		$price_base_type 	HT or TTC
+     * 	   	@param     	int			$info_bits 		    Miscellanous informations
+     * 		@param		int			$type				Type of line (0=product, 1=service)
+     * 		@param		int			$fk_parent_line		???
+     * 		@param		int			$skip_update_total	???
+     *      @return    	int             				< 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0)
     {
@@ -2037,8 +2038,9 @@ class Facture extends CommonObject
 
     /**
      *	Delete line in database
-     *	@param		rowid		Id of line to delete
-     *	@return		int			<0 if KO, >0 if OK
+     *
+     *	@param		int		$rowid		Id of line to delete
+     *	@return		int					<0 if KO, >0 if OK
      */
     function deleteline($rowid)
     {
@@ -2099,10 +2101,11 @@ class Facture extends CommonObject
     }
 
     /**
-     * 		\brief     	Applique une remise relative
-     * 		\param     	user		User qui positionne la remise
-     * 		\param     	remise
-     *		\return		int 		<0 si ko, >0 si ok
+     *	Set percent discount
+     *
+     *	@param     	User	$user		User that set discount
+     *	@param     	double	$remise		Discount
+     *	@return		int 		<0 if ko, >0 if ok
      */
     function set_remise($user, $remise)
     {
@@ -2134,10 +2137,11 @@ class Facture extends CommonObject
 
 
     /**
-     * 		\brief     	Applique une remise absolue
-     * 		\param     	user 		User qui positionne la remise
-     * 		\param     	remise
-     *		\return		int 		<0 si ko, >0 si ok
+     *	Set absolute discount
+     *
+     *	@param     	User	$user 		User that set discount
+     *	@param     	double	$remise
+     *	@return		int 				<0 si ko, >0 si ok
      */
     function set_remise_absolue($user, $remise)
     {
@@ -2206,7 +2210,8 @@ class Facture extends CommonObject
     /**
      *  Return list of payments
      *
-     *  @return     Array with list of payments
+     *	@param		string	$filtertype
+     *  @return     array				Array with list of payments
      */
     function getListOfPayments($filtertype='')
     {
@@ -2257,6 +2262,7 @@ class Facture extends CommonObject
 
     /**
      *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
+     *    
      *		@return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
      */
     function getSumCreditNotesUsed()
@@ -2278,6 +2284,7 @@ class Facture extends CommonObject
 
     /**
      *    	Return amount (with tax) of all deposits invoices used by invoice
+     *    
      *		@return		int			<0 if KO, Sum of deposits amount otherwise
      */
     function getSumDepositsUsed()
@@ -2298,8 +2305,9 @@ class Facture extends CommonObject
     }
 
     /**
-     * 	\brief     	Renvoie tableau des ids de facture avoir issus de la facture
-     *	\return		array		Tableau d'id de factures avoirs
+     *	Renvoie tableau des ids de facture avoir issus de la facture
+     *
+     *	@return		array		Tableau d'id de factures avoirs
      */
     function getListIdAvoirFromInvoice()
     {
@@ -2329,9 +2337,9 @@ class Facture extends CommonObject
     }
 
     /**
-     * 	\brief     	Renvoie l'id de la facture qui la remplace
-     *	\param		option		filtre sur statut ('', 'validated', ...)
-     *	\return		int			<0 si KO, 0 si aucune facture ne remplace, id facture sinon
+     *	Renvoie l'id de la facture qui la remplace
+     *	@param		string	$option		filtre sur statut ('', 'validated', ...)
+     *	\return		int					<0 si KO, 0 si aucune facture ne remplace, id facture sinon
      */
     function getIdReplacingInvoice($option='')
     {
@@ -2369,8 +2377,9 @@ class Facture extends CommonObject
     }
 
     /**
-     *    \brief      Retourne le libelle du type de facture
-     *    \return     string        Libelle
+     *	Retourne le libelle du type de facture
+     *
+     *	@return     string        Libelle
      */
     function getLibType()
     {
@@ -2386,9 +2395,9 @@ class Facture extends CommonObject
 
     /**
      *  Return label of object status
-     *  @param      mode            0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-     *  @param      alreadypaid     0=No payment already done, 1=Some payments already done
-     *  @return     string          Label
+     *  @param      int		$mode            0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+     *  @param      int		$alreadypaid     0=No payment already done, 1=Some payments already done
+     *  @return     string			         Label
      */
     function getLibStatut($mode=0,$alreadypaid=-1)
     {
@@ -2396,13 +2405,14 @@ class Facture extends CommonObject
     }
 
     /**
-     *    	\brief      Renvoi le libelle d'un statut donne
-     *    	\param      paye          	Etat paye
-     *    	\param      statut        	Id statut
-     *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *		\param		alreadypaid	    Montant deja paye
-     *		\param		type			Type facture
-     *    	\return     string        	Libelle du statut
+     *	Renvoi le libelle d'un statut donne
+     *
+     *	@param    	int  	$paye          	Etat paye
+     *	@param      int		$statut        	Id statut
+     *	@param      int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *	@param		double	$alreadypaid	Montant deja paye
+     *	@param		int		$type			Type facture
+     *	@return     string        			Libelle du statut
      */
     function LibStatut($paye,$statut,$mode=0,$alreadypaid=-1,$type=0)
     {
@@ -2522,9 +2532,10 @@ class Facture extends CommonObject
     /**
      *      Return next reference of invoice not already used (or last reference)
      *      according to numbering module defined into constant FACTURE_ADDON
-     *      @param	   soc  		           objet company
-     *      @param     mode                    'next' for next value or 'last' for last value
-     *      @return    string                  free ref or last ref
+     *      
+     *      @param	   Society		$soc		object company
+     *      @param     string		$mode		'next' for next value or 'last' for last value
+     *      @return    string					free ref or last ref
      */
     function getNextNumRef($soc,$mode='next')
     {
@@ -2586,8 +2597,8 @@ class Facture extends CommonObject
     }
 
     /**
-     *      \brief     Charge les informations de l'onglet info dans l'objet facture
-     *      \param     id       	Id de la facture a charger
+     *	Charge les informations de l'onglet info dans l'objet facture
+     *	@param     int	$id		Id de la facture a charger
      */
     function info($id)
     {
@@ -2630,9 +2641,9 @@ class Facture extends CommonObject
     /**
      *  Change les conditions de reglement de la facture
      *
-     *  @param      cond_reglement_id      	Id de la nouvelle condition de reglement
-     * 	@param		date					Date to force payment term
-     *  @return     int                    	>0 si ok, <0 si ko
+     *  @param      int		$cond_reglement_id      Id de la nouvelle condition de reglement
+     * 	@param		date	$date					Date to force payment term
+     *  @return     int                    			>0 si ok, <0 si ko
      */
     function cond_reglement($cond_reglement_id,$date='')
     {
@@ -2678,9 +2689,10 @@ class Facture extends CommonObject
 
 
     /**
-     *   \brief      Change le mode de reglement
-     *   \param      mode        Id du nouveau mode
-     *   \return     int         >0 si ok, <0 si ko
+     *	Change le mode de reglement
+     *
+     *	@param		int		$mode       Id du nouveau mode
+     *	@return     int         		>0 si ok, <0 si ko
      */
     function mode_reglement($mode_reglement_id)
     {
@@ -2712,9 +2724,9 @@ class Facture extends CommonObject
 
 
     /**
-     *   \brief      Renvoi si les lignes de facture sont ventilees et/ou exportees en compta
-     *   \param      user        Utilisateur creant la demande
-     *   \return     int         <0 if KO, 0=no, 1=yes
+     *	Renvoi si les lignes de facture sont ventilees et/ou exportees en compta
+     *
+     *   @return     int         <0 if KO, 0=no, 1=yes
      */
     function getVentilExportCompta()
     {
@@ -2746,6 +2758,7 @@ class Facture extends CommonObject
      *	If hidden option FACTURE_CAN_BE_REMOVED is on, we can
      *  If invoice has a definitive ref, is last, without payment and not dipatched into accountancy -> yes end of rule
      *  If invoice is draft and ha a temporary ref -> yes
+     *  
      *  @return    int         <0 if KO, 0=no, 1=yes
      */
     function is_erasable()
@@ -2778,10 +2791,11 @@ class Facture extends CommonObject
 
 
     /**
-     *	\brief     	Renvoi liste des factures remplacables
-     *				Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
-     *	\param		socid		Id societe
-     *	\return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+     *	Renvoi liste des factures remplacables
+     *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
+     *
+     *	@param		int		$socid		Id societe
+     *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
      */
     function list_replacable_invoices($socid=0)
     {
@@ -2825,11 +2839,12 @@ class Facture extends CommonObject
 
 
     /**
-     *  	\brief     	Renvoi liste des factures qualifiables pour correction par avoir
-     *					Les factures qui respectent les regles suivantes sont retournees:
-     * 					(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
-     *		\param		socid		Id societe
-     *   	\return    	array		Tableau des factures ($id => $ref)
+     *	Renvoi liste des factures qualifiables pour correction par avoir
+     *	Les factures qui respectent les regles suivantes sont retournees:
+     *	(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
+     *
+     *	@param		int		$socid		Id societe
+     *	@return    	array				Tableau des factures ($id => $ref)
      */
     function list_qualified_avoir_invoices($socid=0)
     {
@@ -2880,9 +2895,10 @@ class Facture extends CommonObject
 
 
     /**
-     *   \brief      Create a withdrawal request for a standing order
-     *   \param      user        User asking standing order
-     *   \return     int         <0 if KO, >0 if OK
+     *	Create a withdrawal request for a standing order
+     *
+     *	@param      User	$user       User asking standing order
+     *	@return     int         		<0 if KO, >0 if OK
      */
     function demande_prelevement($user)
     {
@@ -2948,8 +2964,9 @@ class Facture extends CommonObject
 
     /**
      *  Supprime une demande de prelevement
-     *  @param     user         utilisateur creant la demande
-     *  @param     did          id de la demande a supprimer
+     *  
+     *  @param     User		$user         utilisateur creant la demande
+     *  @param     int		$did          id de la demande a supprimer
      */
     function demande_prelevement_delete($user, $did)
     {
@@ -2969,9 +2986,10 @@ class Facture extends CommonObject
 
 
     /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *      @param      user                Objet user
-     *      @return     int                 <0 if KO, >0 if OK
+     *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
+     *	@param      User	$user    	Object user
+     *	@return     int                 <0 if KO, >0 if OK
      */
     function load_board($user)
     {
@@ -3017,8 +3035,9 @@ class Facture extends CommonObject
     /* gestion des contacts d'une facture */
 
     /**
-     *      \brief      Retourne id des contacts clients de facturation
-     *      \return     array       Liste des id contacts facturation
+     *	Retourne id des contacts clients de facturation
+     *
+     *	@return     array       Liste des id contacts facturation
      */
     function getIdBillingContact()
     {
@@ -3026,8 +3045,9 @@ class Facture extends CommonObject
     }
 
     /**
-     *      \brief      Retourne id des contacts clients de livraison
-     *      \return     array       Liste des id contacts livraison
+     *	Retourne id des contacts clients de livraison
+     *
+     *	@return     array       Liste des id contacts livraison
      */
     function getIdShippingContact()
     {
@@ -3161,7 +3181,6 @@ class Facture extends CommonObject
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
-	 *      @param          user    Objet user
 	 *      @return         int     <0 if KO, >0 if OK
      */
     function load_state_board()
@@ -3201,7 +3220,9 @@ class Facture extends CommonObject
     }
 
     /**
-     * 	Return an array of invoice lines
+     * 	Create an array of invoice lines
+     * 
+     * 	@return int		>0 if OK, <0 if KO
      */
     function getLinesArray()
     {
