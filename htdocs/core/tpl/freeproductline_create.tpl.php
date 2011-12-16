@@ -27,7 +27,7 @@
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
 <tr class="liste_titre nodrag nodrop">
-	<td><a name="add"></a><?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?></td>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><a name="add"></a><?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?></td>
 	<td align="right"><?php echo $langs->trans('VAT'); ?></td>
 	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
@@ -41,7 +41,7 @@
 <input type="hidden" name="id" value="<?php echo $this->id; ?>" />
 
 <tr <?php echo $bcnd[$var]; ?>>
-	<td>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<?php
 	echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
@@ -75,7 +75,7 @@
 
 <?php if ($conf->service->enabled && $dateSelector) { ?>
 <tr <?php echo $bcnd[$var]; ?>>
-	<td colspan="9">
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="10"' : ' colspan="9s"'); ?>>
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 	echo $form->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
