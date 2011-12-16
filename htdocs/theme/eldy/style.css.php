@@ -105,6 +105,7 @@ select.flat, form.flat select {
 input:disabled {
 	background:#ddd;
 }
+input:-webkit-autofill { background-color: #FCFEFA !important; background-image:none !important; }
 textarea:disabled {
 	background:#ddd;
 }
@@ -163,7 +164,7 @@ th .button {
     box-shadow: none !important;
 	-moz-border-radius:0px !important;
 	-webkit-border-radius:0px !important;
-	border-radius:0px !important;	
+	border-radius:0px !important;
 }
 
 /* ============================================================================== */
@@ -1561,7 +1562,7 @@ table.dp {
     border-bottom: solid 1px #222222;
     padding: 0px;
 	border-spacing: 0px;
-	border-collapse: collapse;     
+	border-collapse: collapse;
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
