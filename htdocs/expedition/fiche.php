@@ -1104,6 +1104,10 @@ else
 			 */
 			print '<br><table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
+			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+			{
+				print '<td width="5" align="center">&nbsp;</td>';
+			}
 			print '<td>'.$langs->trans("Products").'</td>';
 			print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
 			if ($object->fk_statut <= 1)
@@ -1123,6 +1127,7 @@ else
 			{
 				print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
 			}
+
 			print "</tr>\n";
 
 			$var=false;
@@ -1130,6 +1135,11 @@ else
 			for ($i = 0 ; $i < $num_prod ; $i++)
 			{
 				print "<tr ".$bc[$var].">";
+				
+				if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+				{
+					print '<td align="center">'.($i+1).'</td>';
+				}
 
 				// Predefined product or service
 				if ($lines[$i]->fk_product > 0)
@@ -1194,7 +1204,6 @@ else
 					}
 					print '</td>';
 				}
-
 
 				print "</tr>";
 

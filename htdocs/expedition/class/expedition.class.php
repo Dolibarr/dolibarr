@@ -275,8 +275,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *
-	 *
+	 * Create a expedition line
+	 * 
+	 * @param int	$entrepot_id		Id of warehouse
+	 * @param int	$origin_line_id		Id of source line
+	 * @param int	$qty				Quantity
 	 */
 	function create_line($entrepot_id, $origin_line_id, $qty)
 	{
@@ -510,8 +513,6 @@ class Expedition extends CommonObject
 					// We use warehouse selected for each line
 					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 					if ($result < 0) { $error++; break; }
-
-					$i++;
 				}
 			}
 			else
@@ -617,8 +618,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * Ajoute une ligne
-	 *
+	 * 	Add a expedition line
+	 * 
+	 * 	@param int	$entrepot_id		Id of warehouse
+	 * 	@param int	$id					Id of source line
+	 * 	@param int	$qty				Quantity
 	 */
 	function addline( $entrepot_id, $id, $qty )
 	{
@@ -633,8 +637,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *
-	 *
+	 * 	Delete line
+	 * 
+	 * 	@param int $lineid	Id line of order
+	 * 	TODO Voir si cette function est utilisee
 	 */
 	function deleteline($lineid)
 	{
@@ -763,7 +769,7 @@ class Expedition extends CommonObject
     /**
 	 * 	Delete shipping
 	 *
-	 * 	@return	void
+	 * 	@return	int		>0 if OK otherwise if KO
 	 */
 	function delete()
 	{
@@ -851,7 +857,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Load lines
 	 *
-	 *	@return	void
+	 *	@return	int		>0 if OK, Otherwise if KO
 	 */
 	function fetch_lines()
 	{
@@ -910,11 +916,14 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * Renvoie nom clicable (avec eventuellement le picto)
-	 *
-	 * @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 * @return	string					Chaine avec URL
-	 */
+     *	Return clicable link of object (with eventually picto)
+     *
+     *	@param      int			$withpicto      Add picto into link
+     *	@param      int			$option         Where point the link
+     *	@param      int			$max          	Max length to show
+     *	@param      int			$short			Use short labels
+     *	@return     string          			String with URL
+     */
 	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
 	{
 		global $langs;
@@ -936,12 +945,13 @@ class Expedition extends CommonObject
 		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
-
+	
 	/**
-	 * Retourne le libelle du statut d'une expedition
-	 *
-	 * @return     string      Libelle
-	 */
+     *	Return status label
+     *
+     *	@param      int		$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+     *	@return     string      		Libelle
+     */
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->statut,$mode);
@@ -1062,11 +1072,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * Set the planned delivery date
+	 *	Set the planned delivery date
 	 *
-	 * @param      user        			Objet utilisateur qui modifie
-	 * @param      date_livraison     	Date de livraison
-	 * @return     int         			<0 si ko, >0 si ok
+	 *	@param      User				$user        		Objet utilisateur qui modifie
+	 *	@param      timestamp		date_livraison     	Date de livraison
+	 *	@return     int         							<0 si ko, >0 si ok
 	 */
 	function set_date_livraison($user, $date_livraison)
 	{
@@ -1097,9 +1107,9 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
+	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
 	 *
-	 * @return	void
+	 * 	@return	void
 	 */
 	function fetch_delivery_methods()
 	{
@@ -1123,9 +1133,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Get tracking url status
-	 *
-	 *	@return	void
+	 * 
+	 * Get tracking url status
+	 * 
+	 * @param	string	$value
 	 */
 	function GetUrlTrackingStatus($value='')
 	{
@@ -1194,7 +1205,11 @@ class ExpeditionLigne
 	var $product_desc;  // Description produit
 	var $ref;
 
-
+    /**
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
+     */
 	function ExpeditionLigne($DB)
 	{
 		$this->db=$DB;

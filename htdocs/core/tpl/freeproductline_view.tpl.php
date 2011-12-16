@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
- * Copyright (C) 2010 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,9 @@
 
 <!-- BEGIN PHP TEMPLATE freeproductline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
+	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+	<td align="center"><?php echo ($i+1); ?></td>
+	<?php } ?>
 	<td><a name="<?php echo $line->rowid; ?>"></a>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">

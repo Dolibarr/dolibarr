@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +42,9 @@ class ExpeditionStats
     }
 
     /**
-     * Renvoie le nombre de expedition par annee
+     * Return expedition number by year
      *
-     * @return	void
+     * @return	array	array with number by year
      */
     function getNbExpeditionByYear()
     {
@@ -74,10 +75,10 @@ class ExpeditionStats
     }
 
     /**
-     * Renvoie le nombre de expedition par mois pour une annee donnee
+     * Return the expeditions number by month for a year
      *
      * @param	int		$year		Year
-     * @return	int
+     * @return	array				Array with number by month
      */
     function getNbExpeditionByMonth($year)
     {
@@ -122,9 +123,10 @@ class ExpeditionStats
 
 
     /**
+     * Return the expeditions number by month for a year
      *
-     * @param 	int		$year	Year
-     * @return	int
+     * @param	int		$year		Year
+     * @return	array				Array with number by month
      */
     function getNbExpeditionByMonthWithPrevYear($year)
     {

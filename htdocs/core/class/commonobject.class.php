@@ -2013,6 +2013,10 @@ abstract class CommonObject
         */
 
         print '<tr class="liste_titre nodrag nodrop">';
+        if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+        {
+        	print '<td align="center" width="5">&nbsp;</td>';
+        }
         print '<td>'.$langs->trans('Description').'</td>';
         print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
         print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';

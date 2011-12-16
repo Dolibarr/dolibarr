@@ -28,7 +28,7 @@
 <!-- BEGIN PHP TEMPLATE predefinedproductline_create.tpl.php -->
 
 <tr class="liste_titre nodrag nodrop">
-	<td colspan="3">
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
 	echo $langs->trans("AddNewLine").' - ';
 	if ($conf->service->enabled)
@@ -56,7 +56,7 @@ jQuery(document).ready(function() {
 </script>
 
 <tr <?php echo $bcnd[$var]; ?>>
-	<td colspan="3">
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
 
 	$form->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
@@ -83,7 +83,7 @@ jQuery(document).ready(function() {
 
 <?php if ($conf->service->enabled && $dateSelector) {?>
 <tr <?php echo $bcnd[$var]; ?>>
-	<td colspan="9">
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="10"' : ' colspan="9"'); ?>>
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 	echo $form->select_date('','date_start_predef',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addpredefinedproduct");
