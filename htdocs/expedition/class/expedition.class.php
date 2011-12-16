@@ -513,8 +513,6 @@ class Expedition extends CommonObject
 					// We use warehouse selected for each line
 					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 					if ($result < 0) { $error++; break; }
-
-					$i++;
 				}
 			}
 			else
