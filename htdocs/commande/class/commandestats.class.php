@@ -46,11 +46,10 @@ class CommandeStats extends Stats
 	/**
 	 * Constructor
 	 *
-	 * @param 	$DB		   Database handler
-	 * @param 	$socid	   Id third party for filter
-	 * @param 	$mode	   Option
-	 * @param   $userid    Id user for filter
-	 * @return 	CommandeStats
+	 * @param 	DoliDB	$DB		   Database handler
+	 * @param 	int		$socid	   Id third party for filter
+	 * @param 	string	$mode	   Option
+	 * @param   int		$userid    Id user for filter
 	 */
 	function CommandeStats($DB, $socid=0, $mode, $userid=0)
 	{
@@ -88,8 +87,10 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 *    \brief      Renvoie le nombre de commande par mois pour une annee donnee
-	 *
+	 * Return orders number by month for a year
+	 * 
+	 * @param	int		$year	year for stats
+	 * @return	array			array with number by month
 	 */
 	function getNbByMonth($year)
 	{
@@ -108,7 +109,9 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de commande par annee
+	 * Return orders number by year
+	 * 
+	 * @return	array	array with number by year
 	 *
 	 */
 	function getNbByYear()
@@ -127,8 +130,10 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de commande par mois pour une annee donnee
+	 * Return the orders amount by month for a year
 	 *
+	 * @param	int		$year	year for stats
+	 * @return	array			array with number by month
 	 */
 	function getAmountByMonth($year)
 	{
@@ -147,8 +152,10 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de commande par mois pour une annee donnee
+	 * Return the orders amount average by month for a year
 	 *
+	 * @param	int		$year	year for stats
+	 * @return	array			array with number by month
 	 */
 	function getAverageByMonth($year)
 	{
@@ -166,10 +173,10 @@ class CommandeStats extends Stats
 		return $this->_getAverageByMonth($year, $sql);
 	}
 
-
 	/**
-	 *	\brief	Return nb, total and average
-	 *	\return	array	Array of values
+	 *	Return nb, total and average
+	 *	
+	 *	@return	array	Array of values
 	 */
 	function getAllByYear()
 	{
