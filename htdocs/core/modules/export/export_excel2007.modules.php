@@ -152,7 +152,7 @@ class ExportExcel2007 extends ExportExcel
 
             $this->workbook->setActiveSheetIndex(0);
             $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
-            $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(15);
+            $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(16);
 		}
 		return $ret;
 	}
