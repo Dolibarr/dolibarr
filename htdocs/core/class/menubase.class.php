@@ -48,7 +48,7 @@ class Menubase
     var $titre;
     var $langs;
     var $level;
-    var $leftmenu;		//<! 0=Left menu in pre.inc.php files must not be overwrite by database menu, 1=Must be
+    var $leftmenu;		//<! Not used
     var $perms;
     var $enabled;
     var $user;
@@ -117,7 +117,7 @@ class Menubase
 
         		$sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
 	        	$resqlrowidset=$this->db->query($sql);
-	     		if (! $resqlrowidset) dol_print_error($this->db);   	
+	     		if (! $resqlrowidset) dol_print_error($this->db);
         	}
         	else dol_print_error($this->db);
         }
@@ -468,9 +468,9 @@ class Menubase
     /**
      * 	Load entries found in database in a menu array.
      *
-     * 	@param	array	$newmenu        Menu array to complete
-     * 	@param	string	$mainmenu       Value for mainmenu that defined top menu of left menu
-     * 	@param 	string	$myleftmenu     Value that defined leftmenu
+     * 	@param	array	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
+     * 	@param	string	$mainmenu       Value for mainmenu that defines top menu of left menu
+     * 	@param 	string	$myleftmenu     Value that defines leftmenu
      * 	@param  int		$type_user		0=Internal,1=External,2=All
      * 	@param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
      * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)

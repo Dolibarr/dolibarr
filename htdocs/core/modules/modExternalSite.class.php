@@ -102,7 +102,6 @@ class modExternalSite extends DolibarrModules
 													'type'=>'top',
 													'titre'=>'ExternalSites',
 													'mainmenu'=>'externalsite',
-													'leftmenu'=>'1',
 													'url'=>'/externalsite/frames.php',
 													'langs'=>'other',
 													'position'=>100,

@@ -101,7 +101,6 @@ class modCashDesk extends DolibarrModules
 									'type'=>'top',			// This is a Top menu entry
 									'titre'=>'CashDeskMenu',
 									'mainmenu'=>'cashdesk',
-									'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,

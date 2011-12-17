@@ -113,3 +113,5 @@ ALTER TABLE llx_societe MODIFY COLUMN fk_stcomm integer NOT NULL;
 ALTER TABLE llx_societe CHANGE COLUMN gencod barcode varchar(255);
 ALTER TABLE llx_societe ADD COLUMN fk_barcode_type integer DEFAULT 0;
 
+UPDATE llx_menu SET leftmenu = NULL where leftmenu in ('', '0', '1');
+

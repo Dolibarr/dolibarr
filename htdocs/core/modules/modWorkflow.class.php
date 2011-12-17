@@ -115,7 +115,6 @@ class modWorkflow extends DolibarrModules
                                 'type'=>'top',
                                 'titre'=>'Workflow',
                                 'mainmenu'=>'workflow',
-                                'leftmenu'=>'1',
                                 'url'=>'/workflow/index.php',
                                 'langs'=>'@workflow',
                                 'position'=>100,
@@ -149,7 +148,7 @@ class modWorkflow extends DolibarrModules
     {
 		// Permissions
 		$this->remove();
-		
+
 		$sql = array();
 
         return $this->_init($sql);

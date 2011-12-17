@@ -117,7 +117,6 @@ class modFTP extends DolibarrModules
 							  'type'=>'top',
 							  'titre'=>'FTP',
 							  'mainmenu'=>'ftp',
-							  'leftmenu'=>'0',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 							  'url'=>'/ftp/index.php',
 							  'langs'=>'ftp',
 							  'position'=>100,

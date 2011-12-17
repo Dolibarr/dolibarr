@@ -546,9 +546,9 @@ function print_end_menu_array()
 /**
  * Core function to output left menu eldy
  *
- * @param      db                  Database handler
- * @param      menu_array_before   Table of menu entries to show before entries of menu handler
- * @param      menu_array_after    Table of menu entries to show after entries of menu handler
+ * @param	DoliDB		$db                  Database handler
+ * @param 	array		$menu_array_before   Table of menu entries to show before entries of menu handler
+ * @param   array		$menu_array_after    Table of menu entries to show after entries of menu handler
  */
 function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 {
@@ -1324,7 +1324,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
         }
 
-        // Affichage des menus personnalises
+        // Add personalized menus and modules menus
         require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
         $tabMenu=array();

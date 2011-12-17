@@ -121,7 +121,6 @@ class modECM extends DolibarrModules
 							  'type'=>'top',
 							  'titre'=>'MenuECM',
 							  'mainmenu'=>'ecm',
-							  'leftmenu'=>'1',		// To say if we can overwrite leftmenu
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
