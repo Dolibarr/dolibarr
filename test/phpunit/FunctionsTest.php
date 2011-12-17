@@ -112,7 +112,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testHtmlCleanLastBr()
+    public function testDolHtmlCleanLastBr()
     {
         $input="A string<br>";
         $after=dol_htmlcleanlastbr($input);
@@ -132,7 +132,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testHtmlEntitiesBr()
+    public function testDolHtmlEntitiesBr()
     {
         $input="A string\nwith a é, &, < and >.";   // Text not already HTML
         $after=dol_htmlentitiesbr($input,0);    // Add <br> before \n
@@ -151,6 +151,36 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string",$after);
 
         return true;
+    }
+
+    /**
+     */
+    public function testDolTextIsHtml()
+    {
+        // True
+        $input='<html>xxx</html>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='<body>xxx</body>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx <b>yyy</b> zzz';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='text with <div>some div</div>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='text with HTML &nbsp; entities';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+
+        // False
+        $input='xxx < br>';
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
     }
 
     /**
