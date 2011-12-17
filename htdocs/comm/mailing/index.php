@@ -30,8 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 $langs->load("commercial");
 $langs->load("orders");
 
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
-  accessforbidden();
+if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 
 /*

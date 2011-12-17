@@ -32,8 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $langs->load("mails");
 
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
-accessforbidden();
+if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 $message = '';
 
@@ -435,7 +434,7 @@ if (! empty($_POST['addfile']))
 	$mil->fetch($_POST["id"]);
 
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
-	
+
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory
@@ -576,7 +575,7 @@ if ($_REQUEST["action"] == 'confirm_delete')
 	if ($_REQUEST["confirm"] == 'yes')
 	{
 		$mil = new Mailing($db);
-		$mil->id = $_REQUEST["id"];
+		$mil->fetch($_REQUEST["id"]);
 
 		if ($mil->delete($mil->id))
 		{
@@ -983,7 +982,7 @@ else
 			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$mil->sujet.'"></td></tr>';
 
 			dol_init_file_process($upload_dir);
-			
+
 			// Joined files
 			$addfileaction='addfile';
 			print '<tr><td>'.$langs->trans("MailFile").'</td>';
