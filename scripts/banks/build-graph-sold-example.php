@@ -238,16 +238,16 @@ foreach ($accounts as $account)
     {
         $graph_datas[$i]=array("$labels[$i]",$datas[$i]);
     }
-    $px = new DolGraph();
-    $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Balance")));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
-    $px->SetTitle($title);
-    $px->SetWidth($width);
-    $px->SetHeight($height);
-    $px->SetType('lines');
-    $px->draw($file);
+    $px1 = new DolGraph();
+    $px1->SetData($graph_datas);
+    $px1->SetLegend(array($langs->trans("Balance")));
+    $px1->SetMaxValue($px1->GetCeilMaxValue());
+    $px1->SetMinValue($px1->GetFloorMinValue());
+    $px1->SetTitle($title);
+    $px1->SetWidth($width);
+    $px1->SetHeight($height);
+    $px1->SetType('lines');
+    $px1->draw($file,'');
 
 
     // Chargement du tableau $amounts
@@ -333,15 +333,15 @@ foreach ($accounts as $account)
     {
         $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
     }
-    $px = new DolGraph();
-    $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Balance")));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetTitle($title);
-    $px->SetWidth($width);
-    $px->SetHeight($height);
-    $px->SetType('lines');
-    $px->draw($file);
+    $px2 = new DolGraph();
+    $px2->SetData($graph_datas);
+    $px2->SetLegend(array($langs->trans("Balance")));
+    $px2->SetMaxValue($px2->GetCeilMaxValue());
+    $px2->SetTitle($title);
+    $px2->SetWidth($width);
+    $px2->SetHeight($height);
+    $px2->SetType('lines');
+    $px2->draw($file,'');
 
 
     // Chargement du tableau $amounts
@@ -408,16 +408,16 @@ foreach ($accounts as $account)
     {
         $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
     }
-    $px = new DolGraph();
-    $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Balance")));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
-    $px->SetTitle($title);
-    $px->SetWidth($width);
-    $px->SetHeight($height);
-    $px->SetType('lines');
-    $px->draw($file);
+    $px3 = new DolGraph();
+    $px3->SetData($graph_datas);
+    $px3->SetLegend(array($langs->trans("Balance")));
+    $px3->SetMaxValue($px3->GetCeilMaxValue());
+    $px3->SetMinValue($px3->GetFloorMinValue());
+    $px3->SetTitle($title);
+    $px3->SetWidth($width);
+    $px3->SetHeight($height);
+    $px3->SetType('lines');
+    $px3->draw($file,'');
 
 
     // Chargement du tableau $credits, $debits
@@ -488,17 +488,17 @@ foreach ($accounts as $account)
     {
         $graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
     }
-    $px = new DolGraph();
-    $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Debit"),$langs->trans("Credit")));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
-    $px->SetTitle($title);
-    $px->SetWidth($width);
-    $px->SetHeight($height);
-    $px->SetType('bars');
-    $px->SetShading(3);
-    $px->draw($file);
+    $px4 = new DolGraph();
+    $px4->SetData($graph_datas);
+    $px4->SetLegend(array($langs->trans("Debit"),$langs->trans("Credit")));
+    $px4->SetMaxValue($px4->GetCeilMaxValue());
+    $px4->SetMinValue($px4->GetFloorMinValue());
+    $px4->SetTitle($title);
+    $px4->SetWidth($width);
+    $px4->SetHeight($height);
+    $px4->SetType('bars');
+    $px4->SetShading(3);
+    $px4->draw($file,'');
 }
 
 $db->close();

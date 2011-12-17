@@ -89,23 +89,6 @@ if (! empty($id) || ! empty($ref))
 		print $object->getLibStatut(2,1);
 		print '</td></tr>';
 
-
-		// Graphs additionels generes pas le script product-graph.php
-		$year = strftime('%Y',time());
-		$file = get_exdir($object->id, 3) . "ventes-".$year."-".$object->id.".png";
-		if (file_exists (DOL_DATA_ROOT.'/product/temp/'.$file) )
-		{
-			print '<tr><td>Ventes</td><td>';
-
-			$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_product&amp;file='.$file;
-			print '<img src="'.$url.'" alt="Ventes">';
-			$file = get_exdir($object->id, 3) . "ventes-".$object->id.".png";
-			$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_product&amp;file='.$file;
-			print '<img src="'.$url.'" alt="Ventes">';
-			print '</td></tr>';
-		}
-
-
 		print '</table>';
 		print '</div>';
 
@@ -141,20 +124,16 @@ if (! empty($id) || ! empty($ref))
 		$graphfiles=array(
 		'propal'           =>array('modulepart'=>'productstats_proposals',
 		'file' => $object->id.'/propal12m.png',
-		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsProposals"):$langs->trans("NumberOfProposals"))),
+		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsProposals"):$langs->transnoentitiesnoconv("NumberOfProposals"))),
 		'orders'           =>array('modulepart'=>'productstats_orders',
 		'file' => $object->id.'/orders12m.png',
-		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsCustomerOrders"):$langs->trans("NumberOfCustomerOrders"))),
+		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders"):$langs->transnoentitiesnoconv("NumberOfCustomerOrders"))),
 		'invoices'         =>array('modulepart'=>'productstats_invoices',
 		'file' => $object->id.'/invoices12m.png',
-		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsCustomerInvoices"):$langs->trans("NumberOfCustomerInvoices"))),
+		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices"))),
 		'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers',
 		'file' => $object->id.'/invoicessuppliers12m.png',
-		'label' => ($mode=='byunit'?$langs->trans("NumberOfUnitsSupplierInvoices"):$langs->trans("NumberOfSupplierInvoices"))),
-
-		//			'orderssuppliers'  =>array('modulepart'=>'productstats_orderssuppliers', 'file' => $object->id.'/orderssuppliers12m.png', 'label' => $langs->trans("Nombre commande fournisseurs sur les 12 derniers mois")),
-		//			'contracts'        =>array('modulepart'=>'productstats_contracts', 'file' => $object->id.'/contracts12m.png', 'label' => $langs->trans("Nombre contrats sur les 12 derniers mois")),
-
+		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices"))),
 		);
 
 		$px = new DolGraph();
@@ -175,9 +154,11 @@ if (! empty($id) || ! empty($ref))
 					if ($key == 'orders')            $graph_data = $object->get_nb_order($socid,$mode);
 					if ($key == 'invoices')          $graph_data = $object->get_nb_vente($socid,$mode);
 					if ($key == 'invoicessuppliers') $graph_data = $object->get_nb_achat($socid,$mode);
+
 					if (is_array($graph_data))
 					{
 						$px->SetData($graph_data);
+						$px->SetYLabel($graphfiles[$key]['label']);
 						$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
 						$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
 						$px->SetWidth($WIDTH);
@@ -187,7 +168,10 @@ if (! empty($id) || ! empty($ref))
 						$px->SetShading(3);
 						//print 'x '.$key.' '.$graphfiles[$key]['file'];
 
-						$px->draw($dir."/".$graphfiles[$key]['file']);
+						$url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&file='.urlencode($graphfiles[$key]['file']);
+						$px->draw($dir."/".$graphfiles[$key]['file'],$url);
+
+						$graphfiles[$key]['output']=$px->show();
 					}
 					else
 					{
@@ -223,16 +207,14 @@ if (! empty($id) || ! empty($ref))
 			print '</td></tr>';
 			// Image
 			print '<tr><td colspan="2" align="center">';
-			//print $graphfiles[$key]['modulepart']."x".urlencode($graphfiles[$key]['file']);
-			$url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&file='.urlencode($graphfiles[$key]['file']);
-			//print $url;
-			print '<img src="'.$url.'" alt="'.$graphfiles[$key]['label'].'">';
+			print $graphfiles[$key]['output'];
 			print '</td></tr>';
 			// Date generation
 			print '<tr>';
-			if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file']) && ! $px->isGraphKo())
+			if ($graphfiles[$key]['output'] && ! $px->isGraphKo())
 			{
-				print '<td>'.$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
+			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) print '<td>'.$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
+			    else print '<td>'.$langs->trans("GeneratedOn",dol_print_date(dol_now()),"dayhour").'</td>';
 			}
 			else
 			{
@@ -264,8 +246,7 @@ else
 	dol_print_error();
 }
 
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>

@@ -29,6 +29,10 @@ require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 $langs->load("sendings");
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 print_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
@@ -64,7 +68,7 @@ print '</table>';
 print '<br>';
 print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
