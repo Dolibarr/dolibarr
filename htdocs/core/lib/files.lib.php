@@ -23,7 +23,7 @@
 
 /**
  *  Return user/group account of web server
- *  
+ *
  *  @param	string	$mode       'user' or 'group'
  *  @return string				Return user or group of web server
  */
@@ -38,7 +38,7 @@ function dol_getwebuser($mode)
 /**
  *  Scan a directory and return a list of files/directories.
  *  Content for string is UTF8 and dir separator is "/".
- *  
+ *
  *  @param	string	$path        	Starting path from which to search
  *  @param	string	$types        	Can be "directories", "files", or "all"
  *  @param	int		$recursive		Determines whether subdirectories are searched
@@ -154,7 +154,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
- * 
+ *
  * @param	string 	$a		File 1
  * @param 	string	$b		File 2
  * @return 	int				1, 0, 1
@@ -234,10 +234,10 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	if (preg_match('/\.mdb$/i',$tmpfile))					   { $mime='application/msaccess'; $imgmime='mdb.png'; }
 	if (preg_match('/\.doc(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; }
 	if (preg_match('/\.dot(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; }
-	if (preg_match('/\.xls(b|m|x)?$/i',$tmpfile))			   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
 	if (preg_match('/\.xlt(x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
 	if (preg_match('/\.xla(m)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
-	if (preg_match('/\.xsl(b|m|x)?$/i',$tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; }
+	if (preg_match('/\.xls$/i',$tmpfile))			           { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
+	if (preg_match('/\.xls(b|m|x)?$/i',$tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; }
 	if (preg_match('/\.pps(m|x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-powerpoint'; $imgmime='ppt.png'; }
 	if (preg_match('/\.ppt(m|x)?$/i',$tmpfile))				   { $mime='application/x-mspowerpoint'; $imgmime='ppt.png'; }
 	// Other
@@ -367,7 +367,7 @@ function dol_dir_is_emtpy($folder)
 
 /**
  * 	Count number of lines in a file
- * 
+ *
  * 	@param	string	$file		Filename
  * 	@return int					<0 if KO, Number of lines in files if OK
  */
@@ -398,7 +398,7 @@ function dol_count_nb_of_line($file)
 
 /**
  * Return size of a file
- * 
+ *
  * @param 	tring		$pathoffile		Path of file
  * @return 	string						File size
  */
@@ -410,7 +410,7 @@ function dol_filesize($pathoffile)
 
 /**
  * Return time of a file
- * 
+ *
  * @param 	string		$pathoffile		Path of file
  * @return 	timestamp					Time of file
  */
@@ -451,7 +451,7 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 
 /**
  * Move a file into another name
- * 
+ *
  * @param	string  $srcfile            Source file (can't be a directory)
  * @param   string	$destfile           Destination file (can't be a directory)
  * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
@@ -481,7 +481,7 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 /**
  *	Move an uploaded file after some controls.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
- * 
+ *
  *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
  *	@param	string	$dest_file			Target full path filename
  * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
@@ -496,7 +496,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	global $object;
 
 	$error=0;
-	
+
 	$file_name = $dest_file;
 	// If an upload error has been reported
 	if ($uploaderrorcode)
@@ -789,20 +789,20 @@ function dol_delete_preview($object)
 function dol_meta_create($object)
 {
 	global $langs,$conf;
-	
+
 	$object->fetch_thirdparty();
-	
+
 	if ($conf->facture->dir_output)
 	{
 		$facref = dol_sanitizeFileName($object->ref);
 		$dir = $conf->facture->dir_output . "/" . $facref;
 		$file = $dir . "/" . $facref . ".meta";
-		
+
 		if (! is_dir($dir))
 		{
 			create_exdir($dir);
 		}
-		
+
 		if (is_dir($dir))
 		{
 			$nblignes = count($object->lines);
@@ -813,7 +813,7 @@ function dol_meta_create($object)
 			CLIENT=\"" . $client . "\"
 			TOTAL_HT=\"" . $object->total_ht . "\"
 			TOTAL_TTC=\"" . $object->total_ttc . "\"\n";
-			
+
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
 				//Pour les articles
@@ -824,7 +824,7 @@ function dol_meta_create($object)
 				";
 			}
 		}
-		
+
 		$fp = fopen($file,"w");
 		fputs($fp,$meta);
 		fclose($fp);
@@ -852,7 +852,7 @@ function dol_init_file_process($pathtoscan='')
 		$listoffiles=dol_dir_list($pathtoscan,'files');
 		foreach($listoffiles as $key => $val)
 		{
-			$listofpaths[]=$val['fullname'];		
+			$listofpaths[]=$val['fullname'];
 			$listofnames[]=$val['name'];
 			$listofmimes[]=dol_mimetype($val['name']);
 		}
@@ -925,7 +925,7 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 /**
  * Remove an uploaded file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
- * 
+ *
  * @param	int		$filenb					File nb to delete
  * @param	int		$donotupdatesession		1=Do not edit _SESSION variable
  * @param   int		$donotdeletefile        1=Do not delete physically file

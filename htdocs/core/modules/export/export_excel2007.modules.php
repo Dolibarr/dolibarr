@@ -59,8 +59,8 @@ class ExportExcel2007 extends ExportExcel
 
 		$this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
 		$this->label='Excel 2007';               // Label of driver
-		$this->desc='<b>Excel</b> file format (.xslx)<br>This is native Excel 2007 format (SpreadsheetML).';
-		$this->extension='xslx';             // Extension for generated file by this driver
+		$this->desc='<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).';
+		$this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';			// Picto
 		$this->version='1.30';             // Driver version
 
