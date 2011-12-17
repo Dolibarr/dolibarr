@@ -1480,7 +1480,7 @@ class Product extends CommonObject
 
 		for ($j = 0 ; $j < 12 ; $j++)
 		{
-			$idx=ucfirst(dol_trunc(dol_print_date(dol_mktime(12,0,0,$month,1,$year),"%b"),3));
+			$idx=ucfirst(dol_trunc(dol_print_date(dol_mktime(12,0,0,$month,1,$year),"%b"),3,'right','UTF-8',1));
 			$monthnum=sprintf("%02s",$month);
 
 			$result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);

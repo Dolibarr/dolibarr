@@ -1636,60 +1636,56 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size. 0 for no limit.
- *	@param	string	$trunc				Where to trunc: right, left, middle, wrap
+ *	@param  int		$size				Max string size visible. 0 for no limit. finale string size can be 1 more (if size was max+1) or 3 more (if we added ...)
+ *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
+ *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
  *	@return string						Truncated string
  */
-function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
+function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0)
 {
     global $conf;
 
-    if ($size==0) return $string;
-    if (empty($conf->global->MAIN_DISABLE_TRUNC))
+    if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+
+    // We go always here
+    if ($trunc == 'right')
     {
-        // We go always here
-        if ($trunc == 'right')
-        {
-            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-            if (dol_strlen($newstring,$stringencoding) > ($size+1))
-            return dol_substr($newstring,0,$size,$stringencoding).'...';
-            else
-            return $string;
-        }
-        if ($trunc == 'middle')
-        {
-            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-            if (dol_strlen($newstring,$stringencoding) > 2 && dol_strlen($newstring,$stringencoding) > ($size+1))
-            {
-                $size1=round($size/2);
-                $size2=round($size/2);
-                return dol_substr($newstring,0,$size1,$stringencoding).'...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size2,$size2,$stringencoding);
-            }
-            else
-            return $string;
-        }
-        if ($trunc == 'left')
-        {
-            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-            if (dol_strlen($newstring,$stringencoding) > ($size+1))
-            return '...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size,$size,$stringencoding);
-            else
-            return $string;
-        }
-        if ($trunc == 'wrap')
-        {
-            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-            if (dol_strlen($newstring,$stringencoding) > ($size+1))
-            return dol_substr($newstring,0,$size,$stringencoding)."\n".dol_trunc(dol_substr($newstring,$size,dol_strlen($newstring,$stringencoding)-$size,$stringencoding),$size,$trunc);
-            else
-            return $string;
-        }
-    }
-    else
-    {
+        $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+        if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
+        return dol_substr($newstring,0,$size,$stringencoding).($nodot?'':'...');
+        else
         return $string;
     }
+    elseif ($trunc == 'middle')
+    {
+        $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+        if (dol_strlen($newstring,$stringencoding) > 2 && dol_strlen($newstring,$stringencoding) > ($size+1))
+        {
+            $size1=round($size/2);
+            $size2=round($size/2);
+            return dol_substr($newstring,0,$size1,$stringencoding).'...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size2,$size2,$stringencoding);
+        }
+        else
+        return $string;
+    }
+    elseif ($trunc == 'left')
+    {
+        $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+        if (dol_strlen($newstring,$stringencoding) > ($size+1))
+        return '...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size,$size,$stringencoding);
+        else
+        return $string;
+    }
+    elseif ($trunc == 'wrap')
+    {
+        $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+        if (dol_strlen($newstring,$stringencoding) > ($size+1))
+        return dol_substr($newstring,0,$size,$stringencoding)."\n".dol_trunc(dol_substr($newstring,$size,dol_strlen($newstring,$stringencoding)-$size,$stringencoding),$size,$trunc);
+        else
+        return $string;
+    }
+    else return 'BadParam3CallingDolTrunc';
 }
 
 

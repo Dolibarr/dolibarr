@@ -1,20 +1,20 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 /**
  *      \file       test/phpunit/SecurityTest.php
@@ -49,64 +49,64 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  */
 class FunctionsTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return CoreTest
-	 */
-	function FunctionsTest()
-	{
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return CoreTest
+     */
+    function FunctionsTest()
     {
-    	global $conf,$user,$langs,$db;
-		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-    	print __METHOD__."\n";
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+        //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+
+        print __METHOD__."\n";
     }
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		//$db->rollback();
+        global $conf,$user,$langs,$db;
+        //$db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 */
+    /**
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 */
+    /**
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
 
@@ -153,6 +153,41 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         return true;
     }
 
+    /**
+     */
+    public function testDolTrunc()
+    {
+        // Default trunc (will add ... if truncation truncation or keep last char if only one char)
+        $input="éeéeéeàa";
+        $after=dol_trunc($input,3);
+        $this->assertEquals("éeé...",$after);
+        $after=dol_trunc($input,2);
+        $this->assertEquals("ée...",$after);
+        $input="éeé";
+        $after=dol_trunc($input,3);
+        $this->assertEquals("éeé",$after);
+        $after=dol_trunc($input,2);
+        $this->assertEquals("éeé",$after);
+        $after=dol_trunc($input,1);
+        $this->assertEquals("é...",$after);
+        // Trunc with no ...
+        $input="éeéeéeàa";
+        $after=dol_trunc($input,3,'right','UTF-8',1);
+        $this->assertEquals("éeé",$after);
+        $after=dol_trunc($input,2,'right','UTF-8',1);
+        $this->assertEquals("ée",$after);
+        $input="éeé";
+        $after=dol_trunc($input,3,'right','UTF-8',1);
+        $this->assertEquals("éeé",$after);
+        $after=dol_trunc($input,2,'right','UTF-8',1);
+        $this->assertEquals("ée",$after);
+        $after=dol_trunc($input,1,'right','UTF-8',1);
+        $this->assertEquals("é",$after);
+        $input="éeéeéeàa";
+        $after=dol_trunc($input,4,'middle');
+        $this->assertEquals("ée...àa",$after);
 
+        return true;
+    }
 }
 ?>
