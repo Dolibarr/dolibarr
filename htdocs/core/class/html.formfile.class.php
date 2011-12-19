@@ -39,7 +39,7 @@ class FormFile
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
      */
     function FormFile($db)
     {
@@ -52,13 +52,13 @@ class FormFile
     /**
      *    	Show form to upload a new file
 	 *
-     *    	@param      url				Url
-     *    	@param      title			Title zone (Title or '' or 'none')
-     *    	@param      addcancel		1=Add 'Cancel' button
-     *		@param		sectionid		If upload must be done inside a particular ECM section
-     * 		@param		perm			Value of permission to allow upload
-     *      @param      size            Length of input file area
-     * 		@return		int				<0 ij KO, >0 if OK
+     *    	@param      string	$url			Url
+     *    	@param      string	$title			Title zone (Title or '' or 'none')
+     *    	@param      int		$addcancel		1=Add 'Cancel' button
+     *		@param		int		$sectionid		If upload must be done inside a particular ECM section
+     * 		@param		int		$perm			Value of permission to allow upload
+     *      @param      int		$size           Length of input file area
+     * 		@return		int						<0 if KO, >0 if OK
      */
     function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50)
     {
@@ -521,17 +521,17 @@ class FormFile
     /**
      *      Show list of documents in a directory
      *
-     *      @param      filearray           Array of files loaded by dol_dir_list('files') function before calling this
-     * 		@param		object				Object on which document is linked to
-     * 		@param		modulepart			Value for modulepart used by download or viewimage wrapper
-     * 		@param		param				Parameters on sort links
-     * 		@param		forcedownload		Force to open dialog box "Save As" when clicking on file
-     * 		@param		relativepath		Relative path of docs (autodefined if not provided)
-     * 		@param		permtodelete		Permission to delete
-     * 		@param		useinecm			Change output for use in ecm module
-     * 		@param		textifempty			Text to show if filearray is empty
-     *      @param      maxlength           Maximum length of file name shown
-     * 		@return		int					<0 if KO, nb of files shown if OK
+     *      @param	array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this
+     * 		@param	Object	$object				Object on which document is linked to
+     * 		@param	string	$modulepart			Value for modulepart used by download or viewimage wrapper
+     * 		@param	string	$param				Parameters on sort links
+     * 		@param	int		$forcedownload		Force to open dialog box "Save As" when clicking on file
+     * 		@param	string	$relativepath		Relative path of docs (autodefined if not provided)
+     * 		@param	int		$permtodelete		Permission to delete
+     * 		@param	int		$useinecm			Change output for use in ecm module
+     * 		@param	string	$textifempty		Text to show if filearray is empty
+     *      @param  int		$maxlength          Maximum length of file name shown
+     * 		@return	int							<0 if KO, nb of files shown if OK
      */
     function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0)
     {
@@ -613,17 +613,18 @@ class FormFile
 
     /**
      *      Show list of documents in a directory
-     *      @param      upload_dir          Directory that was scanned
-     *      @param      filearray           Array of files loaded by dol_dir_list function before calling this function
-     *      @param      modulepart          Value for modulepart used by download wrapper
-     *      @param      param               Parameters on sort links
-     *      @param      forcedownload       Force to open dialog box "Save As" when clicking on file
-     *      @param      relativepath        Relative path of docs (autodefined if not provided)
-     *      @param      permtodelete        Permission to delete
-     *      @param      useinecm            Change output for use in ecm module
-     *      @param      textifempty         Text to show if filearray is empty
-     *      @param      maxlength           Maximum length of file name shown
-     *      @return     int                 <0 if KO, nb of files shown if OK
+     *
+     *      @param	string	$upload_dir         Directory that was scanned
+     *      @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
+     *      @param  string	$modulepart         Value for modulepart used by download wrapper
+     *      @param  string	$param              Parameters on sort links
+     *      @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
+     *      @param  string	$relativepath       Relative path of docs (autodefined if not provided)
+     *      @param  int		$permtodelete       Permission to delete
+     *      @param  int		$useinecm           Change output for use in ecm module
+     *      @param  int		$textifempty        Text to show if filearray is empty
+     *      @param  int		$maxlength          Maximum length of file name shown
+     *      @return int                 		<0 if KO, nb of files shown if OK
      */
     function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0)
     {
@@ -722,7 +723,10 @@ class FormFile
     }
 
     /**
-     *    	Show form to upload a new file with jquery fileupload
+     *    Show form to upload a new file with jquery fileupload
+     *
+     *    @param	Object	$object		Object to use
+     *    @return	void
      */
     function form_ajaxfileupload($object)
     {
