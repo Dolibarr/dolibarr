@@ -33,11 +33,12 @@
 class DoliDBPgsql
 {
 	var $db;                      // Database handler
-	var $type='pgsql';            // Name of manager
-	var $label='PostgreSQL';      // Label of manager
+	static $type='pgsql';            // Name of manager
+	static $label='PostgreSQL';      // Label of manager
 	//! Charset
-	var $forcecharset='latin1';
-	var $versionmin=array(8,4,0);	// Version min database
+	static $forcecharset='latin1';
+	//! Version min database
+	static $versionmin=array(8,4,0);	// Version min database
 
 	var $results;                 // Resultset de la derniere requete
 

@@ -34,15 +34,15 @@ class DoliDBMssql
 	//! Database handler
 	var $db;
 	//! Database type
-	var $type='mssql';
+	static $type='mssql';
 	//! Database label
-	var $label='MSSQL';
+	static $label='MSSQL';
 	//! Charset used to force charset when creating database
-	var $forcecharset='latin1';
+	static $forcecharset='latin1';
 	//! Collate used to force collate when creating database
-	var $forcecollate='latin1_swedish_ci';
+	static $forcecollate='latin1_swedish_ci';
 	//! Version min database
-	var $versionmin=array(2000);
+	static $versionmin=array(2000);
 	//! Resultset de la derniere requete
 	var $results;
 	//! 1 si connecte, 0 sinon
@@ -772,7 +772,7 @@ class DoliDBMssql
 	 * 	\param			collation		Charset used to sort data
 	 * 	\return	        resource		resource defined if OK, null if KO
 	 * 	\remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mssql, ...) car elles sont deprecated
-	 *					On force creation de la base avec le charset forcecharset
+	 *					We force to create database with charset this->forcecharset and collate this->forcecollate
 	 */
 	function DDLCreateDb($database,$charset='',$collation='')
 	{

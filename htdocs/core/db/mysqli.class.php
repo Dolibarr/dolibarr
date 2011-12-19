@@ -34,15 +34,15 @@ class DoliDBMysqli
     //! Database handler
     var $db;
     //! Database type
-    var $type='mysqli';
+    static $type='mysqli';
     //! Database label
-    var $label='MySQL';
+    static $label='MySQL';
     //! Charset used to force charset when creating database
-    var $forcecharset='utf8';	// latin1, utf8
+    static $forcecharset='utf8';	// latin1, utf8
     //! Collate used to force collate when creating database
-    var $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
+    static $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
     //! Version min database
-    var $versionmin=array(4,1,0);
+    static $versionmin=array(4,1,0);
     //! Resultset of last request
     var $results;
     //! 1 if connected, 0 else
