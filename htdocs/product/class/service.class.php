@@ -52,8 +52,8 @@ class Service extends CommonObject
 
 
 	/**
-	 *      \brief      Charge indicateurs this->nb de tableau de bord
-	 *      \return     int         <0 si ko, >0 si ok
+	 *	Charge indicateurs this->nb de tableau de bord
+	 *	@return     int         <0 si ko, >0 si ok
 	 */
 	function load_state_board()
 	{
