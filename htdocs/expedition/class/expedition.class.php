@@ -485,7 +485,7 @@ class Expedition extends CommonObject
 		// If stock increment is done on sending (recommanded choice)
 		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 		{
-			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
+			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
 			$langs->load("agenda");
 
