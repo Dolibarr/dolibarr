@@ -92,7 +92,7 @@ class DoliDBMssql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Mssql PHP functions for using MSSql driver are not available in this version of PHP";
-			dol_syslog("DoliDB::DoliDB : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMssql : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -101,7 +101,7 @@ class DoliDBMssql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dol_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -120,7 +120,7 @@ class DoliDBMssql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=mssql_get_last_message();
-			dol_syslog("DoliDB::DoliDB : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -138,7 +138,7 @@ class DoliDBMssql
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dol_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::DoliDBMssql : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -186,7 +186,7 @@ class DoliDBMssql
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dol_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
+		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
 		$newhost=$host;
 		if ($port) $newhost.=':'.$port;
 		$this->db  = @mssql_connect($newhost, $login, $passwd);
@@ -242,7 +242,7 @@ class DoliDBMssql
     {
         if ($this->db)
         {
-          //dol_syslog("DoliDB::disconnect",LOG_DEBUG);
+          //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
           $this->connected=0;
           return mssql_close($this->db);
         }
@@ -403,7 +403,7 @@ class DoliDBMssql
                 $this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
-                dol_syslog("Mssql.lib::query SQL error: ".$query, LOG_WARNING);
+                dol_syslog(get_class($this)."::query SQL error: ".$query, LOG_WARNING);
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;

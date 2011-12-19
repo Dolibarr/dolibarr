@@ -98,7 +98,7 @@ class DoliDBMysql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP. Try to use another driver.";
-			dol_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMysql : Mysql PHP functions for using Mysql driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -107,7 +107,7 @@ class DoliDBMysql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dol_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMysql : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -124,7 +124,7 @@ class DoliDBMysql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=mysql_error();
-			dol_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMysql : Erreur Connect mysql_error=".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -152,7 +152,7 @@ class DoliDBMysql
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dol_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::DoliDBMysql : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -198,7 +198,7 @@ class DoliDBMysql
 	 */
 	function select_db($database)
 	{
-		dol_syslog("DoliDB::select_db database=".$database, LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
 		return mysql_select_db($database, $this->db);
 	}
 
@@ -215,7 +215,7 @@ class DoliDBMysql
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dol_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
+		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
 
 		$newhost=$host;
 
@@ -269,7 +269,7 @@ class DoliDBMysql
     {
         if ($this->db)
         {
-          //dol_syslog("DoliDB::disconnect",LOG_DEBUG);
+          //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
           $this->connected=0;
           return mysql_close($this->db);
         }
@@ -380,7 +380,7 @@ class DoliDBMysql
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
-                dol_syslog("Mysql.lib::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;
@@ -1032,11 +1032,11 @@ class DoliDBMysql
 		$sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
 		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
-		dol_syslog("mysql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
+		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
-			dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql, LOG_ERR);
+			dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -1045,21 +1045,21 @@ class DoliDBMysql
 		$sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
 		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
-		dol_syslog("mysql.lib::DDLCreateUser sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql,LOG_DEBUG);
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
-			dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql, LOG_ERR);
+			dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
 		$sql="FLUSH Privileges";
 
-		dol_syslog("mysql.lib::DDLCreateUser sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql,LOG_DEBUG);
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
-			dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql, LOG_ERR);
+			dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
