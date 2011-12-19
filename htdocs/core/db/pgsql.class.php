@@ -850,8 +850,9 @@ class DoliDBPgsql
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param     	tab     Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
-	 * @return     	int     id
+	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param	string	$fieldid	Field name
+	 * @return  int     			Id of row
 	 */
 	function last_insert_id($tab,$fieldid='rowid')
 	{

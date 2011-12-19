@@ -20,29 +20,29 @@
  */
 
 /**
- *	\file       htdocs/core/db/mysqli.class.php
- *	\brief      Class file to manage Dolibarr database access for a Mysql database
+ *	\file       htdocs/core/db/sqlite.class.php
+ *	\brief      Class file to manage Dolibarr database access for a Sqlite database
  */
 
 
 /**
- *	\class      DoliDBMysqli
- *	\brief      Class to manage Dolibarr database access for a Mysql database
+ *	\class      DoliDBSqlite
+ *	\brief      Class to manage Dolibarr database access for a Sqlite database
  */
-class DoliDBMysqli
+class DoliDBSqlite
 {
     //! Database handler
     var $db;
     //! Database type
-    static $type='mysqli';
+    static $type='sqlite';
     //! Database label
-    static $label='MySQL';
+    static $label='Sqlite';
     //! Charset used to force charset when creating database
     static $forcecharset='utf8';	// latin1, utf8
     //! Collate used to force collate when creating database
     static $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
     //! Version min database
-    static $versionmin=array(4,1,0);
+    static $versionmin=array(3,0,0);
     //! Resultset of last request
     var $results;
     //! 1 if connected, 0 else
@@ -80,7 +80,7 @@ class DoliDBMysqli
 	 *	@param	    int		$port		Port of database server
 	 *	@return	    int					1 if OK, 0 if not
      */
-    function DoliDBMysqli($type, $host, $user, $pass, $name='', $port=0)
+    function DoliDBSqlite($type, $host, $user, $pass, $name='', $port=0)
     {
         global $conf,$langs;
 
@@ -93,87 +93,46 @@ class DoliDBMysqli
 
         //print "Name DB: $host,$user,$pass,$name<br>";
 
-        if (! function_exists("mysqli_connect"))
+        /*if (! function_exists("sqlite_query"))
         {
             $this->connected = 0;
             $this->ok = 0;
-            $this->error="Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.";
-            dol_syslog(get_class($this)."::DoliDBMysqli : Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
+            $this->error="Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.";
+            dol_syslog(get_class($this)."::DoliDBSqlite : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
             return $this->ok;
-        }
+        }*/
 
-        if (! $host)
+        /*if (! $host)
         {
             $this->connected = 0;
             $this->ok = 0;
             $this->error=$langs->trans("ErrorWrongHostParameter");
-            dol_syslog(get_class($this)."::DoliDBMysqli : Erreur Connect, wrong host parameters",LOG_ERR);
+            dol_syslog(get_class($this)."::DoliDBSqlite : Erreur Connect, wrong host parameters",LOG_ERR);
             return $this->ok;
-        }
+        }*/
 
         // Essai connexion serveur
         // We do not try to connect to database, only to server. Connect to database is done later in constrcutor
-        $this->db = $this->connect($host, $user, $pass, '', $port);
+        $this->db = $this->connect($host, $user, $pass, $name, $port);
 
         if ($this->db)
         {
             $this->connected = 1;
             $this->ok = 1;
+            $this->database_selected = 1;
+            $this->database_name = $name;
+
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         else
         {
             // host, login ou password incorrect
             $this->connected = 0;
             $this->ok = 0;
-            $this->error=mysqli_connect_error();
-            dol_syslog(get_class($this)."::DoliDBMysqli : Erreur Connect mysqli_connect_error=".$this->error,LOG_ERR);
-        }
-
-        // Si connexion serveur ok et si connexion base demandee, on essaie connexion base
-        if ($this->connected && $name)
-        {
-            if ($this->select_db($name))
-            {
-                $this->database_selected = 1;
-                $this->database_name = $name;
-                $this->ok = 1;
-
-                // If client connected with different charset than Dolibarr HTML output
-                $clientmustbe='';
-                if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
-                if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if (mysqli_client_encoding($this->db) != $clientmustbe)
-                {
-                    $this->query("SET NAMES '".$clientmustbe."'", $this->db);
-                    //$this->query("SET CHARACTER SET ". $this->forcecharset);
-                }
-            }
-            else
-            {
-                $this->database_selected = 0;
-                $this->database_name = '';
-                $this->ok = 0;
-                $this->error=$this->error();
-                dol_syslog(get_class($this)."::DoliDBMysqli : Erreur Select_db ".$this->error,LOG_ERR);
-            }
-        }
-        else
-        {
-            // Pas de selection de base demandee, ok ou ko
             $this->database_selected = 0;
-
-            if ($this->connected)
-            {
-                // If client connected with different charset than Dolibarr HTML output
-                $clientmustbe='';
-                if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
-                if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if (mysqli_client_encoding($this->db) != $clientmustbe)
-                {
-                    $this->query("SET NAMES '".$clientmustbe."'", $this->db);
-                    //$this->query("SET CHARACTER SET ". $this->forcecharset);
-                }
-            }
+            $this->database_name = '';
+            //$this->error=sqlite_connect_error();
+            dol_syslog(get_class($this)."::DoliDBSqlite : Erreur Connect ".$this->error,LOG_ERR);
         }
 
         return $this->ok;
@@ -201,7 +160,7 @@ class DoliDBMysqli
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
-        return mysqli_select_db($this->db,$database);
+        return sqlite_select_db($this->db,$database);
     }
 
 
@@ -218,15 +177,23 @@ class DoliDBMysqli
      */
     function connect($host, $login, $passwd, $name, $port=0)
     {
-        dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
+        global $conf,$main_data_dir;
 
-        $newhost=$host;
-        $newport=$port;
+        dol_syslog(get_class($this)."::connect name=".$name,LOG_DEBUG);
 
-        // With mysqli, port must be in connect parameters
-        if (! $newport) $newport=3306;
-
-        $this->db  = @mysqli_connect($newhost, $login, $passwd, $name, $newport);
+        $dir=$main_data_dir;
+        if (empty($dir)) $dir=DOL_DATA_ROOT;
+        // With sqlite, port must be in connect parameters
+        //if (! $newport) $newport=3306;
+        try {
+            /*** connect to SQLite database ***/
+            $this->db = new PDO("sqlite:".$dir.'/database_'.$name.'.sdb');
+        }
+        catch(PDOException $e)
+        {
+            $this->error='PDO SQLITE '.$e->getMessage().' current dir='.$dir.'/database_'.$name.'.sdb';
+            return '';
+        }
 
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;
@@ -249,10 +216,9 @@ class DoliDBMysqli
      */
     function getVersion()
     {
-        //        $resql=$this->query('SELECT VERSION()');
-        //        $row=$this->fetch_row($resql);
-        //        return $row[0];
-        return mysqli_get_server_info($this->db);
+        $resql=$this->query('SELECT sqlite_version() as sqliteversion');
+        $row=$this->fetch_row($resql);
+        return $row[0];
     }
 
 	/**
@@ -278,7 +244,8 @@ class DoliDBMysqli
         {
             //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
             $this->connected=0;
-            return mysqli_close($this->db);
+            $this->db=null;    // Clean this->db
+            return true;
         }
         return false;
     }
@@ -366,15 +333,19 @@ class DoliDBMysqli
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
+        $errmsg='';
+
+        $ret='';
         $query = trim($query);
-        if (! $this->database_name)
-        {
-            // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
-            $ret = mysqli_query($this->db,$query);
+
+        // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+        try {
+            //$ret = $this->db->exec($query);
+            $ret = $this->db->query($query);
         }
-        else
+        catch(PDOException $e)
         {
-            $ret = mysqli_query($this->db,$query);
+            $this->error=$e->getMessage();
         }
 
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
@@ -404,7 +375,7 @@ class DoliDBMysqli
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_object($resultset)) { $resultset=$this->results; }
-        return mysqli_fetch_object($resultset);
+        return $resultset->fetch(PDO::FETCH_OBJ);
     }
 
 
@@ -418,7 +389,7 @@ class DoliDBMysqli
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->results; }
-        return mysqli_fetch_array($resultset);
+        return $resultset->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -433,7 +404,7 @@ class DoliDBMysqli
         if (! is_bool($resultset))
         {
             if (! is_object($resultset)) { $resultset=$this->results; }
-            return mysqli_fetch_row($resultset);
+            return $resultset->fetch(PDO::FETCH_NUM);
         }
         else
         {
@@ -453,7 +424,7 @@ class DoliDBMysqli
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->results; }
-        return mysqli_num_rows($resultset);
+        return sqlite_num_rows($resultset);
     }
 
     /**
@@ -469,7 +440,7 @@ class DoliDBMysqli
         if (! is_object($resultset)) { $resultset=$this->results; }
         // mysql necessite un link de base pour cette fonction contrairement
         // a pqsql qui prend un resultset
-        return mysqli_affected_rows($this->db);
+        return sqlite_affected_rows($this->db);
     }
 
 
@@ -483,7 +454,7 @@ class DoliDBMysqli
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->results; }
         // Si resultset en est un, on libere la memoire
-        if (is_object($resultset)) mysqli_free_result($resultset);
+        if (is_object($resultset)) sqlite_free_result($resultset);
     }
 
 
@@ -542,7 +513,7 @@ class DoliDBMysqli
      */
     function escape($stringtoencode)
     {
-        return addslashes($stringtoencode);
+        return PDO::quote($stringtoencode);
     }
 
     /**
@@ -662,11 +633,12 @@ class DoliDBMysqli
             1451 => 'DB_ERROR_CHILD_EXISTS'
             );
 
-            if (isset($errorcode_map[mysqli_errno($this->db)]))
+            if (isset($errorcode_map[$this->db->errorCode()]))
             {
-                return $errorcode_map[mysqli_errno($this->db)];
+                return $errorcode_map[$this->db->errorCode()];
             }
-            $errno=mysqli_errno($this->db);
+            $errno=$this->db->errorCode();
+
             return ($errno?'DB_ERROR_'.$errno:'0');
         }
     }
@@ -678,11 +650,11 @@ class DoliDBMysqli
     function error()
     {
         if (! $this->connected) {
-            // Si il y a eu echec de connexion, $this->db n'est pas valide pour mysqli_error.
-            return 'Not connected. Check setup parameters in conf/conf.php file and your mysql client and server versions';
+            // Si il y a eu echec de connexion, $this->db n'est pas valide pour sqlite_error.
+            return 'Not connected. Check setup parameters in conf/conf.php file and your sqlite version';
         }
         else {
-            return mysqli_error($this->db);
+            return $this->error;
         }
     }
 
@@ -695,7 +667,7 @@ class DoliDBMysqli
      */
     function last_insert_id($tab,$fieldid='rowid')
     {
-        return mysqli_insert_id($this->db);
+        return PDO::lastInsertId();
     }
 
     /**
@@ -1085,14 +1057,7 @@ class DoliDBMysqli
      */
     function getDefaultCharacterSetDatabase()
     {
-        $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
-        if (!$resql)
-        {
-            // version Mysql < 4.1.1
-            return $this->forcecharset;
-        }
-        $liste=$this->fetch_array($resql);
-        return $liste['Value'];
+        return 'UTF-8';
     }
 
     /**
@@ -1101,22 +1066,10 @@ class DoliDBMysqli
      */
     function getListOfCharacterSet()
     {
-        $resql=$this->query('SHOW CHARSET');
         $liste = array();
-        if ($resql)
-        {
-            $i = 0;
-            while ($obj = $this->fetch_object($resql) )
-            {
-                $liste[$i]['charset'] = $obj->Charset;
-                $liste[$i]['description'] = $obj->Description;
-                $i++;
-            }
-            $this->free($resql);
-        } else {
-            // version Mysql < 4.1.1
-            return null;
-        }
+        $i=0;
+        $liste[$i]['charset'] = 'UTF-8';
+        $liste[$i]['description'] = 'UTF-8';
         return $liste;
     }
 
@@ -1126,14 +1079,7 @@ class DoliDBMysqli
      */
     function getDefaultCollationDatabase()
     {
-        $resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
-        if (!$resql)
-        {
-            // version Mysql < 4.1.1
-            return $this->forcecollate;
-        }
-        $liste=$this->fetch_array($resql);
-        return $liste['Value'];
+        return 'UTF-8';
     }
 
     /**
@@ -1142,21 +1088,10 @@ class DoliDBMysqli
      */
     function getListOfCollation()
     {
-        $resql=$this->query('SHOW COLLATION');
         $liste = array();
-        if ($resql)
-        {
-            $i = 0;
-            while ($obj = $this->fetch_object($resql) )
-            {
-                $liste[$i]['collation'] = $obj->Collation;
-                $i++;
-            }
-            $this->free($resql);
-        } else {
-            // version Mysql < 4.1.1
-            return null;
-        }
+        $i=0;
+        $liste[$i]['charset'] = 'UTF-8';
+        $liste[$i]['description'] = 'UTF-8';
         return $liste;
     }
 
