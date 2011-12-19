@@ -125,12 +125,12 @@ if (! $error)
     $result=@include_once($main_dir."/core/db/".$_POST["db_type"].".class.php");
     if ($result)
     {
-        // If we ask database or user creation we need to connect as root
+        // If we ask database or user creation we need to connect as root, so we need root login
         if (! empty($_POST["db_create_database"]) && ! $userroot)
         {
             print '<div class="error">'.$langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$_POST["db_name"]).'</div>';
             print '<br>';
-            if (empty($db->connected)) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+            print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
             print $langs->trans("ErrorGoBackAndCorrectParameters");
             $error++;
         }
@@ -138,7 +138,7 @@ if (! $error)
         {
             print '<div class="error">'.$langs->trans("YouAskLoginCreationSoDolibarrNeedToConnect",$_POST["db_user"]).'</div>';
             print '<br>';
-            if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+            print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
             print $langs->trans("ErrorGoBackAndCorrectParameters");
             $error++;
         }
@@ -167,7 +167,7 @@ if (! $error)
             $db=getDoliDBInstance($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
 
             dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
-            //print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
+            print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
 
             if (empty($_POST["db_create_database"]) && $db->connected && ! $db->database_selected)
             {
@@ -371,7 +371,7 @@ if (! $error && $db->connected && $action == "set")
             }
         }
     }
-    
+
     // Table prefix
     $main_db_prefix = ((GETPOST("db_prefix") && GETPOST("db_prefix") != '') ? GETPOST("db_prefix") : 'llx_');
 
@@ -786,7 +786,7 @@ function write_conf_file($conffile)
 
 		fputs($fp, '$dolibarr_main_db_name=\''.addslashes($_POST["db_name"]).'\';');
 		fputs($fp,"\n");
-		
+
 		fputs($fp, '$dolibarr_main_db_prefix=\''.addslashes($main_db_prefix).'\';');
 		fputs($fp,"\n");
 
