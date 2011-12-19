@@ -1,6 +1,7 @@
 # Dolibarr language file - hu_HU - main
 CHARSET=UTF-8
 DIRECTION=ltr
+FONTFORPDF=dejavusans
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
