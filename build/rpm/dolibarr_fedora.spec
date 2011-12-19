@@ -232,5 +232,5 @@ fi
 
 
 %changelog
-* Wed Jul 31 2011 Laurent Destailleur 3.1.0-0.3.rc1
+* Wed Jul 31 2011 Laurent Destailleur 3.1.0-0.3
 - Initial version (#723326)
