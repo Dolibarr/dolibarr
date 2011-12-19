@@ -556,9 +556,10 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *     Delete invoice from database
-     *     @param     	rowid      	Id of invoice to delete
-     *     @return		int			<0 if KO, >0 if OK
+     *	Delete invoice from database
+     *
+     *	@param     	int		$rowid      	Id of invoice to delete
+     *	@return		int						<0 if KO, >0 if OK
      */
     function delete($rowid)
     {
@@ -606,10 +607,11 @@ class FactureFournisseur extends Facture
     }
 
     /**
-     *      Set supplier ref
-     *      @param      user            User that make change
-     *      @param      ref_supplier    Supplier ref
-     *      @return     int             <0 if KO, >0 if OK
+     *	Set supplier ref
+     *
+     *	@param      User	$user            	User that make change
+     *	@param      string	$ref_supplier    	Supplier ref
+     *	@return     int             			<0 if KO, >0 if OK
      */
     function set_ref_supplier($user, $ref_supplier)
     {
@@ -638,9 +640,10 @@ class FactureFournisseur extends Facture
     }
 
     /**
-     *      Tag invoice as a payed invoice
-     *      @param      user        Object user
-     *      @return     int         <0 si ko, >0 si ok
+     *	Tag invoice as a payed invoice
+     *
+     *	@param      User	$user       Object user
+     *	@return     int         		<0 si ko, >0 si ok
      */
     function set_paid($user)
     {
@@ -685,11 +688,12 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *      Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
-     *		Fonction utilisee quand un paiement prelevement est refuse,
-     * 		ou quand une facture annulee et reouverte.
-     *      @param      user        Object user that change status
-     *      @return     int         <0 si ok, >0 si ok
+     *	Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
+     *	Fonction utilisee quand un paiement prelevement est refuse,
+     *	ou quand une facture annulee et reouverte.
+     * 
+     *	@param      User	$user       Object user that change status
+     *	@return     int         		<0 si ok, >0 si ok
      */
     function set_unpaid($user)
     {
@@ -733,12 +737,12 @@ class FactureFournisseur extends Facture
     }
 
     /**
-     *      Tag invoice as validated + call trigger BILL_VALIDATE
+     *	Tag invoice as validated + call trigger BILL_VALIDATE
      *
-     *      @param	User	$user           Object user that validate
-     *      @param  string	$force_number   Reference to force on invoice
-     *      @param	int		$idwarehouse	Id of warehouse for stock change
-     *      @return int 			        <0 if KO, =0 if nothing to do, >0 if OK
+     *	@param	User	$user           Object user that validate
+     *	@param  string	$force_number   Reference to force on invoice
+     *	@param	int		$idwarehouse	Id of warehouse for stock change
+     *	@return int 			        <0 if KO, =0 if nothing to do, >0 if OK
      */
     function validate($user, $force_number='', $idwarehouse=0)
     {
@@ -906,23 +910,23 @@ class FactureFournisseur extends Facture
      *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
-     *
-     *	@param    	desc            Description de la ligne
-     *	@param    	pu              Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
-     *	@param    	txtva           Taux de tva force, sinon -1
-     *	@param		txlocaltax1		LocalTax1 Rate
-     *	@param		txlocaltax2		LocalTax2 Rate
-     *	@param    	qty             Quantite
-     *	@param    	fk_product      Id du produit/service predefini
-     *	@param    	remise_percent  Pourcentage de remise de la ligne
-     *	@param    	date_start      Date de debut de validite du service
-     * 	@param    	date_end        Date de fin de validite du service
-     * 	@param    	ventil          Code de ventilation comptable
-     *	@param    	info_bits		Bits de type de lines
-     *	@param    	price_base_type HT ou TTC
-     *	@param		type			Type of line (0=product, 1=service)
-     *  @param      rang            Position of line
-     *	@return    	int             >0 if OK, <0 if KO
+
+     *	@param    	string	$desc            	Description de la ligne
+     *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
+     *	@param    	double	$txtva           	Taux de tva force, sinon -1
+     *	@param		double	$txlocaltax1		LocalTax1 Rate
+     *	@param		double	$txlocaltax2		LocalTax2 Rate
+     *	@param    	double	$qty             	Quantite
+     *	@param    	int		$fk_product      	Id du produit/service predefini
+     *	@param    	double	$remise_percent  	Pourcentage de remise de la ligne
+     *	@param    	date	$date_start      	Date de debut de validite du service
+     * 	@param    	date	$date_end        	Date de fin de validite du service
+     * 	@param    	string	$ventil          	Code de ventilation comptable
+     *	@param    	int		$ºinfo_bits			Bits de type de lines
+     *	@param    	string	$price_base_type 	HT ou TTC
+     *	@param		int		$type				Type of line (0=product, 1=service)
+     *  @param      int		$rang            	Position of line
+     *	@return    	int             			>0 if OK, <0 if KO
      */
     function addline($desc, $pu, $txtva, $txlocaltax1=0, $txlocaltax2=0, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1)
     {
@@ -984,19 +988,19 @@ class FactureFournisseur extends Facture
 
     /**
      * Update a line detail into database
-     * @param     	id            	Id of line invoice
-     * @param     	label         	Description of line
-     * @param     	pu          	Prix unitaire (HT ou TTC selon price_base_type)
-     * @param     	vatrate       	VAT Rate
-     * @param		txlocaltax1		LocalTax1 Rate
-     * @param		txlocaltax2		LocalTax2 Rate
-     * @param     	qty           	Quantity
-     * @param     	idproduct		Id produit
-     * @param	  	price_base_type	HT or TTC
-     * @param	  	info_bits		Miscellanous informations of line
-     * @param		type			Type of line (0=product, 1=service)
-     * @param     	remise_percent  Pourcentage de remise de la ligne
-     * @return    	int           	<0 if KO, >0 if OK
+     * @param     	int		$id            		Id of line invoice
+     * @param     	string	$label         		Description of line
+     * @param     	double	$pu          		Prix unitaire (HT ou TTC selon price_base_type)
+     * @param     	double	$vatrate       		VAT Rate
+     * @param		double	$txlocaltax1		LocalTax1 Rate
+     * @param		double	$txlocaltax2		LocalTax2 Rate
+     * @param     	double	$qty           		Quantity
+     * @param     	int		$idproduct			Id produit
+     * @param	  	double	$price_base_type	HT or TTC
+     * @param	  	int		$info_bits			Miscellanous informations of line
+     * @param		int		$type				Type of line (0=product, 1=service)
+     * @param     	double	$remise_percent  	Pourcentage de remise de la ligne
+     * @return    	int           				<0 if KO, >0 if OK
      */
     function updateline($id, $label, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0)
     {
@@ -1079,7 +1083,7 @@ class FactureFournisseur extends Facture
 
     /**
      * Delete a detail line from database
-     * @param     rowid      id of line to delete
+     * @param     int	$rowid      id of line to delete
      */
     function deleteline($rowid)
     {
@@ -1098,8 +1102,8 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *      \brief     Charge les informations d'ordre info dans l'objet facture
-     *      \param     id       	Id de la facture a charger
+     *	Charge les informations d'ordre info dans l'objet facture
+     *	@param     int	$id       	Id de la facture a charger
      */
     function info($id)
     {
@@ -1141,9 +1145,9 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *      @param      user                Objet user
-     *      @return     int                 <0 if KO, >0 if OK
+     *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *	@param      User	$user       Objet user
+     *	@return     int                 <0 if KO, >0 if OK
      */
     function load_board($user)
     {
@@ -1182,11 +1186,12 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
-     *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		option			Sur quoi pointe le lien
-     * 		@param		max				Max length of shown ref
-     * 		@return		string			Chaine avec URL
+     *	Renvoie nom clicable (avec eventuellement le picto)
+     *
+     *		@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		@param		string	$option			Sur quoi pointe le lien
+     * 		@param		int		$max			Max length of shown ref
+     * 		@return		string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$option='',$max=0)
     {
@@ -1306,10 +1311,11 @@ class FactureFournisseur extends Facture
     }
 
     /**
-     *		Load an object from its id and create a new one in database
-     *		@param      fromid     		Id of object to clone
-     *		@param		invertdetail	Reverse sign of amounts for lines
-     * 	 	@return		int				New id of clone
+     *	Load an object from its id and create a new one in database
+     *
+     *	@param      int		$fromid     	Id of object to clone
+     *	@param		int		$invertdetail	Reverse sign of amounts for lines
+     * 	@return		int						New id of clone
      */
     function createFromClone($fromid,$invertdetail=0)
     {
