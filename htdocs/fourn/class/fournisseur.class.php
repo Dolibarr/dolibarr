@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>	
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,11 +102,13 @@ class Fournisseur extends Societe
 		}
 	}
 
-	/**
-	 *      \brief      Cree la commande au statut brouillon
-	 *      \param      user        Utilisateur qui cree
-	 *      \return     int         <0 si ko, id de la commande creee si ok
-	 */
+    /**
+     *  Create the order from an existing
+     *  
+     *  @param      User	$user            	Creator user
+     *  @param      int		$idc				Id source
+     *  @param		int		$comclientid		Id thirdparty
+     */
 	function updateFromCommandeClient($user, $idc, $comclientid)
 	{
 		$comm = new CommandeFournisseur($this->db);
@@ -115,9 +118,10 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 *      \brief      Cree la commande au statut brouillon
-	 *      \param      user        Utilisateur qui cree
-	 *      \return     int         <0 si ko, id de la commande creee si ok
+	 *	Create the order with draft status
+
+	 *	@param      User	$user		Creator user
+	 *	@return     int         		<0 if ko, id of order if ok
 	 */
 	function create_commande($user)
 	{
@@ -183,9 +187,9 @@ class Fournisseur extends Societe
 	/**
 	 *  Create a supplier category
 	 *
-	 *  @param      user        User asking creation
-	 *	@param		name		Nom categorie
-	 *  @return     int         <0 if KO, 0 if OK
+	 *  @param      User	$user       User asking creation
+	 *	@param		string	$name		Category name
+	 *  @return     int         		<0 if KO, 0 if OK
 	 */
 	function CreateCategory($user, $name)
 	{
@@ -209,7 +213,7 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 * 	Retourne la liste des fournisseurs
+	 * 	Return the suppliers list
 	 *
 	 *	@return		array		Array of suppliers
 	 */
