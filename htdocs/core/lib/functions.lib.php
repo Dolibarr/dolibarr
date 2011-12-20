@@ -4307,62 +4307,61 @@ function picto_from_langcode($codelang)
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
 {
-    if (is_array($conf->tabs_modules[$type]))
-    {
-        foreach ($conf->tabs_modules[$type] as $value)
-        {
-            $values=explode(':',$value);
-
-            if ($mode == 'add')
-            {
-                if (count($values) == 6)       // new declaration with permissions
-                {
-                    if ($values[0] != $type) continue;
-                    //print 'ee'.$values[4];
-                    if (verifCond($values[4]))
-                    {
-                        if ($values[3]) $langs->load($values[3]);
-                        $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[5]),1);
-                        $head[$h][1] = $langs->trans($values[2]);
-                        $head[$h][2] = str_replace('+','',$values[1]);
-                        $h++;
-                    }
-                }
-                else if (count($values) == 5)       // new declaration
-                {
-                    if ($values[0] != $type) continue;
-                    if ($values[3]) $langs->load($values[3]);
-                    $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[4]),1);
-                    $head[$h][1] = $langs->trans($values[2]);
-                    $head[$h][2] = str_replace('+','',$values[1]);
-                    $h++;
-                }
-                else if (count($values) == 4)   // old declaration, for backward compatibility
-                {
-                    if ($values[0] != $type) continue;
-                    if ($values[2]) $langs->load($values[2]);
-                    $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
-                    $head[$h][1] = $langs->trans($values[1]);
-                    $head[$h][2] = 'tab'.$values[1];
-                    $h++;
-                }
-            }
-            else if ($mode == 'remove')
-            {
-                if ($values[0] != $type) continue;
-                $tabname=str_replace('-','',$values[1]);
-                foreach($head as $key => $val)
-                {
-                    if ($head[$key][2]==$tabname)
-                    {
-                        //print 'on vire '.$tabname.' key='.$key;
-                        unset($head[$key]);
-                        break;
-                    }
-                }
-            }
-        }
-    }
+	if (is_array($conf->tabs_modules[$type]))
+	{
+		foreach ($conf->tabs_modules[$type] as $value)
+		{
+			$values=explode(':',$value);
+			
+			if ($mode == 'add' && ! preg_match('/^\-/',$values[1]))
+			{
+				if (count($values) == 6)       // new declaration with permissions
+				{
+					if ($values[0] != $type) continue;
+					if (verifCond($values[4]))
+					{
+						if ($values[3]) $langs->load($values[3]);
+						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[5]),1);
+						$head[$h][1] = $langs->trans($values[2]);
+						$head[$h][2] = str_replace('+','',$values[1]);
+						$h++;
+					}
+				}
+				else if (count($values) == 5)       // new declaration
+				{
+					if ($values[0] != $type) continue;
+					if ($values[3]) $langs->load($values[3]);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[4]),1);
+					$head[$h][1] = $langs->trans($values[2]);
+					$head[$h][2] = str_replace('+','',$values[1]);
+					$h++;
+				}
+				else if (count($values) == 4)   // old declaration, for backward compatibility
+				{
+					if ($values[0] != $type) continue;
+					if ($values[2]) $langs->load($values[2]);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
+					$head[$h][1] = $langs->trans($values[1]);
+					$head[$h][2] = 'tab'.$values[1];
+					$h++;
+				}
+			}
+			else if ($mode == 'remove')
+			{
+				if ($values[0] != $type) continue;
+				$tabname=str_replace('-','',$values[1]);
+				foreach($head as $key => $val)
+				{
+					$condition = (! empty($values[3]) ? verifCond($values[3]) : 1);
+					if ($head[$key][2]==$tabname && $condition)
+					{
+						unset($head[$key]);
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 /**

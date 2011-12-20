@@ -89,34 +89,30 @@ function societe_prepare_head($object)
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'thirdparty');
 
-    // Notes
     if ($user->societe_id == 0)
     {
+    	// Notes
         $head[$h][0] = DOL_URL_ROOT.'/societe/socnote.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Note");
         $head[$h][2] = 'note';
         $h++;
-    }
-    // Attached files
-    if ($user->societe_id == 0)
-    {
+        
+        // Attached files
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
         $head[$h][2] = 'document';
         $h++;
-    }
-    // Notifications
-    if (! empty($conf->notification->enabled) && $user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("Notifications");
-        $head[$h][2] = 'notify';
-        $h++;
-    }
-
-    // Log
-    if ($user->societe_id == 0)
-    {
+        
+        // Notifications
+        if (! empty($conf->notification->enabled))
+        {
+        	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$object->id;
+        	$head[$h][1] = $langs->trans("Notifications");
+        	$head[$h][2] = 'notify';
+        	$h++;
+        }
+        
+        // Log
         $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Info");
         $head[$h][2] = 'info';
