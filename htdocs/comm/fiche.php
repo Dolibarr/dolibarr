@@ -632,7 +632,7 @@ if ($socid > 0)
 	{
 		print '<table class="noborder" width="100%">';
 
-		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.duree as duration, f.datei as startdate";
+		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".$objsoc->id;
@@ -655,10 +655,12 @@ if ($socid > 0)
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
-                $fichinter_static->id=$objp->id;
-
 				$objp = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+
+				$fichinter_static->id=$objp->id;
+                $fichinter_static->statut=$objp->fk_statut;
+
+                print "<tr ".$bc[$var].">";
 				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
                 //print '<td align="right">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td align="right">'.ConvertSecondToTime($objp->duration).'</td>'."\n";
