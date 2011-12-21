@@ -3499,12 +3499,13 @@ function picto_required()
  *	Clean a string from all HTML tags and entities
  *	@param   	StringHtml			String to clean
  *	@param		removelinefeed		Replace also all lines feeds by a space
+ *  @param      pagecodeto      	Encoding of input string
  *	@return  	string	    		String cleaned
  */
-function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
+function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
     $pattern = "/<[^>]+>/";
-    $temp = dol_entity_decode($StringHtml);
+    $temp = dol_entity_decode($StringHtml,$pagecodeto);
     $temp = preg_replace($pattern,"",$temp);
 
     // Supprime aussi les retours
