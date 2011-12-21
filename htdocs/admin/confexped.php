@@ -50,9 +50,10 @@ else if ($_GET["action"] == 'disable_sending')
 }
 else if ($_GET["action"] == 'activate_delivery')
 {
-			dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
-			Header("Location: confexped.php");
-			exit;
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);    // We must also enable this
+    dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
+	Header("Location: confexped.php");
+	exit;
 }
 else if ($_GET["action"] == 'disable_delivery')
 {
