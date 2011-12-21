@@ -795,7 +795,7 @@ if ($action == 'create')
 							{
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
-							print "<tr><td>&nbsp; &nbsp; &nbsp; ->
+							print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
                                 <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
                                 </a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
                                 <td align=\"center\">".$value['stock']." ".$img."</td></tr>";
