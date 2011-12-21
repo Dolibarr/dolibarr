@@ -4283,7 +4283,8 @@ function picto_from_langcode($codelang)
 }
 
 /**
- *  Complete or removed entries into a head array (used to build tabs) with value added by external modules
+ *  Complete or removed entries into a head array (used to build tabs) with value added by external modules.
+ *  Such values are declared into $conf->tabs_modules.
  *
  *  @param	Conf		$conf           Object conf
  *  @param  Translate	$langs          Object langs
@@ -4313,12 +4314,13 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 		foreach ($conf->tabs_modules[$type] as $value)
 		{
 			$values=explode(':',$value);
-			
+
 			if ($mode == 'add' && ! preg_match('/^\-/',$values[1]))
 			{
-				if (count($values) == 6)       // new declaration with permissions
+				if (count($values) == 6)       // new declaration with permissions:  $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
 				{
 					if ($values[0] != $type) continue;
+
 					if (verifCond($values[4]))
 					{
 						if ($values[3]) $langs->load($values[3]);
@@ -4347,7 +4349,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					$h++;
 				}
 			}
-			else if ($mode == 'remove')
+			else if ($mode == 'remove' && preg_match('/^\-/',$values[1]))
 			{
 				if ($values[0] != $type) continue;
 				$tabname=str_replace('-','',$values[1]);
