@@ -1137,8 +1137,6 @@ class User extends CommonObject
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;
 
-						//$adh->entity=$this->entity;
-
 						$result=$adh->update($user,0,1);
 						if ($result < 0)
 						{

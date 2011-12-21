@@ -1584,7 +1584,8 @@ else
                 {
                     $yn = yn($fuser->admin);
                     print '<input type="hidden" name="admin" value="'.$fuser->admin.'">';
-                    if (! empty($conf->multicompany->enabled) && ! $fuser->entity) print $form->textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
+                    print '<input type="hidden" name="superadmin" value="'.(empty($fuser->entity) ? 1 : 0).'">';
+                    if (! empty($conf->multicompany->enabled) && empty($fuser->entity)) print $form->textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
                     else print $yn;
                 }
                 print '</td></tr>';
