@@ -515,7 +515,7 @@ class Societe extends CommonObject
             $sql .= ",default_lang = ".($this->default_lang?"'".$this->default_lang."'":"null");
             $sql .= ",logo = ".($this->logo?"'".$this->logo."'":"null");
 
-            if ($allowmodcodeclient)
+            if ($allowmodcodeclient && $this->client)
             {
                 //$this->check_codeclient();
 
@@ -527,7 +527,7 @@ class Societe extends CommonObject
                 $sql .= ", code_compta = ".($this->code_compta?"'".$this->db->escape($this->code_compta)."'":"null");
             }
 
-            if ($allowmodcodefournisseur)
+            if ($allowmodcodefournisseur && $this->fournisseur)
             {
                 //$this->check_codefournisseur();
 
