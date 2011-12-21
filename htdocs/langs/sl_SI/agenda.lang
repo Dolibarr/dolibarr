@@ -1,5 +1,5 @@
-﻿# Dolibarr language file - sl_SI - agenda 
-CHARSET=UTF-8
+# Dolibarr language file - en_US - agenda  = 
+CHARSET = UTF-8
 Actions = Aktivnosti
 ActionsArea = Področje aktivnosti (dogodki in naloge)
 Agenda = Program
@@ -9,9 +9,9 @@ Calendars = Koledarji
 AffectedTo = Se nanaša na
 DoneBy = Izdelal
 Events = Dogodki
-ListOfActions=Seznam dogodkov
-Location=Lokacija
-EventOnFullDay=Dogodek na zaseden dan
+ListOfActions = Seznam dogodkov
+Location = Lokacija
+EventOnFullDay = Dogodek na zaseden dan
 SearchAnAction = Iskanje aktivnosti/naloge
 MenuToDoActions = Vse nedokončane aktivnosti
 MenuDoneActions = Vse prekinjene aktivnosti
@@ -25,20 +25,26 @@ AllMyActions = Vse moje aktivnosti/naloge
 AllActions = Vse aktivnosti/naloge
 ViewList = Gelj seznam
 ViewCal = Glej koledar
+ViewDay = Dnevni pogled
+ViewWeek = Tedenski pogled
 ViewWithPredefinedFilters = Glej z prednastavljenimi filtri
 AutoActions = Avtomatska izpolnitev programa
 AgendaAutoActionDesc = Tukaj definirajte dogodke, za katere želite, da Dolibarr avtomatsko kreira aktivnost v programu. Če ni označeno ničesar (privzeto), bodo v program vključene samo ročno vnesene aktivnosti.
 AgendaSetupOtherDesc = Ta stran omogoča konfiguracijo drugih parametrov modula za programe.
+AgendaExtSitesDesc = Ta stran omogoča konfiguracijo zunanjih koledarjev
 ActionsEvents = Dogodki, za katere bo Dolibarr avtomatsko kreiral aktivnost v programu
 PropalValidatedInDolibarr = Potrjena ponudba %s 
 InvoiceValidatedInDolibarr = Potrjen račun %s 
+InvoiceBackToDraftInDolibarr = Račun %s se vrača v status osnutka
 OrderValidatedInDolibarr = Potrjeno naročilo %s 
-InterventionValidatedInDolibarr=Potrjena intervencija %s
-ProposalSentByEMail=Komercialna ponudba %s poslana po elektronski pošti
-OrderSentByEMail=Naročilo kupca %s poslano po elektronski pošti
-InvoiceSentByEMail=Račun kupcu %s poslan po elektronski pošti
-SupplierOrderSentByEMail=Naročilo dobavitelju %s poslano po elektronski pošti
-SupplierInvoiceSentByEMail=Račun odbavitelja %s poslan po elektronski pošti
+InterventionValidatedInDolibarr = Potrjena intervencija %s
+ProposalSentByEMail = Komercialna ponudba %s poslana po elektronski pošti
+OrderSentByEMail = Naročilo kupca %s poslano po elektronski pošti
+InvoiceSentByEMail = Račun kupcu %s poslan po elektronski pošti
+SupplierOrderSentByEMail = Naročilo dobavitelju %s poslano po elektronski pošti
+SupplierInvoiceSentByEMail = Račun odbavitelja %s poslan po elektronski pošti
+ShippingSentByEMail = Pošiljka %s poslana po EMailu
+InterventionSentByEMail = Intervencija %s poslana po EMailu
 NewCompanyToDolibarr = Kreiran partner
 DateActionPlannedStart = Planiran začetni datum
 DateActionPlannedEnd = Planiran končni datum
@@ -46,12 +52,17 @@ DateActionDoneStart = Realen začetni datum
 DateActionDoneEnd = Realen končni datum
 DateActionStart = Začetni datum
 DateActionEnd = Končni datum
-AgendaUrlOptions1=V filtriran izhod lahko dodate tudi naslednje parametre:
-AgendaUrlOptions2=<b>login=%s</b> za omejitev izhoda na aktivnosti, ki se nanašajo, ali jih je naredil uporabnik <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> za omejitev izhoda na aktivnosti, ki jih je naredil uporabnik <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> za omejitev izhoda na aktivnosti, ki se nanašajo na uporabnika <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> za omejitev izhoda na aktivnosti uporabnika <b>%s</b>.
-AgendaShowBirthdayEvents=Prikaži rojstni dan kontakta
-AgendaHideBirthdayEvents=Skrij rojstni dan kontakta
-
-
+AgendaUrlOptions1 = V filtriran izhod lahko dodate tudi naslednje parametre:
+AgendaUrlOptions2 = <b>login=%s</b> za omejitev izhoda na aktivnosti, ki se nanašajo, ali jih je naredil uporabnik <b>%s</b>.
+AgendaUrlOptions3 = <b>logina=%s</b> za omejitev izhoda na aktivnosti, ki jih je naredil uporabnik <b>%s</b>.
+AgendaUrlOptions4 = <b>logint=%s</b> za omejitev izhoda na aktivnosti, ki se nanašajo na uporabnika <b>%s</b>.
+AgendaUrlOptions5 = <b>logind=%s</b> za omejitev izhoda na aktivnosti uporabnika <b>%s</b>.
+AgendaShowBirthdayEvents = Prikaži rojstni dan kontakta
+AgendaHideBirthdayEvents = Skrij rojstni dan kontakta
+ExtSites = Zunanji koledarji
+# External Sites ical = 
+ExtSitesEnableThisTool = Kako prenesti zunanji koledar v urnik
+ExtSitesNbOfAgenda = Število koledarjev
+AgendaExtNb = Koledar št. %s
+ExtSiteUrlAgenda = URL za dostop do .ical datoteke
+ExtSiteNoLabel = Ni opisa

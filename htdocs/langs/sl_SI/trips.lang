@@ -1,22 +1,22 @@
-﻿# Dolibarr language file - sl_SI - trips
-CHARSET=UTF-8
-Trip=Pot
-Trips=Poti
-TripsAndExpenses=Poti in stroški
-TripsAndExpensesStatistics=Statistika poti in stroškov
-TripCard=Kartica poti
-AddTrip=Dodaj pot
-ListOfTrips=Seznam poti
-ListOfFees=Seznam stroškov
-NewTrip=Nova pot
-CompanyVisited=Obiskano podjetje/ustanova
-Kilometers=Kilometri
-FeesKilometersOrAmout=Količina kilometrov
-DeleteTrip=Izbriši pot
-ConfirmDeleteTrip=Ali zares želite izbrisati to pot ?
-TF_OTHER=Ostalo
-TF_LUNCH=Kosilo
-TF_TRIP=Pot
-ListTripsAndExpenses=Seznam poti in stroškov
-
-
+# Dolibarr language file - en_US - trips = 
+CHARSET = UTF-8
+Trip = Pot
+Trips = Poti
+TripsAndExpenses = Poti in stroški
+TripsAndExpensesStatistics = Statistika poti in stroškov
+TripCard = Kartica poti
+AddTrip = Dodaj pot
+ListOfTrips = Seznam poti
+ListOfFees = Seznam stroškov
+NewTrip = Nova pot
+CompanyVisited = Obiskano podjetje/ustanova
+Kilometers = Kilometri
+FeesKilometersOrAmout = Količina kilometrov
+DeleteTrip = Izbriši pot
+ConfirmDeleteTrip = Ali zares želite izbrisati to pot ?
+TF_OTHER = Ostalo
+TF_LUNCH = Kosilo
+TF_TRIP = Pot
+ListTripsAndExpenses = Seznam poti in stroškov
+ExpensesArea = Področje poti in stroškov
+SearchATripAndExpense = Iskanje poti in stroška
