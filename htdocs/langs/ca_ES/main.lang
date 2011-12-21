@@ -596,6 +596,7 @@ IM=Missatgeria instantània
 NewAttribute=Nou atribut
 AttributeCode=Codi atribut
 OptionalFieldsSetup=Configuració dels atributs opcionals
+SetLinkToThirdParty=Vincular a un altre tercer
 
 # Week day
 Monday=Dilluns

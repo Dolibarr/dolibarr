@@ -596,6 +596,7 @@ IM=Mensajería instantánea
 NewAttribute=Nuevo atributo
 AttributeCode=Código atributo
 OptionalFieldsSetup=Configuración de los atributos opcionales
+SetLinkToThirdParty=Vincular a otro tercero
 
 # Week day
 Monday=Lunes
