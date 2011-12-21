@@ -677,7 +677,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
     if ($result > 0)
     {
         $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->fournisseur->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+        $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref.'/'.$ref.'.pdf';
 
         if (is_readable($file))
         {
@@ -1831,7 +1831,7 @@ else
         if ($action == 'presend')
         {
             $ref = dol_sanitizeFileName($object->ref);
-            $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref.'.pdf';
+            $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref.'/'.$ref.'.pdf';
 
             print '<br>';
             print_titre($langs->trans('SendBillByMail'));
