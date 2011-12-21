@@ -83,7 +83,6 @@ if ($_GET["msg"])
 	print "\n";
 }
 
-
 ?>
 
 <!-- Dump of a server -->
@@ -100,7 +99,7 @@ if ($_GET["msg"])
 		<div id="div_container_exportoptions">
 		<fieldset id="exportoptions"><legend><?php echo $langs->trans("ExportMethod"); ?></legend>
 		<?php
-		if ($db->label == 'MySQL')
+		if ($db::$label == 'MySQL')
 		{
 			?>
 			<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />
@@ -113,7 +112,7 @@ if ($_GET["msg"])
 			<?php
 			}
 		}
-		else if ($db->label == 'PostgreSQL')
+		else if ($db::$label == 'PostgreSQL')
 		{
 			?>
 			<div class="formelementrow"><input type="radio" name="what"	value="postgresql" id="radio_dump_postgresql" />
@@ -123,7 +122,7 @@ if ($_GET["msg"])
 		}
 		else
 		{
-			print 'No method available with database '.$db->label;
+			print 'No method available with database '.$db::$label;
 		}
 		?>
 		</fieldset>
@@ -135,7 +134,7 @@ if ($_GET["msg"])
 
 		<div id="div_container_sub_exportoptions">
 		<?php
-		if ($db->label == 'MySQL')
+		if ($db::$label == 'MySQL')
 		{
 			?> <!--  Fieldset mysqldump -->
 			<fieldset id="mysql_options"><legend><?php echo $langs->trans("MySqlExportParameters"); ?></legend>
@@ -218,7 +217,7 @@ if ($_GET["msg"])
 		<?php
 		}
 
-		if ($db->label == 'PostgreSQL')
+		if ($db::$label == 'PostgreSQL')
 		{
 			?> <!--  Fieldset pg_dump -->
 			<fieldset id="postgresql_options"><legend><?php echo $langs->trans("PostgreSqlExportParameters"); ?></legend>
@@ -282,8 +281,8 @@ if ($_GET["msg"])
 	id="filename_template"
 	value="<?php
 $prefix='dump';
-if ($db->label == 'MySQL') $prefix='mysqldump';
-if ($db->label == 'PostgreSQL') $prefix='pg_dump';
+if ($db::$label == 'MySQL')      $prefix='mysqldump';
+if ($db::$label == 'PostgreSQL') $prefix='pg_dump';
 $file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.sql';
 echo $file;
 ?>" /> <br>
@@ -297,7 +296,7 @@ $compression=array(
 //	'zip'  => array('function' => 'zip_open', 'id' => 'radio_compression_zip',  'label' => $langs->trans("Zip")),		Not open source
 	'gz'   => array('function' => 'gzopen',   'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
 );
-if ($db->label == 'MySQL')
+if ($db::$label == 'MySQL')
 {
 	$compression['bz']=array('function' => 'bzopen',  'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"));
 }
@@ -331,10 +330,10 @@ print "\n";
 ?></fieldset>
 
 
-<center><input type="submit" class="button"
+<div align="center"><input type="submit" class="button"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>
-</center>
+</div>
 
 
 </form>

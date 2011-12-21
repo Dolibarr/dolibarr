@@ -34,7 +34,7 @@ class DoliDBSqlite
     //! Database handler
     var $db;
     //! Database type
-    static $type='sqlite';
+    public $type='sqlite';
     //! Database label
     static $label='Sqlite';
     //! Charset used to force charset when creating database

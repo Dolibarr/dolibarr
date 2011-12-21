@@ -34,7 +34,7 @@ class DoliDBMysqli
     //! Database handler
     var $db;
     //! Database type
-    static $type='mysqli';
+    public $type='mysqli';
     //! Database label
     static $label='MySQL';
     //! Charset used to force charset when creating database

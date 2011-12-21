@@ -208,7 +208,7 @@ if ($what == 'mysql')
             @dol_delete_file($outputerror,1);
             @rename($outputfile,$outputerror);
             // Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
-            if (! $errormsg) 
+            if (! $errormsg)
             {
             	$langs->load("errors");
             	$errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
@@ -395,7 +395,7 @@ function backup_tables($outputfile, $tables='*')
 
     // Print headers and global mysql config vars
     $sqlhead = '';
-    $sqlhead .= "-- ".$db->label." dump via php
+    $sqlhead .= "-- ".$db::$label." dump via php
 --
 -- Host: ".$db->db->host_info."    Database: ".$db->database_name."
 -- ------------------------------------------------------

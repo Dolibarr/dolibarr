@@ -32,8 +32,11 @@
  */
 class DoliDBPgsql
 {
-	var $db;                      // Database handler
-	static $type='pgsql';            // Name of manager
+    //! Database handler
+    var $db;
+    //! Database type
+	public $type='pgsql';            // Name of manager
+    //! Database label
 	static $label='PostgreSQL';      // Label of manager
 	//! Charset
 	static $forcecharset='latin1';

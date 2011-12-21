@@ -34,7 +34,7 @@ class DoliDBMssql
 	//! Database handler
 	var $db;
 	//! Database type
-	static $type='mssql';
+	public $type='mssql';
 	//! Database label
 	static $label='MSSQL';
 	//! Charset used to force charset when creating database
