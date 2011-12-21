@@ -25,6 +25,39 @@
 
 
 /**
+* Prepare array for tabs of warehouses cards
+*
+* @param   $object
+* @return  array
+*/
+function tax_prepare_head($object)
+{
+    global $langs, $conf;
+
+    $h = 0;
+    $head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Card');
+	$head[$h][2] = 'card';
+	$h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'tax');
+
+    $head[$h][0] = DOL_URL_ROOT.'/compta/sociales/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
+
+    return $head;
+}
+
+
+/**
  *  Look for collectable VAT clients in the chosen year (and month)
  *  @param      db          Database handle
  *  @param      y           Year

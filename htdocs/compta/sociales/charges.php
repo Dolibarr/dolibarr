@@ -23,17 +23,19 @@
  */
 
 require('../../main.inc.php');
-require(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
 
 $langs->load("compta");
 $langs->load("bills");
 
 $chid=GETPOST("id");
+$action=GETPOST("action");
 
 // Security check
 $socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'tax', $langs->trans("SocialContribution"), '', 'charges');
 
 
 
@@ -46,9 +48,9 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 /* *************************************************************************** */
 
 /*
- * 	Classer paye
+ * 	Classify paid
  */
-if ($_REQUEST["action"] == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
+if ($action == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
 {
 	$chargesociales = new ChargeSociales($db);
 	$chargesociales->fetch($chid);
@@ -56,9 +58,9 @@ if ($_REQUEST["action"] == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
 }
 
 /*
- *	Suppression d'une charge sociale
+ *	Delete social contribution
  */
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
+if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
 	$chargesociales=new ChargeSociales($db);
 	$chargesociales->fetch($chid);
@@ -76,32 +78,32 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 
 
 /*
- * Ajout d'une charge sociale
+ * Add social contribution
  */
 
-if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
+if ($action == 'add' && $user->rights->tax->charges->creer)
 {
 	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
 	$dateperiod=@dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
 	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
-		$_GET["action"] = 'create';
+		$action = 'create';
 	}
 	elseif (! $dateperiod)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
-		$_GET["action"] = 'create';
+		$action = 'create';
 	}
 	elseif (! $_POST["actioncode"] > 0)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")).'</div>';
-		$_GET["action"] = 'create';
+		$action = 'create';
 	}
 	elseif (! $_POST["amount"])
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")).'</div>';
-		$_GET["action"] = 'create';
+		$action = 'create';
 	}
 	else
 	{
@@ -126,19 +128,19 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 }
 
 
-if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->creer)
+if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->creer)
 {
 	$dateech=dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
 	$dateperiod=dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
 	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
-		$_GET["action"] = 'edit';
+		$action = 'edit';
 	}
 	elseif (! $dateperiod)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
-		$_GET["action"] = 'edit';
+		$action = 'edit';
 	}
 	else
 	{
@@ -167,12 +169,13 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
  * View
  */
 
-llxHeader('',$langs->trans("SocialContribution"));
+$help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
+llxHeader("",$langs->trans("SocialContribution"),$help_url);
 
 $form = new Form($db);
 
 // Mode creation
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("NewSocialContribution"));
 	print "<br>\n";
@@ -249,11 +252,7 @@ if ($chid > 0)
 	{
 		dol_htmloutput_mesg($mesg);
 
-		$h = 0;
-		$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$cha->id;
-		$head[$h][1] = $langs->trans('Card');
-		$head[$h][2] = 'card';
-		$h++;
+		$head=tax_prepare_head($cha);
 
 		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
 
@@ -261,19 +260,19 @@ if ($chid > 0)
 		* Confirmation de la suppression de la charge
 		*
 		*/
-		if ($_GET["action"] == 'paid')
+		if ($action == 'paid')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cha->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
 		}
 
-		if ($_GET['action'] == 'delete')
+		if ($action == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteSocialContribution');
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$cha->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
 		}
 
-		if ($_GET['action'] == 'edit')
+		if ($action == 'edit')
 		{
 			print "<form name=\"charge\" action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -287,7 +286,7 @@ if ($chid > 0)
 		print "</td></tr>";
 
 		// Label
-		if ($_GET['action'] == 'edit')
+		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">';
 			print '<input type="text" name="label" size="40" value="'.$cha->lib.'">';
@@ -304,7 +303,7 @@ if ($chid > 0)
 		// Period end date
 		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
 		print "<td>";
-		if ($_GET['action'] == 'edit')
+		if ($action == 'edit')
 		{
 			print $form->select_date($cha->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
@@ -379,7 +378,7 @@ if ($chid > 0)
 		print "</tr>";
 
 		// Due date
-		if ($_GET['action'] == 'edit')
+		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
 			print $form->select_date($cha->date_ech, 'ech', 0, 0, 0, 'charge', 1);
@@ -397,18 +396,18 @@ if ($chid > 0)
 
 		print '<tr><td colspan="2">&nbsp;</td></tr>';
 
-		if ($_GET['action'] == 'edit')
+		print '</table>';
+
+		if ($action == 'edit')
 		{
-			print '<tr><td colspan="3" align="center">';
+			print '<div align="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</td></tr>';
+			print '</div';
 		}
 
-		print '</table>';
-
-		if ($_GET['action'] == 'edit') print "</form>\n";
+		if ($action == 'edit') print "</form>\n";
 
 		print '</div>';
 
@@ -416,7 +415,7 @@ if ($chid > 0)
 		/*
 		*   Boutons actions
 		*/
-		if ($_GET["action"] != 'edit')
+		if ($action != 'edit')
 		{
 			print "<div class=\"tabsAction\">\n";
 

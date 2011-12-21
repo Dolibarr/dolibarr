@@ -23,6 +23,9 @@ create table llx_chargesociales
   date_ech   datetime NOT NULL,             -- date echeance
   libelle    varchar(80) NOT NULL,
   entity     integer DEFAULT 1 NOT NULL,	  -- multi company id
+  tms                   timestamp,
+  date_creation         datetime,						-- date de creation 
+  date_valid            datetime,						-- date de validation
   fk_type    integer NOT NULL,
   amount     real     default 0 NOT NULL,
   paye       smallint default 0 NOT NULL,

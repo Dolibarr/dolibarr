@@ -22,7 +22,7 @@
  */
 
 /**
- * Enter description here...
+ * Prepare array for tabs of warehouses cards
  *
  * @param   $object
  * @return  array

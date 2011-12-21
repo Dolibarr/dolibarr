@@ -288,7 +288,7 @@ class Entrepot extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql.= " WHERE e.rowid = ".$id;
 
-		dol_syslog("Entrepot::info sql=".$sql);
+		dol_syslog(get_class($this)."::info sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -320,7 +320,7 @@ class Entrepot extends CommonObject
 		}
 		else
 		{
-	  dol_print_error($this->db);
+	        dol_print_error($this->db);
 		}
 	}
 

@@ -30,7 +30,11 @@ ALTER TABLE llx_user ADD COLUMN ref_int varchar(50) AFTER ref_ext;
 ALTER TABLE llx_societe MODIFY code_client varchar(24);
 ALTER TABLE llx_societe MODIFY code_fournisseur varchar(24);
 
+ALTER TABLE llx_chargesociales ADD COLUMN tms                   timestamp;
+ALTER TABLE llx_chargesociales ADD COLUMN date_creation         datetime; 
+ALTER TABLE llx_chargesociales ADD COLUMN date_valid            datetime;
 
+  
 -- Europe
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (1,   'EU4A0',       'Format 4A0',                '1682', '2378', 'mm', 1);
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (2,   'EU2A0',       'Format 2A0',                '1189', '1682', 'mm', 1);
