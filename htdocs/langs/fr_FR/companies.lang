@@ -65,6 +65,7 @@ State=Département/Canton
 Region=Région
 Country=Pays
 CountryCode=Code pays
+CountryId=Id pays
 Phone=Téléphone
 PhonePro=Tél pro.
 PhonePerso=Tél perso.

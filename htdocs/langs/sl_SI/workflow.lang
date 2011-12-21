@@ -1,0 +1,9 @@
+# Dolibarr language file - fr_FR - admin  = 
+CHARSET = 
+WorkflowSetup = Nastavitev modula poteka dela
+WorkflowDesc = Ta modul je namenjen spreminjanju načina delovanja avtomatskih aktivnosti v aplikaciji. Privzeto je potek dela odprt (postavke lahko izvajate v poljubnem vrstnem redu). Za aktivnosti, ki vas zanimajo, lahko vklopite avtomatske aktivnosti.
+ThereIsNoWorkflowToModify = Za aktiviran modul ni na voljo poteka dela, ki bi ga lahko spreminjali
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER = Po podpisu komercialne ponudbe avtomatsko ustvari naročilo kupca
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE = Po podpisu komercialne ponudbe avtomatsko ustvari račun za kupca
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE = Po potrditvi pogodbe avtomatsko ustvari račun za kupca
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE = Po zaključku naročila kupca avtomatsko ustvari račun za kupca

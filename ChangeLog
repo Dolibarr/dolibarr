@@ -31,6 +31,7 @@ For users:
 - New: Support zip/town autocompletion into warehouses.
 - New: Add box for last expired services.
 - New: Reduce seriously size of packages.
+- New: Can define country code for import.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:

@@ -1,20 +1,18 @@
-﻿# Dolibarr language file - sl_SI - paypal
-CHARSET=UTF-8
-PaypalSetup=Nastavitev modula PayPal
-PaypalDesc=Ta modul ponuja stran, ki kupcem omogoča plačila na <a href="http://www.paypal.com" target="_blank">PayPal</a>. Lahko se uporablja za prosta plačila ali za plačila določenih Dolibarr objektov (računi, naročila, ...)
-PaypalOrCBDoPayment=Plačilo s kreditnimi karticami ali Paypal
-PaypalDoPayment=Plačilo z Paypal
-PaypalCBDoPayment=Plačilo s kreditno kartico
-PAYPAL_API_SANDBOX=Način test/sandbox
-PAYPAL_API_USER=API ime uporabnika
-PAYPAL_API_PASSWORD=API geslo
-PAYPAL_API_SIGNATURE=API podpis
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponujeno plačilo "integral" (kreditna kartica+Paypal) ali samo "Paypal"
-PAYPAL_CSS_URL=Opcijski Url ali list CSS oblike na plačilni strani
-ThisIsTransactionId=To je ID transakcije: <b>%s</b>
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> sl_SI
-PredefinedMailContentSendInvoiceWithPaypalLink=Tukaj boste našli račun __FACREF__ \ n \ nV lahko s klikom na spodnjo povezavo varne, da bo vaše plačilo preko PayPal \ n \ n%s \ n \ nSincerely \ n \ n
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:00:07).
+# Dolibarr language file - en_US - paypal = 
+CHARSET = UTF-8
+PaypalSetup = Nastavitev modula PayPal
+PaypalDesc = Ta modul ponuja stran, ki kupcem omogoča plačila na <a href="http://www.paypal.com" target="_blank">PayPal</a>. Lahko se uporablja za prosta plačila ali za plačila določenih Dolibarr objektov (računi, naročila, ...)
+PaypalOrCBDoPayment = Plačilo s kreditnimi karticami ali Paypal
+PaypalDoPayment = Plačilo z Paypal
+PaypalCBDoPayment = Plačilo s kreditno kartico
+PAYPAL_API_SANDBOX = Način test/sandbox
+PAYPAL_API_USER = API ime uporabnika
+PAYPAL_API_PASSWORD = API geslo
+PAYPAL_API_SIGNATURE = API podpis
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY = Ponujeno plačilo "integral" (kreditna kartica+Paypal) ali samo "Paypal"
+PAYPAL_CSS_URL = Opcijski Url ali list CSS oblike na plačilni strani
+ThisIsTransactionId = To je ID transakcije: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL = Pri pošiljanju dokumenta po pošti dodaj url Paypal plačila
+PAYPAL_IPN_MAIL_ADDRESS = Naslov e-pošte za takojšnje obvestilo o plačilu (IPN)
+PredefinedMailContentSendOrderWithPaypalLink = Tukaj je naročilo __ORDERREF__\n\n Lahko kliknete na varnostno povezavo spodaj za izvršitev plačila preko PayPal\n\n%s\n\nS spoštovanjem\n\n
+PredefinedMailContentSendInvoiceWithPaypalLink = Tukaj je račun __FACREF__\n\n Lahko kliknete na varnostno povezavo spodaj za izvršitev plačila preko PayPal\n\n%s\n\nS spoštovanjem\n\n
