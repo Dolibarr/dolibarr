@@ -512,17 +512,17 @@ if ($step == 3 && $datatoimport)
 	print "</tr>\n";
 
 	// Search available imports
-	$dir = $conf->import->dir_temp;
-	$handle=@opendir(dol_osencode($dir));
-	if (is_resource($handle))
+	$filearray=dol_dir_list($conf->import->dir_temp,'files',0,'','','name',SORT_DESC);
+	if (count($filearray) > 0)
 	{
-		//print '<tr><td colspan="4">';
-		//print '<table class="noborder" width="100%">';
+		$dir=$conf->import->dir_temp;
 
 		// Search available files to import
 		$i=0;
-		while (($file = readdir($handle))!==false)
+		foreach ($filearray as $key => $val)
 		{
+		    $file=$val['name'];
+
 			// readdir return value in ISO and we want UTF8 in memory
 			if (! utf8_check($file)) $file=utf8_encode($file);
 
@@ -555,7 +555,6 @@ if ($step == 3 && $datatoimport)
 			print '</td>';
 			print '</tr>';
 		}
-		//print '</table></td></tr>';
 	}
 
 	print '</table></form>';
