@@ -95,7 +95,7 @@ if ($action == 'setconditions' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$object->cond_reglement=$_POST['cond_reglement_id'];
-	
+
 	// TODO move to DAO class
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id'];
 	$sql.= "' WHERE rowid='".$id."'";
@@ -107,7 +107,7 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$object->mode_reglement=$_POST['mode_reglement_id'];
-	
+
 	// TODO move to DAO class
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET mode_reglement='".$_POST['mode_reglement_id'];
 	$sql.= "' WHERE rowid='".$id."'";
@@ -119,7 +119,7 @@ if ($action == 'setassujtva' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$object->tva_assuj=$_POST['assujtva_value'];
-	
+
 	// TODO move to DAO class
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$id."'";
 	$result = $db->query($sql);
@@ -396,7 +396,7 @@ if ($id > 0)
 		}
 		print '</td></tr></table>';
 		print '</td><td colspan="3">';
-		
+
 		// TODO move to DAO class
 		$sql = "SELECT count(rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_address";
@@ -641,7 +641,7 @@ if ($id > 0)
 	 */
 	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire)
 	{
-		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.duree as duration, f.datei as startdate";
+		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".$object->id;
@@ -666,9 +666,11 @@ if ($id > 0)
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
-                $fichinter_static->id=$objp->id;
-
 				$objp = $db->fetch_object($resql);
+
+				$fichinter_static->id=$objp->id;
+                $fichinter_static->statut=$objp->fk_statut;
+
 				print "<tr ".$bc[$var].">";
 				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
                 //print '<td align="right">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
