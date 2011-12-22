@@ -46,7 +46,6 @@
 */htdocs/includes/treemenu/images/*
 */htdocs/includes/treemenu/imagesAlt/*
 */htdocs/includes/treemenu/imagesAlt2/*
-*/htdocs/includes/modules/modBarcode.class.php
 */htdocs/includes/modules/modBookmark4u.class.php
 */htdocs/includes/modules/modClickToDial.class.php
 */htdocs/includes/modules/modDocument.class.php
