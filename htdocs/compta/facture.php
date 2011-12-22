@@ -1264,6 +1264,7 @@ if (! empty($_POST['removedfile']))
     $vardir=$conf->user->dir_output."/".$user->id;
     $upload_dir_tmp = $vardir.'/temp';
 
+	// TODO Delete only files that was uploaded from email form
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
     $action='presend';
