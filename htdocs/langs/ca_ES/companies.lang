@@ -65,6 +65,7 @@ State=Província
 Region=Regió
 Country=Pais
 CountryCode=Codi pais
+CountryId=Id pais
 Phone=Telèfon
 PhonePro=Teléf. treball
 PhonePerso=Telèf. particular
