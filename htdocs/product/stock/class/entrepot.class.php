@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,9 +64,10 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    Creation d'un entrepot en base
+	 *	Creation d'un entrepot en base
 	 *
-	 *    @param      Objet user qui cree l'entrepot
+	 *	@param		User	$user       Object user that create the warehouse
+	 *	@return		int					>0 if OK, =<0 if KO
 	 */
 	function create($user)
 	{
@@ -119,9 +121,11 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    \brief      Update properties of a warehouse
-	 *    \param      id      id of warehouse to modify
-	 *    \param      user
+	 *	Update properties of a warehouse
+	 *
+	 *	@param		int		$id     id of warehouse to modify
+	 *	@param      User	$user
+	 *	@return		int				>0 if OK, <0 if KO
 	 */
 	function update($id, $user)
 	{
@@ -168,9 +172,10 @@ class Entrepot extends CommonObject
 
 
 	/**
-	 *    	\brief      Delete a warehouse
-	 *    	\param      user
-	 * 		\return		int		<0 if KO, >0 if OK
+	 *	Delete a warehouse
+	 *
+	 *	@param		User	$user		Object user that made deletion
+	 *	@return		int					<0 if KO, >0 if OK
 	 */
 	function delete($user)
 	{
@@ -219,8 +224,10 @@ class Entrepot extends CommonObject
 
 
 	/**
-	 *    \brief      Recuperation de la base d'un entrepot
-	 *    \param      id      id de l'entrepot a recuperer
+	 *	Load warehouse data
+	 *
+	 *	@param		int		$id     Warehouse id 
+	 *	@return		int				>0 if OK, <0 if KO
 	 */
 	function fetch($id)
 	{
@@ -278,9 +285,9 @@ class Entrepot extends CommonObject
 
 
 	/**
-	 * 	Charge les informations d'ordre info dans l'objet entrepot
+	 * 	Load warehouse info data
 	 *
-	 *  @param	int		$id      id de l'entrepot a charger
+	 *  @param	int		$id      warehouse id
 	 */
 	function info($id)
 	{
@@ -327,6 +334,7 @@ class Entrepot extends CommonObject
 
 	/**
 	 *  Return list of all warehouses
+	 *  
 	 * 	@return 	array		Array list of warehouses
 	 */
 	function list_array($status=1)
@@ -354,8 +362,9 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie le stock (nombre de produits) et valorisation de l'entrepot
-	 * 		\return		Array		Array('nb'=>Nb, 'value'=>Value)
+	 *	Return stock and value of warehosue
+	 *
+	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	function nb_products()
 	{
@@ -386,10 +395,10 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    	Return label of status of object
-	 *    	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *      @param      type        0=Closed, 1=Opened
-	 *    	@return     string      Label of status
+	 *	Return label of status of object
+	 *
+	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      		Label of status
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -397,11 +406,11 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *     Return label of a given status
-	 *     @param      status      Statut
-	 *     @param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *     @param      type        0=Status "closed", 1=Status "opened"
-	 *     @return     string      Label of status
+	 *	Return label of a given status
+	 *
+	 *	@param      status      Statut
+	 *	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      Label of status
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -447,10 +456,11 @@ class Entrepot extends CommonObject
 
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\return		string			Chaine avec URL
+	 *	Return clickable name (possibility with the pictogram)
+	 *
+	 *	@param		int		$withpicto		with pictogram
+	 *	@param		string	$option			What point the link
+	 *	@return		string					String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
