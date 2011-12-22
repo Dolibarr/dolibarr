@@ -27,7 +27,6 @@
 */htdocs/conf/conf.php.mysql
 */htdocs/conf/conf.php.old
 */htdocs/conf/conf.php.postgres
-*/htdocs/core/modules/modBarcode.class.php
 */htdocs/core/modules/modBookmark4u.class.php
 */htdocs/core/modules/modClickToDial.class.php
 */htdocs/core/modules/modDocument.class.php
