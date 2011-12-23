@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - main 
+# Dolibarr language file - es_ES - main
 CHARSET=UTF-8
 DIRECTION=ltr
 SeparatorDecimal=,
@@ -247,10 +247,12 @@ Bytes=Bytes
 KiloBytes=Kilobytes
 MegaBytes=Megabytes
 GigaBytes=Gigabytes
+TeraBytes=Terabytes
 b=b.
 Kb=Kb
 Mb=Mb
 Gb=Gb
+Tb=Tb
 Cut=Cortar
 Copy=Copiar
 Paste=Pegar
@@ -596,6 +598,8 @@ IM=Mensajería instantánea
 NewAttribute=Nuevo atributo
 AttributeCode=Código atributo
 OptionalFieldsSetup=Configuración de los atributos opcionales
+URLPhoto=Url de la foto/logo
+SetLinkToThirdParty=Vincular a otro tercero
 
 # Week day
 Monday=Lunes
