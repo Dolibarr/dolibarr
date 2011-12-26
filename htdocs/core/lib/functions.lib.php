@@ -145,6 +145,31 @@ if (! function_exists('json_decode'))
 	}
 }
 
+/**
+ * Enter description here ...
+ * 
+ * @param string $class
+ * @param string $member
+ * @return void
+ */
+function getStaticMember($class, $member)
+{
+	if (is_object($class)) $class = get_class($class);
+	$classObj = new ReflectionClass($class);
+	$result = null;
+	
+	foreach($classObj->getStaticProperties() as $prop => $value)
+	{
+		if($prop == $member)
+		{
+			$result = $value;
+			break;
+		}
+	}
+	
+	return $result;
+}
+
 
 /**
  * Return a DoliDB instance (database handler).
