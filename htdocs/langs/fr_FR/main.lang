@@ -602,6 +602,7 @@ NewAttribute=Nouvel attribut
 AttributeCode=Code de l'attribut
 OptionalFieldsSetup=Configuration des attributs complémentaires
 URLPhoto=Url vers photo/logo
+SetLinkToThirdParty=Lier vers un autre tiers
 CreateDraft=Créer brouillon
 ClickToEdit=Cliquer ici pour éditer
 
