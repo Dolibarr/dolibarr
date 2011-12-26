@@ -200,6 +200,16 @@ INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, act
 -- Regions Mexique (id country=154)
 insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (15401,  154, 15401, '', 0, 'Mexique', 1);
 
-
 -- Regions Barbados (id country=46)
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (4601,  46, 4601, '', 0, 'Barbados', 1);
+
+-- Regions Venezuela (id country=232)
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23201,  232, 23201, '', 0, 'Los Andes', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23202,  232, 23202, '', 0, 'Capital', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23203,  232, 23203, '', 0, 'Central', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23204,  232, 23204, '', 0, 'Cento Occidental', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23205,  232, 23205, '', 0, 'Guayana', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23206,  232, 23206, '', 0, 'Insular', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23207,  232, 23207, '', 0, 'Los Llanos', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23208,  232, 23208, '', 0, 'Nor-Oriental', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (23209,  232, 23209, '', 0, 'Zuliana', 1);
