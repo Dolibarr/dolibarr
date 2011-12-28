@@ -776,7 +776,7 @@ else
 
         // Country
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($object->country_id,'country_id');
+        print $form->select_country($object->country_id,'country_id');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
@@ -1028,7 +1028,7 @@ else
                 $object->address				= $_POST["adresse"];
                 $object->zip					= $_POST["zipcode"];
                 $object->town					= $_POST["town"];
-                $object->country_id				= $_POST["country_id"]?$_POST["country_id"]:$mysoc->pays_id;
+                $object->country_id				= $_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
                 $object->state_id				= $_POST["departement_id"];
                 $object->tel					= $_POST["tel"];
                 $object->fax					= $_POST["fax"];
@@ -1221,7 +1221,7 @@ else
 
             // Country
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-            $form->select_pays($object->country_id,'country_id');
+            print $form->select_country($object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
 

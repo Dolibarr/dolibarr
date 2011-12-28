@@ -83,6 +83,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2,
 
 /**
  *	Get value of field, do Ajax process and return result
+ *
  *	@param	    htmlname            nom et id du champ
  *	@param		fields				other fields to autocomplete
  *	@param	    url                 chemin du fichier de reponse : /chemin/fichier.php
@@ -128,7 +129,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 
     						for (i=0;i<length;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
-								if (fields[i]=="selectpays_id")
+								if (fields[i]=="selectcountry_id" || fields[i]=="selectpays_id")
 								{
 								    if (ui.item[fields[i]] > 0)     // Do not erase country if unknown
 								    {
@@ -139,7 +140,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
                                         }
 								    }
 								}
-                                else if (fields[i]=="departement_id")
+                                else if (fields[i]=="state_id" || fields[i]=="departement_id")
                                 {
                                     if (ui.item[fields[i]] > 0)     // Do not erase state if unknown
                                     {
