@@ -47,6 +47,7 @@ StatusOrderApproved=Approved
 StatusOrderRefused=Refused
 StatusOrderReceivedPartially=Partially received
 StatusOrderReceivedAll=Everything received
+ShippingExist=A shipment exists
 DraftOrWaitingApproved=Draft or approved not yet ordered
 DraftOrWaitingShipped=Draft or validated not yet shipped
 MenuOrdersToBill=Orders to bill

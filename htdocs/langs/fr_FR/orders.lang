@@ -47,6 +47,7 @@ StatusOrderApproved=Approuvée
 StatusOrderRefused=Refusée
 StatusOrderReceivedPartially=Reçu partiellement
 StatusOrderReceivedAll=Reçu complètement
+ShippingExist=Une expédition existe
 DraftOrWaitingApproved=Brouillon ou approuvée pas encore commandée
 DraftOrWaitingShipped=Brouillon ou validée pas encore expédiée
 SearchOrder=Rechercher une commande
