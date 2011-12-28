@@ -42,7 +42,7 @@ abstract class ActionsCardCommon
 	var $error;
 	//! Error array
 	var $errors=array();
-	
+
 
 	/**
 	 * 	Instantiation of DAO class
@@ -126,10 +126,11 @@ abstract class ActionsCardCommon
             {
                 $this->object->particulier		= GETPOST("private");
 
-                $this->object->nom				= empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
-                $this->object->nom_particulier	= $_POST["nom"];
-                $this->object->prenom			= $_POST["prenom"];
+                $this->object->name				= empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
                 $this->object->civilite_id		= $_POST["civilite_id"];
+                // Add non official properties
+                $this->object->name_bis        	= $_POST["nom"];
+                $this->object->firstname		= $_POST["prenom"];
             }
             else
             {
@@ -224,8 +225,8 @@ abstract class ActionsCardCommon
                             $contact=new Contact($this->db);
 
                             $contact->civilite_id   = $this->object->civilite_id;
-                            $contact->name          = $this->object->nom_particulier;
-                            $contact->firstname     = $this->object->prenom;
+                            $contact->name          = $this->object->name_bis;
+                            $contact->firstname     = $this->object->firstname;
                             $contact->address       = $this->object->address;
                             $contact->cp            = $this->object->cp;
                             $contact->ville         = $this->object->ville;

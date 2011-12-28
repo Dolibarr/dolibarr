@@ -110,9 +110,10 @@ if (empty($reshook))
             $object->particulier       = GETPOST("private");
 
             $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
-            $object->nom_particulier   = $_POST["nom"];
-            $object->prenom            = $_POST["prenom"];
             $object->civilite_id       = $_POST["civilite_id"];
+            // Add non official properties
+            $object->name_bis          = $_POST["nom"];
+            $object->firstname         = $_POST["prenom"];
         }
         else
         {
@@ -229,8 +230,8 @@ if (empty($reshook))
                         $contact=new Contact($db);
 
      					$contact->civilite_id		= $object->civilite_id;
-                        $contact->name				= $object->nom_particulier;
-                        $contact->firstname			= $object->prenom;
+                        $contact->name				= $object->name_bis;
+                        $contact->firstname			= $object->firstname;
                         $contact->address			= $object->address;
                         $contact->zip				= $object->zip;
                         $contact->cp				= $object->cp;		// TODO obsolete

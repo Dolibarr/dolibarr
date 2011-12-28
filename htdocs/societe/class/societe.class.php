@@ -43,10 +43,8 @@ class Societe extends CommonObject
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
-    var $name;     // TODO obsolete
-    var $nom;
-    var $nom_particulier;
-    var $prenom;
+    var $name;
+    var $nom;      // TODO obsolete
     var $particulier;
     var $address;
     var $adresse;  // TODO obsolete
