@@ -802,7 +802,7 @@ else
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            print $formcompany->get_input_id_prof(1,'idprof1',$object->siren,$object->pays_code);
+            print $formcompany->get_input_id_prof(1,'idprof1',$object->idprof1,$object->pays_code);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -811,7 +811,7 @@ else
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            print $formcompany->get_input_id_prof(2,'idprof2',$object->siret,$object->pays_code);
+            print $formcompany->get_input_id_prof(2,'idprof2',$object->idprof2,$object->pays_code);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -822,7 +822,7 @@ else
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            print $formcompany->get_input_id_prof(3,'idprof3',$object->ape,$object->pays_code);
+            print $formcompany->get_input_id_prof(3,'idprof3',$object->idprof3,$object->pays_code);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1035,9 +1035,9 @@ else
                 $object->email					= $_POST["email"];
                 $object->url					= $_POST["url"];
                 $object->capital				= $_POST["capital"];
-                $object->siren					= $_POST["idprof1"];
-                $object->siret					= $_POST["idprof2"];
-                $object->ape					= $_POST["idprof3"];
+                $object->idprof1				= $_POST["idprof1"];
+                $object->idprof2				= $_POST["idprof2"];
+                $object->idprof3				= $_POST["idprof3"];
                 $object->idprof4				= $_POST["idprof4"];
                 $object->typent_id				= $_POST["typent_id"];
                 $object->effectif_id			= $_POST["effectif_id"];
@@ -1247,7 +1247,7 @@ else
             if ($idprof!='-')
             {
                 print '<td>'.$idprof.'</td><td>';
-                print $formcompany->get_input_id_prof(1,'idprof1',$object->siren,$object->country_code);
+                print $formcompany->get_input_id_prof(1,'idprof1',$object->idprof1,$object->country_code);
                 print '</td>';
             }
             else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1256,7 +1256,7 @@ else
             if ($idprof!='-')
             {
                 print '<td>'.$idprof.'</td><td>';
-                print $formcompany->get_input_id_prof(2,'idprof2',$object->siret,$object->country_code);
+                print $formcompany->get_input_id_prof(2,'idprof2',$object->idprof2,$object->country_code);
                 print '</td>';
             }
             else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1267,7 +1267,7 @@ else
             if ($idprof!='-')
             {
                 print '<td>'.$idprof.'</td><td>';
-                print $formcompany->get_input_id_prof(3,'idprof3',$object->ape,$object->country_code);
+                print $formcompany->get_input_id_prof(3,'idprof3',$object->idprof3,$object->country_code);
                 print '</td>';
             }
             else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1567,8 +1567,8 @@ else
         if ($profid!='-')
         {
             print '<tr><td>'.$profid.'</td><td>';
-            print $object->siren;
-            if ($object->siren)
+            print $object->idprof1;
+            if ($object->idprof1)
             {
                 if ($object->id_prof_check(1,$object) > 0) print ' &nbsp; '.$object->id_prof_url(1,$object);
                 else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
@@ -1581,8 +1581,8 @@ else
         if ($profid!='-')
         {
             print '<td>'.$profid.'</td><td>';
-            print $object->siret;
-            if ($object->siret)
+            print $object->idprof2;
+            if ($object->idprof2)
             {
                 if ($object->id_prof_check(2,$object) > 0) print ' &nbsp; '.$object->id_prof_url(2,$object);
                 else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
@@ -1596,8 +1596,8 @@ else
         if ($profid!='-')
         {
             print '<tr><td>'.$profid.'</td><td>';
-            print $object->ape;
-            if ($object->ape)
+            print $object->idprof3;
+            if ($object->idprof3)
             {
                 if ($object->id_prof_check(3,$object) > 0) print ' &nbsp; '.$object->id_prof_url(3,$object);
                 else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';

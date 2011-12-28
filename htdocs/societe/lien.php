@@ -147,7 +147,7 @@ if ($socid)
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(1,'idprof1',$object->siren,$object->pays_code);
+        print $formcompany->get_input_id_prof(1,'idprof1',$object->idprof1,$object->pays_code);
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -156,7 +156,7 @@ if ($socid)
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(2,'idprof2',$object->siret,$object->pays_code);
+        print $formcompany->get_input_id_prof(2,'idprof2',$object->idprof2,$object->pays_code);
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -167,7 +167,7 @@ if ($socid)
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(3,'idprof3',$object->ape,$object->pays_code);
+        print $formcompany->get_input_id_prof(3,'idprof3',$object->idprof3,$object->pays_code);
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';

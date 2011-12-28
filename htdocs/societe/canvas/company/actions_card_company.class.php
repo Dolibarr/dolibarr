@@ -107,9 +107,9 @@ class ActionsCardCompany extends ActionsCardCommon
 
 		$this->tpl['title']		= $this->getTitle($action);
 
-		$this->tpl['profid1'] 	= $this->object->siren;
-		$this->tpl['profid2'] 	= $this->object->siret;
-		$this->tpl['profid3'] 	= $this->object->ape;
+		$this->tpl['profid1'] 	= $this->object->idprof1;
+		$this->tpl['profid2'] 	= $this->object->idprof2;
+		$this->tpl['profid3'] 	= $this->object->idprof3;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
 
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK))

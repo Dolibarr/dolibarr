@@ -417,9 +417,6 @@ class Societe extends CommonObject
         $this->fax			= preg_replace("/\./","",$this->fax);
         $this->email		= trim($this->email);
         $this->url			= $this->url?clean_url($this->url,0):'';
-        $this->siren=trim($this->siren);	// TODO obsolete
-        $this->siret=trim($this->siret);	// TODO obsolete
-        $this->ape=trim($this->ape);		// TODO obsolete
         $this->idprof1		= trim($this->idprof1);
         $this->idprof2		= trim($this->idprof2);
         $this->idprof3		= trim($this->idprof3);
@@ -725,11 +722,8 @@ class Societe extends CommonObject
 
                 $this->parent    = $obj->parent;
 
-                $this->siren		= $obj->idprof1;	// TODO obsolete
                 $this->idprof1		= $obj->idprof1;
-                $this->siret		= $obj->idprof2;	// TODO obsolete
                 $this->idprof2		= $obj->idprof2;
-                $this->ape			= $obj->idprof3;	// TODO obsolete
                 $this->idprof3		= $obj->idprof3;
                 $this->idprof4		= $obj->idprof4;
 
@@ -1988,7 +1982,7 @@ class Societe extends CommonObject
         // Verifie SIREN si pays FR
         if ($idprof == 1 && $soc->pays_code == 'FR')
         {
-            $chaine=trim($this->siren);
+            $chaine=trim($this->idprof1);
             $chaine=preg_replace('/(\s)/','',$chaine);
 
             if (dol_strlen($chaine) != 9) return -1;
@@ -1997,12 +1991,12 @@ class Societe extends CommonObject
 
             for ($i = 0 ; $i < 10 ; $i = $i+2)
             {
-                $sum = $sum + substr($this->siren, (8 - $i), 1);
+                $sum = $sum + substr($this->idprof1, (8 - $i), 1);
             }
 
             for ($i = 1 ; $i < 9 ; $i = $i+2)
             {
-                $ps = 2 * substr($this->siren, (8 - $i), 1);
+                $ps = 2 * substr($this->idprof1, (8 - $i), 1);
 
                 if ($ps > 9)
                 {
@@ -2017,7 +2011,7 @@ class Societe extends CommonObject
         // Verifie SIRET si pays FR
         if ($idprof == 2 && $soc->pays_code == 'FR')
         {
-            $chaine=trim($this->siret);
+            $chaine=trim($this->idprof1);
             $chaine=preg_replace('/(\s)/','',$chaine);
 
             if (dol_strlen($chaine) != 14) return -1;
@@ -2027,7 +2021,7 @@ class Societe extends CommonObject
         //Returns: 1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, 0 if unexpected bad
         if ($idprof == 1 && $soc->pays_code == 'ES')
         {
-            $string=trim($this->siren);
+            $string=trim($this->idprof1);
             $string=preg_replace('/(\s)/','',$string);
             $string = strtoupper($string);
 
@@ -2101,9 +2095,9 @@ class Societe extends CommonObject
 
         $url='';
 
-        if ($idprof == 1 && $soc->pays_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren;
+        if ($idprof == 1 && $soc->pays_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->idprof1;
         if ($idprof == 1 && $soc->pays_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
-        if ($idprof == 1 && $soc->pays_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->siren;
+        if ($idprof == 1 && $soc->pays_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->idprof1;
 
         if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
         return '';
@@ -2407,8 +2401,6 @@ class Societe extends CommonObject
 
         $this->code_client='CC-'.dol_print_date($now,'dayhourlog');
         $this->code_fournisseur='SC-'.dol_print_date($now,'dayhourlog');
-        $this->siren='123456789';
-        $this->siret='ABCDE';
         $this->capital=10000;
         $this->client=1;
         $this->prospect=1;

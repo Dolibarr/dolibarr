@@ -662,9 +662,9 @@ class FormCompany
         }
 
         $selected=$preselected;
-        if (! $selected && $idprof==1) $selected=$this->siren;
-        if (! $selected && $idprof==2) $selected=$this->siret;
-        if (! $selected && $idprof==3) $selected=$this->ape;
+        if (! $selected && $idprof==1) $selected=$this->idprof1;
+        if (! $selected && $idprof==2) $selected=$this->idprof2;
+        if (! $selected && $idprof==3) $selected=$this->idprof3;
         if (! $selected && $idprof==4) $selected=$this->idprof4;
 
         $out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
