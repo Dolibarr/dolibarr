@@ -3610,6 +3610,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
+ *  @return	string						String encoded
  */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
@@ -3637,7 +3638,7 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
  *
  *	@param	string	$stringtodecode		String to decode
  *	@param	string	$pagecodeto			Page code for result
- *	@param	string						String decoded
+ *	@return	string						String decoded
  */
 function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
@@ -3680,7 +3681,7 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
  * @param   string	$a		Operand a
  * @param   string	$b		Operand b
  * @param   string	$c		Operand c
- * @return  string      String decoded
+ * @return  string			String decoded
  */
 function dol_html_entity_decode($a,$b,$c)
 {
