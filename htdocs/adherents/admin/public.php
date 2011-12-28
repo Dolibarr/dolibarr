@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -34,6 +34,8 @@ $langs->load("admin");
 
 $action=GETPOST('action');
 
+if (! $user->admin) accessforbidden();
+
 
 /*
  * Actions
@@ -45,7 +47,7 @@ if ($action == 'update')
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$_POST["MEMBER_NEWFORM_AMOUNT"],'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$_POST["MEMBER_NEWFORM_EDITAMOUNT"],'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$_POST["MEMBER_NEWFORM_PAYONLINE"],'chaine',0,'',$conf->entity);
-    
+
     if (! $res > 0) $error++;
 
  	if (! $error)
@@ -66,7 +68,6 @@ if ($action == 'update')
 $form=new Form($db);
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
@@ -181,7 +182,7 @@ dol_fiche_end();
 print '<br>';
 //print $langs->trans('FollowingLinksArePublic').'<br>';
 print img_picto('','object_globe.png').' '.$langs->trans('BlankSubscriptionForm').':<br>';
-print '<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.'">'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.'</a>';
+print '<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.'">'.DOL_MAIN_URL_ROOT.'/public/members/new.php</a>';
 
 /*
 print '<table class="border" cellspacing="0" cellpadding="3">';
@@ -192,7 +193,7 @@ print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.img_picto('','obj
 print '</table>';
 */
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

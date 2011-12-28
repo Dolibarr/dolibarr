@@ -136,10 +136,10 @@ abstract class Stats
 	}
 
 	/**
-	 * 	Return nb of elements, total amount and avg amount by year
+	 * 	Return nb of elements, total amount and avg amount each year
 	 *
 	 *	@param		sql		SQL request
-	 * 	@return		array
+	 * 	@return		array					Array with nb, total amount, average for each year
 	 */
 	function _getAllByYear($sql)
 	{
@@ -171,8 +171,9 @@ abstract class Stats
 	/**
 	 *     Renvoie le nombre de proposition par mois pour une annee donnee
 	 *
-     *     @param      year        Year
-     *     @param      sql         SQL
+     *     @param   int		$year       Year
+     *     @param   string	$sql        SQL
+     *     @return	array				Array of nb each month
 	 */
 	function _getNbByMonth($year, $sql)
 	{

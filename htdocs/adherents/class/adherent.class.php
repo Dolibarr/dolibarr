@@ -131,17 +131,17 @@ class Adherent extends CommonObject
     /**
      *  Fonction envoyant un email a l'adherent avec le texte fourni en parametre.
      *
-     *  @param	    text				contenu du message (not html entities encoded)
-     *  @param	    subject				subject of message
-     *  @param 		filename_list       tableau de fichiers attaches
-     *  @param 		mimetype_list       tableau des types des fichiers attaches
-     *  @param 		mimefilename_list   tableau des noms des fichiers attaches
-     *  @param 		addr_cc             email cc
-     *  @param 		addr_bcc            email bcc
-     *  @param 		deliveryreceipt		demande accuse reception
-     *  @param		msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-     *  @param		errors_to			erros to
-     *  @return		int					<0 if KO, >0 if OK
+     *  @param	string	$text				Content of message (not html entities encoded)
+     *  @param	string	$subject			Subject of message
+     *  @param 	array	$filename_list      Array of attached files
+     *  @param 	array	$mimetype_list      Array of mime types of attached files
+     *  @param 	array	$mimefilename_list  Array of public names of attached files
+     *  @param 	string	$addr_cc            Email cc
+     *  @param 	string	$addr_bcc           Email bcc
+     *  @param 	int		$deliveryreceipt	Ask a delivery receipt
+     *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+     *  @param	string	$errors_to			erros to
+     *  @return	int							<0 if KO, >0 if OK
      */
     function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
     {
@@ -179,8 +179,8 @@ class Adherent extends CommonObject
     /**
      * Make substitution
      *
-     * @param       text        Text to make substitution to
-     * @return      string      Value of input text string with substitutions done
+     * @param	string	$text       Text to make substitution to
+     * @return  string      		Value of input text string with substitutions done
      */
     function makeSubstitution($text)
     {
@@ -234,7 +234,9 @@ class Adherent extends CommonObject
 
     /**
      *	Renvoie le libelle traduit de la nature d'un adherent (physique ou morale)
-     *	@param	    morphy		Nature physique ou morale de l'adherent
+     *
+     *	@param	string		$morphy		Nature physique ou morale de l'adherent
+     *	@return	string					Label
      */
     function getmorphylib($morphy='')
     {
@@ -248,16 +250,16 @@ class Adherent extends CommonObject
     /**
      *	Create a member into database
      *
-     *	@param      user        	Objet user qui demande la creation
-     *	@param      notrigger		1 ne declenche pas les triggers, 0 sinon
-     *	@return		int				<0 if KO, >0 if OK
+     *	@param	User	$user        	Objet user qui demande la creation
+     *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
+     *	@return	int						<0 if KO, >0 if OK
      */
     function create($user,$notrigger=0)
     {
         global $conf,$langs;
 
 		$error=0;
-		
+
         $now=dol_now();
 
         // Check parameters
@@ -369,12 +371,12 @@ class Adherent extends CommonObject
     /**
      *	Update a member in database (standard information and password)
      *
-     *	@param		user				User making update
-     *	@param		notrigger			1=disable trigger UPDATE (when called by create)
-     *	@param		nosyncuser			0=Synchronize linked user (standard info), 1=Do not synchronize linked user
-     *	@param		nosyncuserpass		0=Synchronize linked user (password), 1=Do not synchronize linked user
-     *	@param		nosyncthirdparty	0=Synchronize linked thirdparty (standard info), 1=Do not synchronize linked thirdparty
-     * 	@return		int					<0 if KO, >0 if OK
+     *	@param	User	$user				User making update
+     *	@param	int		$notrigger			1=disable trigger UPDATE (when called by create)
+     *	@param	int		$nosyncuser			0=Synchronize linked user (standard info), 1=Do not synchronize linked user
+     *	@param	int		$nosyncuserpass		0=Synchronize linked user (password), 1=Do not synchronize linked user
+     *	@param	int		$nosyncthirdparty	0=Synchronize linked thirdparty (standard info), 1=Do not synchronize linked thirdparty
+     * 	@return	int							<0 if KO, >0 if OK
      */
     function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0)
     {
@@ -411,16 +413,16 @@ class Adherent extends CommonObject
         $sql.= ", ville="   .($this->ville?"'".$this->db->escape($this->ville)."'":"null");
         $sql.= ", pays="          .($this->pays_id>0?"'".$this->pays_id."'":"null");
         $sql.= ", fk_departement=".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
-        $sql.= ", email="   ."'".$this->email."'";
+        $sql.= ", email='".$this->email."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso="  .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
         $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
         $sql.= ", note="    .($this->note?"'".$this->db->escape($this->note)."'":"null");
         $sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
-        $sql.= ", public="  ."'".$this->public."'";
+        $sql.= ", public='".$this->public."'";
         $sql.= ", statut="  .$this->statut;
         $sql.= ", fk_adherent_type=".$this->typeid;
-        $sql.= ", morphy="  ."'".$this->morphy."'";
+        $sql.= ", morphy='".$this->morphy."'";
         $sql.= ", naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
         if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifie que par effacement cotisation
         if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
@@ -598,8 +600,9 @@ class Adherent extends CommonObject
     /**
      *	Update denormalized last subscription date.
      * 	This function is called when we delete a subscription for example.
-     *	@param		user			Utilisateur qui realise la mise a jour
-     *	@return		int				<0 if KO, >0 if OK
+     *
+     *	@param	User	$user			User making change
+     *	@return	int						<0 if KO, >0 if OK
      */
     function update_end_date($user)
     {
@@ -657,9 +660,9 @@ class Adherent extends CommonObject
 
     /**
      *  Fonction qui supprime l'adherent et les donnees associees
-     * 
-     *  @param		rowid		Id de l'adherent a effacer
-     *  @return		int			<0 si KO, 0=rien a effacer, >0 si OK
+     *
+     *  @param	int		$rowid		Id of member to delete
+     *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
      */
     function delete($rowid)
     {
@@ -667,7 +670,7 @@ class Adherent extends CommonObject
 
         $result = 0;
 		$error=0;
-		
+
         $this->db->begin();
 
         // Suppression options
@@ -731,12 +734,13 @@ class Adherent extends CommonObject
 
     /**
      *    Change password of a user
-     *    @param     user             Object user de l'utilisateur qui fait la modification
-     *    @param     password         Nouveau mot de passe (a generer si non communique)
-     *    @param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
-     *	  @param	 notrigger		  1=Ne declenche pas les triggers
-     *    @param	 nosyncuser		  Do not synchronize linked user
-     *    @return    string           If OK return clear password, 0 if no change, < 0 if error
+     *
+     *    @param	User	$user           Object user de l'utilisateur qui fait la modification
+     *    @param 	string	$password       New password (to generate if empty)
+     *    @param    int		$isencrypted    0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
+     *	  @param	int		$notrigger		1=Ne declenche pas les triggers
+     *    @param	int		$nosyncuser		Do not synchronize linked user
+     *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
      */
     function setPassword($user, $password='', $isencrypted=0, $notrigger=0, $nosyncuser=0)
     {
@@ -908,19 +912,20 @@ class Adherent extends CommonObject
 
 
     /**
-     *		Method to get member from its login
-     *		@param	    login		login of member
+     *	Method to load member from its login
+     *
+     *	@param	string	$login		login of member
+     *	@return	void
      */
     function fetch_login($login)
     {
         global $conf;
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-        $sql.= " WHERE login='".$login."'";
+        $sql.= " WHERE login='".$this->db->escape($login)."'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
-
         if ($resql)
         {
             if ($this->db->num_rows($resql))
@@ -939,10 +944,10 @@ class Adherent extends CommonObject
     /**
      *	Load member from database
      *
-     *	@param      rowid       Id of object to load
-     * 	@param		ref			To load member from its ref
-     * 	@param		fk_soc		To load member from its link to third party
-     *	@return     int         >0 if OK, 0 if not found, <0 if KO
+     *	@param	int		$rowid      Id of object to load
+     * 	@param	string	$ref		To load member from its ref
+     * 	@param	int		$fk_soc		To load member from its link to third party
+     *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
     function fetch($rowid,$ref='',$fk_soc='')
     {
@@ -1123,26 +1128,25 @@ class Adherent extends CommonObject
 
 
     /**
-     *	Fonction qui insere la cotisation dans la base de donnees
-     *	et eventuellement liens dans banques, mailman, etc.
+     *	Insert subscription into database and eventually add links to banks, mailman, etc...
      *
-     *	@param	    date        	Date d'effet de la cotisation
-     *	@param	    montant     	Montant cotisation (accepte 0 pour les adherents non soumis e cotisation)
-     *	@param		accountid		Id compte bancaire
-     *	@param		operation		Type operation (si Id compte bancaire fourni)
-     *	@param		label			Label operation (si Id compte bancaire fourni)
-     *	@param		num_chq			Numero cheque (si Id compte bancaire fourni)
-     *	@param		emetteur_nom	Nom emetteur cheque
-     *	@param		emetteur_banque	Nom banque emetteur cheque
-     *	@param		datesubend		Date fin adhesion
-     *	@return     int         	rowid de l'entree ajoutee, <0 si erreur
+     *	@param	timestamp	$date        		Date d'effet de la cotisation
+     *	@param	amount		$montant     		Montant cotisation (accepte 0 pour les adherents non soumis e cotisation)
+     *	@param	int			$accountid			Id compte bancaire
+     *	@param	string		$operation			Type operation (si Id compte bancaire fourni)
+     *	@param	string		$label				Label operation (si Id compte bancaire fourni)
+     *	@param	string		$num_chq			Numero cheque (si Id compte bancaire fourni)
+     *	@param	string		$emetteur_nom		Nom emetteur cheque
+     *	@param	string		$emetteur_banque	Nom banque emetteur cheque
+     *	@param	timestamp	$datesubend			Date fin adhesion
+     *	@return int         					rowid of record added, <0 if KO
      */
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
     {
         global $conf,$langs,$user;
 
 		$error=0;
-		
+
         // Clean parameters
         if (! $montant) $montant=0;
 
@@ -1216,7 +1220,7 @@ class Adherent extends CommonObject
         global $langs,$conf;
 
 		$error=0;
-		
+
 		// Check parameters
         if ($this->statut == 1)
         {
@@ -1268,7 +1272,7 @@ class Adherent extends CommonObject
         global $langs,$conf;
 
 		$error=0;
-		
+
 		// Check paramaters
         if ($this->statut == 0)
         {
@@ -1309,7 +1313,8 @@ class Adherent extends CommonObject
 
     /**
      *  Fonction qui ajoute l'adherent au abonnements automatiques
-     *  mailing-list, spip, etc...
+     *  mailing-list, spip, etc.
+     *
      *  @return		int		<0 if KO, >0 if OK
      */
     function add_to_abo()
@@ -1351,7 +1356,8 @@ class Adherent extends CommonObject
 
     /**
      *  Fonction qui supprime l'adherent des abonnements automatiques
-     *  mailing-list, spip, etc...
+     *  mailing-list, spip, etc.
+     *
      *  @return     int     <0 if KO, >0 if OK
      */
     function del_to_abo()
@@ -1391,7 +1397,8 @@ class Adherent extends CommonObject
 
     /**
      *  Fonction qui donne les droits redacteurs dans spip
-     *  @return		int		=0 si KO, >0 si OK
+     *
+     *  @return		int		=0 if KO, >0 if OK
      */
     function add_to_spip()
     {
@@ -1426,6 +1433,8 @@ class Adherent extends CommonObject
 
     /**
      *  Fonction qui enleve les droits redacteurs dans spip
+     *
+     *  @return		int		=0 if KO, >0 if OK
      */
     function del_to_spip()
     {
@@ -1457,7 +1466,7 @@ class Adherent extends CommonObject
     /**
      *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
      *
-     *  @return     int     1=existe, 0=n'existe pas, -1=erreur
+     *  @return     int     1=exists, 0=does not exists, -1=error
      */
     function is_in_spip()
     {
@@ -1507,8 +1516,8 @@ class Adherent extends CommonObject
     /**
      *  Subscribe an email to all mailing-lists
      *
-     *  @param      listes    To force mailing-list (string separated with ,)
-     *  @return		int		  <=0 if KO, >0 if OK
+     *  @param	array	$listes    	To force mailing-list (string separated with ,)
+     *  @return	int		  			<=0 if KO, >0 if OK
      */
     function add_to_mailman($listes='')
     {
@@ -1586,8 +1595,8 @@ class Adherent extends CommonObject
      *  Unsubscribe an email from all mailing-lists
      *  Used when a user is resiliated
      *
-     *  @param      listes      To force mailing-list (string separated with ,)
-     *  @return     int         <=0 if KO, >0 if OK
+     *  @param	array	$listes     To force mailing-list (string separated with ,)
+     *  @return int         		<=0 if KO, >0 if OK
      */
     function del_to_mailman($listes='')
     {
@@ -1619,7 +1628,7 @@ class Adherent extends CommonObject
 				$this->pass,
 				$conf->global->ADHERENT_MAILMAN_ADMINPW
 				);
-				$curl_url = preg_replace ($patterns, $replace, $conf->global->ADHERENT_MAILMAN_UNSUB_URL);
+				$curl_url = preg_replace($patterns, $replace, $conf->global->ADHERENT_MAILMAN_UNSUB_URL);
 
                 dol_syslog("Call URL to unsubscribe : ".$curl_url);
 				$ch = curl_init();
@@ -1657,10 +1666,10 @@ class Adherent extends CommonObject
     /**
      *    	Return full name (civility+' '+name+' '+lastname)
      *
-     *		@param		langs			Language object for translation of civility
-     *		@param		option			0=No option, 1=Add civility
-     * 		@param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-     * 		@return		string			String with full name
+     *		@param	Translate	$langs			Language object for translation of civility
+     *		@param	int			$option			0=No option, 1=Add civility
+     * 		@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+     * 		@return	string						String with full name
      */
     function getFullName($langs,$option=0,$nameorder=-1)
     {
@@ -1695,8 +1704,8 @@ class Adherent extends CommonObject
     /**
      *    Return label of a civility of a contact
      *
-     *    @param        nohtmlentities      0=Encode with htmlentities for HTML output, 1=No htmlentities for memory translation
-     *    @return       string              Name translated of civility
+     *    @param	int		$nohtmlentities     0=Encode with htmlentities for HTML output, 1=No htmlentities for memory translation
+     *    @return   string              		Name translated of civility
      */
     function getCivilityLabel($nohtmlentities=0)
     {
@@ -1711,10 +1720,10 @@ class Adherent extends CommonObject
     /**
      *    	Renvoie nom clicable (avec eventuellement le picto)
      *
-     *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		maxlen			length max libelle
-     *		@param		option			Page lien
-     *		@return		string			Chaine avec URL
+     *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		@param	int		$maxlen			length max libelle
+     *		@param	string	$option			Page lien
+     *		@return	string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$maxlen=0,$option='card')
     {
@@ -1746,9 +1755,9 @@ class Adherent extends CommonObject
     /**
      * 	Return full address of member
      *
-     * 	@param		withcountry		1=Add country into address string
-     *  @param		sep				Separator to use to build string
-     *	@return		string			Full address string
+     * 	@param	int		$withcountry		1=Add country into address string
+     *  @param	string	$sep				Separator to use to build string
+     *	@return	string						Full address string
      */
     function getFullAddress($withcountry=0,$sep="\n")
     {
@@ -1772,8 +1781,8 @@ class Adherent extends CommonObject
     /**
      *    	Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
      *
-     *    	@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    	@return     string		Libelle
+     *    	@param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *    	@return string				Label
      */
     function getLibStatut($mode=0)
     {
@@ -1783,11 +1792,11 @@ class Adherent extends CommonObject
     /**
      *    	Renvoi le libelle d'un statut donne
      *
-     *    	@param      statut      			Id statut
-     *		@param		need_subscription		1 si type adherent avec cotisation, 0 sinon
-     *		@param		date_end_subscription	Date fin adhesion
-     *    	@param      mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    	@return     string      			Libelle
+     *    	@param	int			$statut      			Id statut
+     *		@param	int			$need_subscription		1 si type adherent avec cotisation, 0 sinon
+     *		@param	timestamp	$date_end_subscription	Date fin adhesion
+     *    	@param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *    	@return string      						Label
      */
     function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
     {
@@ -1865,7 +1874,7 @@ class Adherent extends CommonObject
     /**
      *      Charge indicateurs this->nb de tableau de bord
      *
-     *      @return     int         <0 si ko, >0 si ok
+     *      @return     int         <0 if KO, >0 if OK
      */
     function load_state_board()
     {
@@ -1899,8 +1908,8 @@ class Adherent extends CommonObject
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
-     *      @param          user    Objet user
-     *      @return         int     <0 if KO, >0 if OK
+     *      @param	User	$user   	Objet user
+     *      @return int     			<0 if KO, >0 if OK
      */
     function load_board($user)
     {
@@ -1994,11 +2003,11 @@ class Adherent extends CommonObject
     /**
      *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
      *
-     *	@param		info		Info string loaded by _load_ldap_info
-     *	@param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-     *							1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-     *							2=Return key only (uid=qqq)
-     *	@return		string		DN
+     *	@param	string	$info		Info string loaded by _load_ldap_info
+     *	@param	int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+     *								1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+     *								2=Return key only (uid=qqq)
+     *	@return	string				DN
      */
     function _load_ldap_dn($info,$mode=0)
     {
@@ -2061,7 +2070,8 @@ class Adherent extends CommonObject
     /**
      *      Charge les informations d'ordre info dans l'objet adherent
      *
-     *      @param     int		$id       Id of member to load
+     *      @param  int		$id       Id of member to load
+     *      @return	void
      */
     function info($id)
     {
