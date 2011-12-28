@@ -1,5 +1,8 @@
 <?php
-/* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/**
+ * Copyright (C)           Dan Potter
+ * Copyright (C)           Eric Seigne
+ * Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -24,9 +27,6 @@
 /**
  *      \file       htdocs/core/class/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
- *      \author     Dan Potter.
- *      \author	    Eric Seigne
- *      \author	    Laurent Destailleur.
  */
 
 /**
@@ -37,9 +37,12 @@
  */
 class CMailFile
 {
-	var $subject;
-	var $addr_from;
-	var $errors_to;
+	var $subject;      // Topic:       Subject of email
+	var $addr_from;    // From:        Label of sender (name but can contains an email inside <>)
+	                   // Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
+	                   //              Use it with an email from a sending host from is a SPF protected domain and sending host is not this domain.
+	                   // Return-Path: Email where to send bounds.
+	var $errors_to;    // Errors-To:   Email where to send errors.
 	var $addr_to;
 	var $addr_cc;
 	var $addr_bcc;
