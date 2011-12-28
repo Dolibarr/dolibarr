@@ -1105,6 +1105,8 @@ LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following lo
 ForANonAnonymousAccess=For an authenticated acces (for a write access for example)
 ##### Products #####
 ProductSetup=Products module setup
+ServiceSetup=Services module setup
+ProductServiceSetup=Products and Services modules setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
 ConfirmDeleteProductLineAbility=Confirmation when removing product lines in forms
 ModifyProductDescAbility=Personalization of product descriptions in forms
