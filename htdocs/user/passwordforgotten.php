@@ -33,6 +33,7 @@ $langs->load("errors");
 $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
+$langs->load("other");
 
 // Security check
 if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
