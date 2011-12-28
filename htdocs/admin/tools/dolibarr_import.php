@@ -26,15 +26,15 @@ require("../../main.inc.php");
 $langs->load("admin");
 $langs->load("other");
 
-if (! $user->admin)
-  accessforbidden();
+if (! $user->admin) accessforbidden();
 
 
 /*
  * View
  */
 
-llxHeader('','','EN:Restores|FR:Restaurations|ES:Restauraciones');
+$help_url='EN:Restores|FR:Restaurations|ES:Restauraciones';
+llxHeader('','',$help_url);
 
 ?>
 <script type="text/javascript">

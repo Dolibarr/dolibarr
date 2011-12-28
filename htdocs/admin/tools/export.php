@@ -52,7 +52,8 @@ if ($file && ! $what)
  * View
 */
 
-llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
+$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
+llxHeader('','',$help_url);
 
 $form=new Form($db);
 $formfile = new FormFile($db);

@@ -27,8 +27,7 @@ include_once $dolibarr_main_document_root."/core/lib/files.lib.php";
 $langs->load("admin");
 $langs->load("other");
 
-if (! $user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
 if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 

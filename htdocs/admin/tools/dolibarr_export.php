@@ -26,8 +26,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("admin");
 
-if (! $user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
 
 $form=new Form($db);
@@ -38,7 +37,8 @@ $formfile = new FormFile($db);
  * View
  */
 
-llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
+$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
+llxHeader('','',$help_url);
 
 ?>
 <script type="text/javascript">
@@ -108,7 +108,10 @@ $label=getStaticMember($db, 'label');
 			<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />
 			<label for="radio_dump_mysql">MySQL	Dump (mysqldump)</label>
 			</div>
-			<?php if (! empty($conf->global->MAIN_FEATURES_LEVEL)) { ?>
+			<?php
+			if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+			{
+			?>
 			<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />
 			<label for="radio_dump_mysql">MySQL	Dump (php) <?php print img_warning('Backup can\'t be guaranted with this method. Prefer previous one'); ?></label>
 			</div>
