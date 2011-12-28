@@ -150,7 +150,7 @@ foreach ($modulesdir as $dir)
     						//print "x".$modName." ".$orders[$i]."\n<br>";
     						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
     			            else $categ[$objMod->special]=1;
-    						$dirmod[$i] = $dirroot;
+    						$dirmod[$i] = $dir;
     						$j++;
     			            $i++;
     					}
@@ -323,6 +323,8 @@ if ($mode != 4)
             }
 
             $var=!$var;
+
+            //print "\n<!-- Module ".$objMod->numero." ".$objMod->getName()." found into ".$dirmod[$key]." -->\n";
             print '<tr height="18" '.$bc[$var].">\n";
 
             // Picto
