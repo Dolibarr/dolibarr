@@ -235,7 +235,7 @@ $var = true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/core/modules/societe/";
-    $handle = opendir($dir);
+    $handle = @opendir($dir);
     if (is_resource($handle))
     {
     	// Loop on each module find in opened directory
@@ -312,7 +312,7 @@ $var = true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/core/modules/societe/";
-    $handle = opendir($dir);
+    $handle = @opendir($dir);
     if (is_resource($handle))
     {
     	while (($file = readdir($handle))!==false)
