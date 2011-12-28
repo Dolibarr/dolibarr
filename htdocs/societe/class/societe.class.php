@@ -81,10 +81,10 @@ class Societe extends CommonObject
 	var $barcode_type_coder;    // coder (loaded by fetch_barcode)
 
     // 4 professional id (usage depend on country)
-    var $idprof1;	// IdProf1
-    var $idprof2;	// IdProf2
-    var $idprof3;	// IdProf3
-    var $idprof4;	// IdProf4
+    var $idprof1;	// IdProf1 (Ex: Siren in France)
+    var $idprof2;	// IdProf2 (Ex: Siret in France)
+    var $idprof3;	// IdProf3 (Ex: Ape in France)
+    var $idprof4;	// IdProf4 (Ex: RCS in France)
 
     var $prefix_comm;
 
@@ -113,8 +113,6 @@ class Societe extends CommonObject
     var $prospect;					// 0=no prospect, 1=prospect
     var $fournisseur;				// 0=no supplier, 1=supplier
 
-    var $prefixCustomerIsRequired;
-    var $prefixSupplierIsRequired;
     var $code_client;
     var $code_fournisseur;
     var $code_compta;
@@ -157,8 +155,6 @@ class Societe extends CommonObject
         $this->typent_id  = 0;
         $this->effectif_id  = 0;
         $this->forme_juridique_code  = 0;
-        $this->prefixCustomerIsRequired = 0;
-        $this->prefixSupplierIsRequired = 0;
         $this->tva_assuj = 1;
         $this->status = 1;
 
@@ -1680,7 +1676,6 @@ class Societe extends CommonObject
             $mod = new $var;
 
             $this->code_fournisseur = $mod->getNextValue($objsoc,$type);
-            $this->prefixSupplierIsRequired = $mod->prefixIsRequired;
 
             dol_syslog("Societe::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
         }
