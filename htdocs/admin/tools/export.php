@@ -394,7 +394,7 @@ function backup_tables($outputfile, $tables='*')
 
     // Print headers and global mysql config vars
     $sqlhead = '';
-    $sqlhead .= "-- ".$db::$label." dump via php
+    $sqlhead .= "-- ".getStaticMember($db, 'label')." dump via php
 --
 -- Host: ".$db->db->host_info."    Database: ".$db->database_name."
 -- ------------------------------------------------------

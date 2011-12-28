@@ -58,6 +58,8 @@ print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 
+$label=getStaticMember($db, 'label');
+
 ?>
 
 <fieldset id="fieldsetexport">
@@ -69,7 +71,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 <fieldset id="exportoptions">
 	<legend><?php echo $langs->trans("ImportMethod"); ?></legend>
     <?php
-    if ($db::$label == 'MySQL')
+    if ($label == 'MySQL')
     {
     ?>
     <div class="formelementrow">
@@ -78,7 +80,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
     </div>
     <?php
     }
-    else if ($db::$label == 'PostgreSQL')
+    else if ($label == 'PostgreSQL')
     {
     ?>
     <div class="formelementrow">
@@ -89,7 +91,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
     }
     else
     {
-        print 'No method available with database '.$db::$label;
+        print 'No method available with database '.$label;
     }
     ?>
 </fieldset>
@@ -101,7 +103,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 
 <div id="div_container_sub_exportoptions">
 <?php
-if ($db::$label == 'MySQL')
+if ($label == 'MySQL')
 {
 ?>
 	<fieldset id="mysql_options">
@@ -135,7 +137,7 @@ if ($db::$label == 'MySQL')
     </fieldset>
 <?php
 }
-else if ($db::$label == 'PostgreSQL')
+else if ($label == 'PostgreSQL')
 {
 ?>
     <fieldset id="postgresql_options">
@@ -180,8 +182,7 @@ else if ($db::$label == 'PostgreSQL')
 </fieldset>
 
 <?php
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>
