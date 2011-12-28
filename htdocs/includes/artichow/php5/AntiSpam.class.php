@@ -122,11 +122,12 @@ class awAntiSpam extends awImage {
 	 */
 	public function draw() {
 	
+		// We redefine $fonts here because we need a full path to font
 		$fonts = array(
-			ARTICHOW_FONT.DIRECTORY_SEPARATOR.'Tuffy.ttf',
-			ARTICHOW_FONT.DIRECTORY_SEPARATOR.'TuffyBold.ttf',
-			ARTICHOW_FONT.DIRECTORY_SEPARATOR.'TuffyItalic.ttf',
-			ARTICHOW_FONT.DIRECTORY_SEPARATOR.'TuffyBoldItalic.ttf'
+				ARTICHOW_FONT.DIRECTORY_SEPARATOR.'Aerial.ttf',
+				ARTICHOW_FONT.DIRECTORY_SEPARATOR.'AerialBd.ttf',
+				ARTICHOW_FONT.DIRECTORY_SEPARATOR.'AerialBdIt.ttf',
+				ARTICHOW_FONT.DIRECTORY_SEPARATOR.'AerialIt.ttf'
 		);
 		
 		$sizes = array(12, 12.5, 13, 13.5, 14, 15, 16, 17, 18, 19);

@@ -602,6 +602,7 @@ NewAttribute=New attribute
 AttributeCode=Attribute code
 OptionalFieldsSetup=Extra attributes setup
 URLPhoto=Url of photo/logo
+SetLinkToThirdParty=Link to another third party
 CreateDraft=Create draft
 ClickToEdit=Click to edit
 

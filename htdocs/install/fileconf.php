@@ -284,8 +284,8 @@ if (! empty($force_install_message))
                     include_once($dir."/".$file);
 
 		            // Version min of database
-                    $versionbasemin=$class::$versionmin;
-                    $note='('.$class::$label.' >= '.versiontostring($versionbasemin).')';
+                    $versionbasemin=getStaticMember($class, 'versionmin');
+                    $note='('.getStaticMember($class, 'label').' >= '.versiontostring($versionbasemin).')';
 
 		            // Switch to mysql if mysqli is not present
 		            if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';

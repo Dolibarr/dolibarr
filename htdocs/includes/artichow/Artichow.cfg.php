@@ -73,10 +73,10 @@ define('ARTICHOW_DEPRECATED', TRUE);
 // DOL_CHANGE LDR
 if (defined('ARTICHOW_FONT_NAMES')) $fonts=explode(',',constant('ARTICHOW_FONT_NAMES'));
 else $fonts = array(
-	'Tuffy',
-	'TuffyBold',
-	'TuffyBoldItalic',
-	'TuffyItalic'
+	'Aerial',
+	'AerialBd',
+	'AerialBdIt',
+	'AerialIt'
 );
 global $artichow_defaultfont;
 $artichow_defaultfont=$fonts[0];

@@ -3528,14 +3528,15 @@ class Form
 
 
     /**
-     *    	Return an html string with a select combo box to choose yes or no
+     *	Return an html string with a select combo box to choose yes or no
      *
-     *    	@param      name            Name of html select field
-     *    	@param      value           Pre-selected value
-     *  	@param      option          0 return yes/no, 1 return 1/0
-     * 		@return		int or string	See option
+     *	@param	string	$name			Name of html select field
+     *	@param	string	$value			Pre-selected value
+     *	@param	int		$option			0 return yes/no, 1 return 1/0
+     *	@param	bool	$disabled		true or false
+     *	@return	mixed					See option
      */
-    function selectyesno($htmlname,$value='',$option=0)
+    function selectyesno($htmlname,$value='',$option=0,$disabled=false)
     {
         global $langs;
 
@@ -3546,8 +3547,10 @@ class Form
             $yes="1";
             $no="0";
         }
+        
+        $disabled = ($disabled ? ' disabled="disabled"' : '');
 
-        $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">'."\n";
+        $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
         if (("$value" == 'yes') || ($value == 1))
         {
             $resultyesno .= '<option value="'.$yes.'" selected="selected">'.$langs->trans("Yes").'</option>'."\n";

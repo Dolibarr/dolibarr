@@ -145,6 +145,33 @@ if (! function_exists('json_decode'))
 	}
 }
 
+/**
+ * Function to return value of a static property when class
+ * name is dynamically defined (not hard coded).
+ * This is because $myclass::$myvar works from PHP 5.3.0+ only
+ * 
+ * @param	string 	$class		Class name
+ * @param 	string 	$member		Name of property
+ * @return 	string				Return value of static property.
+ */
+function getStaticMember($class, $member)
+{
+	if (is_object($class)) $class = get_class($class);
+	$classObj = new ReflectionClass($class);
+	$result = null;
+	
+	foreach($classObj->getStaticProperties() as $prop => $value)
+	{
+		if($prop == $member)
+		{
+			$result = $value;
+			break;
+		}
+	}
+	
+	return $result;
+}
+
 
 /**
  * Return a DoliDB instance (database handler).
@@ -3522,10 +3549,10 @@ function picto_required()
 /**
  *	Clean a string from all HTML tags and entities
  *
- *	@param   	StringHtml			String to clean
- *	@param		removelinefeed		Replace also all lines feeds by a space
- *  @param      pagecodeto      	Encoding of input string
- *	@return  	string	    		String cleaned
+ *	@param	string	$StringHtml			String to clean
+ *	@param	string	$removelinefeed		Replace also all lines feeds by a space
+ *  @param  string	$pagecodeto      	Encoding of input string
+ *	@return string	    				String cleaned
  */
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
@@ -3549,10 +3576,10 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 /**
  *	Replace CRLF in string with a HTML BR tag
  *
- *	@param		stringtoencode		String to encode
- *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
- *  @param      forxml              false=Use <br>, true=Use <br />
- *	@return		string				String encoded
+ *	@param	string	$stringtoencode		String to encode
+ *	@param	string	$nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+ *  @param  string	$forxml             false=Use <br>, true=Use <br />
+ *	@return	string						String encoded
  */
 function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
@@ -3583,6 +3610,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
+ *  @return	string						String encoded
  */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
@@ -3608,8 +3636,9 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 /**
  *	This function is called to decode a HTML string (it decodes entities and br tags)
  *
- *	@param		stringtodecode		String to decode
- *	@param		pagecodeto			Page code for result
+ *	@param	string	$stringtodecode		String to decode
+ *	@param	string	$pagecodeto			Page code for result
+ *	@return	string						String decoded
  */
 function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
@@ -3624,7 +3653,8 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 /**
  *	This function remove all ending \n and br at end
  *
- *	@param		stringtodecode		String to decode
+ *	@param	string	$stringtodecode		String to decode
+ *	@return	string						String decoded
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
@@ -3635,9 +3665,9 @@ function dol_htmlcleanlastbr($stringtodecode)
 /**
  *	This function is called to decode a string with HTML entities (it decodes entities tags)
  *
- * 	@param   	stringhtml      stringhtml
- *  @param      pagecodeto      Encoding of input string
- * 	@return  	string	  	    decodestring
+ * 	@param	string	$stringhtml     stringhtml
+ *  @param  string	$pagecodeto     Encoding of input string
+ * 	@return string	  	    		decodestring
  */
 function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 {
@@ -3648,10 +3678,10 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 /**
  * Replace html_entity_decode functions to manage errors
  *
- * @param   a
- * @param   b
- * @param   c
- * @return  string      String decoded
+ * @param   string	$a		Operand a
+ * @param   string	$b		Operand b
+ * @param   string	$c		Operand c
+ * @return  string			String decoded
  */
 function dol_html_entity_decode($a,$b,$c)
 {
@@ -3663,10 +3693,10 @@ function dol_html_entity_decode($a,$b,$c)
 /**
  * Replace htmlentities functions to manage errors
  *
- * @param   a
- * @param   b
- * @param   c
- * @return  string      String encoded
+ * @param   string	$a		Operand a
+ * @param   string	$b		Operand b
+ * @param   string	$c		Operand c
+ * @return  string      	String encoded
  */
 function dol_htmlentities($a,$b,$c)
 {
@@ -3681,8 +3711,8 @@ function dol_htmlentities($a,$b,$c)
  *	If not, it will we considered not HTML encoded even if it is by FPDF.
  *	Example, if string contains euro symbol that has ascii code 128
  *
- *	@param       s       String to check
- *	@return	     int     0 if bad iso, 1 if good iso
+ *	@param	string	$s      String to check
+ *	@return	int     		0 if bad iso, 1 if good iso
  */
 function dol_string_is_good_iso($s)
 {
@@ -3915,8 +3945,8 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
  *  @param  int			$keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *	@return	string						Return html output
  *
- *  @see        dol_print_error
- *  @see        dol_htmloutput_errors
+ *  @see    dol_print_error
+ *  @see    dol_htmloutput_errors
  */
 function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
@@ -3997,8 +4027,8 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @param  int		$keepembedded       Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return string                		Return html output
  *
- *  @see        dol_print_error
- *  @see        dol_htmloutput_mesg
+ *  @see    dol_print_error
+ *  @see    dol_htmloutput_mesg
  */
 function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 {
@@ -4014,8 +4044,8 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *  @param  int		$keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
  *  @return	void
  *
- *  @see        dol_print_error
- *  @see        dol_htmloutput_errors
+ *  @see    dol_print_error
+ *  @see    dol_htmloutput_errors
  */
 function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
@@ -4064,8 +4094,8 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @param  int		$keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return	void
  *
- *  @see        dol_print_error
- *  @see        dol_htmloutput_mesg
+ *  @see    dol_print_error
+ *  @see    dol_htmloutput_mesg
  */
 function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 {
@@ -4229,8 +4259,8 @@ function verifCond($strRights)
  * Replace eval function to add more security.
  * This function is called by verifCond()
  *
- * @param 	string	$s
- * @return	void
+ * @param 	string	$s		String to evaluate
+ * @return	mixed			Result of eval
  */
 function dol_eval($s)
 {
