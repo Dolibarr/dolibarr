@@ -218,7 +218,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
-    // We define pays_id, pays_code and pays_label
+    // We define pays_id, pays_code and country
     $tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
     $country_id=$tmp[0];
     if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"

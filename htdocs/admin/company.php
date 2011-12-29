@@ -232,7 +232,7 @@ $formcompany=new FormCompany($db);
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-// We define country_id, country_code and pays_label
+// We define country_id, country_code and country
 if (! empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
 {
     $tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
