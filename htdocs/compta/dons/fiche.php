@@ -294,9 +294,9 @@ if ($_GET["action"] == 'create')
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-	print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$don->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+	print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$don->zip),'zipcode',array('town','selectcountry_id','departement_id'),6);
     print ' ';
-    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectcountry_id','departement_id'));
     print '</tr>';
 
 	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" value="'.$_POST["pays"].'" size="40"></td></tr>';
@@ -381,9 +381,9 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-    print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$don->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+    print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$don->zip),'zipcode',array('town','selectcountry_id','departement_id'),6);
     print ' ';
-    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectcountry_id','departement_id'));
     print '</tr>';
 
 	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';

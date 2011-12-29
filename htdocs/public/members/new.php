@@ -349,7 +349,7 @@ jQuery(document).ready(function () {
         jQuery("#morphy").click(function() {
             initmorphy();
         });
-        jQuery("#selectpays_id").change(function() {
+        jQuery("#selectcountry_id").change(function() {
            document.newmember.action.value="create";
            document.newmember.submit();
         });
@@ -410,33 +410,33 @@ print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
-print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town','selectpays_id','departement_id'), 6, 1);
+print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town','selectcountry_id','departement_id'), 6, 1);
 print ' / ';
-print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode','selectpays_id','departement_id'), 0, 1);
+print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode','selectcountry_id','departement_id'), 0, 1);
 print '</td></tr>';
 // Country
 print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
-$pays_id=GETPOST('pays_id');
-if (! $pays_id && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $pays_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
-if (! $pays_id && ! empty($conf->geoipmaxmind->enabled))
+$country_id=GETPOST('country_id');
+if (! $country_id && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $country_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
+if (! $country_id && ! empty($conf->geoipmaxmind->enabled))
 {
-    $pays_code=dol_user_country();
-    //print $pays_code;
-    if ($pays_code)
+    $country_code=dol_user_country();
+    //print $country_code;
+    if ($country_code)
     {
-        $new_pays_id=getCountry($pays_code,3,$db,$langs);
-        //print 'xxx'.$pays_code.' - '.$new_pays_id;
-        if ($new_pays_id) $pays_id=$new_pays_id;
+        $new_pays_id=getCountry($country_code,3,$db,$langs);
+        //print 'xxx'.$country_code.' - '.$new_pays_id;
+        if ($new_pays_id) $country_id=$new_pays_id;
     }
 }
-$pays_code=getCountry($pays_id,2,$db,$langs);
-print $form->select_country($pays_id,'pays_id');
+$country_code=getCountry($country_id,2,$db,$langs);
+print $form->select_country($country_id,'pays_id');
 print '</td></tr>';
 // State
 if (empty($conf->global->SOCIETE_DISABLE_STATE))
 {
     print '<tr><td>'.$langs->trans('State').'</td><td>';
-    if ($pays_code) print $formcompany->select_state(GETPOST("departement_id"),$pays_code);
+    if ($country_code) print $formcompany->select_state(GETPOST("departement_id"),$country_code);
     else print '';
     print '</td></tr>';
 }

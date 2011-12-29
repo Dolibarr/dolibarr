@@ -129,7 +129,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 
     						for (i=0;i<length;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
-								if (fields[i]=="selectcountry_id" || fields[i]=="selectpays_id")
+								if (fields[i]=="selectcountry_id")
 								{
 								    if (ui.item[fields[i]] > 0)     // Do not erase country if unknown
 								    {
