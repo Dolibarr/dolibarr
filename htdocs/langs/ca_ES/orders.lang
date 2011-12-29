@@ -47,6 +47,7 @@ StatusOrderApproved=Aprovada
 StatusOrderRefused=Rebutjada
 StatusOrderReceivedPartially=Rebuda parcialment
 StatusOrderReceivedAll=Rebuda
+ShippingExist=Existeix una expedició
 DraftOrWaitingApproved=Esborrany o aprovat encara no controlat
 DraftOrWaitingShipped=Esborrany o validada encara no expedida
 SearchOrder=Cercar una comanda
