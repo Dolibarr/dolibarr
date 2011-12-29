@@ -128,13 +128,13 @@ if ($socid)
 
 	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
 
-	print "<tr><td>".$langs->trans('Zip').'</td><td width="20%">'.$soc->cp."</td>";
-	print "<td>".$langs->trans('Town')."</td><td>".$soc->ville."</td></tr>";
+	print "<tr><td>".$langs->trans('Zip').'</td><td width="20%">'.$soc->zip."</td>";
+	print "<td>".$langs->trans('Town')."</td><td>".$soc->town."</td></tr>";
 
-	print "<tr><td>".$langs->trans('Country')."</td><td colspan=\"3\">".$soc->pays."</td></tr>";
+	print "<tr><td>".$langs->trans('Country')."</td><td colspan=\"3\">".$soc->country."</td></tr>";
 
-	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
-	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id,'AC_FAX').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
 	if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
@@ -143,40 +143,40 @@ if ($socid)
 	$object=$soc;
     print '<tr>';
     // IdProf1 (SIREN for France)
-    $idprof=$langs->transcountry('ProfId1',$object->pays_code);
+    $idprof=$langs->transcountry('ProfId1',$object->country_code);
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(1,'idprof1',$object->idprof1,$object->pays_code);
+        print $formcompany->get_input_id_prof(1,'idprof1',$object->idprof1,$object->country_code);
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
     // IdProf2 (SIRET for France)
-    $idprof=$langs->transcountry('ProfId2',$object->pays_code);
+    $idprof=$langs->transcountry('ProfId2',$object->country_code);
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(2,'idprof2',$object->idprof2,$object->pays_code);
+        print $formcompany->get_input_id_prof(2,'idprof2',$object->idprof2,$object->paycountry_codes_code);
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
     print '</tr>';
     print '<tr>';
     // IdProf3 (APE for France)
-    $idprof=$langs->transcountry('ProfId3',$object->pays_code);
+    $idprof=$langs->transcountry('ProfId3',$object->country_code);
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(3,'idprof3',$object->idprof3,$object->pays_code);
+        print $formcompany->get_input_id_prof(3,'idprof3',$object->idprof3,$object->country_code);
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
     // IdProf4 (NU for France)
-    $idprof=$langs->transcountry('ProfId4',$object->pays_code);
+    $idprof=$langs->transcountry('ProfId4',$object->country_code);
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(4,'idprof4',$object->idprof4,$object->pays_code);
+        print $formcompany->get_input_id_prof(4,'idprof4',$object->idprof4,$object->country_code);
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';

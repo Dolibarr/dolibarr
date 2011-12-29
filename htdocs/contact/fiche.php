@@ -136,8 +136,10 @@ if (empty($reshook))
         $object->address		= $_POST["address"];
         $object->zip			= $_POST["zipcode"];
         $object->town			= $_POST["town"];
-        $object->fk_pays		= $_POST["pays_id"];
+        $object->fk_pays		= $_POST["country_id"];
         $object->fk_departement = $_POST["departement_id"];
+        $object->country_id		= $_POST["country_id"];
+        $object->state_id       = $_POST["departement_id"];
         $object->email			= $_POST["email"];
         $object->phone_pro		= $_POST["phone_pro"];
         $object->phone_perso	= $_POST["phone_perso"];
@@ -227,7 +229,9 @@ if (empty($reshook))
             $object->zip			= $_POST["zipcode"];
             $object->town			= $_POST["town"];
             $object->fk_departement	= $_POST["departement_id"];
-            $object->fk_pays		= $_POST["pays_id"];
+            $object->fk_pays		= $_POST["country_id"];
+            $object->state_id   	= $_POST["departement_id"];
+            $object->country_id		= $_POST["country_id"];
 
             $object->email			= $_POST["email"];
             $object->phone_pro		= $_POST["phone_pro"];
@@ -332,24 +336,15 @@ else
 
             $object->fk_departement = $_POST["departement_id"];
 
-            // We set pays_id, pays_code and label for the selected country
-            $object->fk_pays=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-            if ($object->fk_pays)
+            // We set country_id, country_code and label for the selected country
+            $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+            if ($object->country_id)
             {
-                $sql = "SELECT code, libelle";
-                $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-                $sql.= " WHERE rowid = ".$object->fk_pays;
-                $resql=$db->query($sql);
-                if ($resql)
-                {
-                    $obj = $db->fetch_object($resql);
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
-                $object->pays_code=$obj->code;
-                $object->pays=$obj->libelle;
+            	$tmparray=getCountry($object->country_id,'all');
+                $object->pays_code    = $tmparray['code'];
+                $object->pays         = $tmparray['label'];
+                $object->country_code = $tmparray['code'];
+                $object->country      = $tmparray['label'];
             }
 
             print_fiche_titre($langs->trans("AddContact"));
@@ -361,7 +356,7 @@ else
             {
                 print "\n".'<script type="text/javascript" language="javascript">';
                 print 'jQuery(document).ready(function () {
-							jQuery("#selectpays_id").change(function() {
+							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="create";
 								document.formsoc.submit();
                         	});
@@ -416,14 +411,14 @@ else
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
-            print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectpays_id','departement_id'),6).'&nbsp;';
-            print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectpays_id','departement_id'));
+            print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','departement_id'),6).'&nbsp;';
+            print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','departement_id'));
             print '</td></tr>';
 
             // Country
-            if (dol_strlen(trim($object->fk_pays)) == 0) $object->fk_pays = $objsoc->pays_id;	// Predefined with third party
+            if (dol_strlen(trim($object->fk_pays)) == 0) $object->fk_pays = $objsoc->country_id;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-            $form->select_pays((isset($_POST["pays_id"])?$_POST["pays_id"]:$object->fk_pays),'pays_id');
+            print $form->select_country((isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
 
@@ -431,9 +426,9 @@ else
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
                 print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-                if ($object->fk_pays)
+                if ($object->country_id)
                 {
-                    $formcompany->select_departement(isset($_POST["departement_id"])?$_POST["departement_id"]:$object->fk_departement,$object->pays_code);
+                    print $formcompany->select_state(isset($_POST["departement_id"])?$_POST["departement_id"]:$object->fk_departement,$object->country_code);
                 }
                 else
                 {
@@ -519,21 +514,14 @@ else
              * Fiche en mode edition
              */
 
-            // We set pays_id, and pays_code label of the chosen country
-            if (isset($_POST["pays_id"]) || $object->fk_pays)
+            // We set country_id, and country_code label of the chosen country
+            if (isset($_POST["country_id"]) || $object->country_id)
             {
-                $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays_id"])?$_POST["pays_id"]:$object->fk_pays);
-                $resql=$db->query($sql);
-                if ($resql)
-                {
-                    $obj = $db->fetch_object($resql);
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
-                $object->pays_code=$obj->code;
-                $object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+	            $tmparray=getCountry($object->country_id,'all');
+	            $object->pays_code    =	$tmparray['code'];
+	            $object->pays         =	$tmparray['label'];
+	            $object->country_code =	$tmparray['code'];
+	            $object->country      =	$tmparray['label'];
             }
 
             // Affiche les erreurs
@@ -543,7 +531,7 @@ else
             {
                 print '<script type="text/javascript" language="javascript">';
                 print 'jQuery(document).ready(function () {
-							jQuery("#selectpays_id").change(function() {
+							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="edit";
 								document.formsoc.submit();
 							});
@@ -592,13 +580,13 @@ else
 
             // Zip / Town
             print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
-            print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectpays_id','departement_id'),6).'&nbsp;';
-            print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectpays_id','departement_id'));
+            print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','departement_id'),6).'&nbsp;';
+            print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','departement_id'));
             print '</td></tr>';
 
             // Country
             print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-            $form->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$object->fk_pays,'pays_id');
+            print $form->select_country(isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
 
@@ -606,7 +594,7 @@ else
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
                 print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-                $formcompany->select_departement($object->fk_departement,$object->pays_code);
+                print $formcompany->select_state($object->fk_departement,isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id);
                 print '</td></tr>';
             }
 
@@ -785,7 +773,7 @@ else
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-        $img=picto_from_langcode($object->pays_code);
+        $img=picto_from_langcode($object->country_code);
         if ($img) print $img.' ';
         print $object->pays;
         print '</td></tr>';
@@ -797,11 +785,11 @@ else
         }
 
         // Phone
-        print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($object->phone_pro,$object->pays_code,$object->id,$object->socid,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($object->phone_perso,$object->pays_code,$object->id,$object->socid,'AC_TEL').'</td></tr>';
+        print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($object->phone_pro,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
+        print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($object->phone_perso,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td></tr>';
 
-        print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($object->phone_mobile,$object->pays_code,$object->id,$object->socid,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($object->fax,$object->pays_code,$object->id,$object->socid,'AC_FAX').'</td></tr>';
+        print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($object->phone_mobile,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
+        print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($object->fax,$object->country_code,$object->id,$object->socid,'AC_FAX').'</td></tr>';
 
         // Email
         print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email,$object->id,$object->socid,'AC_EMAIL').'</td>';

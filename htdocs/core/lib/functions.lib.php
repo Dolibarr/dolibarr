@@ -3319,14 +3319,14 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         return 0;
     }
 
-    //if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
+    //if (is_object($societe_acheteuse) && ($societe_vendeuse->country_id == $societe_acheteuse->country_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
     // Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
 
     // Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-    if ($societe_vendeuse->pays_code == $societe_acheteuse->pays_code) // Warning ->pays_code not always defined
+    if ($societe_vendeuse->country_code == $societe_acheteuse->country_code) // Warning ->country_code not always defined
     {
         //print 'VATRULE 3';
-        return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
+        return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
     }
 
     // Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -3345,7 +3345,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         else
         {
             //print 'VATRULE 5';
-            return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
+            return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
         }
     }
 
@@ -3357,7 +3357,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
         {
             //print 'VATRULE 6';
-            return get_product_vat_for_country($idprod,$societe_acheteuse->pays_code);
+            return get_product_vat_for_country($idprod,$societe_acheteuse->country_code);
         }
     }
 
@@ -3395,7 +3395,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
     if (!is_object($societe_vendeuse)) return -1;
     if (!is_object($societe_acheteuse)) return -1;
 
-    if ($societe_vendeuse->pays_id=='ES' || $societe_vendeuse->pays_code=='ES')
+    if ($societe_vendeuse->country_id=='ES' || $societe_vendeuse->country_code=='ES')
     {
         if ($local==1) //RE
         {
@@ -3410,7 +3410,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
             if (! is_numeric($societe_vendeuse->localtax2_assuj) && $societe_vendeuse->localtax2_assuj=='localtax2off') return 0;
         } else return -1;
 
-        if ($idprod) return get_product_localtax_for_country($idprod, $local, $societe_vendeuse->pays_code);
+        if ($idprod) return get_product_localtax_for_country($idprod, $local, $societe_vendeuse->country_code);
         else return -1;
     }
     return 0;

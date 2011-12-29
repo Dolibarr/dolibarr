@@ -571,10 +571,10 @@ class Account extends CommonObject
 
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
         $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
-        $sql.= " ba.domiciliation, ba.proprio, ba.adresse_proprio, ba.fk_departement, ba.fk_pays,";
+        $sql.= " ba.domiciliation, ba.proprio, ba.adresse_proprio, ba.fk_departement, ba.fk_pays as country_id,";
         $sql.= " ba.account_number, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
-        $sql.= ' p.code as pays_code, p.libelle as pays,';
+        $sql.= ' p.code as country_code, p.libelle as country,';
         $sql.= ' d.code_departement as departement_code, d.nom as departement';
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON ba.fk_pays = p.rowid';
@@ -617,9 +617,12 @@ class Account extends CommonObject
                 $this->departement_code= $obj->departement_code;
                 $this->departement     = $obj->departement;
 
-                $this->fk_pays       = $obj->fk_pays;
-                $this->pays_code     = $obj->pays_code;
-                $this->pays          = $obj->pays;
+                $this->fk_pays       = $obj->country_id;
+                $this->pays_code     = $obj->country_code;
+                $this->pays          = $obj->country;
+                $this->country_id    = $obj->country_id;
+                $this->country_code  = $obj->country_code;
+                $this->country       = $obj->country;
 
                 $this->account_number = $obj->account_number;
 
@@ -942,12 +945,12 @@ class Account extends CommonObject
         global $mysoc;
 
         // We return country code of bank account
-        if (! empty($this->pays_code)) return $this->pays_code;
+        if (! empty($this->country_code)) return $this->country_code;
 
         // For backward compatibility, we try to guess country from other information
         if (! empty($this->iban))
         {
-            if ($mysoc->pays_code === 'IN') return $mysoc->pays_code;	// Test to know if we can trust IBAN
+            if ($mysoc->country_code === 'IN') return $mysoc->country_code;	// Test to know if we can trust IBAN
 
             // If IBAN defined, we can know country of account from it
             if (preg_match("/^([a-zA-Z][a-zA-Z])/i",$this->iban,$reg)) return $reg[1];
@@ -959,11 +962,11 @@ class Account extends CommonObject
             require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
             $company=new Societe($this->db);
             $result=$company->fetch($this->socid);
-            if (! empty($company->pays_code)) return $company->pays_code;
+            if (! empty($company->country_code)) return $company->country_code;
         }
 
         // We return country code of managed company
-        if (! empty($mysoc->pays_code)) return $mysoc->pays_code;
+        if (! empty($mysoc->country_code)) return $mysoc->country_code;
 
         return '';
     }

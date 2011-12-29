@@ -411,7 +411,7 @@ class Adherent extends CommonObject
         $sql.= ", adresse=" .($this->adresse?"'".$this->db->escape($this->adresse)."'":"null");
         $sql.= ", cp="      .($this->cp?"'".$this->db->escape($this->cp)."'":"null");
         $sql.= ", ville="   .($this->ville?"'".$this->db->escape($this->ville)."'":"null");
-        $sql.= ", pays="          .($this->pays_id>0?"'".$this->pays_id."'":"null");
+        $sql.= ", pays="          .($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", fk_departement=".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
         $sql.= ", email='".$this->email."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
@@ -547,7 +547,7 @@ class Adherent extends CommonObject
                         $lthirdparty->tel=$this->phone;
                         $lthirdparty->state_id=$this->state_id;
                         $lthirdparty->country_id=$this->country_id;
-                        $lthirdparty->pays_id=$this->pays_id;
+                        $lthirdparty->pays_id=$this->country_id;
                         //$lthirdparty->phone_mobile=$this->phone_mobile;
 
                         $result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
@@ -963,7 +963,7 @@ class Adherent extends CommonObject
         $sql.= " d.datevalid as datev,";
         $sql.= " d.pays,";
         $sql.= " d.fk_departement,";
-        $sql.= " p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
+        $sql.= " p.rowid as country_id, p.code as country_code, p.libelle as country,";
         $sql.= " dep.nom as departement, dep.code_departement as departement_code,";
         $sql.= " t.libelle as type, t.cotisation as cotisation,";
         $sql.= " u.rowid as user_id, u.login as user_login";
@@ -1004,20 +1004,20 @@ class Adherent extends CommonObject
                 $this->town           = $obj->town;
 
                 $this->state_id       = $obj->fk_departement;
-                $this->state_id       = $obj->fk_departement?$obj->departement_code:'';
-                $this->state_id       = $obj->fk_departement?$obj->departement:'';
+                $this->state_code     = $obj->fk_departement?$obj->departement_code:'';
+                $this->state          = $obj->fk_departement?$obj->departement:'';
                 $this->fk_departement = $obj->fk_departement;    // TODO deprecated
                 $this->departement_code = $obj->fk_departement?$obj->departement_code:'';    // TODO deprecated
                 $this->departement	  = $obj->fk_departement?$obj->departement:'';    // TODO deprecated
 
-                $this->country_id     = $obj->pays_id;
-                $this->country_code   = $obj->pays_code;
-                $this->pays_id        = $obj->pays_id;    // TODO deprecated
-                $this->pays_code      = $obj->pays_code;    // TODO deprecated
-                if ($langs->trans("Country".$obj->pays_code) != "Country".$obj->pays_code) $this->pays = $langs->trans("Country".$obj->pays_code);
-                elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
-                else $this->pays=$obj->pays;
-				$this->country        = $this->pays;
+                $this->country_id     = $obj->country_id;
+                $this->country_code   = $obj->country_code;
+                $this->pays_id        = $obj->country_id;    // TODO deprecated
+                $this->pays_code      = $obj->country_code;    // TODO deprecated
+                if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) $this->country = $langs->trans("Country".$obj->country_code);
+                elseif ($obj->country) $this->country=$obj->country;
+                else $this->country=$obj->country;
+				$this->pays           = $this->country;
 
                 $this->phone          = $obj->phone;
                 $this->phone_perso    = $obj->phone_perso;
@@ -1966,15 +1966,12 @@ class Adherent extends CommonObject
         $this->login='dolibspec';
         $this->pass='dolibspec';
         $this->societe = 'Societe ABC';
-        $this->adresse = '61 jump street';
         $this->address = '61 jump street';
-        $this->cp = '75000';
         $this->zip = '75000';
-        $this->ville = 'Paris';
         $this->town = 'Paris';
-        $this->pays_id = 1;
-        $this->pays_code = 'FR';
-        $this->pays = 'France';
+        $this->country_id = 1;
+        $this->country_code = 'FR';
+        $this->country = 'France';
         $this->morphy = 1;
         $this->email = 'specimen@specimen.com';
         $this->phone        = '0999999999';
@@ -2046,7 +2043,7 @@ class Adherent extends CommonObject
         if ($this->adresse && $conf->global->LDAP_MEMBER_FIELD_ADDRESS)  $info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->adresse;
         if ($this->cp && $conf->global->LDAP_MEMBER_FIELD_ZIP)           $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->cp;
         if ($this->ville && $conf->global->LDAP_MEMBER_FIELD_TOWN)       $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->ville;
-        if ($this->pays_code && $conf->global->LDAP_MEMBER_FIELD_COUNTRY)     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->pays_code;
+        if ($this->country_code && $conf->global->LDAP_MEMBER_FIELD_COUNTRY)     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
         if ($this->email && $conf->global->LDAP_MEMBER_FIELD_MAIL)       $info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
         if ($this->phone && $conf->global->LDAP_MEMBER_FIELD_PHONE)      $info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
         if ($this->phone_perso && $conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO) $info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;

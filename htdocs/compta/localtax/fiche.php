@@ -147,7 +147,7 @@ if ($_GET["action"] == 'create')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print_fiche_titre($langs->transcountry("newLT2Payment",$mysoc->pays_code));
+    print_fiche_titre($langs->transcountry("newLT2Payment",$mysoc->country_code));
 
     if ($mesg) print $mesg;
 
@@ -163,7 +163,7 @@ if ($_GET["action"] == 'create')
     print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->transcountry("LT2Payment",$mysoc->pays_code)).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->transcountry("LT2Payment",$mysoc->country_code)).'"></td></tr>';
 
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';

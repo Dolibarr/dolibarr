@@ -95,7 +95,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -409,7 +409,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($this->marge_gauche, $tab2_top + 0);
 
 		// If France, show VAT mention if not applicable
-		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
+		if ($this->emetteur->country_code == 'FR' && $this->franchise == 1)
 		{
 			$pdf->MultiCell(100, $tab2_hl, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 		}
@@ -468,7 +468,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), 0, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->country_code), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), 0, 'R', 1);
 			}
@@ -478,7 +478,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), 0, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->country_code), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), 0, 'R', 1);
 			}
@@ -503,7 +503,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+						$totalvat =$outputlangs->transnoentities("TotalLT1".$mysoc->country_code).' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -531,7 +531,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+						$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->country_code).' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 

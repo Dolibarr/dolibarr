@@ -136,7 +136,7 @@ print '</td>';
 print '</tr>';
 
 //Profid1 of Transmitter
-print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter").' - '.$langs->transcountry('ProfId1',$mysoc->pays_code).'</td>';
+print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter").' - '.$langs->transcountry('ProfId1',$mysoc->country_code).'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">';
 print '<input type="text"   name="value1" value="'.$conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';

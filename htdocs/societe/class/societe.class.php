@@ -400,8 +400,8 @@ class Societe extends CommonObject
         $this->town=$this->town?trim($this->town):trim($this->ville);
         $this->ville=$this->town;       // TODO obsolete
         $this->state_id=trim($this->state_id);
-        $this->pays_id=trim($this->pays_id);
-        $this->country_id	= trim($this->country_id);
+        $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->pays_id;
+        $this->pays_id      = $this->country_id; 
         $this->tel			= trim($this->tel);
         $this->fax			= trim($this->fax);
         $this->tel			= preg_replace("/\s/","",$this->tel);
@@ -633,12 +633,12 @@ class Societe extends CommonObject
         $sql .= ', s.fk_effectif as effectif_id';
         $sql .= ', s.fk_forme_juridique as forme_juridique_code';
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-        $sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
+        $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.import_key';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
-        $sql .= ', p.code as pays_code, p.libelle as pays';
+        $sql .= ', p.code as country_code, p.libelle as country';
         $sql .= ', d.code_departement as departement_code, d.nom as departement';
         $sql .= ', st.libelle as stcomm';
         $sql .= ', te.code as typent_code';
@@ -692,12 +692,13 @@ class Societe extends CommonObject
                 $this->town 		= $obj->town;
                 $this->ville        = $obj->town;		// TODO obsolete
 
-                $this->pays_id 		= $obj->fk_pays;	// TODO obsolete
-                $this->country_id   = $obj->fk_pays;
-                $this->pays_code 	= $obj->fk_pays?$obj->pays_code:'';		// TODO obsolete
-                $this->country_code = $obj->fk_pays?$obj->pays_code:'';
-                $this->pays 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):''; // TODO obsolete
-                $this->country 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
+                $this->pays_id 		= $obj->country_id;	// TODO obsolete
+                $this->country_id   = $obj->country_id;
+                $this->pays_code 	= $obj->country_id?$obj->country_code:'';		// TODO obsolete
+                $this->country_code = $obj->country_id?$obj->country_code:'';
+                $this->pays 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):''; // TODO obsolete
+                $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
+                
                 $this->state_id     = $obj->fk_departement;
                 $this->state_code   = $obj->departement_code;
                 $this->state        = $obj->departement;
@@ -1972,7 +1973,7 @@ class Societe extends CommonObject
         if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return 1;
 
         // Verifie SIREN si pays FR
-        if ($idprof == 1 && $soc->pays_code == 'FR')
+        if ($idprof == 1 && $soc->country_code == 'FR')
         {
             $chaine=trim($this->idprof1);
             $chaine=preg_replace('/(\s)/','',$chaine);
@@ -2001,7 +2002,7 @@ class Societe extends CommonObject
         }
 
         // Verifie SIRET si pays FR
-        if ($idprof == 2 && $soc->pays_code == 'FR')
+        if ($idprof == 2 && $soc->country_code == 'FR')
         {
             $chaine=trim($this->idprof1);
             $chaine=preg_replace('/(\s)/','',$chaine);
@@ -2011,7 +2012,7 @@ class Societe extends CommonObject
 
         //Verify CIF/NIF/NIE if pays ES
         //Returns: 1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, 0 if unexpected bad
-        if ($idprof == 1 && $soc->pays_code == 'ES')
+        if ($idprof == 1 && $soc->country_code == 'ES')
         {
             $string=trim($this->idprof1);
             $string=preg_replace('/(\s)/','',$string);
@@ -2087,9 +2088,9 @@ class Societe extends CommonObject
 
         $url='';
 
-        if ($idprof == 1 && $soc->pays_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->idprof1;
-        if ($idprof == 1 && $soc->pays_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
-        if ($idprof == 1 && $soc->pays_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->idprof1;
+        if ($idprof == 1 && $soc->country_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->idprof1;
+        if ($idprof == 1 && $soc->country_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+        if ($idprof == 1 && $soc->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->idprof1;
 
         if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
         return '';
@@ -2242,8 +2243,8 @@ class Societe extends CommonObject
 			'SI',	// Slovenia
         //'CH',	// Switzerland - No. Swizerland in not in EEC
         );
-        //print "dd".$this->pays_code;
-        return in_array($this->pays_code,$country_code_in_EEC);
+        //print "dd".$this->country_code;
+        return in_array($this->country_code,$country_code_in_EEC);
     }
 
     /**
@@ -2316,10 +2317,10 @@ class Societe extends CommonObject
         $this->zip=$member->cp;
         $this->ville=$member->ville;	// TODO obsolete
         $this->town=$member->ville;
-        $this->pays_code=$member->pays_code;	// TODO obsolete
-        $this->country_code=$member->pays_code;
-        $this->pays_id=$member->pays_id;	// TODO obsolete
-        $this->country_id=$member->pays_id;
+        $this->pays_code=$member->country_code;	// TODO obsolete
+        $this->country_code=$member->country_code;
+        $this->pays_id=$member->country_id;	// TODO obsolete
+        $this->country_id=$member->country_id;
         $this->tel=$member->phone;				// Prof phone
         $this->email=$member->email;
 
@@ -2382,13 +2383,9 @@ class Societe extends CommonObject
         $this->name = 'THIRDPARTY SPECIMEN '.dol_print_date($now,'dayhourlog');
         $this->nom = $this->name;   // For backward compatibility
         $this->specimen=1;
-        $this->cp='99999';
         $this->zip='99999';
-        $this->ville='MyTown';
         $this->town='MyTown';
-        $this->pays_id=1;
         $this->country_id=1;
-        $this->pays_code='FR';
         $this->country_code='FR';
 
         $this->code_client='CC-'.dol_print_date($now,'dayhourlog');

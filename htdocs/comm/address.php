@@ -56,7 +56,10 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $address->address	= $_POST["address"];
     $address->cp		= $_POST["zipcode"];
     $address->ville		= $_POST["town"];
-    $address->pays_id	= $_POST["pays_id"];
+    $address->zip		= $_POST["zipcode"];
+    $address->town		= $_POST["town"];
+    $address->pays_id	= $_POST["country_id"];
+    $address->country_id= $_POST["country_id"];
     $address->tel		= $_POST["tel"];
     $address->fax		= $_POST["fax"];
     $address->note		= $_POST["note"];
@@ -194,24 +197,14 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         }
 
         // On positionne pays_id, pays_code et libelle du pays choisi
-        $address->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-        if ($address->pays_id)
+        $address->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        if ($address->country_id)
         {
-            $sql = "SELECT code, libelle";
-            $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-            $sql.= " WHERE rowid = ".$address->pays_id;
-
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $obj = $db->fetch_object($resql);
-            }
-            else
-            {
-                dol_print_error($db);
-            }
-            $address->pays_code	=	$obj->code;
-            $address->pays		=	$obj->libelle;
+        	$tmparray=getCountry($address->country_id,'all');
+            $address->pays_code	= $tmparray['code'];
+            $address->pays		= $tmparray['label'];
+            $address->country_code	= $tmparray['code'];
+            $address->country		= $tmparray['label'];
         }
 
         print_titre($langs->trans("AddAddress"));
@@ -267,16 +260,16 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 
         // Zip
         print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-        print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
+        print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectcountry_id'),6);
         print '</td></tr>';
 
         // Town
         print '<tr><td>'.$langs->trans('Town').'</td><td>';
-        print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
+        print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectcountry_id'));
         print '</td></tr>';
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($address->pays_id,'pays_id');
+        print $form->select_country($address->country_id,'selectcountry_id');
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$address->tel.'"></td></tr>';
@@ -328,29 +321,19 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $address->address	=	$_POST["address"];
             $address->cp		=	$_POST["zipcode"];
             $address->ville		=	$_POST["town"];
-            $address->pays_id	=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+            $address->country_id	=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
             $address->tel		=	$_POST["tel"];
             $address->fax		=	$_POST["fax"];
             $address->note		=	$_POST["note"];
 
-            // On positionne pays_id, pays_code et libelle du pays choisi
-            if ($address->pays_id)
+            // On positionne country_id, pays_code et libelle du pays choisi
+            if ($address->country_id)
             {
-                $sql = "SELECT code, libelle";
-                $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-                $sql.= "WHERE rowid = ".$address->pays_id;
-
-                $resql=$db->query($sql);
-                if ($resql)
-                {
-                    $obj = $db->fetch_object($resql);
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
-                $address->pays_code	=	$obj->code;
-                $address->pays		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+	        	$tmparray=getCountry($address->country_id,'all');
+	            $address->pays_code	= $tmparray['code'];
+	            $address->pays		= $tmparray['label'];
+	            $address->country_code	= $tmparray['code'];
+	            $address->country		= $tmparray['label'];
             }
         }
 
@@ -380,16 +363,16 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         // Zip
         print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-        print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
+        print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectcountry_id'),6);
         print '</td></tr>';
 
         // Town
         print '<tr><td>'.$langs->trans('Town').'</td><td>';
-        print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
+        print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectcountry_id'));
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($address->pays_id,'pays_id');
+        print $form->select_country($address->country_id,'country_id');
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$address->tel.'"></td></tr>';
@@ -460,9 +443,9 @@ else
 
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$address->lines[$i]->pays.'</td>';
 
-            print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($address->lines[$i]->tel,$address->lines[$i]->pays_code,0,$address->socid,'AC_TEL').'</td></tr>';
+            print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($address->lines[$i]->tel,$address->lines[$i]->country_code,0,$address->socid,'AC_TEL').'</td></tr>';
 
-            print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($address->lines[$i]->fax,$address->lines[$i]->pays_code,0,$address->socid,'AC_FAX').'</td></tr>';
+            print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($address->lines[$i]->fax,$address->lines[$i]->country_code,0,$address->socid,'AC_FAX').'</td></tr>';
 
             print '</td></tr>';
 

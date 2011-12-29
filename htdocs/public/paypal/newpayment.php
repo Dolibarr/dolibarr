@@ -439,7 +439,7 @@ if (GETPOST("source") == 'order' && $valid)
     $shipToStreet=$order->client->address;
     $shipToCity=$order->client->ville;
     $shipToState=$order->client->departement_code;
-    $shipToCountryCode=$order->client->pays_code;
+    $shipToCountryCode=$order->client->country_code;
     $shipToZip=$order->client->cp;
     $shipToStreet2='';
     $phoneNum=$order->client->tel;
@@ -542,7 +542,7 @@ if (GETPOST("source") == 'invoice' && $valid)
     $shipToStreet=$invoice->client->address;
     $shipToCity=$invoice->client->ville;
     $shipToState=$invoice->client->departement_code;
-    $shipToCountryCode=$invoice->client->pays_code;
+    $shipToCountryCode=$invoice->client->country_code;
     $shipToZip=$invoice->client->cp;
     $shipToStreet2='';
     $phoneNum=$invoice->client->tel;
@@ -852,7 +852,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
     $shipToStreet=$member->address;
     $shipToCity=$member->ville;
     $shipToState=$member->departement_code;
-    $shipToCountryCode=$member->pays_code;
+    $shipToCountryCode=$member->country_code;
     $shipToZip=$member->cp;
     $shipToStreet2='';
     $phoneNum=$member->tel;

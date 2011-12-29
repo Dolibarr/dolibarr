@@ -262,10 +262,10 @@ if ($action == 'create')
 	$selectedcode='';
 	if (isset($_POST["account_country_id"]))
 	{
-		$selectedcode=$_POST["account_country_id"]?$_POST["account_country_id"]:$account->pays_code;
+		$selectedcode=$_POST["account_country_id"]?$_POST["account_country_id"]:$account->country_code;
 	}
-	else if (empty($selectedcode)) $selectedcode=$mysoc->pays_code;
-	$form->select_pays($selectedcode,'account_country_id');
+	else if (empty($selectedcode)) $selectedcode=$mysoc->country_code;
+	print $form->select_country($selectedcode,'account_country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	print '</td></tr>';
 
@@ -398,7 +398,7 @@ else
 		print '<tr><td>'.$langs->trans("Country").'</td><td>';
 		if ($account->fk_pays > 0)
 		{
-			$img=picto_from_langcode($account->pays_code);
+			$img=picto_from_langcode($account->country_code);
 			print $img?$img.' ':'';
 			print getCountry($account->getCountryCode(),0,$db);
 		}
@@ -530,13 +530,13 @@ else
         print '</td></tr>';
 
 		// Country
-		$account->pays_id=$account->pays_id?$account->pays_id:$mysoc->pays_id;
+		$account->country_id=$account->country_id?$account->country_id:$mysoc->country_id;
 		print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Country").'</td>';
 		print '<td colspan="3">';
-		$selectedcode=$account->pays_code;
+		$selectedcode=$account->country_code;
 		if (isset($_POST["account_country_id"])) $selectedcode=$_POST["account_country_id"];
-		else if (empty($selectedcode)) $selectedcode=$mysoc->pays_code;
-		$form->select_pays($selectedcode,'account_country_id');
+		else if (empty($selectedcode)) $selectedcode=$mysoc->country_code;
+		print $form->select_country($selectedcode,'account_country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
@@ -544,7 +544,7 @@ else
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 		if ($selectedcode)
 		{
-			$formcompany->select_departement(isset($_POST["account_departement_id"])?$_POST["account_departement_id"]:$account->fk_departement,$selectedcode,'account_departement_id');
+			print $formcompany->select_state(isset($_POST["account_departement_id"])?$_POST["account_departement_id"]:$account->fk_departement,$selectedcode,'account_departement_id');
 		}
 		else
 		{

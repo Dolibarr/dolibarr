@@ -236,15 +236,15 @@ if ($socid)
 	if ($soc->pays)
 	{
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-		$img=picto_from_langcode($soc->pays_code);
+		$img=picto_from_langcode($soc->country_code);
 		print ($img?$img.' ':'');
 		print $soc->pays;
 		print '</td></tr>';
 	}
 
 	// Phone
-	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
-	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id,'AC_FAX').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
 
 	// EMail
 	print '<tr><td>'.$langs->trans('EMail').'</td><td>';

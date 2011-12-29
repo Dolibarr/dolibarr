@@ -843,9 +843,26 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->
 
 if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
 {
-    $object->fetch($id);		// Load order and lines
+    $idwarehouse=GETPOST('idwarehouse');
 
-    $result = $object->cancel($user);
+    $object->fetch($id);		// Load order and lines
+    $object->fetch_thirdparty();
+
+    // Check parameters
+    if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+    {
+        if (! $idwarehouse || $idwarehouse == -1)
+        {
+            $error++;
+            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $action='';
+        }
+    }
+
+	if (! $error)
+	{
+	    $result = $object->cancel($user,$idwarehouse);
+	}
 }
 
 
@@ -1382,16 +1399,16 @@ if ($action == 'create' && $user->rights->commande->creer)
         print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
-        if ($mysoc->pays_code=='ES')
+        if ($mysoc->country_code=='ES')
         {
             if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
             {
-                print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
+                print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
             }
 
             if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
             {
-                print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
+                print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
             }
         }
         print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
@@ -1564,7 +1581,21 @@ else
              */
             if ($action == 'cancel')
             {
-                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
+                $text=$langs->trans('ConfirmCancelOrder',$object->ref);
+                $formquestion=array();
+                if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+                {
+                    $langs->load("stocks");
+                    require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+                    $formproduct=new FormProduct($db);
+                    $formquestion=array(
+                    //'text' => $langs->trans("ConfirmClone"),
+                    //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+                    //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+                    array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+                }
+
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $text, 'confirm_cancel', $formquestion, 0, 1);
             }
 
             /*
@@ -1605,7 +1636,7 @@ else
             if ($conf->projet->enabled) $nbrow++;
 
             //Local taxes
-            if ($mysoc->pays_code=='ES')
+            if ($mysoc->country_code=='ES')
             {
                 if($mysoc->localtax1_assuj=="1") $nbrow++;
                 if($mysoc->localtax2_assuj=="1") $nbrow++;
@@ -1873,17 +1904,17 @@ else
             print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
             // Amount Local Taxes
-            if ($mysoc->pays_code=='ES')
+            if ($mysoc->country_code=='ES')
             {
                 if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
                 {
-                    print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
+                    print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
                     print '<td align="right">'.price($object->total_localtax1).'</td>';
                     print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
                 }
                 if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
                 {
-                    print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
+                    print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
                     print '<td align="right">'.price($object->total_localtax2).'</td>';
                     print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
                 }

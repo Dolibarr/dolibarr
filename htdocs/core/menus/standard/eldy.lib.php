@@ -944,9 +944,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     global $mysoc;
 
                     //Local Taxes
-                    if($mysoc->pays_code=='ES' && $mysoc->localtax2_assuj=="1")
+                    if($mysoc->country_code=='ES' && $mysoc->localtax2_assuj=="1")
                     {
-                    	if (preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/localtax/index.php?leftmenu=tax_vat&amp;mainmenu=accountancy",$langs->transcountry("LT2",$mysoc->pays_code),1,$user->rights->tax->charges->lire);
+                    	if (preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/localtax/index.php?leftmenu=tax_vat&amp;mainmenu=accountancy",$langs->transcountry("LT2",$mysoc->country_code),1,$user->rights->tax->charges->lire);
                     	if (preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/localtax/fiche.php?leftmenu=tax_vat&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
                     	if (preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/localtax/reglement.php?leftmenu=tax_vat",$langs->trans("Payments"),2,$user->rights->tax->charges->lire);
                     	if (preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/localtax/clients.php?leftmenu=tax_vat", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);

@@ -181,7 +181,7 @@ if ($id > 0 || ! empty($ref))
 	if ($conf->projet->enabled) $rowspan++;
 
 	//Local taxes
-	if ($mysoc->pays_code=='ES')
+	if ($mysoc->country_code=='ES')
 	{
 		if($mysoc->localtax1_assuj=="1") $rowspan++;
 		if($mysoc->localtax2_assuj=="1") $rowspan++;
@@ -295,17 +295,17 @@ if ($id > 0 || ! empty($ref))
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
-	if ($mysoc->pays_code=='ES')
+	if ($mysoc->country_code=='ES')
 	{
 		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 		{
-			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
+			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
 			print '<td align="right" colspan="2">'.price($object->total_localtax1).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 		{
-			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
+			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
 			print '<td align="right" colspan="2">'.price($object->total_localtax2).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}

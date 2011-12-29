@@ -278,12 +278,12 @@ if ($resql)
 	$textprofid=array();
 	foreach(array(1,2,3,4) as $key)
 	{
-		$label=$langs->transnoentities("ProfId".$key.$mysoc->pays_code);
+		$label=$langs->transnoentities("ProfId".$key.$mysoc->country_code);
 		$textprofid[$key]='';
-		if ($label != "ProfId".$key.$mysoc->pays_code)
+		if ($label != "ProfId".$key.$mysoc->country_code)
 		{	// Get only text between ()
 			if (preg_match('/\((.*)\)/i',$label,$reg)) $label=$reg[1];
-			$textprofid[$key]=$langs->trans("ProfIdShortDesc",$key,$mysoc->pays_code,$label);
+			$textprofid[$key]=$langs->trans("ProfIdShortDesc",$key,$mysoc->country_code,$label);
 		}
 	}
 

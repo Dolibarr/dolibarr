@@ -422,7 +422,7 @@ abstract class ActionsCardCommon
 			{
 				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function () {
-						jQuery("#selectpays_id").change(function() {
+						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";
 							document.formsoc.canvas.value="'.$canvas.'";
 							document.formsoc.submit();
@@ -490,19 +490,19 @@ abstract class ActionsCardCommon
             }
 
             // Zip
-            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
 
             // Town
-            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectpays_id','departement_id'));
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','departement_id'));
 
             // Country
-            $this->tpl['select_country'] = $form->select_country($this->object->pays_id,'pays_id');
+            $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
             if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 
             // State
-            if ($this->object->pays_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id,$this->object->pays_code);
+            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id,$this->object->country_code);
             else $this->tpl['select_state'] = $countrynotdefined;
 
             // Language
@@ -516,7 +516,7 @@ abstract class ActionsCardCommon
 
             // Local Tax
             // TODO mettre dans une classe propre au pays
-            if($mysoc->pays_code=='ES')
+            if($mysoc->country_code=='ES')
             {
                 $this->tpl['localtax'] = '';
 
@@ -560,8 +560,8 @@ abstract class ActionsCardCommon
             if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
-            $this->tpl['phone'] 	= dol_print_phone($this->object->tel,$this->object->pays_code,0,$this->object->id,'AC_TEL');
-            $this->tpl['fax'] 		= dol_print_phone($this->object->fax,$this->object->pays_code,0,$this->object->id,'AC_FAX');
+            $this->tpl['phone'] 	= dol_print_phone($this->object->tel,$this->object->country_code,0,$this->object->id,'AC_TEL');
+            $this->tpl['fax'] 		= dol_print_phone($this->object->fax,$this->object->country_code,0,$this->object->id,'AC_FAX');
             $this->tpl['email'] 	= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
             $this->tpl['url'] 		= dol_print_url($this->object->url);
 
@@ -629,7 +629,7 @@ abstract class ActionsCardCommon
 
             // Local Tax
             // TODO mettre dans une classe propre au pays
-            if($mysoc->pays_code=='ES')
+            if($mysoc->country_code=='ES')
             {
                 $this->tpl['localtax'] = '';
 
@@ -674,7 +674,7 @@ abstract class ActionsCardCommon
         $this->object->address				=	$_POST["adresse"];
         $this->object->zip					=	$_POST["zipcode"];
         $this->object->town					=	$_POST["town"];
-        $this->object->country_id			=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->country_id;
+        $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         $this->object->state_id		        =	$_POST["departement_id"];
         $this->object->tel					=	$_POST["tel"];
         $this->object->fax					=	$_POST["fax"];

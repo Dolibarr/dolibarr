@@ -165,7 +165,7 @@ if ($resql)
 
       print '<td>'.dol_print_phone($obj->email,$obj->cidp,$obj->rowid,'AC_EMAIL').'</td>';
 
-      print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->rowid,'AC_TEL').'&nbsp;</td>';
+      print '<td>'.dol_print_phone($obj->phone,$obj->country_code,$obj->cidp,$obj->rowid,'AC_TEL').'&nbsp;</td>';
 
       print "</tr>\n";
       $i++;

@@ -776,7 +776,7 @@ else
 
         // Origin country
         print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-        $form->select_pays($_POST["country_id"],'country_id');
+        print $form->select_country($_POST["country_id"],'country_id');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
@@ -966,7 +966,7 @@ else
 
             // Origin country
             print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">';
-            $form->select_pays($object->country_id,'country_id');
+            print $form->select_country($object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
 

@@ -96,14 +96,14 @@ function html_print_paypal_footer($fromcompany,$langs)
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->idprof2))
 	{
-		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
+		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
 	}
 	// Prof Id 2
 	if ($fromcompany->idprof2)
 	{
-		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
+		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
 	}
@@ -113,14 +113,14 @@ function html_print_paypal_footer($fromcompany,$langs)
 	// Prof Id 3
 	if ($fromcompany->idprof3)
 	{
-		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
+		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
 	}
 	// Prof Id 4
 	if ($fromcompany->idprof4)
 	{
-		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
+		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
 	}

@@ -220,6 +220,7 @@ DiscountNone=None
 Supplier=Supplier
 CompanyList=Company's list
 AddContact=Add contact/address
+EditContact=Edit contact/address
 Contact=Contact
 ContactsAddresses=Contacts/Addresses
 NoContactDefined=No contact defined for this third party

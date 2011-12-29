@@ -263,7 +263,7 @@ if ($id > 0)
 	print '</tr>';
 
 	// Local Taxes
-	if($mysoc->pays_code=='ES')
+	if($mysoc->country_code=='ES')
 	{
 		if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
 		{

@@ -248,7 +248,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         $this->assertContains("New address\nNew zip New town", $result);
 
         $result=$localobject->isInEEC();
-        print __METHOD__." id=".$localobject->id." pays_code=".$this->pays_code." result=".$result."\n";
+        print __METHOD__." id=".$localobject->id." country_code=".$this->country_code." result=".$result."\n";
         $this->assertTrue(true, $result);
 
         $localobject->info($localobject->id);

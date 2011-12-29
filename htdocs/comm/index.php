@@ -151,14 +151,14 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("ProposalsDraft").'</td></tr>';
+
 		$total = 0;
 		$num = $db->num_rows($resql);
 		if ($num > 0)
 		{
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("ProposalsDraft").'</td></tr>';
-
 			$i = 0;
 			$var=true;
 			while ($i < $num)
@@ -186,8 +186,9 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				$var=!$var;
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
-			print "</table><br>";
 		}
+		print "</table><br>";
+		
 		$db->free($resql);
 	}
 	else
@@ -217,14 +218,14 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
+
 		$total = 0;
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
-
 			$i = 0;
 			$var = true;
 			while ($i < $num)
@@ -248,8 +249,10 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 				$var=!$var;
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
-			print "</table><br>";
 		}
+		print "</table><br>";
+		
+		$db->free($resql);
 	}
 }
 

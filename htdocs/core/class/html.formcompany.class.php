@@ -190,32 +190,34 @@ class FormCompany
 	}
 
 	/**
-	 *    \brief      Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
-	 *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entree pour
-	 *                un code donnee mais dans ce cas, le champ pays differe).
-	 *                Ainsi les liens avec les departements se font sur un departement independemment de son nom.
-	 *    \param      selected        	Code state preselected
-	 *    \param      pays_code       	0=list for all countries, otherwise country code or country rowid to show
-	 *    \param      departement_id	Id of department
+	 *    Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
+	 *    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
+	 *    La cle de la liste est le code (il peut y avoir plusieurs entree pour
+	 *    un code donnee mais dans ce cas, le champ pays differe).
+	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
+	 * 
+	 *    @param	string	$selected        	Code state preselected
+	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    int		$departement_id		Id of department
+	 * 	  @return	void
 	 */
-	function select_state($selected='',$pays_code=0, $htmlname='departement_id')
+	function select_state($selected='',$country_codeid=0, $htmlname='departement_id')
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog("FormCompany::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
+		dol_syslog("FormCompany::select_departement selected=$selected, country_codeid=$country_codeid",LOG_DEBUG);
 
 		$langs->load("dict");
 
 		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
-		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
+		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as country_code FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
-		if ($pays_code && is_numeric($pays_code)) $sql .= " AND p.rowid = '".$pays_code."'";
-		if ($pays_code && ! is_numeric($pays_code)) $sql .= " AND p.code = '".$pays_code."'";
+		if ($country_codeid && is_numeric($country_codeid)) $sql .= " AND p.rowid = '".$country_codeid."'";
+		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND p.code = '".$country_codeid."'";
 		$sql .= " ORDER BY p.code, d.code_departement";
 
 		dol_syslog("FormCompany::select_departement sql=".$sql);
@@ -223,10 +225,10 @@ class FormCompany
 		if ($result)
 		{
 			if (!empty($htmlname)) $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
-			if ($pays_code) $out.= '<option value="0">&nbsp;</option>';
+			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			dol_syslog("FormCompany::select_departement num=$num",LOG_DEBUG);
+			dol_syslog("FormCompany::select_departement num=".$num,LOG_DEBUG);
 			if ($num)
 			{
 				$pays='';
@@ -241,7 +243,7 @@ class FormCompany
 						if (! $pays || $pays != $obj->libelle_pays)
 						{
 							// Affiche la rupture si on est en mode liste multipays
-							if (! $pays_code && $obj->code_pays)
+							if (! $country_codeid && $obj->country_code)
 							{
 								$out.= '<option value="-1" disabled="disabled">----- '.$obj->libelle_pays." -----</option>\n";
 								$pays=$obj->libelle_pays;
@@ -288,7 +290,7 @@ class FormCompany
 		global $conf,$langs;
 		$langs->load("dict");
 
-		$sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.code as pays_code, p.libelle as libelle_pays FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
+		$sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.code as country_code, p.libelle as country FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
 		$sql .= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1 ORDER BY pays_code, libelle ASC";
 
 		dol_syslog("Form::select_region sql=".$sql);
@@ -308,13 +310,13 @@ class FormCompany
 						print '<option value="0">&nbsp;</option>';
 					}
 					else {
-						if ($pays == '' || $pays != $obj->libelle_pays)
+						if ($pays == '' || $pays != $obj->country)
 						{
 							// Show break
-							$key=$langs->trans("Country".strtoupper($obj->pays_code));
-							$valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$obj->pays_code." - ".$key:$obj->libelle_pays;
+							$key=$langs->trans("Country".strtoupper($obj->country_code));
+							$valuetoshow=($key != "Country".strtoupper($obj->country_code))?$obj->country_code." - ".$key:$obj->country;
 							print '<option value="-1" disabled="disabled">----- '.$valuetoshow." -----</option>\n";
-							$pays=$obj->libelle_pays;
+							$pays=$obj->country;
 						}
 
 						if ($selected > 0 && $selected == $obj->code)

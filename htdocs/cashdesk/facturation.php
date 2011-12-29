@@ -128,7 +128,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 $sql.= ", ".MAIN_DB_PREFIX."c_pays as p";
 $sql.= " WHERE t.fk_pays = p.rowid";
 $sql.= " AND t.active = 1";
-$sql.= " AND p.code = '".$mysoc->pays_code."'";
+$sql.= " AND p.code = '".$mysoc->country_code."'";
 //print $request;
 
 $res = $db->query($sql);

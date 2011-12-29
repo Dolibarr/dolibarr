@@ -116,14 +116,14 @@ if ($socid > 0)
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	$img=picto_from_langcode($societe->pays_code);
-	if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->pays,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$societe->pays;
+	$img=picto_from_langcode($societe->country_code);
+	if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->country,$langs->trans("CountryIsInEEC"),1,0);
+	else print ($img?$img.' ':'').$societe->country;
 	print '</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
-	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->tel,$societe->country_code,0,$societe->id,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->fax,$societe->country_code).'</td></tr>';
 
 	// EMail
 	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';

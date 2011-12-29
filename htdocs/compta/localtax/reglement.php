@@ -40,7 +40,7 @@ llxHeader();
 
 $localtax_static = new localtax($db);
 
-print_fiche_titre($langs->transcountry("LT2Payments",$mysoc->pays_code));
+print_fiche_titre($langs->transcountry("LT2Payments",$mysoc->country_code));
 
 $sql = "SELECT rowid, amount, label, f.datev as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f ";

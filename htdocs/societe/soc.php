@@ -206,7 +206,7 @@ if (empty($reshook))
 					if($object->id_prof_exists($i,$_POST["$slabel"],$object->id))
 					{
 						$langs->load("errors");
-                		$error++; $errors[] = $langs->transcountry('ProfId'.$i ,$object->pays_code)." ".$langs->trans("ErrorProdIdAlreadyExist",$_POST["$slabel"]);
+                		$error++; $errors[] = $langs->transcountry('ProfId'.$i ,$object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist",$_POST["$slabel"]);
                 		$action = ($action=='add'?'create':'edit');
 					}
 				}
@@ -595,7 +595,7 @@ else
         $object->pays_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         if ($object->country_id)
         {
-            $tmparray=getCountry($object->country_id,'all',$db,$langs,0);
+            $tmparray=getCountry($object->country_id,'all');
             $object->pays_code=$tmparray['code'];
             $object->pays=$tmparray['label'];
             $object->country_code=$tmparray['code'];
@@ -798,40 +798,40 @@ else
 
         print '<tr>';
         // IdProf1 (SIREN for France)
-        $idprof=$langs->transcountry('ProfId1',$object->pays_code);
+        $idprof=$langs->transcountry('ProfId1',$object->country_code);
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            print $formcompany->get_input_id_prof(1,'idprof1',$object->idprof1,$object->pays_code);
+            print $formcompany->get_input_id_prof(1,'idprof1',$object->idprof1,$object->country_code);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
         // IdProf2 (SIRET for France)
-        $idprof=$langs->transcountry('ProfId2',$object->pays_code);
+        $idprof=$langs->transcountry('ProfId2',$object->country_code);
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            print $formcompany->get_input_id_prof(2,'idprof2',$object->idprof2,$object->pays_code);
+            print $formcompany->get_input_id_prof(2,'idprof2',$object->idprof2,$object->country_code);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
         print '</tr>';
         print '<tr>';
         // IdProf3 (APE for France)
-        $idprof=$langs->transcountry('ProfId3',$object->pays_code);
+        $idprof=$langs->transcountry('ProfId3',$object->country_code);
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            print $formcompany->get_input_id_prof(3,'idprof3',$object->idprof3,$object->pays_code);
+            print $formcompany->get_input_id_prof(3,'idprof3',$object->idprof3,$object->country_code);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
         // IdProf4 (NU for France)
-        $idprof=$langs->transcountry('ProfId4',$object->pays_code);
+        $idprof=$langs->transcountry('ProfId4',$object->country_code);
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            print $formcompany->get_input_id_prof(4,'idprof4',$object->idprof4,$object->pays_code);
+            print $formcompany->get_input_id_prof(4,'idprof4',$object->idprof4,$object->country_code);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -887,7 +887,7 @@ else
         print '<td colspan="3">';
         if ($object->country_id)
         {
-            $formcompany->select_forme_juridique($object->forme_juridique_code,$object->pays_code);
+            $formcompany->select_forme_juridique($object->forme_juridique_code,$object->country_code);
         }
         else
         {
@@ -900,7 +900,7 @@ else
 
         // Local Taxes
         // TODO add specific function by country
-        if($mysoc->pays_code=='ES')
+        if($mysoc->country_code=='ES')
         {
             if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
@@ -1356,7 +1356,7 @@ else
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
-            $formcompany->select_forme_juridique($object->forme_juridique_code,$object->pays_code);
+            $formcompany->select_forme_juridique($object->forme_juridique_code,$object->country_code);
             print '</td></tr>';
 
             // Capital
@@ -1541,7 +1541,7 @@ else
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" nowrap="nowrap">';
-        $img=picto_from_langcode($object->pays_code);
+        $img=picto_from_langcode($object->country_code);
         if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->pays,$langs->trans("CountryIsInEEC"),1,0);
         else print ($img?$img.' ':'').$object->pays;
         print '</td></tr>';
@@ -1549,8 +1549,8 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
-        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->pays_code,0,$object->id,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->pays_code,0,$object->id,'AC_FAX').'</td></tr>';
+        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
+        print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
         // EMail
         print '<tr><td>'.$langs->trans('EMail').'</td><td width="25%">';
@@ -1563,7 +1563,7 @@ else
         print '</td></tr>';
 
         // ProfId1 (SIREN for France)
-        $profid=$langs->transcountry('ProfId1',$object->pays_code);
+        $profid=$langs->transcountry('ProfId1',$object->country_code);
         if ($profid!='-')
         {
             print '<tr><td>'.$profid.'</td><td>';
@@ -1577,7 +1577,7 @@ else
         }
         else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
         // ProfId2 (SIRET for France)
-        $profid=$langs->transcountry('ProfId2',$object->pays_code);
+        $profid=$langs->transcountry('ProfId2',$object->country_code);
         if ($profid!='-')
         {
             print '<td>'.$profid.'</td><td>';
@@ -1592,7 +1592,7 @@ else
         else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
         // ProfId3 (APE for France)
-        $profid=$langs->transcountry('ProfId3',$object->pays_code);
+        $profid=$langs->transcountry('ProfId3',$object->country_code);
         if ($profid!='-')
         {
             print '<tr><td>'.$profid.'</td><td>';
@@ -1606,7 +1606,7 @@ else
         }
         else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
         // ProfId4 (NU for France)
-        $profid=$langs->transcountry('ProfId4',$object->pays_code);
+        $profid=$langs->transcountry('ProfId4',$object->country_code);
         if ($profid!='-')
         {
             print '<td>'.$profid.'</td><td>';
@@ -1668,7 +1668,7 @@ else
 
         // Local Taxes
         // TODO add specific function by country
-        if($mysoc->pays_code=='ES')
+        if($mysoc->country_code=='ES')
         {
             if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {

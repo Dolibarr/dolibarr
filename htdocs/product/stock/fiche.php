@@ -62,10 +62,10 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->address     = $_POST["address"];
 	$object->cp          = $_POST["zipcode"];
 	$object->ville       = $_POST["town"];
-	$object->pays_id     = $_POST["pays_id"];
+	$object->pays_id     = $_POST["country_id"];
 	$object->zip         = $_POST["zipcode"];
 	$object->town        = $_POST["town"];
-	$object->country_id  = $_POST["pays_id"];
+	$object->country_id  = $_POST["country_id"];
 
 	if ($object->libelle) {
 		$id = $object->create($user);
@@ -115,10 +115,10 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		$object->address     = $_POST["address"];
 		$object->cp          = $_POST["zipcode"];
 		$object->ville       = $_POST["town"];
-		$object->pays_id     = $_POST["pays_id"];
+		$object->pays_id     = $_POST["country_id"];
 		$object->zip         = $_POST["zipcode"];
 		$object->town        = $_POST["town"];
-		$object->country_id  = $_POST["pays_id"];
+		$object->country_id  = $_POST["country_id"];
 
 		if ( $object->update($_POST["id"], $user) > 0)
 		{
@@ -193,14 +193,14 @@ if ($action == 'create')
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
+	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
 	print '</td><td>'.$langs->trans('Town').'</td><td>';
-	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectpays_id','departement_id'));
+	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
 	print '</td></tr>';
 
 	// Country
 	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-	$form->select_pays($object->country_id?$object->country_id:$mysoc->country_code,'pays_id');
+	print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	print '</td></tr>';
 
@@ -512,14 +512,14 @@ else
 
 			// Zip / Town
 			print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
+			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
 			print '</td><td>'.$langs->trans('Town').'</td><td>';
-			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectpays_id','departement_id'));
+			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
 			print '</td></tr>';
 
 			// Country
 			print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-			$form->select_pays($object->country_id?$object->country_id:$mysoc->country_code,'pays_id');
+			print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 			print '</td></tr>';
 
@@ -542,9 +542,7 @@ else
 }
 
 
-
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>

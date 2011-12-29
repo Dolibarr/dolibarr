@@ -228,8 +228,8 @@ if ($action == 'add')
         }
         $adh->photo       = $_POST["photo"];
         $adh->note        = $_POST["note"];
-        $adh->country_id  = $_POST["pays_id"];
-        $adh->pays_id     = $_POST["pays_id"];    // TODO deprecated
+        $adh->country_id  = $_POST["country_id"];
+        $adh->pays_id     = $_POST["country_id"];    // TODO deprecated
         $adh->state_id    = $_POST["state_id"];
         $adh->typeid      = $_POST["type"];
         $adh->note        = $_POST["comment"];

@@ -104,7 +104,7 @@ $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 // Affiche en-tete du rapport
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
-    $nom=$langs->transcountry("LT2ReportByCustomersInInputOutputMode",$mysoc->pays_code);
+    $nom=$langs->transcountry("LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $description=$langs->trans("RulesVATDue");
     if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
@@ -121,7 +121,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
-    $nom=$langs->transcountry("LT2ReportByCustomersInInputOutputMode",$mysoc->pays_code);
+    $nom=$langs->transcountry("LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $description=$langs->trans("RulesVATIn");
     if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
@@ -138,8 +138,8 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
-$vatcust=$langs->transcountry("LT2",$mysoc->pays_code);
-$vatsup=$langs->transcountry("LT2",$mysoc->pays_code);
+$vatcust=$langs->transcountry("LT2",$mysoc->country_code);
+$vatsup=$langs->transcountry("LT2",$mysoc->country_code);
 
 // IRPF that the customer has retained me
 
@@ -147,7 +147,7 @@ print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
 print '<td align="left">'.$langs->trans("Customer")."</td>";
-print "<td>".$langs->transcountry("ProfId1",$mysoc->pays_code)."</td>";
+print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
 print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
 print "<td align=\"right\">".$vatcust."</td>";
 print "</tr>\n";
@@ -214,7 +214,7 @@ else
 print "<tr class=\"liste_titre\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
 print '<td align="left">'.$langs->trans("Supplier")."</td>";
-print "<td>".$langs->transcountry("ProfId1",$mysoc->pays_code)."</td>";
+print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
 print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
 print "<td align=\"right\">".$vatsup."</td>";
 print "</tr>\n";

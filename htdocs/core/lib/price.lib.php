@@ -116,7 +116,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[12] = price2num(($pu * (1 + ( $txlocaltax2 / 100))) - $pu, 'MT');
 
 		//If Country is Spain, localtax2 (IRPF) will be subtracted
-		if ($mysoc->pays_code=='ES')
+		if ($mysoc->country_code=='ES')
 		{
 			$result[8] = $result[8] - $result[15];
 			$result[2] = $result[2] - $result[10];

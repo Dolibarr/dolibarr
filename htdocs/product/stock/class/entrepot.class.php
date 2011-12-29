@@ -136,10 +136,9 @@ class Entrepot extends CommonObject
 		$this->address=$this->db->escape(trim($this->address));
 		$this->cp=trim($this->cp);
 		$this->ville=$this->db->escape(trim($this->ville));
-		$this->pays_id=trim($this->pays_id?$this->pays_id:0);
 		$this->zip=trim($this->cp);
 		$this->town=$this->db->escape(trim($this->ville));
-		$this->country_id=trim($this->pays_id?$this->pays_id:0);
+		$this->country_id=($this->country_id > 0 ? $this->country_id:$this->pays_id);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET label = '" . $this->libelle ."'";

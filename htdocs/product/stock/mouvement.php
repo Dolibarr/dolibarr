@@ -186,7 +186,7 @@ if ($resql)
 
 		// Country
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-		$img=picto_from_langcode($entrepot->pays_code);
+		$img=picto_from_langcode($entrepot->country_code);
 		print ($img?$img.' ':'');
 		print $entrepot->pays;
 		print '</td></tr>';

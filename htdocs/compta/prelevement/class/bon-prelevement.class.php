@@ -1178,7 +1178,7 @@ class BonPrelevement extends CommonObject
         $this->file = fopen($this->filename,"w");
 
         //Build file for Spain
-        if ($mysoc->pays_code=='ES')
+        if ($mysoc->country_code=='ES')
         {
             if ($conf->esaeb->enabled)
             {
@@ -1270,7 +1270,7 @@ class BonPrelevement extends CommonObject
         }
 
         //Build file for France
-        elseif ($mysoc->pays_code=='FR')
+        elseif ($mysoc->country_code=='FR')
         {
             /*
              * En-tete Emetteur
