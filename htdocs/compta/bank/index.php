@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/compta/bank/index.php
  *       \ingroup    banque
- *       \brief      Page accueil banque
+ *       \brief      Home page of bank module
  */
 
 require("./pre.inc.php");
@@ -43,7 +43,8 @@ $statut=isset($_GET["statut"])?$_GET["statut"]:'';
  * View
  */
 
-llxHeader();
+$help_url='EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+llxHeader('',$langs->trans('AccountsArea'),$help_url);
 
 $link='';
 if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
@@ -88,12 +89,14 @@ print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
 
-$total = 0;
+$total = 0; $found = 0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
 	if ($type == 1)
 	{
+	    $found++;
+
 		$acc = new Account($db);
 		$acc->fetch($key);
 
@@ -122,12 +125,12 @@ foreach ($accounts as $key=>$type)
 		$total += $solde;
 	}
 }
-
+if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
 print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
 
-print '<tr><td colspan="5">&nbsp;</td></tr>';
+//print '<tr><td colspan="5">&nbsp;</td></tr>';
 
 
 /*
@@ -140,13 +143,15 @@ print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
 
-$total = 0;
+$total = 0; $found = 0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
 	if ($type == 2)
 	{
-		$acc = new Account($db);
+	    $found++;
+
+	    $acc = new Account($db);
 		$acc->fetch($key);
 
 		$var = !$var;
@@ -166,13 +171,13 @@ foreach ($accounts as $key=>$type)
 		$total += $solde;
 	}
 }
-
+if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
 print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
 
 
-print '<tr><td colspan="5">&nbsp;</td></tr>';
+//print '<tr><td colspan="5">&nbsp;</td></tr>';
 
 
 /*
@@ -187,13 +192,15 @@ print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
 
-$total = 0;
+$total = 0; $found = 0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
 	if ($type == 0)
 	{
-		$acc = new Account($db);
+	    $found++;
+
+	    $acc = new Account($db);
 		$acc->fetch($key);
 
 		$var = !$var;
@@ -221,7 +228,7 @@ foreach ($accounts as $key=>$type)
 		$total += $solde;
 	}
 }
-
+if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
 print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
@@ -241,7 +248,7 @@ if ($user->rights->banque->configurer) {
 print "</div>";
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
