@@ -108,7 +108,7 @@ Autres modules:
 
 Miscellanous:
 - Application multi-utilisateurs avec différents niveaux de permissions par module.
-- Plusieurs gestionnaires de menus (possibilité de différencier les menus pour les utilisateurs internes ou externes comme les clients ou fournisseurs)
+- Plusieurs gestionnaires de menus (possibilité de différencier les menus pour les utilisateurs internes ou externes comme les clients ou fournisseurs).
 - Application simple à utiliser.
 - Plusieurs thèmes visuels.
 - Code simple et facilement personnalisable.
