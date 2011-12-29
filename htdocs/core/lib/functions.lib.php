@@ -149,7 +149,7 @@ if (! function_exists('json_decode'))
  * Function to return value of a static property when class
  * name is dynamically defined (not hard coded).
  * This is because $myclass::$myvar works from PHP 5.3.0+ only
- * 
+ *
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
  * @return 	string				Return value of static property.
@@ -159,7 +159,7 @@ function getStaticMember($class, $member)
 	if (is_object($class)) $class = get_class($class);
 	$classObj = new ReflectionClass($class);
 	$result = null;
-	
+
 	foreach($classObj->getStaticProperties() as $prop => $value)
 	{
 		if($prop == $member)
@@ -168,7 +168,7 @@ function getStaticMember($class, $member)
 			break;
 		}
 	}
-	
+
 	return $result;
 }
 
@@ -1722,7 +1722,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *	@param      string		$alt           		Text of alt on image
  *	@param      string		$picto         		Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
  *							 		       		For external modules use imagename@mymodule to search into directory "img" of module.
- *  @param      string		$options       		Add more attribute on img tag
+ *  @param      string		$options       		Add more attribute on img tag (ie: class="datecallink")
  *  @param      int			$pictoisfullpath    If 1, image path is a full path
  *	@return     string      					Return img tag
  *  @see        #img_picto, #img_picto_common

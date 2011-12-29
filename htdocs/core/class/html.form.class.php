@@ -3236,7 +3236,7 @@ class Form
                     {
                         $retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
                         $base=DOL_URL_ROOT.'/core/';
-                        $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');">'.img_object($langs->trans("SelectDate"),'calendarday').'</button>';
+                        $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');">'.img_object($langs->trans("SelectDate"),'calendarday','class="datecallink"').'</button>';
                     }
 
                     $retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
@@ -3401,7 +3401,7 @@ class Form
             // If reset_scripts is not empty, print the button with the reset_scripts in OnClick
             if ($reset_scripts)
             {
-                $retstring.='<button class="dpInvisibleButtons" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Now" onClick="'.$reset_scripts.'">';
+                $retstring.='<button class="dpInvisibleButtons datenowlink" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Now" onClick="'.$reset_scripts.'">';
                 $retstring.=$langs->trans("Now");
                 $retstring.='</button> ';
             }
@@ -3547,7 +3547,7 @@ class Form
             $yes="1";
             $no="0";
         }
-        
+
         $disabled = ($disabled ? ' disabled="disabled"' : '');
 
         $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
