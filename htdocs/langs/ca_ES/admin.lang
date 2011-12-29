@@ -1109,8 +1109,10 @@ LDAPDescGroups=Aquesta pàgina permet definir el nom dels atributs de l'arbre LD
 LDAPDescMembers=Aquesta pàgina permet definir el nom dels atributs de l'arbre LDAP per a cada informació dels membres del mòdul Associacions Dolibarr.
 LDAPDescValues=Els valors d'exemples s'adapten a <b>OpenLDAP</b> amb els schemas carregats: <b>core.schema, cosine.schema, inetorgperson.schema </b>). Si vostè utilitza els a valors suggerits i OpenLDAP, modifiqui el seu fitxer de configuració LDAP <b>slapd.conf </b> per a tenir tots aquests schemas actius.
 ForANonAnonymousAccess=Per un accés autentificat
-##### Products #####
+##### Products/Services #####
 ProductSetup=Configuració del mòdul Productes
+ServiceSetup=Configuració del mòdul Serveis
+ProductServiceSetup= Configuración dels mòduls Productos i Serveis
 NumberOfProductShowInSelect=Nº de productes màx a les llistes (0= sense límit)
 ConfirmDeleteProductLineAbility=Confirmació d'eliminació d'una línia de producte en els formularis
 ModifyProductDescAbility=Personalització de les descripcions dels productes en els formularis
