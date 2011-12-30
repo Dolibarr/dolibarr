@@ -85,9 +85,9 @@ class Menubase
         $this->menu_handler=trim($this->menu_handler);
         $this->module=trim($this->module);
         $this->type=trim($this->type);
-        $this->mainmenu=trim($this->mainmenu);
+        $this->mainmenu=trim($this->mainmenu);        // If type='top'
         $this->leftmenu=trim($this->leftmenu);
-        $this->fk_menu=trim($this->fk_menu);
+        $this->fk_menu=trim($this->fk_menu);          // If -1, fk_mainmenu and fk_leftmenu must be defined
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
         $this->position=trim($this->position);
@@ -146,8 +146,8 @@ class Menubase
         $sql.= " '".$conf->entity."',";
         $sql.= " '".$this->module."',";
         $sql.= " '".$this->type."',";
-        $sql.= " '".$this->mainmenu."',";
-        $sql.= " '".$this->leftmenu."',";
+        $sql.= " ".($this->mainmenu?"'".$this->mainmenu."'":"''").",";    // Can't be null
+        $sql.= " ".($this->leftmenu?"'".$this->leftmenu."'":"null").",";
         $sql.= " '".$this->fk_menu."',";
         $sql.= " ".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
         $sql.= " ".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
@@ -392,22 +392,22 @@ class Menubase
         for ($x = 0; $x < $num; $x++)
         {
             //si un element a pour pere : $pere
-            if ($tab[$x][1] == $pere)
+            if ($tab[$x]['fk_menu'] == $pere)
             {
-                if ($tab[$x][7])
+                if ($tab[$x]['enabled'])
                 {
                     $leftmenuConstraint = true;
-                    if ($tab[$x][6])
+                    if ($tab[$x]['leftmenu'])
                     {
-                        $leftmenuConstraint = verifCond($tab[$x][6]);
+                        $leftmenuConstraint = verifCond($tab[$x]['leftmenu']);
                     }
 
                     if ($leftmenuConstraint)
                     {
                         //print 'name='.$tab[$x][3].' pere='.$pere." ".$tab[$x][6];
 
-                        $this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5], $tab[$x][8]);
-                        $this->recur($tab, $tab[$x][0], $rang +1, $leftmenu);
+                        $this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x]['url'])) ? $tab[$x]['url'] : $tab[$x]['url'], $tab[$x]['titre'], $rang -1, $tab[$x]['perms'], $tab[$x]['atarget'], $tab[$x]['mainmenu']);
+                        $this->recur($tab, $tab[$x]['rowid'], $rang +1, $leftmenu);
                     }
                 }
             }
@@ -443,20 +443,20 @@ class Menubase
         {
             foreach($tabMenu as $val)
             {
-                if ($val[9]=='top')
+                if ($val['type']=='top')
                 {
+                    $newTabMenu[$i]['rowid']=$val['rowid'];
+                    $newTabMenu[$i]['fk_menu']=$val['fk_menu'];
+                    $newTabMenu[$i]['url']=$val['url'];
+                    $newTabMenu[$i]['titre']=$val['titre'];
+                    $newTabMenu[$i]['right']=$val['perms'];
+                    $newTabMenu[$i]['atarget']=$val['atarget'];
+                    $newTabMenu[$i]['leftmenu']=$val['leftmenu'];
+                    $newTabMenu[$i]['enabled']=$val['enabled'];
+                    $newTabMenu[$i]['mainmenu']=$val['mainmenu'];
+                    $newTabMenu[$i]['type']=$val['type'];
+                    $newTabMenu[$i]['lang']=$val['langs'];
 
-                    $newTabMenu[$i]['rowid']=$val[0];
-                    $newTabMenu[$i]['fk_menu']=$val[1];
-                    $newTabMenu[$i]['url']=$val[2];
-                    $newTabMenu[$i]['titre']=$val[3];
-                    $newTabMenu[$i]['right']=$val[4];
-                    $newTabMenu[$i]['atarget']=$val[5];
-                    $newTabMenu[$i]['leftmenu']=$val[6];
-                    $newTabMenu[$i]['enabled']=$val[7];
-                    $newTabMenu[$i]['mainmenu']=$val[8];
-                    $newTabMenu[$i]['type']=$val[9];
-                    $newTabMenu[$i]['lang']=$val[10];
                     $i++;
                 }
             }
@@ -469,7 +469,7 @@ class Menubase
      * 	Load entries found in database in a menu array.
      *
      * 	@param	array	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
-     * 	@param	string	$mainmenu       Value for mainmenu that defines top menu of left menu
+     * 	@param	string	$mainmenu       Value for mainmenu that defines top menu of left menu to load
      * 	@param 	string	$myleftmenu     Value that defines leftmenu
      * 	@param  int		$type_user		0=Internal,1=External,2=All
      * 	@param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
@@ -483,9 +483,10 @@ class Menubase
 
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
+        // We initialize newmenu to return with first already found menu entries
         $this->newmenu = $newmenu;
 
-        // Load datas into tabMenu
+        // Load datas from database into $tabMenu
         if (count($tabMenu) == 0)
         {
             $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
@@ -498,9 +499,9 @@ class Menubase
         {
             foreach($tabMenu as $val)
             {
-                if ($val[9] == 'top' && $val[8] == $mainmenu)
+                if ($val['type'] == 'top' && $val['mainmenu'] == $mainmenu)    // 9 is type, 8 is mainmenu
                 {
-                    $menutopid=$val[0];
+                    $menutopid=$val['rowid'];
                     break;
                 }
             }
@@ -514,12 +515,12 @@ class Menubase
 
 
     /**
-     *  Load entries found in database in a menu array.
+     *  Load entries found in database to $tabMenu.
      *
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      0=Internal,1=External,2=All
      *  @param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
-     *  @param  array	&$tabMenu       If array with menu entries already load, we put this array here (in most cases, it's empty)
+     *  @param  array	&$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
     function menuLoad($myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -530,7 +531,7 @@ class Menubase
         $menutopid=0;
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
-        $sql = "SELECT m.rowid, m.type, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
+        $sql = "SELECT m.rowid, m.type, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
         $sql.= " WHERE m.entity = ".$conf->entity;
         $sql.= " AND m.menu_handler in('".$menu_handler."','all')";
@@ -539,7 +540,7 @@ class Menubase
         // If type_user == 2, no test required
         $sql.= " ORDER BY m.position, m.rowid";
 
-        dol_syslog("Menubase::menuLeftCharger sql=".$sql);
+        dol_syslog(get_class($this)."::menuLeftCharger sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -614,6 +615,28 @@ class Menubase
                 $tabMenu[$b][8] = $menu['mainmenu'];
                 $tabMenu[$b][9] = $menu['type'];
                 $tabMenu[$b][10] = $menu['langs'];
+
+                // We complete tabMenu
+                $tabMenu[$b]['rowid']       = $menu['rowid'];
+                $tabMenu[$b]['fk_menu']     = $menu['fk_menu'];
+                $tabMenu[$b]['url']         = $menu['url'];
+                if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b]['url']))
+                {
+                    if (preg_match('/\?/',$tabMenu[$b]['url'])) $tabMenu[$b]['url'].='&amp;idmenu='.$menu['rowid'];
+                    else $tabMenu[$b]['url'].='?idmenu='.$menu['rowid'];
+                }
+                $tabMenu[$b]['titre']       = $chaine;
+                $tabMenu[$b]['target']      = $menu['target'];
+                $tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
+                if (! isset($tabMenu[$b]['perms'])) $tabMenu[$b]['perms'] = $perms;
+                else $tabMenu[$b]['perms']  = ($tabMenu[$b]['perms'] && $perms);
+                if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
+                else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);
+                $tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
+                $tabMenu[$b]['type']        = $menu['type'];
+                $tabMenu[$b]['langs']       = $menu['langs'];
+                $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
+                $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
 
                 $b++;
                 $a++;

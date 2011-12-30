@@ -37,13 +37,13 @@ class modMyModule extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modMyModule($DB)
+	function modMyModule($db)
 	{
         global $langs,$conf;
 
-        $this->db = $DB;
+        $this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -184,7 +184,7 @@ class modMyModule extends DolibarrModules
 		// $r++;
 		//
 		// Example to declare a Left Menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry) or use 'fk_mainmenu=xxx,fk_leftmenu=yyy'
 		//							'type'=>'left',			// This is a Left menu entry
 		//							'titre'=>'MyModule left menu 1',
 		//							'mainmenu'=>'mymodule',
