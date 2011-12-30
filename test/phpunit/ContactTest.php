@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/SocieteTest.php
+ *      \file       test/phpunit/ContactTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 $langs->load("dict");
 
 if (empty($user->id))
@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SocieteTest extends PHPUnit_Framework_TestCase
+class ContactTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,9 +57,9 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return SocieteTest
+	 * @return ContactTest
 	 */
-	function SocieteTest()
+	function ContactTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -77,8 +77,6 @@ class SocieteTest extends PHPUnit_Framework_TestCase
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
-
-        if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') { print __METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(); }
 
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
@@ -113,7 +111,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testSocieteCreate()
+    public function testContactCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -121,7 +119,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Contact($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -132,10 +130,10 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testSocieteCreate
+     * @depends	testContactCreate
      * The depends says test is run only if previous is ok
      */
-    public function testSocieteFetch($id)
+    public function testContactFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -143,23 +141,19 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Contact($this->savdb);
     	$result=$localobject->fetch($id);
         print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-
-        $result=$localobject->verify();
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertEquals($result, 0);
 
     	return $localobject;
     }
 
     /**
-     * @depends	testSocieteFetch
+     * @depends	testContactFetch
      * The depends says test is run only if previous is ok
      */
-    public function testSocieteUpdate($localobject)
+    public function testContactUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -169,20 +163,20 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
 		$localobject->note='New note after update';
 		//$localobject->note_public='New note public after update';
-		$localobject->name='New name';
+		$localobject->lastname='New name';
+		$localobject->firstname='New firstname';
 		$localobject->address='New address';
 		$localobject->zip='New zip';
 		$localobject->town='New town';
-		$localobject->country_id=2;
-		$localobject->status=0;
-		$localobject->tel='New tel';
+    	$localobject->country_id=2;
+    	$localobject->status=0;
+		$localobject->phone_pro='New tel pro';
+		$localobject->phone_perso='New tel perso';
+		$localobject->phone_mobile='New tel mobile';
 		$localobject->fax='New fax';
 		$localobject->email='newemail@newemail.com';
-		$localobject->url='New url';
-		$localobject->idprof1='new idprof1';
-		$localobject->idprof2='new idprof2';
-		$localobject->idprof3='new idprof3';
-		$localobject->idprof4='new idprof4';
+		$localobject->jabberid='New im id';
+		$localobject->default_lang='es_ES';
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
@@ -193,37 +187,37 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     	//print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	//$this->assertLessThan($result, 0);
 
-		$newobject=new Societe($this->savdb);
+		$newobject=new Contact($this->savdb);
     	$result=$newobject->fetch($localobject->id);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
     	$this->assertEquals($localobject->note, $newobject->note);
     	//$this->assertEquals($localobject->note_public, $newobject->note_public);
-    	$this->assertEquals($localobject->name, $newobject->name);
+    	$this->assertEquals($localobject->lastname, $newobject->lastname);
+    	$this->assertEquals($localobject->firstname, $newobject->firstname);
     	$this->assertEquals($localobject->address, $newobject->address);
     	$this->assertEquals($localobject->zip, $newobject->zip);
     	$this->assertEquals($localobject->town, $newobject->town);
     	$this->assertEquals($localobject->country_id, $newobject->country_id);
     	$this->assertEquals('BE', $newobject->country_code);
     	$this->assertEquals($localobject->status, $newobject->status);
-    	$this->assertEquals($localobject->tel, $newobject->tel);
+    	$this->assertEquals($localobject->phone_pro, $newobject->phone_pro);
+    	$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
+    	$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
     	$this->assertEquals($localobject->fax, $newobject->fax);
     	$this->assertEquals($localobject->email, $newobject->email);
-    	$this->assertEquals($localobject->url, $newobject->url);
-    	$this->assertEquals($localobject->idprof1, $newobject->idprof1);
-    	$this->assertEquals($localobject->idprof2, $newobject->idprof2);
-    	$this->assertEquals($localobject->idprof3, $newobject->idprof3);
-    	$this->assertEquals($localobject->idprof4, $newobject->idprof4);
+    	$this->assertEquals($localobject->jabberid, $newobject->jabberid);
+    	$this->assertEquals($localobject->default_lang, $newobject->default_lang);
 
     	return $localobject;
     }
 
     /**
-     * @depends	testSocieteUpdate
+     * @depends	testContactUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testSocieteOther($localobject)
+    public function testContactOther($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -231,17 +225,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-        $result=$localobject->set_as_client();
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-
-        $result=$localobject->set_price_level(1,$user);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-
-        $result=$localobject->set_remise_client(10,'Gift',$user);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		//$localobject->fetch($localobject->id);
 
         $result=$localobject->getNomUrl(1);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -251,10 +235,6 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertContains("New address\nNew zip New town\nBelgium", $result);
 
-        $result=$localobject->isInEEC();
-        print __METHOD__." id=".$localobject->id." country_code=".$this->country_code." result=".$result."\n";
-        $this->assertTrue(true, $result);
-
         $localobject->info($localobject->id);
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
         $this->assertNotEquals($localobject->date_creation, '');
@@ -263,10 +243,10 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testSocieteOther
+     * @depends	testContactOther
      * The depends says test is run only if previous is ok
      */
-    public function testSocieteDelete($id)
+    public function testContactDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -274,7 +254,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Societe($this->savdb);
+		$localobject=new Contact($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$result=$localobject->delete($id);
@@ -285,29 +265,8 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     *
      */
-    /*public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Adherent($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }*/
-
-
-    /**
-     */
-    public function testSocieteStatic()
+    public function testContactStatic()
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -315,7 +274,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new Societe($db);
+        $localobject=new Contact($db);
 
 
         return;

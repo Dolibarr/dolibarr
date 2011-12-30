@@ -158,10 +158,52 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		$localobject->login='newlogin';
+		$localobject->societe='New company';
 		$localobject->note='New note after update';
-    	$result=$localobject->update($user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+		//$localobject->note_public='New note public after update';
+		$localobject->lastname='New name';
+		$localobject->firstname='New firstname';
+		$localobject->address='New address';
+		$localobject->zip='New zip';
+		$localobject->town='New town';
+		$localobject->country_id=2;
+		$localobject->statut=0;
+		$localobject->phone='New tel pro';
+		$localobject->phone_perso='New tel perso';
+		$localobject->phone_mobile='New tel mobile';
+		$localobject->email='newemail@newemail.com';
+		$result=$localobject->update($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		$result=$localobject->update_note($localobject->note);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		//$result=$localobject->update_note_public($localobject->note_public);
+		//print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		//$this->assertLessThan($result, 0);
+
+		$newobject=new Adherent($this->savdb);
+		$result=$newobject->fetch($localobject->id);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+
+		$this->assertEquals($localobject->login, $newobject->login);
+		$this->assertEquals($localobject->societe, $newobject->societe);
+		$this->assertEquals($localobject->note, $newobject->note);
+		//$this->assertEquals($localobject->note_public, $newobject->note_public);
+		$this->assertEquals($localobject->lastname, $newobject->lastname);
+		$this->assertEquals($localobject->firstname, $newobject->firstname);
+		$this->assertEquals($localobject->address, $newobject->address);
+		$this->assertEquals($localobject->zip, $newobject->zip);
+		$this->assertEquals($localobject->town, $newobject->town);
+		$this->assertEquals($localobject->country_id, $newobject->country_id);
+		$this->assertEquals('BE', $newobject->country_code);
+		$this->assertEquals($localobject->statut, $newobject->statut);
+		$this->assertEquals($localobject->phone, $newobject->phone);
+		$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
+		$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
+		$this->assertEquals($localobject->email, $newobject->email);
 
     	return $localobject;
     }
