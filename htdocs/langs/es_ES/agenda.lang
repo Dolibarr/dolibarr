@@ -39,6 +39,7 @@ InvoiceBackToDraftInDolibarr=Factura %s devuelta a borrador
 OrderValidatedInDolibarr=Pedido %s validado
 OrderApprovedInDolibarr=Pedido %s aprobado
 OrderBackToDraftInDolibarr=Pedido %s devuelto a borrador
+OrderCanceledInDolibarr=Pedido %s anulado
 InterventionValidatedInDolibarr=Intervención %s validada
 ProposalSentByEMail=Presupuesto %s enviado por e-mail
 OrderSentByEMail=Pedido de cliente %s enviado por e-mail

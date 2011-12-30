@@ -222,6 +222,7 @@ DiscountNone=Cap
 Supplier=Proveïdor
 CompanyList=Llistat d'empreses
 AddContact=Crear contacte/adreça
+EditContact=Editar contacte/adreça
 Contact=Contacte
 NoContactDefined=Cap contacte definit per a aquest tercer
 DefaultContact=Contacte per defecte
