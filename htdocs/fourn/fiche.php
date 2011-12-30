@@ -229,7 +229,7 @@ if ($object->fetch($id))
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$object->id.'">'.$langs->trans("All").' ('.$object->NbProduct().')';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$object->id.'">'.$langs->trans("All").' ('.$object->nbOfProductRefs().')';
 		print '</a></td></tr></table>';
 	}
 
