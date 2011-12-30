@@ -222,6 +222,7 @@ DiscountNone=Ninguna
 Supplier=Proveedor
 CompanyList=Listado de empresas
 AddContact=Crear contacto/dirección
+EditContact=Editar contacto/dirección
 Contact=Contacto
 NoContactDefined=Ningun contacto definido para este tercero
 DefaultContact=Contacto por defecto
