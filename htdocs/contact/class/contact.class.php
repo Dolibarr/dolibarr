@@ -134,7 +134,7 @@ class Contact extends CommonObject
         $sql.= " ".$conf->entity;
 		$sql.= ")";
 
-		dol_syslog("Contact::create sql=".$sql);
+		dol_syslog(get_class($this)."::create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -178,7 +178,7 @@ class Contact extends CommonObject
             else
             {
                 $this->db->rollback();
-                dol_syslog("Contact::create ".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
                 return -2;
             }
 		}
@@ -187,7 +187,7 @@ class Contact extends CommonObject
 			$this->error=$this->db->lasterror();
 
 			$this->db->rollback();
-			dol_syslog("Contact::create ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -208,7 +208,7 @@ class Contact extends CommonObject
 
 		$this->id = $id;
 
-		// Nettoyage parametres
+		// Clean parameters
 		$this->name=trim($this->name);
 		$this->firstname=trim($this->firstname);
 
@@ -217,8 +217,11 @@ class Contact extends CommonObject
 		$this->phone_perso=trim($this->phone_perso);
 		$this->phone_mobile=trim($this->phone_mobile);
 		$this->fax=trim($this->fax);
+		$this->zip=($this->zip?$this->zip:$this->cp);
+		$this->town=($this->town?$this->town:$this->ville);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
-
+		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
+		
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
@@ -231,7 +234,7 @@ class Contact extends CommonObject
 		$sql .= ", cp='".$this->db->escape($this->zip)."'";
 		$sql .= ", ville='".$this->db->escape($this->town)."'";
 		$sql .= ", fk_pays=".($this->country_id>0?$this->country_id:'NULL');
-		$sql .= ", fk_departement=".($this->fk_departement>0?$this->fk_departement:'NULL');
+		$sql .= ", fk_departement=".($this->state_id>0?$this->state_id:'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
@@ -245,7 +248,7 @@ class Contact extends CommonObject
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
 		$sql .= " WHERE rowid=".$id;
 
-		dol_syslog("Contact::update sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::update sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -267,7 +270,7 @@ class Contact extends CommonObject
 			else
 			{
 				$this->error=join(',',$this->errors);
-				dol_syslog("Contact::update Error ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
@@ -275,7 +278,7 @@ class Contact extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror().' sql='.$sql;
-			dol_syslog("Contact::update Error ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
             $this->db->rollback();
 			return -1;
 		}
@@ -390,7 +393,7 @@ class Contact extends CommonObject
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid=".$id;
 		//print "update_perso: ".$this->birthday.'-'.$this->db->idate($this->birthday);
-		dol_syslog("Contact::update_perso this->birthday=".$this->birthday." - sql=".$sql);
+		dol_syslog(get_class($this)."::update_perso this->birthday=".$this->birthday." - sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -468,7 +471,7 @@ class Contact extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		$sql.= " WHERE c.rowid = ". $id;
 
-		dol_syslog("Contact::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -547,7 +550,7 @@ class Contact extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dol_syslog("Contact::fetch ".$this->error, LOG_ERR);
+					dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -572,7 +575,7 @@ class Contact extends CommonObject
 					else
 					{
 						$this->error=$this->db->error();
-						dol_syslog("Contact::fetch ".$this->error, LOG_ERR);
+						dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 						return -1;
 					}
 				}
@@ -588,7 +591,7 @@ class Contact extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Contact::fetch ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -612,7 +615,7 @@ class Contact extends CommonObject
 		$sql.=" AND fk_socpeople = ". $this->id;
 		$sql.=" GROUP BY tc.element";
 
-		dol_syslog("Contact::load_ref_elements sql=".$sql);
+		dol_syslog(get_class($this)."::load_ref_elements sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -633,7 +636,7 @@ class Contact extends CommonObject
 		else
 		{
 			$this->error=$this->db->error()." - ".$sql;
-			dol_syslog("Contact::load_ref_elements Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::load_ref_elements Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -664,7 +667,7 @@ class Contact extends CommonObject
 			$sql.= " WHERE ec.fk_socpeople=".$this->id;
 			$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 			$sql.= " AND tc.source='external'";
-			dol_syslog("Contact::delete sql=".$sql);
+			dol_syslog(get_class($this)."::delete sql=".$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -677,7 +680,7 @@ class Contact extends CommonObject
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 					$sqldel.=" WHERE rowid = ".$obj->rowid;
-					dol_syslog("Contact::delete sql=".$sqldel);
+					dol_syslog(get_class($this)."::delete sql=".$sqldel);
 					$result = $this->db->query($sqldel);
 					if (! $result)
 					{
@@ -699,7 +702,7 @@ class Contact extends CommonObject
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
-			dol_syslog("Contact::delete sql=".$sql);
+			dol_syslog(get_class($this)."::delete sql=".$sql);
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
@@ -1035,16 +1038,14 @@ class Contact extends CommonObject
 		// Initialise parameters
 		$this->id=0;
 		$this->specimen=1;
-		$this->nom = 'DOLIBARR';
-		$this->name = $this->nom;
-		$this->prenom = 'SPECIMEN';
-		$this->firstname = $this->prenom;
+		$this->name = 'DOLIBARR';
+		$this->firstname = 'SPECIMEN';
 		$this->address = '61 jump street';
-		$this->cp = '75000';
-		$this->ville = 'Paris';
-		$this->fk_pays = 1;
-		$this->pays_code = 'FR';
-		$this->pays = 'France';
+		$this->zip = '75000';
+		$this->town = 'Paris';
+		$this->country_id = 1;
+		$this->country_code = 'FR';
+		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];

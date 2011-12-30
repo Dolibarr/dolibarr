@@ -234,11 +234,9 @@ if (empty($reshook))
                         $contact->firstname			= $object->firstname;
                         $contact->address			= $object->address;
                         $contact->zip				= $object->zip;
-                        $contact->cp				= $object->cp;		// TODO obsolete
                         $contact->town				= $object->town;
-                        $contact->ville				= $object->ville;	// TODO obsolete
-                        $contact->fk_departement	= $object->state_id;
-                        $contact->fk_pays			= $object->country_id;
+                        $contact->state_id      	= $object->state_id;
+                        $contact->country_id		= $object->country_id;
                         $contact->socid				= $object->id;	// fk_soc
                         $contact->status			= 1;
                         $contact->email				= $object->email;
