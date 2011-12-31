@@ -1129,6 +1129,13 @@ abstract class DolibarrModules
                     $menu->fk_leftmenu=$reg[2];
                     $foundparent=1;
                 }
+                elseif (preg_match('/fk_mainmenu=(.*)/',$fk_parent,$reg))
+                {
+                    $menu->fk_menu=-1;
+                    $menu->fk_mainmenu=$reg[1];
+                    $menu->fk_leftmenu='';
+                    $foundparent=1;
+                }
                 if (! $foundparent)
                 {
                     $this->error="ErrorBadDefinitionOfMenuArrayInModuleDescriptor (bad value for key fk_menu)";

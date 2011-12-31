@@ -35,22 +35,23 @@ For users:
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
-- New: Add webservice to get or create a product, service.
-- New: Add webservice to get a user.
-- New: Add hooks to change way of showing/editing lines into dictionnaries.
+- New: Can add a left menu (first level) into an existing top menu.
 - New: Add webservice to get or create a product or service.
+- New: Add webservice to get a user.
+- New: Add more "hooks" (like hooks to change way of showing/editing lines into dictionnaries).
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
-- New: Add trigger ACTION_DELETE and ACTION_MODIFY
+- New: Add trigger ACTION_DELETE and ACTION_MODIFY.
 - New: Can define different requests according to database type into migration files.
+- New: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
+- Qual: Add a lot of more PHPUnit tests.
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.
 - Qual: Cleaned a lot of dead code.
-- Qual: Add more "hooks".
-- Qual: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
 - Qual: More OOP (usage of "abstract", "static", ...), uniformize constructors.
-- Qual: task #216 : Move /lib in /core/lib directory
-- Qual: task #217 : Move core files in core directory (login, menus, triggers, boxes, modules)
+- Qual: Fix a lot of checkstyle warnings.
+- Qual: task #216 : Move /lib into /core/lib directory
+- Qual: task #217 : Move core files into core directory (login, menus, triggers, boxes, modules)
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
