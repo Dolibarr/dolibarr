@@ -32,6 +32,7 @@ For users:
 - New: Add box for last expired services.
 - New: Reduce seriously size of packages.
 - New: Can define country code for import.
+- New: When invoice was generated from order, order date is visible on PDF, after order ref.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
