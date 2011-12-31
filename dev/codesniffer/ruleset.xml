@@ -205,7 +205,10 @@
 
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
 
-	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace" />
+	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace">
+        <severity>0</severity>
+    </rule>
+	
     <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
         <severity>0</severity>
     </rule>

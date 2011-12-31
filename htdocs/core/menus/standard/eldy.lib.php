@@ -1256,23 +1256,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add("/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->run);
                 $newmenu->add("/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->run);
             }
-
-            if (! empty($conf->domain->enabled))
-            {
-                $langs->load("domains");
-                $newmenu->add("/domain/index.php?leftmenu=export",$langs->trans("DomainNames"),0, $user->rights->domain->read);
-                $newmenu->add("/domain/fiche.php?action=create&leftmenu=export",$langs->trans("NewDomain"),1, $user->rights->domain->create);
-                $newmenu->add("/domain/index.php?leftmenu=export",$langs->trans("List"),1, $user->rights->domain->read);
-            }
-
-            if (! empty($conf->submiteverywhere->enabled))
-            {
-                $langs->load("submiteverywhere@submiteverywhere");
-
-                $newmenu->add("/submiteverywhere/index.php?leftmenu=submiteverywhere", $langs->trans("News"), 0, $user->rights->submiteverywhere->read);
-                $newmenu->add("/submiteverywhere/fiche.php?leftmenu=submiteverywhere&amp;action=create", $langs->trans("NewNews"), 1, $user->rights->submiteverywhere->create);
-                $newmenu->add("/submiteverywhere/liste.php?leftmenu=submiteverywhere", $langs->trans("List"), 1, $user->rights->submiteverywhere->read);
-            }
         }
 
         /*

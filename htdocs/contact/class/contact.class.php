@@ -53,6 +53,9 @@ class Contact extends CommonObject
 	var $fk_departement;		// Id of department
 	var $departement_code;		// Code of department
 	var $departement;			// Label of department
+	var $state_id;	        	// Id of department
+	var $state_code;		    // Code of department
+	var $state;			        // Label of department
 
 	var $fk_pays;				// Id of country
 	var $pays_code;				// Code of country
@@ -68,6 +71,7 @@ class Contact extends CommonObject
 	var $email;
 	var $birthday;
 	var $default_lang;
+    var $note;                  // Private note
 
 	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
 	var $ref_contrat;           // Nb de reference contrat pour lequel il est contact
@@ -83,11 +87,11 @@ class Contact extends CommonObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Contact($DB)
+	function Contact($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 	}
 
 	/**
@@ -106,9 +110,9 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->name=trim($this->name);
+		$this->lastname=$this->lastname?trim($this->lastname):$this->name;
         $this->firstname=trim($this->firstname);
-        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name=ucwords($this->name);
+        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
         if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
@@ -209,9 +213,8 @@ class Contact extends CommonObject
 		$this->id = $id;
 
 		// Clean parameters
-		$this->name=trim($this->name);
+		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->name);
 		$this->firstname=trim($this->firstname);
-
 		$this->email=trim($this->email);
 		$this->phone_pro=trim($this->phone_pro);
 		$this->phone_perso=trim($this->phone_perso);
@@ -221,14 +224,14 @@ class Contact extends CommonObject
 		$this->town=($this->town?$this->town:$this->ville);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
-		
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		if ($this->socid == -1) $sql .= " fk_soc=null,";
 		$sql .= "  civilite='".$this->db->escape($this->civilite_id)."'";
-		$sql .= ", name='".$this->db->escape($this->name)."'";
+		$sql .= ", name='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
 		$sql .= ", cp='".$this->db->escape($this->zip)."'";
@@ -252,6 +255,11 @@ class Contact extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+		    unset($this->country_code);
+		    unset($this->country);
+		    unset($this->state_code);
+		    unset($this->state);
+
 			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
@@ -453,14 +461,14 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name, c.firstname,";
-		$sql.= " c.address, c.cp, c.ville,";
-		$sql.= " c.fk_pays,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name as lastname, c.firstname,";
+		$sql.= " c.address, c.cp as zip, c.ville as town,";
+		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
 		$sql.= " c.priv, c.note, c.default_lang, c.canvas,";
-		$sql.= " p.libelle as pays, p.code as pays_code,";
+		$sql.= " p.libelle as country, p.code as country_code,";
 		$sql.= " d.nom as departement, d.code_departement as departement_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity, s.default_lang as socdefault_lang";
@@ -482,31 +490,32 @@ class Contact extends CommonObject
 				$this->id				= $obj->rowid;
 				$this->ref				= $obj->rowid;
 				$this->civilite_id		= $obj->civilite_id;
-				$this->name				= $obj->name;
+				$this->lastname			= $obj->lastname;
+				$this->name				= $obj->lastname;       // TODO deprecated
 				$this->firstname		= $obj->firstname;
-				$this->nom				= $obj->name;			// TODO deprecated
+				$this->nom				= $obj->lastname;		// TODO deprecated
 				$this->prenom			= $obj->firstname;		// TODO deprecated
 
 				$this->address			= $obj->address;
 				$this->adresse			= $obj->address; 		// TODO deprecated
-				$this->cp				= $obj->cp;				// TODO deprecated
-				$this->zip				= $obj->cp;
-				$this->ville			= $obj->ville;			// TODO deprecated
-				$this->town				= $obj->ville;
+				$this->cp				= $obj->zip;			// TODO deprecated
+				$this->zip				= $obj->zip;
+				$this->ville			= $obj->town;			// TODO deprecated
+				$this->town				= $obj->town;
 
 				$this->fk_departement	= $obj->fk_departement;
 				$this->state_id			= $obj->fk_departement;
 				$this->departement_code = $obj->departement_code;	// TODO deprecated
 				$this->state_code       = $obj->departement_code;
-				$this->departement		= $obj->departement;	// TODO deprecated
+				$this->departement		= $obj->departement;	    // TODO deprecated
 				$this->state			= $obj->departement;
 
-				$this->fk_pays			= $obj->fk_pays;
-				$this->country_id 		= $obj->fk_pays;
-				$this->pays_code		= $obj->fk_pays?$obj->pays_code:'';
-				$this->country_code		= $obj->fk_pays?$obj->pays_code:'';
-				$this->pays				= ($obj->fk_pays > 0)?$langs->transnoentitiesnoconv("Country".$obj->pays_code):'';
-				$this->country			= ($obj->fk_pays > 0)?$langs->transnoentitiesnoconv("Country".$obj->pays_code):'';
+				$this->fk_pays			= $obj->country_id;
+				$this->country_id 		= $obj->country_id;
+				$this->pays_code		= $obj->country_id?$obj->country_code:'';
+				$this->country_code		= $obj->country_id?$obj->country_code:'';
+				$this->pays				= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
+				$this->country			= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
 
 				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
@@ -850,7 +859,15 @@ class Contact extends CommonObject
     function getFullAddress($withcountry=0,$sep="\n")
     {
         $ret='';
-        if (in_array($this->country,array('us')))
+        if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
+        {
+            require_once(DOL_DOCUMENT_ROOT ."/core/lib/company.lib.php");
+            $tmparray=getCountry($this->country_id,'all');
+            $this->country_code=$tmparray['code'];
+            $this->country     =$tmparray['label'];
+        }
+
+        if (in_array($this->country_code,array('US')))
         {
 	        $ret.=($this->address?$this->address.$sep:'');
 	        $ret.=trim($this->zip.' '.$this->town);
@@ -878,13 +895,6 @@ class Contact extends CommonObject
 
 		$code=$this->civilite_id;
         return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : '';
-		/*if (empty($ret))
-		{
-		    $ret=$code;
-		    $langs->getLabelFromKey($this->db,$reg[1],'c_civilite','code','civilite');
-		     //$ret=dol_getIdFromCode($this->db,$code,'c_civilite',
-		}
-		return $ret;*/
 	}
 
 

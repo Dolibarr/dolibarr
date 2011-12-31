@@ -377,7 +377,7 @@ class Societe extends CommonObject
 
 		$error=0;
 
-        dol_syslog("Societe::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
+        dol_syslog(get_class($this)."::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
         // For triggers
         if ($call_trigger)
@@ -401,7 +401,7 @@ class Societe extends CommonObject
         $this->ville=$this->town;       // TODO obsolete
         $this->state_id=trim($this->state_id);
         $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->pays_id;
-        $this->pays_id      = $this->country_id; 
+        $this->pays_id      = $this->country_id;
         $this->tel			= trim($this->tel);
         $this->fax			= trim($this->fax);
         $this->tel			= preg_replace("/\s/","",$this->tel);
@@ -456,7 +456,7 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            dol_syslog("Societe::Update verify ok");
+            dol_syslog(get_class($this)."::Update verify ok");
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
             $sql.= " SET nom = '" . $this->db->escape($this->name) ."'"; // Champ obligatoire
@@ -534,6 +534,11 @@ class Societe extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
+                unset($this->country_code);
+                unset($this->country);
+                unset($this->state_code);
+                unset($this->state);
+
                 // Si le fournisseur est classe on l'ajoute
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
@@ -698,7 +703,7 @@ class Societe extends CommonObject
                 $this->country_code = $obj->country_id?$obj->country_code:'';
                 $this->pays 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):''; // TODO obsolete
                 $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
-                
+
                 $this->state_id     = $obj->fk_departement;
                 $this->state_code   = $obj->departement_code;
                 $this->state        = $obj->departement;
@@ -1426,24 +1431,33 @@ class Societe extends CommonObject
 
     /**
      * 	Return full address of third party
-     * 	@param		withcountry		1=Add country into address string
-     *  @param		sep				Separator to use to build string
-     *	@return		string			Full address string
+     *
+     * 	@param		int			$withcountry		1=Add country into address string
+     *  @param		string		$sep				Separator to use to build string
+     *	@return		string							Full address string
      */
     function getFullAddress($withcountry=0,$sep="\n")
     {
         $ret='';
-        if (in_array($this->country,array('us')))
+        if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
         {
-            $ret.=($this->address?$this->address.$sep:'');
-            $ret.=trim($this->zip.' '.$this->town);
-            if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
+            require_once(DOL_DOCUMENT_ROOT ."/core/lib/company.lib.php");
+            $tmparray=getCountry($this->country_id,'all');
+            $this->country_code=$tmparray['code'];
+            $this->country     =$tmparray['label'];
+        }
+
+        if (in_array($this->country_code,array('US')))
+        {
+	        $ret.=($this->address?$this->address.$sep:'');
+	        $ret.=trim($this->zip.' '.$this->town);
+	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
         }
         else
         {
-            $ret.=($this->address?$this->address.$sep:'');
-            $ret.=trim($this->zip.' '.$this->town);
-            if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
+	        $ret.=($this->address?$this->address.$sep:'');
+	        $ret.=trim($this->zip.' '.$this->town);
+	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
         }
         return trim($ret);
     }
@@ -1913,10 +1927,11 @@ class Societe extends CommonObject
 
 	/**
      *    Verify if a profid exists into database for others thirds
-     *    @param      	idprof		1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *    @param		value		value of profid
-     *    @param		socid		id of society if update
-     *    @return     	boolean		true if exists, false if not
+     *
+     *    @param	int		$idprof		1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *    @param	string	$value		Value of profid
+     *    @param	int		$socid		Id of society if update
+     *    @return   boolean				true if exists, false if not
      */
     function id_prof_exists($idprof,$value,$socid=0)
     {

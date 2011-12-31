@@ -27,7 +27,8 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
+$langs->load("dict");
 
 if (empty($user->id))
 {
@@ -145,10 +146,6 @@ class ContactTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-        $result=$localobject->verify();
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertEquals($result, 0);
-
     	return $localobject;
     }
 
@@ -166,20 +163,20 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
 		$localobject->note='New note after update';
 		//$localobject->note_public='New note public after update';
-		$localobject->name='New name';
+		$localobject->lastname='New name';
+		$localobject->firstname='New firstname';
 		$localobject->address='New address';
 		$localobject->zip='New zip';
 		$localobject->town='New town';
     	$localobject->country_id=2;
-		$localobject->status=0;
-		$localobject->tel='New tel';
+    	$localobject->status=0;
+		$localobject->phone_pro='New tel pro';
+		$localobject->phone_perso='New tel perso';
+		$localobject->phone_mobile='New tel mobile';
 		$localobject->fax='New fax';
-		$localobject->email='New email';
-		$localobject->url='New url';
-		$localobject->idprof1='new idprof1';
-		$localobject->idprof2='new idprof2';
-		$localobject->idprof3='new idprof3';
-		$localobject->idprof4='new idprof4';
+		$localobject->email='newemail@newemail.com';
+		$localobject->jabberid='New im id';
+		$localobject->default_lang='es_ES';
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
@@ -197,20 +194,21 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
     	$this->assertEquals($localobject->note, $newobject->note);
     	//$this->assertEquals($localobject->note_public, $newobject->note_public);
-    	$this->assertEquals($localobject->name, $newobject->name);
+    	$this->assertEquals($localobject->lastname, $newobject->lastname);
+    	$this->assertEquals($localobject->firstname, $newobject->firstname);
     	$this->assertEquals($localobject->address, $newobject->address);
     	$this->assertEquals($localobject->zip, $newobject->zip);
     	$this->assertEquals($localobject->town, $newobject->town);
     	$this->assertEquals($localobject->country_id, $newobject->country_id);
+    	$this->assertEquals('BE', $newobject->country_code);
     	$this->assertEquals($localobject->status, $newobject->status);
-    	$this->assertEquals($localobject->tel, $newobject->tel);
+    	$this->assertEquals($localobject->phone_pro, $newobject->phone_pro);
+    	$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
+    	$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
     	$this->assertEquals($localobject->fax, $newobject->fax);
     	$this->assertEquals($localobject->email, $newobject->email);
-    	$this->assertEquals($localobject->url, $newobject->url);
-    	$this->assertEquals($localobject->idprof1, $newobject->idprof1);
-    	$this->assertEquals($localobject->idprof2, $newobject->idprof2);
-    	$this->assertEquals($localobject->idprof3, $newobject->idprof3);
-    	$this->assertEquals($localobject->idprof4, $newobject->idprof4);
+    	$this->assertEquals($localobject->jabberid, $newobject->jabberid);
+    	$this->assertEquals($localobject->default_lang, $newobject->default_lang);
 
     	return $localobject;
     }
@@ -227,30 +225,16 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-/*        $result=$localobject->set_as_client();
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-
-        $result=$localobject->set_price_level(1,$user);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-
-        $result=$localobject->set_remise_client(10,'Gift',$user);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		//$localobject->fetch($localobject->id);
 
         $result=$localobject->getNomUrl(1);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertNotEquals($result, '');
 
-        $result=$localobject->getFullAddress();
+        $result=$localobject->getFullAddress(1);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town", $result);
+        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
 
-        $result=$localobject->isInEEC();
-        print __METHOD__." id=".$localobject->id." country_code=".$this->country_code." result=".$result."\n";
-        $this->assertTrue(true, $result);
-*/
         $localobject->info($localobject->id);
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
         $this->assertNotEquals($localobject->date_creation, '');

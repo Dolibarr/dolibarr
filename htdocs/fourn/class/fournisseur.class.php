@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>	
+ * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,19 +82,21 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 * FIXME This returns number of prices, not number of products. Is it what we want ?
+	 * Returns number of ref prices (not number of products).
+	 *
+	 * @return	int		Nb of ref prices, or <0 if error
 	 */
-	function NbProduct()
+	function nbOfProductRefs()
 	{
-		$sql = "SELECT count(pfp.rowid)";
+		$sql = "SELECT count(pfp.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql .= " WHERE pfp.fk_soc = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
-			$row = $this->db->fetch_row($resql);
-			return $row[0];
+			$obj = $this->db->fetch_object($resql);
+			return $obj->nb;
 		}
 		else
 		{
@@ -104,7 +106,7 @@ class Fournisseur extends Societe
 
     /**
      *  Create the order from an existing
-     *  
+     *
      *  @param      User	$user            	Creator user
      *  @param      int		$idc				Id source
      *  @param		int		$comclientid		Id thirdparty

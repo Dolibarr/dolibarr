@@ -123,7 +123,7 @@ if ($conf->stock->enabled)
 </table>
 <br>
 
-<center><span class="bouton_login"><input name="sbmtConnexion" type="submit" value=<?php echo $langs->trans("Connection"); ?> /></span></center>
+<div align="center"><span class="bouton_login"><input name="sbmtConnexion" type="submit" value=<?php echo $langs->trans("Connection"); ?> /></span></div>
 
 </form>
 </fieldset>

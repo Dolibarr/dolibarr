@@ -80,7 +80,7 @@ class Adherent extends CommonObject
 
     var $morphy;
     var $public;
-    var $note;				// Note
+    var $note;				// Private note
     var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
     var $photo;
 
@@ -115,11 +115,11 @@ class Adherent extends CommonObject
     /**
 	 *	Constructor
 	 *
-	 *	@param 		DoliDB		$DB		Database handler
+	 *	@param 		DoliDB		$db		Database handler
      */
-    function Adherent($DB)
+    function Adherent($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
         $this->statut = -1;
         // l'adherent n'est pas public par defaut
         $this->public = 0;
@@ -388,8 +388,15 @@ class Adherent extends CommonObject
         dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass.", email=".$this->email);
 
         // Clean parameters
-        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->nom=ucwords(trim($this->nom));
-        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->prenom=ucwords(trim($this->prenom));
+		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->nom);
+		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->prenom);
+		$this->address=($this->address?$this->address:$this->adresse);
+		$this->zip=($this->zip?$this->zip:$this->cp);
+		$this->town=($this->town?$this->town:$this->ville);
+		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
+		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
+		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
+        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
 
         // Check parameters
         if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -403,16 +410,16 @@ class Adherent extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
         $sql.= " civilite = ".($this->civilite_id?"'".$this->civilite_id."'":"null");
-        $sql.= ", prenom = ".($this->prenom?"'".$this->db->escape($this->prenom)."'":"null");
-        $sql.= ", nom="     .($this->nom?"'".$this->db->escape($this->nom)."'":"null");
+        $sql.= ", prenom = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
+        $sql.= ", nom="     .($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
         $sql.= ", login="   .($this->login?"'".$this->db->escape($this->login)."'":"null");
         $sql.= ", societe=" .($this->societe?"'".$this->db->escape($this->societe)."'":"null");
         $sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
-        $sql.= ", adresse=" .($this->adresse?"'".$this->db->escape($this->adresse)."'":"null");
-        $sql.= ", cp="      .($this->cp?"'".$this->db->escape($this->cp)."'":"null");
-        $sql.= ", ville="   .($this->ville?"'".$this->db->escape($this->ville)."'":"null");
+        $sql.= ", adresse=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
+        $sql.= ", cp="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
+        $sql.= ", ville="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
         $sql.= ", pays="          .($this->country_id>0?"'".$this->country_id."'":"null");
-        $sql.= ", fk_departement=".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
+        $sql.= ", fk_departement=".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ", email='".$this->email."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso="  .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
@@ -433,7 +440,12 @@ class Adherent extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $nbrowsaffected+=$this->db->affected_rows($resql);
+		    unset($this->country_code);
+		    unset($this->country);
+		    unset($this->state_code);
+		    unset($this->state);
+
+		    $nbrowsaffected+=$this->db->affected_rows($resql);
 
             // Actions on extra fields (by external module)
             include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -953,7 +965,7 @@ class Adherent extends CommonObject
     {
         global $conf, $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as name, d.societe, d.fk_soc, d.statut, d.public, d.adresse as address, d.cp as zip, d.ville as town, d.note,";
+        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.adresse as address, d.cp as zip, d.ville as town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy,";
         $sql.= " d.datec as datec,";
@@ -990,8 +1002,8 @@ class Adherent extends CommonObject
                 $this->civilite_id    = $obj->civilite;
                 $this->prenom         = $obj->firstname;
                 $this->firstname      = $obj->firstname;
-                $this->nom            = $obj->name;
-                $this->lastname       = $obj->name;
+                $this->nom            = $obj->lastname;
+                $this->lastname       = $obj->lastname;
                 $this->login          = $obj->login;
                 $this->pass           = $obj->pass;
                 $this->societe        = $obj->societe;
@@ -1755,14 +1767,23 @@ class Adherent extends CommonObject
     /**
      * 	Return full address of member
      *
-     * 	@param	int		$withcountry		1=Add country into address string
-     *  @param	string	$sep				Separator to use to build string
-     *	@return	string						Full address string
+     *
+     * 	@param		int			$withcountry		1=Add country into address string
+     *  @param		string		$sep				Separator to use to build string
+     *	@return		string							Full address string
      */
     function getFullAddress($withcountry=0,$sep="\n")
     {
         $ret='';
-        if (in_array($this->country,array('us')))
+        if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
+        {
+            require_once(DOL_DOCUMENT_ROOT ."/core/lib/company.lib.php");
+            $tmparray=getCountry($this->country_id,'all');
+            $this->country_code=$tmparray['code'];
+            $this->country     =$tmparray['label'];
+        }
+
+        if (in_array($this->country_code,array('US')))
         {
 	        $ret.=($this->address?$this->address.$sep:'');
 	        $ret.=trim($this->zip.' '.$this->town);
@@ -1776,7 +1797,6 @@ class Adherent extends CommonObject
         }
         return trim($ret);
     }
-
 
     /**
      *    	Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)

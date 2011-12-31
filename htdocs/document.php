@@ -535,14 +535,18 @@ else						// Open and return file
 
 	// Les drois sont ok et fichier trouve, on l'envoie
 
+    header('Content-Description: File Transfer');
 	if ($encoding)   header('Content-Encoding: '.$encoding);
 	if ($type)       header('Content-Type: '.$type.(preg_match('/text/',$type)?'; charset="'.$conf->file->character_set_client:''));
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 	else header('Content-Disposition: inline; filename="'.$filename.'"');
-
+	header('Content-Length: ' . dol_filesize($original_file));
 	// Ajout directives pour resoudre bug IE
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
+
+	//ob_clean();
+	//flush();
 
 	readfile($original_file_osencoded);
 }
