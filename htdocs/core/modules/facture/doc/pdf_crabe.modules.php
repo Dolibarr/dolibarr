@@ -1044,16 +1044,16 @@ class pdf_crabe extends ModelePDFFactures
 		if ($object->type == 2) $title=$outputlangs->transnoentities("InvoiceAvoir");
 		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
-		$pdf->MultiCell(100, 4, $title, '', 'R');
+		$pdf->MultiCell(100, 3, $title, '', 'R');
 
-		$pdf->SetFont('','B', $default_font_size + 2);
+		$pdf->SetFont('','B', $default_font_size);
 
-		$posy+=6;
+		$posy+=5;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
-		$posy+=2;
+		$posy+=1;
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		$objectidnext=$object->getIdReplacingInvoice('validated');
@@ -1109,6 +1109,8 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
+		$posy+=2;
+
 		// Add list of linked orders and proposals
 		// TODO mutualiser
 	    $object->fetchObjectLinked();
@@ -1121,10 +1123,13 @@ class pdf_crabe extends ModelePDFFactures
 	    		$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
-	    			$posy+=4;
+	    			$posy+=3;
 	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->SetFont('','', $default_font_size - 1);
+	    			$pdf->SetFont('','', $default_font_size - 2);
 	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref), '', 'R');
+	    			$posy+=3;
+	    			$pdf->SetXY($posx,$posy);
+	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'R');
 	    		}
 			}
 			else if ($objecttype == 'commande')
@@ -1133,12 +1138,15 @@ class pdf_crabe extends ModelePDFFactures
 				$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
-	    			$posy+=4;
+	    			$posy+=3;
 	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->SetFont('','', $default_font_size - 1);
+	    			$pdf->SetFont('','', $default_font_size - 2);
 	    			$text=$objects[$i]->ref;
 	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
 	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+	    			$posy+=3;
+	    			$pdf->SetXY($posx,$posy);
+	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'R');
 	    		}
 	    	}
 		}

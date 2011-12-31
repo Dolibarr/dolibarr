@@ -2959,7 +2959,7 @@ else
                 $somethingshown=$object->showLinkedObjectBlock();
 
                 // Link for paypal payment
-                if ($conf->paypal->enabled)
+                if ($conf->paypal->enabled && $object->statut != 0)
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
                     print showPaypalPaymentUrl('invoice',$object->ref);

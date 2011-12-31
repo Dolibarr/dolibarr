@@ -581,8 +581,7 @@ class Menubase
                 //$objm = $this->db->fetch_object($resql);
                 $menu = $this->db->fetch_array($resql);
 
-                // Define $chaine
-                $chaine="";
+                // Define $title
                 $title = $langs->trans($menu['titre']);
                 if ($title == $menu['titre'])   // Translation not found
                 {
@@ -594,16 +593,12 @@ class Menubase
                     if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
                     {
                         $tab_titre = explode("/",$menu['titre']);
-                        $chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
+                        $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
                     }
                     else
                     {
-                        $chaine = $langs->trans($menu['titre']);
+                        $title = $langs->trans($menu['titre']);
                     }
-                }
-                else
-                {
-                    $chaine = $title;
                 }
 
                 // Define $right
@@ -620,30 +615,9 @@ class Menubase
                 {
                     $enabled = verifCond($menu['enabled']);
                     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_ACCORDION && preg_match('/^\$leftmenu/',$menu['enabled'])) $enabled=1;
-                    //print "verifCond chaine=".$chaine." rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
+                    //print "verifCond title=".$title." rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
                 }
 
-/*
-                // 0=rowid, 1=fk_menu, 2=url, 3=text, 4=perms, 5=target, 8=mainmenu
-                $tabMenu[$b][0] = $menu['rowid'];
-                $tabMenu[$b][1] = $menu['fk_menu'];
-                $tabMenu[$b][2] = $menu['url'];
-                if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b][2]))
-                {
-                    if (preg_match('/\?/',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
-                    else $tabMenu[$b][2].='?idmenu='.$menu['rowid'];
-                }
-                $tabMenu[$b][3] = $chaine;
-                $tabMenu[$b][5] = $menu['target'];
-                $tabMenu[$b][6] = $menu['leftmenu'];
-                if (! isset($tabMenu[$b][4])) $tabMenu[$b][4] = $perms;
-                else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
-                if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $enabled;
-                else $tabMenu[$b][7] = ($tabMenu[$b][7] && $enabled);
-                $tabMenu[$b][8] = $menu['mainmenu'];
-                $tabMenu[$b][9] = $menu['type'];
-                $tabMenu[$b][10] = $menu['langs'];
-*/
                 // We complete tabMenu
                 $tabMenu[$b]['rowid']       = $menu['rowid'];
                 $tabMenu[$b]['fk_menu']     = $menu['fk_menu'];
@@ -653,7 +627,7 @@ class Menubase
                     if (preg_match('/\?/',$tabMenu[$b]['url'])) $tabMenu[$b]['url'].='&amp;idmenu='.$menu['rowid'];
                     else $tabMenu[$b]['url'].='?idmenu='.$menu['rowid'];
                 }
-                $tabMenu[$b]['titre']       = $chaine;
+                $tabMenu[$b]['titre']       = $title;
                 $tabMenu[$b]['target']      = $menu['target'];
                 $tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
                 if (! isset($tabMenu[$b]['perms'])) $tabMenu[$b]['perms'] = $perms;

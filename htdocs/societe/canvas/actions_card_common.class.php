@@ -221,16 +221,16 @@ abstract class ActionsCardCommon
                     {
                         if ($this->object->particulier)
                         {
-                            dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
+                            dol_syslog(get_class($this)."::doActions This thirdparty is a personal people",LOG_DEBUG);
                             $contact=new Contact($this->db);
 
                             $contact->civilite_id   = $this->object->civilite_id;
                             $contact->name          = $this->object->name_bis;
                             $contact->firstname     = $this->object->firstname;
                             $contact->address       = $this->object->address;
-                            $contact->cp            = $this->object->cp;
-                            $contact->ville         = $this->object->ville;
-                            $contact->fk_pays       = $this->object->fk_pays;
+                            $contact->zip           = $this->object->zip;
+                            $contact->town          = $this->object->town;
+                            $contact->country_id    = $this->object->country_id;
                             $contact->socid         = $this->object->id;                // fk_soc
                             $contact->status        = 1;
                             $contact->email         = $this->object->email;
