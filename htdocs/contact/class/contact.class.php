@@ -229,7 +229,7 @@ class Contact extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
-		if ($this->socid == -1) $sql .= " fk_soc=null,";
+		else if ($this->socid == -1) $sql .= " fk_soc=null,";
 		$sql .= "  civilite='".$this->db->escape($this->civilite_id)."'";
 		$sql .= ", name='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
@@ -415,13 +415,13 @@ class Contact extends CommonObject
 			//check existing
 			$sql_check = "SELECT * FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
 			$result_check = $this->db->query($sql_check);
-			if (!$result_check or ($this->db->num_rows($result_check)<1))
+			if (! $result_check || ($this->db->num_rows($result_check)<1))
 			{
 				//insert
-				$sql = "INSERT into ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-				$sql.= "values (1,".$id.",".$user->id.")";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
+				$sql.= "VALUES (1,".$id.",".$user->id.")";
 				$result = $this->db->query($sql);
-				if (!$result)
+				if (! $result)
 				{
                     $error++;
                     $this->error=$this->db->lasterror();
@@ -434,8 +434,8 @@ class Contact extends CommonObject
 		}
 		else
 		{
-			$sql = "DELETE from ".MAIN_DB_PREFIX."user_alert ";
-			$sql.= "where type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
+			$sql.= "WHERE type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
