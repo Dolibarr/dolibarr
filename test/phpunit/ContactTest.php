@@ -179,10 +179,10 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$localobject->default_lang='es_ES';
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, 'Contact::update error');
 		$result=$localobject->update_note($localobject->note);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, 'Contact::update_note error');
 		//$result=$localobject->update_note_public($localobject->note_public);
     	//print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	//$this->assertLessThan($result, 0);
@@ -190,7 +190,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$newobject=new Contact($this->savdb);
     	$result=$newobject->fetch($localobject->id);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, 'Contact::fetch error');
 
     	$this->assertEquals($localobject->note, $newobject->note);
     	//$this->assertEquals($localobject->note_public, $newobject->note_public);
