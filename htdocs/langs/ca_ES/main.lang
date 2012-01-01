@@ -247,10 +247,12 @@ Bytes=Bytes
 KiloBytes=Kilobytes
 MegaBytes=Megabytes
 GigaBytes=Gigabytes
+TeraBytes=Terabytes
 b=b.
 Kb=Kb
 Mb=Mb
 Gb=Gb
+Tb=Tb
 Cut=Tallar
 Copy=Copiar
 Paste=Pegar
@@ -596,6 +598,8 @@ IM=Missatgeria instantània
 NewAttribute=Nou atribut
 AttributeCode=Codi atribut
 OptionalFieldsSetup=Configuració dels atributs opcionals
+URLPhoto=Url de la foto/logo
+SetLinkToThirdParty=Vincular a un altre tercer
 
 # Week day
 Monday=Dilluns
