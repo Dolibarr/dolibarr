@@ -496,6 +496,8 @@ abstract class ActionsCardCommon
             $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','departement_id'));
 
             // Country
+            $this->object->country_id = ($this->object->country_id ? $this->object->country_id : $mysoc->country_id);
+            $this->object->country_code = ($this->object->country_code ? $this->object->country_code : $mysoc->country_code);
             $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
