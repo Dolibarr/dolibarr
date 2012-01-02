@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Juanjo Menentr       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,12 @@ class modPropale extends DolibarrModules
 		$this->const[$r][3] = 'Duration of validity of business proposals';
 		$this->const[$r][4] = 0;
 		$r++;
+		
+		$this->const[$r][0] = "PROPALE_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/proposals";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
 
 		// Boxes
 		$this->boxes = array();
@@ -183,6 +190,12 @@ class modPropale extends DolibarrModules
 
 		// Remove permissions and default values
 		$this->remove();
+		
+		//ODT template
+		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/proposals';
+		create_exdir($dirodt);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/proposals/template_proposal.odt',$dirodt.'/template_proposal.odt',0,0);
 
 		$sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
