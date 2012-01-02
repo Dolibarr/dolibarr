@@ -170,7 +170,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$localobject->zip='New zip';
 		$localobject->town='New town';
     	$localobject->country_id=2;
-    	$localobject->status=0;
+    	//$localobject->status=0;
 		$localobject->phone_pro='New tel pro';
 		$localobject->phone_perso='New tel perso';
 		$localobject->phone_mobile='New tel mobile';
@@ -211,8 +211,8 @@ class ContactTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals($localobject->country_id, $newobject->country_id);
     	print __METHOD__." old=BE new=".$newobject->country_code."\n";
     	$this->assertEquals('BE', $newobject->country_code);
-    	print __METHOD__." old=".$localobject->status." new=".$newobject->status."\n";
-    	$this->assertEquals($localobject->status, $newobject->status);
+    	//print __METHOD__." old=".$localobject->status." new=".$newobject->status."\n";
+    	//$this->assertEquals($localobject->status, $newobject->status);
     	print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
     	$this->assertEquals($localobject->phone_pro, $newobject->phone_pro);
     	print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
