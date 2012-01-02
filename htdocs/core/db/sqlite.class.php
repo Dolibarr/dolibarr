@@ -242,12 +242,12 @@ class DoliDBSqlite
                     // TODO Add alter to set default value or null/not null if there is this in $reg[3]
                 }
 
-                // alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
+                // alter table add primary key (field1, field2 ...) -> We create a unique index instead as dynamic creation of primary key is not supported
     			// ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
     			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
     			{
     				$line = "-- ".$line." replaced by --\n";
-    				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
+    				$line.= "CREATE UNIQUE INDEX ".$reg[2]." ON ".$reg[1]."(".$reg[3];
     			}
 
                 // Translate order to drop foreign keys
