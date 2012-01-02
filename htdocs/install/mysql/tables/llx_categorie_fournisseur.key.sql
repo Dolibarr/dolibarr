@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2005 Brice Davoleau       <e1davole@iu-vannes.fr>
--- Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>		
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2007 Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,9 +16,9 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_categorie_product ADD PRIMARY KEY pk_categorie_product (fk_categorie, fk_product);
-ALTER TABLE llx_categorie_product ADD INDEX idx_categorie_product_fk_categorie (fk_categorie);
-ALTER TABLE llx_categorie_product ADD INDEX idx_categorie_product_fk_product (fk_product);
+ALTER TABLE llx_categorie_fournisseur ADD PRIMARY KEY pk_categorie_fournisseur (fk_categorie, fk_societe);
+ALTER TABLE llx_categorie_fournisseur ADD INDEX idx_categorie_fournisseur_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_fournisseur ADD INDEX idx_categorie_fournisseur_fk_societe (fk_societe);
 
-ALTER TABLE llx_categorie_product ADD CONSTRAINT fk_categorie_product_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_product ADD CONSTRAINT fk_categorie_product_product_rowid   FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_categorie_fournisseur ADD CONSTRAINT fk_categorie_fournisseur_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_fournisseur ADD CONSTRAINT fk_categorie_fournisseur_fk_soc   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);

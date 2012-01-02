@@ -16,7 +16,7 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_categorie_societe ADD PRIMARY KEY (fk_categorie, fk_societe);
+ALTER TABLE llx_categorie_societe ADD PRIMARY KEY pk_categorie_societe (fk_categorie, fk_societe);
 ALTER TABLE llx_categorie_societe ADD INDEX idx_categorie_societe_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_societe ADD INDEX idx_categorie_societe_fk_societe (fk_societe);
 
