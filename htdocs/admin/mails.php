@@ -32,8 +32,7 @@ $langs->load("mails");
 $langs->load("other");
 $langs->load("errors");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $substitutionarrayfortest=array(
 '__LOGIN__' => $user->login,
@@ -44,12 +43,14 @@ $substitutionarrayfortest=array(
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
+$action=GETPOST('action');
+
 
 /*
  * Actions
  */
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["cancel"]))
+if ($action == 'update' && empty($_POST["cancel"]))
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   $_POST["MAIN_DISABLE_ALL_MAILS"],'chaine',0,'',$conf->entity);
 
@@ -159,7 +160,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 /*
  * Send mail
  */
-if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
+if (($action == 'send' || $action == 'sendhtml')
 && ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST["removedfile"] && ! $_POST['cancel'])
 {
 	$error=0;
@@ -259,7 +260,7 @@ print_fiche_titre($langs->trans("EMailsSetup"),'','setup');
 print $langs->trans("EMailsDesc")."<br>\n";
 print "<br>\n";
 
-if ($message) print $message.'<br>';
+dol_htmloutput_mesg($message);
 
 // List of sending methods
 $listofmethods=array();
@@ -268,7 +269,7 @@ $listofmethods['mail']='PHP mail function';
 $listofmethods['smtps']='SMTP/SMTPS socket library';
 
 
-if (isset($_GET["action"]) && $_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	$form=new Form($db);
 
@@ -547,7 +548,7 @@ else
 	$var=!$var;
 	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 	{
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_PW.'</td></tr>';
+		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./','*',$conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
 	}
 
 	// TLS
@@ -631,7 +632,7 @@ else
 
 
 	// Run the test to connect
-	if ($_GET["action"] == 'testconnect')
+	if ($action == 'testconnect')
 	{
 		print '<br>';
 		print_titre($langs->trans("DoTestServerAvailability"));
@@ -653,7 +654,7 @@ else
 	}
 
 	// Affichage formulaire de TEST simple
-	if ($_GET["action"] == 'test')
+	if ($action == 'test')
 	{
 		print '<br>';
 		print_titre($langs->trans("DoTestSend"));
@@ -698,7 +699,7 @@ else
 	}
 
 	// Affichage formulaire de TEST HTML
-	if ($_GET["action"] == 'testhtml')
+	if ($action == 'testhtml')
 	{
 		print '<br>';
 		print_titre($langs->trans("DoTestSendHTML"));
@@ -745,7 +746,7 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
