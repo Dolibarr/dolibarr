@@ -124,7 +124,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->create($user);
 
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+    	$this->assertLessThan($result, 0);
 
     	return $result;
     }
@@ -143,6 +143,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Contact($this->savdb);
     	$result=$localobject->fetch($id);
+    	
         print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
@@ -169,7 +170,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$localobject->zip='New zip';
 		$localobject->town='New town';
     	$localobject->country_id=2;
-    	$localobject->status=0;
+    	//$localobject->status=0;
 		$localobject->phone_pro='New tel pro';
 		$localobject->phone_perso='New tel perso';
 		$localobject->phone_mobile='New tel mobile';
@@ -192,22 +193,39 @@ class ContactTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Contact::fetch error');
 
+    	print __METHOD__." old=".$localobject->note." new=".$newobject->note."\n";
     	$this->assertEquals($localobject->note, $newobject->note);
+    	//print __METHOD__." old=".$localobject->note_public." new=".$newobject->note_public."\n";
     	//$this->assertEquals($localobject->note_public, $newobject->note_public);
+    	print __METHOD__." old=".$localobject->lastname." new=".$newobject->lastname."\n";
     	$this->assertEquals($localobject->lastname, $newobject->lastname);
+    	print __METHOD__." old=".$localobject->firstname." new=".$newobject->firstname."\n";
     	$this->assertEquals($localobject->firstname, $newobject->firstname);
+    	print __METHOD__." old=".$localobject->address." new=".$newobject->address."\n";
     	$this->assertEquals($localobject->address, $newobject->address);
+    	print __METHOD__." old=".$localobject->zip." new=".$newobject->zip."\n";
     	$this->assertEquals($localobject->zip, $newobject->zip);
+    	print __METHOD__." old=".$localobject->town." new=".$newobject->town."\n";
     	$this->assertEquals($localobject->town, $newobject->town);
+    	print __METHOD__." old=".$localobject->country_id." new=".$newobject->country_id."\n";
     	$this->assertEquals($localobject->country_id, $newobject->country_id);
+    	print __METHOD__." old=BE new=".$newobject->country_code."\n";
     	$this->assertEquals('BE', $newobject->country_code);
-    	$this->assertEquals($localobject->status, $newobject->status);
+    	//print __METHOD__." old=".$localobject->status." new=".$newobject->status."\n";
+    	//$this->assertEquals($localobject->status, $newobject->status);
+    	print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
     	$this->assertEquals($localobject->phone_pro, $newobject->phone_pro);
+    	print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
     	$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
+    	print __METHOD__." old=".$localobject->phone_mobile." new=".$newobject->phone_mobile."\n";
     	$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
+    	print __METHOD__." old=".$localobject->fax." new=".$newobject->fax."\n";
     	$this->assertEquals($localobject->fax, $newobject->fax);
+    	print __METHOD__." old=".$localobject->email." new=".$newobject->email."\n";
     	$this->assertEquals($localobject->email, $newobject->email);
+    	print __METHOD__." old=".$localobject->jabberid." new=".$newobject->jabberid."\n";
     	$this->assertEquals($localobject->jabberid, $newobject->jabberid);
+    	print __METHOD__." old=".$localobject->default_lang." new=".$newobject->default_lang."\n";
     	$this->assertEquals($localobject->default_lang, $newobject->default_lang);
 
     	return $localobject;
