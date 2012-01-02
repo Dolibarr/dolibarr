@@ -174,3 +174,5 @@ insert into llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'VE', 'V
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2321,232,     '0','0','No VAT',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2322,232,     '12','0','VAT 12%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2323,232,     '8','0','VAT 8%',1);
+
+update llx_cotisation set fk_bank = null where fk_bank not in (select rowid from llx_bank);
