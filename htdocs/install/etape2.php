@@ -45,10 +45,12 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
+$choix=0;
 if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
+//if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into etape2.php page');
 
 // Init "forced values" to nothing. "forced values" are used after a Doliwamp install wizard.
 $useforcedwizard=false;
@@ -188,7 +190,7 @@ if ($action == "set")
                 {
                     $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
                 }
-                
+
                 // Replace the prefix tables
                 if ($dolibarr_main_db_prefix != 'llx_')
                 {
@@ -337,7 +339,7 @@ if ($action == "set")
                     	{
                     		$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
                     	}
-                    	
+
                         //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
                         $requestnb++;
 
@@ -547,7 +549,7 @@ if ($action == "set")
                 	{
                 		$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
                 	}
-                	
+
                     //dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
                     $resql=$db->query($buffer);
                     if ($resql)

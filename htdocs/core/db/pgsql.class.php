@@ -507,7 +507,7 @@ class DoliDBPgsql
 
 		// Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query,$type);
-		//print "FF\n".$query."<br>\n";
+		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
 		// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
 		$loop=true;
@@ -786,7 +786,7 @@ class DoliDBPgsql
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		}
 		else {
-			// Constants to convert a MySql error code to a generic Dolibarr error code
+			// Constants to convert error code to a generic Dolibarr error code
 			$errorcode_map = array(
 			1004 => 'DB_ERROR_CANNOT_CREATE',
 			1005 => 'DB_ERROR_CANNOT_CREATE',

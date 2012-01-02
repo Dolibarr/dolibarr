@@ -36,7 +36,7 @@ class DoliDBSqlite
     //! Database type
     public $type='sqlite';
     //! Database label
-    static $label='Sqlite';
+    static $label='PDO Sqlite';
     //! Charset used to force charset when creating database
     static $forcecharset='utf8';	// latin1, utf8
     //! Collate used to force collate when creating database
@@ -148,7 +148,157 @@ class DoliDBSqlite
      */
     function convertSQLFromMysql($line,$type='ddl')
     {
-        return $line;
+		// Removed empty line if this is a comment line for SVN tagging
+		if (preg_match('/^--\s\$Id/i',$line)) {
+			return '';
+		}
+		// Return line if this is a comment
+		if (preg_match('/^#/i',$line) || preg_match('/^$/i',$line) || preg_match('/^--/i',$line))
+		{
+			return $line;
+		}
+		if ($line != "")
+		{
+		    if ($type == 'auto')
+		    {
+              if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
+              else if (preg_match('/CREATE TABLE/i',$line)) $type='dml';
+              else if (preg_match('/DROP TABLE/i',$line)) $type='dml';
+		    }
+
+		    if ($type == 'dml')
+		    {
+                $line=preg_replace('/\s/',' ',$line);   // Replace tabulation with space
+
+		        // we are inside create table statement so lets process datatypes
+    			if (preg_match('/(ISAM|innodb)/i',$line)) { // end of create table sequence
+    				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
+    				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
+    				$line=preg_replace('/,$/','',$line);
+    			}
+
+    			// Process case: "CREATE TABLE llx_mytable(rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,code..."
+    			if (preg_match('/[\s\t\(]*(\w*)[\s\t]+int.*auto_increment/i',$line,$reg)) {
+    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i','\\1 \\2 SERIAL PRIMARY KEY',$line);
+                    //$line = "-- ".$line." replaced by --\n".$newline;
+                    $line=$newline;
+    			}
+
+    			// tinyint type conversion
+    			$line=str_replace('tinyint','smallint',$line);
+
+    			// nuke unsigned
+    			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
+
+    			// blob -> text
+    			$line=preg_replace('/\w*blob/i','text',$line);
+
+    			// tinytext/mediumtext -> text
+    			$line=preg_replace('/tinytext/i','text',$line);
+    			$line=preg_replace('/mediumtext/i','text',$line);
+
+    			// change not null datetime field to null valid ones
+    			// (to support remapping of "zero time" to null
+    			$line=preg_replace('/datetime not null/i','datetime',$line);
+    			$line=preg_replace('/datetime/i','timestamp',$line);
+
+    			// double -> numeric
+    			$line=preg_replace('/^double/i','numeric',$line);
+    			$line=preg_replace('/(\s*)double/i','\\1numeric',$line);
+    			// float -> numeric
+    			$line=preg_replace('/^float/i','numeric',$line);
+    			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
+
+    			// unique index(field1,field2)
+    			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
+    			{
+    				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
+    			}
+
+    			// We remove end of requests "AFTER fieldxxx"
+    			$line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
+
+    			// We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
+    			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
+
+                // Translate order to rename fields
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
+                {
+                	$line = "-- ".$line." replaced by --\n";
+                    $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
+                }
+
+                // Translate order to modify field format
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
+                {
+                    $line = "-- ".$line." replaced by --\n";
+                    $newreg3=$reg[3];
+                    $newreg3=preg_replace('/ DEFAULT NULL/i','',$newreg3);
+                    $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
+                    $newreg3=preg_replace('/ NULL/i','',$newreg3);
+                    $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
+                    $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i','',$newreg3);
+                    $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
+                    // TODO Add alter to set default value or null/not null if there is this in $reg[3]
+                }
+
+                // alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
+    			// ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
+    			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
+    			{
+    				$line = "-- ".$line." replaced by --\n";
+    				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
+    			}
+
+                // Translate order to drop foreign keys
+                // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
+                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
+                {
+                    $line = "-- ".$line." replaced by --\n";
+                    $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
+                }
+
+    			// alter table add [unique] [index] (field1, field2 ...)
+    			// ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
+    			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
+    			{
+    				$fieldlist=$reg[4];
+    				$idxname=$reg[3];
+    				$tablename=$reg[1];
+    				$line = "-- ".$line." replaced by --\n";
+    				$line.= "CREATE ".(preg_match('/UNIQUE/',$reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
+    			}
+            }
+
+            // To have postgresql case sensitive
+            $line=str_replace(' LIKE \'',' ILIKE \'',$line);
+
+			// Delete using criteria on other table must not declare twice the deleted table
+			// DELETE FROM tabletodelete USING tabletodelete, othertable -> DELETE FROM tabletodelete USING othertable
+			if (preg_match('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i',$line,$reg))
+			{
+				if ($reg[1] == $reg[2])	// If same table, we remove second one
+				{
+					$line=preg_replace('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i','DELETE FROM \\1 USING \\3', $line);
+				}
+			}
+
+			// Remove () in the tables in FROM if one table
+			$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
+			//print $line."\n";
+
+			// Remove () in the tables in FROM if two table
+			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2',$line);
+			//print $line."\n";
+
+			// Remove () in the tables in FROM if two table
+			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2, \\3',$line);
+			//print $line."\n";
+
+			//print "type=".$type." newline=".$line."<br>\n";
+		}
+
+		return $line;
     }
 
 	/**
@@ -188,6 +338,7 @@ class DoliDBSqlite
         try {
             /*** connect to SQLite database ***/
             $this->db = new PDO("sqlite:".$dir.'/database_'.$name.'.sdb');
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch(PDOException $e)
         {
@@ -337,11 +488,16 @@ class DoliDBSqlite
 
         $ret='';
         $query = trim($query);
+        $this->error = 0;
 
-        // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+		// Convert MySQL syntax to SQLite syntax
+		$query=$this->convertSQLFromMysql($query,$type);
+		//print "After convertSQLFromMysql:\n".$query."<br>\n";
+
+		// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
         try {
             //$ret = $this->db->exec($query);
-            $ret = $this->db->query($query);
+            $ret = $this->db->query($query);        // $ret is a PDO object
         }
         catch(PDOException $e)
         {
@@ -351,12 +507,13 @@ class DoliDBSqlite
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
         {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
-            if (! $ret)
+            if (! is_object($ret) || $this->error)
             {
                 $this->lastqueryerror = $query;
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
-                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+                if (preg_match('/[0-9]/',$this->lasterrno)) dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno." ".$this->lasterror, LOG_WARNING);
+                else dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
             }
             $this->lastquery=$query;
             $this->results = $ret;
@@ -424,11 +581,12 @@ class DoliDBSqlite
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->results; }
-        return sqlite_num_rows($resultset);
+        return $resultset->rowCount();
     }
 
     /**
      *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+     *
      *	@see    	num_rows
      *	@param      resultset   Curseur de la requete voulue
      *	@return     int		    Nombre de lignes
@@ -440,7 +598,7 @@ class DoliDBSqlite
         if (! is_object($resultset)) { $resultset=$this->results; }
         // mysql necessite un link de base pour cette fonction contrairement
         // a pqsql qui prend un resultset
-        return sqlite_affected_rows($this->db);
+        return $resultset->rowCount();
     }
 
 
@@ -454,7 +612,7 @@ class DoliDBSqlite
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->results; }
         // Si resultset en est un, on libere la memoire
-        if (is_object($resultset)) sqlite_free_result($resultset);
+        if (is_object($resultset)) $resultset->closeCursor();
     }
 
 
@@ -558,8 +716,9 @@ class DoliDBSqlite
 
 
     /**
-     *	\brief      Renvoie la derniere requete soumise par la methode query()
-     *	\return	    lastquery
+     *	Renvoie la derniere requete soumise par la methode query()
+     *
+     *	@return	    lastquery
      */
     function lastquery()
     {
@@ -567,8 +726,9 @@ class DoliDBSqlite
     }
 
     /**
-     *	\brief      Renvoie la derniere requete en erreur
-     *	\return	    string	lastqueryerror
+     *	Renvoie la derniere requete en erreur
+     *
+     *	@return	    string	lastqueryerror
      */
     function lastqueryerror()
     {
@@ -576,8 +736,9 @@ class DoliDBSqlite
     }
 
     /**
-     *	\brief      Renvoie le libelle derniere erreur
-     *	\return	    string	lasterror
+     *	Renvoie le libelle derniere erreur
+     *
+     *	@return	    string	lasterror
      */
     function lasterror()
     {
@@ -585,8 +746,9 @@ class DoliDBSqlite
     }
 
     /**
-     *	\brief      Renvoie le code derniere erreur
-     *	\return	    string	lasterrno
+     *	Renvoie le code derniere erreur
+     *
+     *	@return	    string	lasterrno
      */
     function lasterrno()
     {
@@ -594,8 +756,9 @@ class DoliDBSqlite
     }
 
     /**
-     *	\brief     Renvoie le code erreur generique de l'operation precedente.
-     *	\return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+     *	Renvoie le code erreur generique de l'operation precedente.
+     *
+     *	@return	string	$error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
      */
     function errno()
     {
@@ -604,8 +767,8 @@ class DoliDBSqlite
             return 'DB_ERROR_FAILED_TO_CONNECT';
         }
         else {
-            // Constants to convert a MySql error code to a generic Dolibarr error code
-            $errorcode_map = array(
+            // Constants to convert error code to a generic Dolibarr error code
+            /*$errorcode_map = array(
             1004 => 'DB_ERROR_CANNOT_CREATE',
             1005 => 'DB_ERROR_CANNOT_CREATE',
             1006 => 'DB_ERROR_CANNOT_CREATE',
@@ -615,7 +778,7 @@ class DoliDBSqlite
             1044 => 'DB_ERROR_ACCESSDENIED',
             1046 => 'DB_ERROR_NODBSELECTED',
             1048 => 'DB_ERROR_CONSTRAINT',
-            1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
+            'HY000' => 'DB_ERROR_TABLE_ALREADY_EXISTS',
             1051 => 'DB_ERROR_NOSUCHTABLE',
             1054 => 'DB_ERROR_NOSUCHFIELD',
             1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
@@ -636,16 +799,28 @@ class DoliDBSqlite
             if (isset($errorcode_map[$this->db->errorCode()]))
             {
                 return $errorcode_map[$this->db->errorCode()];
-            }
+            }*/
             $errno=$this->db->errorCode();
+			if ($errno=='HY000')
+			{
+                if (preg_match('/table.*already exists/i',$this->error))     return 'DB_ERROR_TABLE_ALREADY_EXISTS';
+                elseif (preg_match('/index.*already exists/i',$this->error)) return 'DB_ERROR_KEY_NAME_ALREADY_EXISTS';
+                elseif (preg_match('/syntax error/i',$this->error))          return 'DB_ERROR_SYNTAX';
+			}
+			if ($errno=='23000')
+			{
+                if (preg_match('/column.* not unique/i',$this->error))       return 'DB_ERROR_RECORD_ALREADY_EXISTS';
+                elseif (preg_match('/PRIMARY KEY must be unique/i',$this->error)) return 'DB_ERROR_RECORD_ALREADY_EXISTS';
+			}
 
             return ($errno?'DB_ERROR_'.$errno:'0');
         }
     }
 
     /**
-     *	\brief     Renvoie le texte de l'erreur mysql de l'operation precedente.
-     *	\return    error_text
+     *	Renvoie le texte de l'erreur mysql de l'operation precedente.
+     *
+     *	@return	string	$error_text
      */
     function error()
     {
