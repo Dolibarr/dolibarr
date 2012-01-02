@@ -124,7 +124,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->create($user);
 
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+    	$this->assertLessThan($result, 0);
 
     	return $result;
     }
@@ -143,6 +143,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Contact($this->savdb);
     	$result=$localobject->fetch($id);
+    	
         print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
