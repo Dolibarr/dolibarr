@@ -205,7 +205,7 @@
 
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
 
-	<rule ref="Squiz.WhiteSpace.ScopeClosingBrace">
+	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace">
         <severity>0</severity>
     </rule>
 	
