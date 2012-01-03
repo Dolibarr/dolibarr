@@ -57,10 +57,11 @@ class Menu
      * @param   string	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not
      * @param   string	$target		Target lien
-     * @param	string	$mainmenu	Main menu
+     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
+     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
      * @return	void
      */
-    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='')
+    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
     {
         $i = count($this->liste);
         $this->liste[$i]['url'] = $url;
@@ -69,12 +70,13 @@ class Menu
         $this->liste[$i]['enabled'] = $enabled;
         $this->liste[$i]['target'] = $target;
         $this->liste[$i]['mainmenu'] = $mainmenu;
+        $this->liste[$i]['leftmenu'] = $leftmenu;
     }
 
     /**
      * Remove a menu entry from this->liste
      *
-     * @return	voir
+     * @return	void
      */
     function remove_last()
     {

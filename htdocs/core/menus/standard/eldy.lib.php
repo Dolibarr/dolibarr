@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -627,7 +627,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $langs->load("admin");
                 $langs->load("help");
 
-                $newmenu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"));
+                $newmenu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"), 0, 1, '', $mainmenu, 'setup');
                 if ($leftmenu=="setup") $newmenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/modules.php", $langs->trans("Modules"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/menus.php", $langs->trans("Menus"),1);
@@ -643,7 +643,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 if ($leftmenu=="setup") $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/const.php", $langs->trans("OtherSetup"),1);
 
-                $newmenu->add("/admin/system/index.php?leftmenu=system", $langs->trans("SystemInfo"));
+                $newmenu->add("/admin/system/index.php?leftmenu=system", $langs->trans("SystemInfo"), 0, 1, '', $mainmenu, 'system');
                 if ($leftmenu=="system") $newmenu->add("/admin/system/dolibarr.php", $langs->trans("Dolibarr"),1);
                 if ($leftmenu=="system") $newmenu->add("/admin/system/constall.php", $langs->trans("AllParameters"),2);
                 if ($leftmenu=="system") $newmenu->add("/admin/system/modules.php", $langs->trans("Modules"),2);

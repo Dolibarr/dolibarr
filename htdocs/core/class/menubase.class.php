@@ -231,12 +231,12 @@ class Menubase
         $sql.= " usertype='".$this->user."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog("Menubase::update sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Menubase::update ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -275,7 +275,7 @@ class Menubase
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-        dol_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -309,7 +309,7 @@ class Menubase
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Menubase::fetch ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -333,7 +333,7 @@ class Menubase
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Menubase::delete ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -480,7 +480,7 @@ class Menubase
         {
             $this->menuLoad($mainmenu, $leftmenu, $type_user, $menu_handler, $tabMenu);
         }
-        //var_dump($tabMenu);
+        //var_dump($tabMenu); exit;
 
         $menutopid='';
         if (is_array($tabMenu))
@@ -509,9 +509,11 @@ class Menubase
                         //var_dump($this->newmenu->liste);exit;
                         $tabMenu[$key]['fk_menu']=$menutopid;
                     }
-                    else if ($val['fk_leftmenu'] == $fk_leftmenu)
+                    else if ($val['fk_leftmenu'] == $leftmenu)
                     {
-                        // TODO
+                        //$tabMenu[$key]['fk_menu']=$menutopid;
+
+                        // Search higher menu level with this leftmenu
                         /*
                         foreach($this->newmenu as $keyparent => $valparent)
                         {
@@ -544,12 +546,12 @@ class Menubase
 
 
     /**
-     *  Load entries found in database to $tabMenu.
+     *  Load entries found in database into variable $tabMenu. Note that only "database menu entries" are loaded here, hardcoded will not be present into output.
      *
      *  @param	string	$mymainmenu     Value for left that defined mainmenu
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      0=Internal,1=External,2=All
-     *  @param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
+     *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
      *  @param  array	&$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
