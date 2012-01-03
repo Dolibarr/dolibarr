@@ -209,7 +209,7 @@
         <severity>0</severity>
     </rule>
 	
-    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Line">
+    <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
         <severity>0</severity>
     </rule>
     
