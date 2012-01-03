@@ -44,7 +44,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 
 	$tabMenu=array();
 	$menuArbo = new Menubase($db,'auguria','top');
-	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'], '', $type_user, 'auguria',$tabMenu);
+	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria',$tabMenu);
 
 	print_start_menu_array_auguria();
 
