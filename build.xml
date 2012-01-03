@@ -66,7 +66,7 @@
  <!-- Generate checkstyle.xml -->
  <target name="phpcs">
   <exec executable="phpcs" dir="${basedir}" output="${basedir}/hudson/logs/checkstyle.xml">
-    <arg line=" --standard=${basedir}/dev/codesniffer/ruleset.xml
+    <arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
     			--report=checkstyle
                 --ignore=${ignorepaths},${ignoreregexp}
                 htdocs

@@ -440,7 +440,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
     $tabMenu=array();
 	$menuArbo = new Menubase($db,'eldy','top');
-	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'],'',$type_user,'eldy',$tabMenu);
+	$newTabMenu = $menuArbo->menuTopCharger('','',$type_user,'eldy',$tabMenu);
 
 	$num = count($newTabMenu);
 	for($i = 0; $i < $num; $i++)

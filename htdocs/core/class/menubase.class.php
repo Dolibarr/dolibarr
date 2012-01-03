@@ -402,26 +402,27 @@ class Menubase
     }
 
     /**
-     *	Load tabMenu array
+     *	Load tabMenu array with top menu entries found into database.
      *
-     * 	@param	string	$mainmenu		Value for mainmenu that defined top menu
-     * 	@param	string	$myleftmenu		Left menu name
-     * 	@param	int		$type_user		0=Internal,1=External,2=All
-     * 	@param	string	$menu_handler	Name of menu_handler used (auguria, eldy...)
-     * 	@param  array	&$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+     * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (always '')
+     * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
+     * 	@param	int		$type_user		Filter on type of user (0=Internal,1=External,2=All)
+     * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
+     * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return	array					Return array with menu entries for top menu
      */
-    function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+    function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf;
-        global $leftmenu,$rights;	// To export to dol_eval function
+        global $mainmenu,$leftmenu,$rights;	// To export to dol_eval function
 
+        $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
         // Load datas into tabMenu
         if (count($tabMenu) == 0)
         {
-            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+            $this->menuLoad($mainmenu, $leftmenu, $type_user, $menu_handler, $tabMenu);
         }
 
         $newTabMenu=array();
@@ -438,9 +439,9 @@ class Menubase
                     $newTabMenu[$i]['titre']=$val['titre'];
                     $newTabMenu[$i]['right']=$val['perms'];
                     $newTabMenu[$i]['atarget']=$val['atarget'];
+                    $newTabMenu[$i]['mainmenu']=$val['mainmenu'];
                     $newTabMenu[$i]['leftmenu']=$val['leftmenu'];
                     $newTabMenu[$i]['enabled']=$val['enabled'];
-                    $newTabMenu[$i]['mainmenu']=$val['mainmenu'];
                     $newTabMenu[$i]['type']=$val['type'];
                     $newTabMenu[$i]['lang']=$val['langs'];
 
@@ -456,18 +457,19 @@ class Menubase
      * 	Load entries found in database in a menu array.
      *
      * 	@param	array	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
-     * 	@param	string	$mainmenu       Value for mainmenu that defines top menu of left menu to load
-     * 	@param 	string	$myleftmenu     Value that defines leftmenu
-     * 	@param  int		$type_user		0=Internal,1=External,2=All
-     * 	@param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
+     * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (often $_SESSION['mainmenu'])
+     * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
+     * 	@param	int		$type_user		Filter on type of user (0=Internal,1=External,2=All)
+     * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
      * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return array    		       	Menu array for particular mainmenu value or full tabArray
      */
-    function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+    function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
-        global $leftmenu,$rights; // To export to dol_eval function
+        global $mainmenu,$leftmenu,$rights; // To export to dol_eval function
 
+        $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
         // We initialize newmenu with first already found menu entries
@@ -476,7 +478,7 @@ class Menubase
         // Load datas from database into $tabMenu, then we will complete this->newmenu with values into $tabMenu
         if (count($tabMenu) == 0)
         {
-            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+            $this->menuLoad($mainmenu, $leftmenu, $type_user, $menu_handler, $tabMenu);
         }
         //var_dump($tabMenu);
 
@@ -544,18 +546,20 @@ class Menubase
     /**
      *  Load entries found in database to $tabMenu.
      *
+     *  @param	string	$mymainmenu     Value for left that defined mainmenu
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      0=Internal,1=External,2=All
      *  @param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
      *  @param  array	&$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
-    function menuLoad($myleftmenu, $type_user, $menu_handler, &$tabMenu)
+    function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
-        global $leftmenu, $rights; // To export to dol_eval function
+        global $mainmenu, $leftmenu, $rights; // To export to dol_eval function
 
         $menutopid=0;
+        $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
         $sql = "SELECT m.rowid, m.type, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
@@ -629,12 +633,12 @@ class Menubase
                 }
                 $tabMenu[$b]['titre']       = $title;
                 $tabMenu[$b]['target']      = $menu['target'];
+                $tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
                 $tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
                 if (! isset($tabMenu[$b]['perms'])) $tabMenu[$b]['perms'] = $perms;
                 else $tabMenu[$b]['perms']  = ($tabMenu[$b]['perms'] && $perms);
                 if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
                 else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);
-                $tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
                 $tabMenu[$b]['type']        = $menu['type'];
                 $tabMenu[$b]['langs']       = $menu['langs'];
                 $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
