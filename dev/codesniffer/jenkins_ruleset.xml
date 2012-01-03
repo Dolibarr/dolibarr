@@ -204,6 +204,10 @@
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
 
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
+	
+	<rule ref="PEAR.WhiteSpace.ScopeIndent">
+        <severity>0</severity>
+    </rule>
 
 	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace">
         <severity>0</severity>
