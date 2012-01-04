@@ -331,12 +331,12 @@ else
 
 
 		// Array of install choices
-		print '<table width="100%" border="1" cellpadding="2">';
+		print '<table width="100%" class="listofchoices">';
 
 		// Show first install line
-		print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
+		print '<tr class="listofchoices"><td class="listofchoices" nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
 		print '</td>';
-		print '<td>';
+		print '<td class="listofchoices">';
 		print $langs->trans("FreshInstallDesc");
 		if (empty($dolibarr_main_db_host))	// This means install process was not run
 		{
@@ -347,7 +347,7 @@ else
 			$foundrecommandedchoice=1;	// To show only once
 		}
 		print '</td>';
-		print '<td align="center">';
+		print '<td class="listofchoices" align="center">';
 		if ($allowinstall)
 		{
 			print '<a href="fileconf.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
@@ -393,8 +393,8 @@ else
             $version=preg_split('/[\.-]/',DOL_VERSION);
             $newversionfrombis='';
             if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis='/'.$versionto;
-			print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.' -> '.$newversionto.'</b></td>';
-			print '<td>';
+			print '<tr class="listofchoices"><td class="listofchoices" nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.' -> '.$newversionto.'</b></td>';
+			print '<td class="listofchoices">';
 			print $langs->trans("UpgradeDesc");
 			if ($ok)
 			{
@@ -421,7 +421,7 @@ else
 				}
 			}
 			print '</td>';
-			print '<td align="center">';
+			print '<td class="listofchoices" align="center">';
 			if ($allowupgrade)
 			{
 				// If it's not last updagre script, action = upgrade_tmp, if last action = upgrade
