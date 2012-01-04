@@ -137,7 +137,7 @@ foreach($paths as $tmppath)
 {
     if ($tmppath) $concatpath.='/'.$tmppath;
     //print $real_$dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
-    if ($real_dolibarr_main_document_root == realpath($pathroot.$concatpath))
+    if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath))    // @ avoid warning when safe_mode is on.
     {
         $tmp3=$concatpath;
         //print "Found relative url = ".$tmp3;
