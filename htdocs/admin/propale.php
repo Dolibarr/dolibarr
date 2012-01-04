@@ -71,12 +71,12 @@ if ($action == 'specimen')
 	$propal->initAsSpecimen();
 
 	// Charge le modele
-	$dir = "/core/modules/propale/";
-	$file = "pdf_propale_".$modele.".modules.php";
+	$dir = "/core/modules/propale/doc/";
+	$file = "pdf_".$modele.".modules.php";
 	$file = dol_buildpath($dir.$file);
 	if (file_exists($file))
 	{
-		$classname = "pdf_propale_".$modele;
+		$classname = "pdf_".$modele;
 		require_once($file);
 
 		$module = new $classname($db);
