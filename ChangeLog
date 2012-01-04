@@ -33,6 +33,7 @@ For users:
 - New: Reduce seriously size of packages.
 - New: Can define country code for import.
 - New: When invoice was generated from order, order date is visible on PDF, after order ref.
+- New: [ task #181 ] Hide password of click2dial in user card
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
