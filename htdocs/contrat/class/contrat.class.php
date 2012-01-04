@@ -72,23 +72,22 @@ class Contrat extends CommonObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Contrat($DB)
+	function Contrat($db)
 	{
-		global $langs;
-
-		$this->db = $DB ;
-		$this->product = new Product($DB);
-		$this->societe = new Societe($DB);
-		$this->user_service = new User($DB);
-		$this->user_cloture = new User($DB);
+		$this->db = $db;
+		$this->product = new Product($db);
+		$this->societe = new Societe($db);
+		$this->user_service = new User($db);
+		$this->user_cloture = new User($db);
 	}
 
 	/**
 	 *	Return next contract ref
-	 *	@param		soc		objet society
-	 *	@return     string	free reference for contract
+	 *
+	 *	@param	Societe		$soc		objet society
+	 *	@return string					free reference for contract
 	 */
 	function getNextNumRef($soc)
 	{
@@ -121,7 +120,7 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dol_print_error($db,"Contract::getNextValue ".$obj->error);
+				dol_print_error($db,get_class($this)."::getNextValue ".$obj->error);
 				return "";
 			}
 		}
@@ -133,20 +132,21 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      \brief      Activate a contract line
-	 *      \param      user        Objet User qui active le contrat
-	 *      \param      line_id     Id de la ligne de detail a activer
-	 *      \param      date        Date d'ouverture
-	 *      \param      date_end    Date fin prevue
-	 * 		\param		comment		A comment typed by user
-	 *      \return     int         <0 if KO, >0 if OK
+	 *  Activate a contract line
+	 *
+	 *  @param      user        Objet User qui active le contrat
+	 *  @param      line_id     Id de la ligne de detail a activer
+	 *  @param      date        Date d'ouverture
+	 *  @param      date_end    Date fin prevue
+	 * 	@param		comment		A comment typed by user
+	 *  @return     int         <0 if KO, >0 if OK
 	 */
 	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
 		global $langs,$conf;
 
 		$error=0;
-		
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
@@ -157,7 +157,7 @@ class Contrat extends CommonObject
 		$sql.= " commentaire = '".$this->db->escape($comment)."'";
 		$sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
 
-		dol_syslog("Contrat::active_line sql=".$sql);
+		dol_syslog(get_class($this)."::active_line sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -174,7 +174,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Contrat::active_line error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::active_line error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -182,19 +182,20 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *      \brief      Close a contract line
-	 *      \param      user        Objet User qui active le contrat
-	 *      \param      line_id     Id de la ligne de detail a activer
-	 *      \param      date_end	Date fin
-	 * 		\param		comment		A comment typed by user
-	 *      \return     int         <0 if KO, >0 if OK
+	 *  Close a contract line
+	 *
+	 *  @param      user        Objet User qui active le contrat
+	 *  @param      line_id     Id de la ligne de detail a activer
+	 *  @param      date_end	Date fin
+	 * 	@param		comment		A comment typed by user
+	 *  @return     int         <0 if KO, >0 if OK
 	 */
 	function close_line($user, $line_id, $date_end, $comment='')
 	{
 		global $langs,$conf;
 
 		$error=0;
-		
+
 		// statut actif : 4
 
 		$this->db->begin();
@@ -221,7 +222,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Contrat::close_line error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::close_line error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -230,11 +231,11 @@ class Contrat extends CommonObject
 
 	/**
 	 *  Close all lines of a contract
-	 * 
-	 *  @param      user      Object User making action
-	 *  @param      langs     Object Lang
-	 *  @param      conf      Object Conf
-	 *	@return		void
+	 *
+	 *  @param	User		$user      Object User making action
+	 *  @param  Translate	$langs     Object Lang
+	 *  @param  Conf		$conf      Object Conf
+	 *	@return	void
 	 */
 	function cloture($user,$langs='',$conf='')
 	{
@@ -279,16 +280,17 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Validate a contract
-	 *    	\param      user      	Objet User
-	 *    	\param      langs     	Environnement langue de l'utilisateur
-	 *    	\param      conf      	Environnement de configuration lors de l'operation
-	 * 		\return		int			<0 if KO, >0 if OK
+	 *  Validate a contract
+	 *
+	 *  @param      user      	Objet User
+	 *  @param      langs     	Environnement langue de l'utilisateur
+	 *  @param      conf      	Environnement de configuration lors de l'operation
+	 * 	@return		int			<0 if KO, >0 if OK
 	 */
 	function validate($user,$langs,$conf)
 	{
 		$error=0;
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
 		$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
@@ -314,8 +316,9 @@ class Contrat extends CommonObject
 
 	/**
 	 *    Load a contract from database
-	 *    @param      id      Id of contract to load
-	 *    @return     int     <0 if KO, id of contract if OK
+	 *
+	 *    @param	int		$id     Id of contract to load
+	 *    @return   int     		<0 if KO, id of contract if OK
 	 */
 	function fetch($id,$ref='')
 	{
@@ -329,7 +332,7 @@ class Contrat extends CommonObject
 		if ($ref) $sql.= " WHERE ref='".$ref."'";
 		else $sql.= " WHERE rowid=".$id;
 
-		dol_syslog("Contrat::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -369,14 +372,14 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dol_syslog("Contrat::Fetch Erreur contrat non trouve");
-				$this->error="Contrat non trouve";
+				dol_syslog(get_class($this)."::Fetch Erreur contrat non trouve");
+				$this->error="Contract not found";
 				return -2;
 			}
 		}
 		else
 		{
-			dol_syslog("Contrat::Fetch Erreur lecture contrat");
+			dol_syslog(get_class($this)."::Fetch Erreur lecture contrat");
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -384,8 +387,9 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      Load lignes array into this->lines
-	 *      @return    Array   Return array of contract lines
+	 *  Load lignes array into this->lines
+	 *
+	 *  @return    Array   Return array of contract lines
 	 */
 	function fetch_lines()
 	{
@@ -420,7 +424,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
 		$sql.= " ORDER by d.rowid ASC";
 
-		dol_syslog("Contrat::fetch_lines sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -494,7 +498,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dol_syslog("Contrat::Fetch Erreur lecture des lignes de contrats liees aux produits");
+			dol_syslog(get_class($this)."::Fetch Erreur lecture des lignes de contrats liees aux produits");
 			return -3;
 		}
 
@@ -582,7 +586,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dol_syslog("Contrat::Fetch Erreur lecture des lignes de contrat non liees aux produits");
+			dol_syslog(get_class($this)."::Fetch Erreur lecture des lignes de contrat non liees aux produits");
 			$this->error=$this->db->error();
 			return -2;
 		}
@@ -596,9 +600,10 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      \brief      Create a contract into database
-	 *      \param      user        User that create
-	 *      \return     int         <0 if KO, id of contract if OK
+	 *  Create a contract into database
+	 *
+	 *  @param	User	$user       User that create
+	 *  @return int  				<0 if KO, id of contract if OK
 	 */
 	function create($user)
 	{
@@ -666,7 +671,7 @@ class Contrat extends CommonObject
 				else
 				{
 					$this->error=$interface->error;
-					dol_syslog("Contrat::create - 30 - ".$this->error, LOG_ERR);
+					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
 					return -3;
@@ -675,7 +680,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->error="Failed to add contact";
-				dol_syslog("Contrat::create - 20 - ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -2;
@@ -684,7 +689,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$langs->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
-			dol_syslog("Contrat::create - 10 - ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create - 10 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
 			return -1;
@@ -693,11 +698,12 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *      \brief      Supprime l'objet de la base
-	 *      \param      user        Utilisateur qui supprime
-	 *      \param      langs       Environnement langue de l'utilisateur
-	 *      \param      conf        Environnement de configuration lors de l'operation
-	 *      \return     int         < 0 si erreur, > 0 si ok
+	 *  Supprime l'objet de la base
+	 *
+	 *  @param      user        Utilisateur qui supprime
+	 *  @param      langs       Environnement langue de l'utilisateur
+	 *  @param      conf        Environnement de configuration lors de l'operation
+	 *  @return     int         < 0 si erreur, > 0 si ok
 	 */
 	function delete($user,$langs='',$conf='')
 	{
@@ -711,7 +717,7 @@ class Contrat extends CommonObject
 			$res = $this->delete_linked_contact();
 			if ($res < 0)
 			{
-				dol_syslog("Contract::delete error", LOG_ERR);
+				dol_syslog(get_class($this)."::delete error", LOG_ERR);
 				$error++;
 			}
 		}
@@ -728,7 +734,7 @@ class Contrat extends CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".$this->id;
 
-			dol_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::delete contratdet_log sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -749,7 +755,7 @@ class Contrat extends CommonObject
 				$sql= "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",",$tab_resql).")";
 
-				dol_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::delete contratdet_log sql=".$sql, LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -765,7 +771,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE fk_contrat=".$this->id;
 
-			dol_syslog("Contrat::delete contratdet sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::delete contratdet sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -780,7 +786,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
 			$sql.= " WHERE rowid=".$this->id;
 
-			dol_syslog("Contrat::delete contrat sql=".$sql);
+			dol_syslog(get_class($this)."::delete contrat sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -804,7 +810,7 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Contrat::delete ERROR ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::delete ERROR ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -812,27 +818,28 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *      \brief      Ajoute une ligne de contrat en base
-	 *      \param      desc            	Description de la ligne
-	 *      \param      pu_ht              	Prix unitaire HT
-	 *      \param      qty             	Quantite
-	 *      \param      txtva           	Taux tva
-	 *      \param      txlocaltax1         Local tax 1 rate
-	 *      \param      txlocaltax2         Local tax 2 rate
-	 *      \param      fk_product      	Id produit
-	 *      \param      remise_percent  	Pourcentage de remise de la ligne
-	 *      \param      date_start      	Date de debut prevue
-	 *      \param      date_end        	Date de fin prevue
-	 *		\param		price_base_type		HT ou TTC
-	 * 	    \param    	pu_ttc             	Prix unitaire TTC
-	 * 		\param    	info_bits			Bits de type de lignes
-	 *      \return     int             	<0 si erreur, >0 si ok
+	 *  Ajoute une ligne de contrat en base
+	 *
+	 *  @param      desc            	Description de la ligne
+	 *  @param      pu_ht              	Prix unitaire HT
+	 *  @param      qty             	Quantite
+	 *  @param      txtva           	Taux tva
+	 *  @param      txlocaltax1         Local tax 1 rate
+	 *  @param      txlocaltax2         Local tax 2 rate
+	 *  @param      fk_product      	Id produit
+	 *  @param      remise_percent  	Pourcentage de remise de la ligne
+	 *  @param      date_start      	Date de debut prevue
+	 *  @param      date_end        	Date de fin prevue
+	 *	@param		price_base_type		HT ou TTC
+	 * 	@param    	pu_ttc             	Prix unitaire TTC
+	 * 	@param    	info_bits			Bits de type de lignes
+	 *  @return     int             	<0 si erreur, >0 si ok
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
 	{
 		global $user, $langs, $conf;
 
-		dol_syslog("Contrat::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
+		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
 
 		if ($this->statut >= 0)
 		{
@@ -888,7 +895,7 @@ class Contrat extends CommonObject
 			$sql.= " info_bits,";
 			$sql.= " price_ht, remise";								// TODO A virer
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
-			if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
+			if ($date_end > 0)   { $sql.= ",date_fin_validite"; }
 			$sql.= ") VALUES ($this->id, '', '" . $this->db->escape($desc) . "',";
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
 			$sql.= " '".$qty."',";
@@ -903,7 +910,7 @@ class Contrat extends CommonObject
 			if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
 			$sql.= ")";
 
-			dol_syslog("Contrat::addline sql=".$sql);
+			dol_syslog(get_class($this)."::addline sql=".$sql);
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -925,36 +932,35 @@ class Contrat extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog("Contrat::addline ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::addline ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
 		else
 		{
-			dol_syslog("Contrat::addline ErrorTryToAddLineOnValidatedContract", LOG_ERR);
+			dol_syslog(get_class($this)."::addline ErrorTryToAddLineOnValidatedContract", LOG_ERR);
 			return -2;
 		}
 	}
 
 	/**
-	 *      \brief     Mets a jour une ligne de contrat
-	 *      \param     rowid            Id de la ligne de facture
-	 *      \param     desc             Description de la ligne
-	 *      \param     pu               Prix unitaire
-	 *      \param     qty              Quantite
-	 *      \param     remise_percent   Pourcentage de remise de la ligne
-	 *      \param     date_start       Date de debut prevue
-	 *      \param     date_end         Date de fin prevue
-	 *      \param     tvatx            Taux TVA
-	 *      \param     localtax1tx      Local tax 1 rate
-	 *      \param     localtax2tx      Local tax 2 rate
-	 *      \param     date_debut_reel  Date de debut reelle
-	 *      \param     date_fin_reel    Date de fin reelle
-	 *      \return    int              < 0 si erreur, > 0 si ok
+	 *  Mets a jour une ligne de contrat
+	 *
+	 *  @param     rowid            Id de la ligne de facture
+	 *  @param     desc             Description de la ligne
+	 *  @param     pu               Prix unitaire
+	 *  @param     qty              Quantite
+	 *  @param     remise_percent   Pourcentage de remise de la ligne
+	 *  @param     date_start       Date de debut prevue
+	 *  @param     date_end         Date de fin prevue
+	 *  @param     tvatx            Taux TVA
+	 *  @param     localtax1tx      Local tax 1 rate
+	 *  @param     localtax2tx      Local tax 2 rate
+	 *  @param     date_debut_reel  Date de debut reelle
+	 *  @param     date_fin_reel    Date de fin reelle
+	 *  @return    int              < 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0,
-	$date_start='', $date_end='', $tvatx, $localtax1tx=0, $localtax2tx=0,
-	$date_debut_reel='', $date_fin_reel='')
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start='', $date_end='', $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='')
 	{
 		global $user, $conf, $langs;
 
@@ -978,7 +984,7 @@ class Contrat extends CommonObject
 			$remise_percent=0;
 		}
 
-		dol_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx, $localtax1tx, $localtax2tx");
+		dol_syslog(get_class($this)."::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx, $localtax1tx, $localtax2tx");
 
 		$this->db->begin();
 
@@ -1001,7 +1007,7 @@ class Contrat extends CommonObject
 		else { $sql.=",date_cloture=null"; }
 		$sql .= " WHERE rowid = ".$rowid;
 
-		dol_syslog("Contrat::UpdateLine sql=".$sql);
+		dol_syslog(get_class($this)."::UpdateLine sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1014,7 +1020,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog("Contrat::UpdateLigne Erreur -2");
+				dol_syslog(get_class($this)."::UpdateLigne Erreur -2");
 				return -2;
 			}
 		}
@@ -1022,34 +1028,35 @@ class Contrat extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog("Contrat::UpdateLigne Erreur -1");
+			dol_syslog(get_class($this)."::UpdateLigne Erreur -1");
 			return -1;
 		}
 	}
 
 	/**
-	 *      \brief      Delete a contract line
-	 *      \param      idline		Id of line to delete
-	 *		\param      user        User that delete
-	 *      \return     int         >0 if OK, <0 if KO
+	 *  Delete a contract line
+	 *
+	 *  @param      idline		Id of line to delete
+	 *	@param      user        User that delete
+	 *  @return     int         >0 if OK, <0 if KO
 	 */
 	function deleteline($idline,$user)
 	{
 		global $conf, $langs;
 
 		$error=0;
-		
+
 		if ($this->statut >= 0)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE rowid=".$idline;
 
-			dol_syslog("Contratdet::delete sql=".$sql);
+			dol_syslog(get_class($this)."::delete sql=".$sql);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
 				$this->error="Error ".$this->db->lasterror();
-				dol_syslog("Contratdet::delete ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				return -1;
 			}
 
@@ -1070,8 +1077,9 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *      \brief      Update statut of contract according to services
-	 *		\return     int     <0 si ko, >0 si ok
+	 *  Update statut of contract according to services
+	 *
+	 *	@return     int     <0 if KO, >0 if OK
 	 */
 	function update_statut($user)
 	{
@@ -1092,9 +1100,10 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *    	Return label of a contract status
-	 *    	@param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
-	 *    	@return     string      	Label
+	 *  Return label of a contract status
+	 *
+	 *  @param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *  @return     string      	Label
 	 */
 	function getLibStatut($mode)
 	{
@@ -1102,10 +1111,11 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *    	Renvoi label of a given contrat status
-	 *    	@param      statut      	Status id
-	 *    	@param      mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
-	 *		@return     string      	Label
+	 *  Renvoi label of a given contrat status
+	 *
+	 *  @param      statut      	Status id
+	 *  @param      mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *	@return     string      	Label
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -1161,10 +1171,11 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\param		maxlength		Max length of ref
-	 *	\return		string			Chaine avec URL
+	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *
+	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	int		$maxlength		Max length of ref
+	 *	@return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$maxlength=0)
 	{
@@ -1185,9 +1196,11 @@ class Contrat extends CommonObject
 		return $result;
 	}
 
-	/*
-	 *       \brief     Charge les informations d'ordre info dans l'objet contrat
-	 *       \param     id     id du contrat a charger
+	/**
+	 *  Charge les informations d'ordre info dans l'objet contrat
+	 *
+	 *  @param  int		$id     id du contrat a charger
+	 *  @return	void
 	 */
 	function info($id)
 	{
@@ -1233,9 +1246,10 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *    \brief      Return list of line rowid
-	 *    \param      statut      Status of lines to get
-	 *    \return     array       Array of line's rowid
+	 *  Return list of line rowid
+	 *
+	 *  @param      statut      Status of lines to get
+	 *  @return     array       Array of line's rowid
 	 */
 	function array_detail($statut=-1)
 	{
@@ -1246,7 +1260,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE fk_contrat =".$this->id;
 		if ($statut >= 0) $sql.= " AND statut = '$statut'";
 
-		dol_syslog("Contrat::array_detail() sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::array_detail() sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1268,9 +1282,10 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  	\brief      Return list of other contracts for same company than current contract
-	 *		\param		option		'all' or 'others'
-	 *  	\return     array   	Array of contracts id
+	 *  Return list of other contracts for same company than current contract
+	 *
+	 *	@param		option		'all' or 'others'
+	 *  @return     array   	Array of contracts id
 	 */
 	function getListOfContracts($option='all')
 	{
@@ -1281,7 +1296,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE fk_soc =".$this->socid;
 		if ($option == 'others') $sql.= " AND c.rowid != ".$this->id;
 
-		dol_syslog("Contrat::getOtherContracts() sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::getOtherContracts() sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1307,6 +1322,7 @@ class Contrat extends CommonObject
 
 	/**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
      *      @param      user                Objet user
      *      @param      mode                "inactive" pour services a activer, "expired" pour services expires
      *      @return     int                 <0 if KO, >0 if OK
@@ -1367,8 +1383,9 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      \brief      Charge indicateurs this->nb de tableau de bord
-	 *      \return     int         <0 si ko, >0 si ok
+	 *   Charge indicateurs this->nb de tableau de bord
+	 *
+	 *   @return     int         <0 si ko, >0 si ok
 	 */
 	function load_state_board()
 	{
@@ -1409,8 +1426,9 @@ class Contrat extends CommonObject
 	/* gestion des contacts d'un contrat */
 
 	/**
-	 *      \brief      Retourne id des contacts clients de facturation
-	 *      \return     array       Liste des id contacts facturation
+	 *  Return id des contacts clients de facturation
+	 *
+	 *  @return     array       Liste des id contacts facturation
 	 */
 	function getIdBillingContact()
 	{
@@ -1418,8 +1436,9 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      \brief      Retourne id des contacts clients de prestation
-	 *      \return     array       Liste des id contacts prestation
+	 *  Return id des contacts clients de prestation
+	 *
+	 *  @return     array       Liste des id contacts prestation
 	 */
 	function getIdServiceContact()
 	{
@@ -1550,17 +1569,19 @@ class ContratLigne
 
 
 	/**
-	 *      Constructeur d'objets ligne de contrat
-	 *      @param     DB      Database access handler
+	 * Constructeur d'objets ligne de contrat
+	 *
+	 * @param	DoliDB		$db      Database access handler
 	 */
-	function ContratLigne($DB)
+	function ContratLigne($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 	}
 
 
 	/**
 	 *    	Return label of this contract line status
+	 *
 	 *		@param      mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    	@return     string      	Libelle
 	 */
@@ -1571,6 +1592,7 @@ class ContratLigne
 
 	/**
 	 *    	Return label of a contract line status
+	 *
 	 *    	@param      statut      id statut
 	 *		@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *		@param		expired		0=Not expired, 1=Expired, -1=Both or unknown
@@ -1632,6 +1654,7 @@ class ContratLigne
 
 	/**
 	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *
 	 *  @param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *  @return		string			Chaine avec URL
  	 */
@@ -1656,6 +1679,7 @@ class ContratLigne
 
 	/**
 	 *    	Load object in memory from database
+	 *
 	 *    	@param      id          id object
 	 * 		@param		ref			Ref of contract
 	 *    	@return     int         <0 if KO, >0 if OK
@@ -1704,7 +1728,7 @@ class ContratLigne
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
 		if ($ref) $sql.= " WHERE t.rowid = '".$ref."'";
 
-		dol_syslog("Contratdet::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1754,7 +1778,7 @@ class ContratLigne
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("ContratLigne::fetch ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1762,16 +1786,17 @@ class ContratLigne
 
 	/**
 	 *      Update database for contract line
-	 *      @param      user        	User that modify
-	 *      @param      notrigger	    0=no, 1=yes (no update trigger)
-	 *      @return     int         	<0 if KO, >0 if OK
+	 *
+	 *      @param	User	$user        	User that modify
+	 *      @param  int		$notrigger	    0=no, 1=yes (no update trigger)
+	 *      @return int         			<0 if KO, >0 if OK
 	 */
 	function update($user, $notrigger=0)
 	{
 		global $conf, $langs;
 
 		$error=0;
-		
+
 		// Clean parameters
 		$this->fk_contrat=trim($this->fk_contrat);
 		$this->fk_product=trim($this->fk_product);
@@ -1866,6 +1891,7 @@ class ContratLigne
 	/**
 	 *      Mise a jour en base des champs total_xxx de ligne
 	 *		Used by migration process
+	 *
 	 *		@return		int		<0 if KO, >0 if OK
 	 */
 	function update_total()

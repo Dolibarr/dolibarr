@@ -167,9 +167,10 @@ $bc[true]=' class="bg2"';
 
 
 /**
- *	\brief		Load conf file (file must exists)
- *	\param		dolibarr_main_document_root		Root directory of Dolibarr bin files
- *	\return		int								<0 if KO, >0 if OK
+ *	Load conf file (file must exists)
+ *
+ *	@param	string	$dolibarr_main_document_root		Root directory of Dolibarr bin files
+ *	@return	int											<0 if KO, >0 if OK
  */
 function conf($dolibarr_main_document_root)
 {
@@ -240,10 +241,11 @@ function pHeader($soutitre,$next,$action='none')
 }
 
 /**
- * Enter description here...
+ * Show footer
  *
- * @param   $nonext
- * @param   $setuplang
+ * @param	string	$nonext			No button "Next step"
+ * @param   string	$setuplang		Language code
+ * @return	void
  */
 function pFooter($nonext=0,$setuplang='')
 {
@@ -258,8 +260,8 @@ function pFooter($nonext=0,$setuplang='')
 /**
  * Output a text into a log file
  *
- * @param   $message
- * @param   $level
+ * @param	string	$message		Message to show
+ * @param   string	$level			Log level
  */
 function dolibarr_support_syslog($message, $level=LOG_DEBUG)
 {

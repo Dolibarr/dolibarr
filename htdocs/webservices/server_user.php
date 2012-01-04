@@ -53,69 +53,69 @@ $server->wsdl->schemaTargetNamespace=$ns;
 
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
-        'authentication',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-        array(
-	        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-	    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-	    	'login' => array('name'=>'login','type'=>'xsd:string'),
-        	'password' => array('name'=>'password','type'=>'xsd:string'),
-	        'entity' => array('name'=>'entity','type'=>'xsd:string'),
-        )
+    'authentication',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+    	'login' => array('name'=>'login','type'=>'xsd:string'),
+    	'password' => array('name'=>'password','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+    )
 );
 
 // Define WSDL Return object
 $server->wsdl->addComplexType(
-        'result',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-        array(
-	        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-            'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-        )
+    'result',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+    )
 );
 
 // Define other specific objects
 $server->wsdl->addComplexType(
-        'user',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-        array(
-'element' => array('name'=>'element','type'=>'xsd:string'),
-'id' => array('name'=>'id','type'=>'xsd:string'),
-'lastname' => array('name'=>'lastname','type'=>'xsd:string'),
-'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
-'note' => array('name'=>'note','type'=>'xsd:string'),
-'email' => array('name'=>'email','type'=>'xsd:string'),
-'signature' => array('name'=>'signature','type'=>'xsd:string'),
-'office_phone' => array('name'=>'office_phone','type'=>'xsd:string'),
-'office_fax' => array('name'=>'office_fax','type'=>'xsd:string'),
-'user_mobile' => array('name'=>'user_mobile','type'=>'xsd:string'),
-'admin' => array('name'=>'admin','type'=>'xsd:string'),
-'login' => array('name'=>'login','type'=>'xsd:string'),
-'entity' => array('name'=>'entity','type'=>'xsd:string'),
-'pass_indatabase' => array('name'=>'pass_indatabase','type'=>'xsd:string'),
-'pass_indatabase_crypted' => array('name'=>'pass_indatabase_crypted','type'=>'xsd:string'),
-'datec' => array('name'=>'datec','type'=>'xsd:dateTime'),
-'datem' => array('name'=>'datem','type'=>'xsd:dateTime'),
-'societe_id' => array('name'=>'societe_id','type'=>'xsd:string'),
-'fk_member' => array('name'=>'fk_member','type'=>'xsd:string'),
-'datelastlogin' => array('name'=>'datelastlogin','type'=>'xsd:dateTime'),
-'datepreviouslogin' => array('name'=>'datepreviouslogin','type'=>'xsd:dateTime'),
-'statut' => array('name'=>'statut','type'=>'xsd:string'),
-'photo' => array('name'=>'photo','type'=>'xsd:string'),
-'lang' => array('name'=>'lang','type'=>'xsd:string'),
-'entrepots' => array('name'=>'entrepots','type'=>'xsd:string'),
-//'rights' => array('name'=>'rights','type'=>'xsd:string'),
-'canvas' => array('name'=>'canvas','type'=>'xsd:string')
-        )
+    'user',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'element' => array('name'=>'element','type'=>'xsd:string'),
+        'id' => array('name'=>'id','type'=>'xsd:string'),
+        'lastname' => array('name'=>'lastname','type'=>'xsd:string'),
+        'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
+        'note' => array('name'=>'note','type'=>'xsd:string'),
+        'email' => array('name'=>'email','type'=>'xsd:string'),
+        'signature' => array('name'=>'signature','type'=>'xsd:string'),
+        'office_phone' => array('name'=>'office_phone','type'=>'xsd:string'),
+        'office_fax' => array('name'=>'office_fax','type'=>'xsd:string'),
+        'user_mobile' => array('name'=>'user_mobile','type'=>'xsd:string'),
+        'admin' => array('name'=>'admin','type'=>'xsd:string'),
+        'login' => array('name'=>'login','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+        'pass_indatabase' => array('name'=>'pass_indatabase','type'=>'xsd:string'),
+        'pass_indatabase_crypted' => array('name'=>'pass_indatabase_crypted','type'=>'xsd:string'),
+        'datec' => array('name'=>'datec','type'=>'xsd:dateTime'),
+        'datem' => array('name'=>'datem','type'=>'xsd:dateTime'),
+        'societe_id' => array('name'=>'societe_id','type'=>'xsd:string'),
+        'fk_member' => array('name'=>'fk_member','type'=>'xsd:string'),
+        'datelastlogin' => array('name'=>'datelastlogin','type'=>'xsd:dateTime'),
+        'datepreviouslogin' => array('name'=>'datepreviouslogin','type'=>'xsd:dateTime'),
+        'statut' => array('name'=>'statut','type'=>'xsd:string'),
+        'photo' => array('name'=>'photo','type'=>'xsd:string'),
+        'lang' => array('name'=>'lang','type'=>'xsd:string'),
+        'entrepots' => array('name'=>'entrepots','type'=>'xsd:string'),
+        //'rights' => array('name'=>'rights','type'=>'xsd:string'),
+        'canvas' => array('name'=>'canvas','type'=>'xsd:string')
+    )
 );
 
 
