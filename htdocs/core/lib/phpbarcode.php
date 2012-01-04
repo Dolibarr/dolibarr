@@ -177,7 +177,8 @@ function barcode_encode($code,$encoding)
 function barcode_gen_ean_sum($ean)
 {
     $even=true; $esum=0; $osum=0;
-    for ($i=strlen($ean)-1;$i>=0;$i--)
+    $ln=strlen($ean)-1;
+    for ($i=$ln; $i>=0; $i--)
     {
         if ($even) $esum+=$ean[$i];	else $osum+=$ean[$i];
         $even=!$even;
@@ -324,15 +325,16 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 
     /* set defaults */
     if ($scale<1) $scale=2;
-    $total_y=(int)($total_y);
-    if ($total_y<1) $total_y=(int)$scale * 60;
+    $total_y=(int) $total_y;
+    if ($total_y<1) $total_y=(int) $scale * 60;
     if (!$space)
     $space=array('top'=>2*$scale,'bottom'=>2*$scale,'left'=>2*$scale,'right'=>2*$scale);
 
     /* count total width */
     $xpos=0;
     $width=true;
-    for ($i=0;$i<strlen($bars);$i++)
+    $ln=strlen($bars);
+    for ($i=0; $i<$ln; $i++)
     {
         $val=strtolower($bars[$i]);
         if ($width)
@@ -368,7 +370,8 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 
     /* paint the bars */
     $width=true;
-    for ($i=0;$i<strlen($bars);$i++)
+    $ln=strlen($bars);
+    for ($i=0; $i<$ln; $i++)
     {
         $val=strtolower($bars[$i]);
         if ($width)

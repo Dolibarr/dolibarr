@@ -38,12 +38,12 @@ class modBarcode extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modBarcode($DB)
+	function modBarcode($db)
 	{
-		$this->db = $DB ;
-		$this->numero = 55 ;
+		$this->db = $db;
+		$this->numero = 55;
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)

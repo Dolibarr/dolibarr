@@ -39,13 +39,13 @@ class modAccounting extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modAccounting($DB)
+	function modAccounting($db)
 	{
 		global $conf;
 
-		$this->db = $DB ;
+		$this->db = $db;
 		$this->numero = 50400 ;
 
 		$this->family = "financial";

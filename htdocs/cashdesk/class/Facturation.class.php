@@ -23,8 +23,8 @@ include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 /**
  * Class ot manage invoices for pos module (cashdesk)
  */
-class Facturation {
-
+class Facturation
+{
     /**
      * Attributs "volatiles" : reinitialises apres chaque traitement d'un article
      * <p>Attributs "volatiles" : reinitialises apres chaque traitement d'un article</p>

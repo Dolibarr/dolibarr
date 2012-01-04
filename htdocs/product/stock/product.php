@@ -76,12 +76,14 @@ if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 		$product = new Product($db);
 		$result=$product->fetch($_GET["id"]);
 
-		$result=$product->correct_stock($user,
-		$_POST["id_entrepot"],
-		$_POST["nbpiece"],
-		$_POST["mouvement"],
-		$_POST["label"],
-		0);		// We do not change value of stock for a correction
+		$result=$product->correct_stock(
+    		$user,
+    		$_POST["id_entrepot"],
+    		$_POST["nbpiece"],
+    		$_POST["mouvement"],
+    		$_POST["label"],
+    		0
+		);		// We do not change value of stock for a correction
 
 		if ($result > 0)
 		{
@@ -113,20 +115,24 @@ if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 			//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
 			// Remove stock
-			$result1=$product->correct_stock($user,
-			$_POST["id_entrepot_source"],
-			$_POST["nbpiece"],
-			1,
-			$_POST["label"],
-			$pricesrc);
+			$result1=$product->correct_stock(
+    			$user,
+    			$_POST["id_entrepot_source"],
+    			$_POST["nbpiece"],
+    			1,
+    			$_POST["label"],
+    			$pricesrc
+			);
 
 			// Add stock
-			$result2=$product->correct_stock($user,
-			$_POST["id_entrepot_destination"],
-			$_POST["nbpiece"],
-			0,
-			$_POST["label"],
-			$pricedest);
+			$result2=$product->correct_stock(
+    			$user,
+    			$_POST["id_entrepot_destination"],
+    			$_POST["nbpiece"],
+    			0,
+    			$_POST["label"],
+    			$pricedest
+			);
 
 			if ($result1 >= 0 && $result2 >= 0)
 			{

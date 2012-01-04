@@ -35,11 +35,11 @@ class modCategorie extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modCategorie ($DB)
+	function modCategorie($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->numero = 1780;
 
 		$this->family = "technic";
@@ -156,19 +156,21 @@ class modCategorie extends DolibarrModules
 
 
     /**
-     *      Function called when module is enabled.
-     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *      It also creates data directories.
-     *      @return     int             1 if OK, 0 if KO
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
-	function init()
+	function init($options='')
 	{
 		// Permissions
 		$this->remove();
 
 		$sql = array();
 
-		return $this->_init($sql);
+		return $this->_init($sql,$options);
 	}
 
     /**

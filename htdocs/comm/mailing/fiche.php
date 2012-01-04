@@ -209,9 +209,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					}
 
 					// Fabrication du mail
-					$mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
-											$arr_file, $arr_mime, $arr_name,
-		            						'', '', 0, $msgishtml, $errorsto, $arr_css);
+					$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css);
 
 					if ($mail->error)
 					{
@@ -342,8 +340,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 			}
 		}
 
-		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
-		$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$mil->email_errorsto,$arr_css);
+		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body, $arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$mil->email_errorsto,$arr_css);
 
 		$result=$mailfile->sendfile();
 		if ($result)

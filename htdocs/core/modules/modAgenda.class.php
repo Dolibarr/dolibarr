@@ -39,11 +39,11 @@ class modAgenda extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modAgenda($DB)
+	function modAgenda($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->numero = 2400;
 
 		$this->family = "projects";

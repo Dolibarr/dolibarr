@@ -38,11 +38,11 @@ class modBookmark extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modBookmark($DB)
+	function modBookmark($db)
 	{
-		$this->db = $DB ;
+		$this->db = $db;
 		$this->numero = 330;
 
 		$this->family = "technic";

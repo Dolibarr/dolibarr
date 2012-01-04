@@ -39,12 +39,12 @@ class modAdherent extends DolibarrModules
     /**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
      */
-    function modAdherent($DB)
+    function modAdherent($db)
     {
-        $this->db = $DB;
-        $this->numero = 310 ;
+        $this->db = $db;
+        $this->numero = 310;
 
         $this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)

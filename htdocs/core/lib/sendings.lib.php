@@ -95,7 +95,7 @@ function delivery_prepare_head($object)
  * @param   string		$origin			Origin
  * @param	int			$origin_id		Origin id
  * @param	string		$filter			Filter
- * @return
+ * @return	int							<0 if KO, >0 if OK
  */
 function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 {

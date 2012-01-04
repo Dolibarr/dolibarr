@@ -52,12 +52,11 @@ class PaymentSocialContribution extends CommonObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function PaymentSocialContribution($DB)
+	function PaymentSocialContribution($db)
 	{
-		$this->db = $DB;
-		return 1;
+		$this->db = $db;
 	}
 
 	/**
@@ -147,9 +146,10 @@ class PaymentSocialContribution extends CommonObject
 	}
 
 	/**
-	 *    \brief      Load object in memory from database
-	 *    \param      id          id object
-	 *    \return     int         <0 if KO, >0 if OK
+	 *  Load object in memory from database
+	 *
+	 *  @param	int		$id         Id object
+	 *  @return int         		<0 if KO, >0 if OK
 	 */
 	function fetch($id)
 	{
@@ -216,10 +216,11 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-	 *      \brief      Update database
-	 *      \param      user        	User that modify
-	 *      \param      notrigger	    0=launch triggers after, 1=disable triggers
-	 *      \return     int         	<0 if KO, >0 if OK
+	 *  Update database
+	 *
+	 *  @param	User	$user        	User that modify
+	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int         			<0 if KO, >0 if OK
 	 */
 	function update($user=0, $notrigger=0)
 	{
@@ -302,10 +303,11 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-	 *     \brief      Delete object in database
-	 *     \param      user        	User that delete
-	 *     \param      notrigger	0=launch triggers after, 1=disable triggers
-	 *     \return     int			<0 if KO, >0 if OK
+	 *  Delete object in database
+	 *
+	 *  @param	User	$user        	User that delete
+	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
+	 *  @return int						<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
@@ -371,9 +373,10 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-	 *		\brief      Load an object from its id and create a new one in database
-	 *		\param      fromid     		Id of object to clone
-	 * 	 	\return		int				New id of clone
+	 *	Load an object from its id and create a new one in database
+	 *
+	 *	@param	int		$fromid     	Id of object to clone
+	 * 	@return	int						New id of clone
 	 */
 	function createFromClone($fromid)
 	{
@@ -454,13 +457,14 @@ class PaymentSocialContribution extends CommonObject
     /**
      *      Add record into bank for payment with links between this bank record and invoices of payment.
      *      All payment properties must have been set first like after a call to create().
-     *      @param      user                Object of user making payment
-     *      @param      mode                'payment_sc'
-     *      @param      label               Label to use in bank record
-     *      @param      accountid           Id of bank account to do link with
-     *      @param      emetteur_nom        Name of transmitter
-     *      @param      emetteur_banque     Name of bank
-     *      @return     int                 <0 if KO, >0 if OK
+     *
+     *      @param	User	$user               Object of user making payment
+     *      @param  string	$mode               'payment_sc'
+     *      @param  string	$label              Label to use in bank record
+     *      @param  int		$accountid          Id of bank account to do link with
+     *      @param  string	$emetteur_nom       Name of transmitter
+     *      @param  string	$emetteur_banque    Name of bank
+     *      @return int                 		<0 if KO, >0 if OK
      */
     function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
     {
@@ -479,15 +483,17 @@ class PaymentSocialContribution extends CommonObject
             if ($mode == 'payment_sc') $total=-$total;
 
             // Insert payment into llx_bank
-            $bank_line_id = $acc->addline($this->datepaye,
-            $this->paiementtype,  // Payment mode id or code ("CHQ or VIR for example")
-            $label,
-            $total,
-            $this->num_paiement,
-            '',
-            $user,
-            $emetteur_nom,
-            $emetteur_banque);
+            $bank_line_id = $acc->addline(
+                $this->datepaye,
+                $this->paiementtype,  // Payment mode id or code ("CHQ or VIR for example")
+                $label,
+                $total,
+                $this->num_paiement,
+                '',
+                $user,
+                $emetteur_nom,
+                $emetteur_banque
+            );
 
             // Mise a jour fk_bank dans llx_paiement.
             // On connait ainsi le paiement qui a genere l'ecriture bancaire
@@ -521,8 +527,7 @@ class PaymentSocialContribution extends CommonObject
                     {
                         $socialcontrib = new ChargeSociales($this->db);
                         $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id,
-                        DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
+                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
@@ -546,9 +551,10 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-	 *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
-	 *      \param      id_bank         Id de la banque
-	 *      \return     int             >0 si OK, <=0 si KO
+	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
+	 *
+	 *  @param	int		$id_bank         Id if bank
+	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
 	function update_fk_bank($id_bank)
 	{
@@ -569,10 +575,11 @@ class PaymentSocialContribution extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 * 		\param		maxlen			Longueur max libelle
-	 *		\return		string			Chaine avec URL
+	 *  Renvoie nom clicable (avec eventuellement le picto)
+	 *
+	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 * 	@param	int		$maxlen			Longueur max libelle
+	 *	@return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$maxlen=0)
 	{

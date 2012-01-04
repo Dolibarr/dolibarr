@@ -41,14 +41,14 @@ class modBanque extends DolibarrModules
 	/**
 	 *	Constructor.
 	 *
-	 *	@param	DoliDB	$DB		Database handler
+	 *	@param	DoliDB	$db		Database handler
 	 */
-	function modBanque($DB)
+	function modBanque($db)
 	{
 		global $conf;
 
-		$this->db = $DB ;
-		$this->numero = 85 ;
+		$this->db = $db;
+		$this->numero = 85;
 
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -168,7 +168,7 @@ class modBanque extends DolibarrModules
      *      Function called when module is enabled.
      *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      *      It also creates data directories.
-     *      
+     *
      *      @return     int             1 if OK, 0 if KO
      */
 	function init()
@@ -187,7 +187,7 @@ class modBanque extends DolibarrModules
      *      Function called when module is disabled.
      *      Remove from database constants, boxes and permissions from Dolibarr database.
      *      Data directories are not deleted.
-     *      
+     *
      *      @return     int             1 if OK, 0 if KO
      */
 	function remove()

@@ -36,11 +36,11 @@ class modFTP extends DolibarrModules
    /**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
     */
-	function modFTP($DB)
+	function modFTP($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id.
@@ -128,15 +128,18 @@ class modFTP extends DolibarrModules
 	}
 
 	/**
-     *		\brief      Function called when module is enabled.
-     *					The init function add previous constants, boxes and permissions into Dolibarr database.
-     *					It also creates data directories.
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
-	function init()
+	function init($options='')
   	{
     	$sql = array();
 
-    	return $this->_init($sql);
+    	return $this->_init($sql,$options);
   	}
 
 	/**

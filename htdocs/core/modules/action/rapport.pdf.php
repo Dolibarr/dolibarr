@@ -168,7 +168,7 @@ class CommActionRapport
 		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year,$this->month,false))."'";
 		$sql.= " ORDER BY a.datep DESC";
 
-		dol_syslog("Rapport.pdf::_page sql=".$sql);
+		dol_syslog(get_class($this)."::_page sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -224,11 +224,12 @@ class CommActionRapport
 	}
 
 	/**
-	 *      Show page head
+	 *  Show page head
 	 *
-	 *      @param      pdf             Objet PDF
-	 *      @param      outputlangs		Objet lang cible
-	 * 		@param		pagenb			Page nb
+	 *  @param  PDF			$pdf            Objet PDF
+	 *  @param  Translate	$outputlangs	Objet lang cible
+	 * 	@param	int			$pagenb			Page nb
+	 * 	@return	int							Pos y
 	 */
 	function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{
@@ -253,9 +254,7 @@ class CommActionRapport
 
 		$y=$pdf->GetY()+2;
 
-		$pdf->Rect($this->marge_gauche, $y,
-		$this->page_largeur - $this->marge_gauche - $this->marge_droite,
-		$this->page_hauteur - $this->marge_haute - $this->marge_basse);
+		$pdf->Rect($this->marge_gauche, $y, ($this->page_largeur - $this->marge_gauche - $this->marge_droite), ($this->page_hauteur - $this->marge_haute - $this->marge_basse));
 		$y=$pdf->GetY()+1;
 
 		return $y;

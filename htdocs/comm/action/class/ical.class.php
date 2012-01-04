@@ -64,7 +64,7 @@ class ical
     }
 
     /**
-     * Returns the number of ToDo
+     * Returns the number of to do
      *
      * @return int
      */
