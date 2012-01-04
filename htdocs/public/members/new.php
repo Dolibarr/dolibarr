@@ -70,8 +70,12 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 /**
  * Show header for new member
  *
- * @param 	string		$title
- * @param 	string		$head
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	array  		$arrayofjs			Array of complementary js files
+ * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
 function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
@@ -462,7 +466,7 @@ foreach($extrafields->attribute_label as $key=>$value)
 {
     print "<tr><td>".$value."</td><td>";
     print $extrafields->showInputField($key,GETPOST('options_'.$key));
-    print "</td></tr>"."\n";
+    print "</td></tr>\n";
 }
 // Comments
 print '<tr>';

@@ -61,8 +61,6 @@ function llxHeaderVierge($title, $head = "")
 /**
 * Show footer for member list
 *
-* @param 	string		$title
-* @param 	string		$head
 * @return	void
 */
 function llxFooterVierge()
