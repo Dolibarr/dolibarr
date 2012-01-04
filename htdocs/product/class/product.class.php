@@ -1510,7 +1510,7 @@ class Product extends CommonObject
 	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_vente($socid=0,$mode)
+	function get_nb_vente($socid,$mode)
 	{
 		global $conf;
 		global $user;
@@ -1539,7 +1539,7 @@ class Product extends CommonObject
 	 * 	@param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_achat($socid=0,$mode)
+	function get_nb_achat($socid,$mode)
 	{
 		global $conf;
 		global $user;
@@ -1568,7 +1568,7 @@ class Product extends CommonObject
 	 * 	@param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propal($socid=0,$mode)
+	function get_nb_propal($socid,$mode)
 	{
 		global $conf;
 		global $user;
@@ -1596,7 +1596,7 @@ class Product extends CommonObject
 	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * 	@return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_order($socid=0,$mode)
+	function get_nb_order($socid,$mode)
 	{
 		global $conf, $user;
 
@@ -1621,6 +1621,7 @@ class Product extends CommonObject
 	 *
 	 *  @param      int	$id_pere    Id du produit auquel sera lie le produit a lier
 	 *  @param      int	$id_fils    Id du produit a lier
+	 *  @param		int	$qty		Quantity
 	 *  @return     int        		< 0 if KO, > 0 if OK
 	 */
 	function add_sousproduit($id_pere, $id_fils,$qty)
@@ -1871,22 +1872,22 @@ class Product extends CommonObject
 	/**
 	 *  Recopie les prix d'un produit/service sur un autre
 	 *
-	 *  @param    fromId      Id produit source
-	 *  @param    toId        Id produit cible
-	 *  @return   int         < 0 si erreur, > 0 si ok
+	 *  @param	int		$fromId     Id product source
+	 *  @param  int		$toId       Id product target
+	 *  @return nt         			< 0 if KO, > 0 if OK
 	 */
 	function clone_price($fromId, $toId)
 	{
 		$this->db->begin();
 
 		// les prix
-		$sql = "INSERT ".MAIN_DB_PREFIX."product_price ("
-		. " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell )"
-		. " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell "
-		. " FROM ".MAIN_DB_PREFIX."product_price "
-		. " WHERE fk_product = ". $fromId;
+		$sql = "INSERT ".MAIN_DB_PREFIX."product_price (";
+		$sql.= " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell)";
+		$sql.= " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
+		$sql.= " WHERE fk_product = ". $fromId;
 
-		if ( ! $this->db->query($sql ) )
+		if (! $this->db->query($sql))
 		{
 			$this->db->rollback();
 			return -1;
@@ -1920,11 +1921,11 @@ class Product extends CommonObject
 		}*/
 
 		// les prix de fournisseurs.
-		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur_price ("
-		. " datec, fk_product, fk_soc, price, quantity, fk_user )"
-		. " SELECT '".$this->db->idate(mktime())."', ".$toId. ", fk_soc, price, quantity, fk_user"
-		. " FROM ".MAIN_DB_PREFIX."product_fournisseur_price"
-		. " WHERE fk_product = ".$fromId;
+		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur_price (";
+		$sql.= " datec, fk_product, fk_soc, price, quantity, fk_user)";
+		$sql.= " SELECT '".$this->db->idate(mktime())."', ".$toId. ", fk_soc, price, quantity, fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+		$sql.= " WHERE fk_product = ".$fromId;
 
 		$resql=$this->db->query($sql);
 		if (! $resql)
@@ -2037,7 +2038,7 @@ class Product extends CommonObject
 	/**
 	 *  reconstruit l'arborescence des categories sous la forme d'un tableau
 	 *
-	 *	@param		int		$multiply	
+	 *	@param		int		$multiply		Because each sublevel must be multiplicated by parent nb
 	 *  @return 	array 					$this->res
 	 */
 	function get_arbo_each_prod($multiply=1)
@@ -2055,7 +2056,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  renvoie tous les sousproduits dans le tableau res, chaque ligne de res contient : id -> qty
+	 *  Renvoie tous les sousproduits dans le tableau res, chaque ligne de res contient : id -> qty
 	 *
 	 *  @return array $this->res
 	 */
@@ -2104,7 +2105,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -2136,7 +2137,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -2174,7 +2175,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -2407,10 +2408,11 @@ class Product extends CommonObject
 	/**
 	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
 	 *
-	 *  @param      string	$sdir       Repertoire destination finale
-	 *  @param      string	$file       Nom du fichier uploade
-	 *  @param      int		$maxWidth   Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param      int		$maxHeight  Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *  @param  string	$sdir       Repertoire destination finale
+	 *  @param  string	$file       Nom du fichier uploade
+	 *  @param  int		$maxWidth   Largeur maximum que dois faire la miniature (160 par defaut)
+	 *  @param  int		$maxHeight  Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *  @return	void
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
@@ -2439,10 +2441,10 @@ class Product extends CommonObject
 	/**
 	 *  Build thumb
 	 *
-	 *  @param      string	$sdir           Repertoire destination finale
-	 *  @param      string	$file           Chemin du fichier d'origine
-	 *  @param      int		$maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param      int		$maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *  @param  string	$file           Chemin du fichier d'origine
+	 *  @param  int		$maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
+	 *  @param  int		$maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *  @return	void
 	 */
 	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
 	{
@@ -2458,9 +2460,9 @@ class Product extends CommonObject
 	/**
 	 *  Deplace fichier recupere sur internet (utilise pour interface avec OSC)
 	 *
-	 *  @param      string	$sdir        	Repertoire destination finale
-	 *  @param      string	$file      		url de l'image
-	 *	@author	  Jean Heimburger	june 2007
+	 *  @param  string	$sdir        	Repertoire destination finale
+	 *  @param  string	$file      		url de l'image
+	 *  @return	void
 	 */
 	function add_photo_web($sdir, $file)
 	{
@@ -2749,7 +2751,8 @@ class Product extends CommonObject
 	/**
 	 *  Efface la photo du produit et sa vignette
 	 *
-	 *  @param      string		$file        Chemin de l'image
+	 *  @param  string		$file        Chemin de l'image
+	 *  @return	void
 	 */
 	function delete_photo($file)
 	{
@@ -2776,7 +2779,8 @@ class Product extends CommonObject
 	/**
 	 *  Load size of image file
 	 *
-	 *  @param      string	$file        Path to file
+	 *  @param  string	$file        Path to file
+	 *  @return	void
 	 */
 	function get_image_size($file)
 	{
@@ -2822,7 +2826,8 @@ class Product extends CommonObject
 	/**
 	 *  Mise a jour du code barre
 	 *
-	 *  @param      User	$user    Utilisateur qui fait la modification
+	 *  @param  User	$user    Utilisateur qui fait la modification
+	 *  @return	void
 	 */
 	function update_barcode($user)
 	{
@@ -2830,7 +2835,7 @@ class Product extends CommonObject
 		$sql.= " SET barcode = '".$this->barcode."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Product::update_barcode sql=".$sql);
+		dol_syslog(get_class($this)."::update_barcode sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2846,7 +2851,8 @@ class Product extends CommonObject
 	/**
 	 *  Mise a jour du type de code barre
 	 *
-	 *  @param      User	$user     Utilisateur qui fait la modification
+	 *  @param  User	$user     Utilisateur qui fait la modification
+	 *  @return	void
 	 */
 	function update_barcode_type($user)
 	{
@@ -2854,7 +2860,7 @@ class Product extends CommonObject
 		$sql.= " SET fk_barcode_type = '".$this->barcode_type."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Product::update_barcode_type sql=".$sql);
+		dol_syslog(get_class($this)."::update_barcode_type sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2870,7 +2876,7 @@ class Product extends CommonObject
 
     /**
      * Return if object is a product
-     * 
+     *
      * @return  boolean     True if it's a product
      */
 	function isproduct()
@@ -2887,7 +2893,7 @@ class Product extends CommonObject
 
     /**
      * Return if object is a product
-     * 
+     *
      * @return  boolean     True if it's a service
      */
 	function isservice()

@@ -138,12 +138,14 @@ class FormProduct
 	}
 
 	/**
-	 *  \brief      Output a combo box with list of units
-	 *  \param      name                Name of HTML field
-	 *  \param      measuring_style     Unit to show: weight, size, surface, volume
-	 *  \param      default             Force unit
-	 * 	\param		adddefault			Add empty unit called "Default"
-	 *  \remarks pour l'instant on ne definit pas les unites dans la base
+	 *  Output a combo box with list of units
+	 *  pour l'instant on ne definit pas les unites dans la base
+	 *
+	 *  @param	string		$name               Name of HTML field
+	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume
+	 *  @param  string		$default            Force unit
+	 * 	@param	int			$adddefault			Add empty unit called "Default"
+	 * 	@return	void
 	 */
 	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
@@ -152,11 +154,13 @@ class FormProduct
 
 	/**
 	 *  Return a combo box with list of units
-	 *  @param  name                Name of HTML field
-	 *  @param  measuring_style     Unit to show: weight, size, surface, volume
-	 *  @param  default             Force unit
-	 * 	@param	adddefault			Add empty unit called "Default"
-	 *  @see 	For the moment, units labels are defined in measuring_units_string
+	 *  For the moment, units labels are defined in measuring_units_string
+	 *
+	 *  @param	string		$name                Name of HTML field
+	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume
+	 *  @param  string		$default             Force unit
+	 * 	@param	int			$adddefault			Add empty unit called "Default"
+	 * 	@return	void
 	 */
 	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
