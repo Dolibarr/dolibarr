@@ -125,11 +125,12 @@ if ($action == "set")
 
     $requestnb=0;
 
-    // To disable some code
-    $createtables=1;
-    $createkeys=1;
-    $createfunctions=1;
-    $createdata=1;
+    // To disable some code, so you can call step2 with url like
+    // http://localhost/dolibarrnew/install/etape2.php?action=set&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
+    $createtables=isset($_GET['createtables'])?GETPOST('createtables'):1;
+    $createkeys=isset($_GET['createkeys'])?GETPOST('createkeys'):1;
+    $createfunctions=isset($_GET['createfunctions'])?GETPOST('createfunction'):1;
+    $createdata=isset($_GET['createdata'])?GETPOST('createdata'):1;
 
 
     // To say sql requests are escaped for mysql so we need to unescape them
@@ -497,8 +498,12 @@ if ($action == "set")
             {
                 if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
                 {
-                    $tablefound++;
-                    $tabledata[]=$file;
+                    //print 'x'.$file.'-'.$createdata.'<br>';
+                    if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i',$file))
+                    {
+                        $tablefound++;
+                        $tabledata[]=$file;
+                    }
                 }
             }
             closedir($handle);
@@ -539,7 +544,7 @@ if ($action == "set")
                 }
                 fclose($fp);
 
-                dolibarr_install_syslog("Found ".$linefound." records, defined ".count($arrayofrequests)." groups.",LOG_DEBUG);
+                dolibarr_install_syslog("Found ".$linefound." records, defined ".count($arrayofrequests)." group(s).",LOG_DEBUG);
 
                 // We loop on each requests
                 foreach($arrayofrequests as $buffer)
@@ -585,11 +590,15 @@ if ($action == "set")
         }
     }
     print '</table>';
-
-    $db->close();
+}
+else
+{
+    print 'Parameter action=set not defined';
 }
 
 dolibarr_install_syslog("--- install/etape2.php end", LOG_INFO);
 
 pFooter(!$ok,$setuplang);
+
+$db->close();
 ?>

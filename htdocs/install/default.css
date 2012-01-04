@@ -86,6 +86,11 @@ color: #000000;
 border: 1px solid #888888 !important;
 }
 
+.blinkwait {
+	font-weight: bold;
+	text-decoration:blink !important;	
+}
+
 .installchoices table tr td  {
 margin-left: 2px;
 margin-right: 2px;
