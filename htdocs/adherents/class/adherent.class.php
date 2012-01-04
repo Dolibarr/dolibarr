@@ -1026,10 +1026,9 @@ class Adherent extends CommonObject
                 $this->country_code   = $obj->country_code;
                 $this->pays_id        = $obj->country_id;    // TODO deprecated
                 $this->pays_code      = $obj->country_code;    // TODO deprecated
-                if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) $this->country = $langs->trans("Country".$obj->country_code);
-                elseif ($obj->country) $this->country=$obj->country;
+                if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) $this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
                 else $this->country=$obj->country;
-				$this->pays           = $this->country;
+				$this->pays           = $this->country;     // TODO deprecated
 
                 $this->phone          = $obj->phone;
                 $this->phone_perso    = $obj->phone_perso;
