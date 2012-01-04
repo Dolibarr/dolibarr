@@ -117,13 +117,15 @@ color: #777711;
 
 /* Error */
 div.error {
-color: #550000; font-weight: bold;
+color: #550000;
+font-weight: bold;
 padding: 0.2em 0.2em 0.2em 0.2em;
 margin: 0.5em 0em 0.5em 0em;
 border: 1px solid #6C7C8B;
 }
 font.error {
-color: #550000; font-weight: bold;
+color: #550000;
+font-weight: bold;
 }
 
 /* Next button */

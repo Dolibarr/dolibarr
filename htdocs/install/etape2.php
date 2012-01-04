@@ -78,7 +78,7 @@ if ($action == "set")
 {
     print '<h3>'.$langs->trans("Database").'</h3>';
 
-    print '<table cellspacing="0" cellpadding="4" border="0" width="100%">';
+    print '<table cellspacing="0" style="padding: 4px 4px 4px 0px" border="0" width="100%">';
     $error=0;
 
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
@@ -220,7 +220,7 @@ if ($action == "set")
                         print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
                         print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
                         print "\n</td>";
-                        print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
+                        print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
                         $error++;
                     }
                 }
@@ -229,7 +229,7 @@ if ($action == "set")
             {
                 print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
                 print "</td>";
-                print "<td>".$langs->trans("Error")." Failed to open file ".$dir.$file."</td></tr>";
+                print '<td><font class="error">'.$langs->trans("Error").' Failed to open file '.$dir.$file.'</td></tr>';
                 $error++;
                 dolibarr_install_syslog("Failed to open file ".$dir.$file,LOG_ERR);
             }
@@ -246,7 +246,7 @@ if ($action == "set")
         }
         else
         {
-            print "<tr><td>".$langs->trans("ErrorFailedToFindSomeFiles",$dir)."</td><td>".$langs->trans("Error")."</td></tr>";
+            print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles",$dir).'</td><td><font class="error">'.$langs->trans("Error").'</font></td></tr>';
             dolibarr_install_syslog("Failed to find files to create database in directory ".$dir,LOG_ERR);
         }
     }
@@ -367,7 +367,7 @@ if ($action == "set")
                                 print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
                                 print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$db->lastqueryerror();
                                 print "\n</td>";
-                                print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
+                                print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
                                 $error++;
                             }
                         }
@@ -378,7 +378,7 @@ if ($action == "set")
             {
                 print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
                 print "</td>";
-                print "<td>".$langs->trans("Error")." Failed to open file ".$dir.$file."</td></tr>";
+                print '<td><font class="error">'.$langs->trans("Error")." Failed to open file ".$dir.$file."</font></td></tr>";
                 $error++;
                 dolibarr_install_syslog("Failed to open file ".$dir.$file,LOG_ERR);
             }
@@ -455,7 +455,7 @@ if ($action == "set")
                             print "<tr><td>".$langs->trans("FunctionsCreation");
                             print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
                             print "\n</td>";
-                            print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
+                            print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
                             $error++;
                         }
                     }
@@ -469,7 +469,7 @@ if ($action == "set")
             }
             else
             {
-                print "<td>".$langs->trans("Error")."</td></tr>";
+                print '<td><font class="error">'.$langs->trans("Error").'</font></td></tr>';
                 $ok = 1 ;
             }
 
@@ -546,7 +546,10 @@ if ($action == "set")
 
                 dolibarr_install_syslog("Found ".$linefound." records, defined ".count($arrayofrequests)." group(s).",LOG_DEBUG);
 
-                // We loop on each requests
+                $okallfile=1;
+                $db->begin();
+
+                // We loop on each requests of file
                 foreach($arrayofrequests as $buffer)
                 {
                 	// Replace the prefix tables
@@ -556,10 +559,9 @@ if ($action == "set")
                 	}
 
                     //dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-                    $resql=$db->query($buffer);
+                    $resql=$db->query($buffer,1);
                     if ($resql)
                     {
-                        $ok = 1;
                         //$db->free($resql);     // Not required as request we launch here does not return memory needs.
                     }
                     else
@@ -571,10 +573,14 @@ if ($action == "set")
                         else
                         {
                             $ok = 0;
-                            print $langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."<br>";
+                            $okallfile = 0;
+                            print '<font class="error">'.$langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."</font><br>";
                         }
                     }
                 }
+
+                if ($okallfile) $db->commit();
+                else $db->rollback();
             }
         }
 
@@ -585,8 +591,8 @@ if ($action == "set")
         }
         else
         {
-            print "<td>".$langs->trans("Error")."</td></tr>";
-            $ok = 1 ;
+            print '<td><font class="error">'.$langs->trans("Error").'</font></td></tr>';
+            $ok = 1;    // Data loading are not blocking errors
         }
     }
     print '</table>';
