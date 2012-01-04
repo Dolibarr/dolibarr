@@ -32,6 +32,11 @@ public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=
 
 * Removed all fonts except dejavu* (greek, arab, persan, romanian, turkish), freemono* (russian), stsongstdlight* (chinese), helvetica* (all other) and useless directories (fonts/utils, docs, cache, images)
 
+* Replace in tcpdf_config.php
+define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
+with
+define ('K_PATH_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+dol_mkdir(K_PATH_CACHE);
 
 
 JSGANTT:
