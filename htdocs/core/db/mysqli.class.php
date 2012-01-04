@@ -311,8 +311,8 @@ class DoliDBMysqli
     /**
      * Validate a database transaction
      *
-     * @param		$log		Add more log to default log line
-     * @return	    int         1 if validation is OK or transaction level no started, 0 if ERROR
+     * @param	string	$log		Add more log to default log line
+     * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
      */
     function commit($log='')
     {
@@ -336,8 +336,8 @@ class DoliDBMysqli
     /**
      *	Annulation d'une transaction et retour aux anciennes valeurs
      *
-     * 	@param		$log		Add more log to default log line
-     * 	@return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+     * 	@param	string	$log		Add more log to default log line
+     * 	@return	int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
      */
     function rollback($log='')
     {
@@ -358,11 +358,11 @@ class DoliDBMysqli
     /**
      * 	Execute a SQL request and return the resultset
      *
-     * 	@param		query			SQL query string
-     * 	@param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
-     * 								Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-     *  @param      type            Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-     *	@return	    resource    	Resultset of answer
+     * 	@param	string	$query			SQL query string
+     * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+     * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+     *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+     *	@return	resource    			Resultset of answer
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
@@ -397,8 +397,8 @@ class DoliDBMysqli
     /**
      *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
      *
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return	    object		Object result line or false if KO or end of cursor
+     *	@param	Resultset	$resultset  Curseur de la requete voulue
+     *	@return	Object					Object result line or false if KO or end of cursor
      */
     function fetch_object($resultset)
     {
@@ -409,10 +409,10 @@ class DoliDBMysqli
 
 
     /**
-     *	Renvoie les donnees dans un tableau
+     *	Return datas as an array
      *
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return	    array
+     *	@param	Resultset	$resultset  Resultset of request
+     *	@return	array					Array
      */
     function fetch_array($resultset)
     {
@@ -422,10 +422,10 @@ class DoliDBMysqli
     }
 
     /**
-     *	Renvoie les donnees comme un tableau
+     *	Return datas as an array
      *
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return	    array
+     *	@param	Resultset	$resultset  Resultset of request
+     *	@return	array					Array
      */
     function fetch_row($resultset)
     {
@@ -443,11 +443,11 @@ class DoliDBMysqli
     }
 
     /**
-     *	Renvoie le nombre de lignes dans le resultat d'une requete SELECT
+     *	Return number of lines for result of a SELECT
      *
-     *	@see    	affected_rows
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return     int		    Nombre de lignes
+     *	@param	Resultset	$resultset  Resulset of requests
+     *	@return int		    			Nb of lines
+     *	@see    affected_rows
      */
     function num_rows($resultset)
     {
