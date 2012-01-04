@@ -312,9 +312,9 @@ class Fichinter extends CommonObject
 	function setValid($user, $outputdir)
 	{
 		global $langs, $conf;
-		
+
 		$error=0;
-		
+
 		if ($this->statut != 1)
 		{
 			$this->db->begin();
@@ -363,7 +363,7 @@ class Fichinter extends CommonObject
 
 	/**
 	 * 	Set intervetnion as billed
-	 * 
+	 *
 	 *  @return int     <0 si ko, >0 si ok
 	 */
 	function setBilled()
@@ -519,7 +519,7 @@ class Fichinter extends CommonObject
 
 	/**
 	 * 	Information sur l'objet fiche intervention
-	 * 
+	 *
 	 *	@param	int		$id      id de la fiche d'intervention
 	 */
 	function info($id)
@@ -1091,12 +1091,12 @@ class FichinterLigne
 	{
 		if ($this->statut == 0)
 		{
-			dol_syslog("FichinterLigne::deleteline lineid=".$this->rowid);
+			dol_syslog(get_class($this)."::deleteline lineid=".$this->rowid);
 			$this->db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
 			$resql = $this->db->query($sql);
-			dol_syslog("FichinterLigne::deleteline sql=".$sql);
+			dol_syslog(get_class($this)."::deleteline sql=".$sql);
 
 			if ($resql)
 			{
@@ -1115,7 +1115,7 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog("FichinterLigne::deleteline Error ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::deleteline Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}

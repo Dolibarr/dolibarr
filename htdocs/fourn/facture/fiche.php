@@ -131,7 +131,7 @@ if ($action == 'confirm_deleteproductline' && $confirm == 'yes')
     if ($user->rights->fournisseur->facture->creer)
     {
         $object->fetch($id);
-        $object->deleteline($_REQUEST['lineid']);
+        $object->deleteline(GETPOST('lineid'));
         $action = '';
     }
 }
@@ -407,7 +407,7 @@ if ($action == 'add' && $user->rights->fournisseur->facture->creer)
 if ($action == 'del_ligne')
 {
     $object->fetch($id);
-    $object->deleteline($_GET['lineid']);
+    $object->deleteline(GETPOST('lineid'));
     $action = 'edit';
 }
 

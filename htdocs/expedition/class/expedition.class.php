@@ -126,7 +126,7 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_print_error($db,"Expedition::getNextNumRef ".$obj->error);
+				dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
 		}
@@ -208,7 +208,7 @@ class Expedition extends CommonObject
 			$sql.= " SET ref = '(PROV".$this->id.")'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Expedition::create sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				// Insertion des lignes
@@ -276,10 +276,11 @@ class Expedition extends CommonObject
 
 	/**
 	 * Create a expedition line
-	 * 
-	 * @param int	$entrepot_id		Id of warehouse
-	 * @param int	$origin_line_id		Id of source line
-	 * @param int	$qty				Quantity
+	 *
+	 * @param 	int		$entrepot_id		Id of warehouse
+	 * @param 	int		$origin_line_id		Id of source line
+	 * @param 	int		$qty				Quantity
+	 * @return	int							<0 if KO, >0 if OK
 	 */
 	function create_line($entrepot_id, $origin_line_id, $qty)
 	{
@@ -335,7 +336,7 @@ class Expedition extends CommonObject
         if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
         if ($ref_int) $sql.= " AND e.ref_int='".$this->db->escape($ref_int)."'";
 
-		dol_syslog("Expedition::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -401,14 +402,14 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_syslog('Expedition::Fetch Error -2');
+				dol_syslog(get_class($this).'::Fetch Error -2');
 				$this->error='Delivery with id '.$id.' not found sql='.$sql;
 				return -2;
 			}
 		}
 		else
 		{
-			dol_syslog('Expedition::Fetch Error -1');
+			dol_syslog(get_class($this).'::Fetch Error -1');
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -426,19 +427,19 @@ class Expedition extends CommonObject
 
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-		dol_syslog("Expedition::valid");
+		dol_syslog(get_class($this)."::valid");
 
 		// Protection
 		if ($this->statut)
 		{
-			dol_syslog("Expedition::valid no draft status", LOG_WARNING);
+			dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
 			return 0;
 		}
 
 		if (! $user->rights->expedition->valider)
 		{
 			$this->error='Permission denied';
-			dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -473,11 +474,11 @@ class Expedition extends CommonObject
 		$sql.= ", fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Expedition::valid update expedition sql=".$sql);
+		dol_syslog(get_class($this)."::valid update expedition sql=".$sql);
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
-			dol_syslog("Expedition::valid Echec update - 10 - sql=".$sql, LOG_ERR);
+			dol_syslog(get_class($this)."::valid Echec update - 10 - sql=".$sql, LOG_ERR);
 			$this->error=$this->db->lasterror();
 			$error++;
 		}
@@ -497,14 +498,14 @@ class Expedition extends CommonObject
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
 
-			dol_syslog("Expedition::valid select details sql=".$sql);
+			dol_syslog(get_class($this)."::valid select details sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
 			    $cpt = $this->db->num_rows($resql);
                 for ($i = 0; $i < $cpt; $i++)
 				{
-					dol_syslog("Expedition::valid movement index ".$i);
+					dol_syslog(get_class($this)."::valid movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 
 					//var_dump($this->lines[$i]);
@@ -519,7 +520,7 @@ class Expedition extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->error();
-				dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 				return -2;
 			}
 		}
@@ -618,13 +619,14 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * 	Add a expedition line
-	 * 
-	 * 	@param int	$entrepot_id		Id of warehouse
-	 * 	@param int	$id					Id of source line
-	 * 	@param int	$qty				Quantity
+	 * Add a expedition line
+	 *
+	 * @param 	int		$entrepot_id		Id of warehouse
+	 * @param 	int		$id					Id of source line
+	 * @param 	int		$qty				Quantity
+	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function addline( $entrepot_id, $id, $qty )
+	function addline($entrepot_id, $id, $qty)
 	{
 		$num = count($this->lines);
 		$line = new ExpeditionLigne($this->db);
@@ -634,32 +636,6 @@ class Expedition extends CommonObject
 		$line->qty = $qty;
 
 		$this->lines[$num] = $line;
-	}
-
-	/**
-	 * 	Delete line
-	 * 
-	 * 	@param int $lineid	Id line of order
-	 * 	TODO Voir si cette function est utilisee
-	 */
-	function deleteline($lineid)
-	{
-		if ($this->statut == 0)
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = ".$lineid;
-
-			if ($this->db->query($sql) )
-			{
-				$this->update_price();
-
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
 	}
 
     /**
@@ -767,7 +743,7 @@ class Expedition extends CommonObject
     }
 
     /**
-	 * 	Delete shipping
+	 * 	Delete shipment
 	 *
 	 * 	@return	int		>0 if OK otherwise if KO
 	 */
@@ -777,7 +753,7 @@ class Expedition extends CommonObject
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 		$error=0;
-		
+
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
@@ -872,7 +848,7 @@ class Expedition extends CommonObject
 		$sql.= " WHERE ed.fk_expedition = ".$this->id;
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
 
-		dol_syslog("Expedition::fetch_lines sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -910,7 +886,7 @@ class Expedition extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Expedition::fetch_lines: Error '.$this->error, LOG_ERR);
+			dol_syslog(get_class($this).'::fetch_lines: Error '.$this->error, LOG_ERR);
 			return -3;
 		}
 	}
@@ -945,7 +921,7 @@ class Expedition extends CommonObject
 		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
-	
+
 	/**
      *	Return status label
      *
@@ -1008,7 +984,7 @@ class Expedition extends CommonObject
 
 		$now=dol_now();
 
-		dol_syslog("Expedition::initAsSpecimen");
+		dol_syslog(get_class($this)."::initAsSpecimen");
 
 		// Charge tableau des produits prodids
 		$prodids = array();
@@ -1074,9 +1050,9 @@ class Expedition extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User				$user        		Objet utilisateur qui modifie
-	 *	@param      timestamp		date_livraison     	Date de livraison
-	 *	@return     int         							<0 si ko, >0 si ok
+	 *	@param      User			$user        		Objet utilisateur qui modifie
+	 *	@param      timestamp		$date_livraison     Date de livraison
+	 *	@return     int         						<0 if KO, >0 if OK
 	 */
 	function set_date_livraison($user, $date_livraison)
 	{
@@ -1086,7 +1062,7 @@ class Expedition extends CommonObject
 			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Expedition::set_date_livraison sql=".$sql,LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1133,10 +1109,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 * 
 	 * Get tracking url status
-	 * 
-	 * @param	string	$value
+	 *
+	 * @param	string	$value		Value
+	 * @return	void
 	 */
 	function GetUrlTrackingStatus($value='')
 	{
@@ -1205,14 +1181,15 @@ class ExpeditionLigne
 	var $product_desc;  // Description produit
 	var $ref;
 
+
     /**
      *	Constructor
      *
      *  @param		DoliDB		$db      Database handler
      */
-	function ExpeditionLigne($DB)
+	function ExpeditionLigne($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 }
