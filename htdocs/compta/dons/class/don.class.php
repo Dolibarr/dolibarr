@@ -295,6 +295,13 @@ class Don extends CommonObject
     {
         global $conf;
 
+        // Clean parameters
+        $this->address=($this->address>0?$this->address:$this->adresse);
+        $this->zip=($this->zip>0?$this->zip:$this->cp);
+        $this->town=($this->town>0?$this->town:$this->ville);
+        $this->country_id=($this->country_id>0?$this->country_id:$this->fk_pays);
+        $this->country=($this->country?$this->country:$this->pays);
+
         $now=dol_now();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (";
@@ -327,9 +334,9 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->nom)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
         $sql.= ", '".$this->db->escape($this->adresse)."'";
-        $sql.= ", '".$this->cp."'";
-        $sql.= ", '".$this->db->escape($this->ville)."'";
-        $sql.= ", '".$this->db->escape($this->pays)."'"; // TODO use fk_pays
+        $sql.= ", '".$this->db->escape($this->zip)."'";
+        $sql.= ", '".$this->db->escape($this->town)."'";
+        $sql.= ", '".$this->db->escape($this->country)."'"; // TODO use country_id
         $sql.= ", ".$this->public;
         $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
         $sql.= ", '".$this->db->escape($this->note)."'";
@@ -362,6 +369,12 @@ class Don extends CommonObject
      */
     function update($user)
     {
+        // Clean parameters
+        $this->address=($this->address>0?$this->address:$this->adresse);
+        $this->zip=($this->zip>0?$this->zip:$this->cp);
+        $this->town=($this->town>0?$this->town:$this->ville);
+        $this->country_id=($this->country_id>0?$this->country_id:$this->fk_pays);
+        $this->country=($this->country?$this->country:$this->pays);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
         $sql .= "amount = " . price2num($this->amount);
@@ -369,10 +382,10 @@ class Don extends CommonObject
         $sql .= ",prenom = '".$this->db->escape($this->prenom)."'";
         $sql .= ",nom='".$this->db->escape($this->nom)."'";
         $sql .= ",societe='".$this->db->escape($this->societe)."'";
-        $sql .= ",adresse='".$this->db->escape($this->adresse)."'";
-        $sql .= ",cp='".$this->cp."'";
-        $sql .= ",ville='".$this->db->escape($this->ville)."'";
-        $sql .= ",pays='".$this->db->escape($this->pays)."'"; // TODO use fk_pays
+        $sql .= ",adresse='".$this->db->escape($this->address)."'";
+        $sql .= ",cp='".$this->db->escape($this->zip)."'";
+        $sql .= ",ville='".$this->db->escape($this->town)."'";
+        $sql .= ",pays='".$this->db->escape($this->country)."'"; // TODO use country_id
         $sql .= ",public=".$this->public;
         $sql .= ",fk_don_projet=".($this->fk_project>0?$this->fk_project:'null');
         $sql .= ",note='".$this->db->escape($this->note)."'";
@@ -399,7 +412,8 @@ class Don extends CommonObject
     /**
      *    Delete a donation
      *
-     *    @param  int	$rowid     Id of donation to delete
+     *    @param  	int		$rowid     	Id of donation to delete
+     *    @return	int					<0 if KO, >0 if OK
      */
     function delete($rowid)
     {
@@ -525,7 +539,7 @@ class Don extends CommonObject
      *    Classe le don comme paye, le don a ete recu
      *
      *    @param	int		$rowid           	id du don a modifier
-     *    @param    int		$modepaiementd   	mode de paiement
+     *    @param    int		$modepaiement   	mode de paiement
      *    @return   int      					<0 if KO, >0 if OK
      */
     function set_paye($rowid, $modepaiement='')
