@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/propale/pdf_propale_jaune.modules.php
+ *	\file       htdocs/core/modules/propale/pdf_jaune.modules.php
  *	\ingroup    propale
  *	\brief      Fichier de la classe permettant de generer les propales au modele Jaune
  *	\author	    Laurent Destailleur
@@ -33,10 +33,10 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
 /**
- *	\class      pdf_propale_jaune
+ *	\class      pdf_jaune
  *	\brief      Classe permettant de generer les propales au modele Jaune
  */
-class pdf_propale_jaune extends ModelePDFPropales
+class pdf_jaune extends ModelePDFPropales
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -46,7 +46,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 	 *
 	 *  @param		DoliDB		$DB      Database handler
 	 */
-	function pdf_propale_jaune($db)
+	function pdf_jaune($db)
 	{
 		global $conf,$langs,$mysoc;
 
