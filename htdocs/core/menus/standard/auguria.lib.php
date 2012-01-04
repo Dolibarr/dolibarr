@@ -81,7 +81,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 
 				print_start_menu_entry_auguria($idsel);
 				print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['atarget']?' target="'.$newTabMenu[$i]['atarget'].'"':($atarget?' target="'.$atarget.'"':'')).'>';
+				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['target']?' target="'.$newTabMenu[$i]['target'].'"':($atarget?' target="'.$atarget.'"':'')).'>';
 				print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
 				print '</a>';
 				print_end_menu_entry_auguria();

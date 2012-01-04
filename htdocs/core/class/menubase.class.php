@@ -372,36 +372,6 @@ class Menubase
 
 
     /**
-     *  Complete this->newmenu with menu entry found in $tab
-     *
-     *  @param  array	$tab			Tab array
-     *  @param  int		$pere			Id of parent
-     *  @param  int		$rang			Rang
-     *  @param  string	$myleftmenu     Value for left that defined leftmenu
-     *  @return	void
-     */
-    function recur($tab, $pere, $rang, $myleftmenu)
-    {
-        global $leftmenu;	// To be exported in dol_eval function
-
-        //print "xx".$pere;
-        $leftmenu = $myleftmenu;
-
-        //ballayage du tableau
-        $num = count($tab);
-        for ($x = 0; $x < $num; $x++)
-        {
-            //si un element a pour pere : $pere
-            if ($tab[$x]['fk_menu'] == $pere && $tab[$x]['enabled'])
-            {
-                //print 'mainmenu='.$tab[$x]['mainmenu'];
-                $this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], $rang - 1, $tab[$x]['perms'], $tab[$x]['atarget'], $tab[$x]['mainmenu']);
-                $this->recur($tab, $tab[$x]['rowid'], $rang + 1, $leftmenu);
-            }
-        }
-    }
-
-    /**
      *	Load tabMenu array with top menu entries found into database.
      *
      * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (always '')
@@ -414,7 +384,7 @@ class Menubase
     function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf;
-        global $mainmenu,$leftmenu,$rights;	// To export to dol_eval function
+        global $mainmenu,$leftmenu;	// To export to dol_eval function
 
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
@@ -438,12 +408,12 @@ class Menubase
                     $newTabMenu[$i]['url']=$val['url'];
                     $newTabMenu[$i]['titre']=$val['titre'];
                     $newTabMenu[$i]['right']=$val['perms'];
-                    $newTabMenu[$i]['atarget']=$val['atarget'];
+                    $newTabMenu[$i]['target']=$val['target'];
                     $newTabMenu[$i]['mainmenu']=$val['mainmenu'];
                     $newTabMenu[$i]['leftmenu']=$val['leftmenu'];
                     $newTabMenu[$i]['enabled']=$val['enabled'];
                     $newTabMenu[$i]['type']=$val['type'];
-                    $newTabMenu[$i]['lang']=$val['langs'];
+                    $newTabMenu[$i]['langs']=$val['langs'];
 
                     $i++;
                 }
@@ -467,7 +437,7 @@ class Menubase
     function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
-        global $mainmenu,$leftmenu,$rights; // To export to dol_eval function
+        global $mainmenu,$leftmenu; // To export to dol_eval function
 
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
@@ -482,64 +452,55 @@ class Menubase
         }
         //var_dump($tabMenu); exit;
 
-        $menutopid='';
         if (is_array($tabMenu))
         {
+            $menutopid='';
             foreach($tabMenu as $key => $val)
             {
                 // Define menutopid of mainmenu
-                if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu)    // 9 is type, 8 is mainmenu
+                if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu)
                 {
                     $menutopid=$val['rowid'];
                     break;
                 }
             }
-        }
 
-        // Update fk_menu when value is -1 (left menu added by modules with no top menu)
-        if (is_array($tabMenu))
-        {
+            // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed
+            $this->recur($tabMenu, $menutopid, 1, $leftmenu);
+            //var_dump($this->newmenu->liste);exit;
+
+            // Update fk_menu when value is -1 (left menu added by modules with no top menu)
             foreach($tabMenu as $key => $val)
             {
-                if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu)
+                if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu)    // We found a menu entry not linked to parent with good mainmenu
                 {
                     if (empty($val['fk_leftmenu']))
                     {
-                        //print 'Try to find fk_menu for '.join(',',$val);
+                        //print 'Try to add menu with '.$mainmenu.' for '.join(',',$val);
                         //var_dump($this->newmenu->liste);exit;
-                        $tabMenu[$key]['fk_menu']=$menutopid;
+                        $this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
                     }
                     else if ($val['fk_leftmenu'] == $leftmenu)
                     {
-                        //$tabMenu[$key]['fk_menu']=$menutopid;
+                        //print 'Try to add menu with '.$mainmenu.' for '.join(',',$val);
+                        //var_dump($this->newmenu->liste);exit;
 
-                        // Search higher menu level with this leftmenu
-                        /*
-                        foreach($this->newmenu as $keyparent => $valparent)
+                        // Search higher menu level with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
+                        foreach($this->newmenu->liste as $keyparent => $valparent)
                         {
-                            if (empty($val['fk_leftmenu']) && $valparent['type'] == 'top' && $valparent['mainmenu'] == $val['fk_mainmenu'])
+                            //var_dump($valparent);
+                            if ($valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu'])
                             {
-                                $tabMenu[$key]['fk_menu']=$valparent['rowid'];
-                                break;
-                            }
-                            //var_dump($tabMenu);exit;
-                            if (! empty($val['fk_leftmenu']) && $valparent['type'] == 'left' && $valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu'])
-                            {
-                                print 'eeee';
-                                $tabMenu[$key]['fk_menu']=$valparent['rowid'];
+                                //print "We found parent: level=".$valparent['level'];
+                                // TODO
+                                // We add menu entry
                                 break;
                             }
                         }
-                        */
-                        //exit;
                     }
                 }
             }
         }
-
-        // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed
-        $this->recur($tabMenu, $menutopid, 1, $leftmenu);
-        //var_dump($this->newmenu->liste);exit;
 
         return $this->newmenu;
     }
@@ -555,10 +516,10 @@ class Menubase
      *  @param  array	&$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
-    function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+    private function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
-        global $mainmenu, $leftmenu, $rights; // To export to dol_eval function
+        global $mainmenu, $leftmenu; // To export to dol_eval function
 
         $menutopid=0;
         $mainmenu=$mymainmenu;  // To export to dol_eval function
@@ -587,26 +548,6 @@ class Menubase
                 //$objm = $this->db->fetch_object($resql);
                 $menu = $this->db->fetch_array($resql);
 
-                // Define $title
-                $title = $langs->trans($menu['titre']);
-                if ($title == $menu['titre'])   // Translation not found
-                {
-                    if (! empty($menu['langs']))    // If there is a dedicated translation file
-                    {
-                        $langs->load($menu['langs']);
-                    }
-
-                    if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
-                    {
-                        $tab_titre = explode("/",$menu['titre']);
-                        $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
-                    }
-                    else
-                    {
-                        $title = $langs->trans($menu['titre']);
-                    }
-                }
-
                 // Define $right
                 $perms = true;
                 if ($menu['perms'])
@@ -621,32 +562,59 @@ class Menubase
                 {
                     $enabled = verifCond($menu['enabled']);
                     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_ACCORDION && preg_match('/^\$leftmenu/',$menu['enabled'])) $enabled=1;
-                    //print "verifCond title=".$title." rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
+                    //print "verifCond rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
                 }
 
-                // We complete tabMenu
-                $tabMenu[$b]['rowid']       = $menu['rowid'];
-                $tabMenu[$b]['fk_menu']     = $menu['fk_menu'];
-                $tabMenu[$b]['url']         = $menu['url'];
-                if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b]['url']))
+                // Define $title
+                if ($enabled)
                 {
-                    if (preg_match('/\?/',$tabMenu[$b]['url'])) $tabMenu[$b]['url'].='&amp;idmenu='.$menu['rowid'];
-                    else $tabMenu[$b]['url'].='?idmenu='.$menu['rowid'];
-                }
-                $tabMenu[$b]['titre']       = $title;
-                $tabMenu[$b]['target']      = $menu['target'];
-                $tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
-                $tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
-                if (! isset($tabMenu[$b]['perms'])) $tabMenu[$b]['perms'] = $perms;
-                else $tabMenu[$b]['perms']  = ($tabMenu[$b]['perms'] && $perms);
-                if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
-                else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);
-                $tabMenu[$b]['type']        = $menu['type'];
-                $tabMenu[$b]['langs']       = $menu['langs'];
-                $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
-                $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
+                    $title = $langs->trans($menu['titre']);
+                    if ($title == $menu['titre'])   // Translation not found
+                    {
+                        if (! empty($menu['langs']))    // If there is a dedicated translation file
+                        {
+                            $langs->load($menu['langs']);
+                        }
 
-                $b++;
+                        if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
+                        {
+                            $tab_titre = explode("/",$menu['titre']);
+                            $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
+                        }
+                        else
+                        {
+                            $title = $langs->trans($menu['titre']);
+                        }
+                    }
+
+                    // We complete tabMenu
+                    $tabMenu[$b]['rowid']       = $menu['rowid'];
+                    $tabMenu[$b]['fk_menu']     = $menu['fk_menu'];
+                    $tabMenu[$b]['url']         = $menu['url'];
+                    if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b]['url']))
+                    {
+                        if (preg_match('/\?/',$tabMenu[$b]['url'])) $tabMenu[$b]['url'].='&amp;idmenu='.$menu['rowid'];
+                        else $tabMenu[$b]['url'].='?idmenu='.$menu['rowid'];
+                    }
+                    $tabMenu[$b]['titre']       = $title;
+                    $tabMenu[$b]['target']      = $menu['target'];
+                    $tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
+                    $tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
+                    /*if (! isset($tabMenu[$b]['perms'])) $tabMenu[$b]['perms'] = $perms;
+                    else $tabMenu[$b]['perms']  = ($tabMenu[$b]['perms'] && $perms);
+                    if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
+                    else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);*/
+                    $tabMenu[$b]['perms']       = $perms;
+                    $tabMenu[$b]['enabled']     = $enabled;
+                    $tabMenu[$b]['type']        = $menu['type'];
+                    //$tabMenu[$b]['langs']       = $menu['langs'];
+                    $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
+                    $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
+                    //$tabMenu[$b]['position']    = $menu['position'];
+
+                    $b++;
+                }
+
                 $a++;
             }
             $this->db->free($resql);
@@ -658,6 +626,30 @@ class Menubase
             return -1;
         }
     }
+
+    /**
+     *  Complete this->newmenu with menu entry found in $tab
+     *
+     *  @param  array	$tab			Tab array
+     *  @param  int		$pere			Id of parent
+     *  @param  int		$level			Level
+     *  @return	void
+     */
+    private function recur($tab, $pere, $level)
+    {
+        // Loop on tab array
+        $num = count($tab);
+        for ($x = 0; $x < $num; $x++)
+        {
+            //si un element a pour pere : $pere
+            if ($tab[$x]['fk_menu'] == $pere && $tab[$x]['enabled'])
+            {
+                //print 'mainmenu='.$tab[$x]['mainmenu'];
+                $this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], $level - 1, $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu']);
+                $this->recur($tab, $tab[$x]['rowid'], $level + 1);
+            }
+        }
+   }
 
 }
 
