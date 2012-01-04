@@ -85,7 +85,7 @@ class Menubase
         $this->menu_handler=trim($this->menu_handler);
         $this->module=trim($this->module);
         $this->type=trim($this->type);
-        $this->mainmenu=trim($this->mainmenu);        // If type='top'
+        $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
         $this->fk_menu=trim($this->fk_menu);          // If -1, fk_mainmenu and fk_leftmenu must be defined
         $this->fk_mainmenu=trim($this->fk_mainmenu);
@@ -152,12 +152,12 @@ class Menubase
         $sql.= " ".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
         $sql.= " ".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
         $sql.= " '".$this->position."',";
-        $sql.= " '".$this->url."',";
-        $sql.= " '".$this->target."',";
-        $sql.= " '".$this->titre."',";
-        $sql.= " '".$this->langs."',";
-        $sql.= " '".$this->perms."',";
-        $sql.= " '".$this->enabled."',";
+        $sql.= " '".$this->db->escape($this->url)."',";
+        $sql.= " '".$this->db->escape($this->target)."',";
+        $sql.= " '".$this->db->escape($this->titre)."',";
+        $sql.= " '".$this->db->escape($this->langs)."',";
+        $sql.= " '".$this->db->escape($this->perms)."',";
+        $sql.= " '".$this->db->escape($this->enabled)."',";
         $sql.= " '".$this->user."'";
         $sql.= ")";
 
@@ -244,11 +244,12 @@ class Menubase
     }
 
 
-    /*
-     *    \brief      Load object in memory from database
-     *    \param      id          id object
-     *    \param      user        User that load
-     *    \return     int         <0 if KO, >0 if OK
+    /**
+     *   Load object in memory from database
+     *
+     *   @param		int		$id         Id object
+     *   @param		User    $user       User that load
+     *   @return	int         		<0 if KO, >0 if OK
      */
     function fetch($id, $user=0)
     {
@@ -328,7 +329,7 @@ class Menubase
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog("Menubase::delete sql=".$sql);
+        dol_syslog(get_class($this)."::delete sql=".$sql);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
@@ -396,27 +397,11 @@ class Menubase
         }
 
         $newTabMenu=array();
-        $i=0;
         if (is_array($tabMenu))
         {
             foreach($tabMenu as $val)
             {
-                if ($val['type']=='top')
-                {
-                    $newTabMenu[$i]['rowid']=$val['rowid'];
-                    $newTabMenu[$i]['fk_menu']=$val['fk_menu'];
-                    $newTabMenu[$i]['url']=$val['url'];
-                    $newTabMenu[$i]['titre']=$val['titre'];
-                    $newTabMenu[$i]['right']=$val['perms'];
-                    $newTabMenu[$i]['target']=$val['target'];
-                    $newTabMenu[$i]['mainmenu']=$val['mainmenu'];
-                    $newTabMenu[$i]['leftmenu']=$val['leftmenu'];
-                    $newTabMenu[$i]['enabled']=$val['enabled'];
-                    $newTabMenu[$i]['type']=$val['type'];
-                    $newTabMenu[$i]['langs']=$val['langs'];
-
-                    $i++;
-                }
+                if ($val['type']=='top') $newTabMenu[]=$val;
             }
         }
 
@@ -472,31 +457,44 @@ class Menubase
             // Update fk_menu when value is -1 (left menu added by modules with no top menu)
             foreach($tabMenu as $key => $val)
             {
+                //var_dump($tabMenu);
                 if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu)    // We found a menu entry not linked to parent with good mainmenu
                 {
+                    //print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
+                    //var_dump($this->newmenu->liste);exit;
+
                     if (empty($val['fk_leftmenu']))
                     {
-                        //print 'Try to add menu with '.$mainmenu.' for '.join(',',$val);
-                        //var_dump($this->newmenu->liste);exit;
                         $this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
+                        //var_dump($this->newmenu->liste);
                     }
-                    else if ($val['fk_leftmenu'] == $leftmenu)
+                    else
                     {
-                        //print 'Try to add menu with '.$mainmenu.' for '.join(',',$val);
-                        //var_dump($this->newmenu->liste);exit;
-
-                        // Search higher menu level with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
+                        // Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
+                        $searchlastsub=0;$lastid=0;$nextid=0;$found=0;
                         foreach($this->newmenu->liste as $keyparent => $valparent)
                         {
                             //var_dump($valparent);
+                            if ($searchlastsub)    // If we started to search for last submenu
+                            {
+                                if ($valparent['level'] >= $searchlastsub) $lastid=$keyparent;
+                                if ($valparent['level'] < $searchlastsub)
+                                {
+                                    $nextid=$keyparent;
+                                    break;
+                                }
+                            }
                             if ($valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu'])
                             {
-                                //print "We found parent: level=".$valparent['level'];
-                                // TODO
-                                // We add menu entry
-                                break;
+                                //print "We found parent: keyparent='.$keyparent.' - level=".$valparent['level'].' - '.join(',',$valparent).'<br>';
+                                // Now we look to find last subelement of this parent (we add at end)
+                                $searchlastsub=($valparent['level']+1);
+                                $lastid=$keyparent;
+                                $found=1;
                             }
                         }
+                        //print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
+                        if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
                     }
                 }
             }
@@ -553,7 +551,7 @@ class Menubase
                 if ($menu['perms'])
                 {
                     $perms = verifCond($menu['perms']);
-                    //print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
+                    //print "verifCond rowid=".$menu['rowid']." ".$menu['perms'].":".$perms."<br>\n";
                 }
 
                 // Define $enabled
@@ -600,10 +598,6 @@ class Menubase
                     $tabMenu[$b]['target']      = $menu['target'];
                     $tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
                     $tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
-                    /*if (! isset($tabMenu[$b]['perms'])) $tabMenu[$b]['perms'] = $perms;
-                    else $tabMenu[$b]['perms']  = ($tabMenu[$b]['perms'] && $perms);
-                    if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
-                    else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);*/
                     $tabMenu[$b]['perms']       = $perms;
                     $tabMenu[$b]['enabled']     = $enabled;
                     $tabMenu[$b]['type']        = $menu['type'];
@@ -645,8 +639,8 @@ class Menubase
             if ($tab[$x]['fk_menu'] == $pere && $tab[$x]['enabled'])
             {
                 //print 'mainmenu='.$tab[$x]['mainmenu'];
-                $this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], $level - 1, $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu']);
-                $this->recur($tab, $tab[$x]['rowid'], $level + 1);
+                $this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level-1), $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu']);
+                $this->recur($tab, $tab[$x]['rowid'], ($level+1));
             }
         }
    }

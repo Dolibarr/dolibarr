@@ -54,7 +54,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 		if ($newTabMenu[$i]['enabled'] == true)
 		{
 			$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
-			if ($newTabMenu[$i]['right'] == true)	// Is allowed
+			if ($newTabMenu[$i]['perms'] == true)	// Is allowed
 			{
 				// Define url
 				if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
@@ -280,6 +280,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
                 else $url.='&';
                 $url.='mainmenu='.$mainmenu;
             }
+
+            print '<!-- Add menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['mainmenu'].' -->'."\n";
 
             // Menu niveau 0
             if ($menu_array[$i]['level'] == 0)

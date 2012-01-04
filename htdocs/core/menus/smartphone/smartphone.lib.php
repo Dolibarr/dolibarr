@@ -51,7 +51,7 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 	{
 		if ($newTabMenu[$i]['enabled'] == true)
 		{
-			if ($newTabMenu[$i]['right'] == true)	// Is allowed
+			if ($newTabMenu[$i]['perms'] == true)	// Is allowed
 			{
 				// Define url
 				if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))

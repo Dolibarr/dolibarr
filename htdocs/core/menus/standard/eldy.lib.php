@@ -450,7 +450,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			//var_dump($newTabMenu[$i]);
 
 			$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
-			if ($newTabMenu[$i]['right'] == true)	// Is allowed
+			if ($newTabMenu[$i]['perms'] == true)	// Is allowed
 			{
 				if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 				{
@@ -1356,6 +1356,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
             // For external modules
             $url = dol_buildpath($menu_array[$i]['url'], 1);
+
+            print '<!-- Add menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' -->'."\n";
 
             // Menu niveau 0
             if ($menu_array[$i]['level'] == 0)

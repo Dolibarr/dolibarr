@@ -36,7 +36,7 @@ For users:
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
-- New: Can add a left menu (first level) into an existing top menu.
+- New: Can add a left menu into an existing top menu or left menu.
 - New: Add webservice to get or create a product or service.
 - New: Add webservice to get a user.
 - New: Add more "hooks" (like hooks to change way of showing/editing lines into dictionnaries).
