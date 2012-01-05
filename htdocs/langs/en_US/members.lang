@@ -179,7 +179,7 @@ MembersStatisticsDesc=Choose statistics you want to read...
 MenuMembersStats=Statistics
 LastMemberDate=Last member date
 Nature=Nature
-Public=Information are public (no=private)
+Public=Information are public
 Exports=Exports
 NewMemberbyWeb=New member added. Awaiting approval
 NewMemberForm=New member form

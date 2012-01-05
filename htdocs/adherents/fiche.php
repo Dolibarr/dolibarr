@@ -1430,18 +1430,22 @@ if ($rowid && $action != 'edit')
 			}
 		}
 
-		// Envoi fiche par mail
-		if ($object->statut >= 1)
+		// Send card by email
+		if ($user->rights->adherent->creer)
 		{
-			if ($user->rights->adherent->creer)
-			{
+       		if ($object->statut >= 1)
+       		{
 				if ($object->email) print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
 				else print "<a class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NoEMail"))."\">".$langs->trans("SendCardByMail")."</a>\n";
-		    }
-			else
-			{
-				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
-			}
+       		}
+       		else
+       		{
+       		    print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("ValidateBefore"))."\">".$langs->trans("SendCardByMail")."</font>";
+       		}
+	    }
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
 		}
 
 		// Resilier

@@ -46,9 +46,9 @@ class Adherent extends CommonObject
     var $ref;
     var $civilite_id;
     var $firstname;
-    var $prenom;                // TODO deprecated
+    var $prenom;                // deprecated
     var $lastname;
-    var $nom;                   // TODO deprecated
+    var $nom;                   // deprecated
     var $login;
     var $pass;
     var $societe;
@@ -62,16 +62,16 @@ class Adherent extends CommonObject
     var $state_id;              // Id of department
     var $state_code;            // Code of department
     var $state;                 // Label of department
-    var $fk_departement;		// TODO deprecated
-    var $departement_code;		// TODO deprecated
-    var $departement;			// TODO deprecated
+    var $fk_departement;		// deprecated
+    var $departement_code;		// deprecated
+    var $departement;			// deprecated
 
     var $country_id;
     var $country_code;
     var $country;
-    var $pays_id;              // TODO deprecated
-    var $pays_code;            // TODO deprecated
-    var $pays;                 // TODO deprecated
+    var $pays_id;              // deprecated
+    var $pays_code;            // deprecated
+    var $pays;                 // deprecated
 
     var $email;
     var $phone;
@@ -193,13 +193,13 @@ class Adherent extends CommonObject
 
         $infos='';
         if ($this->civilite_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
-        $infos.= $langs->transnoentities("Lastname").": ".$this->nom."\n";
-        $infos.= $langs->transnoentities("Firstname").": ".$this->prenom."\n";
+        $infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
+        $infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
         $infos.= $langs->transnoentities("Company").": ".$this->societe."\n";
-        $infos.= $langs->transnoentities("Address").": ".$this->adresse."\n";
-        $infos.= $langs->transnoentities("Zip").": ".$this->cp."\n";
-        $infos.= $langs->transnoentities("Town").": ".$this->ville."\n";
-        $infos.= $langs->transnoentities("Country").": ".$this->pays."\n";
+        $infos.= $langs->transnoentities("Address").": ".$this->address."\n";
+        $infos.= $langs->transnoentities("Zip").": ".$this->zip."\n";
+        $infos.= $langs->transnoentities("Town").": ".$this->town."\n";
+        $infos.= $langs->transnoentities("Country").": ".$this->country."\n";
         $infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
         $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
         $infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
@@ -212,13 +212,13 @@ class Adherent extends CommonObject
                '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
                '%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
                '%CIVILITE%'=>$this->getCivilityLabel($msgishtml?0:1),
-               '%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->prenom):$this->prenom,
-               '%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->nom):$this->nom,
+               '%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+               '%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
                '%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-               '%ADRESSE%'=>$msgishtml?dol_htmlentitiesbr($this->adresse):$this->adresse,
-               '%CP%'=>$msgishtml?dol_htmlentitiesbr($this->cp):$this->cp,
-               '%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->ville):$this->ville,
-               '%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->pays):$this->pays,
+               '%ADRESSE%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
+               '%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+               '%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+               '%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
                '%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
                '%NAISS%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
                '%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,

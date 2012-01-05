@@ -53,9 +53,8 @@ $sql = "SELECT sum(r.reviews_rating)/count(r.reviews_rating) as rat, r.products_
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews as r,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products as p ";
 $sql .= " WHERE r.products_id = p.products_id";
 $sql .= " GROUP BY r.products_id, p.products_model, p.products_quantity, p.products_status";
-
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit($limit ,$offset);
+$sql .= $dbosc->plimit($limit,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<TR class=\"liste_titre\"><td>".$langs->trans("Ref");

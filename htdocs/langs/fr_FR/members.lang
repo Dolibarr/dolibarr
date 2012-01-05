@@ -183,7 +183,7 @@ MembersStatisticsDesc=Choisissez les statistiques que vous désirez consulter...
 MenuMembersStats=Statistiques
 LastMemberDate=Date dernier adhérent
 Nature=Nature
-Public=Informations publiques (no=privées)
+Public=Informations publiques
 Exports=Exports
 NewMemberbyWeb=Nouvel Adherent ajoute. En attente de validation
 NewMemberForm=Nouvel Adherent form
