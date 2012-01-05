@@ -182,7 +182,7 @@ dol_fiche_end();
 print '<br>';
 //print $langs->trans('FollowingLinksArePublic').'<br>';
 print img_picto('','object_globe.png').' '.$langs->trans('BlankSubscriptionForm').':<br>';
-print '<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.'">'.DOL_MAIN_URL_ROOT.'/public/members/new.php</a>';
+print '<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php">'.DOL_MAIN_URL_ROOT.'/public/members/new.php</a>';
 
 /*
 print '<table class="border" cellspacing="0" cellpadding="3">';
