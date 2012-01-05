@@ -169,7 +169,8 @@ class Facturation
     /**
      *  Remove a product from panel
      *
-     *  @param      aArticle	Id of line into cart to remove
+     *  @param  int		$aArticle	Id of line into cart to remove
+     *  @return	void
      */
     public function supprArticle($aArticle)
     {
@@ -241,6 +242,8 @@ class Facturation
 
     /**
      * Reinitialisation des attributs persistants
+     *
+     *  @return	void
      */
     public function raz_pers()
     {
@@ -261,34 +264,37 @@ class Facturation
 
     /**
      * Getter for id
-     * @param      aId
-     * @return     id
+     *
+     * @param	int		$aId	Id
+     * @return  id
      */
     public function id($aId=null)
     {
 
         if ( !$aId )
         {
-
             return $this->id;
 
-        } else if ( $aId == 'RESET' )
+        }
+        else if ( $aId == 'RESET' )
         {
 
             $this->id = NULL;
 
-        } else
+        }
+        else
         {
 
             $this->id = $aId;
 
         }
-
     }
 
     /**
      * Getter for ref
-     * @param $aRef
+     *
+     * @param	string	$aRef	Ref
+     * @return	string			Ref
      */
     public function ref($aRef=null)
      {
@@ -310,10 +316,11 @@ class Facturation
 
     /**
      * Getter for qte
-     * @param $aQte
-     * @return
+     *
+     * @param	int		$aQte		Qty
+     * @return	int					Qty
      */
-    public function qte ( $aQte=null )
+    public function qte( $aQte=null )
     {
         if ( !$aQte )
         {
@@ -334,8 +341,8 @@ class Facturation
     /**
      * Getter for stock
      *
-     * @param      aStock
-     * @return
+     * @param   string	$aStock		Stock
+     * @return	string				Stock
      */
     public function stock($aStock=null)
     {
@@ -358,8 +365,8 @@ class Facturation
     /**
      * Getter for remise_percent
      *
-     * @param      aRemisePercent
-     * @return
+     * @param	string	$aRemisePercent		Discount
+     * @return	string						Discount
      */
     public function remise_percent($aRemisePercent=null)
     {
@@ -382,8 +389,8 @@ class Facturation
     /**
      * Getter for montant_remise
      *
-     * @param      aMontantRemise
-     * @return
+     * @param	int		$aMontantRemise		Amount
+     * @return	string						Amount
      */
     public function montant_remise($aMontantRemise=null)
     {
@@ -407,8 +414,8 @@ class Facturation
     /**
      * Getter for prix
      *
-     * @param      aPrix
-     * @return
+     * @param	int		$aPrix		Price
+     * @return	string				Stock
      */
     public function prix ( $aPrix=null )
     {
@@ -432,8 +439,8 @@ class Facturation
     /**
      * Getter for tva
      *
-     * @param      aTva
-     * @return
+     * @param	int		$aTva		Vat
+     * @return	int					Vat
      */
     public function tva ( $aTva=null )
     {
@@ -455,10 +462,12 @@ class Facturation
     }
 
     /**
+     * Get num invoice
      *
-     * @param $aNumFacture
+     * @param string	$aNumFacture		Invoice ref
+     * @return	string						Invoice ref
      */
-    public function num_facture ( $aNumFacture=null )
+    public function num_facture( $aNumFacture=null )
     {
 
         if ( !$aNumFacture ) {
@@ -477,10 +486,12 @@ class Facturation
     }
 
     /**
+     * Get payment mode
      *
-     * @param unknown_type $aModeReglement
+     * @param	int		$aModeReglement		Payment mode
+     * @return	int							Payment mode
      */
-    public function mode_reglement ( $aModeReglement=null )
+    public function mode_reglement( $aModeReglement=null )
     {
 
         if ( !$aModeReglement ) {
@@ -500,10 +511,12 @@ class Facturation
     }
 
     /**
+     * Get amount
      *
-     * @param $aMontantEncaisse
+     * @param	int		$aMontantEncaisse		Amount
+     * @return	int								Amount
      */
-    public function montant_encaisse ( $aMontantEncaisse=null )
+    public function montant_encaisse( $aMontantEncaisse=null )
     {
 
         if ( !$aMontantEncaisse ) {
@@ -523,10 +536,12 @@ class Facturation
     }
 
     /**
+     * Get amount
      *
-     * @param $aMontantRendu
+     * @param	int			$aMontantRendu		Amount
+     * @return	int								Amount
      */
-    public function montant_rendu ( $aMontantRendu=null )
+    public function montant_rendu( $aMontantRendu=null )
     {
 
         if ( !$aMontantRendu ) {
@@ -545,12 +560,13 @@ class Facturation
     }
 
     /**
+     * Get payment date
      *
-     * @param $aPaiementLe
+     * @param	date		$aPaiementLe		Date
+     * @return	date							Date
      */
-    public function paiement_le ( $aPaiementLe=null )
+    public function paiement_le( $aPaiementLe=null )
     {
-
         if ( !$aPaiementLe ) {
 
             return $this->paiement_le;
@@ -564,16 +580,16 @@ class Facturation
             $this->paiement_le = $aPaiementLe;
 
         }
-
     }
 
     /**
+     * Get totla HT
      *
-     * @param $aTotalHt
+     * @param	int		$aTotalHt		Total amount
+     * @return	int						Total amount
      */
-    public function prix_total_ht ( $aTotalHt=null )
+    public function prix_total_ht( $aTotalHt=null )
     {
-
         if ( !$aTotalHt ) {
 
             return $this->prix_total_ht;
@@ -587,16 +603,16 @@ class Facturation
             $this->prix_total_ht = $aTotalHt;
 
         }
-
     }
 
     /**
+     * Get amount vat
      *
-     * @param $aMontantTva
+     * @param	int		$aMontantTva	Amount vat
+     * @return	int						Amount vat
      */
-    public function montant_tva ( $aMontantTva=null )
+    public function montant_tva( $aMontantTva=null )
     {
-
         if ( !$aMontantTva ) {
 
             return $this->montant_tva;
@@ -614,12 +630,13 @@ class Facturation
     }
 
     /**
+     * Get total TTC
      *
-     * @param $aTotalTtc
+     * @param	int		$aTotalTtc		Amount ttc
+     * @return	int						Amount ttc
      */
-    public function prix_total_ttc ( $aTotalTtc=null )
+    public function prix_total_ttc( $aTotalTtc=null )
     {
-
         if ( !$aTotalTtc )
         {
             return $this->prix_total_ttc;

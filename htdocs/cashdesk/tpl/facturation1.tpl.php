@@ -167,7 +167,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			<tr><th class="label1"><?php echo $langs->trans("TotalTicket"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("Change"); ?></th></tr>
 			<tr>
 			<!-- Affichage du montant du -->
-			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prix_total_ttc (), 'MT'); ?>" disabled="disabled" /></td>
+			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prix_total_ttc(), 'MT'); ?>" disabled="disabled" /></td>
 			<!-- Choix du montant encaisse -->
 			<td><input class="texte2" type="text" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" /></td>
 			<!-- Affichage du montant rendu -->
