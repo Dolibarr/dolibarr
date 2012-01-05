@@ -1009,8 +1009,10 @@ class Propal extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->statut_libelle       = $obj->statut_label;
 
-				$this->datec                = $this->db->jdate($obj->datec);
-				$this->datev                = $this->db->jdate($obj->datev);
+				$this->datec                = $this->db->jdate($obj->datec); //TODO obsolete
+				$this->datev                = $this->db->jdate($obj->datev); //TODO obsolete
+				$this->date_creation		= $this->db->jdate($obj->datec); //Creation date
+                $this->date_validation		= $this->db->jdate($obj->datev); //Validation date
 				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
 				$this->datep                = $this->db->jdate($obj->dp);
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
