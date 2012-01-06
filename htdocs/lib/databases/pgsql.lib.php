@@ -357,7 +357,7 @@ class DoliDb
 		$name = str_replace(array("\\", "'"), array("\\\\", "\\'"), $name);
 		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), $port);
 		
-		if (! $name) $name="postgres";
+		//if (! $name) $name="postgres";
 		
 		// try first Unix domain socket (local)
 		if (! $host || $host == "" || $host == "localhost")
