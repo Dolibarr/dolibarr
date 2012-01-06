@@ -189,7 +189,7 @@ function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		return 0;
 	}
 }

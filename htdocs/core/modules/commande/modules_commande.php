@@ -233,7 +233,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		}
 		return 0;
 	}

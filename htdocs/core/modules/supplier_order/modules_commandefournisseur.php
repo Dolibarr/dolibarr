@@ -168,7 +168,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 	// Si model pas encore bon
 	if (! $modelisok)
 	{
-		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF) $modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
+		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF) $model = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 		$file = "pdf_".$model.".modules.php";
 		// On verifie l'emplacement du modele
         $file = dol_buildpath($dir.$file);
@@ -179,7 +179,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 	if (! $modelisok)
 	{
 		$liste=ModelePDFSuppliersOrders::liste_modeles($db);
-		$modele=key($liste);        // Renvoie la premiere valeur de cle trouvee dans le tableau
+		$model=key($liste);        // Renvoie la premiere valeur de cle trouvee dans le tableau
 		$file = "pdf_".$model.".modules.php";
 		// On verifie l'emplacement du modele
         $file = dol_buildpath($dir.$file);
@@ -222,7 +222,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		}
 		return 0;
 	}
