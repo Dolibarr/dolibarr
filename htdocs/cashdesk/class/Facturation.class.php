@@ -248,7 +248,7 @@ class Facturation
     public function raz_pers()
     {
         $this->num_facture('RESET');
-        $this->mode_reglement('RESET');
+        $this->getPaymentMode('RESET');
         $this->montant_encaisse('RESET');
         $this->montant_rendu('RESET');
         $this->paiement_le('RESET');

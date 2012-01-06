@@ -40,7 +40,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->currency; ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
 		<?php
-		switch ($obj_facturation->mode_reglement())
+		switch ($obj_facturation->getPaymentMode())
 		{
 			case 'ESP':
 				echo $langs->trans("Cash");
@@ -75,7 +75,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 		<?php
 			// Affichage des infos en fonction du mode de paiement
-			if ( $obj_facturation->mode_reglement() == 'DIF' ) {
+			if ( $obj_facturation->getPaymentMode() == 'DIF' ) {
 
 				echo ('<tr><td class="resume_label">'.$langs->trans("DateEcheance").'</td><td>'.$obj_facturation->paiement_le().'</td></tr>');
 
