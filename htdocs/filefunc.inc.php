@@ -30,7 +30,7 @@
  *  \version    $Id: filefunc.inc.php,v 1.22 2011/08/04 12:07:29 eldy Exp $
  */
 
-define('DOL_VERSION','3.1.0');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
+define('DOL_VERSION','3.1.1');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
 define('EURO',chr(128));
 
 // Definition des constantes syslog
@@ -138,7 +138,7 @@ foreach($paths as $tmppath)
 {
     if ($tmppath) $concatpath.='/'.$tmppath;
     //print $real_$dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
-    if ($real_dolibarr_main_document_root == realpath($pathroot.$concatpath))
+    if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath))
     {
         $tmp3=$concatpath;
         //print "Found relative url = ".$tmp3;
