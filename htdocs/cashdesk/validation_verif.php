@@ -51,10 +51,10 @@ switch ($action)
 
 		$obj_facturation->num_facture($num);
 
-		$obj_facturation->getPaymentMode($_POST['hdnChoix']);
+		$obj_facturation->getSetPaymentMode($_POST['hdnChoix']);
 
 		// Si paiement autre qu'en especes, montant encaisse = prix total
-		$mode_reglement = $obj_facturation->getPaymentMode();
+		$mode_reglement = $obj_facturation->getSetPaymentMode();
 		if ( $mode_reglement != 'ESP' ) {
 			$montant = $obj_facturation->prix_total_ttc();
 		} else {
@@ -103,7 +103,7 @@ switch ($action)
 			exit;
 		}
 
-		switch ( $obj_facturation->getPaymentMode() )
+		switch ( $obj_facturation->getSetPaymentMode() )
 		{
 			case 'DIF':
 				$mode_reglement_id = 0;
@@ -131,7 +131,7 @@ switch ($action)
 		if (empty($mode_reglement_id)) $mode_reglement_id=0;	// If mode_reglement_id not found
 		if (empty($cond_reglement_id)) $cond_reglement_id=0;	// If cond_reglement_id not found
 		$note .= $_POST['txtaNotes'];
-		dol_syslog("obj_facturation->getPaymentMode()=".$obj_facturation->getPaymentMode()." mode_reglement_id=".$mode_reglement_id." cond_reglement_id=".$cond_reglement_id);
+		dol_syslog("obj_facturation->getSetPaymentMode()=".$obj_facturation->getSetPaymentMode()." mode_reglement_id=".$mode_reglement_id." cond_reglement_id=".$cond_reglement_id);
 
 
 		$error=0;
@@ -206,7 +206,7 @@ switch ($action)
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...
-		if ( $obj_facturation->getPaymentMode() == 'DIF' )
+		if ( $obj_facturation->getSetPaymentMode() == 'DIF' )
 		{
 			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiement_le()));
 			if ($resultcreate > 0)
@@ -254,7 +254,7 @@ switch ($action)
                     if (! $error)
                     {
                     	if ($invoice->total_ttc == $obj_facturation->prix_total_ttc()
-                    		&& $obj_facturation->getPaymentMode() != 'DIFF')
+                    		&& $obj_facturation->getSetPaymentMode() != 'DIFF')
                     	{
                     		// We set status to payed
                     		$result=$invoice->set_paid($user);
