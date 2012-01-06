@@ -342,52 +342,53 @@ class DoliDBPgsql
 	/**
 	 *	Connexion to server
 	 *
-	 *	@param	    string	$host		database server host
-	 *	@param	    string	$login		login
-	 *	@param	    string	$passwd		password
-	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		string	$port		Port of database server
-	 *	@return		resource			Database access handler
+	 *	@param	    string		$host		Database server host
+	 *	@param	    string		$login		Login
+	 *	@param	    string		$passwd		Password
+	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
+	 *	@param		string		$port		Port of database server
+	 *	@return		resource				Database access handler
 	 *	@see		close
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		// use pg_connect() instead of pg_pconnect():
-		// To us persistent connection because this one cost 1ms, non persistent cost 30ms
-		
+		// use pg_pconnect() instead of pg_connect() if you want to use persistent connection costing 1ms, instead of 30ms for non persistent
+
 		$this->db = false;
-		
+
 		// connections parameters must be protected (only \ and ' according to pg_connect() manual)
 		$host = str_replace(array("\\", "'"), array("\\\\", "\\'"), $host);
 		$login = str_replace(array("\\", "'"), array("\\\\", "\\'"), $login);
 		$passwd = str_replace(array("\\", "'"), array("\\\\", "\\'"), $passwd);
 		$name = str_replace(array("\\", "'"), array("\\\\", "\\'"), $name);
 		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), $port);
-		
+
 		//if (! $name) $name="postgres";
-		
+
 		// try first Unix domain socket (local)
-		if (! $host || $host == "" || $host == "localhost")
+		if (! $host || $host == "" || $host == "localhost" || $host == "127.0.0.1")
 		{
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";
 			$this->db = pg_connect($con_string);
 		}
-		
+
 		// if local connection failed or not requested, use TCP/IP
 		if (! $this->db)
 		{
-			if (! $host) $host = "localhost";
+		    if (! $host) $host = "localhost";
 			if (! $port) $port = 5432;
-			
+
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
 			$this->db = pg_connect($con_string);
 		}
-		else
+
+		// now we test if at least one connect method was a success
+		if ($this->db)
 		{
 			$this->database_name = $name;
 			pg_set_error_verbosity($this->db, PGSQL_ERRORS_VERBOSE);	// Set verbosity to max
 		}
-		
+
 		return $this->db;
 	}
 
@@ -629,9 +630,9 @@ class DoliDBPgsql
 	/**
 	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
-	 * @see    	   num_rows
-	 * @param	Resultset	$resultset  Curseur de la requete voulue
-	 * @return  int		    			Nombre de lignes
+	 * @param	Resultset	$resultset  Result set of request
+	 * @return  int		    			Nb of lines
+	 * @see 	num_rows
 	 */
 	function affected_rows($resultset)
 	{
@@ -646,7 +647,7 @@ class DoliDBPgsql
 	/**
 	 * Libere le dernier resultset utilise sur cette connexion
 	 *
-	 * @param	Resultset	$resultset   Curseur de la requete voulue
+	 * @param	Resultset	$resultset  Result set of request
 	 * @return	void
 	 */
 	function free($resultset=0)
@@ -898,9 +899,9 @@ class DoliDBPgsql
      *  Encrypt sensitive data in database
      *  Warning: This function includes the escape, so it must use direct value
      *
-     *  @param          fieldorvalue    Field name or value to encrypt
-     *  @param          withQuotes      Return string with quotes
-     *  @return         return          XXX(field) or XXX('value') or field or 'value'
+     *  @param  string  $fieldorvalue   Field name or value to encrypt
+     *  @param	int		$withQuotes     Return string with quotes
+     *  @return return          		XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -920,8 +921,8 @@ class DoliDBPgsql
 	/**
 	 *	Decrypt sensitive data in database
 	 *
-	 *	@param	        value			Value to decrypt
-	 * 	@return	        return			Decrypted value if used
+	 *	@param	int		$value			Value to decrypt
+	 * 	@return	string					Decrypted value if used
 	 */
 	function decrypt($value)
 	{
@@ -958,11 +959,11 @@ class DoliDBPgsql
 	 *	Create a new database
 	 *  Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
 	 *
-	 *	@param	        database		Database name to create
-	 * 	@param			charset			Charset used to store data
-	 * 	@param			collation		Charset used to sort data
-	 * 	@param			owner			Username of database owner
-	 * 	@return	        resource		resource defined if OK, null if KO
+	 *	@param	string	$database		Database name to create
+	 * 	@param	string	$charset		Charset used to store data
+	 * 	@param	string	$collation		Charset used to sort data
+	 * 	@param	string	$owner			Username of database owner
+	 * 	@return	resource				Resource defined if OK, null if KO
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
@@ -974,9 +975,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *  Liste des tables dans une database.
-	 *  @param	    database	Nom de la database
-	 *  @return	    resource
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	resource				Resource
 	 */
 	function DDLListTables($database, $table='')
 	{
@@ -993,10 +996,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *	Liste les informations des champs d'une table.
-	 *	@param	    table			Nom de la table
-	 *	@return	    array			Tableau des informations des champs de la table
-	 *	TODO modifier pour postgresql
+	 *	List information of columns into a table.
+	 *
+	 *	@param	string	$table		Name of table
+	 *	@return	array				Tableau des informations des champs de la table
+	 *	TODO modify for postgresql
 	 */
 	function DDLInfoTable($table)
 	{
@@ -1094,13 +1098,13 @@ class DoliDBPgsql
 	}
 
 	/**
-	 * 	Create a user
+	 * 	Create a user to connect to database
 	 *
-	 *	@param	    dolibarr_main_db_host 		Ip serveur
-	 *	@param	    dolibarr_main_db_user 		Nom user a creer
-	 *	@param	    dolibarr_main_db_pass 		Mot de passe user a creer
-	 *	@param		dolibarr_main_db_name		Database name where user must be granted
-	 *	@return	    int							<0 si KO, >=0 si OK
+	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
+	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
+	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
+	 *	@return	int									<0 if KO, >=0 if OK
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
@@ -1117,11 +1121,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *	Decrit une table dans une database
+	 *	Return a pointer of line with description of a table or field
 	 *
-	 *	@param	    table	Nom de la table
-	 *	@param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-	 *	@return	    resource
+	 *	@param	string		$table	Name of table
+	 *	@param	string		$field	Optionnel : Name of field if we want description of field
+	 *	@return	resource			Resource
 	 */
 	function DDLDescTable($table,$field="")
 	{
@@ -1135,13 +1139,13 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *	Insert a new field in table
+	 *	Create a new field into table
 	 *
-	 *	@param	    table 			Nom de la table
-	 *	@param		field_name 		Nom du champ a inserer
-	 *	@param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
-	 *	@param	    field_position 	Optionnel ex.: "after champtruc"
-	 *	@return	    int				<0 si KO, >0 si OK
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to add
+	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
+	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
@@ -1174,10 +1178,10 @@ class DoliDBPgsql
 	/**
 	 *	Update format of a field into a table
 	 *
-	 *	@param	    table 			Name of table
-	 *	@param		field_name 		Name of field to modify
-	 *	@param	    field_desc 		Array with description of field format
-	 *	@return	    int				<0 if KO, >0 if OK
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to modify
+	 *	@param	string	$field_desc 		Array with description of field format
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
@@ -1193,11 +1197,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *	Drop a field in table
+	 *	Drop a field from table
 	 *
-	 *	@param	    table 			Nom de la table
-	 *	@param		field_name 		Nom du champ a inserer
-	 *	@return	    int				<0 si KO, >0 si OK
+	 *	@param	string	$table 			Name of table
+	 *	@param	string	$field_name 	Name of field to drop
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function DDLDropField($table,$field_name)
 	{

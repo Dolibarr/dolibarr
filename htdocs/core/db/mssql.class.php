@@ -795,10 +795,11 @@ class DoliDBMssql
 	}
 
 	/**
-	 *	\brief     	List tables into a database.
-	 *	\param	    database		Name of database
-	 *	\param	    table   		Filter on some tables
-	 *	\return	    array			Array list of tables
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	resource				Resource
 	 */
 	function DDLListTables($database,$table='')
 	{
@@ -884,11 +885,12 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief      decrit une table dans une database.
-		\param	    table	Nom de la table
-		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-		\return	    resource
-		*/
+	 *	Return a pointer of line with description of a table or field
+	 *
+	 *	@param	string		$table	Name of table
+	 *	@param	string		$field	Optionnel : Name of field if we want description of field
+	 *	@return	resource			Resource
+	 */
 	function DDLDescTable($table,$field="")
 	{
 		$sql="DESC ".$table." ".$field;
@@ -899,12 +901,13 @@ class DoliDBMssql
 	}
 
 	/**
-	 *	\brief      Insert a new field in table
-	 *	\param	    table 			Nom de la table
-	 *	\param		field_name 		Nom du champ a inserer
-	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
-	 *	\param	    field_position 	Optionnel ex.: "after champtruc"
-	 *	\return	    int				<0 si KO, >0 si OK
+	 *	Create a new field into table
+	 *
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to add
+	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
+	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
@@ -935,10 +938,11 @@ class DoliDBMssql
 
 	/**
 	 *	Update format of a field into a table
-	 *	@param	    table 			Name of table
-	 *	@param		field_name 		Name of field to modify
-	 *	@param	    field_desc 		Array with description of field format
-	 *	@return	    int				<0 if KO, >0 if OK
+	 *
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to modify
+	 *	@param	string	$field_desc 		Array with description of field format
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
@@ -954,10 +958,11 @@ class DoliDBMssql
 	}
 
 	/**
-	 *	\brief      Drop a field in table
-	 *	\param	    table 			Nom de la table
-	 *	\param		field_name 		Nom du champ a inserer
-	 *	\return	    int				<0 si KO, >0 si OK
+	 *	Drop a field from table
+	 *
+	 *	@param	string	$table 			Name of table
+	 *	@param	string	$field_name 	Name of field to drop
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function DDLDropField($table,$field_name)
 	{
@@ -972,7 +977,13 @@ class DoliDBMssql
 	}
 
 
-	function getDefaultCharacterSetDatabase(){
+    /**
+     *	Return charset used to store data in database
+     *
+     *	@return		string		Charset
+     */
+    function getDefaultCharacterSetDatabase()
+	{
 		/*
 		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
 		 if (!$resql)
@@ -985,7 +996,13 @@ class DoliDBMssql
 		return '';
 	}
 
-	function getListOfCharacterSet(){
+	/**
+	 *	Return list of available charset that can be used to store data in database
+	 *
+	 *	@return		array		List of Charset
+	 */
+	function getListOfCharacterSet()
+	{
 		/*
 		 $resql=$this->query('SHOW CHARSET');
 		 $liste = array();
@@ -1007,6 +1024,11 @@ class DoliDBMssql
 		return ''; // attente debuggage
 	}
 
+	/**
+	 *	Return collation used in database
+	 *
+	 *	@return		string		Collation value
+	 */
 	function getDefaultCollationDatabase()
 	{
 		$resql=$this->query("SELECT SERVERPROPERTY('collation')");
@@ -1018,6 +1040,11 @@ class DoliDBMssql
 		return $liste['computed'];
 	}
 
+	/**
+	 *	Return list of available collation that can be used for database
+	 *
+	 *	@return		array		Liste of Collation
+	 */
 	function getListOfCollation()
 	{
 		/*
@@ -1040,8 +1067,9 @@ class DoliDBMssql
 		return ''; // attente debugage
 	}
 
-	/*
-	 *  Return full path of dump program
+	/**
+	 *	Return full path of dump program
+	 *
 	 *	@return		string		Full path of dump program
 	 */
 	function getPathOfDump()
@@ -1050,10 +1078,11 @@ class DoliDBMssql
 	    return '';
 	}
 
-    /**
-     *	Return full path of restore program
-     *	@return		string		Full path of restore program
-     */
+	/**
+	 *	Return full path of restore program
+	 *
+	 *	@return		string		Full path of restore program
+	 */
 	function getPathOfRestore()
 	{
 

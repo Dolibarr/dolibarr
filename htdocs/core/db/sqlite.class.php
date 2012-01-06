@@ -960,10 +960,11 @@ class DoliDBSqlite
     }
 
     /**
-     *	\brief     	List tables into a database.
-     *	\param	    database		Name of database
-     *	\param	    table   		Filter on some tables
-     *	\return	    array			Array list of tables
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	resource				Resource
      */
     function DDLListTables($database, $table='')
     {
@@ -982,9 +983,11 @@ class DoliDBSqlite
     }
 
     /**
-     *	\brief     	Liste les informations des champs d'une table.
-     *	\param	    table			Nom de la table
-     *	\return	    array			Tableau des informations des champs de la table
+	 *	List information of columns into a table.
+	 *
+	 *	@param	string	$table		Name of table
+	 *	@return	array				Tableau des informations des champs de la table
+	 *	TODO modify for sqlite
      */
     function DDLInfoTable($table)
     {
@@ -1079,10 +1082,11 @@ class DoliDBSqlite
     }
 
     /**
-     *	Return a pointer on fields describing table
-     *	@param	    table	Nom de la table
-     *	@param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-     *	@return	    resource
+	 *	Return a pointer of line with description of a table or field
+	 *
+	 *	@param	string		$table	Name of table
+	 *	@param	string		$field	Optionnel : Name of field if we want description of field
+	 *	@return	resource			Resource
      */
     function DDLDescTable($table,$field="")
     {
@@ -1094,12 +1098,13 @@ class DoliDBSqlite
     }
 
     /**
-     *	Insert a new field in table
-     *	@param	    table 			Table name
-     *	@param		field_name 		Name of field
-     *	@param	    field_desc 		Array with properties describing new field
-     *	@param	    field_position 	Optionnal ie.: "after fielddummy"
-     *	@return	    int				<0 if KO, >0 if OK
+	 *	Create a new field into table
+	 *
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to add
+	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
+	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
+	 *	@return	int							<0 if KO, >0 if OK
      */
     function DDLAddField($table,$field_name,$field_desc,$field_position="")
     {
@@ -1139,11 +1144,12 @@ class DoliDBSqlite
     }
 
     /**
-     *	Update format of a field into a table
-     *	@param	    table 			Name of table
-     *	@param		field_name 		Name of field to modify
-     *	@param	    field_desc 		Array with description of field format
-     *	@return	    int				<0 if KO, >0 if OK
+	 *	Update format of a field into a table
+	 *
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to modify
+	 *	@param	string	$field_desc 		Array with description of field format
+	 *	@return	int							<0 if KO, >0 if OK
      */
     function DDLUpdateField($table,$field_name,$field_desc)
     {
@@ -1159,10 +1165,11 @@ class DoliDBSqlite
     }
 
     /**
-     *	Drop a field in table
-     *	@param	    table 			Nom de la table
-     *	@param		field_name 		Nom du champ a inserer
-     *	@return	    int				<0 si KO, >0 si OK
+	 *	Drop a field from table
+	 *
+	 *	@param	string	$table 			Name of table
+	 *	@param	string	$field_name 	Name of field to drop
+	 *	@return	int						<0 if KO, >0 if OK
      */
     function DDLDropField($table,$field_name)
     {
@@ -1178,12 +1185,13 @@ class DoliDBSqlite
 
 
     /**
-     *	\brief      Create a user and privileges to connect to database (even if database does not exists yet)
-     *	\param	    dolibarr_main_db_host 		Ip server
-     *	\param	    dolibarr_main_db_user 		Username to create
-     *	\param	    dolibarr_main_db_pass 		Password
-     *	\param		dolibarr_main_db_name		Database name where user must be granted
-     *	\return	    int							<0 if KO, >=0 if OK
+	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
+	 *
+	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
+	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
+	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
+	 *	@return	int									<0 if KO, >=0 if OK
      */
     function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
     {
