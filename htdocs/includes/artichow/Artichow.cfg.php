@@ -11,7 +11,7 @@
  * Path to Artichow
  */
 
-define('ARTICHOW', dirname(__FILE__).DIRECTORY_SEPARATOR.'php'.substr(phpversion(), 0, 1));
+define('ARTICHOW', dirname(__FILE__).DIRECTORY_SEPARATOR.'php5');
 
 
 /*

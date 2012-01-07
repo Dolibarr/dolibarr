@@ -348,13 +348,11 @@ if (! defined('NOLOGIN'))
 		// Verification security graphic code
 		if (GETPOST("username","alpha",2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
-			require_once(ARTICHOW_PATH.'Artichow.cfg.php');
-			require_once(ARTICHOW.'/AntiSpam.class.php');
-
-			$object = new AntiSpam();
+            $sessionkey = 'artichow_dol_antispam_value';
+            $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
 			// Verifie code
-			if (! $object->check('dol_antispam_value',$_POST['code'],true))
+			if (! $ok)
 			{
 				dol_syslog('Bad value for code, connexion refused');
 				$langs->load('main');

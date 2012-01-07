@@ -214,7 +214,7 @@ else
 			$i++;
 		}
 		// If we are the first of month, only $datas[0] is defined to an int value, others are defined to ""
-		// and this make artichow report a warning.
+		// and this may make graph lib report a warning.
 		//$datas[0]=100; KO
 		//$datas[0]=100; $datas[1]=90; OK
 		//var_dump($datas);

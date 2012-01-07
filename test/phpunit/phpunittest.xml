@@ -11,6 +11,7 @@
     <directory suffix=".php">../../test/</directory>
     <directory suffix=".php">../../htdocs/custom/</directory>
     <directory suffix=".php">../../htdocs/custom2/</directory>
+    <directory suffix=".php">../../htdocs/core/menus/smartphone/</directory>
     <directory suffix=".php">../../htdocs/products/canvas/</directory>
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
@@ -21,7 +22,6 @@
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">../../htdocs/core/menus/smartphone/</directory>
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
@@ -46,6 +46,7 @@
     <directory suffix=".php">../../test/</directory>
     <directory suffix=".php">../../htdocs/custom/</directory>
     <directory suffix=".php">../../htdocs/custom2/</directory>
+    <directory suffix=".php">../../htdocs/core/menus/smartphone</directory>
     <directory suffix=".php">../../htdocs/products/canvas/</directory>
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
@@ -56,7 +57,6 @@
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">../../htdocs/core/menus/smartphone</directory>
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
