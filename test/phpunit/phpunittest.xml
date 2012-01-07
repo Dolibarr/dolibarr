@@ -16,7 +16,6 @@
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
     <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
-    <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
     <directory suffix=".php">../../htdocs/includes/fpdfi/</directory>
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
@@ -51,7 +50,6 @@
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
     <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
-    <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
     <directory suffix=".php">../../htdocs/includes/fpdfi/</directory>
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>

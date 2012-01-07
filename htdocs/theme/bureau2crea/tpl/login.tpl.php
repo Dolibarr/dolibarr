@@ -213,7 +213,7 @@ jQuery(document).ready(function () {
 			<input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" />
         </div>
         <div class="captchaImg">
-			<img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="128" height="36" id="captcha" />
+			<img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="captcha" />
 			<a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a>
 		</div>
 	<?php } ?>

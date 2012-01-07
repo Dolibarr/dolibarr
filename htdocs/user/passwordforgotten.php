@@ -84,7 +84,7 @@ if ($action == 'validatenewpassword' && $username && $passwordmd5)
 // Action modif mot de passe
 if ($action == 'buildnewpassword' && $username)
 {
-    $sessionkey = 'artichow_dol_antispam_value';
+    $sessionkey = 'dol_antispam_value';
     $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
     // Verify code
