@@ -416,11 +416,11 @@ function encodedecode_dbpassconf($level=0)
 				// Add value at end of file
 				if ($level == 0)
 				{
-					$config .= '$dolibarr_main_db_pass="'.$passwd.'";'."\n";
+					$config .= '$dolibarr_main_db_pass=\''.$passwd.'\';'."\n";
 				}
 				if ($level == 1)
 				{
-					$config .= '$dolibarr_main_db_pass="crypted:'.$passwd_crypted.'";'."\n";
+					$config .= '$dolibarr_main_db_pass=\'crypted:'.$passwd_crypted.'\';'."\n";
 				}
 
 				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
@@ -437,7 +437,7 @@ function encodedecode_dbpassconf($level=0)
 		$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
 		if ($fp = @fopen($file,'w'))
 		{
-			fputs($fp, $config, dol_strlen($config));
+			fputs($fp, $config);
 			fclose($fp);
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch

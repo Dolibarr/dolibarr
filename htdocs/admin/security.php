@@ -427,7 +427,8 @@ print '</form>';
 
 print '</div>';
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
