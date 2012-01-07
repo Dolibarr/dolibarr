@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -427,8 +427,8 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add_action">';
 	if (GETPOST("backtopage")) print '<input type="hidden" name="backtopage" value="'.(GETPOST("backtopage") != 1 ? GETPOST("backtopage") : $_SERVER["HTTP_REFERER"]).'">';
 
-	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre ($langs->trans("AddActionRendezVous"));
-	else print_fiche_titre ($langs->trans("AddAnAction"));
+	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
+	else print_fiche_titre($langs->trans("AddAnAction"));
 
 	dol_htmloutput_mesg($mesg);
 
@@ -986,8 +986,9 @@ llxFooter();
 
 
 /**
- *  \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
- *  \return     int     Retourne le nombre de lignes ajoutees
+ *  Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
+ *
+ *  @return     int     Retourne le nombre de lignes ajoutees
  */
 function add_row_for_calendar_link()
 {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Roman Ozana		    <ozana@omdesign.cz>
  * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011 	   Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012 	   Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,13 @@ class ical
 	/**
      * Read text file, icalender text file
      *
-     * @param string $file
-     * @return string
+     * @param 	string 	$file		File
+     * @return	string
      */
     function read_file($file)
     {
         $this->file = $file;
-        $file_text = join ("", file ($file)); //load file
+        $file_text = join("", file ($file)); //load file
         $file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
 
         return $file_text; // return all text
@@ -76,8 +76,8 @@ class ical
     /**
      * Translate Calendar
      *
-     * @param string $uri
-     * @return array
+     * @param	string 	$uri	Url
+     * @return	array
      */
     function parse($uri)
     {
@@ -157,9 +157,9 @@ class ical
     /**
      * Add to $this->ical array one value and key. Type is VTODO, VEVENT, VFREEBUSY, VCALENDAR ... .
      *
-     * @param string $type
-     * @param string $key
-     * @param string $value
+     * @param string $type	Type
+     * @param string $key	Key
+     * @param string $value	Value
      */
     function add_to_array($type, $key, $value)
     {
@@ -216,8 +216,8 @@ class ical
     /**
      * Parse text "XXXX:value text some with : " and return array($key = "XXXX", $value="value");
      *
-     * @param string $text
-     * @return array
+     * @param 	string 	$text	Text
+     * @return 	array
      */
     function retun_key_value($text)
     {
@@ -238,8 +238,8 @@ class ical
     /**
      * Parse RRULE  return array
      *
-     * @param string $value
-     * @return array
+     * @param 	string 	$value	string
+     * @return 	array
      */
     function ical_rrule($value)
     {
@@ -254,8 +254,8 @@ class ical
     /**
      * Return Unix time from ical date time fomrat (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
      *
-     * @param unknown_type $ical_date
-     * @return timestamp
+     * @param 	string		$ical_date		String date
+     * @return 	timestamp
      */
     function ical_date_to_unix($ical_date)
     {
@@ -275,9 +275,9 @@ class ical
     /**
      * Return unix date from iCal date format
      *
-     * @param string $key
-     * @param string $value
-     * @return array
+     * @param 	string 		$key			Key
+     * @param 	string 		$value			Value
+     * @return 	array
      */
     function ical_dt_date($key, $value)
     {
@@ -321,9 +321,9 @@ class ical
     /**
      * Compare two unix timestamp
      *
-     * @param array $a
-     * @param array $b
-     * @return integer
+     * @param 	array 	$a		Operand a
+     * @param 	array 	$b		Operand b
+     * @return 	integer
      */
     function ical_dtstart_compare($a, $b)
     {
@@ -351,7 +351,7 @@ class ical
     }
 
     /**
-     * Return todo array (not sort todo array)
+     * Return to do array (not sort to do array)
      *
      * @return array
      */
