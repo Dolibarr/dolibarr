@@ -217,11 +217,11 @@ class InterfaceLdapsynchro
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
-				
+
 				// Get a gid number for objectclass PosixGroup
 				if(in_array('posixGroup',$info['objectclass']))
 					$info['gidNumber'] = $ldap->getNextGroupGid();
-				
+
 	    	    $result=$ldap->add($dn,$info,$user);
 				if ($result < 0)
 				{
@@ -482,7 +482,7 @@ class InterfaceLdapsynchro
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
-				# If status field is setup to be synchronized
+				// If status field is setup to be synchronized
 				if ($conf->global->LDAP_FIELD_MEMBER_STATUS)
 				{
 					$ldap=new Ldap();
