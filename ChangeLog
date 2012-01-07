@@ -34,6 +34,8 @@ For users:
 - New: Can define country code for import.
 - New: When invoice was generated from order, order date is visible on PDF, after order ref.
 - New: [ task #181 ] Hide password of click2dial in user card
+- New: Chart are faster to build
+- New: Value of data into charts are visible on mouse hover.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
@@ -46,6 +48,7 @@ For developers:
 - New: Add trigger ACTION_DELETE and ACTION_MODIFY.
 - New: Can define different requests according to database type into migration files.
 - New: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
+- New: Removed artichow deprecated libraries.
 - Qual: Add a lot of more PHPUnit tests.
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.
