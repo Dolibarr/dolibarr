@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (c) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
@@ -655,7 +655,7 @@ class User extends CommonObject
 		global $user,$conf,$langs;
 
 		$error=0;
-		
+
 		$this->db->begin();
 
 		$this->fetch($this->id);
@@ -848,7 +848,7 @@ class User extends CommonObject
 		global $conf,$user,$langs;
 
 		$error=0;
-		
+
 		// Positionne parametres
 		$this->admin = 0;
 		$this->nom = $contact->nom;			// TODO deprecated
@@ -1361,7 +1361,7 @@ class User extends CommonObject
 	{
 		global $conf,$langs;
 		global $dolibarr_main_url_root;
-		
+
 		require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 
 		$subject = $langs->trans("SubjectNewPassword");
@@ -1832,13 +1832,13 @@ class User extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// Champs
-		if ($this->fullname && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
-		if ($this->nom && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->lastname;
-		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
-		if ($this->login && $conf->global->LDAP_FIELD_LOGIN) $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
-		if ($this->login && $conf->global->LDAP_FIELD_LOGIN_SAMBA) $info[$conf->global->LDAP_FIELD_LOGIN_SAMBA] = $this->login;
-		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD) $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
-		if ($this->ldap_sid && $conf->global->LDAP_FIELD_SID) $info[$conf->global->LDAP_FIELD_SID] = $this->ldap_sid;
+		if ($this->fullname && $conf->global->LDAP_FIELD_FULLNAME)   $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
+		if ($this->lastname && $conf->global->LDAP_FIELD_NAME)       $info[$conf->global->LDAP_FIELD_NAME] = $this->lastname;
+		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
+		if ($this->login && $conf->global->LDAP_FIELD_LOGIN)         $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
+		if ($this->login && $conf->global->LDAP_FIELD_LOGIN_SAMBA)   $info[$conf->global->LDAP_FIELD_LOGIN_SAMBA] = $this->login;
+		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD)       $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
+		if ($this->ldap_sid && $conf->global->LDAP_FIELD_SID)        $info[$conf->global->LDAP_FIELD_SID] = $this->ldap_sid;
 		if ($this->societe_id > 0)
 		{
 			$soc = new Societe($this->db);
@@ -1849,14 +1849,14 @@ class User extends CommonObject
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
 		}
-		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
-		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)          $info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
-		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
-		if ($this->office_phone && $conf->global->LDAP_FIELD_PHONE) $info[$conf->global->LDAP_FIELD_PHONE] = $this->office_phone;
-		if ($this->user_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->user_mobile;
-		if ($this->office_fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->office_fax;
-		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS)     $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
+		if ($this->zip && $conf->global->LDAP_FIELD_ZIP)             $info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
+		if ($this->town && $conf->global->LDAP_FIELD_TOWN)           $info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
+		if ($this->office_phone && $conf->global->LDAP_FIELD_PHONE)  $info[$conf->global->LDAP_FIELD_PHONE] = $this->office_phone;
+		if ($this->user_mobile && $conf->global->LDAP_FIELD_MOBILE)  $info[$conf->global->LDAP_FIELD_MOBILE] = $this->user_mobile;
+		if ($this->office_fax && $conf->global->LDAP_FIELD_FAX)	     $info[$conf->global->LDAP_FIELD_FAX] = $this->office_fax;
+		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION)    $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
+		if ($this->email && $conf->global->LDAP_FIELD_MAIL)          $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
 		{
@@ -1917,7 +1917,7 @@ class User extends CommonObject
 		$this->datem=time();
 		$this->webcal_login='dolibspec';
 
-		$this->datelastlogi=time();
+		$this->datelastlogin=time();
 		$this->datepreviouslogin=time();
 		$this->statut=1;
 
