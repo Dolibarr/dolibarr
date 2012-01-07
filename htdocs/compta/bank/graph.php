@@ -241,7 +241,7 @@ else
 		$px1->SetTitle($title);
 		$px1->SetWidth($width);
 		$px1->SetHeight($height);
-		$px1->SetType('lines');
+		$px1->SetType(array('lines','lines'));
 		$px1->setBgColor('onglet');
 		$px1->setBgColorGrid(array(255,255,255));
 		$px1->SetHorizTickIncrement(1);
@@ -371,7 +371,7 @@ else
 		$px2->SetTitle($title);
 		$px2->SetWidth($width);
 		$px2->SetHeight($height);
-		$px2->SetType('lines');
+		$px2->SetType(array('lines','lines'));
 		$px2->setBgColor('onglet');
 		$px2->setBgColorGrid(array(255,255,255));
 		$px2->SetHideXGrid(true);
@@ -480,7 +480,7 @@ else
 		$px3->SetTitle($title);
 		$px3->SetWidth($width);
 		$px3->SetHeight($height);
-		$px3->SetType('lines');
+		$px3->SetType(array('lines','lines'));
 		$px3->setBgColor('onglet');
 		$px3->setBgColorGrid(array(255,255,255));
 		$px3->SetPrecisionY(0);
@@ -607,7 +607,7 @@ else
 		$px4->SetTitle($title);
 		$px4->SetWidth($width);
 		$px4->SetHeight($height);
-		$px4->SetType('bars');
+		$px4->SetType(array('bars','bars'));
 		$px4->SetShading(3);
 		$px4->setBgColor('onglet');
 		$px4->setBgColorGrid(array(255,255,255));
@@ -716,7 +716,7 @@ else
 		$px5->SetTitle($title);
 		$px5->SetWidth($width);
 		$px5->SetHeight($height);
-		$px5->SetType('bars');
+		$px5->SetType(array('bars','bars'));
 		$px5->SetShading(3);
 		$px5->setBgColor('onglet');
 		$px5->setBgColorGrid(array(255,255,255));
@@ -862,7 +862,7 @@ print '</table>';
 print "\n</div>\n";
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

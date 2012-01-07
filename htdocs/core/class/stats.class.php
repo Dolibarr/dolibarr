@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getNbByYear sql=".$sql);
+		dol_syslog(get_class($this)."::_getNbByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -145,7 +145,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getAllByYear sql=".$sql);
+		dol_syslog(get_class($this)."::_getAllByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -179,7 +179,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getNbByMonth sql=".$sql);
+		dol_syslog(get_class($this)."::_getNbByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -227,7 +227,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getAmountByMonth sql=".$sql);
+		dol_syslog(get_class($this)."::_getAmountByMonth sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -272,7 +272,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getAverageByMonth sql=".$sql);
+		dol_syslog(get_class($this)."::_getAverageByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

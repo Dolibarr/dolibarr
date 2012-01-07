@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,18 @@
  *	\brief      File for class to generate graph
  *
  *	Usage:
- *	$graph_data = array(array('labelA',yA),array('labelB',yB));
- *	array(array('labelA',yA1,...,yAn),array('labelB',yB1,...yBn));
+ *	$graph_data = array(array('labelxA',yA),array('labelxB',yB));
+ *	$graph_data = array(array('labelxA',yA1,...,yAn),array('labelxB',yB1,...yBn));	// when there is n value to show for each x
+ *  $legend     = array("Val1",...,"Valn");											// list of n series name
  *	$px = new DolGraph();
  *	$px->SetData($graph_data);
  *	$px->SetMaxValue($px->GetCeilMaxValue());
  *	$px->SetMinValue($px->GetFloorMinValue());
  *	$px->SetTitle("title");
- *	$px->SetLegend(array("Val1","Val2"));
+ *	$px->SetLegend($legend);
  *	$px->SetWidth(width);
  *	$px->SetHeight(height);
- *	$px->draw("file.png");
+ *	$px->draw("file.png","/viewdownload?...");
  */
 
 
@@ -42,11 +43,12 @@
  */
 class DolGraph
 {
-    //! Type du graphique
-    var $type='bars';		// bars, lines, ...
-    var $mode='side';		// Mode bars graph: side, depth
+    //! Type of graph
+    var $type=array('bars');	// bars, lines, ...
+    var $mode='side';		    // Mode bars graph: side, depth
+    private $_library='jflot';	// Graphic library to use (jflot, artichow)
 
-    //! Tableau de donnees
+    //! Array of data
     var $data;				// array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
     var $title;
     var $width=380;
@@ -70,11 +72,9 @@ class DolGraph
     var $graph;     			// Objet Graph (Artichow, Phplot...)
     var $error;
 
-    var $library='artichow';	// Graphic library to use
-
     var $bordercolor;			// array(R,G,B)
     var $bgcolor;				// array(R,G,B)
-    var $bgcolorgrid;			// array(R,G,B)
+    var $bgcolorgrid=array(255,255,255);			// array(R,G,B)
     var $datacolor;				// array(array(R,G,B),...)
 
     private $_stringtoshow;      // To store string to output graph into HTML page
@@ -88,19 +88,23 @@ class DolGraph
         global $conf;
         global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 
-        // Test si module GD present
-        $modules_list = get_loaded_extensions();
-        $isgdinstalled=0;
-        foreach ($modules_list as $module)
+        // To use old feature
+        if ($conf->global->MAIN_GRAPH_LIBRARY == 'artichow')
         {
-            if ($module == 'gd') {
-                $isgdinstalled=1;
+            $this->_library='artichow';
+
+            // Test if module GD present
+            $modules_list = get_loaded_extensions();
+            $isgdinstalled=0;
+            foreach ($modules_list as $module)
+            {
+                if ($module == 'gd') $isgdinstalled=1;
             }
-        }
-        if (! $isgdinstalled)
-        {
-            $this->error="Error: PHP GD module is not available. It is required to build graphics.";
-            return -1;
+            if (! $isgdinstalled)
+            {
+                $this->error="Error: PHP GD module is not available. It is required to build graphics.";
+                return -1;
+            }
         }
 
         $this->bordercolor = array(235,235,224);
@@ -234,12 +238,13 @@ class DolGraph
     function SetData($data)
     {
         $this->data = $data;
+        //var_dump($this->data);
     }
 
     /**
      * Set type
      *
-     * @param 	string	$type		Type
+     * @param 	array	$type		Array with type for each serie
      * @return	void
      */
     function SetType($type)
@@ -538,8 +543,8 @@ class DolGraph
             dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
             return -1;
         }
-        $call = "draw_".$this->library;
-        $this->$call($file,$fileurl);
+        $call = "draw_".$this->_library;
+        call_user_func_array(array($this,$call), array($file,$fileurl));
     }
 
 
@@ -554,7 +559,7 @@ class DolGraph
     {
         global $artichow_defaultfont;
 
-        dol_syslog(get_class($this)."::draw_artichow this->type=".$this->type);
+        dol_syslog(get_class($this)."::draw_artichow this->type=".join(',',$this->type));
 
         if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP',3);
         if (! defined('LEGEND_BACKGROUND')) define('LEGEND_BACKGROUND',2);
@@ -562,8 +567,8 @@ class DolGraph
 
         // Create graph
         $classname='';
-        if ($this->type == 'bars')  $classname='BarPlot';
-        if ($this->type == 'lines') $classname='LinePlot';
+        if ($this->type[0] == 'bars')  $classname='BarPlot';    // Only first type of type is supported by artichow
+        if ($this->type[0] == 'lines') $classname='LinePlot';
         include_once(ARTICHOW_PATH.$classname.".class.php");
 
         // Definition de couleurs
@@ -614,17 +619,16 @@ class DolGraph
 
         while ($i < $nblot)
         {
-            $j=0;
+            $x=0;
             $values=array();
             foreach($this->data as $key => $valarray)
             {
-                $legends[$j] = $valarray[0];
-                $values[$j]  = $valarray[$i+1];
-                $j++;
+                $legends[$x] = $valarray[0];
+                $values[$x]  = $valarray[$i+1];
+                $x++;
             }
 
-            // Artichow ne gere pas les valeurs inconnues
-            // Donc si inconnu, on la fixe a null
+            // We fix unknown values to null
             $newvalues=array();
             foreach($values as $val)
             {
@@ -632,7 +636,7 @@ class DolGraph
             }
 
 
-            if ($this->type == 'bars')
+            if ($this->type[0] == 'bars')
             {
                 //print "Lot de donnees $i<br>";
                 //print_r($values);
@@ -668,7 +672,7 @@ class DolGraph
                 $plot->SetYMin($this->MinValue);
             }
 
-            if ($this->type == 'lines')
+            if ($this->type[0] == 'lines')
             {
                 $color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
                 $colorbis=new Color(min($this->datacolor[$i][0]+20,255),min($this->datacolor[$i][1]+20,255),min($this->datacolor[$i][2]+20,255),60);
@@ -699,8 +703,8 @@ class DolGraph
             // solve a bug in Artichow with UTF8
             if (count($this->Legend))
             {
-                if ($this->type == 'bars')  $group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
-                if ($this->type == 'lines') $group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
+                if ($this->type[0] == 'bars')  $group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
+                if ($this->type[0] == 'lines') $group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
             }
             $group->add($plot);
 
@@ -718,8 +722,167 @@ class DolGraph
         // Generate file
         $graph->draw($file);
 
-        $this->_stringtoshow='<img src="'.$fileurl.'" title="'.dol_escape_htmltag($this->title?$this->title:$this->YLabel).'" alt="'.dol_escape_htmltag($this->title?$this->title:$this->YLabel).'">';
+        $this->_stringtoshow='<!-- Build using '.$this->_library.' --><img src="'.$fileurl.'" title="'.dol_escape_htmltag($this->title?$this->title:$this->YLabel).'" alt="'.dol_escape_htmltag($this->title?$this->title:$this->YLabel).'">';
     }
+
+
+    /**
+     * Build a graph onto disk using JFlot library
+     *	$graph_data = array(array('labelxA',yA),array('labelxB',yB));
+     *	$graph_data = array(array('labelxA',yA1,...,yAn),array('labelxB',yB1,...yBn));	// when there is n value to show for each x
+     *   $legend     = array("Val1",...,"Valn");											// list of n series name
+     *
+     * @param	string	$file    	Image file name to use if we save onto disk
+     * @param	string	$fileurl	Url path to show image if saved onto disk
+     * @return	void
+     */
+    private function draw_jflot($file,$fileurl)
+    {
+        global $artichow_defaultfont;
+
+        dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type));
+
+        // On boucle sur chaque lot de donnees
+        $legends=array();
+        $nblot=count($this->data[0])-1;    // -1 to remove legend
+        $firstlot=0;
+        if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
+
+        $i=$firstlot;
+        $serie=array();
+        while ($i < $nblot)
+        {
+            $x=0;
+            $values=array();
+            foreach($this->data as $key => $valarray)
+            {
+                $legends[$x] = $valarray[0];
+                $values[$x]  = $valarray[$i+1];
+                $x++;
+            }
+
+            // We fix unknown values to null
+            $newvalues=array();
+            foreach($values as $val)
+            {
+                $newvalues[]=(is_numeric($val) ? $val : null);
+            }
+
+            //print "Lot de donnees $i<br>";
+            //print_r($values);
+            //print '<br>';
+            $serie[$i]="var d".$i." = [];\n";
+            $x=0;
+            foreach($newvalues as $key => $val)
+            {
+                if (isset($val)) $serie[$i].="d".$i.".push([".$x.", ".$val."]);\n";
+                $x++;
+            }
+
+            $i++;
+        }
+
+        $tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file),'_',array('-','.'))));
+
+        $this->_stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
+        $this->_stringtoshow.='<br><div align="center">'.$this->title.'</div><br>';
+        $this->_stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;"></div>'."\n";
+        $this->_stringtoshow.='<script id="'.$tag.'">'."\n";
+        $this->_stringtoshow.='$(function () {'."\n";
+        $i=$firstlot;
+        while ($i < $nblot)
+        {
+            $this->_stringtoshow.=$serie[$i];
+            $i++;
+        }
+        $this->_stringtoshow.="\n";
+
+        $this->_stringtoshow.='
+        function showTooltip_'.$tag.'(x, y, contents) {
+            $(\'<div id="tooltip_'.$tag.'">\' + contents + \'</div>\').css( {
+                position: \'absolute\',
+                display: \'none\',
+                top: y + 5,
+                left: x + 5,
+                border: \'1px solid #ddd\',
+                padding: \'2px\',
+                \'background-color\': \'#ffe\',
+                width: 200,
+                opacity: 0.80
+            }).appendTo("body").fadeIn(20);
+        }
+
+        var previousPoint = null;
+    	$("#placeholder_'.$tag.'").bind("plothover", function (event, pos, item) {
+        $("#x").text(pos.x.toFixed(2));
+        $("#y").text(pos.y.toFixed(2));
+
+        if (item) {
+            if (previousPoint != item.dataIndex) {
+                previousPoint = item.dataIndex;
+
+                $("#tooltip").remove();
+                /* console.log(item); */
+                var x = item.datapoint[0].toFixed(2);
+                var y = item.datapoint[1].toFixed(2);
+                var z = item.series.xaxis.ticks[item.dataIndex].label;
+
+                showTooltip_'.$tag.'(item.pageX, item.pageY,
+                            item.series.label + "<br>" + z + " => " + y);
+            }
+        }
+        else {
+            $("#tooltip_'.$tag.'").remove();
+            previousPoint = null;
+        }
+
+    	});
+        ';
+
+        $this->_stringtoshow.='var stack = null, steps = false;'."\n";
+
+        $this->_stringtoshow.='function plotWithOptions_'.$tag.'() {'."\n";
+        $this->_stringtoshow.='$.plot($("#placeholder_'.$tag.'"), [ '."\n";
+        $i=$firstlot;
+        while ($i < $nblot)
+        {
+            if ($i > $firstlot) $this->_stringtoshow.=', '."\n";
+            $color=sprintf("%02x%02x%02x",$this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
+            $this->_stringtoshow.='{ ';
+            if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->_stringtoshow.='bars: { show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
+            if (isset($this->type[$i]) && $this->type[$i] == 'lines')  $this->_stringtoshow.='lines: { show: true, fill: false }, ';
+            $this->_stringtoshow.='color: "#'.$color.'", label: "'.dol_escape_js($this->Legend[$i]).'", data: d'.$i.' }';
+            $i++;
+        }
+        $this->_stringtoshow.="\n".' ], { series: { stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
+
+        // Xaxis
+        $this->_stringtoshow.=', xaxis: { ticks: ['."\n";
+        $x=0;
+        foreach($this->data as $key => $valarray)
+        {
+            if ($x > 0) $this->_stringtoshow.=', '."\n";
+            $this->_stringtoshow.= ' ['.$x.', "'.$valarray[0].'"]';
+            $x++;
+        }
+        $this->_stringtoshow.='] }'."\n";
+
+        // Yaxis
+        $this->_stringtoshow.=', yaxis: { min: '.$this->MinValue.', max: '.($this->MaxValue).' }'."\n";
+
+        // Background color
+        $color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
+        $color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
+        $this->_stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] } }'."\n";
+        //$this->_stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
+        $this->_stringtoshow.='});'."\n";
+        $this->_stringtoshow.='}'."\n";
+
+        $this->_stringtoshow.='plotWithOptions_'.$tag.'();'."\n";
+        $this->_stringtoshow.='});'."\n";
+        $this->_stringtoshow.='</script>'."\n";
+    }
+
 
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ $data = array();
 
 for ($i = 1 ; $i < 13 ; $i++)
 {
-  $data[$i-1] = array(ucfirst(substr(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
+  $data[$i-1] = array(ucfirst(dol_substr(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
 }
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
@@ -171,7 +171,8 @@ if ($mesg) { print $mesg; }
 else { print $px3->show(); }
 print '</td></tr></table>';
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
