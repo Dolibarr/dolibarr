@@ -211,14 +211,7 @@ if ($socid > 0)
 		$formfile=new FormFile($db);
 
         // Show upload form
-		if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
-		{
-			$formfile->form_ajaxfileupload($object);
-		}
-		else
-		{
-			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer);
-        }
+		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer,50,$object);
 
 		// List of document
 		$param='&socid='.$object->id;

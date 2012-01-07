@@ -464,10 +464,11 @@ class ActionComm extends CommonObject
     /**
      *   Load all objects with filters
      *
-     *   @param	int		$socid			Filter by thirdparty
-     * 	 @param	int		$fk_element		Id of element action is linked to
-     *   @param	string	$elementtype	Type of element action is linked to
-     *   @param	filter					Other filter
+     *   @param		int		$socid			Filter by thirdparty
+     * 	 @param		int		$fk_element		Id of element action is linked to
+     *   @param		string	$elementtype	Type of element action is linked to
+     *   @param		string	$filter			Other filter
+     *   @return	int						<0 if KO, >0 if OK
      */
     function getActions($socid=0, $fk_element=0, $elementtype='', $filter='')
     {
@@ -732,7 +733,7 @@ class ActionComm extends CommonObject
      *		@param	string		$type			'event' or 'journal'
      *		@param	int			$cachedelay		Do not rebuild file if date older than cachedelay seconds
      *		@param	string		$filename		Force filename
-     *		@param	filters						Array of filters
+     *		@param	array		$filters		Array of filters
      *		@return int     					<0 if error, nb of events in new file if ok
      */
     function build_exportfile($format,$type,$cachedelay,$filename,$filters)

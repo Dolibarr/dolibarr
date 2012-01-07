@@ -69,11 +69,12 @@ class Export
 	{
 		global $langs,$conf,$mysoc;
 
-		dol_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
+		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
         $var=true;
         $i=0;
 
+        // Define list of modules directories into modulesdir
         foreach ($conf->file->dol_document_root as $type => $dirroot)
 		{
 			$modulesdir[] = $dirroot . "/core/modules/";
@@ -188,7 +189,7 @@ class Export
 									$this->array_export_sql_end[$i]=$module->export_sql_end[$r];
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
-									dol_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".count($module->export_fields_code[$r]));
+									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".count($module->export_fields_code[$r]));
 									$i++;
 									//	          }
 								}

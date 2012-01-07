@@ -344,7 +344,7 @@ $formfile=new FormFile($db);
 $formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs->trans("FormToTestFileUploadForm"),0,0,1);
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

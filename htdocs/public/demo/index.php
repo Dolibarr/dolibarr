@@ -340,8 +340,8 @@ llxFooterVierge();
 /**
  * Show header for demo
  *
- * @param 	string		$title
- * @param 	string		$head
+ * @param 	string		$title		Title
+ * @param 	string		$head		Head string
  * @return	void
  */
 function llxHeaderVierge($title, $head = "")

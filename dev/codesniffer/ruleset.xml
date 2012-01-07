@@ -78,13 +78,13 @@
     <!-- Tweaks to metrics -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
-            <property name="complexity" value="30" />
+            <property name="complexity" value="40" />
             <property name="absoluteComplexity" value="100" />
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">
         <properties>
-            <property name="nestingLevel" value="6" />
+            <property name="nestingLevel" value="9" />
             <property name="absoluteNestingLevel" value="50" />
         </properties>
     </rule>

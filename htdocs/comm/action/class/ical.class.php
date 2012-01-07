@@ -47,7 +47,7 @@ class ical
     function read_file($file)
     {
         $this->file = $file;
-        $file_text = join("", file ($file)); //load file
+        $file_text = join("", file($file)); //load file
         $file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
 
         return $file_text; // return all text
@@ -105,7 +105,7 @@ class ical
                 switch ($text) // search special string
                 {
                     case "BEGIN:VTODO":
-                        $this->todo_count = $this->todo_count+1; // new todo begin
+                        $this->todo_count = $this->todo_count+1; // new to do begin
                         $type = "VTODO";
                         break;
 
@@ -157,9 +157,10 @@ class ical
     /**
      * Add to $this->ical array one value and key. Type is VTODO, VEVENT, VFREEBUSY, VCALENDAR ... .
      *
-     * @param string $type	Type
-     * @param string $key	Key
-     * @param string $value	Value
+     * @param 	string $type	Type
+     * @param 	string $key		Key
+     * @param 	string $value	Value
+     * @return	void
      */
     function add_to_array($type, $key, $value)
     {

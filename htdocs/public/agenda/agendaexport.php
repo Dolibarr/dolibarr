@@ -36,7 +36,17 @@ define("NOLOGIN",1);		// This means this output page does not require to be logg
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 // C'est un wrapper, donc header vierge
+/**
+ * Header function
+ *
+ * @return	void
+ */
 function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>'; }
+/**
+ * Footer function
+ *
+ * @return	void
+ */
 function llxFooterVierge() { print '</body></html>'; }
 
 require("../../main.inc.php");

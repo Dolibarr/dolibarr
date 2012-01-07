@@ -58,73 +58,81 @@ class FormFile
      *		@param		int		$sectionid		If upload must be done inside a particular ECM section
      * 		@param		int		$perm			Value of permission to allow upload
      *      @param      int		$size           Length of input file area
+     *    	@param		Object	$object			Object to use (when attachment is done on an element)
      * 		@return		int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50)
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='')
     {
         global $conf,$langs;
 
-        $maxlength=$size;
-
-        print "\n\n<!-- Start form attach new file -->\n";
-
-        if (empty($title)) $title=$langs->trans("AttachANewFile");
-        if ($title != 'none') print_titre($title);
-
-        print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-        print '<input type="hidden" name="section" value="'.$sectionid.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
-        print '<table width="100%" class="nobordernopadding">';
-        print '<tr><td width="50%" valign="top">';
-
-        $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
-        $maxphp=@ini_get('upload_max_filesize');	// En inconnu
-        if (preg_match('/m$/i',$maxphp)) $maxphp=$maxphp*1024;
-        if (preg_match('/k$/i',$maxphp)) $maxphp=$maxphp;
-        // Now $max and $maxphp are in Kb
-        if ($maxphp > 0) $max=min($max,$maxphp);
-
-        if ($max > 0)
+        if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
         {
-            print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
-        }
-        print '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
-        print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
-        print '>';
-        print ' &nbsp; ';
-        print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
-        print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
-        print '>';
-
-        if ($addcancel)
-        {
-            print ' &nbsp; ';
-            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        }
-
-        if (! empty($conf->global->MAIN_UPLOAD_DOC))
-        {
-            if ($perm)
-            {
-                print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
-                print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
-                print ')';
-            }
+            return $this->_form_ajaxfileupload($object);
         }
         else
         {
-            print ' ('.$langs->trans("UploadDisabled").')';
+            $maxlength=$size;
+
+            print "\n\n<!-- Start form attach new file -->\n";
+
+            if (empty($title)) $title=$langs->trans("AttachANewFile");
+            if ($title != 'none') print_titre($title);
+
+            print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+            print '<input type="hidden" name="section" value="'.$sectionid.'">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+            print '<table width="100%" class="nobordernopadding">';
+            print '<tr><td width="50%" valign="top">';
+
+            $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
+            $maxphp=@ini_get('upload_max_filesize');	// En inconnu
+            if (preg_match('/m$/i',$maxphp)) $maxphp=$maxphp*1024;
+            if (preg_match('/k$/i',$maxphp)) $maxphp=$maxphp;
+            // Now $max and $maxphp are in Kb
+            if ($maxphp > 0) $max=min($max,$maxphp);
+
+            if ($max > 0)
+            {
+                print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
+            }
+            print '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
+            print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+            print '>';
+            print ' &nbsp; ';
+            print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
+            print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="disabled"':'');
+            print '>';
+
+            if ($addcancel)
+            {
+                print ' &nbsp; ';
+                print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+            }
+
+            if (! empty($conf->global->MAIN_UPLOAD_DOC))
+            {
+                if ($perm)
+                {
+                    print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
+                    print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+                    print ')';
+                }
+            }
+            else
+            {
+                print ' ('.$langs->trans("UploadDisabled").')';
+            }
+            print "</td></tr>";
+            print "</table>";
+
+            print '</form>';
+            if (empty($sectionid)) print '<br>';
+
+            print "\n<!-- End form attach new file -->\n\n";
+
+            return 1;
         }
-        print "</td></tr>";
-        print "</table>";
-
-        print '</form>';
-        if (empty($sectionid)) print '<br>';
-
-        print "\n<!-- End form attach new file -->\n\n";
-
-        return 1;
     }
 
     /**
@@ -723,12 +731,13 @@ class FormFile
     }
 
     /**
-     *    Show form to upload a new file with jquery fileupload
+     *    Show form to upload a new file with jquery fileupload.
+     *    This form use the fileupload.php file.
      *
      *    @param	Object	$object		Object to use
      *    @return	void
      */
-    function form_ajaxfileupload($object)
+    private function _form_ajaxfileupload($object)
     {
         global $langs;
 

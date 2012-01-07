@@ -798,12 +798,13 @@ llxFooter();
  * @param   int		$year            Year
  * @param   int		$monthshown      Current month shown in calendar view
  * @param   string	$style           Style to use for this day
- * @param   array	$eventarray      Array of events
+ * @param   array	&$eventarray     Array of events
  * @param   int		$maxPrint        Nb of actions to show each day on month view (0 means non limit)
  * @param   int		$maxnbofchar     Nb of characters to show for event line
  * @param   string	$newparam        Parameters on current URL
  * @param   int		$showinfo        Add extended information (used by day view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
+ * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxPrint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60)
 {

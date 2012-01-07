@@ -85,7 +85,7 @@ if ($search_desc)    $sql .= " AND (f.description like '%".$db->escape($search_d
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = " . $socid;
 $sql.= " ORDER BY ".$sortfield." ".$sortorder;
-$sql.= $db->plimit($limit + 1 ,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $result=$db->query($sql);
 if ($result)
