@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
 
-if (!$user->admin)
-  accessforbidden();
+if (! $user->admin) accessforbidden();
 
+$action = GETPOST('action','alpha');
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update')
+if ($action == 'update')
 {
 	$error=0;
 	$MAXDEC=8;
@@ -96,9 +96,9 @@ print "<br>\n";
 
 if ($mesg) print $mesg.'<br>';
 
-if (isset($_GET["action"]) && $_GET["action"] == 'edit')
+if ($action == 'edit')
 {
-    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
 
@@ -167,6 +167,27 @@ else
     print '</div>';
 }
 
+$vat_rates=array();
+
+// TODO move to DAO class
+$sql.="SELECT taux as vat_rate";
+$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+$sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$mysoc->country_code."'";
+$sql.=" ORDER BY t.taux ASC";
+
+$resql=$db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		for ($i = 0; $i < $num; $i++)
+		{
+			$obj = $db->fetch_object($resql);
+			$vat_rates[$i] = $obj->vat_rate;
+		}
+	}
+}
 
 // Show examples
 print '<b>'.$langs->trans("ExamplesWithCurrentSetup").":</b><br>\n";
@@ -177,36 +198,56 @@ print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+print '<br>';
 
-$s=10/3;$qty=1;$vat=0;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
-print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
-print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+print $langs->trans("VATRoundedByLine").' ('.$langs->trans("DolibarrDefault").')<br><br>';
 
-$s=10/3;$qty=2;$vat=0;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
-print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
-print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+foreach($vat_rates as $vat)
+{
+	for ($qty=1; $qty<=2; $qty++)
+	{
+		$s1=10/3;
+		$s2=2/7;
+		
+		// Round by line
+		$tmparray1=calcul_price_total(1,$qty*price2num($s1,'MU'),0,$vat,0,0,0,'HT',0);
+		$tmparray2=calcul_price_total(1,$qty*price2num($s2,'MU'),0,$vat,0,0,0,'HT',0);
+		$total_ht = $tmparray1[0] + $tmparray2[0];
+		$total_tva = $tmparray1[1] + $tmparray2[1];
+		$total_ttc = $tmparray1[2] + $tmparray2[2];
+		
+		print $langs->trans("UnitPriceOfProduct").": ".(price2num($s1,'MU') + price2num($s2,'MU'));
+		print " x ".$langs->trans("Quantity").": ".$qty;
+		print " - ".$langs->trans("VAT").": ".$vat.'%';
+		print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$total_ht.' / '.$total_tva.' / '.$total_ttc."<br>\n";
+	}
+}
 
-$s=10/3;$qty=1;$vat=10;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
-print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
-print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+print '<br>'.$langs->trans("VATRoundedOnTotal").'<br><br>';
 
-$s=10/3;$qty=2;$vat=10;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
-print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
-print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+foreach($vat_rates as $vat)
+{
+	for ($qty=1; $qty<=2; $qty++)
+	{
+		$s1=10/3;
+		$s2=2/7;
+
+		// Global round
+		$subtotal_ht = (($qty*price2num($s1,'MU')) + ($qty*price2num($s2,'MU')));
+		$tmparray3=calcul_price_total(1,$subtotal_ht,0,$vat,0,0,0,'HT',0);
+		$total_ht = $tmparray3[0];
+		$total_tva = $tmparray3[1];
+		$total_ttc = $tmparray3[2];
+
+		print $langs->trans("UnitPriceOfProduct").": ".price2num($s1+$s2,'MU');
+		print " x ".$langs->trans("Quantity").": ".$qty;
+		print " - ".$langs->trans("VAT").": ".$vat.'%';
+		print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$total_ht.' / '.$total_tva.' / '.$total_ttc."<br>\n";
+	}
+}
+
+llxFooter();
 
 $db->close();
 
-llxFooter();
 ?>

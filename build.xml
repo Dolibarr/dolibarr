@@ -77,14 +77,14 @@
  <!-- Generate Doxygen documentation -->
  <target name="doxygen" description="Dolibarr documentation" >
   <exec executable="doxygen" dir="${basedir}" failonerror="false">
-   <arg value="${basedir}/build/doxygen/hudson-doxygen.doxyfile"/>
+   <arg value="${basedir}/build/doxygen/jenkins_doxygen.doxyfile"/>
   </exec>
  </target>
  
  <!-- Run unit tests and generate junit.xml and clover.xml -->
  <target name="phpunit">
   <exec executable="phpunit" dir="${basedir}" failonerror="true">
-   <arg line="	--configuration ${basedir}/test/phpunit/hudson_phpunittest.xml
+   <arg line="	--configuration ${basedir}/test/phpunit/jenkins_phpunittest.xml
 				--log-junit ${basedir}/hudson/logs/junit.xml
 				--coverage-clover ${basedir}/hudson/coverage/clover.xml
   				--coverage-html ${basedir}/hudson/coverage/
