@@ -1007,7 +1007,7 @@ class Form
         $out='';
 
         // On recherche les utilisateurs
-        $sql = "SELECT u.rowid, u.name, u.firstname, u.login, u.admin, u.entity";
+        $sql = "SELECT u.rowid, u.name as lastname, u.firstname, u.login, u.admin, u.entity";
         if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
         	$sql.= ", e.label";
@@ -1045,8 +1045,8 @@ class Form
                     $obj = $this->db->fetch_object($resql);
 
                     $userstatic->id=$obj->rowid;
-                    $userstatic->nom=$obj->name;
-                    $userstatic->prenom=$obj->firstname;
+                    $userstatic->lastname=$obj->lastname;
+                    $userstatic->firstname=$obj->firstname;
 
                     $disableline=0;
                     if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
