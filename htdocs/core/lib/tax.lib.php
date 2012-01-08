@@ -120,10 +120,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
             $sql.= " ".MAIN_DB_PREFIX."societe as s";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -159,10 +157,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
             $sql.= " WHERE ";
             $sql.= " f.fk_statut in (2)";   // Paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -282,10 +278,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+            if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+            else $sql.= " AND f.type IN (0,1,2,3)";
             $sql.= " AND f.rowid = d.".$fk_facture;
             if ($y && $m)
             {
@@ -324,23 +318,14 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
             $sql.= " 0 as payment_id, 0 as payment_amount";
-//          $sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-//          $sql.= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
-//          $sql.= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
             $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             $sql.= " AND f.rowid = d.".$fk_facture;
-//          $sql.= " AND pf.".$fk_facture2." = f.rowid";
-//          $sql.= " AND pa.rowid = pf.".$fk_payment;
-//          $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
-//          $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -451,10 +436,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             $sql.= " AND f.rowid = d.".$fk_facture;
             if ($y && $m)
             {
@@ -501,10 +484,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             $sql.= " AND f.rowid = d.".$fk_facture;;
             $sql.= " AND pf.".$fk_facture2." = f.rowid";
             $sql.= " AND pa.rowid = pf.".$fk_payment;

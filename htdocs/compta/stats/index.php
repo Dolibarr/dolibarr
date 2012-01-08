@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,7 @@ $userid=GETPOST('userid');
 $socid=GETPOST('socid');
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
-accessforbidden();
+if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire) accessforbidden();
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->COMPTA_MODE;
@@ -64,6 +63,8 @@ if ($modecompta=="CREANCES-DETTES")
 	$period="$year_start - $year_end";
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCADue");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -73,23 +74,23 @@ else {
 	$period="$year_start - $year_end";
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCAIn");
+	$description.= $langs->trans("DepositsAreIncluded");
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
 
-if ($modecompta == 'CREANCES-DETTES') {
+if ($modecompta == 'CREANCES-DETTES')
+{
 	$sql  = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
-	$sql.= " AND (";
-	$sql.= " f.type = 0";          // Standard
-	$sql.= " OR f.type = 1";       // Replacement
-	$sql.= " OR f.type = 2";       // Credit note
-	$sql.= " OR f.type = 3";       // Deposit
-	$sql.= ")";
-} else {
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+	else $sql.= " AND f.type IN (0,1,2,3)";
+}
+else
+{
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
@@ -129,7 +130,8 @@ else {
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
-if ($modecompta != 'CREANCES-DETTES') {
+if ($modecompta != 'CREANCES-DETTES')
+{
 	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -143,7 +145,8 @@ if ($modecompta != 'CREANCES-DETTES') {
 	$sql.= " ORDER BY dm";
 
 	$result = $db->query($sql);
-	if ($result) {
+	if ($result)
+	{
 		$num = $db->num_rows($result);
 		$i = 0;
 		while ($i < $num)
@@ -158,7 +161,8 @@ if ($modecompta != 'CREANCES-DETTES') {
 			$i++;
 		}
 	}
-	else {
+	else
+	{
 		dol_print_error($db);
 	}
 }
@@ -494,8 +498,7 @@ print "</table>";
 
  */
 
-$db->close();
-
 llxFooter();
 
+$db->close();
 ?>
