@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2011          Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2004-2010			Folke Ashberg: Some lines of code were inspired from work
- *                                  of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
- *                                  source code at http://www.ashberg.de/bar.
+/* Copyright (C) 2004-2012 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Folke Ashberg: Some lines of code were inspired from work
+ *                         of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
+ *                         source code at http://www.ashberg.de/bar.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/core/barcode.lib.php
+ *	\brief      Set of functions used for barcode generation
+ *	\ingroup    core
+ */
 
 /* ******************************************************************** */
 /*                          COLORS                                      */
@@ -65,7 +70,7 @@ else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
 function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
 {
     // DOLCHANGE LDR Add log
-    dol_syslog("phpbarcode.php::barcode_print $code $encoding $scale $mode");
+    dol_syslog("barcode.lib.php::barcode_print $code $encoding $scale $mode");
 
     $bars=barcode_encode($code,$encoding);
 
@@ -73,7 +78,7 @@ function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
     {
         // DOLCHANGE LDR Return error message instead of array
         $error='Bad Value '.$code.' for encoding '.$encoding;
-        dol_syslog('phpbarcode.php::barcode_print '.$error, LOG_ERR);
+        dol_syslog('barcode.lib.php::barcode_print '.$error, LOG_ERR);
         return $error;
     }
     if (! $mode) $mode="png";
@@ -127,13 +132,13 @@ function barcode_encode($code,$encoding)
     )
     {
         /* use built-in EAN-Encoder */
-        dol_syslog("phpbarcode.php::barcode_encode Use barcode_encode_ean");
+        dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
         $bars=barcode_encode_ean($code, $encoding);
     }
     else if (file_exists($genbarcode_loc))
     {
         /* use genbarcode */
-        dol_syslog("phpbarcode.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
+        dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
         $bars=barcode_encode_genbarcode($code, $encoding);
     }
     else
@@ -284,7 +289,7 @@ function barcode_encode_genbarcode($code,$encoding)
     }
     else
     {
-        dol_syslog("phpbarcode::barcode_encode_genbarcode failed to run popen ".$fullcommandclear, LOG_ERR);
+        dol_syslog("barcode.lib.php::barcode_encode_genbarcode failed to run popen ".$fullcommandclear, LOG_ERR);
         return false;
     }
     //var_dump($bars);
@@ -426,6 +431,5 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
         imagepng($im);
     }
 }
-
 
 ?>

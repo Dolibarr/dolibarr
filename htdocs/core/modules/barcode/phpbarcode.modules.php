@@ -19,12 +19,12 @@
 
 /**
  *	\file       htdocs/core/modules/barcode/phpbarcode.modules.php
- *	\ingroup    facture
+ *	\ingroup    barcode
  *	\brief      Fichier contenant la classe du modele de generation code barre phpbarcode
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/modules/barcode/modules_barcode.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/phpbarcode.php");    // This is to include def like $genbarcode_loc and $font_loc
+require_once(DOL_DOCUMENT_ROOT."/core/lib/barcode.lib.php");    // This is to include def like $genbarcode_loc and $font_loc
 
 
 /**		\class      modPhpbarcode
@@ -123,8 +123,7 @@ class modPhpbarcode extends ModeleBarCode
 		$_GET["scale"]=$scale;
 		$_GET["mode"]=$mode;
 
-		require_once(DOL_DOCUMENT_ROOT.'/core/lib/phpbarcode.php');
-		dol_syslog("modPhpbarcode::buildBarCode $code,$encoding,$scale,$mode");
+		dol_syslog(get_class($this)."::buildBarCode $code,$encoding,$scale,$mode");
 		if ($code) $result=barcode_print($code,$encoding,$scale,$mode);
 
 		if (! is_array($result))
