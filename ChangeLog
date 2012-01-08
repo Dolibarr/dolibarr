@@ -3,8 +3,19 @@ English Dolibarr ChangeLog
 $Id:$
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.1.1 compared to 3.1.0 *****
+
+- Fix: Removed warnings during install
+
+
+
 ***** ChangeLog for 3.1 compared to 3.0 *****
 WARNING: IE6 browser is no more supported in this version.
+WARNING: Credit notes are no more used as a "payment" but are removed from total
+         amount of final invoice. So final turnover is now amount of credit note
+         + amount of final invoice (previously turnover was final invoices only).
+
 For users:
 - New: War against number of clicks:
      - When adding a free bank transaction, form to add next one is still
