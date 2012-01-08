@@ -345,22 +345,42 @@ class DoliDb
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		if (!$name){
-			$name="postgres";
+		// use pg_connect() instead of pg_pconnect():
+		// To us persistent connection because this one cost 1ms, non persistent cost 30ms
+		
+		$this->db = false;
+		
+		// connections parameters must be protected (only \ and ' according to pg_connect() manual)
+		$host = str_replace(array("\\", "'"), array("\\\\", "\\'"), $host);
+		$login = str_replace(array("\\", "'"), array("\\\\", "\\'"), $login);
+		$passwd = str_replace(array("\\", "'"), array("\\\\", "\\'"), $passwd);
+		$name = str_replace(array("\\", "'"), array("\\\\", "\\'"), $name);
+		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), $port);
+		
+		//if (! $name) $name="postgres";
+		
+		// try first Unix domain socket (local)
+		if (! $host || $host == "" || $host == "localhost")
+		{
+			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";
+			$this->db = pg_connect($con_string);
 		}
-		if (!$port){
-			$port=5432;
+		
+		// if local connection failed or not requested, use TCP/IP
+		if (! $this->db)
+		{
+			if (! $host) $host = "localhost";
+			if (! $port) $port = 5432;
+			
+			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
+			$this->db = pg_connect($con_string);
 		}
-		$con_string = "host=$host port=$port dbname=$name user=$login password=$passwd";
-        //print 'xxx'.$con_string;
-        //$this->db = pg_pconnect($con_string);   // To us persistent connection because this one cost 1ms, non ersisten cost 30ms
-        $this->db = pg_connect($con_string);
-		if ($this->db)
+		else
 		{
 			$this->database_name = $name;
 			pg_set_error_verbosity($this->db, PGSQL_ERRORS_VERBOSE);	// Set verbosity to max
-
 		}
+		
 		return $this->db;
 	}
 
