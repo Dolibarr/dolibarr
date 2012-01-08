@@ -47,21 +47,21 @@ if ($action == 'update' || $action == 'add')
 {
 	$constname=GETPOST("constname");
 	$constvalue=GETPOST("constvalue");
-	
+
 	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE') && $constvalue == -1) $constvalue='';
 	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
 	{
 		if ($constvalue) $constvalue=0;
 		else $constvalue=1;
 	}
-	
+
 	if (in_array($constname,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $constvalue=$_POST["constvalue".$constname];
 	$consttype=$_POST["consttype"];
 	$constnote=GETPOST("constnote");
 	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
-	
+
 	if (! $res > 0) $error++;
-	
+
 	if (! $error)
 	{
 		$mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
@@ -233,6 +233,10 @@ if ($conf->global->ADHERENT_USE_MAILMAN)
             </script>';
 
 		    form_constantes($constantes);
+
+		    print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+		    print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
+
 		    print '<br>';
 }
 else
@@ -398,14 +402,14 @@ function form_constantes($tableau)
                 print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
                 //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
                 print '<div id="example1" class="hidden">';
-                print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&adminpw=%MAILMAN_ADMINPW%&subscribe_or_invite=0&send_welcome_msg_to_this_batch=0&notification_to_list_owner=0';
+                print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;subscribe_or_invite=0&amp;send_welcome_msg_to_this_batch=0&amp;notification_to_list_owner=0';
                 print '</div>';
             }
             if ($const=='ADHERENT_MAILMAN_UNSUB_URL')
             {
                 print '. '.$langs->trans("Example").': <a href="#" id="exampleclick2">'.img_down().'</a><br>';
                 print '<div id="example2" class="hidden">';
-                print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&adminpw=%MAILMAN_ADMINPW%&send_unsub_ack_to_this_batch=0&send_unsub_notifications_to_list_owner=0';
+                print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;send_unsub_ack_to_this_batch=0&amp;send_unsub_notifications_to_list_owner=0';
                 print '</div>';
                 //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
             }
