@@ -161,7 +161,7 @@ foreach ($tabfac as $key => $val)
 	$invoicestatic->ref=$val["ref"];
 	$invoicestatic->type=$val["type"];
 
-	print "<tr ".$bc[$var]." >";
+	print "<tr ".$bc[$var].">";
 	// third party
 	//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 	print "<td>".$val["date"]."</td>";
@@ -194,7 +194,7 @@ foreach ($tabfac as $key => $val)
 			//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 			print "<td>".$val["date"]."</td>";
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			print "<td>".$k."</td><td>".$langs->trans("VAT")." ".$key."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
+			print "<td>".$k."</td><td>".$langs->trans("VAT")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
 		}
 	}
 

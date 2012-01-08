@@ -196,7 +196,7 @@ foreach ($tabfac as $key => $val)
     		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
     		print "<td>".$val["date"]."</td>";
     		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-    		print "<td>".$k."</td><td>".$langs->trans("VAT")." ".$key."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
+    		print "<td>".$k."</td><td>".$langs->trans("VAT")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
 	    }
 	}
 
