@@ -168,31 +168,10 @@ else
 }
 
 
-$vat_rates=array();
-
-// TODO move to DAO class
-$sql.="SELECT taux as vat_rate";
-$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-$sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$mysoc->country_code."'";
-$sql.=" ORDER BY t.taux ASC";
-
-$resql=$db->query($sql);
-if ($resql)
-{
-    $num = $db->num_rows($resql);
-    if ($num)
-    {
-        for ($i = 0; $i < $num; $i++)
-        {
-            $obj = $db->fetch_object($resql);
-            $vat_rates[$i] = $obj->vat_rate;
-        }
-    }
-}
-
 // Show examples
 print '<b>'.$langs->trans("ExamplesWithCurrentSetup").":</b><br>\n";
 
+// Always show vat rates with vat 0
 $s=2/7;$qty=1;$vat=0;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
@@ -200,26 +179,7 @@ print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
-foreach($vat_rates as $vat)
-{
-    for ($qty=1; $qty<=2; $qty++)
-    {
-        $s=10/3;
-        $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
-        print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
-        print " x ".$langs->trans("Quantity").": ".$qty;
-        print " - ".$langs->trans("VAT").": ".$vat.'%';
-        print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
-    }
-}
-
-
-// More examples
-// This example must be kept for test purpose with current value because value used (2/7, 10/3, and vat 0, 10)
-// were calculated to show all possible cases of rounding. If we change this, examples becomes useless or show the same rounding rule.
-
-/*
- $s=10/3;$qty=1;$vat=0;
+$s=10/3;$qty=1;$vat=0;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
@@ -233,20 +193,64 @@ print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
-$s=10/3;$qty=1;$vat=10;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
-print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
-print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+// Add vat rates examples specific to country
+$vat_rates=array();
 
-$s=10/3;$qty=2;$vat=10;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
-print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
-print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
-*/
+$sql.="SELECT taux as vat_rate";
+$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+$sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$mysoc->country_code."' AND taux != 0";
+$sql.=" ORDER BY t.taux ASC";
+$resql=$db->query($sql);
+if ($resql)
+{
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        for ($i = 0; $i < $num; $i++)
+        {
+            $obj = $db->fetch_object($resql);
+            $vat_rates[$i] = $obj->vat_rate;
+        }
+    }
+}
+else dol_print_error($db);
+
+if (count($vat_rates))
+{
+    foreach($vat_rates as $vat)
+    {
+        for ($qty=1; $qty<=2; $qty++)
+        {
+            $s=10/3;
+            $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
+            print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
+            print " x ".$langs->trans("Quantity").": ".$qty;
+            print " - ".$langs->trans("VAT").": ".$vat.'%';
+            print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+        }
+    }
+}
+else
+{
+    // More examples if not specific vat rate found
+    // This example must be kept for test purpose with current value because value used (2/7, 10/3, and vat 0, 10)
+    // were calculated to show all possible cases of rounding. If we change this, examples becomes useless or show the same rounding rule.
+
+    $s=10/3;$qty=1;$vat=10;
+    $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
+    print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
+    print " x ".$langs->trans("Quantity").": ".$qty;
+    print " - ".$langs->trans("VAT").": ".$vat.'%';
+    print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+
+    $s=10/3;$qty=2;$vat=10;
+    $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
+    print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
+    print " x ".$langs->trans("Quantity").": ".$qty;
+    print " - ".$langs->trans("VAT").": ".$vat.'%';
+    print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
+
+}
 
 
 llxFooter();
