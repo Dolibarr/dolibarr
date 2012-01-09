@@ -44,8 +44,7 @@ $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 /*
  * Ajout d'un nouveau contact
  */
-
-if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
+if ($_POST["action"] == 'addcontact' && $user->rights->fournisseur->commande->creer)
 {
 
 	$result = 0;
@@ -76,7 +75,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
 	}
 }
 // modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer)
+if ($_POST["action"] == 'updateligne' && $user->rights->fournisseur->commande->creer)
 {
 	$commande = new CommandeFournisseur($db);
 	if ($commande->fetch($_GET["id"]))
@@ -101,7 +100,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer)
 }
 
 // bascule du statut d'un contact
-if ($_GET["action"] == 'swapstatut' && $user->rights->commande->creer)
+if ($_GET["action"] == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 {
 	$commande = new CommandeFournisseur($db);
 	if ($commande->fetch($_GET["id"]))
@@ -126,7 +125,7 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->commande->creer)
 }
 
 // Efface un contact
-if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
+if ($_GET["action"] == 'deleteline' && $user->rights->fournisseur->commande->creer)
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($_GET["id"]);
@@ -367,7 +366,7 @@ if ($id > 0 || ! empty($ref))
 
 				// Icon update et delete
 				print '<td align="center" nowrap>';
-				if ($commande->statut < 5 && $user->rights->commande->creer)
+				if ($commande->statut < 5 && $user->rights->fournisseur->commande->creer)
 				{
 					print '&nbsp;';
 					print '<a href="contact.php?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
