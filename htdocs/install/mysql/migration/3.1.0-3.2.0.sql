@@ -15,6 +15,8 @@
 -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+alter table llx_extrafields add column type varchar(8);
+
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
 
 ALTER TABLE llx_actioncomm ADD COLUMN ref_ext varchar(128) after id;
