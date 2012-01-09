@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2011-2012 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,11 +51,11 @@ if((isset($_GET['action']) && ! empty($_GET['action'])) && (isset($_GET['name'])
 	{
 		if ($_GET['action'] == 'set')
 		{
-			dolibarr_set_const($db, $_GET['name'], 1, 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, GETPOST('name','alpha'), 1, 'chaine', 0, '', GETPOST('entity','int'));
 		}
 		else if ($_GET['action'] == 'del')
 		{
-			dolibarr_del_const($db, $_GET['name'], $conf->entity);
+			dolibarr_del_const($db, GETPOST('name','alpha'), GETPOST('entity','int'));
 		}
 	}
 }
