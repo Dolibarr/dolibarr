@@ -267,7 +267,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$commande->client->id;
+			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$soc->id;
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($commande, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
