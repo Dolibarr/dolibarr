@@ -463,7 +463,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
     $sql.= " WHERE name = ".$db->encrypt($name,1);
-    if ($entity > 0) $sql.= " AND entity = ".$entity;
+    if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
     dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
     $resql=$db->query($sql);

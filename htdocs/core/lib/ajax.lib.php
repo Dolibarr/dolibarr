@@ -218,13 +218,16 @@ function ajax_combobox($htmlname)
 /**
  * 	On/off button for constant
  *
- * 	@param		code	Name of constant
- * 	@param		input	Input element
+ * 	@param	string	$code		Name of constant
+ * 	@param	array	$input		Input element
+ * 	@param	int		$entity		Entity to set
  * 	TODO add different method for other input (show/hide, disable, ..)
  */
-function ajax_constantonoff($code,$input=array())
+function ajax_constantonoff($code,$input=array(),$entity=false)
 {
 	global $conf, $langs;
+	
+	$entity = ((! empty($entity) && is_numeric($entity) && $entity > 0) || $entity == 0 ? $entity : $conf->entity);
 
 	$out= '<script type="text/javascript">
 		$(function() {
@@ -234,7 +237,8 @@ function ajax_constantonoff($code,$input=array())
 			$( "#set_'.$code.'" ).click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
 					action: \'set\',
-					name: \''.$code.'\'
+					name: \''.$code.'\',
+					entity: \''.$entity.'\'
 				},
 				function() {
 					$("#set_'.$code.'" ).hide();
@@ -256,7 +260,8 @@ function ajax_constantonoff($code,$input=array())
 			$( "#del_'.$code.'" ).click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
 					action: \'del\',
-					name: \''.$code.'\'
+					name: \''.$code.'\',
+					entity: \''.$entity.'\'
 				},
 				function() {
 					$("#del_'.$code.'" ).hide();

@@ -191,28 +191,19 @@ class Conf
 							$this->modules[]=$module;
 						}
 					}
-					// Sharings between entities
-					else if ($value && preg_match('/^MULTICOMPANY_([A-Z_]+)_SHARING$/',$key,$reg))
-					{
-						$module=strtolower($reg[1]);
-						$multicompany_sharing[$module]=$value;
-					}
 				}
 				$i++;
 			}
 
-			// Sharings between entities
-			if (! empty($this->multicompany->enabled) && ! empty($multicompany_sharing))
+			// Load shared elements between entities
+			if (! empty($this->multicompany->enabled))
 			{
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret)
 				{
 					$mc = new ActionsMulticompany($db);
-
-					foreach($multicompany_sharing as $key => $value)
-					{
-						$this->entities[$key]=$mc->check_entity($value);
-					}
+					$this->multicompany->entity = $mc->loadEntity();
+					$this->entities = $mc->loadSharedElements();
 				}
 			}
 		}

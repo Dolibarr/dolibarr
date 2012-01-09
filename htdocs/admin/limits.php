@@ -252,6 +252,54 @@ else
 
 }
 
+// Important: can debug rounding, to simulate the rounded total
+/*
+print '<br><b>'.$langs->trans("VATRoundedByLine").' ('.$langs->trans("DolibarrDefault").')</b><br>';
+
+foreach($vat_rates as $vat)
+{
+	for ($qty=1; $qty<=2; $qty++)
+	{
+		$s1=10/3;
+		$s2=2/7;
+
+		// Round by line
+		$tmparray1=calcul_price_total(1,$qty*price2num($s1,'MU'),0,$vat,0,0,0,'HT',0);
+		$tmparray2=calcul_price_total(1,$qty*price2num($s2,'MU'),0,$vat,0,0,0,'HT',0);
+		$total_ht = $tmparray1[0] + $tmparray2[0];
+		$total_tva = $tmparray1[1] + $tmparray2[1];
+		$total_ttc = $tmparray1[2] + $tmparray2[2];
+
+		print $langs->trans("UnitPriceOfProduct").": ".(price2num($s1,'MU') + price2num($s2,'MU'));
+		print " x ".$langs->trans("Quantity").": ".$qty;
+		print " - ".$langs->trans("VAT").": ".$vat.'%';
+		print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$total_ht.' / '.$total_tva.' / '.$total_ttc."<br>\n";
+	}
+}
+
+print '<br><b>'.$langs->trans("VATRoundedOnTotal").'</b><br>';
+
+foreach($vat_rates as $vat)
+{
+	for ($qty=1; $qty<=2; $qty++)
+	{
+		$s1=10/3;
+		$s2=2/7;
+
+		// Global round
+		$subtotal_ht = (($qty*price2num($s1,'MU')) + ($qty*price2num($s2,'MU')));
+		$tmparray3=calcul_price_total(1,$subtotal_ht,0,$vat,0,0,0,'HT',0);
+		$total_ht = $tmparray3[0];
+		$total_tva = $tmparray3[1];
+		$total_ttc = $tmparray3[2];
+
+		print $langs->trans("UnitPriceOfProduct").": ".price2num($s1+$s2,'MU');
+		print " x ".$langs->trans("Quantity").": ".$qty;
+		print " - ".$langs->trans("VAT").": ".$vat.'%';
+		print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$total_ht.' / '.$total_tva.' / '.$total_ttc."<br>\n";
+	}
+}
+*/
 
 llxFooter();
 
