@@ -49,7 +49,7 @@ $object = new CommandeFournisseur($db);
  * Ajout d'un nouveau contact
  */
 
-if ($action == 'addcontact' && $user->rights->commande->creer)
+if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
 {
 	$result = $object->fetch($id);
 
@@ -78,7 +78,7 @@ if ($action == 'addcontact' && $user->rights->commande->creer)
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->commande->creer)
+if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -91,7 +91,7 @@ if ($action == 'swapstatut' && $user->rights->commande->creer)
 }
 
 // Efface un contact
-if ($action == 'deleteline' && $user->rights->commande->creer)
+if ($action == 'deleteline' && $user->rights->fournisseur->commande->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);
@@ -329,7 +329,7 @@ if ($id > 0 || ! empty($ref))
 
 				// Icon update et delete
 				print '<td align="center" nowrap="nowrap">';
-				if ($object->statut < 5 && $user->rights->commande->creer)
+				if ($object->statut < 5 && $user->rights->fournisseur->commande->creer)
 				{
 					print '&nbsp;';
 					print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
