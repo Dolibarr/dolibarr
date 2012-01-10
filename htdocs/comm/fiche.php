@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
- * Copyright (C) 2005-2011 Regis Houssin               <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent               <jmenent@2byte.es>
  *
@@ -51,7 +51,7 @@ if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) $langs->load("chronodocs");
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id'));
 if ($user->societe_id > 0) $id=$user->societe_id;
-$result = restrictedArea($user,'societe',$id,'');
+$result = restrictedArea($user,'societe',$id,'&societe');
 
 $action		= GETPOST('action');
 $mode		= GETPOST("mode");
@@ -478,6 +478,7 @@ if ($id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql.= " AND s.rowid = ".$object->id;
+		$sql.= " AND p.entity = ".$conf->entity;
 		$sql.= " ORDER BY p.datep DESC";
 
 		$resql=$db->query($sql);
@@ -536,6 +537,7 @@ if ($id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
 		$sql.= " AND s.rowid = ".$object->id;
+		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " ORDER BY c.date_commande DESC";
 
 		$resql=$db->query($sql);
@@ -585,10 +587,11 @@ if ($id > 0)
 		$contratstatic=new Contrat($db);
 
 		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-		$sql .= " WHERE c.fk_soc = s.rowid ";
-		$sql .= " AND s.rowid = ".$object->id;
-		$sql .= " ORDER BY c.datec DESC";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+		$sql.= " WHERE c.fk_soc = s.rowid ";
+		$sql.= " AND s.rowid = ".$object->id;
+		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " ORDER BY c.datec DESC";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -642,10 +645,11 @@ if ($id > 0)
 	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire)
 	{
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
-		$sql .= " WHERE f.fk_soc = s.rowid";
-		$sql .= " AND s.rowid = ".$object->id;
-		$sql .= " ORDER BY f.tms DESC";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
+		$sql.= " WHERE f.fk_soc = s.rowid";
+		$sql.= " AND s.rowid = ".$object->id;
+		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " ORDER BY f.tms DESC";
 
 		$fichinter_static=new Fichinter($db);
 
@@ -704,6 +708,7 @@ if ($id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
+		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
 		$sql.= ' f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid';
@@ -863,8 +868,8 @@ else
 	dol_print_error($db,'Bad value for socid parameter');
 }
 
+llxFooter();
+
 $db->close();
 
-
-llxFooter();
 ?>

@@ -380,12 +380,7 @@ class Societe extends CommonObject
         dol_syslog(get_class($this)."::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
         // For triggers
-        if ($call_trigger)
-        {
-        	$objectstatic=new Societe($this->db);
-        	$objectstatic->fetch($id);
-        	$this->oldobject = $objectstatic;
-        }
+        if ($call_trigger) $this->oldobject = dol_clone($this);
 
         $now=dol_now();
 

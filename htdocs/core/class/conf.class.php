@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin      	<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin      	<regis@dolibarr.fr>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -123,9 +123,7 @@ class Conf
 
 		$resql = $db->query($sql);
 		if ($resql)
-		{
-			$multicompany_sharing=array();
-			
+		{	
 			$i = 0;
 			$numr = $db->num_rows($resql);
 			while ($i < $numr)
@@ -195,15 +193,14 @@ class Conf
 				$i++;
 			}
 
-			// Load shared elements between entities
+			// Load multicompany configuration
 			if (! empty($this->multicompany->enabled))
 			{
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret)
 				{
 					$mc = new ActionsMulticompany($db);
-					$this->multicompany->entity = $mc->loadEntity();
-					$this->entities = $mc->loadSharedElements();
+					$mc->setValues($this);
 				}
 			}
 		}

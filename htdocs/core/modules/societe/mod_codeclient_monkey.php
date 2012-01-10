@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,6 +117,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         $sql = "SELECT MAX(SUBSTRING(".$field." FROM ".$posindice.")) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -126,7 +128,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 		else
 		{
-			dol_syslog("mod_codeclient_monkey::getNextValue sql=".$sql);
+			dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -135,7 +137,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$yymm = strftime("%y%m",$date);
 		$num = sprintf("%04s",$max+1);
 
-		dol_syslog("mod_codeclient_monkey::getNextValue return ".$prefix.$yymm."-".$num);
+		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;
 	}
 
@@ -195,7 +197,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			}
 		}
 
-		dol_syslog("mod_codeclient_monkey::verif type=".$type." result=".$result);
+		dol_syslog(get_class($this)."::verif type=".$type." result=".$result);
 		return $result;
 	}
 
@@ -213,7 +215,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE code_client = '".$code."'";
 		if ($soc->id > 0) $sql.= " AND rowid != ".$soc->id;
-
+		
+		dol_syslog(get_class($this)."::verif_dispo sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{

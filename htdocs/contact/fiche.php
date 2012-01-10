@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ if (! empty($canvas))
 }
 
 // Security check
-$result = restrictedArea($user, 'contact', $id, 'socpeople', '', '', '', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', '', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');

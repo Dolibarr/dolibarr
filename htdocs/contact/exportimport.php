@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ $langs->load("companies");
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $contactid, 'socpeople');
+$result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
 
 
 /*
