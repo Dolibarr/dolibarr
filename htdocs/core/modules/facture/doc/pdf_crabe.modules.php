@@ -22,8 +22,7 @@
 /**
  *	\file       htdocs/core/modules/facture/doc/pdf_crabe.modules.php
  *	\ingroup    facture
- *	\brief      File of class to generate invoices from crab model
- *	\author	    Laurent Destailleur
+ *	\brief      File of class to generate customers invoices from crab model
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php");
@@ -101,7 +100,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Get source company
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -276,7 +275,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
 					}
 
-					// Prix unitaire HT avant remise
+					// Unit price before discount
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, $up_excl_tax, 0, 'R', 0);
@@ -294,7 +293,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
 					}
 
-					// Total HT ligne
+					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
@@ -406,7 +405,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				$pdf->Output($file,'F');
 
-				// Actions on extra fields (by external module or standard code)
+				// Add pdfgeneration hook
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 				$hookmanager=new HookManager($this->db);
 				$hookmanager->callHooks(array('pdfgeneration'));
@@ -562,11 +561,11 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *	Show other information
 	 *
-	 *	@param      pdf             Objet PDF
-	 *	@param      object          Objet facture
-	 *	@param		posy			Position depart
-	 *	@param		outputlangs		Objet langs
-	 *	@return     y               Position pour suite
+	 *	@param	PDF			&$pdf           Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param	int			$posy			Position start
+	 *	@param	Translate	$outputlangs	Object langs
+	 *	@return int							Position pour suite
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -602,7 +601,6 @@ class pdf_crabe extends ModelePDFFactures
 
 			$posy=$pdf->GetY()+3;
 		}
-
 
 		if ($object->type != 2)
 		{
@@ -691,7 +689,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 			}
 		}
-
+		
 		return $posy;
 	}
 
@@ -699,12 +697,12 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param      pdf             Objet PDF
-	 *	@param      object          Objet facture
-	 *	@param      deja_regle      Montant deja regle
-	 *	@param		posy			Position depart
-	 *	@param		outputlangs		Objet langs
-	 *	@return     y               Position pour suite
+	 *	@param	PDF			&$pdf           Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param  int			$deja_regle     Montant deja regle
+	 *	@param	int			$posy			Position depart
+	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@return int							Position pour suite
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -836,7 +834,7 @@ class pdf_crabe extends ModelePDFFactures
 								$tvakey=str_replace('*','',$tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+							$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->country_code).' ';
 							$totalvat.=vatrate($tvakey,1).$tvacompl;
 							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -920,9 +918,9 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	/**
-	 *   Affiche la grille des lignes de factures
+	 *   Show the lines of invoice
 	 *
-	 *   @param      pdf     objet PDF
+	 *   @param		PDF		$pdf     object PDF
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -1046,7 +1044,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
 		$pdf->MultiCell(100, 3, $title, '', 'R');
 
-		$pdf->SetFont('','B', $default_font_size);
+		$pdf->SetFont('','B',$default_font_size);
 
 		$posy+=5;
 		$pdf->SetXY($posx,$posy);
@@ -1233,7 +1231,8 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	/**
-	 *   	\brief      Show footer of page
+	 *   Show footer of page
+     *
 	 *   	\param      pdf     		PDF factory
 	 * 		\param		object			Object invoice
 	 *      \param      outputlangs		Object lang for output

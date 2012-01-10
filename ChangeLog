@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.2 compared to 3.1 *****
 
 For users:
+- New: Show payments terms and conditions onto muscadet template.
 - New: Can open back a closed commercial proposal.
 - New: show thirdparty barcode on main tab.
 - New: Can input note (private and public) during note and expenses creation.
@@ -20,7 +21,7 @@ For users:
 - New: task #11278 : Option into point of sale module to add services in list.
 - New: task #11261 : Add an entry into menu called "New shipment".
 - New: Make option MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT available by default.
-- New: Can build PDF in USLetter format or canada format.
+- New: Can build PDF in USLetter format or canada format (change paper size).
 - New: Can export into Excel 2007 format.
 - New: Add hidden option CASHDESK_FORCE_STOCK_ON_BILL
 - New: Can search on part of barcode into POS module.
