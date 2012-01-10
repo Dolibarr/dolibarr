@@ -575,31 +575,12 @@ if ($action == 'classin')
 }
 
 
-// Repasse la facture en mode brouillon
+// Set invoice to draft status
 if ($action == 'edit' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
 
-    // On verifie si la facture a des paiements
-    // TODO move to DAO class
-    $sql = 'SELECT pf.amount';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf';
-    $sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
-
-    $result = $db->query($sql);
-    if ($result)
-    {
-        $i = 0;
-        $num = $db->num_rows($result);
-
-        while ($i < $num)
-        {
-            $objp = $db->fetch_object($result);
-            $totalpaye += $objp->amount;
-            $i++;
-        }
-    }
-
+    $totalpaye = $object->getSommePaiement();
     $resteapayer = $object->total_ttc - $totalpaye;
 
     // On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
@@ -620,6 +601,7 @@ if ($action == 'edit' && $user->rights->fournisseur->facture->creer)
     }
 }
 
+// Set invoice to validated/unpaid status
 if ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
 {
     $result = $object->fetch($id);

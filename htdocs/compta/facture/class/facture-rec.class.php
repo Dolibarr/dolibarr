@@ -79,7 +79,7 @@ class FactureRec extends Facture
 	/**
 	 * 	Create a predefined invoice
 	 *
-	 * 	@param		User	$user
+	 * 	@param		User	$user		User object
 	 * 	@param		int		$facid		Id of source invoice
 	 *	@return		int					<0 if KO, id of invoice if OK
 	 */
@@ -145,17 +145,21 @@ class FactureRec extends Facture
 				$num=count($facsrc->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
-					$result_insert = $this->addline($this->id,
-					$facsrc->lines[$i]->desc,
-					$facsrc->lines[$i]->subprice,
-					$facsrc->lines[$i]->qty,
-					$facsrc->lines[$i]->tva_tx,
-					$facsrc->lines[$i]->fk_product,
-					$facsrc->lines[$i]->remise_percent,
-		                    'HT',0,'',0,
-					$facsrc->lines[$i]->product_type,
-					$facsrc->lines[$i]->rang,
-					$facsrc->lines[$i]->special_code
+					$result_insert = $this->addline(
+    					$this->id,
+    					$facsrc->lines[$i]->desc,
+    					$facsrc->lines[$i]->subprice,
+    					$facsrc->lines[$i]->qty,
+    					$facsrc->lines[$i]->tva_tx,
+    					$facsrc->lines[$i]->fk_product,
+    					$facsrc->lines[$i]->remise_percent,
+	                    'HT',
+	                    0,
+	                    '',
+	                    0,
+    					$facsrc->lines[$i]->product_type,
+    					$facsrc->lines[$i]->rang,
+    					$facsrc->lines[$i]->special_code
 					);
 
 					if ($result_insert < 0)
@@ -207,7 +211,7 @@ class FactureRec extends Facture
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'"; // TODO remplacer par une fonction
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 		$sql.= ' WHERE f.rowid='.$rowid;
 
         dol_syslog("FactureRec::Fetch rowid=".$rowid." sql=".$sql, LOG_DEBUG);
@@ -377,6 +381,7 @@ class FactureRec extends Facture
 
 	/**
 	 * 		Delete current invoice
+	 *
 	 * 		@return		int		<0 if KO, >0 if OK
 	 */
 	function delete()
@@ -406,9 +411,8 @@ class FactureRec extends Facture
 
 
 	/**
-	 * 
-	 * Add a line to invoice
-	 * 
+	 * 	Add a line to invoice
+	 *
 	 *	@param    	int			$facid           	Id de la facture
      *	@param    	string		$desc            	Description de la ligne
      *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
@@ -422,7 +426,7 @@ class FactureRec extends Facture
      *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
      *	@param		int			$type				Type of line (0=product, 1=service)
      *	@param      int			$rang               Position of line
-     *	@param		int			$special_code
+     *	@param		int			$special_code		Special code
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
 	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0)
@@ -461,14 +465,6 @@ class FactureRec extends Facture
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-
-			// TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			if (trim(dol_strlen($remise_percent)) > 0)
-			{
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
-			}
 
 			$product_type=$type;
 			if ($fk_product)
@@ -511,10 +507,10 @@ class FactureRec extends Facture
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code.")";
 
-			dol_syslog("FactureRec::addline sql=".$sql, LOG_DEBUG);
-			if ($this->db->query( $sql))
+			dol_syslog(get_class($this)."::addline sql=".$sql, LOG_DEBUG);
+			if ($this->db->query($sql))
 			{
-				$this->id=$facid;	// TODO A virer
+				$this->id=$facid;
 				$this->update_price();
 				return 1;
 			}
@@ -531,10 +527,10 @@ class FactureRec extends Facture
 	/**
 	 *	Rend la facture automatique
 	 *
-	 *	@param		User	$user
-	 *	@param		int		$freq
-	 *	@param		string	$courant
-	 *	@return		int		0 if OK, <0 if KO
+	 *	@param		User	$user		User object
+	 *	@param		int		$freq		Freq
+	 *	@param		string	$courant	Courant
+	 *	@return		int					0 if OK, <0 if KO
 	 */
 	function set_auto($user, $freq, $courant)
 	{
@@ -566,6 +562,7 @@ class FactureRec extends Facture
 
 	/**
 	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *
 	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'withdraw')
 	 *	@return		string					Chaine avec URL
