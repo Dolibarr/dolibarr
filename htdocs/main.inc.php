@@ -567,7 +567,7 @@ if (! defined('NOLOGIN'))
 		}
 
 		// Create entity cookie, just used for login page
-		if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && !empty($conf->global->MAIN_MULTICOMPANY_COOKIE) && isset($_POST["entity"]))
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
 		{
 			include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
 
@@ -576,7 +576,7 @@ if (! defined('NOLOGIN'))
 			$prefix=dol_getprefix();
 			$entityCookieName = 'DOLENTITYID_'.$prefix;
 			// TTL : is defined in the config page multicompany
-			$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
+			$ttl = (! empty($conf->global->MULTICOMPANY_COOKIE_TTL) ? $conf->global->MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
 			// Cryptkey : will be created randomly in the config page multicompany
 			$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 
