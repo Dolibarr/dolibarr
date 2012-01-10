@@ -46,6 +46,8 @@
    				--exclude '${basedir}/htdocs/core/filemanagerdol'
    				--exclude '${basedir}/htdocs/includes'
    				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'
+   				--min-tokens 70
+   				--min-lines 20 
    				htdocs
    				" />
   </exec>
