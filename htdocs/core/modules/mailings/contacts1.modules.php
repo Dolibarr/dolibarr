@@ -83,10 +83,11 @@ class mailing_contacts1 extends MailingTargets
 
 
 	/**
-	 *		\brief		Return here number of distinct emails returned by your selector.
-	 *					For example if this selector is used to extract 500 different
-	 *					emails from a text file, this function must return 500.
-	 *		\return		int
+	 *	Return here number of distinct emails returned by your selector.
+	 *	For example if this selector is used to extract 500 different
+	 *	emails from a text file, this function must return 500.
+	 *
+	 *	@return		int
 	 */
 	function getNbOfRecipients()
 	{
@@ -107,9 +108,9 @@ class mailing_contacts1 extends MailingTargets
 
 
 	/**
-	 *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
-	 *                  des destinataires de mailings
-	 *      \return     string      Retourne zone select
+	 *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *
+	 *   @return     string      Retourne zone select
 	 */
 	function formFilter()
 	{
@@ -152,8 +153,10 @@ class mailing_contacts1 extends MailingTargets
 
 
 	/**
-	 *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
-	 *      \return     string      Url lien
+	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *
+     *  @param	int		$id		ID
+	 *  @return string      	Url lien
 	 */
 	function url($id)
 	{
@@ -162,10 +165,11 @@ class mailing_contacts1 extends MailingTargets
 
 
 	/**
-	 *    \brief      Ajoute destinataires dans table des cibles
-	 *    \param      mailing_id    Id of emailing
-	 *    \param      filterarray   Requete sql de selection des destinataires
-	 *    \return     int           <0 si erreur, nb ajout si ok
+	 *  Ajoute destinataires dans table des cibles
+	 *
+	 *  @param	int		$mailing_id    	Id of emailing
+	 *  @param  array	$filtersarray   Requete sql de selection des destinataires
+	 *  @return int           			<0 si erreur, nb ajout si ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
 	{

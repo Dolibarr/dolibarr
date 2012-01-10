@@ -225,12 +225,14 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				// Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
-				$odfHandler = new odf($srctemplatepath, array
-				(
-						'PATH_TO_TMP'	  => $conf->societe->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}')
+				$odfHandler = new odf(
+				    $srctemplatepath,
+				    array(
+    					'PATH_TO_TMP'	  => $conf->societe->dir_temp,
+    					'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+    					'DELIMITER_LEFT'  => '{',
+    					'DELIMITER_RIGHT' => '}'
+					)
 				);
 
 				//print $odfHandler->__toString()."\n";

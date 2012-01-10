@@ -37,8 +37,9 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 
     /**
      *     Return list of active generation modules
-     * 	   @param      $db                 Database handler
-     *     @param      $maxfilenamelength  Max length of value to show
+     *
+     * 	   @param	DoliDB	$db                 Database handler
+     *     @param   string	$maxfilenamelength  Max length of value to show
      */
     function liste_modeles($db,$maxfilenamelength=0)
     {
@@ -65,7 +66,8 @@ abstract class ModeleThirdPartyCode
 
     /**     Renvoi la description par defaut du modele de numerotation
      *
-     *      @return     string      Texte descripif
+     *		@param	Translate	$langs		Object langs
+     *      @return string      			Texte descripif
      */
     function info($langs)
     {
@@ -75,7 +77,8 @@ abstract class ModeleThirdPartyCode
 
     /**     Renvoi nom module
      *
-     *      @return     string      Nom du module
+     *		@param	Translate	$langs		Object langs
+     *      @return string      			Nom du module
      */
     function getNom($langs)
     {
@@ -85,7 +88,8 @@ abstract class ModeleThirdPartyCode
 
     /**     Renvoi un exemple de numerotation
      *
-     *      @return     string      Example
+     *		@param	Translate	$langs		Object langs
+     *      @return string      			Example
      */
     function getExample($langs)
     {
@@ -103,9 +107,12 @@ abstract class ModeleThirdPartyCode
         return true;
     }
 
-    /**     Return next value available
+    /**
+     *  Return next value available
      *
-     *      @return     string      Value
+     *	@param	Societe		$objsoc		Object thirdparty
+     *	@param	int			$type		Type
+     *  @return string      			Value
      */
     function getNextValue($objsoc=0,$type=-1)
     {
@@ -132,7 +139,8 @@ abstract class ModeleThirdPartyCode
     /**
      *      Renvoi la liste des modeles de numéroation
      *
-     *      @param      db      Handler de base
+     *      @param	DoliDB	$db     Database handler
+     *      @return	array			List of numbers
      */
     function liste_modeles($db)
     {
@@ -161,10 +169,10 @@ abstract class ModeleThirdPartyCode
     /**
      *      Return description of module parameters
      *
-     *      @param      langs      	Output language
-     *		@param		soc			Third party object
-     *		@param		type		-1=Nothing, 0=Customer, 1=Supplier
-     *		@return		string		HTML translated description
+     *      @param	Translate	$langs      Output language
+     *		@param	Societe		$soc		Third party object
+     *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+     *		@return	tring					HTML translated description
      */
     function getToolTip($langs,$soc,$type)
     {
@@ -228,7 +236,7 @@ abstract class ModeleThirdPartyCode
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
-	 *   @param		int		0=no, 1=yes
+	 *   @return	int		0=no, 1=yes
 	 */
     function verif_prefixIsUsed()
     {
@@ -249,8 +257,8 @@ abstract class ModeleAccountancyCode
 
     /**		Return description of module
      *
-     * 		@param 		$langs		Object langs
-     * 		@return     string      Description of module
+     * 		@param	Translate	$langs		Object langs
+     * 		@return string      			Description of module
      */
     function info($langs)
     {
@@ -260,9 +268,10 @@ abstract class ModeleAccountancyCode
 
     /**		Return an example of result returned by getNextValue
      *
-     *      @param		$langs		Object langs
-     *      @param		$objsoc		Object thirdparty
-     *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+     *      @param	Translate	$langs		Object langs
+     *      @param	societe		$objsoc		Object thirdparty
+     *      @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+     *      @return	string					Example
      */
     function getExample($langs,$objsoc=0,$type=-1)
     {
@@ -298,10 +307,10 @@ abstract class ModeleAccountancyCode
     /**
      *      Return description of module parameters
      *
-     *      @param      langs      	Output language
-     *		@param		soc			Third party object
-     *		@param		type		-1=Nothing, 0=Customer, 1=Supplier
-     *		@return		string		HTML translated description
+     *      @param	Translate	$langs      Output language
+     *		@param	Societe		$soc		Third party object
+     *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+     *		@return	string					HTML translated description
      */
     function getToolTip($langs,$soc,$type)
     {
@@ -335,10 +344,10 @@ abstract class ModeleAccountancyCode
     /**
      *  Set accountancy account code for a third party into this->code
      *
-     *  @param      db              Database handler
-     *  @param      societe         Third party object
-     *  @param      type			'customer' or 'supplier'
-     *  @return		int				>=0 if OK, <0 if KO
+     *  @param	DoliDB	$db             Database handler
+     *  @param  Societe	$societe        Third party object
+     *  @param  int		$type			'customer' or 'supplier'
+     *  @return	int						>=0 if OK, <0 if KO
      */
     function get_code($db, $societe, $type='')
     {

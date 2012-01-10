@@ -53,9 +53,9 @@ class mailing_example extends MailingTargets
     /**
      *  This is the main function that returns the array of emails
      *
-     *  @param      mailing_id    Id of mailing. No need to use it.
-     *  @param      filterarray   If you used the formFilter function. Empty otherwise.
-     *  @return     int           <0 if error, number of emails added if ok
+     *  @param	int		$mailing_id    	Id of mailing. No need to use it.
+     *  @param  array	$filtersarray   If you used the formFilter function. Empty otherwise.
+     *  @return int           			<0 if error, number of emails added if ok
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
@@ -130,7 +130,8 @@ class mailing_example extends MailingTargets
      *  Can include an URL link on each record provided by selector
      *	shown on target page.
      *
-     *  @return     string      Url link
+     *  @param	int		$id		ID
+     *  @return string      	Url link
      */
     function url($id)
     {

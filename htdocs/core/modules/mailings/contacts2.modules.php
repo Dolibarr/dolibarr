@@ -53,8 +53,10 @@ class mailing_contacts2 extends MailingTargets
 
 
     /**
-     *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
-     *      \return     string      Url lien
+     *  Renvoie url lien vers fiche de la source du destinataire du mailing
+     *
+     *  @param	int		$id		ID
+     *  @return     string      Url lien
      */
     function url($id)
     {
@@ -63,9 +65,10 @@ class mailing_contacts2 extends MailingTargets
 
     /**
      *    This is the main function that returns the array of emails
-     *    @param      mailing_id    Id of mailing. No need to use it.
-     *    @param      filterarray   Function
-     *    @return     int           <0 if error, number of emails added if ok
+     *
+     *    @param	int		$mailing_id    	Id of mailing. No need to use it.
+     *    @param    array	$filtersarray   Function
+     *    @return   int           			<0 if error, number of emails added if ok
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
@@ -146,6 +149,7 @@ class mailing_contacts2 extends MailingTargets
 
     /**
      * 		Return here number of distinct emails returned by your selector.
+     *
      * 		@return		int
      */
     function getNbOfRecipients()
@@ -171,6 +175,7 @@ class mailing_contacts2 extends MailingTargets
     /**
      *      This is to add a form filter to provide variant of selector
      *		If used, the HTML select must be called "filter"
+     *
      *      @return     string      A html select zone
      */
     function formFilter()

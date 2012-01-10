@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C)           Walter Torres        <walter@torres.ws> [with a *lot* of help!]
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,28 +36,6 @@
  *  - GPG access
  * This Class is based off of 'SMTP PHP MAIL' by Dirk Paehl, http://www.paehl.de
  */
-
-/**
- * Version number of Class
- */
-define('SMTPs_VER', '1.16', false);
-
-/**
- * SMTPs Success value
- */
-define('SMTPs_SUCCEED', true, false);
-
-/**
- * SMTPs Fail value
- */
-define('SMTPs_FAIL', false, false);
-
-/**
- * Improper parameters
- */
-define('SMTPs_INVALID_PARAMETERS', 50, false);
-
-
 
 
 /**

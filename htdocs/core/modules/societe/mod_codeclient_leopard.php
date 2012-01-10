@@ -63,8 +63,8 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 	/**		Return description of module
 	 *
-	 * 		@param 		$langs		Object langs
-	 * 		@return     string      Description of module
+	 * 		@param	string	$langs		Object langs
+	 * 		@return string      		Description of module
 	 */
 	function info($langs)
 	{

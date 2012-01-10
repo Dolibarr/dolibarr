@@ -52,7 +52,7 @@ class mailing_thirdparties extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @param	array	$filterarray   	If you used the formFilter function. Empty otherwise.
+	 *    @param	array	$filtersarray   If you used the formFilter function. Empty otherwise.
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
@@ -172,9 +172,10 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 	/**
-	 *      \brief      This is to add a form filter to provide variant of selector
-	 *					If used, the HTML select must be called "filter"
-	 *      \return     string      A html select zone
+	 *  This is to add a form filter to provide variant of selector
+	 *	If used, the HTML select must be called "filter"
+	 *
+	 *  @return     string      A html select zone
 	 */
 	function formFilter()
 	{
@@ -228,9 +229,10 @@ class mailing_thirdparties extends MailingTargets
 
 
 	/**
-	 *      \brief      Can include an URL link on each record provided by selector
-	 *					shown on target page.
-	 *      \return     string      Url link
+	 *  Can include an URL link on each record provided by selector shown on target page.
+	 *
+     *  @param	int		$id		ID
+	 *  @return string      	Url link
 	 */
 	function url($id)
 	{
