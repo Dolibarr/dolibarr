@@ -54,15 +54,15 @@ class BonPrelevement extends CommonObject
     /**
      *	Constructor
      *
-     *  @param		DoliDB		$DB      	Database handler
+     *  @param		DoliDB		$db      	Database handler
      *  @param		string		$filename	Filename of withdraw receipt
      */
-    function BonPrelevement($DB, $filename='')
+    function BonPrelevement($db, $filename='')
     {
         global $conf,$langs;
 
         $error = 0;
-        $this->db = $DB;
+        $this->db = $db;
 
         $this->filename=$filename;
 
@@ -526,7 +526,7 @@ class BonPrelevement extends CommonObject
         global $conf,$langs;
 
         $error = 0;
-        
+
         dol_syslog("bon-prelevement::set_infotrans Start",LOG_INFO);
         if ($this->db->begin())
         {
@@ -1209,14 +1209,14 @@ class BonPrelevement extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $esaeb19->agregaRecibo(
-                        $idOrdenante,
+                            $idOrdenante,
     	                	"idcliente".$i+1,
-                        $obj->client_nom,
-                        $obj->code_banque,
-                        $obj->code_guichet,
-                        $obj->cle_rib,
-                        $obj->number,
-                        $obj->amount,
+                            $obj->client_nom,
+                            $obj->code_banque,
+                            $obj->code_guichet,
+                            $obj->cle_rib,
+                            $obj->number,
+                            $obj->amount,
     	                	"Fra.".$obj->facnumber." ".$obj->amount
                         );
 
@@ -1303,16 +1303,7 @@ class BonPrelevement extends CommonObject
                 {
                     $row = $this->db->fetch_row($resql);
 
-                    $this->EnregDestinataire(
-                    $row[0],
-                    $row[1],
-                    $row[2],
-                    $row[3],
-                    $row[4],
-                    $row[5],
-                    $row[6],
-                    $row[7]
-                    );
+                    $this->EnregDestinataire($row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7]);
 
                     $this->total = $this->total + $row[5];
 

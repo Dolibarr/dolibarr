@@ -36,20 +36,21 @@ class RejetPrelevement
 
 
 	/**
-	 *    Class constructor
-	 *    @param  DB          Database Handler access
-	 *    @param  user        User
+	 *  Constructor
+	 *
+	 *  @param	DoliDb	$db			Database handler
+	 *  @param 	User	$user       Objet user
 	 */
-	function RejetPrelevement($DB, $user)
+	function RejetPrelevement($db, $user)
 	{
 		global $langs;
-		
-		$this->db = $DB ;
+
+		$this->db = $db;
 		$this->user = $user;
 
 		$this->motifs = array();
 		$this->facturer = array();
-		
+
 		$this->motifs[0] = $langs->trans("StatusMotif0");
     	$this->motifs[1] = $langs->trans("StatusMotif1");
     	$this->motifs[2] = $langs->trans("StatusMotif2");
@@ -59,16 +60,27 @@ class RejetPrelevement
     	$this->motifs[6] = $langs->trans("StatusMotif6");
     	$this->motifs[7] = $langs->trans("StatusMotif7");
     	$this->motifs[8] = $langs->trans("StatusMotif8");
-    	
+
     	$this->facturer[0]=$langs->trans("NoInvoiceRefused");
 		$this->facturer[1]=$langs->trans("InvoiceRefused");
-    	
+
 	}
 
+	/**
+	 * Create
+	 *
+	 * @param 	User		$user				User object
+	 * @param 	int			$id					Id
+	 * @param 	string		$motif				Motif
+	 * @param 	timestamp	$date_rejet			Date rejet
+	 * @param 	int			$bonid				Bon id
+	 * @param 	int			$facturation		Facturation
+	 * @return	void
+	 */
 	function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)
 	{
 		global $langs,$conf;
-		
+
 		$error = 0;
 		$this->id = $id;
 		$this->bon_id = $bonid;
@@ -115,7 +127,7 @@ class RejetPrelevement
 			dol_syslog("RejetPrelevement::create Erreur 5");
 			$error++;
 		}
-		
+
 		$num=count($facs);
 		for ($i = 0; $i < $num; $i++)
 		{
@@ -126,12 +138,12 @@ class RejetPrelevement
 			$pai = new Paiement($this->db);
 
 			$pai->amounts = array();
-			
-			/* 
+
+			/*
 			 * We replace the comma with a point otherwise some
 			 * PHP installs sends only the part integer negative
 			*/
-			
+
 			$pai->amounts[$facs[$i]] = price2num($fac->total_ttc * -1);
 			$pai->datepaye = $date_rejet;
 			$pai->paiementid = 3; // type of payment: withdrawal
@@ -150,14 +162,14 @@ class RejetPrelevement
 					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
 					$error++;
 				}
-			
+
 				// Payment validation
 				if ($pai->valide() < 0)
 				{
 					$error++;
 					dol_syslog("RejetPrelevement::Create Error payment validation");
 				}
-			
+
 			}
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
@@ -181,8 +193,10 @@ class RejetPrelevement
 	}
 
 	/**
-	 *      Envoi mail
-	 * 		@param		fac			Invoice object
+	 *  Envoi mail
+	 *
+	 * 	@param	Facture		$fac			Invoice object
+	 * 	@return	void
 	 */
 	function _send_email($fac)
 	{
@@ -232,12 +246,10 @@ class RejetPrelevement
 			$socname = $soc->nom;
 			$amount = price($fac->total_ttc);
 			$userinfo = $this->user->getFullName($langs);
-			
+
 			$message = $langs->trans("InfoRejectMessage",$facref,$socname, $amount, $userinfo);
-			
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,
-			$arr_file,$arr_mime,$arr_name,
-                                      '', '', 0, $msgishtml,$this->user->email);
+
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$this->user->email);
 
 			$result=$mailfile->sendfile();
 			if ($result)
@@ -257,13 +269,15 @@ class RejetPrelevement
 
 	/**
 	 *    Retrieve the list of invoices
+	 *
+	 *    @return	void
 	 */
 	function _get_list_factures()
 	{
 		global $conf;
 
 		$arr = array();
-		
+
 		 //Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -300,7 +314,9 @@ class RejetPrelevement
 
 	/**
 	 *    Retrieve withdrawal object
-	 *    @param      rowid       id of invoice to retrieve
+	 *
+	 *    @param    int		$rowid       id of invoice to retrieve
+	 *    @return	void
 	 */
 	function fetch($rowid)
 	{

@@ -66,10 +66,7 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
 {
     $error = 0;
 
-    $datepaye = dol_mktime(12, 0 , 0,
-    $_POST['remonth'],
-    $_POST['reday'],
-    $_POST['reyear']);
+    $datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
     $paiement_id = 0;
 
     // Verifie si des paiements sont superieurs au montant facture
@@ -634,7 +631,7 @@ if (! GETPOST('action'))
     }
 
     $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
-    $sql .= $db->plimit($limit +1 ,$offset);
+    $sql .= $db->plimit($limit+1, $offset);
     $resql = $db->query($sql);
 
     if ($resql)

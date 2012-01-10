@@ -182,7 +182,7 @@ class RssParser
             }
 
             xml_set_object($xmlparser, $this);
-            xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element' );
+            xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
             xml_set_character_data_handler($xmlparser, 'feed_cdata');
             $status = xml_parse($xmlparser, $str);
             xml_parser_free($xmlparser);
@@ -371,9 +371,10 @@ class RssParser
     /**
      * 	Triggered when opened tag is found
      *
-     * 	@param		$p
-     *  @param		$element	Tag
-     *  @param		$attrs		Attributes of tags
+     * 	@param	string		$p
+     *  @param	string		$element	Tag
+     *  @param	array		&$attrs		Attributes of tags
+     *  @return	void
      */
     function feed_start_element($p, $element, &$attrs)
     {
@@ -382,7 +383,7 @@ class RssParser
 
         // check for a namespace, and split if found
         $ns = false;
-        if ( strpos( $element, ':' ) ) {
+        if (strpos($element, ':' )) {
             list($ns, $el) = explode(':', $element, 2);
         }
         if ( $ns and $ns != 'rdf' ) {
@@ -455,10 +456,7 @@ class RssParser
         elseif ($this->_format == 'atom' and $this->incontent )
         {
             // if tags are inlined, then flatten
-            $attrs_str = join(' ',
-            array_map('map_attrs',
-            array_keys($attrs),
-            array_values($attrs) ) );
+            $attrs_str = join(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
 
             $this->append_content("<$element $attrs_str>" );
 
@@ -491,8 +489,9 @@ class RssParser
     /**
      * 	Triggered when CDATA is found
      *
-     * 	@param		$p
-     *  @param		$text	Tag
+     * 	@param	string	$p
+     *  @param	string	$text	Tag
+     *  @return	void
      */
     function feed_cdata($p, $text)
     {
@@ -509,8 +508,9 @@ class RssParser
     /**
      * 	Triggered when closed tag is found
      *
-     * 	@param		$p
-     *  @param		$el		Tag
+     * 	@param	string		$p
+     *  @param	string		$el		Tag
+     *  @return	void
      */
     function feed_end_element($p, $el)
     {
@@ -562,8 +562,9 @@ class RssParser
     /**
      * 	To concat 2 string with no warning if an operand is not defined
      *
-     * 	@param		$str1
-     *  @param		$str2
+     * 	@param	string	&$str1		Str1
+     *  @param	string	$str2		Str2
+     *  @return	string				String cancatenated
      */
     function concat(&$str1, $str2="")
     {
@@ -574,6 +575,10 @@ class RssParser
     }
 
     /**
+     * Enter description here ...
+     *
+     * @param	string	$text		Text
+     * @return	void
      */
     function append_content($text)
     {
@@ -587,6 +592,10 @@ class RssParser
 
     /**
      * 	smart append - field and namespace aware
+     *
+     * 	@param	string	$el		El
+     * 	@param	string	$text	Text
+     * 	@return	void
      */
     function append($el, $text)
     {
@@ -596,30 +605,30 @@ class RssParser
         if ( $this->current_namespace )
         {
             if ( $this->initem ) {
-                $this->concat(                    $this->current_item[ $this->current_namespace ][ $el ], $text);
+                $this->concat($this->current_item[ $this->current_namespace ][ $el ], $text);
             }
             elseif ($this->inchannel) {
-                $this->concat(                   $this->channel[ $this->current_namespace][ $el ], $text);
+                $this->concat($this->channel[ $this->current_namespace][ $el ], $text);
             }
             elseif ($this->intextinput) {
-                $this->concat(                   $this->textinput[ $this->current_namespace][ $el ], $text);
+                $this->concat($this->textinput[ $this->current_namespace][ $el ], $text);
             }
             elseif ($this->inimage) {
-                $this->concat(                   $this->image[ $this->current_namespace ][ $el ], $text);
+                $this->concat($this->image[ $this->current_namespace ][ $el ], $text);
             }
         }
         else {
             if ( $this->initem ) {
-                $this->concat(                    $this->current_item[ $el ], $text);
+                $this->concat($this->current_item[ $el ], $text);
             }
             elseif ($this->intextinput) {
-                $this->concat(                   $this->textinput[ $el ], $text);
+                $this->concat($this->textinput[ $el ], $text);
             }
             elseif ($this->inimage) {
-                $this->concat(                   $this->image[ $el ], $text);
+                $this->concat($this->image[ $el ], $text);
             }
             elseif ($this->inchannel) {
-                $this->concat(                   $this->channel[ $el ], $text);
+                $this->concat($this->channel[ $el ], $text);
             }
 
         }
@@ -630,6 +639,9 @@ class RssParser
 
 /**
  * Function to convert an XML object into an array
+ *
+ * @param	string	$xml		Xml
+ * @return	void
  */
 function xml2php($xml)
 {
