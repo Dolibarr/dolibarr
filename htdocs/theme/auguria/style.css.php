@@ -682,7 +682,7 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.jpg',1); ?>) !important;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.jpg',1) ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
@@ -1267,7 +1267,7 @@ white-space: nowrap;
 
 .impair {
 /* background: #d0d4d7; */
-background: #eaeaea;
+background: #F5F6F7;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 }
@@ -1280,7 +1280,7 @@ border: 0px;
 
 .pair	{
 /* background: #e6ebed; */
-background: #f4f4f4;
+background: #FBFCFC;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 }
@@ -1290,6 +1290,11 @@ background: #c0c4c7;
 border: 0px;
 }
 */
+
+tr.pair td, tr.impair td, td.pair, td.impair
+{
+/*border-bottom: 1px solid white;*/
+}
 
 
 /*
@@ -1324,14 +1329,19 @@ white-space: nowrap;
 
 tr.box_impair {
 /* background: #e6ebed; */
-background: #eaeaea;
+background: #F5F6F7;
 font-family: <?php print $fontlist ?>;
 }
 
 tr.box_pair {
 /* background: #d0d4d7; */
-background: #f4f4f4;
+background: #FBFCFC;
 font-family: <?php print $fontlist ?>;
+}
+
+tr.box_pair td, tr.box_impair td, td.box_pair, td.box_impair
+{
+/*border-bottom: 1px solid white;*/
 }
 
 tr.fiche {
