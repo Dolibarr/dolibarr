@@ -3165,10 +3165,7 @@ else
             print '</td>';
             print '<td class="liste_titre" align="center">';
             print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-            //print '&nbsp;'.$langs->trans('Year').': '.$syear;
-            //print 'xx'.$syear.'zz';
-            //if ($syear == '') $syear = date("Y");
-            $htmlother->select_year($syear?$syear:-1,'year',1, 20, 5);
+            $htmlother->select_year($year?$year:-1,'year',1, 20, 5);
             print '</td>';
             print '<td class="liste_titre" align="left">&nbsp;</td>';
             print '<td class="liste_titre" align="left">';
