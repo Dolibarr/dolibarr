@@ -137,7 +137,6 @@ if ($result)
         	}
         	else
         	{
-        		$mc = new ActionsMulticompany($db);
         		$mc->getInfo($obj->entity);
         		print $mc->label;
         	}

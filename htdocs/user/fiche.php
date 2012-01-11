@@ -746,7 +746,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
     {
         if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
-            $mc = new ActionsMulticompany($db);
             print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
             print "<td>".$mc->select_entities($conf->entity);
             print "</td></tr>\n";
@@ -1076,7 +1075,6 @@ else
             	}
             	else
             	{
-            		$mc = new ActionsMulticompany($db);
             		$mc->getInfo($fuser->entity);
             		print $mc->label;
             	}
@@ -1327,7 +1325,6 @@ else
                     {
                         if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
                         {
-                            $mc = new ActionsMulticompany($db);
                             print '</td><td valign="top">'.$langs->trans("Entity").'</td>';
                             print "<td>".$mc->select_entities($conf->entity);
                         }
@@ -1378,9 +1375,8 @@ else
                             print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
                         }
                         print '</td>';
-                        if(! empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                        if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                         {
-                            $mc = new ActionsMulticompany($db);
                             $mc->getInfo($group->usergroup_entity);
                             print '<td class="valeur">'.$mc->label."</td>";
                         }
@@ -1594,9 +1590,8 @@ else
             //Multicompany
             if (! empty($conf->multicompany->enabled))
             {
-            	if(empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             	{
-            		$mc = new ActionsMulticompany($db);
             		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
             		print "<td>".$mc->select_entities($conf->entity);
             		print "</td></tr>\n";

@@ -108,8 +108,6 @@ if ($resql)
         //multicompany
         if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
         {
-            dol_include_once("/multicompany/class/actions_multicompany.class.php");
-            $mc = new ActionsMulticompany($db);
             $mc->getInfo($obj->entity);
             print '<td align="center">'.$mc->label.'</td>';
         }

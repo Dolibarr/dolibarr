@@ -266,17 +266,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Entity field
 	$select_entity='';
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY) && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX))
+	if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX))
 	{
 		$rowspan++;
-
-		$res=dol_include_once('/multicompany/class/actions_multicompany.class.php');
-		if ($res)
-		{
-			$mc = new ActionsMulticompany($db);
-
-			$select_entity=$mc->select_entities($lastentity, 'tabindex="3"', 1);
-		}
+		$select_entity = $mc->select_entities($lastentity, 'tabindex="3"', 1);
 	}
 
 	// Security graphical code

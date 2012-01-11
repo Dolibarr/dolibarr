@@ -208,34 +208,27 @@ elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.
 
 // Entity combobox
 $select_entity='';
-if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX) && ! $disabled)
+if (! empty($conf->multicompany->enabled)  && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX) && ! $disabled)
 {
     $rowspan++;
     $lastuser='';
     $lastentity = GETPOST('entity');
 
-    if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
+    if (! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED))
     {
         $prefix=dol_getprefix();
         $entityCookieName = 'DOLENTITYID_'.$prefix;
         if (isset($_COOKIE[$entityCookieName]))
         {
             include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
-
-            $cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
-
-            $entityCookie = new DolCookie($cryptkey);
+            $lastuser = '';	$lastentity = '';
+            $entityCookie = new DolCookie($conf->file->cookie_cryptkey);
             $cookieValue = $entityCookie->_getCookie($entityCookieName);
             list($lastuser, $lastentity) = explode('|', $cookieValue);
         }
     }
 
-    $res=dol_include_once('/multicompany/class/actions_multicompany.class.php');
-    if ($res)
-    {
-        $mc = new ActionsMulticompany($db);
-        $select_entity = $mc->select_entities($lastentity,'tabindex="2"');
-    }
+    $select_entity = $mc->select_entities($lastentity,'tabindex="2"');
 }
 
 // Security graphical code

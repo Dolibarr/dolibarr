@@ -153,7 +153,6 @@ if ($resql)
         	}
         	else
         	{
-        		$mc = new ActionsMulticompany($db);
         		$mc->getInfo($obj->entity);
         		print $mc->label;
         	}
@@ -232,7 +231,6 @@ if ($canreadperms)
 			print "</td>";
 			if (! empty($conf->multicompany->enabled))
 			{
-	        	$mc = new ActionsMulticompany($db);
 	        	$mc->getInfo($obj->entity);
 	        	print '<td>';
 	        	print $mc->label;
