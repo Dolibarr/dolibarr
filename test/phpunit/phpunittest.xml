@@ -46,6 +46,10 @@
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
     <directory suffix=".php">../../htdocs/includes/</directory>
+    <file>../../htdocs/boutique/osc_master.inc.php</file>
+    <file>../../htdocs/compta/bank/pre.inc.php</file>
+    <file>../../htdocs/compta/paiement/cheque/pre.inc.php</file>
+    <file>../../htdocs/ftp/pre.inc.php</file>
     </exclude>
   </whitelist>
 </filter>

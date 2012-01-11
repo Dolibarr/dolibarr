@@ -16,9 +16,9 @@
     <directory suffix=".php">../../dev/</directory>
     <directory suffix=".php">../../doc/</directory>
     <directory suffix=".php">../../test/</directory>
-    <directory suffix=".php">../../htdocs/core/filemanagerdol/</directory>
     <directory suffix=".php">../../htdocs/core/menus/smartphone/</directory>
     <directory suffix=".php">../../htdocs/custom/</directory>
+    <directory suffix=".php">../../htdocs/custom2/</directory>
     <directory suffix=".php">../../htdocs/products/canvas/</directory>
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
@@ -39,11 +39,6 @@
     <directory suffix=".php">../../dev/</directory>
     <directory suffix=".php">../../doc/</directory>
     <directory suffix=".php">../../test/</directory>
-    <directory suffix=".inc.php">../../htdocs/boutique/</directory>
-    <directory suffix=".inc.php">../../htdocs/compta/paiement/cheque/</directory>
-    <directory suffix=".inc.php">../../htdocs/compta/bank/</directory>
-    <directory suffix=".inc.php">../../htdocs/ftp/</directory>
-    <directory suffix=".php">../../htdocs/core/filemanagerdol/</directory>
     <directory suffix=".php">../../htdocs/core/menus/smartphone</directory>
     <directory suffix=".php">../../htdocs/custom/</directory>
     <directory suffix=".php">../../htdocs/custom2/</directory>
@@ -51,6 +46,10 @@
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
     <directory suffix=".php">../../htdocs/includes/</directory>
+    <file>../../htdocs/boutique/osc_master.inc.php</file>
+    <file>../../htdocs/compta/bank/pre.inc.php</file>
+    <file>../../htdocs/compta/paiement/cheque/pre.inc.php</file>
+    <file>../../htdocs/ftp/pre.inc.php</file>
     </exclude>
   </whitelist>
 </filter>
