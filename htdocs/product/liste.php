@@ -136,7 +136,7 @@ else
     	//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
     //}
-    $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
+    $sql.= ' WHERE p.entity IN ('.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
     if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
     if ($sall)
     {

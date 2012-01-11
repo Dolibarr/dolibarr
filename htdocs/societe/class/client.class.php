@@ -35,13 +35,11 @@ class Client extends Societe
     /**
      *  Constructor
      *
-     *  @param	DoliDB	$DB		Database handler
+     *  @param	DoliDB	$db		Database handler
      */
-    function Client($DB)
+    function __construct($db)
     {
-        global $config;
-
-        $this->db = $DB;
+        $this->db = $db;
     }
 
     /**
@@ -64,8 +62,8 @@ class Client extends Societe
         	$sql.= " WHERE sc.fk_user = " .$user->id;
         	$clause = "AND";
         }
-        $sql.= " ".$clause." s.client in (1,2,3)";
-        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " ".$clause." s.client IN (1,2,3)";
+        $sql.= ' AND s.entity IN ('.(! empty($conf->entities['societe']) ? $conf->entities['societe'] : $conf->entity).')';
         $sql.= " GROUP BY s.client";
 
         $resql=$this->db->query($sql);

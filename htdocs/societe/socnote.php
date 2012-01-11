@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012      Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,11 +32,11 @@ $action = isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $langs->load("companies");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe', $socid);
+$result = restrictedArea($user, 'societe', $socid, '&societe');
 
-
+$object = new Societe($db);
 
 /*
  * Actions
@@ -44,11 +44,9 @@ $result = restrictedArea($user, 'societe', $socid);
 
 if ($action == 'add' && ! GETPOST('cancel'))
 {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($_POST["note"])."' WHERE rowid=".$_POST["socid"];
+    // TODO move to DAO class
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($_POST["note"])."' WHERE rowid=".$socid;
     $result = $db->query($sql);
-
-    $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
-    $socid = $_GET["socid"];
 }
 
 
@@ -65,49 +63,48 @@ llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Notes"),$help_url)
 
 if ($socid > 0)
 {
-    $societe = new Societe($db);
-    $societe->fetch($socid);
+	$object->fetch($socid);
 
     /*
      * Affichage onglets
      */
     if ($conf->notification->enabled) $langs->load("mails");
 
-    $head = societe_prepare_head($societe);
+    $head = societe_prepare_head($object);
 
     dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
 
 
-    print "<form method=\"post\" action=\"".DOL_URL_ROOT."/societe/socnote.php\">";
+    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="border" width="100%">';
 
     print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
     print '<td colspan="3">';
-    print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
+    print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
     print '</td></tr>';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
-    if ($societe->client)
+    if ($object->client)
     {
         print '<tr><td>';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
-        print $societe->code_client;
-        if ($societe->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print $object->code_client;
+        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
         print '</td></tr>';
     }
 
-    if ($societe->fournisseur)
+    if ($object->fournisseur)
     {
         print '<tr><td>';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
-        print $societe->code_fournisseur;
-        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td></tr>';
     }
 
@@ -115,17 +112,17 @@ if ($socid > 0)
     print '<td valign="top">';
     if ($action == 'edit' && $user->rights->societe->creer)
     {
-        print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-        print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
+        print '<input type="hidden" name="action" value="add" />';
+        print '<input type="hidden" name="socid" value="'.$object->id.'" />';
 
         // Editeur wysiwyg
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note',$societe->note,'',360,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
+        $doleditor=new DolEditor('note',$object->note,'',360,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
         $doleditor->Create();
     }
     else
     {
-        print dol_textishtml($societe->note)?$societe->note:dol_nl2br($societe->note,1,true);
+        print dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true);
     }
     print "</td></tr>";
 
@@ -156,14 +153,14 @@ if ($action != 'edit')
 
     if ($user->rights->societe->creer)
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/socnote.php?socid='.$societe->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
 
     print '</div>';
 }
 
+llxFooter();
 
 $db->close();
 
-llxFooter();
 ?>

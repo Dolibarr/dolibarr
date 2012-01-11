@@ -137,7 +137,7 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = GETPOST("entity",'int');
 	}
-	else	// TODO Does this "else" still usefull ?
+	else
 	{
 		$prefix=dol_getprefix();
 	    $entityCookieName = 'DOLENTITYID_'.$prefix;
