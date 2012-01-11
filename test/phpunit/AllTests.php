@@ -79,11 +79,13 @@ class AllTests
         require_once dirname(__FILE__).'/AdherentTest.php';
         $suite->addTestSuite('AdherentTest');
 
-        require_once dirname(__FILE__).'/DiscountTest.php';
-        $suite->addTestSuite('DiscountTest');
-
         require_once dirname(__FILE__).'/ProductTest.php';
         $suite->addTestSuite('ProductTest');
+
+        require_once dirname(__FILE__).'/PricesTest.php';
+        $suite->addTestSuite('PricesTest');
+        require_once dirname(__FILE__).'/DiscountTest.php';
+        $suite->addTestSuite('DiscountTest');
 
         require_once dirname(__FILE__).'/CommandeTest.php';
         $suite->addTestSuite('CommandeTest');
