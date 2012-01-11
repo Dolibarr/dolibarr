@@ -221,59 +221,69 @@ function ajax_combobox($htmlname)
  * 	@param	string	$code		Name of constant
  * 	@param	array	$input		Input element
  * 	@param	int		$entity		Entity to set
- * 	TODO add different method for other input (show/hide, disable, ..)
+ * 	@return	void
  */
 function ajax_constantonoff($code,$input=array(),$entity=false)
 {
 	global $conf, $langs;
-	
+
 	$entity = ((! empty($entity) && is_numeric($entity) && $entity > 0) || $entity == 0 ? $entity : $conf->entity);
 
 	$out= '<script type="text/javascript">
 		$(function() {
-			var input='.json_encode($input).';
+			var input = '.json_encode($input).';
 
 			// Set constant
-			$( "#set_'.$code.'" ).click(function() {
+			$("#set_'.$code.'").click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
 					action: \'set\',
 					name: \''.$code.'\',
 					entity: \''.$entity.'\'
 				},
 				function() {
-					$("#set_'.$code.'" ).hide();
-					$("#del_'.$code.'" ).show();
-					// Enable another object
-					if (input.length > 0) {
-						$.each(input, function(key,value) {
+					$("#set_'.$code.'").hide();
+					$("#del_'.$code.'").show();
+					// Enable another element
+					if (input.disabled && input.disabled.length > 0) {
+						$.each(input.disabled, function(key,value) {
 							$("#" + value).removeAttr("disabled");
-							if ( $( "#" + value).hasClass("butActionRefused") == true ) {
+							if ($("#" + value).hasClass("butActionRefused") == true) {
 								$("#" + value).removeClass("butActionRefused");
 								$("#" + value).addClass("butAction");
 							}
+						});
+					// Show another element
+					} else if (input.showhide && input.showhide.length > 0) {
+						$.each(input.showhide, function(key,value) {
+							$("#" + value).show();
 						});
 					}
 				});
 			});
 
 			// Del constant
-			$( "#del_'.$code.'" ).click(function() {
+			$("#del_'.$code.'").click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
 					action: \'del\',
 					name: \''.$code.'\',
 					entity: \''.$entity.'\'
 				},
 				function() {
-					$("#del_'.$code.'" ).hide();
-					$("#set_'.$code.'" ).show();
-					// Disable another object
-					if (input.length > 0) {
-						$.each(input, function(key,value) {
+					$("#del_'.$code.'").hide();
+					$("#set_'.$code.'").show();
+					// Disable another element
+					if (input.disabled && input.disabled.length > 0) {
+						$.each(input.disabled, function(key,value) {
 							$("#" + value).attr("disabled", true);
-							if ( $( "#" + value).hasClass("butAction") == true ) {
+							if ($("#" + value).hasClass("butAction") == true) {
 								$("#" + value).removeClass("butAction");
 								$("#" + value).addClass("butActionRefused");
 							}
+						});
+					// Hide another element
+					} else if (input.showhide && input.showhide.length > 0) {
+						$.each(input.showhide, function(key,value) {
+							$("#" + value).hide();
 						});
 					}
 				});

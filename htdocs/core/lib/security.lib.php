@@ -269,7 +269,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX))
 	{
 		$rowspan++;
-		$select_entity = $mc->select_entities($lastentity, 'tabindex="3"', 1);
+		$select_entity = $mc->select_entities($lastentity, 'entity', ' tabindex="3"', 1);
 	}
 
 	// Security graphical code

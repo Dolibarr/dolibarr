@@ -228,7 +228,7 @@ if (! empty($conf->multicompany->enabled)  && empty($conf->global->MULTICOMPANY_
         }
     }
 
-    $select_entity = $mc->select_entities($lastentity,'tabindex="2"');
+    $select_entity = $mc->select_entities($lastentity, 'entity', ' tabindex="2"');
 }
 
 // Security graphical code
