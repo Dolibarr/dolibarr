@@ -108,7 +108,7 @@ class ChargeSociales extends CommonObject
 
 
     /**
-     *      Create a social contribution in database
+     *      Create a social contribution into database
      *
      *      @param	User	$user   User making creation
      *      @return int     		<0 if KO, id if OK
@@ -119,7 +119,7 @@ class ChargeSociales extends CommonObject
         $newamount=price2num($this->amount,'MT');
 
         // Validation parametres
-        if (! $newamount > 0)
+        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
         {
             $this->error="ErrorBadParameter";
             return -2;
@@ -489,7 +489,7 @@ class ChargeSociales extends CommonObject
         $this->paye = 0;
         $this->date = time();
         $this->date_ech=$this->date+3600*24*30;
-        $this->period=$this->date+3600*24*30;
+        $this->periode=$this->date+3600*24*30;
         $this->amount=100;
         $this->lib = 0;
         $this->type = 1;
