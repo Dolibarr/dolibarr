@@ -28,17 +28,15 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/price.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
+if (empty($user->id))
+{
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
+}
+$conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
@@ -137,6 +135,55 @@ class PricesTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1.36,$result1[8]);
 
         return true;
+    }
+
+
+    /**
+    * Test function addline and update_price
+    *
+    * @return boolean
+    * @see		http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
+    */
+    public function testUpdatePrice()
+    {
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
+
+		// Two lines of 1.24 give 2.48 HT and 2.72 TTC with standard vat rounding mode
+		$localobject=new Facture($this->savdb);
+        $localobject->initAsSpecimen('nolines');
+        $invoiceid=$localobject->create($user);
+
+        $localobject->addline($invoiceid,'Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
+        $localobject->addline($invoiceid,'Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
+
+        $newlocalobject=new Facture($this->savdb);
+        $newlocalobject->fetch($invoiceid);
+
+        $this->assertEquals(2.48,$newlocalobject->total_ht);
+        $this->assertEquals(0.24,$newlocalobject->total_tva);
+        $this->assertEquals(2.72,$newlocalobject->total_ttc);
+
+
+        // Two lines of 1.24 give 2.48 HT and 2.73 TTC with global vat rounding mode
+        $localobject=new Facture($this->savdb);
+        $localobject->initAsSpecimen('nolines');
+        $invoiceid=$localobject->create($user);
+
+        $localobject->addline($invoiceid,'Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
+        $localobject->addline($invoiceid,'Desc',1.24,1,10,0,0,0,0,'','',0,0,0,'HT');
+
+        $newlocalobject=new Facture($this->savdb);
+        $newlocalobject->fetch($invoiceid);
+
+        $this->assertEquals(2.48,$newlocalobject->total_ht);
+        //$this->assertEquals(0.25,$newlocalobject->total_tva);
+        //$this->assertEquals(2.73,$newlocalobject->total_ttc);
+
     }
 
 }
