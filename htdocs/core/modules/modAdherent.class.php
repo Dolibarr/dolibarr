@@ -65,7 +65,7 @@ class modAdherent extends DolibarrModules
         // Dependances
         //------------
         $this->depends = array();
-        $this->requiredby = array();
+        $this->requiredby = array('modMailmanSpip');
         $this->langfiles = array("members","companies");
 
         // Constantes
@@ -79,7 +79,6 @@ class modAdherent extends DolibarrModules
         $this->const[10] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de désinscription aux listes mailman");
         $this->const[11] = array("ADHERENT_MAILMAN_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%","Url pour les inscriptions mailman");
         $this->const[12] = array("ADHERENT_MAILMAN_LISTS","chaine","","Mailing-list to subscribe new members to");
-        $this->const[16] = array("ADHERENT_USE_SPIP_AUTO","yesno","","Utilisation de SPIP automatiquement");
         $this->const[17] = array("ADHERENT_SPIP_USER","chaine","","Utilisateur de connexion à la base spip");
         $this->const[18] = array("ADHERENT_SPIP_PASS","chaine","","Mot de passe de connexion à la base spip");
         $this->const[19] = array("ADHERENT_SPIP_SERVEUR","chaine","","serveur spip");

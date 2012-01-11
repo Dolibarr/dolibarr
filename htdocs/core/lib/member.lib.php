@@ -24,8 +24,8 @@
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param      object          Member
- *  @return     array           head
+ *  @param	Object	$object         Member
+ *  @return array           		head
  */
 function member_prepare_head($object)
 {
@@ -93,8 +93,9 @@ function member_prepare_head($object)
 
 /**
  *  Return array head with list of tabs to view object informations
- *  @param      object          Member
- *  @return     array           head
+ *
+ *  @param	Object	$object         Member
+ *  @return array           		head
  */
 function member_admin_prepare_head($object)
 {

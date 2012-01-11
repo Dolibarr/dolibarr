@@ -1273,6 +1273,8 @@ BankOrderGlobal=General
 BankOrderGlobalDesc=General display order
 BankOrderES=Spanish
 BankOrderESDesc=Spanish display order
+##### MailmanSpip #####
+MailmanSpipSetup=Mailman and Spip module Setup
 ##### Multicompany #####
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####

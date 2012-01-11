@@ -1348,7 +1348,7 @@ class Adherent extends CommonObject
         }
 
         // spip
-        if ($conf->global->ADHERENT_USE_SPIP && $conf->global->ADHERENT_USE_SPIP_AUTO)
+        if ($conf->global->ADHERENT_USE_SPIP && $conf->mailmanspip->enabled)
         {
             $result=$this->add_to_spip();
             if ($result < 0)
@@ -1389,7 +1389,7 @@ class Adherent extends CommonObject
             }
         }
 
-        if ($conf->global->ADHERENT_USE_SPIP && $conf->global->ADHERENT_USE_SPIP_AUTO)
+        if ($conf->global->ADHERENT_USE_SPIP && $conf->mailmanspip->enabled)
         {
             $result=$this->del_to_spip();
             if ($result < 0)
