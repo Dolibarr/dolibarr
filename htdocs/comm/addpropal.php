@@ -41,6 +41,9 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("deliveries");
 
+$action=GETPOST('action');
+$mesg=GETPOST('mesg');
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
@@ -64,9 +67,10 @@ print_fiche_titre($langs->trans("NewProp"));
 
 $form=new Form($db);
 
+dol_htmloutput_mesg($mesg);
 
 // Add new proposal
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	$soc = new Societe($db);
 	$result=$soc->fetch($_GET["socid"]);
@@ -341,7 +345,7 @@ if ($_GET["action"] == 'create')
 	print "</form>";
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

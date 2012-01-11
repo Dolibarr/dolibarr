@@ -612,7 +612,7 @@ class Propal extends CommonObject
         if (empty($this->availability_id)) $this->availability_id=0;
         if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
 
-		dol_syslog("Propal::Create");
+		dol_syslog(get_class($this)."::create");
 
 		// Check parameters
 		$soc = new Societe($this->db);
@@ -620,8 +620,14 @@ class Propal extends CommonObject
 		if ($result < 0)
 		{
 			$this->error="Failed to fetch company";
-			dol_syslog("Propal::create ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -3;
+		}
+		if (empty($this->datep))
+		{
+		    $this->error="Date of proposal is required";
+		    dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+		    return -4;
 		}
 		if (! empty($this->ref))
 		{
@@ -683,7 +689,7 @@ class Propal extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
-		dol_syslog("Propal::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -694,7 +700,7 @@ class Propal extends CommonObject
 				if (empty($this->ref)) $this->ref='(PROV'.$this->id.')';
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->ref."' WHERE rowid=".$this->id;
 
-				dol_syslog("Propal::create sql=".$sql);
+				dol_syslog(get_class($this)."::create sql=".$sql);
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 
@@ -805,13 +811,13 @@ class Propal extends CommonObject
 			if (! $error)
 			{
 				$this->db->commit();
-				dol_syslog("Propal::Create done id=".$this->id);
+				dol_syslog(get_class($this)."::create done id=".$this->id);
 				return $this->id;
 			}
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Propal::Create -2 ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::create -2 ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -819,7 +825,7 @@ class Propal extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Propal::Create -1 ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create -1 ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1201,9 +1207,16 @@ class Propal extends CommonObject
 	 */
 	function set_date($user, $date)
 	{
-		if ($user->rights->propale->creer)
+		if (empty($date))
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = ".$this->db->idate($date);
+		    $this->error='ErrorBadParameter';
+		    dol_syslog(get_class($this)."::set_date ".$this->error, LOG_ERR);
+		    return -1;
+		}
+
+	    if ($user->rights->propale->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."'";
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			dol_syslog(get_class($this)."::set_date sql=".$sql);
@@ -1231,9 +1244,9 @@ class Propal extends CommonObject
 	 */
 	function set_echeance($user, $date_fin_validite)
 	{
-		if ($user->rights->propale->creer)
+	    if ($user->rights->propale->creer)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".$this->db->idate($date_fin_validite);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_fin_validite!=''?"'".$this->db->idate($date_fin_validite)."'":'null');
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 			if ($this->db->query($sql) )
 			{
@@ -1243,7 +1256,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Propal::set_echeance Erreur SQL".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::set_echeance Erreur SQL".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -1261,7 +1274,7 @@ class Propal extends CommonObject
 		if ($user->rights->propale->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-			$sql.= " SET date_livraison = ".($date_livraison!=''?$this->db->idate($date_livraison):'null');
+			$sql.= " SET date_livraison = ".($date_livraison!=''?"'".$this->db->idate($date_livraison)."'":'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql))
@@ -1272,7 +1285,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Propal::set_date_livraison Erreur SQL");
+				dol_syslog(get_class($this)."::set_date_livraison Erreur SQL");
 				return -1;
 			}
 		}
@@ -1465,8 +1478,8 @@ class Propal extends CommonObject
 		}
 	}
 
-	
-	
+
+
 	/**
 	*	Close the commercial proposal
 	*
@@ -1478,23 +1491,23 @@ class Propal extends CommonObject
 	function reopen($user, $statut, $note)
 	{
 	    global $langs,$conf;
-	
+
 	    $this->statut = $statut;
 	    $error=0;
-	
+
 	    $this->db->begin();
-	
+
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 			$sql.= " SET fk_statut = ".$statut.", note = '".$this->db->escape($note)."', date_cloture=".$this->db->idate(mktime()).", fk_user_cloture=".$user->id;
 	    $sql.= " WHERE rowid = ".$this->id;
-	
+
 	    $resql=$this->db->query($sql);
 	    if ($resql)
 	    {
 
 	    }
 	}
-	
+
 
 	/**
 	 *	Close the commercial proposal
