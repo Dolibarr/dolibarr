@@ -608,7 +608,8 @@ class Propal extends CommonObject
 		$now=dol_now();
 
 		// Clean parameters
-		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+		if (empty($this->date)) $this->date=$this->datep;
+		$this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
         if (empty($this->availability_id)) $this->availability_id=0;
         if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
 
@@ -623,7 +624,7 @@ class Propal extends CommonObject
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -3;
 		}
-		if (empty($this->datep))
+		if (empty($this->date))
 		{
 		    $this->error="Date of proposal is required";
 		    dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
@@ -672,18 +673,18 @@ class Propal extends CommonObject
 		$sql.= ", ".($this->remise_absolue?$this->remise_absolue:'null');
 		$sql.= ", 0";
 		$sql.= ", 0";
-		$sql.= ", '".$this->db->idate($this->datep)."'";
+		$sql.= ", '".$this->db->idate($this->date)."'";
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", '(PROV)'";
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->note_public)."'";
 		$sql.= ", '".$this->modelpdf."'";
-		$sql.= ", '".$this->db->idate($this->fin_validite)."'";
+		$sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"null");
 		$sql.= ", ".$this->cond_reglement_id;
 		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".$this->db->escape($this->ref_client)."'";
-		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":'null');
+		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
 		$sql.= ", ".$this->availability_id;
 		$sql.= ", ".$this->demand_reason_id;
 		$sql.= ", ".$conf->entity;
@@ -897,9 +898,9 @@ class Propal extends CommonObject
 		// Clear fields
 		$this->user_author	= $user->id;
 		$this->user_valid	= '';
-		$this->date			= '';
-		$this->datep		= $now;
-		$this->fin_validite	= $this->datep + ($this->duree_validite * 24 * 3600);
+		$this->date			= $now;
+		$this->datep		= $now;    // deprecated
+		$this->fin_validite	= $this->date + ($this->duree_validite * 24 * 3600);
 		$this->ref_client	= '';
 
 		// Set ref
@@ -1020,7 +1021,7 @@ class Propal extends CommonObject
 				$this->date_creation		= $this->db->jdate($obj->datec); //Creation date
                 $this->date_validation		= $this->db->jdate($obj->datev); //Validation date
 				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
-				$this->datep                = $this->db->jdate($obj->dp);
+				$this->datep                = $this->db->jdate($obj->dp);    // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
 				$this->availability_id      = $obj->fk_availability;
@@ -1223,7 +1224,7 @@ class Propal extends CommonObject
 			if ($this->db->query($sql) )
 			{
 				$this->date = $date;
-				$this->datep = $date;
+				$this->datep = $date;    // deprecated
 				return 1;
 			}
 			else
