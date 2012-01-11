@@ -210,7 +210,14 @@ function getEntity($element=false, $shared=false)
 	}
 	else
 	{
-		return $conf->entity;
+		$out='';
+		
+		$addzero = array('user', 'usergroup');
+		if (in_array($element, $addzero)) $out.= '0,';
+		
+		$out.= $conf->entity;
+		
+		return $out;
 	}
 }
 
