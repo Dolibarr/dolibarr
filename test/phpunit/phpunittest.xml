@@ -53,4 +53,6 @@
     </exclude>
   </whitelist>
 </filter>
+<ini name="max_execution_time" value="600"/>
+<ini name="max_input_time" value="600"/>
 </phpunit>
