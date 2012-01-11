@@ -73,7 +73,7 @@ class box_produits extends ModeleBoxes {
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
+			$sql.= ' WHERE p.entity IN (0,'.getEntity($productstatic->element, 1).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
 			$sql.= $db->order('p.datec', 'DESC');

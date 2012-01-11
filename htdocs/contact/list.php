@@ -121,7 +121,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-$sql.= ' WHERE p.entity IN ('.(! empty($conf->entities['societe']) ? $conf->entities['societe'] : $conf->entity).')';
+$sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";

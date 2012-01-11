@@ -2804,7 +2804,7 @@ class Product extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.fk_product_type <> 1";
-		$sql.= ' AND p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
+		$sql.= ' AND p.entity IN ('.getEntity($this->element, 1).')';
 
 		$resql=$this->db->query($sql);
 		if ($resql)

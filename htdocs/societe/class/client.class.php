@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ class Client extends Societe
         	$clause = "AND";
         }
         $sql.= " ".$clause." s.client IN (1,2,3)";
-        $sql.= ' AND s.entity IN ('.(! empty($conf->entities['societe']) ? $conf->entities['societe'] : $conf->entity).')';
+        $sql.= ' AND s.entity IN ('.getEntity($this->element, 1).')';
         $sql.= " GROUP BY s.client";
 
         $resql=$this->db->query($sql);

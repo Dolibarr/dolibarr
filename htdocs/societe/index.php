@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
 
 $langs->load("companies");
 
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 // Security check
@@ -80,9 +80,9 @@ $total=0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (! $user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ' WHERE s.entity IN ('.(! empty($conf->entities['societe']) ? $conf->entities['societe'] : $conf->entity).')';
-if (! $user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
 $result = $db->query($sql);
@@ -149,9 +149,9 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=15;
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (! $user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ' WHERE s.entity IN ('.(! empty($conf->entities['societe']) ? $conf->entities['societe'] : $conf->entity).')';
-if (! $user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 $sql.= " AND (";
 if (! empty($conf->societe->enabled)) $sql.=" s.client IN (1,2,3)";

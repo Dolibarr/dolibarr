@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,18 +39,14 @@ $fuser = new User($db);
 $fuser->fetch($id);
 
 // If user is not user read and no permission to read other users, we stop
-if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
-  accessforbidden();
+if (($fuser->id != $user->id) && (! $user->rights->user->user->lire)) accessforbidden();
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_GET["id"])	// A user can always read its own card
-{
-	$feature2='';
-}
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+if ($user->id == $id) $feature2=''; // A user can always read its own card
+$result = restrictedArea($user, 'user', $id, '&user', $feature2);
 
 
 

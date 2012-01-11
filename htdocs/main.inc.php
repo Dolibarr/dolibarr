@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
@@ -576,7 +576,7 @@ if (! defined('NOLOGIN'))
 			$prefix=dol_getprefix();
 			$entityCookieName = 'DOLENTITYID_'.$prefix;
 			// TTL : is defined in the config page multicompany
-			$ttl = (! empty($conf->global->MULTICOMPANY_COOKIE_TTL) ? $conf->global->MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
+			$ttl = (! empty($conf->global->MULTICOMPANY_COOKIE_TTL) ? dol_now()+$conf->global->MULTICOMPANY_COOKIE_TTL : dol_now()+60*60*8 );
 			// Cryptkey : will be created randomly in the config page multicompany
 			$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 

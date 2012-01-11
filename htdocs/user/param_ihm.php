@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ if ($user->id == $id)	// A user can always read its own card
     $feature2='';
     $canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $id, '', $feature2);
+$result = restrictedArea($user, 'user', $id, '&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 $dirtop = "../core/menus/standard";

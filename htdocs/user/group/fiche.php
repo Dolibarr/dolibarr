@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ $confirm=GETPOST("confirm");
 $userid=GETPOST("user","int");
 
 // Security check
-$result = restrictedArea($user, 'user', $_GET["id"], 'usergroup', 'user');
+$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
 
 if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->multicompany->transverse_mode)
 {
