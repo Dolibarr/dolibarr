@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -193,6 +193,26 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
     return $dolidb;
 }
 
+/**
+ * 	Get entity to use
+ * 
+ * 	@param	string	$element	Current element
+ * 	@param	int		$shared		1=Return shared entities
+ * 	@return	mixed				Entity id(s) to use
+ */
+function getEntity($element=false, $shared=false)
+{
+	global $conf, $mc;
+	
+	if (is_object($mc))
+	{
+		return $mc->getEntity($element, $shared);
+	}
+	else
+	{
+		return $conf->entity;
+	}
+}
 
 /**
  *  Function called at end of web php process
@@ -2392,7 +2412,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                 }
                 else
                 {
-                	$sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$sharedelement]) ? $conf->entities[$sharedelement] : $conf->entity).")";
+                	$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
             else if (in_array($feature,$checksoc))
@@ -2411,7 +2431,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " WHERE sc.fk_soc = ".$objectid;
                     $sql.= " AND sc.fk_user = ".$user->id;
                     $sql.= " AND sc.fk_soc = s.rowid";
-                    $sql.= " AND s.entity IN (0,".(! empty($conf->entities[$sharedelement]) ? $conf->entities[$sharedelement] : $conf->entity).")";
+                    $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
                 else if (! empty($conf->multicompany->enabled))
@@ -2419,7 +2439,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql = "SELECT s.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
                     $sql.= " WHERE s.rowid = ".$objectid;
-                    $sql.= " AND s.entity IN (0,".(! empty($conf->entities[$sharedelement]) ? $conf->entities[$sharedelement] : $conf->entity).")";
+                    $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
             else if (in_array($feature,$checkother))
@@ -2440,7 +2460,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
                     $sql.= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)";	// Contact not linked to a company or to a company of user
-                    $sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$sharedelement]) ? $conf->entities[$sharedelement] : $conf->entity).")";
+                    $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
                 else if (! empty($conf->multicompany->enabled))
@@ -2448,7 +2468,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql = "SELECT dbt.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
-                    $sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$sharedelement]) ? $conf->entities[$sharedelement] : $conf->entity).")";
+                    $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
             else if (in_array($feature,$checkproject))
@@ -2482,7 +2502,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
                     $sql.= " AND sc.fk_soc = dbt.".$dbt_keyfield;
                     $sql.= " AND dbt.".$dbt_keyfield." = s.rowid";
-                    $sql.= " AND s.entity IN (0,".(! empty($conf->entities[$sharedelement]) ? $conf->entities[$sharedelement] : $conf->entity).")";
+                    $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
                     $sql.= " AND sc.fk_user = ".$user->id;
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
@@ -2491,7 +2511,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql = "SELECT dbt.".$dbt_select;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-                    $sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$sharedelement]) ? $conf->entities[$sharedelement] : $conf->entity).")";
+                    $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
 

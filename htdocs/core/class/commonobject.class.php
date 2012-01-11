@@ -724,7 +724,7 @@ abstract class CommonObject
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
         if (! empty($filter)) $sql.=" AND ".$filter;
         if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-        if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.(! empty($conf->entities[$this->element]) ? $conf->entities[$this->element] : $conf->entity).')';
+        if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
 
         //print $sql."<br>";
         $result = $this->db->query($sql);
@@ -745,7 +745,7 @@ abstract class CommonObject
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
         if (! empty($filter)) $sql.=" AND ".$filter;
         if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-        if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.(! empty($conf->entities[$this->element]) ? $conf->entities[$this->element] : $conf->entity).')';
+        if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
         // Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
         //print $sql."<br>";

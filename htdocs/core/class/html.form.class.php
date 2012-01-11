@@ -1165,7 +1165,7 @@ class Form
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
-        $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
+        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
         if ($finished == 0)
         {
             $sql.= " AND p.finished = ".$finished;
