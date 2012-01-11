@@ -192,10 +192,12 @@ class Conf
 				}
 				$i++;
 			}
-
-			// Load multicompany configuration
-			if (! empty($this->multicompany->enabled))
+			
+			// Object $mc
+			if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
 			{
+				global $mc;
+				
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret)
 				{

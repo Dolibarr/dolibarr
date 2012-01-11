@@ -734,22 +734,12 @@ else
 $heightforframes=48;
 
 // Switch to another entity
-if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
 {
-	if (GETPOST('action') == 'switchentity')
+	if ($mc->switchEntity(GETPOST('entity')) >= 0)
 	{
-		$res = @dol_include_once("/multicompany/class/actions_multicompany.class.php");
-
-		if ($res)
-		{
-			$mc = new ActionsMulticompany($db);
-
-			if($mc->switchEntity(GETPOST('entity')) >= 0)
-			{
-				Header("Location: ".DOL_URL_ROOT.'/');
-				exit;
-			}
-		}
+		Header("Location: ".DOL_URL_ROOT.'/');
+		exit;
 	}
 }
 
@@ -1032,7 +1022,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  */
 function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 {
-	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
+	global $user, $conf, $langs, $db;
+	global $dolibarr_main_authentication;
+	global $mc;
 
 	$form=new Form($db);
 
@@ -1217,16 +1209,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	print $form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
 
-	// Select entity
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+	// Show entity info
+	if (! empty($conf->multicompany->enabled))
 	{
-		$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
-
-		if ($res)
-		{
-			$mc = new ActionsMulticompany($db);
-			$mc->showInfo($conf->entity);
-		}
+		$mc->showInfo($conf->entity);
 	}
 
 	print $form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
