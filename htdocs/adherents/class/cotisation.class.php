@@ -73,12 +73,12 @@ class Cotisation extends CommonObject
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, datef, cotisation, note)";
-        $sql.= " VALUES (".$this->fk_adherent.", ".$this->db->idate(mktime()).",";
-		$sql.= " ".$this->db->idate($this->dateh).",";
-		$sql.= " ".$this->db->idate($this->datef).",";
+        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate(mktime())."',";
+		$sql.= " '".$this->db->idate($this->dateh)."',";
+		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",'".$this->db->escape($this->note)."')";
 
-		dol_syslog("Cotisation::create sql=".$sql);
+		dol_syslog(get_class($this)."::create sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

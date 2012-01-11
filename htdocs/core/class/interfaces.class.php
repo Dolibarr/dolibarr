@@ -37,11 +37,11 @@ class Interfaces
     /**
      *	Constructor
      *
-     *  @param		DoliDB		$DB      Database handler
+     *  @param		DoliDB		$db      Database handler
      */
-    function Interfaces($DB)
+    function Interfaces($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
     }
 
     /**

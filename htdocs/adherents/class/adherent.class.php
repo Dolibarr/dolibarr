@@ -1202,7 +1202,10 @@ class Adherent extends CommonObject
                 $result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // Fin appel triggers
+            }
 
+            if (! $error)
+            {
                 $this->db->commit();
                 return $rowid;
             }

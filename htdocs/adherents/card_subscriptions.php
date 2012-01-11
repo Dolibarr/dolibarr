@@ -273,6 +273,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         {
             $error++;
             $errmsg=$adh->error;
+            $errmsgs=$adh->errors;
         }
 
         if (! $error)
@@ -297,21 +298,24 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         $sql ="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid;
                         $sql.=" WHERE rowid=".$crowid;
 
-                        dol_syslog("Adherent::cotisation sql=".$sql);
+                        dol_syslog("card_subscriptions::cotisation sql=".$sql);
                         $resql = $db->query($sql);
                         if (! $resql)
                         {
-                            $error=$db->lasterror();
+                            $error++;
+                            $errmsg=$db->lasterror();
                         }
                     }
                     else
                     {
-                        $error=$acct->error;
+                        $error++;
+                        $errmsg=$acct->error;
                     }
                 }
                 else
                 {
-                    $error=$acct->error;
+                    $error++;
+                    $errmsg=$acct->error;
                 }
             }
 
