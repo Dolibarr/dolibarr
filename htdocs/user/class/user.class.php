@@ -24,7 +24,7 @@
 
 /**
  *  \file       htdocs/user/class/user.class.php
- *  \brief      Fichier de la classe utilisateur
+ *	\brief      File of class to manage users
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -86,7 +86,7 @@ class User extends CommonObject
 
 	var $rights;               // Array of permissions user->rights->permx
 	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
-	var $tab_loaded=array();		// Tableau pour signaler les permissions deja chargees
+	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
 	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
@@ -270,13 +270,13 @@ class User extends CommonObject
 	 * 	@param	int		$rid         id du droit a ajouter
 	 *  @param  string	$allmodule   Ajouter tous les droits du module allmodule
 	 *  @param  string	$allperms    Ajouter tous les droits du module allmodule, perms allperms
-	 *  @return int   			     > 0 si ok, < 0 si erreur
+	 *  @return int   			     > 0 if OK, < 0 if KO
 	 */
 	function addrights($rid,$allmodule='',$allperms='')
 	{
 		global $conf;
 
-		dol_syslog("User::addrights $rid, $allmodule, $allperms");
+		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms");
 		$err=0;
 		$whereforadd='';
 
@@ -336,9 +336,9 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id." AND fk_id=".$nid;
 					if (! $this->db->query($sql)) $err++;
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES (".$this->id.", ".$nid.")";
 					if (! $this->db->query($sql)) $err++;
 
 					$i++;
@@ -369,7 +369,7 @@ class User extends CommonObject
 	 *  @param	int		$rid        Id du droit a retirer
 	 *  @param  string	$allmodule  Retirer tous les droits du module allmodule
 	 *  @param  string	$allperms   Retirer tous les droits du module allmodule, perms allperms
-	 *  @return int 				> 0 si ok, < 0 si erreur
+	 *  @return int         		> 0 if OK, < 0 if OK
 	 */
 	function delrights($rid,$allmodule='',$allperms='')
 	{
@@ -434,7 +434,7 @@ class User extends CommonObject
 					$nid = $obj->id;
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
-					$sql.= " WHERE fk_user = $this->id AND fk_id=$nid";
+					$sql.= " WHERE fk_user = ".$this->id." AND fk_id=".$nid;
 					if (! $this->db->query($sql)) $err++;
 
 					$i++;
@@ -469,7 +469,7 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
 		$this->all_permissions_are_loaded=false;
-		$this->tab_loaded=array();
+		$this->_tab_loaded=array();
 	}
 
 
@@ -483,7 +483,7 @@ class User extends CommonObject
 	{
 		global $conf;
 
-		if ($moduletag && isset($this->tab_loaded[$moduletag]) && $this->tab_loaded[$moduletag])
+		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
 		{
 			// Le fichier de ce module est deja charge
 			return;
@@ -507,15 +507,15 @@ class User extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getRights sql='.$sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
+		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj = $this->db->fetch_object($result);
+				$obj = $this->db->fetch_object($resql);
 
 				$module=$obj->module;
 				$perms=$obj->perms;
@@ -540,7 +540,7 @@ class User extends CommonObject
 				}
 				$i++;
 			}
-			$this->db->free($result);
+			$this->db->free($resql);
 		}
 
 		// Maintenant les droits groupes
@@ -556,32 +556,35 @@ class User extends CommonObject
 		$sql.= " AND gu.entity IN (0,".$conf->entity.")";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getRights sql='.$sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
+		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row($result);
+				$obj = $this->db->fetch_object($resql);
 
-				if (dol_strlen($row[1]) > 0)
+				$module=$obj->module;
+				$perms=$obj->perms;
+				$subperms=$obj->subperms;
+
+				if ($perms)
 				{
-
-					if (dol_strlen($row[2]) > 0)
+					if ($subperms)
 					{
-						$this->rights->$row[0]->$row[1]->$row[2] = 1;
+						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
-						$this->rights->$row[0]->$row[1] = 1;
+						$this->rights->$module->$perms = 1;
 					}
 
 				}
 				$i++;
 			}
-			$this->db->free($result);
+			$this->db->free($resql);
 		}
 
 		if (! $moduletag)
@@ -593,7 +596,7 @@ class User extends CommonObject
 		else
 		{
 			// Si module defini, on le marque comme charge en cache
-			$this->tab_loaded[$moduletag]=1;
+			$this->_tab_loaded[$moduletag]=1;
 		}
 	}
 
