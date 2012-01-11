@@ -21,29 +21,29 @@
  */
 
 /**
- *       \file       htdocs/fichinter/document.php
- *       \ingroup    fichinter
- *       \brief      Page des documents joints sur les contrats
+ *       \file       htdocs/compta/sociales/document.php
+ *       \ingroup    tax
+ *       \brief      Page with attached files on social contributions
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/fichinter.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("other");
-$langs->load("fichinter");
 $langs->load("companies");
-$langs->load("interventions");
+$langs->load("compta");
+$langs->load("bills");
 
 $id = GETPOST("id");
 $action = GETPOST("action");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
+$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
 
 // Get parameters
@@ -58,11 +58,11 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 
-$object = new Fichinter($db);
+$object = new ChargeSociales($db);
 $object->fetch($id);
 
-$upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$modulepart='fichinter';
+$upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$modulepart='tax';
 
 
 /*
@@ -116,16 +116,11 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("InterventionCard"));
-
+$help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
+llxHeader("",$langs->trans("SocialContribution"),$help_url);
 
 if ($object->id)
 {
-	$object->fetch_thirdparty();
-
-    $soc = new Societe($db);
-    $soc->fetch($object->societe->id);
-
 	if ( $error_msg )
 	{
 		echo '<div class="error">'.$error_msg.'</div><br>';
@@ -138,9 +133,9 @@ if ($object->id)
 		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
 	}
 
-	$head=fichinter_prepare_head($object, $user);
+	$head=tax_prepare_head($object, $user);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("InterventionCard"), 0, 'intervention');
+	dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), 0, 'bill');
 
 
 	// Construit liste des fichiers
@@ -157,9 +152,6 @@ if ($object->id)
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$object->ref.'</td></tr>';
 
-	// Societe
-	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
-
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';
@@ -169,18 +161,19 @@ if ($object->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id,'',0,0,$user->rights->ficheinter->creer);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id,'',0,0,$user->rights->tax->charges->creer);
 
 
 	// List of document
 	//$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'ficheinter',$param);
+	$formfile->list_of_documents($filearray,$object,'tax',$param);
 
 }
 else
 {
 	print $langs->trans("UnkownError");
 }
+
 
 llxFooter();
 

@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.2 compared to 3.1 *****
 
 For users:
+- New: Can attach files on social contributions.
 - New: Show payments terms and conditions onto muscadet template.
 - New: Can open back a closed commercial proposal.
 - New: show thirdparty barcode on main tab.
