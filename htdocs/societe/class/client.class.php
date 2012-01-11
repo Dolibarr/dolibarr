@@ -50,7 +50,6 @@ class Client extends Societe
     function load_state_board()
     {
         global $conf, $user;
-        global $mc;
 
         $this->nb=array("customers" => 0,"prospects" => 0);
         $clause = "WHERE";
