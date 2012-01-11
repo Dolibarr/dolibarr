@@ -310,21 +310,36 @@ if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$
 	}
 }
 
-if ($action == 'confirm_deleteproductline' && $confirm == 'yes')
+if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
 {
-	if ($user->rights->fournisseur->commande->creer)
-	{
-		$object->fetch($id);
-		$result = $object->deleteline($_GET['lineid']);
+    $object->fetch($id);
 
-		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-		}
-		supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
-	}
+    $result = $object->deleteline(GETPOST('lineid'));
+    if ($result	>= 0)
+    {
+        $outputlangs = $langs;
+        if (! empty($_REQUEST['lang_id']))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+        }
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+            $ret=$object->fetch($id);    // Reload to get new records
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        }
+    }
+    else
+    {
+        $error++;
+        $mesg=$object->error;
+    }
+
+    if (! $error)
+    {
+        Header("Location: fiche.php?id=".$id);
+        exit;
+    }
 }
 
 if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->commande->valider)

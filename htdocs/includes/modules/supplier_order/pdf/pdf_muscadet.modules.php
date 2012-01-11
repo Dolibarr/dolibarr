@@ -739,6 +739,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
+			
+			$usecontact=false;
+			$arrayidcontact=$object->getIdContact('external','BILLING');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
 
 			// Recipient name
 			if (! empty($usecontact))
