@@ -91,7 +91,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function getNextValue($objsoc=0,$type=-1)
 	{
-		global $db, $conf;
+		global $db, $conf, $mc;
 
 		$return='000001';
 
@@ -117,7 +117,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         $sql = "SELECT MAX(SUBSTRING(".$field." FROM ".$posindice.")) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity = ".getEntity('societe');
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -212,8 +212,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function verif_dispo($db, $code, $soc)
 	{
+		global $conf, $mc;
+		
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE code_client = '".$code."'";
+		$sql.= " AND entity = ".getEntity('societe');
 		if ($soc->id > 0) $sql.= " AND rowid != ".$soc->id;
 		
 		dol_syslog(get_class($this)."::verif_dispo sql=".$sql, LOG_DEBUG);

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -222,8 +222,8 @@ dol_htmloutput_mesg($mesg);
 
 print_titre($langs->trans("CompanyCodeChecker"));
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
@@ -260,22 +260,25 @@ foreach ($conf->file->dol_document_root as $dirroot)
     			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
     			$var = !$var;
-    			print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
-    			print $modCodeTiers->info($langs);
-    			print "</td>\n";
-    			print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
+    			print '<tr '.$bc[$var].'>'."\n";
+    			print '<td width="140">'.$modCodeTiers->nom.'</td>'."\n";
+    			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
+    			print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
     			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
     			{
-    				print "<td align=\"center\">\n";
+    				print '<td align="center">'."\n";
     				print img_picto($langs->trans("Activated"),'switch_on');
     				print "</td>\n";
     			}
     			else
     			{
-    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
+    				$disabled = ((is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+    				print '<td align="center">';
+    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
     				print img_picto($langs->trans("Disabled"),'switch_off');
-    				print '</a></td>';
+    				if (! $disabled) print '</a>';
+    				print '</td>';
     			}
 
     			print '<td align="center">';
