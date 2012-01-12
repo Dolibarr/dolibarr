@@ -129,7 +129,7 @@ if ($user->rights->fournisseur->facture->lire)
 	{
 		$sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
 	}
-	$sql.= " GROUP BY f.facnumber";
+	$sql.= " GROUP BY f.facnumber,s.nom, s.rowid, f.rowid, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut";
 
 	$sql.= " ORDER BY ";
 	$listfield=explode(',',$sortfield);
