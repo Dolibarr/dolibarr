@@ -267,7 +267,7 @@ if ($resql)
 
 		// Affiche statut de la facture
 		print '<td align="right" nowrap="nowrap">';
-		// TODO  le montant deja paye obj->am n'est pas definie
+		// TODO  le montant deja paye objp->am n'est pas definie
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
 		print '</td>';
 
