@@ -54,18 +54,18 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[6] = price2num($tot_sans_remise, 'MT');
 		$result[8] = price2num($tot_sans_remise * (1 + ( (($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result8bis= price2num($tot_sans_remise * (1 + ( $txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
-		$result[7] = price2num($result8bis - $result[6]);
+		$result[7] = price2num($result8bis - $result[6], 'MT');
 
 		$result[0] = price2num($tot_avec_remise, 'MT');
 		$result[2] = price2num($tot_avec_remise * (1 + ( (($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result2bis= price2num($tot_avec_remise * (1 + ( $txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
 
-		$result[1] = price2num($result2bis - $result[0]);	// Total VAT = TTC - HT
+		$result[1] = price2num($result2bis - $result[0], 'MT');	// Total VAT = TTC - HT
 
 		$result[3] = price2num($pu, 'MU');
 		$result[5] = price2num($pu * (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non
 		$result5bis= price2num($pu * (1 + ($txtva / 100)), 'MU');	// Si TVA consideree normale (non NPR)
-		$result[4] = price2num($result5bis - $result[3]);
+		$result[4] = price2num($result5bis - $result[3], 'MU');
 	}
 	else
 	{
@@ -77,31 +77,31 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[8] = price2num($tot_sans_remise, 'MT');
 		$result[6] = price2num($tot_sans_remise / (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result6bis= price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
-		$result[7] = price2num($result[8] - $result6bis);
+		$result[7] = price2num($result[8] - $result6bis, 'MT');
 
 		$result[2] = price2num($tot_avec_remise, 'MT');
 		$result[0] = price2num($tot_avec_remise / (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result0bis= price2num($tot_avec_remise / (1 + ($txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
 
-		$result[1] = price2num($result[2] - $result0bis);	// Total VAT = TTC - HT
+		$result[1] = price2num($result[2] - $result0bis, 'MT');	// Total VAT = TTC - HT
 
 		$result[5] = price2num($pu, 'MU');
 		$result[3] = price2num($pu / (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non
 		$result3bis= price2num($pu / (1 + ($txtva / 100)), 'MU');	// Si TVA consideree normale (non NPR)
-		$result[4] = price2num($result[5] - $result3bis);
+		$result[4] = price2num($result[5] - $result3bis, 'MU');
 	}
 
 	//Local taxes
 	if ($txlocaltax1>0)
 	{
 		$result[14] = price2num(($tot_sans_remise * (1 + ( $txlocaltax1 / 100))) - $tot_sans_remise, 'MT');
-		$result[8]  = price2num($result[8] + $result[14]);
+		$result[8]  = price2num($result[8] + $result[14], 'MT');
 
 		$result[9]  = price2num(($tot_avec_remise * (1 + ( $txlocaltax1 / 100))) - $tot_avec_remise, 'MT');
-		$result[2]  = price2num($result[2] + $result[9]);
+		$result[2]  = price2num($result[2] + $result[9], 'MT');
 
 		$result[11] = price2num(($pu * (1 + ( $txlocaltax1 / 100))) - $pu, 'MT');
-		$result[5]  = price2num($result[5] + $result[11]);
+		$result[5]  = price2num($result[5] + $result[11], 'MT');
 	}
 	else
 	{
@@ -119,15 +119,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		//If Country is Spain, localtax2 (IRPF) will be subtracted
 		if ($mysoc->country_code=='ES')
 		{
-			$result[8] = price2num($result[8] - $result[15]);
-			$result[2] = price2num($result[2] - $result[10]);
-			$result[5] = price2num($result[5] - $result[12]);
+			$result[8] = price2num($result[8] - $result[15], 'MT');
+			$result[2] = price2num($result[2] - $result[10], 'MT');
+			$result[5] = price2num($result[5] - $result[12], 'MU');
 		}
 		else
 		{
-			$result[8] = price2num($result[8] + $result[15]);
-			$result[2] = price2num($result[2] + $result[10]);
-			$result[5] = price2num($result[5] + $result[12]);
+			$result[8] = price2num($result[8] + $result[15], 'MT');
+			$result[2] = price2num($result[2] + $result[10], 'MT');
+			$result[5] = price2num($result[5] + $result[12], 'MU');
 		}
 	}
 	else
@@ -144,7 +144,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		{
 			$result[0]=round($result[0]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 			$result[1]=round($result[1]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[2]=$result[0]+$result[1];
+			$result[2]=price2num($result[0]+$result[1], 'MT');
 			$result[9]=round($result[9]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 			$result[10]=round($result[10]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 		}
@@ -152,7 +152,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		{
 			$result[1]=round($result[1]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 			$result[2]=round($result[2]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[0]=$result[2]-$result[0];
+			$result[0]=price2num($result[2]-$result[0], 'MT');
 			$result[9]=round($result[9]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 			$result[10]=round($result[10]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 		}
