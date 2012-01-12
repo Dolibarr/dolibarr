@@ -122,17 +122,17 @@ class PricesTest extends PHPUnit_Framework_TestCase
         $result1=calcul_price_total(1, 1.24, 0, 10, 0, 0, 0, 'HT', 0);
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
 
-        $this->assertEquals(1.24,$result1[0]);
+        $this->assertEquals('1.24',$result1[0]);
         $this->assertEquals(0.12,$result1[1]);
-        $this->assertEquals(1.36,$result1[2]);
+        $this->assertEquals('1.36',$result1[2]);
 
-        $this->assertEquals(1.24, $result1[3]);
+        $this->assertEquals('1.24', $result1[3]);
         $this->assertEquals(0.124,$result1[4]);
-        $this->assertEquals(1.364,$result1[5]);
+        $this->assertEquals('1.364',$result1[5]);
 
-        $this->assertEquals(1.24,$result1[6]);
+        $this->assertEquals('1.24',$result1[6]);
         $this->assertEquals(0.12,$result1[7]);
-        $this->assertEquals(1.36,$result1[8]);
+        $this->assertEquals('1.36',$result1[8]);
 
         return true;
     }
