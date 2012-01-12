@@ -125,21 +125,21 @@ class PricesTest extends PHPUnit_Framework_TestCase
         print __METHOD__." value0=1.24 result0=".$result1[0]."\n";
         $this->assertEquals(1.24,$result1[0]);
         print __METHOD__." value1=0.12 result1=".$result1[1]."\n";
-        $this->assertEquals(0.12,$result1[1]);
+        $this->assertEquals(0.12,$result1[1],'',0.2);
         print __METHOD__." value2=1.36 result2=".$result1[2]."\n";
         $this->assertEquals(1.36,$result1[2]);
         
         print __METHOD__." value3=1.24 result3=".$result1[3]."\n";
         $this->assertEquals(1.24, $result1[3]);
         print __METHOD__." value4=0.124 result4=".$result1[4]."\n";
-        $this->assertEquals(0.124,$result1[4]);
+        $this->assertEquals(0.124,$result1[4],'',0.3);
         print __METHOD__." value5=1.364 result5=".$result1[5]."\n";
         $this->assertEquals(1.364,$result1[5]);
         
         print __METHOD__." value6=1.24 result6=".$result1[6]."\n";
         $this->assertEquals(1.24,$result1[6]);
         print __METHOD__." value7=0.12 result7=".$result1[7]."\n";
-        $this->assertEquals(0.12,$result1[7]);
+        $this->assertEquals(0.12,$result1[7],'',0.2);
         print __METHOD__." value8=1.36 result8=".$result1[8]."\n";
         $this->assertEquals(1.36,$result1[8]);
 
