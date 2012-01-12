@@ -25,15 +25,16 @@
 
 /**
  *		Calculate totals (net, vat, ...) of a line.
- *		@param	qty							Quantity
- * 		@param 	pu							Unit price (HT or TTC selon price_base_type)
- *		@param 	remise_percent_ligne		Discount for line
- *		@param 	txtva						Vat rate
- *		@param  txlocaltax1					Localtax1 rate (used for some countries only, like spain)
- *		@param  txlocaltax2					Localtax2 rate (used for some countries only, like spain)
- *		@param 	remise_percent_global		0
- *		@param	price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
- *		@param	info_bits					Miscellanous informations on line
+ *
+ *		@param	int		$qty						Quantity
+ * 		@param 	float	$pu							Unit price (HT or TTC selon price_base_type)
+ *		@param 	float	$remise_percent_ligne		Discount for line
+ *		@param 	float	$txtva						Vat rate
+ *		@param  float	$txlocaltax1				Localtax1 rate (used for some countries only, like spain)
+ *		@param  float	$txlocaltax2				Localtax2 rate (used for some countries only, like spain)
+ *		@param 	float	$remise_percent_global		0
+ *		@param	string	$price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
+ *		@param	int		$info_bits					Miscellanous informations on line
  *		@return result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
  */
 function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocaltax1=0, $txlocaltax2=0, $remise_percent_global=0, $price_base_type='HT', $info_bits=0)
@@ -53,18 +54,18 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[6] = price2num($tot_sans_remise, 'MT');
 		$result[8] = price2num($tot_sans_remise * (1 + ( (($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result8bis= price2num($tot_sans_remise * (1 + ( $txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
-		$result[7] = $result8bis - $result[6];
+		$result[7] = price2num($result8bis - $result[6]);
 
 		$result[0] = price2num($tot_avec_remise, 'MT');
 		$result[2] = price2num($tot_avec_remise * (1 + ( (($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result2bis= price2num($tot_avec_remise * (1 + ( $txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
 
-		$result[1] = $result2bis - $result[0];	// Total VAT = TTC - HT
+		$result[1] = price2num($result2bis - $result[0]);	// Total VAT = TTC - HT
 
 		$result[3] = price2num($pu, 'MU');
 		$result[5] = price2num($pu * (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non
 		$result5bis= price2num($pu * (1 + ($txtva / 100)), 'MU');	// Si TVA consideree normale (non NPR)
-		$result[4] = $result5bis - $result[3];
+		$result[4] = price2num($result5bis - $result[3]);
 	}
 	else
 	{
@@ -76,31 +77,31 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[8] = price2num($tot_sans_remise, 'MT');
 		$result[6] = price2num($tot_sans_remise / (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result6bis= price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
-		$result[7] = $result[8] - $result6bis;
+		$result[7] = price2num($result[8] - $result6bis);
 
 		$result[2] = price2num($tot_avec_remise, 'MT');
 		$result[0] = price2num($tot_avec_remise / (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result0bis= price2num($tot_avec_remise / (1 + ($txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
 
-		$result[1] = $result[2] - $result0bis;	// Total VAT = TTC - HT
+		$result[1] = price2num($result[2] - $result0bis);	// Total VAT = TTC - HT
 
 		$result[5] = price2num($pu, 'MU');
 		$result[3] = price2num($pu / (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non
 		$result3bis= price2num($pu / (1 + ($txtva / 100)), 'MU');	// Si TVA consideree normale (non NPR)
-		$result[4] = $result[5] - $result3bis;
+		$result[4] = price2num($result[5] - $result3bis);
 	}
 
 	//Local taxes
 	if ($txlocaltax1>0)
 	{
 		$result[14] = price2num(($tot_sans_remise * (1 + ( $txlocaltax1 / 100))) - $tot_sans_remise, 'MT');
-		$result[8] = $result[8] + $result[14];
+		$result[8]  = price2num($result[8] + $result[14]);
 
-		$result[9] = price2num(($tot_avec_remise * (1 + ( $txlocaltax1 / 100))) - $tot_avec_remise, 'MT');
-		$result[2] = $result[2] + $result[9];
+		$result[9]  = price2num(($tot_avec_remise * (1 + ( $txlocaltax1 / 100))) - $tot_avec_remise, 'MT');
+		$result[2]  = price2num($result[2] + $result[9]);
 
 		$result[11] = price2num(($pu * (1 + ( $txlocaltax1 / 100))) - $pu, 'MT');
-		$result[5] = $result[5] + $result[11];
+		$result[5]  = price2num($result[5] + $result[11]);
 	}
 	else
 	{
@@ -118,15 +119,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		//If Country is Spain, localtax2 (IRPF) will be subtracted
 		if ($mysoc->country_code=='ES')
 		{
-			$result[8] = $result[8] - $result[15];
-			$result[2] = $result[2] - $result[10];
-			$result[5] = $result[5] - $result[12];
+			$result[8] = price2num($result[8] - $result[15]);
+			$result[2] = price2num($result[2] - $result[10]);
+			$result[5] = price2num($result[5] - $result[12]);
 		}
 		else
 		{
-			$result[8] = $result[8] + $result[15];
-			$result[2] = $result[2] + $result[10];
-			$result[5] = $result[5] + $result[12];
+			$result[8] = price2num($result[8] + $result[15]);
+			$result[2] = price2num($result[2] + $result[10]);
+			$result[5] = price2num($result[5] + $result[12]);
 		}
 	}
 	else
