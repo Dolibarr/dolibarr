@@ -95,11 +95,11 @@ class User extends CommonObject
 	/**
 	 *    Constructor de la classe
 	 *
-	 *    @param   DoliDb  $DB     Database handler
+	 *    @param   DoliDb  $db     Database handler
 	 */
-	function User($DB)
+	function __construct($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		// Preference utilisateur
 		$this->liste_limit = 0;
@@ -107,8 +107,6 @@ class User extends CommonObject
 
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
-
-		return 1;
 	}
 
 	/**

@@ -43,10 +43,10 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $langs->load("users");
 $langs->load("other");
 
-$id=GETPOST("id");
-$action=GETPOST("action");
-$confirm=GETPOST("confirm");
-$userid=GETPOST("user","int");
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$userid=GETPOST('user', 'int');
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
@@ -66,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
 {
     if ($caneditperms)
     {
-        $object->fetch($_GET["id"]);
+        $object->fetch($id);
         $object->delete();
         Header("Location: index.php");
         exit;
@@ -95,11 +95,10 @@ if ($action == 'add')
 		if (! $message)
 		{
 			$object->nom	= trim($_POST["nom"]);
-			if($conf->multicompany->enabled && !empty($conf->multicompany->transverse_mode))
-				$object->entity = 0;
-			else
-				$object->entity = $_POST["entity"];
 			$object->note	= trim($_POST["note"]);
+			
+			if($conf->multicompany->enabled && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
+			else $object->entity = $_POST["entity"];
 
             $db->begin();
 
@@ -176,11 +175,10 @@ if ($action == 'update')
         $object->oldcopy=dol_clone($object);
 
 		$object->nom	= trim($_POST["group"]);
-		if($conf->multicompany->enabled && !empty($conf->multicompany->transverse_mode))
-                            $object->entity = 0;
-                        else
-                            $object->entity = $_POST["entity"];
 		$object->note	= dol_htmlcleanlastbr($_POST["note"]);
+		
+		if($conf->multicompany->enabled && !empty($conf->multicompany->transverse_mode)) $object->entity = 0;
+		else $object->entity = $_POST["entity"];
 
         $ret=$object->update();
 
@@ -507,5 +505,6 @@ else
 
 llxFooter();
 
-if (is_object($db)) $db->close();
+$db->close();
+
 ?>

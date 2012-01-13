@@ -40,12 +40,10 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 
 $id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
 
 $socid=0;
-if ($user->societe_id > 0)
-{
-    $socid = $user->societe_id;
-}
+if ($user->societe_id > 0) $socid = $user->societe_id;
 
 $fgroup = new Usergroup($db);
 $fgroup->fetch($id);
@@ -56,7 +54,7 @@ $fgroup->getrights();
  * Actions
  */
 
-if ($_GET["action"] == 'dolibarr2ldap')
+if ($action == 'dolibarr2ldap')
 {
 	$message="";
 
@@ -82,8 +80,6 @@ if ($_GET["action"] == 'dolibarr2ldap')
 		$db->rollback();
 	}
 }
-
-
 
 
 /*
@@ -208,10 +204,8 @@ else
 
 print '</table>';
 
-
-
+llxFooter();
 
 $db->close();
 
-llxFooter();
 ?>
