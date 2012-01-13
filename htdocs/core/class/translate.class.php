@@ -81,7 +81,7 @@ class Translate {
 				$newdir=$dir.$conf->global->MAIN_FORCELANGDIR;
 				if (! in_array($newdir,$this->dir))
 				{
-				    $more['module_'.$i]=$newdir; $i++; // TODO a quoi ça sert ??
+				    $more['module_'.$i]=$newdir; $i++; // We add the forced dir into the array $more. Just after, we add entries into $more to list of lang dir $this->dir.
 				}
 			}
 			$this->dir=array_merge($more,$this->dir);
