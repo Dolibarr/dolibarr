@@ -69,6 +69,11 @@ else if ($action == 'viewProdDescInForm')
 	$view = GETPOST("activate_viewProdDescInForm");
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $view,'chaine',0,'',$conf->entity);
 }
+else if ($action == 'viewProdDescInClientLanguage')
+{
+	$view = GETPOST("activate_viewProdDescInClientLanguage");
+	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_CLIENT_LANGUAGE", $view,'chaine',0,'',$conf->entity);
+}
 else if ($action == 'usesearchtoselectproduct')
 {
 	$usesearch = GETPOST("activate_usesearchtoselectproduct");
@@ -248,6 +253,22 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</td>';
 print '</tr>';
 print '</form>';
+
+// Visualiser description produit dans la langue du client
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="viewProdDescInClientLanguage">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("ViewProductDescInClientLanguageAbility").'</td>';
+print '<td width="60" align="right">';
+print $form->selectyesno("activate_viewProdDescInClientLanguage",$conf->global->PRODUIT_DESC_IN_CLIENT_LANGUAGE,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
 
 if ($conf->global->PRODUCT_CANVAS_ABILITY)
 {
