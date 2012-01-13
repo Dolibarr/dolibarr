@@ -246,7 +246,7 @@ class Translate {
 								$tab=explode('=',$line,2);
 								$key=trim($tab[0]);
 								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-								if (empty($this->tab_translate[$key]) && isset($tab[1]))
+								if ((! empty($conf->global->MAIN_FORCELANGDIR) || empty($this->tab_translate[$key])) && isset($tab[1]))
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
@@ -287,8 +287,8 @@ class Translate {
 							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
 							$size=dol_setcache($usecachekey,$tabtranslatedomain);
 						}
-						//exit;
-						break;		// Break loop on each root dir
+						
+						if (empty($conf->global->MAIN_FORCELANGDIR)) break;		// Break loop on each root dir. If a module has forced dir, we do not stop loop.
 					}
 				}
 			}
