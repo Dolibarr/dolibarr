@@ -551,23 +551,26 @@ if ($action == 'addline' && $user->rights->commande->creer)
                     $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
                 }
             }
-
+            
             // Define output language
-            if ($conf->global->PRODUIT_DESC_IN_CLIENT_LANGUAGE) {
-              $outputlangs = $langs;
-              $newlang='';
-              if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-              if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-              if (! empty($newlang))
-              {
-                  $outputlangs = new Translate("",$conf);
-                  $outputlangs->setDefaultLang($newlang);
-              }
-  
-              $desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"]))?$prod->multilangs[$outputlangs->defaultlang]["description"]:$prod->description;
-            }
-            else
-              $desc = $prod->description;
+			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE))
+			{
+				$outputlangs = $langs;
+				$newlang='';
+				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+				if (empty($newlang)) $newlang=$object->client->default_lang;
+				if (! empty($newlang))
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				
+				$desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
+			}
+			else
+			{
+				$desc = $prod->description;
+			}
 
             $desc.= ($desc && $_POST['np_desc']) ? ((dol_textishtml($desc) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
             $desc.= $_POST['np_desc'];
