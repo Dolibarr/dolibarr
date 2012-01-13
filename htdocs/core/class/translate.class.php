@@ -81,7 +81,7 @@ class Translate {
 				$newdir=$dir.$conf->global->MAIN_FORCELANGDIR;
 				if (! in_array($newdir,$this->dir))
 				{
-				    $more['module_'.$i]=$newdir; $i++;
+				    $more['module_'.$i]=$newdir; $i++; // TODO a quoi ça sert ??
 				}
 			}
 			$this->dir=array_merge($more,$this->dir);
@@ -193,7 +193,6 @@ class Translate {
 		if ($alt < 1 && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
 
-
 		foreach($this->dir as $keydir => $searchdir)
 		{
 			// Directory of translation files
@@ -250,7 +249,7 @@ class Translate {
 								$tab=explode('=',$line,2);
 								$key=trim($tab[0]);
 								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-								if (empty($this->tab_translate[$key]) && isset($tab[1]))
+								if ((! empty($conf->global->MAIN_FORCELANGDIR) || empty($this->tab_translate[$key])) && isset($tab[1]))
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
