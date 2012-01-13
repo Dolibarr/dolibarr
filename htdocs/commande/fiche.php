@@ -552,8 +552,24 @@ if ($action == 'addline' && $user->rights->commande->creer)
                 }
             }
 
-            $desc = $prod->description;
-            $desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br>\n":"\n") : "";
+            // Define output language
+            if ($conf->global->PRODUIT_DESC_IN_CLIENT_LANGUAGE) {
+              $outputlangs = $langs;
+              $newlang='';
+              if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+              if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+              if (! empty($newlang))
+              {
+                  $outputlangs = new Translate("",$conf);
+                  $outputlangs->setDefaultLang($newlang);
+              }
+  
+              $desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"]))?$prod->multilangs[$outputlangs->defaultlang]["description"]:$prod->description;
+            }
+            else
+              $desc = $prod->description;
+
+            $desc.= ($desc && $_POST['np_desc']) ? ((dol_textishtml($desc) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
             $desc.= $_POST['np_desc'];
             $type = $prod->type;
         }
