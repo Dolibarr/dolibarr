@@ -1111,6 +1111,7 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=no 
 ConfirmDeleteProductLineAbility=Confirmation when removing product lines in forms
 ModifyProductDescAbility=Personalization of product descriptions in forms
 ViewProductDescInFormAbility=Visualization of product descriptions in the forms (otherwise as popup tooltip)
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the thirdparty language
 UseSearchToSelectProduct=Use a search form to choose a product (instead of using a list box).<br>Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Default barcode type to use for products

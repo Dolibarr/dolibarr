@@ -95,11 +95,11 @@ class User extends CommonObject
 	/**
 	 *    Constructor de la classe
 	 *
-	 *    @param   DoliDb  $DB     Database handler
+	 *    @param   DoliDb  $db     Database handler
 	 */
-	function User($DB)
+	function __construct($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		// Preference utilisateur
 		$this->liste_limit = 0;
@@ -107,8 +107,6 @@ class User extends CommonObject
 
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
-
-		return 1;
 	}
 
 	/**
@@ -853,12 +851,15 @@ class User extends CommonObject
 		$error=0;
 
 		// Positionne parametres
-		$this->admin = 0;
-		$this->nom = $contact->nom;			// TODO deprecated
-		$this->prenom = $contact->prenom;	// TODO deprecated
-		$this->lastname = $contact->nom;
-		$this->firstname = $contact->prenom;
-		$this->email = $contact->email;
+		$this->admin		= 0;
+		$this->nom			= $contact->nom;			// TODO deprecated
+		$this->prenom		= $contact->prenom;	// TODO deprecated
+		$this->lastname		= $contact->nom;
+		$this->firstname	= $contact->prenom;
+		$this->email		= $contact->email;
+		$this->office_phone	= $contact->phone_pro;
+		$this->office_fax	= $contact->fax;
+		$this->user_mobile	= $contact->phone_mobile;
 
 		if (empty($login)) $login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
 		$this->login = $login;
@@ -871,6 +872,9 @@ class User extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET fk_socpeople=".$contact->id;
+			$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
+			$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
+			$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 			if ($contact->socid) $sql.=", fk_societe=".$contact->socid;
 			$sql.= " WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);

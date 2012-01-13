@@ -1119,6 +1119,7 @@ NumberOfProductShowInSelect= Nombre de produits max dans les listes déroulantes
 ConfirmDeleteProductLineAbility= Confirmation de suppression d'une ligne produit dans les formulaires
 ModifyProductDescAbility= Personnalisation des descriptions produits dans les formulaires
 ViewProductDescInFormAbility= Visualisation des descriptions produits dans les formulaires (sinon en tant que tooltip)
+ViewProductDescInThirdpartyLanguageAbility= Visualisation des descriptions produits dans la langue du tiers
 UseSearchToSelectProduct= Utiliser un formulaire de recherche pour le choix d'un produit (plutôt qu'une liste déroulante).<br>Notez que si vous avez un nombre important de produits ou services (> 100 000), vous pouvez améliorer les performances en définissant la constante PRODUCT_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limitée au début de la chaine.
 UseEcoTaxeAbility= Prise en charge des éco-taxes (DEEE)
 SetDefaultBarcodeTypeProducts= Type de code-barres utilisé par défaut pour les produits

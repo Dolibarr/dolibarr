@@ -995,9 +995,28 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
                     $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
                 }
             }
+            
+            // Define output language
+			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE))
+			{
+				$outputlangs = $langs;
+				$newlang='';
+				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+				if (empty($newlang)) $newlang=$object->client->default_lang;
+				if (! empty($newlang))
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				
+				$desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
+			}
+			else
+			{
+				$desc = $prod->description;
+			}
 
-            $desc = $prod->description;
-            $desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br>\n":"\n") : "";
+            $desc.= ($desc && $_POST['np_desc']) ? ((dol_textishtml($desc) || dol_textishtml($_POST['np_desc']))?"<br>\n":"\n") : "";
             $desc.= $_POST['np_desc'];
             if (! empty($prod->customcode) || ! empty($prod->country_code))
             {

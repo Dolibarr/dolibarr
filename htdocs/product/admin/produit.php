@@ -3,7 +3,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,6 +68,11 @@ else if ($action == 'viewProdDescInForm')
 {
 	$view = GETPOST("activate_viewProdDescInForm");
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $view,'chaine',0,'',$conf->entity);
+}
+else if ($action == 'viewProdDescInThirdpartyLanguage')
+{
+	$view = GETPOST("activate_viewProdDescInThirdpartyLanguage");
+	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE", $view,'chaine',0,'',$conf->entity);
 }
 else if ($action == 'usesearchtoselectproduct')
 {
@@ -249,6 +254,25 @@ print '</td>';
 print '</tr>';
 print '</form>';
 
+// View product description in thirdparty language
+if (! empty($conf->global->MAIN_MULTILANGS))
+{
+	$var=!$var;
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="viewProdDescInThirdpartyLanguage">';
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
+	print '<td width="60" align="right">';
+	print $form->selectyesno("activate_viewProdDescInThirdpartyLanguage",$conf->global->PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE,1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</td>';
+	print '</tr>';
+	print '</form>';
+}
+
+
 if ($conf->global->PRODUCT_CANVAS_ABILITY)
 {
 	// Add canvas feature
@@ -319,7 +343,8 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 
 dol_htmloutput_mesg($mesg);
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>
