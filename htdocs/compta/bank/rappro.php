@@ -144,7 +144,7 @@ if ($resql)
     print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
     print '<br>';
 
-    if ($mesg) print $mesg."<br>";
+    dol_htmloutput_mesg($mesg);
 
     // Show last bank receipts
     $nbmax=5;
@@ -245,8 +245,8 @@ if ($resql)
         $links = $acct->get_url($objp->rowid);
         foreach($links as $key=>$val)
         {
-            if (! $newline) print ' - ';
-            else print '<br>';
+            if ($newline == 0) print ' - ';
+            else if ($newline == 1) print '<br>';
             if ($links[$key]['type']=='payment') {
 	            $paymentstatic->id=$links[$key]['url_id'];
 	            print ' '.$paymentstatic->getNomUrl(2);
@@ -259,10 +259,9 @@ if ($resql)
                 $newline=0;
 			}
             elseif ($links[$key]['type']=='company') {
-                print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$links[$key]['url_id'].'">';
-                print img_object($langs->trans('ShowCustomer'),'company').' ';
-                print dol_trunc($links[$key]['label'],24);
-                print '</a>';
+                $societestatic->id=$links[$key]['url_id'];
+                $societestatic->name=$links[$key]['label'];
+                print $societestatic->getNomUrl(1,'',24);
                 $newline=0;
             }
 			else if ($links[$key]['type']=='sc') {
@@ -273,13 +272,12 @@ if ($resql)
 			}
 			else if ($links[$key]['type']=='payment_sc')
 			{
-				//print ' - ';
-				/*
-				print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
-				//print img_object($langs->trans('ShowPayment'),'payment').' ';
+			    // We don't show anything because there is 1 payment for 1 social contribution and we already show link to social contribution
+				/*print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowPayment'),'payment').' ';
 				print $langs->trans("SocialContributionPayment");
-				print '</a>';
-				*/
+				print '</a>';*/
+			    $newline=2;
 			}
 			else if ($links[$key]['type']=='payment_vat')
 			{
