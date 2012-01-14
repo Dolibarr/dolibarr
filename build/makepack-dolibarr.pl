@@ -291,15 +291,19 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README`;
 
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/codesniffer`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/fpdf`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdata`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpcheckstyle`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpunit`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/security`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/flyer`;
