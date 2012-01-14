@@ -78,10 +78,10 @@ class Translate {
 			$more=array();
 			foreach($conf->file->dol_document_root as $dir)
 			{
-				$newdir=$dir.$conf->global->MAIN_FORCELANGDIR;
-				if (! in_array($newdir,$this->dir)) $more[]=$newdir;
+				$newdir=$dir.$conf->global->MAIN_FORCELANGDIR;    // For example $conf->global->MAIN_FORCELANGDIR is '/mymodule' meaning we search files into '/mymodule/langs/xx_XX'
+				if (! in_array($newdir,$this->dir)) $more[]=$newdir;       // We add the forced dir into the array $more. Just after, we add entries into $more to list of lang dir $this->dir.
 			}
-			$this->dir=array_merge($more,$this->dir);
+			$this->dir=array_merge($more,$this->dir);    // Forced dir ($more) are before standard dirs ($this->dir)
 		}
 
 		$this->origlang=$srclang;
@@ -246,7 +246,7 @@ class Translate {
 								$tab=explode('=',$line,2);
 								$key=trim($tab[0]);
 								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-								if ((! empty($conf->global->MAIN_FORCELANGDIR) || empty($this->tab_translate[$key])) && isset($tab[1]))
+								if (empty($this->tab_translate[$key]) && isset($tab[1]))    // If data was already found, we must not enter here, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite)
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
@@ -287,7 +287,7 @@ class Translate {
 							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
 							$size=dol_setcache($usecachekey,$tabtranslatedomain);
 						}
-						
+
 						if (empty($conf->global->MAIN_FORCELANGDIR)) break;		// Break loop on each root dir. If a module has forced dir, we do not stop loop.
 					}
 				}
