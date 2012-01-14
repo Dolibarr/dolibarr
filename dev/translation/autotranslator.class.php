@@ -1,20 +1,31 @@
 <?php
+/* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /**
- * This software is licensed under GPL license agreement
- * This is a language automatic translator parser for Dolibarr
- * This script uses google language ajax api as the translator engine
- * The main translator function can be found at:
- *
- * http://www.plentyofcode.com/2008/10/google-translation-api-translate-on.html
- * Hope you make a good use of it  :)
- *
- * http://code.google.com/intl/fr/apis/ajaxlanguage/documentation/#SupportedPairs
+ *      \file       dev/translation/langAutoParser.class.php
+ *		\ingroup    dev
+ *      \brief      This file is an example for a command line script
  */
 
 /**
  * Class to parse language files and translate them
+ * This is a language automatic translator parser for Dolibarr
  */
-class langAutoParser
+class autoTranslator
 {
 	private $translatedFiles = array();
 	private $destLang = '';
@@ -24,11 +35,13 @@ class langAutoParser
 	private $time;
 	private $time_end;
 	private $outputpagecode = 'UTF-8';
+	private $apikey;
 	//private $outputpagecode = 'ISO-8859-1';
 	const DIR_SEPARATOR = '/';
 
-	
-	function __construct($destLang,$refLang,$langDir,$limittofile){
+
+	function __construct($destLang,$refLang,$langDir,$limittofile,$apikey)
+	{
 
 		// Set enviorment variables
 		$this->destLang = $destLang;
@@ -36,6 +49,7 @@ class langAutoParser
 		$this->langDir = $langDir.self::DIR_SEPARATOR;
 		$this->time = date('Y-m-d H:i:s');
 		$this->limittofile = $limittofile;
+        $this->apikey = $apikey;
 
 		// Translate
 		//ini_set('default_charset','UTF-8');
@@ -46,7 +60,7 @@ class langAutoParser
 
 	/**
 	 * 	Parse file
-	 * 
+	 *
 	 * 	@return	void
 	 */
 	private function parseRefLangTranslationFiles()
@@ -127,7 +141,7 @@ class langAutoParser
 
 	/**
 	 * Update file with new translations
-	 * 
+	 *
 	 * @param 	string	$destPath		Target path
 	 * @param 	string	$file			File
 	 * @param 	string	$mydestLang		Target language code
@@ -155,7 +169,7 @@ class langAutoParser
 
 	/**
 	 * Create a new translation file
-	 * 
+	 *
 	 * @param 	string	$path			Path
 	 * @param 	string	$mydestlang		Target language code
 	 * @return	void
@@ -216,7 +230,7 @@ class langAutoParser
 	}
 
 	/**
-	 * 
+	 *
 	 * @param 	string 	$line	Line found into file
 	 * @return	string	Key
 	 */
@@ -227,7 +241,7 @@ class langAutoParser
 	}
 
 	/**
-	 * 
+	 *
 	 * @param 	string 	$line	Line found into file
 	 * @return	string	Value
 	 */
@@ -238,7 +252,7 @@ class langAutoParser
 	}
 
 	/**
-	 * 
+	 *
 	 * @param 	string 	$lang	Language code
 	 * @return	array	Array
 	 */
@@ -273,18 +287,16 @@ class langAutoParser
 		//setting language pair
 		$lang_pair = $src_lang.'|'.$dest_lang;
 
-		$src_texts_query = "";
 		$src_text_to_translate=preg_replace('/%s/','SSSSS',join('',$src_texts));
 		$src_text_to_translate=preg_replace('/'.preg_quote('\n\n').'/',' NNNNN ',$src_text_to_translate);
-		
-		$src_texts_query .= "&q=".urlencode($src_text_to_translate);
 
-		$url = "http://ajax.googleapis.com/ajax/services/language/translate?v=1.0".$src_texts_query."&langpair=".urlencode($lang_pair);
+		// Define GET URL v1
+		$url = "http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=".urlencode($src_text_to_translate)."&langpair=".urlencode($lang_pair);
+        // Define GET URL v2
+		// Example: "https://www.googleapis.com/language/translate/v2?key=".$this->apikey."&q=".urlencode($src_text_to_translate)."&source=".$src_lang."&target=".$dest_lang
 
-		// sendRequest
-		// note how referer is set manually
-
-		//print "Url to translate: ".$url."\n";
+		// Send request
+		print "Url to translate: ".$url."\n";
 
 		if (! function_exists("curl_init"))
 		{
@@ -313,7 +325,7 @@ class langAutoParser
 		$rep=preg_replace('/SSSSS/i','%s',$rep);
 		$rep=preg_replace('/NNNNN/i','\n\n',$rep);
 		$rep=preg_replace('/&#39;/i','\'',$rep);
-		
+
 		//print "OK ".join('',$src_texts).' => '.$rep."\n";
 
 		return $rep;

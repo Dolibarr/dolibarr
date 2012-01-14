@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,12 @@
 
 /**
  *      \file       dev/translation/autotranslator.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *      \brief      This file is an example for a command line script
- * 		\author		Put author name here
- *		\remarks	Put here some comments
+ *		\ingroup    dev
+ * 		\brief      This script uses google language ajax api as the translator engine
+ *                  The main translator function can be found at:
+ *                  http://code.google.com/intl/fr/apis/language/translate/overview.html
+ *                  http://translate.google.com/translate_tools
+ *                  https://code.google.com/apis/console
  */
 
 $sapi_type = php_sapi_name();
@@ -85,9 +87,9 @@ if ($argv[2] != 'all')
 	}
 }
 
-require_once(DOL_DOCUMENT_ROOT."/../dev/translation/langAutoParser.class.php");
+require_once(DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php");
 
-$langParser = new langAutoParser($argv[2],$argv[1],$dir,$file);
+$langParser = new autoTranslator($argv[2],$argv[1],$dir,$file,$apikey);
 
 print "***** Finished *****\n";
 
