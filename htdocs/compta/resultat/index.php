@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -442,7 +442,7 @@ $totentrees=array();
 $totsorties=array();
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
+print '<tr class="liste_titre"><td class="liste_titre">&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
@@ -453,7 +453,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	print '</a></td>';
 }
 print '</tr>';
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="right">'.$langs->trans("Outcome").'</td>';
