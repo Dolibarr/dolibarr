@@ -27,6 +27,7 @@
 */
 
 require("../../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/class/comptacompte.class.php");
 
 $mesg = '';
 
