@@ -367,7 +367,7 @@ a.tmenu:hover, a.tmenu:active {
 	border-<?php print $right; ?>: 1px solid #555555;
 	border-<?php print $left; ?>: 1px solid #D8D8D8;
 	border-top: 1px solid #D8D8D8;
-	border-bottom: 2px solid #dee7ec;
+	border-bottom: 2px solid #F4F4F4;
 }
 a.tmenu:hover, a.tmenu:active {
 	background: #F4F4F4;
