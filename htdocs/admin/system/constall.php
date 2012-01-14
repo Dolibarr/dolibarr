@@ -80,6 +80,7 @@ $configfileparameters=array(
                             '?dolibarr_lib_GEOIP_PATH',
 							'?dolibarr_lib_ODTPHP_PATH',
                             '?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+						    '?dolibarr_js_CKEDITOR',
                             '?dolibarr_font_DOL_DEFAULT_TTF',
                             '?dolibarr_font_DOL_DEFAULT_TTF_BOLD'
 						);
@@ -119,6 +120,7 @@ $configfilelib=array(
                     'dolibarr_lib_GEOIP_PATH',
 					'dolibarr_lib_ODTPHP_PATH',
                     'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+                    'dolibarr_js_CKEDITOR',
                     'dolibarr_font_DOL_DEFAULT_TTF',
                     'dolibarr_font_DOL_DEFAULT_TTF_BOLD'
 					);

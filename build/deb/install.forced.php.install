@@ -31,6 +31,7 @@ $force_dolibarr_lib_PHPEXCEL_PATH='';
 $force_dolibarr_lib_TCPDF_PATH='';
 $force_dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
 $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip';
+$force_dolibarr_js_CKEDITOR='/javascript/ckeditor';
 $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf';
 
 ?>

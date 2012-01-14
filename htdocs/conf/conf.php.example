@@ -277,6 +277,8 @@ $dolibarr_main_prod='0';
 //$dolibarr_lib_ODTPHP_PATH='';
 // Value to overwrite some path to use shared libraries instead of embedded one
 //$dolibarr_lib_ODTPHP_PATHTOPCLZIP="/usr/share/php/libphp-pclzip";
+// Value to overwrite path to use shared javascript instead of embedded one
+//$dolibarr_js_CKEDITOR='/javascript/ckeditor';
 
 
 //##############################

@@ -742,6 +742,7 @@ function write_conf_file($conffile)
     global $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
     global $force_dolibarr_lib_PHPEXCEL_PATH, $force_dolibarr_lib_GEOIP_PATH;
     global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
+    global $force_dolibarr_js_CKEDITOR;
     global $force_dolibarr_font_DOL_DEFAULT_TTF, $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD;
 
     $error=0;
@@ -849,6 +850,9 @@ function write_conf_file($conffile)
         fputs($fp,"\n");
         if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP=''; }
         fputs($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP=\''.$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_js_CKEDITOR)) { fputs($fp, '#'); $force_dolibarr_js_CKEDITOR=''; }
+        fputs($fp, '$dolibarr_ks_CKEDITOR=\''.$force_dolibarr_js_CKEDITOR.'\';');
         fputs($fp,"\n");
 
         // Write params to overwrites default font path
