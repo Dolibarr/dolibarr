@@ -60,7 +60,7 @@ ALTER TABLE llx_commandedet ADD COLUMN fk_parent_line integer NULL AFTER fk_comm
 ALTER TABLE llx_facturedet ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
 ALTER TABLE llx_facturedet_rec ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
 
---Remove old Spanish TVA
+-- Remove old Spanish TVA
 UPDATE llx_c_tva SET taux = '18' WHERE rowid = 41;
 UPDATE llx_c_tva SET taux = '8' WHERE rowid = 42;
 DELETE FROM llx_c_tva WHERE rowid = 45;
@@ -78,7 +78,7 @@ ALTER TABLE llx_product ADD COLUMN fk_country integer after customcode;
 ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX idx_ecm_directories (label, fk_parent, entity);
 ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents (fullpath_dol);
 
---Add modules facture fournisseur
+-- Add modules facture fournisseur
 INSERT INTO llx_const (name, value, type, note, visible) values ('INVOICE_SUPPLIER_ADDON_PDF', 'canelle','chaine','',0);
 ALTER TABLE llx_facture_fourn ADD COLUMN model_pdf varchar(50) after note_public;
 
