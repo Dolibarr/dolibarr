@@ -995,7 +995,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
                     $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
                 }
             }
-            
+
             // Define output language
 			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE))
 			{
@@ -1008,7 +1008,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
 					$outputlangs = new Translate("",$conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				
+
 				$desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
 			}
 			else
@@ -1757,7 +1757,6 @@ if ($action == 'create')
     }
     $text.='</select>';
     $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
-    //.' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
     print $desc;
     print '</td></tr>'."\n";
 

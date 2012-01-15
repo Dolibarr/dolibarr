@@ -1036,7 +1036,6 @@ if ($action == 'create')
     }
     $text.='</select>';
     $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
-    //.' ('.$langs->trans("FeatureNotYetAvailable").')',$langs->transnoentities("InvoiceAvoirDesc"),1);
     print $desc;
     print '</td></tr>'."\n";
     */
