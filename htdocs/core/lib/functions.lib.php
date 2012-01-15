@@ -676,7 +676,7 @@ function dol_syslog($message, $level=LOG_INFO)
  *	Show tab header of a card
  *
  *	@param	array	$links		Array of tabs
- *	@param	int		$active     Active tab name
+ *	@param	string	$active     Active tab name (document', 'info', 'ldap', ....)
  *	@param  string	$title      Title
  *	@param  int		$notab		0=Add tab header, 1=no tab header
  * 	@param	string	$picto		Add a picto on tab title

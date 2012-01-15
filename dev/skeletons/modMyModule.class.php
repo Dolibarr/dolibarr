@@ -121,20 +121,21 @@ class modMyModule extends DolibarrModules
         $this->tabs = array();
 
         // Dictionnaries
-        $this->dictionnaries=array();
+        if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;
+		$this->dictionnaries=array();
         /* Example:
-        if (! isset($conf->cabinetmed->enabled)) $conf->cabinetmed->enabled=0;	// This is to avoid warnings
+        if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;	// This is to avoid warnings
         $this->dictionnaries=array(
-            'langs'=>'cabinetmed@cabinetmed',
-            'tabname'=>array(MAIN_DB_PREFIX."cabinetmed_diaglec",MAIN_DB_PREFIX."cabinetmed_examenprescrit",MAIN_DB_PREFIX."cabinetmed_motifcons"),		// List of tables we want dictonnary on
-            'tablib'=>array("DiagnostiqueLesionnel","ExamenPrescrit","MotifConsultation"),																// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'cabinetmed_diaglec as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'cabinetmed_examenprescrit as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'cabinetmed_motifcons as f'),	// Request to select fields
+            'langs'=>'mymodule@mymodule',
+            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
             'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
             'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionnary)
             'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
             'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
             'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->cabinetmed->enabled,$conf->cabinetmed->enabled,$conf->cabinetmed->enabled)											// Condition to show each dictionnary
+            'tabcond'=>array($conf->mymodule->enabled,$conf->mymodule->enabled,$conf->mymodule->enabled)												// Condition to show each dictionnary
         );
         */
 
