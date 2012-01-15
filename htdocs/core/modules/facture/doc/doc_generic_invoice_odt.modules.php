@@ -101,7 +101,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		{
         	$invoice_source->fetch($object->fk_facture_source);
 		}
-		$alreadypayed=price($object->getSommePaiement(),'MT');
+		$alreadypayed=price($object->getSommePaiement(),0,$outputlangs);
 
         return array(
             'object_id'=>$object->id,
@@ -117,15 +117,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
             'object_payment_mode'=>$object->mode_reglement,
             'object_payment_term'=>$object->cond_reglement,
-        	'object_total_ht'=>price($object->total_ht),
-            'object_total_vat'=>price($object->total_tva),
-            'object_total_ttc'=>price($object->total_ttc),
+        	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
+            'object_total_vat'=>price($object->total_tva,0,$outputlangs),
+            'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
             'object_vatrate'=>vatrate($object->tva),
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public,
         	// Payments
             'object_already_payed'=>$alreadypayed,
-            'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,'MT')
+            'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,0,$outputlangs)
         );
     }
 
@@ -166,7 +166,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$langs->load("companies");
 		$langs->load("errors");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -266,11 +266,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			{
 				$id = $object;
 				$object = new Facture($this->db);
-				$object->fetch($id);
-
+				$result=$object->fetch($id);
 				if ($result < 0)
 				{
-					dol_print_error($db,$object->error);
+					dol_print_error($this->db,$object->error);
 					return -1;
 				}
 			}
@@ -362,15 +361,13 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 
 				// Make substitutions into odt of freetext
-				if ($newfreetext)
-				{
-					try {
-						$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
-					}
-					catch(OdfException $e)
-					{
-					}
+				try {
+					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
+				catch(OdfException $e)
+				{
+				}
+
                 // Make substitutions into odt of user info
 				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
@@ -432,8 +429,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 					}
 				}
-				// Replace tags of object
+				// Replace tags of object + external modules
 			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+			    complete_substitutions_array($tmparray, $outputlangs, $object);
                 foreach($tmparray as $key=>$value)
                 {
                     try {

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -67,10 +67,10 @@ function pdf_getFormat()
 /**
  *      Return a PDF instance object. We create a FPDI instance that instanciate TCPDF.
  *
- *      @param      format          Array(width,height). Keep empty to use default setup.
- *      @param      metric          Unit of format ('mm')
- *      @param      pagetype        'P' or 'l'
- *      @return     PDF object
+ *      @param	string		$format         Array(width,height). Keep empty to use default setup.
+ *      @param	string		$metric         Unit of format ('mm')
+ *      @param  string		$pagetype       'P' or 'l'
+ *      @return TPDF							PDF object
  */
 function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
@@ -127,8 +127,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 /**
  *      Return font name to use for PDF generation
  *
- *      @param      outputlangs     Output langs object
- *      @return     string          Name of font to use
+ *      @param	Translate	$outputlangs    Output langs object
+ *      @return string          			Name of font to use
  */
 function pdf_getPDFFont($outputlangs)
 {
@@ -146,8 +146,8 @@ function pdf_getPDFFont($outputlangs)
 /**
  *      Return font size to use for PDF generation
  *
- *      @param      outputlangs     Output langs object
- *      @return     int             Size of font to use
+ *      @param	Translate	$outputlangs     Output langs object
+ *      @return int				             Size of font to use
  */
 function pdf_getPDFFontSize($outputlangs)
 {
@@ -166,14 +166,14 @@ function pdf_getPDFFontSize($outputlangs)
 /**
  *   	Return a string with full address formated
  *
- * 		@param		outputlangs		Output langs object
- *   	@param      sourcecompany	Source company object
- *   	@param      targetcompany	Target company object
- *      @param      targetcontact	Target contact object
- * 		@param		usecontact		Use contact instead of company
- * 		@param		mode			Address type
- * 		@param		deliverycompany	Delivery company object
- * 		@return		string			String with full address
+ * 		@param	Translate	$outputlangs		Output langs object
+ *   	@param  Societe		$sourcecompany		Source company object
+ *   	@param  Societe		$targetcompany		Target company object
+ *      @param  Contact		$targetcontact		Target contact object
+ * 		@param	int			$usecontact			Use contact instead of company
+ * 		@param	int			$mode				Address type
+ * 		@param	Societe		$deliverycompany	Delivery company object
+ * 		@return	string							String with full address
  */
 function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source',$deliverycompany='')
 {
@@ -190,7 +190,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'source')
 	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$sourcecompany)."\n";
+		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany))."\n";
 
 		// Tel
 		if ($sourcecompany->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);
@@ -207,15 +207,15 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		if ($usecontact)
 		{
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1));
-			$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$targetcontact)."\n";
+			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
 			// Country
-			if ($targetcontact->pays_code && $targetcontact->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
+			if ($targetcontact->country_code && $targetcontact->country_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
 		}
 		else
 		{
-			$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$targetcompany)."\n";
+			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
 			// Country
-			if ($targetcompany->pays_code && $targetcompany->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
+			if ($targetcompany->country_code && $targetcompany->country_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
 		}
 
 		// Intra VAT
@@ -224,25 +224,25 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		// Professionnal Ids
 		if ($conf->global->MAIN_PROFID1_IN_ADDRESS)
 		{
-			$tmp=$outputlangs->transcountrynoentities("ProfId1",$targetcompany->pays_code);
+			$tmp=$outputlangs->transcountrynoentities("ProfId1",$targetcompany->country_code);
 			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
 			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
 		}
 		if ($conf->global->MAIN_PROFID2_IN_ADDRESS)
 		{
-			$tmp=$outputlangs->transcountrynoentities("ProfId2",$targetcompany->pays_code);
+			$tmp=$outputlangs->transcountrynoentities("ProfId2",$targetcompany->country_code);
 			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
 			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
 		}
 		if ($conf->global->MAIN_PROFID3_IN_ADDRESS)
 		{
-			$tmp=$outputlangs->transcountrynoentities("ProfId3",$targetcompany->pays_code);
+			$tmp=$outputlangs->transcountrynoentities("ProfId3",$targetcompany->country_code);
 			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
 			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
 		}
 		if ($conf->global->MAIN_PROFID4_IN_ADDRESS)
 		{
-			$tmp=$outputlangs->transcountrynoentities("ProfId4",$targetcompany->pays_code);
+			$tmp=$outputlangs->transcountrynoentities("ProfId4",$targetcompany->country_code);
 			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
 			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
 		}
@@ -250,7 +250,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'delivery')	// for a delivery address (address + phone/fax)
 	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).dol_format_address($outputlangs,$deliverycompany)."\n";
+		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($deliverycompany))."\n";
 
 		// Tel
 		if ($deliverycompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($deliverycompany->phone);
@@ -265,9 +265,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 /**
  *   	Show header of page for PDF generation
  *
- *   	@param      PDF			$pdf     		Object PDF
+ *   	@param      PDF			&$pdf     		Object PDF
  *      @param      Translate	$outputlangs	Object lang for output
  * 		@param		int			$page_height	Height of page
+ *      @return	void
  */
 function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 {
@@ -284,12 +285,13 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 /**
  *      Add a draft watermark on PDF files
  *
- *      @param      pdf             Object PDF
- *      @param      outputlangs     Object lang
- *      @param      h		        Height of PDF
- *      @param      w		        Width of PDF
- *      @param      unit            Unit of height (mmn, pt, ...)
- *      @param      text            Text to show
+ *      @param	PDF      	&$pdf           Object PDF
+ *      @param  Translate	$outputlangs	Object lang
+ *      @param  int		    $h		        Height of PDF
+ *      @param  int		    $w		        Width of PDF
+ *      @param  string	    $unit           Unit of height (mmn, pt, ...)
+ *      @param  string		$text           Text to show
+ *      @return	void
  */
 function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 {
@@ -324,6 +326,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *      @param      cury            Y
  *      @param      account         Bank account object
  *      @param      onlynumber      Output only number
+ *      @return	void
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 {
@@ -462,18 +465,18 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 
 
 /**
- *   	Show footer of page for PDF generation
+ *  Show footer of page for PDF generation
  *
- *   	@param      pdf     		The PDF factory
- *      @param      outputlangs		Object lang for output
- * 		@param		paramfreetext	Constant name of free text
- * 		@param		fromcompany		Object company
- * 		@param		marge_basse		Margin bottom
- * 		@param		marge_gauche	Margin left
- * 		@param		page_hauteur	Page height
- * 		@param		object			Object shown in PDF
- * 		@param		showdetails		Show company details
- * 		@return		void
+ *	@param	PDF			&$pdf     		The PDF factory
+ *  @param  Translate	$outputlangs		Object lang for output
+ * 	@param	string		$paramfreetext	Constant name of free text
+ * 	@param	Societe		$fromcompany		Object company
+ * 	@param	int			$marge_basse		Margin bottom
+ * 	@param	int			$marge_gauche	Margin left
+ * 	@param	int			$page_hauteur	Page height
+ * 	@param	Object		$object			Object shown in PDF
+ * 	@param	int			$showdetails		Show company details
+ * 	@return	void
  */
 function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object,$showdetails=0)
 {
@@ -557,19 +560,19 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Capital
 	if ($fromcompany->capital)
 	{
-		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
+		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->currency);
 	}
 	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->idprof2))
+	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
 	{
-		$field=$outputlangs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
+		$field=$outputlangs->transcountrynoentities("ProfId1",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line3.=($line3?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
 	}
 	// Prof Id 2
 	if ($fromcompany->idprof2)
 	{
-		$field=$outputlangs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
+		$field=$outputlangs->transcountrynoentities("ProfId2",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line3.=($line3?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof2);
 	}
@@ -579,14 +582,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Prof Id 3
 	if ($fromcompany->idprof3)
 	{
-		$field=$outputlangs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
+		$field=$outputlangs->transcountrynoentities("ProfId3",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
 	}
 	// Prof Id 4
 	if ($fromcompany->idprof4)
 	{
-		$field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
+		$field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
 	}
@@ -662,19 +665,19 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 /**
  *	Output line description into PDF
  *
- *  @param      PDF				$pdf                PDF object
- *	@param		Object			$object				Object
- *	@param		int				$i					Current line number
- *  @param    	Translate		$outputlangs		Object lang for output
- *  @param      int				$w					Width
- *  @param      int				$h					Height
- *  @param      int				$posx				Pos x
- *  @param      int				$posy				Pos y
- *  @param    	int				$hideref       		Hide reference
- *  @param      int				$hidedesc            Hide description
- * 	@param		int				$issupplierline		Is it a line for a supplier object ?
- * 	@param		HookManager		$hookmanager		Instance of HookManager
- * 	@return		void
+ *  @param  PDF				$pdf                PDF object
+ *	@param	Object			$object				Object
+ *	@param	int				$i					Current line number
+ *  @param  Translate		$outputlangs		Object lang for output
+ *  @param  int				$w					Width
+ *  @param  int				$h					Height
+ *  @param  int				$posx				Pos x
+ *  @param  int				$posy				Pos y
+ *  @param  int				$hideref       		Hide reference
+ *  @param  int				$hidedesc            Hide description
+ * 	@param	int				$issupplierline		Is it a line for a supplier object ?
+ * 	@param	HookManager		$hookmanager		Instance of HookManager
+ * 	@return	void
  */
 function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0,$hookmanager=false)
 {
@@ -685,12 +688,12 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		$parameters = array('pdf'=>$pdf,'i'=>$i,'outputlangs'=>$outputlangs,'w'=>$w,'h'=>$h,'posx'=>$posx,'posy'=>$posy,'hideref'=>$hideref,'hidedesc'=>$hidedesc,'issupplierline'=>$issupplierline,'special_code'=>$special_code);
+		$action='';
 		$reshook=$hookmanager->executeHooks('pdf_writelinedesc',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	}
 	else
 	{
 		$labelproductservice=pdf_getlinedesc($object,$i,$outputlangs,$hideref,$hidedesc,$issupplierline);
-
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1);
 
@@ -701,13 +704,13 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 /**
  *  Return line description translated in outputlangs and encoded in UTF8
  *
- *  @param      Object		$object              Object
- *  @param      int			$i                   Current line number
- *  @param      Translate	$outputlangs         Object langs for output
- *  @param      int			$hideref             Hide reference
- *  @param      int			$hidedesc            Hide description
- *  @param      int			$issupplierline      Is it a line for a supplier object ?
- *  @return     string       				     String with line
+ *  @param  Object		$object              Object
+ *  @param  int			$i                   Current line number
+ *  @param  Translate	$outputlangs         Object langs for output
+ *  @param  int			$hideref             Hide reference
+ *  @param  int			$hidedesc            Hide description
+ *  @param  int			$issupplierline      Is it a line for a supplier object ?
+ *  @return string       				     String with line
  */
 function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
@@ -747,6 +750,14 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
+		}
+		elseif ($desc == '(DEPOSIT)' && $object->lines[$i]->fk_remise_except)
+		{
+		    $discount=new DiscountAbsolute($db);
+		    $discount->fetch($object->lines[$i]->fk_remise_except);
+		    $libelleproduitservice=$outputlangs->transnoentities("DiscountFromDeposit",$discount->ref_facture_source);
+		    // Add date of deposit
+		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
 		else
 		{
@@ -793,10 +804,9 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		}
 	}
 
-	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
-
 	if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
 	{
+		$format='day';
 		// Show duration if exists
 		if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{
@@ -811,7 +821,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
+		$libelleproduitservice.="\n".$period;
 		//print $libelleproduitservice;
 	}
 
@@ -828,18 +838,21 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$libelleproduitservice.="<br>".$tmptxt;
 	}*/
 
+	// Now we convert \n into br
+	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
+
 	return $libelleproduitservice;
 }
 
 /**
  *	Return line num
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -859,12 +872,12 @@ function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0,$hookmanager=fals
 /**
  *	Return line product ref
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -883,12 +896,12 @@ function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0,$hookmanager=fals
 /**
  *	Return line ref_supplier
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -907,12 +920,12 @@ function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0,$hookman
 /**
  *	Return line vat rate
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -921,6 +934,7 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0,$hookmanager=
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
 		return $hookmanager->executeHooks('pdf_getlinevatrate',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	}
 	else
@@ -932,36 +946,69 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0,$hookmanager=
 /**
  *	Return line unit price excluding tax
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
-	if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    global $conf;
+
+    $sign=1;
+    if ($object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
+
+    if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+		$action='';
 		return $hookmanager->executeHooks('pdf_getlineupexcltax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	}
 	else
 	{
-		if (empty($hidedetails) || $hidedetails > 1) return price($object->lines[$i]->subprice);
+		if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->subprice);
 	}
+}
+
+/**
+ *	Return line unit price including tax
+ *
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Tranlate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
+ *  @return	void
+ */
+function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
+{
+    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    {
+        $special_code = $object->lines[$i]->special_code;
+    	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+    	foreach($object->hooks as $hook)
+    	{
+    		if (method_exists($hook['modules'][$special_code],'pdf_getlineupwithtax')) return $hook['modules'][$special_code]->pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails);
+		}
+    }
+    else
+    {
+        if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->subprice) + ($object->lines[$i]->subprice)*($object->lines[$i]->tva_tx)/100);
+    }
 }
 
 /**
  *	Return line quantity
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ *  @return	void
  */
 function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -972,6 +1019,7 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0,$hookmanager=fals
 			$special_code = $object->lines[$i]->special_code;
 			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+			$action='';
 			return $hookmanager->executeHooks('pdf_getlineqty',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		}
 		else
@@ -984,12 +1032,12 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0,$hookmanager=fals
 /**
  *	Return line quantity asked
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -1000,6 +1048,7 @@ function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0,$hookmanage
 			$special_code = $object->lines[$i]->special_code;
 			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+			$action='';
 			return $hookmanager->executeHooks('pdf_getlineqty_asked',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		}
 		else
@@ -1012,12 +1061,12 @@ function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0,$hookmanage
 /**
  *	Return line quantity shipped
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -1028,6 +1077,7 @@ function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0,$hookmana
 			$special_code = $object->lines[$i]->special_code;
 			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+			$action='';
 			return $hookmanager->executeHooks('pdf_getlineqty_shipped',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		}
 		else
@@ -1040,12 +1090,12 @@ function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0,$hookmana
 /**
  *	Return line keep to ship quantity
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -1056,6 +1106,7 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0,$hookm
 			$special_code = $object->lines[$i]->special_code;
 			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+			$action='';
 			return $hookmanager->executeHooks('pdf_getlineqty_keeptoship',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		}
 		else
@@ -1068,12 +1119,12 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0,$hookm
 /**
  *	Return line remise percent
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
@@ -1086,6 +1137,7 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0,$hookma
 			$special_code = $object->lines[$i]->special_code;
 			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+			$action='';
 			return $hookmanager->executeHooks('pdf_getlineremisepercent',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		}
 		else
@@ -1098,15 +1150,20 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0,$hookma
 /**
  *	Return line total excluding tax
  *
- *	@param		Object		$object				Object
- *	@param		int			$i					Current line number
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
+    global $conf;
+
+    $sign=1;
+    if ($object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
+
 	if ($object->lines[$i]->special_code == 3)
 	{
 		return $outputlangs->transnoentities("Option");
@@ -1118,23 +1175,58 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0,$hookman
 			$special_code = $object->lines[$i]->special_code;
 			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+			$action='';
 			return $hookmanager->executeHooks('pdf_getlinetotalexcltax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		}
 		else
 		{
-			if (empty($hidedetails) || $hidedetails > 1) return price($object->lines[$i]->total_ht);
+			if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->total_ht);
 		}
 	}
 }
 
 /**
+ *	Return line total including tax
+ *
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param 	Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide value (0 = no, 1 = yes, 2 = just special lines)
+ *  @return	void
+ */
+function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
+{
+    if ($object->lines[$i]->special_code == 3)
+    {
+        return $outputlangs->transnoentities("Option");
+    }
+    else
+    {
+        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        {
+        	$special_code = $object->lines[$i]->special_code;
+        	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+        	foreach($object->hooks as $hook)
+	    	{
+	    		if (method_exists($hook['modules'][$special_code],'pdf_getlinetotalwithtax')) return $hook['modules'][$special_code]->pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails);
+			}
+        }
+        else
+        {
+            if (empty($hidedetails) || $hidedetails > 1) return
+				price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100);
+        }
+    }
+}
+
+/**
  *	Return total quantity of products and/or services
  *
- *	@param		Object		$object				Object
- *	@param		string		$type				Type
- *  @param    	Translate	$outputlangs		Object langs for output
- *  @param		HookManager	$hookmanager		Hook manager instance
- * 	@return		void
+ *	@param	Object		$object				Object
+ *	@param	string		$type				Type
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ * 	@return	void
  */
 function pdf_getTotalQty($object,$type='',$outputlangs,$hookmanager=false)
 {
@@ -1181,21 +1273,350 @@ function pdf_getTotalQty($object,$type='',$outputlangs,$hookmanager=false)
 function pdf_getCurrencySymbol(&$pdf, $currency_code)
 {
 	switch ($currency_code) {
+		case "ALL":
+			$currency_sign = " ".$pdf->unichr(76).$pdf->unichr(101).$pdf->unichr(107);
+			break;
+		case "AFN":
+			$currency_sign = " ".$pdf->unichr(1547);
+			break;
+		case "ARS":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "AWG":
+			$currency_sign = " ".$pdf->unichr(402);
+			break;
+		case "AUD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "AZN":
+			$currency_sign = " ".$pdf->unichr(1084).$pdf->unichr(1072).$pdf->unichr(1085);
+			break;
+		case "BSD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "BBD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "BYR":
+			$currency_sign = " ".$pdf->unichr(112).$pdf->unichr(46);
+			break;
+		case "BZD":
+			$currency_sign = " ".$pdf->unichr(66).$pdf->unichr(90).$pdf->unichr(36);
+			break;
+		case "BMD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "BOB":
+			$currency_sign = " ".$pdf->unichr(36).$pdf->unichr(98);
+			break;
+		case "BAM":
+			$currency_sign = " ".$pdf->unichr(75).$pdf->unichr(77);
+			break;
+		case "BWP":
+			$currency_sign = " ".$pdf->unichr(80);
+			break;
+		case "BGN":
+			$currency_sign = " ".$pdf->unichr(1083).$pdf->unichr(1074);
+			break;
+		case "BRL":
+			$currency_sign = " ".$pdf->unichr(82).$pdf->unichr(36);
+			break;
+		case "BND":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "KHR":
+			$currency_sign = " ".$pdf->unichr(6107);
+			break;
+		case "CAD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "KYD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "CLP":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "CNY":
+			$currency_sign = " ".$pdf->unichr(165);
+			break;
+		case "COP":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "CRC":
+			$currency_sign = " ".$pdf->unichr(8353);
+			break;
+		case "HRK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(110);
+			break;
+		case "CUP":
+			$currency_sign = " ".$pdf->unichr(8369);
+			break;
+		case "CZK":
+			$currency_sign = " ".$pdf->unichr(75).$pdf->unichr(269);
+			break;
+		case "DKK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
+		case "DOP":
+			$currency_sign = " ".$pdf->unichr(82).$pdf->unichr(68).$pdf->unichr(36);
+			break;
+		case "XCD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "EGP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "SVC":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "EEK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
 		case "EUR":
 			$currency_sign = " ".$pdf->unichr(8364);
 			break;
-		case "USD":
-			$currency_sign = " ".utf8_encode('$');
+		case "FKP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "FJD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "GHC":
+			$currency_sign = " ".$pdf->unichr(162);
+			break;
+		case "GIP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "GTQ":
+			$currency_sign = " ".$pdf->unichr(81);
+			break;
+		case "GGP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "GYD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "HNL":
+			$currency_sign = " ".$pdf->unichr(76);
+			break;
+		case "HKD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "HUF":
+			$currency_sign = " ".$pdf->unichr(70).$pdf->unichr(116);
+			break;
+		case "ISK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
+		case "INR":
+			$currency_sign = " ".$pdf->unichr(8377);
+			break;
+		case "IDR":
+			$currency_sign = " ".$pdf->unichr(82).$pdf->unichr(112);
+			break;
+		case "IRR":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "IMP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "ILS":
+			$currency_sign = " ".$pdf->unichr(8362);
+			break;
+		case "JMD":
+			$currency_sign = " ".$pdf->unichr(74).$pdf->unichr(36);
+			break;
+		case "JPY":
+			$currency_sign = " ".$pdf->unichr(165);
+			break;
+		case "JEP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "KZT":
+			$currency_sign = " ".$pdf->unichr(1083).$pdf->unichr(1074);
+			break;
+		case "KPW":
+			$currency_sign = " ".$pdf->unichr(8361);
+			break;
+		case "KRW":
+			$currency_sign = " ".$pdf->unichr(8361);
+			break;
+		case "KGS":
+			$currency_sign = " ".$pdf->unichr(1083).$pdf->unichr(1074);
+			break;
+		case "LAK":
+			$currency_sign = " ".$pdf->unichr(8365);
+			break;
+		case "LVL":
+			$currency_sign = " ".$pdf->unichr(76).$pdf->unichr(115);
+			break;
+		case "LBP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "LRD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "LTL":
+			$currency_sign = " ".$pdf->unichr(76).$pdf->unichr(116);
+			break;
+		case "MKD":
+			$currency_sign = " ".$pdf->unichr(1076).$pdf->unichr(1077).$pdf->unichr(1085);
+			break;
+		case "MYR":
+			$currency_sign = " ".$pdf->unichr(82).$pdf->unichr(77);
+			break;
+		case "MUR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "MXN":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "MNT":
+			$currency_sign = " ".$pdf->unichr(8366);
+			break;
+		case "MZN":
+			$currency_sign = " ".$pdf->unichr(77).$pdf->unichr(84);
+			break;
+		case "NAD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "NPR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "ANG":
+			$currency_sign = " ".$pdf->unichr(402);
+			break;
+		case "NZD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "NIO":
+			$currency_sign = " ".$pdf->unichr(67).$pdf->unichr(36);
+			break;
+		case "NGN":
+			$currency_sign = " ".$pdf->unichr(8358);
+			break;
+		case "NOK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
+		case "OMR":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "PKR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "PAB":
+			$currency_sign = " ".$pdf->unichr(66).$pdf->unichr(47).$pdf->unichr(46);
+			break;
+		case "PYG":
+			$currency_sign = " ".$pdf->unichr(71).$pdf->unichr(115);
+			break;
+		case "PEN":
+			$currency_sign = " ".$pdf->unichr(83).$pdf->unichr(47).$pdf->unichr(46);
+			break;
+		case "PHP":
+			$currency_sign = " ".$pdf->unichr(8369);
+			break;
+		case "PLN":
+			$currency_sign = " ".$pdf->unichr(122).$pdf->unichr(322);
+			break;
+		case "QAR":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "RON":
+			$currency_sign = " ".$pdf->unichr(108).$pdf->unichr(101).$pdf->unichr(105);
+			break;
+		case "RUB":
+			$currency_sign = " ".$pdf->unichr(1088).$pdf->unichr(1091).$pdf->unichr(1073);
+			break;
+		case "SHP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "SAR":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "RSD":
+			$currency_sign = " ".$pdf->unichr(1044).$pdf->unichr(1080).$pdf->unichr(1085).$pdf->unichr(46);
+			break;
+		case "SCR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "SGD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "SBD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "SOS":
+			$currency_sign = " ".$pdf->unichr(83);
+			break;
+		case "ZAR":
+			$currency_sign = " ".$pdf->unichr(82);
+			break;
+		case "LKR":
+			$currency_sign = " ".$pdf->unichr(8360);
+			break;
+		case "SEK":
+			$currency_sign = " ".$pdf->unichr(107).$pdf->unichr(114);
+			break;
+		case "CHF":
+			$currency_sign = " ".$pdf->unichr(67).$pdf->unichr(72).$pdf->unichr(70);
+			break;
+		case "SRD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "SYP":
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "TWD":
+			$currency_sign = " ".$pdf->unichr(78).$pdf->unichr(84).$pdf->unichr(36);
+			break;
+		case "THB":
+			$currency_sign = " ".$pdf->unichr(3647);
+			break;
+		case "TTD":
+			$currency_sign = " ".$pdf->unichr(84).$pdf->unichr(84).$pdf->unichr(36);
+			break;
+		case "TRY":
+			$currency_sign = " ".$pdf->unichr(84).$pdf->unichr(76);
+			break;
+		case "TRL":
+			$currency_sign = " ".$pdf->unichr(8356);
+			break;
+		case "TVD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "UAH":
+			$currency_sign = " ".$pdf->unichr(8372);
 			break;
 		case "GBP":
-			$currency_sign = " ".utf8_encode('£');
+			$currency_sign = " ".$pdf->unichr(163);
+			break;
+		case "USD":
+			$currency_sign = " ".$pdf->unichr(36);
+			break;
+		case "UYU":
+			$currency_sign = " ".$pdf->unichr(36).$pdf->unichr(85);
+			break;
+		case "UZS":
+			$currency_sign = " ".$pdf->unichr(1083).$pdf->unichr(1074);
+			break;
+		case "VEF":
+			$currency_sign = " ".$pdf->unichr(66).$pdf->unichr(115);
+			break;
+		case "VND":
+			$currency_sign = " ".$pdf->unichr(8363);
+			break;
+		case "YER":
+			$currency_sign = " ".$pdf->unichr(65020);
+			break;
+		case "ZWD":
+			$currency_sign = " ".$pdf->unichr(90).$pdf->unichr(36);
 			break;
 		default:
-			$currency_sign = " ".$currency;
+			$currency_sign = " ".$currency_code;
 			break;
 	}
 	return $currency_sign;
 }
-
 
 ?>

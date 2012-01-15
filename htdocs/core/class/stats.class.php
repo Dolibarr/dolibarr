@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getNbByYear sql=".$sql);
+		dol_syslog(get_class($this)."::_getNbByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -136,16 +136,16 @@ abstract class Stats
 	}
 
 	/**
-	 * 	Return nb of elements, total amount and avg amount by year
+	 * 	Return nb of elements, total amount and avg amount each year
 	 *
 	 *	@param		sql		SQL request
-	 * 	@return		array
+	 * 	@return		array					Array with nb, total amount, average for each year
 	 */
 	function _getAllByYear($sql)
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getAllByYear sql=".$sql);
+		dol_syslog(get_class($this)."::_getAllByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -171,14 +171,15 @@ abstract class Stats
 	/**
 	 *     Renvoie le nombre de proposition par mois pour une annee donnee
 	 *
-     *     @param      year        Year
-     *     @param      sql         SQL
+     *     @param   int		$year       Year
+     *     @param   string	$sql        SQL
+     *     @return	array				Array of nb each month
 	 */
 	function _getNbByMonth($year, $sql)
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getNbByMonth sql=".$sql);
+		dol_syslog(get_class($this)."::_getNbByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -226,7 +227,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getAmountByMonth sql=".$sql);
+		dol_syslog(get_class($this)."::_getAmountByMonth sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -271,7 +272,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog("Stats::_getAverageByMonth sql=".$sql);
+		dol_syslog(get_class($this)."::_getAverageByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

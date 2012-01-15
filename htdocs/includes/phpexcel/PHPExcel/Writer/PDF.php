@@ -233,10 +233,10 @@ class PHPExcel_Writer_PDF extends PHPExcel_Writer_HTML implements PHPExcel_Write
 		$this->buildCSS(true);
 
 		// Generate HTML
-		$html = '';
-		//$html .= $this->generateHTMLHeader(false);
-		$html .= $this->generateSheetData();
-		//$html .= $this->generateHTMLFooter();
+		$form = '';
+		//$form .= $this->generateHTMLHeader(false);
+		$form .= $this->generateSheetData();
+		//$form .= $this->generateHTMLFooter();
 
 		// Default PDF paper size
 		$paperSize = 'LETTER';	//	Letter	(8.5 in. by 11 in.)
@@ -283,7 +283,7 @@ class PHPExcel_Writer_PDF extends PHPExcel_Writer_HTML implements PHPExcel_Write
 
 		// Set the appropriate font
 		$pdf->SetFont($this->_font);
-		$pdf->writeHTML($html);
+		$pdf->writeHTML($form);
 
 		// Document info
 		$pdf->SetTitle($this->_phpExcel->getProperties()->getTitle());

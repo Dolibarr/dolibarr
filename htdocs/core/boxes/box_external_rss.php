@@ -42,24 +42,27 @@ class box_external_rss extends ModeleBoxes {
     var $info_box_contents = array();
 
     /**
-     *  Constructeur de la classe
+     *  Constructor
+     * 
+     * 	@param	DoliDB	$db		Database handler
      */
-    function box_external_rss($DB,$param)
+    function box_external_rss($db,$param)
     {
         global $langs;
         $langs->load("boxes");
 
-		$this->db=$DB;
+		$this->db=$db;
 		$this->param=$param;
 
         $this->boxlabel=$langs->trans("BoxLastRssInfos");
     }
 
     /**
-     *  Load information for box into memory to show them later with this->showBox method.
-     *
-     *  @param      int		$max        	Max numbe rof records to load
-     *  @param		int		$cachedelay		Delay we accept for cache file
+	 *  Load data into info_box_contents array to show array later.
+	 *
+	 *  @param	int		$max        	Maximum number of records to load
+     *  @param	int		$cachedelay		Delay we accept for cache file
+     *  @return	void
      */
     function loadBox($max=5, $cachedelay=3600)
     {
@@ -79,7 +82,7 @@ class box_external_rss extends ModeleBoxes {
 		// Get RSS feed
         $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
 
-        $rssparser=new RssParser($db);
+        $rssparser=new RssParser($this->db);
 		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
 
 		// INFO on channel
@@ -152,6 +155,13 @@ class box_external_rss extends ModeleBoxes {
     }
 
 
+	/**
+	 *	Method to show box
+	 *
+	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$contents   Array with properties of box lines
+	 *	@return	void
+	 */
     function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);

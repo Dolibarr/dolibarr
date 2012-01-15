@@ -75,8 +75,9 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 * 	Execute actions
 	 *
-	 * 	@param		int		$socid 		Id of object (may be empty for creation)
-	 * 	@return		int					<0 if KO, >0 if OK
+	 *  @param	string	&$action    Type of action
+	 *  @param	int		$id			Id of object
+	 * 	@return	int					<0 if KO, >0 if OK
 	 */
 	function doActions(&$action, $id)
 	{
@@ -106,9 +107,9 @@ class ActionsCardCompany extends ActionsCardCommon
 
 		$this->tpl['title']		= $this->getTitle($action);
 
-		$this->tpl['profid1'] 	= $this->object->siren;
-		$this->tpl['profid2'] 	= $this->object->siret;
-		$this->tpl['profid3'] 	= $this->object->ape;
+		$this->tpl['profid1'] 	= $this->object->idprof1;
+		$this->tpl['profid2'] 	= $this->object->idprof2;
+		$this->tpl['profid3'] 	= $this->object->idprof3;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
 
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK))
@@ -127,15 +128,15 @@ class ActionsCardCompany extends ActionsCardCommon
 		{
 			for ($i=1; $i<=4; $i++)
 			{
-				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->pays_code);
-				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i,'idprof'.$i,$this->tpl['profid'.$i],$this->object->pays_code);
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->country_code);
+				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i,'idprof'.$i,$this->tpl['profid'.$i],$this->object->country_code);
 			}
 
 			// Type
 			$this->tpl['select_companytype']	= $form->selectarray("typent_id",$formcompany->typent_array(0), $this->object->typent_id);
 
 			// Juridical Status
-			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code,$this->object->pays_code);
+			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code,$this->object->country_code);
 
 			// Workforce
 			$this->tpl['select_workforce'] = $form->selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
@@ -171,7 +172,7 @@ class ActionsCardCompany extends ActionsCardCommon
 
 			for ($i=1; $i<=4; $i++)
 			{
-				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->pays_code);
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->country_code);
 				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i,$this->object);
 				$this->tpl['urlprofid'.$i]		= $this->object->id_prof_url($i,$this->object);
 			}

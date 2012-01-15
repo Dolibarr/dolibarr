@@ -553,16 +553,15 @@ if (count($listofextcals))
                     $event->id=$icalevent['UID'];
                     $event->icalname=$namecal;
                     $event->icalcolor=$colorcal;
-                    //$usertime=($_SESSION['dol_tz']*60*60)+($_SESSION['dol_dst']*60*60);
                     $usertime=0;    // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
                     $event->datep=$datestart+$usertime;
                     $event->datef=$dateend+$usertime;
                     $event->type_code="ICALEVENT";
-                    
+
                     if($icalevent['SUMMARY']) $event->libelle=$icalevent['SUMMARY'];
                     elseif($icalevent['DESCRIPTION']) $event->libelle=dol_nl2br($icalevent['DESCRIPTION'],1);
 					else $event->libelle = $langs->trans("ExtSiteNoLabel");
-                    
+
 					$event->date_start_in_calendar=$event->datep;
 
                     if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
@@ -654,13 +653,13 @@ if (empty($action) || $action == 'show_month')      // View by month
             {
                 $style='cal_other_month';
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-                show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxnbofchar, $newparam);
+                show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
             /* Show days of the current month */
             elseif(($tmpday <= $max_day_in_month))
             {
-                $curtime = dol_mktime (0, 0, 0, $month, $tmpday, $year);
+                $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
 
                 $style='cal_current_month';
                 $today=0;
@@ -715,7 +714,7 @@ elseif ($action == 'show_week') // View by week
         if(($tmpday <= $max_day_in_month))
         {
             // Show days of the current week
-            $curtime = dol_mktime (0, 0, 0, $month, $tmpday, $year);
+            $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
 
             $style='cal_current_month';
             $today=0;
@@ -756,7 +755,7 @@ else    // View by day
     if ($today) $style='cal_today';
 
     $timestamp=dol_mktime(12,0,0,$month,$day,$year);
-    $arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$day,$year));
+    $arraytimestamp=dol_getdate($timestamp);
     echo '<table width="100%" class="nocellnopadd">';
     echo ' <tr class="liste_titre">';
     echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
@@ -764,7 +763,7 @@ else    // View by day
     echo " <tr>\n";
     echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
     $maxnbofchar=80;
-    show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
+    show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
     echo "</td>\n";
     echo " </tr>\n";
     echo '</table>';
@@ -792,18 +791,20 @@ llxFooter();
 
 /**
  * Show event of a particular day
- * @param   $db              Database handler
- * @param   $day             Day
- * @param   $month           Month
- * @param   $year            Year
- * @param   $monthshown      Current month shown in calendar view
- * @param   $style           Style to use for this day
- * @param   $eventarray      Array of events
- * @param   $maxPrint        Nb of actions to show each day on month view (0 means non limit)
- * @param   $maxnbofchar     Nb of characters to show for event line
- * @param   $newparam        Parameters on current URL
- * @param   $showinfo        Add extended information (used by day view)
- * @param   $minheight       Minimum height for each event. 60px by default.
+ *
+ * @param	DoliDB	$db              Database handler
+ * @param   int		$day             Day
+ * @param   int		$month           Month
+ * @param   int		$year            Year
+ * @param   int		$monthshown      Current month shown in calendar view
+ * @param   string	$style           Style to use for this day
+ * @param   array	&$eventarray     Array of events
+ * @param   int		$maxPrint        Nb of actions to show each day on month view (0 means non limit)
+ * @param   int		$maxnbofchar     Nb of characters to show for event line
+ * @param   string	$newparam        Parameters on current URL
+ * @param   int		$showinfo        Add extended information (used by day view)
+ * @param   int		$minheight       Minimum height for each event. 60px by default.
+ * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxPrint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60)
 {
@@ -815,7 +816,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     if ($_GET["maxprint"] == 'on') $maxPrint=0;   // Force to remove limits
 
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
-    $curtime = dol_mktime (0, 0, 0, $month, $day, $year);
+    $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
     print '<table class="nobordernopadding" width="100%">';
     print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
     print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,17 +45,17 @@ class FactureStats extends Stats
 	/**
      * 	Constructor
      *
-	 * 	@param	DoliDB		$DB			Database handler
+	 * 	@param	DoliDB		$db			Database handler
 	 * 	@param 	int			$socid		Id third party
 	 * 	@param 	string		$mode	   	Option
      * 	@param	int			$userid    	Id user for filter
 	 * 	@return FactureStats
 	 */
-	function FactureStats($DB, $socid=0, $mode, $userid=0)
+	function FactureStats($db, $socid, $mode, $userid=0)
 	{
 		global $conf;
 
-		$this->db = $DB;
+		$this->db = $db;
         $this->socid = $socid;
         $this->userid = $userid;
 
@@ -85,6 +85,7 @@ class FactureStats extends Stats
 
 	/**
 	 * 	Renvoie le nombre de facture par annee
+	 *
 	 *	@return		array	Array of values
 	 */
 	function getNbByYear()
@@ -101,8 +102,9 @@ class FactureStats extends Stats
 
 	/**
 	 * 	Renvoie le nombre de facture par mois pour une annee donnee
-	 *	@param	year	Year to scan
-	 *	@return	array	Array of values
+	 *
+	 *	@param	int		$year	Year to scan
+	 *	@return	array			Array of values
 	 */
 	function getNbByMonth($year)
 	{
@@ -121,8 +123,9 @@ class FactureStats extends Stats
 
 	/**
 	 * 	Renvoie le montant de facture par mois pour une annee donnee
-	 *	@param	year	Year to scan
-	 *	@return	array	Array of values
+	 *
+	 *	@param	int		$year	Year to scan
+	 *	@return	array			Array of values
 	 */
 	function getAmountByMonth($year)
 	{
@@ -139,9 +142,10 @@ class FactureStats extends Stats
 	}
 
 	/**
-	 *	\brief	Return average amount
-	 *	\param	year	Year to scan
-	 *	\return	array	Array of values
+	 *	Return average amount
+	 *
+	 *	@param	int		$year	Year to scan
+	 *	@return	array			Array of values
 	 */
 	function getAverageByMonth($year)
 	{
@@ -156,8 +160,9 @@ class FactureStats extends Stats
 	}
 
 	/**
-	 *	\brief	Return nb, total and average
-	 *	\return	array	Array of values
+	 *	Return nb, total and average
+	 *
+	 *	@return	array	Array of values
 	 */
 	function getAllByYear()
 	{

@@ -172,10 +172,11 @@ function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($object,$outputlangs) > 0)
 		{
-			// on supprime l'image correspondant au preview
-			delivery_order_delete_preview($db, $object->id);
-
 			$outputlangs->charset_output=$sav_charset_output;
+
+			// we delete preview files
+        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			dol_delete_preview($object);
 			return 1;
 		}
 		else
@@ -188,38 +189,9 @@ function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		return 0;
 	}
 }
 
-
-function delivery_order_delete_preview($db, $deliveryid)
-{
-	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
-	$delivery = new Livraison($db,"",$deliveryid);
-	$delivery->fetch($deliveryid);
-	$client = new Societe($db);
-	$client->fetch($delivery->socid);
-
-	if ($conf->livraison->dir_output)
-	{
-		$deliveryref = dol_sanitizeFileName($delivery->ref);
-		$dir = $conf->livraison->dir_output . "/" . $deliveryref ;
-		$file = $dir . "/" . $deliveryref . ".pdf.png";
-
-		if ( file_exists( $file ) && is_writable( $file ) )
-		{
-			if ( ! dol_delete_file($file,1) )
-			{
-				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-				return 0;
-			}
-		}
-	}
-
-	return 1;
-}
 ?>

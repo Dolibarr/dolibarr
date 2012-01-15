@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011   	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,10 @@ require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 // If not defined, we select menu "home"
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
+
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('index'));
 
 
 /*
@@ -97,7 +102,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Informations").'</td></tr>';
+print '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
 print '<tr '.$bc[false].'>';
 print '<td nowrap="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
 print '<tr '.$bc[true].'>';
@@ -122,8 +127,8 @@ if ($user->societe_id == 0)
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("DolibarrStateBoard").'</td>';
-    print '<td align="right">&nbsp;</td>';
+    print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
+    print '<th class="liste_titre" align="right">&nbsp;</th>';
     print '</tr>';
 
     $var=true;
@@ -249,6 +254,11 @@ if ($user->societe_id == 0)
         }
     }
 
+    $object=(object) array();
+    $parameters=array();
+    $action='';
+    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
     print '</table>';
 }
 
@@ -265,12 +275,12 @@ $dashboardlines=array();
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("DolibarrWorkBoard").'</td>';
-print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("Late").'</td>';
-print '<td>&nbsp;</td>';
-print '<td width="20">&nbsp;</td>';
-if ($showweather) print '<td width="80">&nbsp;</td>';
+print '<th class="liste_titre"colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
+print '<th class="liste_titre"align="right">'.$langs->trans("Number").'</th>';
+print '<th class="liste_titre"align="right">'.$langs->trans("Late").'</th>';
+print '<th class="liste_titre">&nbsp;</th>';
+print '<th class="liste_titre"width="20">&nbsp;</th>';
+if ($showweather) print '<th class="liste_titre" width="80">&nbsp;</th>';
 print '</tr>';
 
 
@@ -539,7 +549,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
     $lockfile=DOL_DATA_ROOT.'/install.lock';
     if (! empty($lockfile) && ! file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install"))
     {
-        $langs->load("other");
+        $langs->load("errors");
         //if (! empty($message)) $message.='<br>';
         $message.=info_admin($langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
     }
@@ -548,7 +558,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
     if (is_writable($conffile))
     {
         $langs->load("errors");
-        $langs->load("other");
+        //$langs->load("other");
         //if (! empty($message)) $message.='<br>';
         $message.=info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
     }
@@ -561,10 +571,9 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
     }
 }
 
+llxFooter();
 
 $db->close();
-
-llxFooter();
 
 
 /**

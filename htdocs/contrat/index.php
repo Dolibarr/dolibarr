@@ -180,7 +180,7 @@ $var=true;
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
-    $dataseries[]=array('label'=>$staticcontratligne->LibStatut($status,1,($bool?1:0)),'values'=>array(0=>($nb[$status.$bool]?$nb[$status.$bool]:0)));
+    $dataseries[]=array('label'=>$staticcontratligne->LibStatut($status,1,($bool?1:0)),'data'=>($nb[$status.$bool]?(int) $nb[$status.$bool]:0));
     if (! $conf->use_javascript_ajax)
     {
         $var=!$var;

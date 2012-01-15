@@ -76,12 +76,14 @@ if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 		$product = new Product($db);
 		$result=$product->fetch($_GET["id"]);
 
-		$result=$product->correct_stock($user,
-		$_POST["id_entrepot"],
-		$_POST["nbpiece"],
-		$_POST["mouvement"],
-		$_POST["label"],
-		0);		// We do not change value of stock for a correction
+		$result=$product->correct_stock(
+    		$user,
+    		$_POST["id_entrepot"],
+    		$_POST["nbpiece"],
+    		$_POST["mouvement"],
+    		$_POST["label"],
+    		0
+		);		// We do not change value of stock for a correction
 
 		if ($result > 0)
 		{
@@ -113,20 +115,24 @@ if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 			//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
 			// Remove stock
-			$result1=$product->correct_stock($user,
-			$_POST["id_entrepot_source"],
-			$_POST["nbpiece"],
-			1,
-			$_POST["label"],
-			$pricesrc);
+			$result1=$product->correct_stock(
+    			$user,
+    			$_POST["id_entrepot_source"],
+    			$_POST["nbpiece"],
+    			1,
+    			$_POST["label"],
+    			$pricesrc
+			);
 
 			// Add stock
-			$result2=$product->correct_stock($user,
-			$_POST["id_entrepot_destination"],
-			$_POST["nbpiece"],
-			0,
-			$_POST["label"],
-			$pricedest);
+			$result2=$product->correct_stock(
+    			$user,
+    			$_POST["id_entrepot_destination"],
+    			$_POST["nbpiece"],
+    			0,
+    			$_POST["label"],
+    			$pricedest
+			);
 
 			if ($result1 >= 0 && $result2 >= 0)
 			{
@@ -167,7 +173,7 @@ if ($_GET["id"] || $_GET["ref"])
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
 
-		$html = new Form($db);
+		$form = new Form($db);
 
 		print($mesg);
 
@@ -176,7 +182,7 @@ if ($_GET["id"] || $_GET["ref"])
 		// Ref
 		print '<tr>';
 		print '<td width="30%">'.$langs->trans("Ref").'</td><td>';
-		print $html->showrefnav($product,'ref','',1,'ref');
+		print $form->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
 
@@ -277,13 +283,13 @@ if ($_GET["id"] || $_GET["ref"])
 		}
 
         // Stock
-        print '<tr><td>'.$html->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
-        print $html->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer);
+        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer);
         print '</td></tr>';
 
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";
-		$sql.= " FROM llx_stock_mouvement as m";
+		$sql.= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 		$sql.= " WHERE m.fk_product = '".$product->id."'";
 		$resqlbis = $db->query($sql);
 		if ($resqlbis)
@@ -327,7 +333,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
 		print '<td width="20%">';
-		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot','',1);
+		print $formproduct->selectWarehouses($_GET["dwid"],'id_entrepot','',1);
 		print '</td>';
 		print '<td width="20%">';
 		print '<select name="mouvement" class="flat">';
@@ -366,10 +372,10 @@ if ($_GET["id"] || $_GET["ref"])
 
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
-		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
+		print $formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
 		print '</td>';
 		print '<td width="20%">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
-		$formproduct->selectWarehouses('','id_entrepot_destination','',1);
+		print $formproduct->selectWarehouses('','id_entrepot_destination','',1);
 		print '</td>';
 		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td>';
 		print '</tr>';
@@ -403,7 +409,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<input type="hidden" name="action" value="create_stock">';
 		print '<table class="border" width="100%"><tr>';
 		print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%">';
-		$formproduct->selectWarehouses('','id_entrepot','',1);
+		print $formproduct->selectWarehouses('','id_entrepot','',1);
 		print '</td><td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
 		print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';

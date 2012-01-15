@@ -45,10 +45,12 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
+$choix=0;
 if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
+//if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into etape2.php page');
 
 // Init "forced values" to nothing. "forced values" are used after a Doliwamp install wizard.
 $useforcedwizard=false;
@@ -76,7 +78,7 @@ if ($action == "set")
 {
     print '<h3>'.$langs->trans("Database").'</h3>';
 
-    print '<table cellspacing="0" cellpadding="4" border="0" width="100%">';
+    print '<table cellspacing="0" style="padding: 4px 4px 4px 0px" border="0" width="100%">';
     $error=0;
 
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
@@ -123,11 +125,12 @@ if ($action == "set")
 
     $requestnb=0;
 
-    // To disable some code
-    $createtables=1;
-    $createkeys=1;
-    $createfunctions=1;
-    $createdata=1;
+    // To disable some code, so you can call step2 with url like
+    // http://localhost/dolibarrnew/install/etape2.php?action=set&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
+    $createtables=isset($_GET['createtables'])?GETPOST('createtables'):1;
+    $createkeys=isset($_GET['createkeys'])?GETPOST('createkeys'):1;
+    $createfunctions=isset($_GET['createfunctions'])?GETPOST('createfunction'):1;
+    $createdata=isset($_GET['createdata'])?GETPOST('createdata'):1;
 
 
     // To say sql requests are escaped for mysql so we need to unescape them
@@ -189,12 +192,14 @@ if ($action == "set")
                     $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
                 }
 
+                // Replace the prefix tables
+                if ($dolibarr_main_db_prefix != 'llx_')
+                {
+                	$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
+                }
+
                 //print "<tr><td>Creation de la table $name/td>";
                 $requestnb++;
-                if ($conf->file->character_set_client == "UTF-8")
-                {
-                    $buffer=utf8_encode($buffer);
-                }
 
                 dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
                 $resql=$db->query($buffer,0,'dml');
@@ -215,7 +220,7 @@ if ($action == "set")
                         print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
                         print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
                         print "\n</td>";
-                        print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
+                        print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
                         $error++;
                     }
                 }
@@ -224,7 +229,7 @@ if ($action == "set")
             {
                 print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
                 print "</td>";
-                print "<td>".$langs->trans("Error")." Failed to open file ".$dir.$file."</td></tr>";
+                print '<td><font class="error">'.$langs->trans("Error").' Failed to open file '.$dir.$file.'</td></tr>';
                 $error++;
                 dolibarr_install_syslog("Failed to open file ".$dir.$file,LOG_ERR);
             }
@@ -241,7 +246,7 @@ if ($action == "set")
         }
         else
         {
-            print "<tr><td>".$langs->trans("ErrorFailedToFindSomeFiles",$dir)."</td><td>".$langs->trans("Error")."</td></tr>";
+            print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles",$dir).'</td><td><font class="error">'.$langs->trans("Error").'</font></td></tr>';
             dolibarr_install_syslog("Failed to find files to create database in directory ".$dir,LOG_ERR);
         }
     }
@@ -330,12 +335,14 @@ if ($action == "set")
                     $buffer=trim($req);
                     if ($buffer)
                     {
+                    	// Replace the prefix tables
+                    	if ($dolibarr_main_db_prefix != 'llx_')
+                    	{
+                    		$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
+                    	}
+
                         //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
                         $requestnb++;
-                        if ($conf->file->character_set_client == "UTF-8")
-                        {
-                            $buffer=utf8_encode($buffer);
-                        }
 
                         dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
                         $resql=$db->query($buffer,0,'dml');
@@ -360,7 +367,7 @@ if ($action == "set")
                                 print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
                                 print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$db->lastqueryerror();
                                 print "\n</td>";
-                                print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
+                                print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
                                 $error++;
                             }
                         }
@@ -371,7 +378,7 @@ if ($action == "set")
             {
                 print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
                 print "</td>";
-                print "<td>".$langs->trans("Error")." Failed to open file ".$dir.$file."</td></tr>";
+                print '<td><font class="error">'.$langs->trans("Error")." Failed to open file ".$dir.$file."</font></td></tr>";
                 $error++;
                 dolibarr_install_syslog("Failed to open file ".$dir.$file,LOG_ERR);
             }
@@ -448,7 +455,7 @@ if ($action == "set")
                             print "<tr><td>".$langs->trans("FunctionsCreation");
                             print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
                             print "\n</td>";
-                            print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
+                            print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
                             $error++;
                         }
                     }
@@ -462,7 +469,7 @@ if ($action == "set")
             }
             else
             {
-                print "<td>".$langs->trans("Error")."</td></tr>";
+                print '<td><font class="error">'.$langs->trans("Error").'</font></td></tr>';
                 $ok = 1 ;
             }
 
@@ -491,8 +498,12 @@ if ($action == "set")
             {
                 if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
                 {
-                    $tablefound++;
-                    $tabledata[]=$file;
+                    //print 'x'.$file.'-'.$createdata.'<br>';
+                    if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i',$file))
+                    {
+                        $tablefound++;
+                        $tabledata[]=$file;
+                    }
                 }
             }
             closedir($handle);
@@ -533,16 +544,24 @@ if ($action == "set")
                 }
                 fclose($fp);
 
-                dolibarr_install_syslog("Found ".$linefound." records, defined ".count($arrayofrequests)." groups.",LOG_DEBUG);
+                dolibarr_install_syslog("Found ".$linefound." records, defined ".count($arrayofrequests)." group(s).",LOG_DEBUG);
 
-                // We loop on each requests
+                $okallfile=1;
+                $db->begin();
+
+                // We loop on each requests of file
                 foreach($arrayofrequests as $buffer)
                 {
+                	// Replace the prefix tables
+                	if ($dolibarr_main_db_prefix != 'llx_')
+                	{
+                		$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
+                	}
+
                     //dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-                    $resql=$db->query($buffer);
+                    $resql=$db->query($buffer,1);
                     if ($resql)
                     {
-                        $ok = 1;
                         //$db->free($resql);     // Not required as request we launch here does not return memory needs.
                     }
                     else
@@ -554,10 +573,14 @@ if ($action == "set")
                         else
                         {
                             $ok = 0;
-                            print $langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."<br>";
+                            $okallfile = 0;
+                            print '<font class="error">'.$langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."</font><br>";
                         }
                     }
                 }
+
+                if ($okallfile) $db->commit();
+                else $db->rollback();
             }
         }
 
@@ -568,16 +591,20 @@ if ($action == "set")
         }
         else
         {
-            print "<td>".$langs->trans("Error")."</td></tr>";
-            $ok = 1 ;
+            print '<td><font class="error">'.$langs->trans("Error").'</font></td></tr>';
+            $ok = 1;    // Data loading are not blocking errors
         }
     }
     print '</table>';
-
-    $db->close();
+}
+else
+{
+    print 'Parameter action=set not defined';
 }
 
 dolibarr_install_syslog("--- install/etape2.php end", LOG_INFO);
 
 pFooter(!$ok,$setuplang);
+
+$db->close();
 ?>

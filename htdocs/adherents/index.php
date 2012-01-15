@@ -154,34 +154,36 @@ if ($conf->use_javascript_ajax)
     $SommeD=0;
     $dataval=array();
     $datalabels=array();
+    $i=0;
     foreach ($AdherentType as $key => $adhtype)
     {
-        $datalabels[]=$adhtype->getNomUrl(0,dol_size(16));
-        $dataval['draft'][]=isset($MemberToValidate[$key])?$MemberToValidate[$key]:0;
-        $dataval['notuptodate'][]=isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0;
-        $dataval['uptodate'][]=isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0;
-        $dataval['resiliated'][]=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
+        $datalabels[]=array($i,$adhtype->getNomUrl(0,dol_size(16)));
+        $dataval['draft'][]=array($i,isset($MemberToValidate[$key])?$MemberToValidate[$key]:0);
+        $dataval['notuptodate'][]=array($i,isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0);
+        $dataval['uptodate'][]=array($i,isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0);
+        $dataval['resiliated'][]=array($i,isset($MembersResiliated[$key])?$MembersResiliated[$key]:0);
         $SommeA+=isset($MemberToValidate[$key])?$MemberToValidate[$key]:0;
         $SommeB+=isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0;
         $SommeC+=isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0;
         $SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
+        $i++;
     }
 
     /*
     $dataseries=array();
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'values'=> $dataval['draft']);
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'values'=> $dataval['notuptodate']);
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'values'=> $dataval['uptodate']);
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'values'=> $dataval['resiliated']);
+    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'data'=>(int) $dataval['draft']);
+    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'data'=>(int) $dataval['notuptodate']);
+    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'data'=>(int) $dataval['uptodate']);
+    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'data'=>(int) $dataval['resiliated']);
     $data=array('series'=>$dataseries,'seriestype'=>array('bar','bar','bar','bar'),'xlabel'=>$datalabels);
     dol_print_graph('stats2',300,180,$data,1,'barline');
     */
 
     $dataseries=array();
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'values'=>array(round($SommeB)));
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'values'=>array(round($SommeC)));
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'values'=>array(round($SommeD)));
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'values'=>array(round($SommeA)));
+    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'data'=>round($SommeB));
+    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'data'=>round($SommeC));
+    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'data'=>round($SommeD));
+    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'data'=>round($SommeA));
     $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,1,'pie',1);
     print '</td></tr>';

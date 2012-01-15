@@ -286,14 +286,15 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 /**
  *    	Create a thumbnail from an image file (Supported extensions are gif, jpg, png and bmp).
  *      If file is myfile.jpg, new file may be myfile_small.jpg
- *    	@param     file           	Path of source file to resize
- *    	@param     maxWidth       	Largeur maximum que dois faire la miniature (-1=unchanged, 160 by default)
- *    	@param     maxHeight      	Hauteur maximum que dois faire l'image (-1=unchanged, 120 by default)
- *    	@param     extName        	Extension to differenciate thumb file name ('_small', '_mini')
- *    	@param     quality        	Quality of compression (0=worst, 100=best)
- *      @param     outdir           Directory where to store thumb
- *      @param     targetformat     New format of target (1,2,3,4 or 0 to keep old format)
- *    	@return    string			Full path of thumb
+ *
+ *    	@param     string	$file           	Path of source file to resize
+ *    	@param     int		$maxWidth       	Largeur maximum que dois faire la miniature (-1=unchanged, 160 by default)
+ *    	@param     int		$maxHeight      	Hauteur maximum que dois faire l'image (-1=unchanged, 120 by default)
+ *    	@param     string	$extName        	Extension to differenciate thumb file name ('_small', '_mini')
+ *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
+ *      @param     string	$outdir           	Directory where to store thumb
+ *      @param     int		$targetformat     	New format of target (1,2,3,... or 0 to keep old format)
+ *    	@return    string						Full path of thumb or '' if it fails
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
 {
@@ -355,16 +356,19 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	$imgfonction='';
 	switch($infoImg[2])
 	{
-		case 1:	// IMG_GIF
+		case IMAGETYPE_GIF:	    // 1
 			$imgfonction = 'imagecreatefromgif';
 			break;
-		case 2:	// IMG_JPG
+		case IMAGETYPE_JPEG:    // 2
 			$imgfonction = 'imagecreatefromjpeg';
 			break;
-		case 3:	// IMG_PNG
+		case IMAGETYPE_PNG:	    // 3
 			$imgfonction = 'imagecreatefrompng';
 			break;
-		case 4:	// IMG_WBMP
+		case IMAGETYPE_BMP:	    // 6
+            // Not supported by PHP GD
+			break;
+		case IMAGETYPE_WBMP:	// 15
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
 	}
@@ -384,23 +388,32 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	// Initialisation des variables selon l'extension de l'image
 	switch($infoImg[2])
 	{
-		case 1:	// Gif
+		case IMAGETYPE_GIF:	    // 1
 			$img = imagecreatefromgif($fichier);
 			$extImg = '.gif'; // Extension de l'image
 			break;
-		case 2:	// Jpg
+		case IMAGETYPE_JPEG:    // 2
 			$img = imagecreatefromjpeg($fichier);
 			$extImg = '.jpg'; // Extension de l'image
 			break;
-		case 3:	// Png
+		case IMAGETYPE_PNG:	    // 3
 			$img = imagecreatefrompng($fichier);
 			$extImg = '.png';
 			break;
-		case 4:	// Bmp
+		case IMAGETYPE_BMP:	    // 6
+            // Not supported by PHP GD
+			$extImg = '.bmp';
+			break;
+		case IMAGETYPE_WBMP:	// 15
 			$img = imagecreatefromwbmp($fichier);
 			$extImg = '.bmp';
 			break;
 	}
+    if (! is_resource($img))
+    {
+        dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
+        return 0;
+    }
 
 	// Initialisation des dimensions de la vignette si elles sont superieures a l'original
 	if($maxWidth > $imgWidth){ $maxWidth = $imgWidth; }
@@ -426,7 +439,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
     if (empty($targetformat)) $targetformat=$infoImg[2];
 
 	// Create empty image
-	if ($targetformat == 1)
+	if ($targetformat == IMAGETYPE_GIF)
 	{
 		// Compatibilite image GIF
 		$imgThumb = imagecreate($thumbWidth, $thumbHeight);
@@ -451,25 +464,30 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	// Initialisation des variables selon l'extension de l'image
 	switch($targetformat)
 	{
-		case 1:	// Gif
+		case IMAGETYPE_GIF:	    // 1
 			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procede autrement pour le format GIF
 			imagecolortransparent($imgThumb,$trans_colour);
             $extImgTarget = '.gif';
             $newquality='NU';
             break;
-		case 2:	// Jpg
-			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+		case IMAGETYPE_JPEG:    // 2
+            $trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
             $extImgTarget = '.jpg';
             $newquality=$quality;
             break;
-		case 3:	// Png
+		case IMAGETYPE_PNG:	    // 3
 			imagealphablending($imgThumb,false); // Pour compatibilite sur certain systeme
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);	// Keep transparent channel
             $extImgTarget = '.png';
             $newquality=$quality-100;
             $newquality=round(abs($quality-100)*9/100);
             break;
-		case 4:	// Bmp
+		case IMAGETYPE_BMP:	    // 6
+            // Not supported by PHP GD
+            $extImgTarget = '.bmp';
+            $newquality='NU';
+            break;
+		case IMAGETYPE_WBMP:	// 15
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
             $extImgTarget = '.bmp';
             $newquality='NU';
@@ -492,16 +510,19 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	// Create image on disk
 	switch($targetformat)
 	{
-		case 1:	// Gif
+		case IMAGETYPE_GIF:	    // 1
 			imagegif($imgThumb, $imgThumbName);
 			break;
-		case 2:	// Jpg
+		case IMAGETYPE_JPEG:    // 2
 			imagejpeg($imgThumb, $imgThumbName, $newquality);
 			break;
-		case 3:	// Png
+		case IMAGETYPE_PNG:	    // 3
 			imagepng($imgThumb, $imgThumbName, $newquality);
 			break;
-		case 4:	// Bmp
+		case IMAGETYPE_BMP:	    // 6
+            // Not supported by PHP GD
+			break;
+		case IMAGETYPE_WBMP:    // 15
 			image2wmp($imgThumb, $imgThumbName);
 			break;
 	}
@@ -545,7 +566,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$imageColorPending = $imageDir . "therm_color_pending.png";
 	$imageColorIntent = $imageDir . "therm_color_intent.png";
 
-	$htmlThermTop = '
+	$formThermTop = '
         <!-- Thermometer Begin -->
         <table cellpadding="0" cellspacing="4" border="0">
         <tr><td>
@@ -557,10 +578,10 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
             <td>
               <table cellpadding="0" cellspacing="0" border="0">';
 
-	$htmlSection = '
+	$formSection = '
           <tr><td><img src="{image}" width="26" height="{height}" border="0"></td></tr>';
 
-	$htmlThermbottom = '
+	$formThermbottom = '
               </table>
             </td>
             <td><img src="' . $imageIndex . '" width="32" height="200" border="0"></td>
@@ -578,7 +599,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$legendaPending = "&euro; " . round($pendingValue);
 	$legendaIntent = "&euro; " . round($intentValue);
 	$legendaTotal = "&euro; " . round($actualValue + $pendingValue + $intentValue);
-	$htmlLegenda = '
+	$formLegenda = '
 
         <table cellpadding="0" cellspacing="0" border="0">
           <tr><td><img src="' . $imageColorActual . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><b>'.$langs->trans("Paid").':<br>' . $legendaActual . '</b></font></td></tr>
@@ -621,14 +642,14 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	// start writing the html (from bottom to top)
 
 	// bottom
-	$thermometer = $htmlThermbottom;
+	$thermometer = $formThermbottom;
 
 	// actual
 	$sectionHeight = round(($actualValue / $maximumValue) * $height);
 	$totalHeight = $totalHeight + $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
-		$section = $htmlSection;
+		$section = $formSection;
 		$section = str_replace("{image}", $imageMiddleActual, $section);
 		$section = str_replace("{height}", $sectionHeight, $section);
 		$thermometer = $section . $thermometer;
@@ -639,7 +660,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$totalHeight = $totalHeight + $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
-		$section = $htmlSection;
+		$section = $formSection;
 		$section = str_replace("{image}", $imageMiddlePending, $section);
 		$section = str_replace("{height}", $sectionHeight, $section);
 		$thermometer = $section . $thermometer;
@@ -650,7 +671,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$totalHeight = $totalHeight + $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
-		$section = $htmlSection;
+		$section = $formSection;
 		$section = str_replace("{image}", $imageMiddleIntent, $section);
 		$section = str_replace("{height}", $sectionHeight, $section);
 		$thermometer = $section . $thermometer;
@@ -660,16 +681,16 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$sectionHeight = $height- $totalHeight;
 	if ( $sectionHeight > 0 )
 	{
-		$section = $htmlSection;
+		$section = $formSection;
 		$section = str_replace("{image}", $imageMiddleGoal, $section);
 		$section = str_replace("{height}", $sectionHeight, $section);
 		$thermometer = $section . $thermometer;
 	}
 
 	// top
-	$thermometer = $htmlThermTop . $thermometer;
+	$thermometer = $formThermTop . $thermometer;
 
-	return $thermometer . $htmlLegenda;
+	return $thermometer . $formLegenda;
 }
 
 ?>

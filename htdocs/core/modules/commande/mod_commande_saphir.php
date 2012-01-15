@@ -48,7 +48,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 		$langs->load("bills");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -57,7 +57,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Order"),$langs->transnoentities("Order"));

@@ -41,12 +41,11 @@ class Promotion
 	/**
 	 * 	Constructor
 	 *
-	 * 	@param		DoliDB	$DB		Database handler
+	 * 	@param		DoliDB		$db		Database handler
 	 */
-	function Promotion($DB)
+	function Promotion($db)
 	{
-		$this->db = $DB;
-		$this->id = $id;
+		$this->db = $db;
 	}
 
 	/**

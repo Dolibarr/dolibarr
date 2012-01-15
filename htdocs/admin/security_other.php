@@ -210,8 +210,8 @@ if (function_exists("imagecreatefrompng"))
 }
 else
 {
-    $html = new Form($db);
-    $desc = $html->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
+    $form = new Form($db);
+    $desc = $form->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
     print $desc;
 }
 print "</td>";
@@ -344,7 +344,7 @@ $formfile=new FormFile($db);
 $formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs->trans("FormToTestFileUploadForm"),0,0,1);
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

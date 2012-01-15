@@ -70,8 +70,12 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 /**
  * Show header for new member
  *
- * @param 	string		$title
- * @param 	string		$head
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	array  		$arrayofjs			Array of complementary js files
+ * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
 function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
@@ -228,8 +232,8 @@ if ($action == 'add')
         }
         $adh->photo       = $_POST["photo"];
         $adh->note        = $_POST["note"];
-        $adh->country_id  = $_POST["pays_id"];
-        $adh->pays_id     = $_POST["pays_id"];    // TODO deprecated
+        $adh->country_id  = $_POST["country_id"];
+        $adh->pays_id     = $_POST["country_id"];    // TODO deprecated
         $adh->state_id    = $_POST["state_id"];
         $adh->typeid      = $_POST["type"];
         $adh->note        = $_POST["comment"];
@@ -314,7 +318,7 @@ if ($action == 'added')
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
 $extrafields = new ExtraFields($db);
@@ -349,7 +353,7 @@ jQuery(document).ready(function () {
         jQuery("#morphy").click(function() {
             initmorphy();
         });
-        jQuery("#selectpays_id").change(function() {
+        jQuery("#selectcountry_id").change(function() {
            document.newmember.action.value="create";
            document.newmember.submit();
         });
@@ -373,7 +377,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
     $isempty=1;
     if (count($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
     print '<tr><td width="15%">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td width="35%">';
-    print $html->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
+    print $form->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
     print '</td></tr>'."\n";
 }
 else
@@ -388,7 +392,7 @@ $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
     print '<tr class="morphy"><td>'.$langs->trans("MorPhy").' <FONT COLOR="red">*</FONT></td><td>'."\n";
-    print $html->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
+    print $form->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
 else
@@ -410,33 +414,33 @@ print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
-print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town','selectpays_id','departement_id'), 6, 1);
+print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town','selectcountry_id','departement_id'), 6, 1);
 print ' / ';
-print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode','selectpays_id','departement_id'), 0, 1);
+print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode','selectcountry_id','departement_id'), 0, 1);
 print '</td></tr>';
 // Country
 print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
-$pays_id=GETPOST('pays_id');
-if (! $pays_id && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $pays_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
-if (! $pays_id && ! empty($conf->geoipmaxmind->enabled))
+$country_id=GETPOST('country_id');
+if (! $country_id && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $country_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
+if (! $country_id && ! empty($conf->geoipmaxmind->enabled))
 {
-    $pays_code=dol_user_country();
-    //print $pays_code;
-    if ($pays_code)
+    $country_code=dol_user_country();
+    //print $country_code;
+    if ($country_code)
     {
-        $new_pays_id=getCountry($pays_code,3,$db,$langs);
-        //print 'xxx'.$pays_code.' - '.$new_pays_id;
-        if ($new_pays_id) $pays_id=$new_pays_id;
+        $new_pays_id=getCountry($country_code,3,$db,$langs);
+        //print 'xxx'.$country_code.' - '.$new_pays_id;
+        if ($new_pays_id) $country_id=$new_pays_id;
     }
 }
-$pays_code=getCountry($pays_id,2,$db,$langs);
-print $html->select_country($pays_id,'pays_id');
+$country_code=getCountry($country_id,2,$db,$langs);
+print $form->select_country($country_id,'pays_id');
 print '</td></tr>';
 // State
 if (empty($conf->global->SOCIETE_DISABLE_STATE))
 {
     print '<tr><td>'.$langs->trans('State').'</td><td>';
-    if ($pays_code) print $formcompany->select_state(GETPOST("departement_id"),$pays_code);
+    if ($country_code) print $formcompany->select_state(GETPOST("departement_id"),$country_code);
     else print '';
     print '</td></tr>';
 }
@@ -451,7 +455,7 @@ if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 }
 // Birthday
 print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
-print $html->select_date($birthday,'birth',0,0,1,"newmember");
+print $form->select_date($birthday,'birth',0,0,1,"newmember");
 print '</td></tr>'."\n";
 // Photo
 print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
@@ -462,7 +466,7 @@ foreach($extrafields->attribute_label as $key=>$value)
 {
     print "<tr><td>".$value."</td><td>";
     print $extrafields->showInputField($key,GETPOST('options_'.$key));
-    print "</td></tr>"."\n";
+    print "</td></tr>\n";
 }
 // Comments
 print '<tr>';
@@ -475,13 +479,12 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
 {
     $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','400'=>'<= 1 500 000','750'=>'<= 3 000 000','1500'=>'<= 5 000 000','2000'=>'5 000 000+');
     print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <FONT COLOR="red">*</FONT></td><td>';
-    print $html->select_array('budget', $arraybudget, GETPOST('budget'), 1);
+    print $form->selectarray('budget', $arraybudget, GETPOST('budget'), 1);
     print ' € or $';
 
     print '<script type="text/javascript">
     jQuery(document).ready(function () {
         initturnover();
-        jQuery(".morphy").hide();
         jQuery("#morphy").click(function() {
             initturnover();
         });
@@ -489,13 +492,13 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
                 if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
         });
-        jQuery("#type").change(function() {
+        /*jQuery("#type").change(function() {
             if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'mor\'); }
             if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); }
             if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); }
             if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); }
             initturnover();
-        });
+        });*/
         function initturnover() {
             if (jQuery("#morphy").val()==\'phy\') {
                 jQuery(".amount").val(20);
@@ -534,7 +537,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
         print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled="disabled" size="6" value="'.$amount.'">';
         print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }
-    print ' '.$langs->trans("Currency".$conf->monnaie);
+    print ' '.$langs->trans("Currency".$conf->currency);
     print '</td></tr>';
 }
 print "</table>\n";

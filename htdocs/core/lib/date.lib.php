@@ -62,6 +62,23 @@ function get_tz_array()
 
 
 /**
+ * Return server timezone
+ *
+ * @return string	TimeZone
+ */
+function getCurrentTimeZone()
+{
+    // Method 1
+    //$tzstring=date_default_timezone_get(); // Then convert into tz
+
+    // Method 2
+    $tmp=dol_mktime(0,0,0,1,1,1970);
+    $tz=($tmp<0?'+':'-').sprintf("%02d",abs($tmp/3600));
+    return $tz;
+}
+
+
+/**
  *  Add a delay to a date
  *
  *  @param      timestamp	$time               Date timestamp (or string with format YYYY-MM-DD)

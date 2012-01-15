@@ -26,18 +26,18 @@ require("../../main.inc.php");
 $langs->load("admin");
 $langs->load("other");
 
-if (! $user->admin)
-  accessforbidden();
+if (! $user->admin) accessforbidden();
 
 
 /*
  * View
  */
 
-llxHeader('','','EN:Restores|FR:Restaurations|ES:Restauraciones');
+$help_url='EN:Restores|FR:Restaurations|ES:Restauraciones';
+llxHeader('','',$help_url);
 
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#mysql_options").<?php echo GETPOST('radio_dump')=='mysql_options'?'show()':'hide()'; ?>;
 	jQuery("#postgresql_options").<?php echo GETPOST('radio_dump')=='postgresql_options'?'show()':'hide()'; ?>;
@@ -58,6 +58,8 @@ print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 
+$label=getStaticMember($db, 'label');
+
 ?>
 
 <fieldset id="fieldsetexport">
@@ -69,27 +71,27 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 <fieldset id="exportoptions">
 	<legend><?php echo $langs->trans("ImportMethod"); ?></legend>
     <?php
-    if ($db->label == 'MySQL')
+    if ($label == 'MySQL')
     {
     ?>
     <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"	<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?> />
+        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?> />
         <label for="radio_dump_mysql">MySQL (mysql)</label>
     </div>
     <?php
     }
-    else if ($db->label == 'PostgreSQL')
+    else if ($label == 'PostgreSQL')
     {
     ?>
     <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_postgresql" <?php echo ($_GET["radio_dump"]=='postgresql_options'?' checked':''); ?> />
+        <input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($_GET["radio_dump"]=='postgresql_options'?' checked':''); ?> />
         <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore)</label>
     </div>
     <?php
     }
     else
     {
-        print 'No method available with database '.$db->label;
+        print 'No method available with database '.$label;
     }
     ?>
 </fieldset>
@@ -101,7 +103,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 
 <div id="div_container_sub_exportoptions">
 <?php
-if ($db->label == 'MySQL')
+if ($label == 'MySQL')
 {
 ?>
 	<fieldset id="mysql_options">
@@ -135,7 +137,7 @@ if ($db->label == 'MySQL')
     </fieldset>
 <?php
 }
-else if ($db->label == 'PostgreSQL')
+else if ($label == 'PostgreSQL')
 {
 ?>
     <fieldset id="postgresql_options">
@@ -180,8 +182,7 @@ else if ($db->label == 'PostgreSQL')
 </fieldset>
 
 <?php
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>

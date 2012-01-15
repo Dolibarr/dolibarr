@@ -7,6 +7,9 @@
 
     <rule ref="Generic.CodeAnalysis.EmptyStatement" />
  
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
+		<severity>0</severity>
+	</rule>
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowedWarning">
 		<severity>0</severity>
 	</rule>
@@ -78,13 +81,13 @@
     <!-- Tweaks to metrics -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
-            <property name="complexity" value="25" />
+            <property name="complexity" value="40" />
             <property name="absoluteComplexity" value="100" />
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">
         <properties>
-            <property name="nestingLevel" value="6" />
+            <property name="nestingLevel" value="9" />
             <property name="absoluteNestingLevel" value="50" />
         </properties>
     </rule>
@@ -205,10 +208,15 @@
 
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
 
-	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace" />
+	<!-- Need to be commented to be disabled
+	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace">
+        <severity>0</severity>
+    </rule>
+	
     <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
         <severity>0</severity>
     </rule>
+	-->
     
     <!-- Already found as a Generic rule -->
 	<!-- <rule ref="PEAR.WhiteSpace.ScopeIndent" /> -->

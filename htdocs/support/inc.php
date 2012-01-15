@@ -167,9 +167,10 @@ $bc[true]=' class="bg2"';
 
 
 /**
- *	\brief		Load conf file (file must exists)
- *	\param		dolibarr_main_document_root		Root directory of Dolibarr bin files
- *	\return		int								<0 if KO, >0 if OK
+ *	Load conf file (file must exists)
+ *
+ *	@param	string	$dolibarr_main_document_root		Root directory of Dolibarr bin files
+ *	@return	int											<0 if KO, >0 if OK
  */
 function conf($dolibarr_main_document_root)
 {
@@ -193,7 +194,6 @@ function conf($dolibarr_main_document_root)
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($conf->file->character_set_client))     	  $conf->file->character_set_client="UTF-8";
 	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
 
 	return 1;
@@ -201,7 +201,12 @@ function conf($dolibarr_main_document_root)
 
 
 /**
- *	\brief		Show HTML header
+ *	Show HTML header
+ *
+ *	@param	string	$soutitre	Title
+ *	@param	string	$next		Next
+ *	@param	string	$action		Action
+ *	@return	void
  */
 function pHeader($soutitre,$next,$action='none')
 {
@@ -236,10 +241,11 @@ function pHeader($soutitre,$next,$action='none')
 }
 
 /**
- * Enter description here...
+ * Show footer
  *
- * @param   $nonext
- * @param   $setuplang
+ * @param	string	$nonext			No button "Next step"
+ * @param   string	$setuplang		Language code
+ * @return	void
  */
 function pFooter($nonext=0,$setuplang='')
 {
@@ -254,8 +260,8 @@ function pFooter($nonext=0,$setuplang='')
 /**
  * Output a text into a log file
  *
- * @param   $message
- * @param   $level
+ * @param	string	$message		Message to show
+ * @param   string	$level			Log level
  */
 function dolibarr_support_syslog($message, $level=LOG_DEBUG)
 {

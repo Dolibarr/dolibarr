@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +27,8 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
 
-$action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["action"]:"");
-$id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
+$id = GETPOST('id','int');
+$action = GETPOST('action');
 
 $langs->load("companies");
 $langs->load("members");
@@ -38,18 +39,14 @@ $fuser = new User($db);
 $fuser->fetch($id);
 
 // If user is not user read and no permission to read other users, we stop
-if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
-  accessforbidden();
+if (($fuser->id != $user->id) && (! $user->rights->user->user->lire)) accessforbidden();
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_GET["id"])	// A user can always read its own card
-{
-	$feature2='';
-}
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+if ($user->id == $id) $feature2=''; // A user can always read its own card
+$result = restrictedArea($user, 'user', $id, '&user', $feature2);
 
 
 
@@ -57,7 +54,7 @@ $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
+if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
 {
 	$db->begin();
 
@@ -81,7 +78,7 @@ if ($_POST["action"] == 'update' && $user->rights->user->user->creer && ! $_POST
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($id)
 {
@@ -100,7 +97,7 @@ if ($id)
     // Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
-	print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+	print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 	print '</td>';
 	print '</tr>';
 
@@ -123,25 +120,26 @@ if ($id)
 		print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
 	    // Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER,10,80);
+		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
 		$doleditor->Create();
 	}
 	else
 	{
-		print dol_textishtml($fuser->note)?$fuser->note:dol_nl2br($fuser->note,1,true);
+		print dol_htmlentitiesbr($fuser->note);
 	}
 	print "</td></tr>";
 
+    print "</table>";
+
 	if ($action == 'edit')
 	{
-		print '<tr><td colspan="4" align="center">';
+		print '<center><br>';
 		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
 		print '&nbsp; &nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
+		print '</center>';
 	}
 
-    print "</table>";
 	print "</form>\n";
 
 

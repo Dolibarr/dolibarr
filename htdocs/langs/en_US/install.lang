@@ -51,6 +51,7 @@ ServerAddressDescription=Name or ip address for database server, usually 'localh
 ServerPortDescription=Database server port. Keep empty if unknown.
 DatabaseServer=Database server
 DatabaseName=Database name
+DatabasePrefix=Database prefix table
 Login=Login
 AdminLogin=Login for Dolibarr database owner.
 Password=Password
@@ -232,3 +233,6 @@ MigrationProjectTaskTime=Update time spent in seconds
 
 # Migration Acctioncom
 MigrationActioncommElement=Update data on actions
+
+# Migration payment mode
+MigrationPaymentMode=Data migration for payment mode

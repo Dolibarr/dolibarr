@@ -95,12 +95,12 @@ function delivery_prepare_head($object)
  * @param   string		$origin			Origin
  * @param	int			$origin_id		Origin id
  * @param	string		$filter			Filter
- * @return
+ * @return	int							<0 if KO, >0 if OK
  */
 function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 {
 	global $db, $conf, $langs, $bc;
-	global $html;
+	global $form;
 
 	$product_static=new Product($db);
 	$expedition=new Expedition($db);
@@ -131,8 +131,6 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 		if ($num)
 		{
-			if ($somethingshown) print '<br>';
-
 			if ($filter) print_titre($langs->trans("OtherSendingsForSameOrder"));
 			else print_titre($langs->trans("SendingsAndReceivingForSameOrder"));
 
@@ -175,7 +173,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$objp->product;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
-					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($objp->date_start,$objp->date_end);
@@ -191,7 +189,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				else
 				{
 					print "<td>";
-					if ($type==1) $text = img_object($langs->trans('Service'),'service');
+					if ($objp->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
 					print $text.' '.nl2br($objp->description);
 

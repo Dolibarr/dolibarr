@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,9 @@ $langs->load('projects');
 $langs->load('propal');
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'');
+$result = restrictedArea($user, 'societe', $socid, '&societe');
 
 
 /*
@@ -116,14 +116,14 @@ if ($socid > 0)
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	$img=picto_from_langcode($societe->pays_code);
-	if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->pays,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$societe->pays;
+	$img=picto_from_langcode($societe->country_code);
+	if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->country,$langs->trans("CountryIsInEEC"),1,0);
+	else print ($img?$img.' ':'').$societe->country;
 	print '</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
-	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->tel,$societe->country_code,0,$societe->id,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->fax,$societe->country_code).'</td></tr>';
 
 	// EMail
 	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
@@ -226,7 +226,6 @@ if ($socid > 0)
 	{
 		$propal_static=new Propal($db);
 
-		print '<table class="noborder" width="100%">';
 		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql.= " p.datep as dp, p.fin_validite as datelimite,";
 		$sql.= " c.label as statut, c.id as statutid";
@@ -248,7 +247,8 @@ if ($socid > 0)
 
 			if ($num > 0)
 			{
-    			print '<tr class="liste_titre">';
+		        print '<table class="noborder" width="100%">';
+			    print '<tr class="liste_titre">';
     			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
     			print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table></td>';
@@ -273,13 +273,14 @@ if ($socid > 0)
 				$i++;
 			}
 			$db->free();
+
+			if ($num > 0) print "</table>";
 		}
 		else
 		{
 			dol_print_error($db);
 		}
 
-		print "</table>";
 	}
 
 	print "</td></tr>";

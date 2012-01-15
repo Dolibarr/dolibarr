@@ -50,7 +50,7 @@ if ($action == 'updateMask')
     $maskcredit=GETPOST("maskcredit");
     if ($maskconstinvoice) $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
     if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -127,7 +127,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
     $type='invoice';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -158,7 +158,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
     $db->begin();
 
     if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -206,10 +206,10 @@ if ($action == 'setribchq')
 {
 	$rib = GETPOST("rib");
 	$chq = GETPOST("chq");
-	
+
 	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib,'chaine',0,'',$conf->entity);
     $res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$chq,'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -225,9 +225,9 @@ if ($action == 'setribchq')
 if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("FACTURE_DRAFT_WATERMARK");
-	
+
     $res = dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -243,9 +243,9 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 if ($action == 'set_FACTURE_FREE_TEXT')
 {
 	$free = GETPOST("FACTURE_FREE_TEXT");
-	
+
     $res = dolibarr_set_const($db, "FACTURE_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -261,9 +261,9 @@ if ($action == 'set_FACTURE_FREE_TEXT')
 if ($action == 'setforcedate')
 {
 	$forcedate = GETPOST("forcedate");
-	
+
     $res = dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$forcedate,'chaine',0,'',$conf->entity);
-    
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -283,7 +283,7 @@ if ($action == 'setforcedate')
 
 llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -355,7 +355,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
                             // Show example of numbering module
                             print '<td nowrap="nowrap">';
                             $tmp=$module->getExample();
-                            if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                            if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+                            elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                             else print $tmp;
                             print '</td>'."\n";
 
@@ -408,7 +409,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
                             }
 
                             print '<td align="center">';
-                            print $html->textwithpicto('',$htmltooltip,1,0);
+                            print $form->textwithpicto('',$htmltooltip,1,0);
 
                             if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
                             {
@@ -562,7 +563,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 
 
 	                            print '<td align="center">';
-	                            print $html->textwithpicto('',$htmltooltip,1,0);
+	                            print $form->textwithpicto('',$htmltooltip,1,0);
 	                            print '</td>';
 
 	                            // Preview
@@ -707,7 +708,7 @@ print '<input type="hidden" name="action" value="setforcedate" />';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
-print $html->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
+print $form->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

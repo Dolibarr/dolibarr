@@ -48,7 +48,7 @@ class Menubase
     var $titre;
     var $langs;
     var $level;
-    var $leftmenu;		//<! 0=Left menu in pre.inc.php files must not be overwrite by database menu, 1=Must be
+    var $leftmenu;		//<! Not used
     var $perms;
     var $enabled;
     var $user;
@@ -58,13 +58,13 @@ class Menubase
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB 		    Database handler
+	 *  @param		DoliDB		$db 		    Database handler
      *  @param     	string		$menu_handler	Menu handler
      *  @param     	string		$type			Type
      */
-    function Menubase($DB,$menu_handler='',$type='')
+    function Menubase($db,$menu_handler='',$type='')
     {
-        $this->db = $DB;
+        $this->db = $db;
         $this->menu_handler = $menu_handler;
         $this->type = $type;
         return 1;
@@ -87,7 +87,7 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
-        $this->fk_menu=trim($this->fk_menu);
+        $this->fk_menu=trim($this->fk_menu);          // If -1, fk_mainmenu and fk_leftmenu must be defined
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
         $this->position=trim($this->position);
@@ -101,14 +101,26 @@ class Menubase
         if (! $this->level) $this->level=0;
 
         // Check parameters
-        // Put here code to add control on parameters values
+        if (empty($this->menu_handler)) return -1;
 
-        // FIXME
-        // Get the max rowid in llx_menu and use it as rowid in insert because postgresql
+        // For PGSQL, we must first found the max rowid and use it as rowid in insert because postgresql
         // may use an already used value because its internal cursor does not increase when we do
         // an insert with a forced id.
-        // Two solution: Disable menu handler using database when database is postgresql or update counter when
-        // enabling such menus.
+        if (in_array($this->db->type,array('pgsql')))
+        {
+			$sql = "SELECT MAX(rowid) as maxrowid FROM ".MAIN_DB_PREFIX."menu";
+        	$resqlrowid=$this->db->query($sql);
+        	if ($resqlrowid)
+        	{
+        		$obj=$this->db->fetch_object($resqlrowid);
+        		$maxrowid=$obj->maxrowid;
+
+        		$sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
+	        	$resqlrowidset=$this->db->query($sql);
+	     		if (! $resqlrowidset) dol_print_error($this->db);
+        	}
+        	else dol_print_error($this->db);
+        }
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
@@ -134,34 +146,34 @@ class Menubase
         $sql.= " '".$conf->entity."',";
         $sql.= " '".$this->module."',";
         $sql.= " '".$this->type."',";
-        $sql.= " '".$this->mainmenu."',";
-        $sql.= " '".$this->leftmenu."',";
+        $sql.= " ".($this->mainmenu?"'".$this->mainmenu."'":"''").",";    // Can't be null
+        $sql.= " ".($this->leftmenu?"'".$this->leftmenu."'":"null").",";
         $sql.= " '".$this->fk_menu."',";
         $sql.= " ".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
         $sql.= " ".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
         $sql.= " '".$this->position."',";
-        $sql.= " '".$this->url."',";
-        $sql.= " '".$this->target."',";
-        $sql.= " '".$this->titre."',";
-        $sql.= " '".$this->langs."',";
-        $sql.= " '".$this->perms."',";
-        $sql.= " '".$this->enabled."',";
+        $sql.= " '".$this->db->escape($this->url)."',";
+        $sql.= " '".$this->db->escape($this->target)."',";
+        $sql.= " '".$this->db->escape($this->titre)."',";
+        $sql.= " '".$this->db->escape($this->langs)."',";
+        $sql.= " '".$this->db->escape($this->perms)."',";
+        $sql.= " '".$this->db->escape($this->enabled)."',";
         $sql.= " '".$this->user."'";
         $sql.= ")";
 
-        dol_syslog("Menubase::create sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
-            dol_syslog("Menubase::create record added has rowid=".$this->id, LOG_DEBUG);
+            dol_syslog(get_class($this)."::create record added has rowid=".$this->id, LOG_DEBUG);
 
             return $this->id;
         }
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Menubase::create ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -219,12 +231,12 @@ class Menubase
         $sql.= " usertype='".$this->user."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog("Menubase::update sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Menubase::update ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -232,11 +244,12 @@ class Menubase
     }
 
 
-    /*
-     *    \brief      Load object in memory from database
-     *    \param      id          id object
-     *    \param      user        User that load
-     *    \return     int         <0 if KO, >0 if OK
+    /**
+     *   Load object in memory from database
+     *
+     *   @param		int		$id         Id object
+     *   @param		User    $user       User that load
+     *   @return	int         		<0 if KO, >0 if OK
      */
     function fetch($id, $user=0)
     {
@@ -263,7 +276,7 @@ class Menubase
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-        dol_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -297,7 +310,7 @@ class Menubase
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Menubase::fetch ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -316,12 +329,12 @@ class Menubase
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog("Menubase::delete sql=".$sql);
+        dol_syslog(get_class($this)."::delete sql=".$sql);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Menubase::delete ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -360,93 +373,35 @@ class Menubase
 
 
     /**
-     *  Complete this->newmenu with menu entry found in $tab
+     *	Load tabMenu array with top menu entries found into database.
      *
-     *  @param  array	$tab			Tab array
-     *  @param  int		$pere			Id of parent
-     *  @param  int		$rang			Rang
-     *  @param  string	$myleftmenu     Value for left that defined leftmenu
-     *  @return	void
-     */
-    function recur($tab, $pere, $rang, $myleftmenu)
-    {
-        global $leftmenu;	// To be exported in dol_eval function
-
-        //print "xx".$pere;
-        $leftmenu = $myleftmenu;
-
-        //ballayage du tableau
-        $num = count($tab);
-        for ($x = 0; $x < $num; $x++)
-        {
-            //si un element a pour pere : $pere
-            if ($tab[$x][1] == $pere)
-            {
-                if ($tab[$x][7])
-                {
-                    $leftmenuConstraint = true;
-                    if ($tab[$x][6])
-                    {
-                        $leftmenuConstraint = verifCond($tab[$x][6]);
-                    }
-
-                    if ($leftmenuConstraint)
-                    {
-                        //print 'name='.$tab[$x][3].' pere='.$pere." ".$tab[$x][6];
-
-                        $this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5], $tab[$x][8]);
-                        $this->recur($tab, $tab[$x][0], $rang +1, $lelfmenu);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     *	Load tabMenu array
-     *
-     * 	@param	string	$mainmenu		Value for mainmenu that defined top menu
-     * 	@param	string	$myleftmenu		Left menu name
-     * 	@param	int		$type_user		0=Internal,1=External,2=All
-     * 	@param	string	$menu_handler	Name of menu_handler used (auguria, eldy...)
-     * 	@param  array	&$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+     * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (always '')
+     * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
+     * 	@param	int		$type_user		Filter on type of user (0=Internal,1=External,2=All)
+     * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
+     * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return	array					Return array with menu entries for top menu
      */
-    function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
+    function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf;
-        global $leftmenu,$rights;	// To export to dol_eval function
+        global $mainmenu,$leftmenu;	// To export to dol_eval function
 
+        $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
         // Load datas into tabMenu
         if (count($tabMenu) == 0)
         {
-            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+            $this->menuLoad($mainmenu, $leftmenu, $type_user, $menu_handler, $tabMenu);
         }
 
         $newTabMenu=array();
-        $i=0;
         if (is_array($tabMenu))
         {
             foreach($tabMenu as $val)
             {
-                if ($val[9]=='top')
-                {
-
-                    $newTabMenu[$i]['rowid']=$val[0];
-                    $newTabMenu[$i]['fk_menu']=$val[1];
-                    $newTabMenu[$i]['url']=$val[2];
-                    $newTabMenu[$i]['titre']=$val[3];
-                    $newTabMenu[$i]['right']=$val[4];
-                    $newTabMenu[$i]['atarget']=$val[5];
-                    $newTabMenu[$i]['leftmenu']=$val[6];
-                    $newTabMenu[$i]['enabled']=$val[7];
-                    $newTabMenu[$i]['mainmenu']=$val[8];
-                    $newTabMenu[$i]['type']=$val[9];
-                    $newTabMenu[$i]['lang']=$val[10];
-                    $i++;
-                }
+                if ($val['type']=='top') $newTabMenu[]=$val;
             }
         }
 
@@ -456,69 +411,119 @@ class Menubase
     /**
      * 	Load entries found in database in a menu array.
      *
-     * 	@param	array	$newmenu        Menu array to complete
-     * 	@param	string	$mainmenu       Value for mainmenu that defined top menu of left menu
-     * 	@param 	string	$myleftmenu     Value that defined leftmenu
-     * 	@param  int		$type_user		0=Internal,1=External,2=All
-     * 	@param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
-     * 	@param  array	&$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+     * 	@param	array	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
+     * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (often $_SESSION['mainmenu'])
+     * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
+     * 	@param	int		$type_user		Filter on type of user (0=Internal,1=External,2=All)
+     * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
+     * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return array    		       	Menu array for particular mainmenu value or full tabArray
      */
-    function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
+    function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
-        global $leftmenu,$rights; // To export to dol_eval function
+        global $mainmenu,$leftmenu; // To export to dol_eval function
 
+        $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
+        // We initialize newmenu with first already found menu entries
         $this->newmenu = $newmenu;
 
-        // Load datas into tabMenu
+        // Load datas from database into $tabMenu, then we will complete this->newmenu with values into $tabMenu
         if (count($tabMenu) == 0)
         {
-            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+            $this->menuLoad($mainmenu, $leftmenu, $type_user, $menu_handler, $tabMenu);
         }
-        //var_dump($tabMenu);
+        //var_dump($tabMenu); exit;
 
-        // Define menutopid
-        $menutopid='';
         if (is_array($tabMenu))
         {
-            foreach($tabMenu as $val)
+            $menutopid='';
+            foreach($tabMenu as $key => $val)
             {
-                if ($val[9] == 'top' && $val[8] == $mainmenu)
+                // Define menutopid of mainmenu
+                if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu)
                 {
-                    $menutopid=$val[0];
+                    $menutopid=$val['rowid'];
                     break;
                 }
             }
-        }
 
-        // Now edit this->newmenu->list to add entries found into tabMenu that are in childs of mainmenu claimed
-        $this->recur($tabMenu, $menutopid, 1, $leftmenu);
+            // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed
+            $this->recur($tabMenu, $menutopid, 1, $leftmenu);
+            //var_dump($this->newmenu->liste);exit;
+
+            // Update fk_menu when value is -1 (left menu added by modules with no top menu)
+            foreach($tabMenu as $key => $val)
+            {
+                //var_dump($tabMenu);
+                if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu)    // We found a menu entry not linked to parent with good mainmenu
+                {
+                    //print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
+                    //var_dump($this->newmenu->liste);exit;
+
+                    if (empty($val['fk_leftmenu']))
+                    {
+                        $this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
+                        //var_dump($this->newmenu->liste);
+                    }
+                    else
+                    {
+                        // Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
+                        $searchlastsub=0;$lastid=0;$nextid=0;$found=0;
+                        foreach($this->newmenu->liste as $keyparent => $valparent)
+                        {
+                            //var_dump($valparent);
+                            if ($searchlastsub)    // If we started to search for last submenu
+                            {
+                                if ($valparent['level'] >= $searchlastsub) $lastid=$keyparent;
+                                if ($valparent['level'] < $searchlastsub)
+                                {
+                                    $nextid=$keyparent;
+                                    break;
+                                }
+                            }
+                            if ($valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu'])
+                            {
+                                //print "We found parent: keyparent='.$keyparent.' - level=".$valparent['level'].' - '.join(',',$valparent).'<br>';
+                                // Now we look to find last subelement of this parent (we add at end)
+                                $searchlastsub=($valparent['level']+1);
+                                $lastid=$keyparent;
+                                $found=1;
+                            }
+                        }
+                        //print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
+                        if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
+                    }
+                }
+            }
+        }
 
         return $this->newmenu;
     }
 
 
     /**
-     *  Load entries found in database in a menu array.
+     *  Load entries found in database into variable $tabMenu. Note that only "database menu entries" are loaded here, hardcoded will not be present into output.
      *
+     *  @param	string	$mymainmenu     Value for left that defined mainmenu
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      0=Internal,1=External,2=All
-     *  @param  string	$menu_handler   Name of menu_handler used (auguria, eldy...)
-     *  @param  array	&$tabMenu        If array with menu entries already load, we put this array here (in most cases, it's empty)
+     *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
+     *  @param  array	&$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
-    function menuLoad($myleftmenu, $type_user, $menu_handler, &$tabMenu=array())
+    private function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
-        global $leftmenu, $rights; // To export to dol_eval function
+        global $mainmenu, $leftmenu; // To export to dol_eval function
 
         $menutopid=0;
+        $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
-        $sql = "SELECT m.rowid, m.type, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
+        $sql = "SELECT m.rowid, m.type, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
         $sql.= " WHERE m.entity = ".$conf->entity;
         $sql.= " AND m.menu_handler in('".$menu_handler."','all')";
@@ -527,7 +532,7 @@ class Menubase
         // If type_user == 2, no test required
         $sql.= " ORDER BY m.position, m.rowid";
 
-        dol_syslog("Menubase::menuLeftCharger sql=".$sql);
+        dol_syslog(get_class($this)."::menuLeftCharger sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -541,37 +546,12 @@ class Menubase
                 //$objm = $this->db->fetch_object($resql);
                 $menu = $this->db->fetch_array($resql);
 
-                // Define $chaine
-                $chaine="";
-                $title = $langs->trans($menu['titre']);
-                if ($title == $menu['titre'])   // Translation not found
-                {
-                    if (! empty($menu['langs']))    // If there is a dedicated translation file
-                    {
-                        $langs->load($menu['langs']);
-                    }
-
-                    if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
-                    {
-                        $tab_titre = explode("/",$menu['titre']);
-                        $chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
-                    }
-                    else
-                    {
-                        $chaine = $langs->trans($menu['titre']);
-                    }
-                }
-                else
-                {
-                    $chaine = $title;
-                }
-
                 // Define $right
                 $perms = true;
                 if ($menu['perms'])
                 {
                     $perms = verifCond($menu['perms']);
-                    //print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
+                    //print "verifCond rowid=".$menu['rowid']." ".$menu['perms'].":".$perms."<br>\n";
                 }
 
                 // Define $enabled
@@ -580,30 +560,55 @@ class Menubase
                 {
                     $enabled = verifCond($menu['enabled']);
                     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_ACCORDION && preg_match('/^\$leftmenu/',$menu['enabled'])) $enabled=1;
-                    //print "verifCond chaine=".$chaine." rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
+                    //print "verifCond rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
                 }
 
-                // 0=rowid, 1=fk_menu, 2=url, 3=text, 4=perms, 5=target, 8=mainmenu
-                $tabMenu[$b][0] = $menu['rowid'];
-                $tabMenu[$b][1] = $menu['fk_menu'];
-                $tabMenu[$b][2] = $menu['url'];
-                if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b][2]))
+                // Define $title
+                if ($enabled)
                 {
-                    if (preg_match('/\?/',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
-                    else $tabMenu[$b][2].='?idmenu='.$menu['rowid'];
-                }
-                $tabMenu[$b][3] = $chaine;
-                $tabMenu[$b][5] = $menu['target'];
-                $tabMenu[$b][6] = $menu['leftmenu'];
-                if (! isset($tabMenu[$b][4])) $tabMenu[$b][4] = $perms;
-                else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
-                if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $enabled;
-                else $tabMenu[$b][7] = ($tabMenu[$b][7] && $enabled);
-                $tabMenu[$b][8] = $menu['mainmenu'];
-                $tabMenu[$b][9] = $menu['type'];
-                $tabMenu[$b][10] = $menu['langs'];
+                    $title = $langs->trans($menu['titre']);
+                    if ($title == $menu['titre'])   // Translation not found
+                    {
+                        if (! empty($menu['langs']))    // If there is a dedicated translation file
+                        {
+                            $langs->load($menu['langs']);
+                        }
 
-                $b++;
+                        if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
+                        {
+                            $tab_titre = explode("/",$menu['titre']);
+                            $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
+                        }
+                        else
+                        {
+                            $title = $langs->trans($menu['titre']);
+                        }
+                    }
+
+                    // We complete tabMenu
+                    $tabMenu[$b]['rowid']       = $menu['rowid'];
+                    $tabMenu[$b]['fk_menu']     = $menu['fk_menu'];
+                    $tabMenu[$b]['url']         = $menu['url'];
+                    if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b]['url']))
+                    {
+                        if (preg_match('/\?/',$tabMenu[$b]['url'])) $tabMenu[$b]['url'].='&amp;idmenu='.$menu['rowid'];
+                        else $tabMenu[$b]['url'].='?idmenu='.$menu['rowid'];
+                    }
+                    $tabMenu[$b]['titre']       = $title;
+                    $tabMenu[$b]['target']      = $menu['target'];
+                    $tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
+                    $tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
+                    $tabMenu[$b]['perms']       = $perms;
+                    $tabMenu[$b]['enabled']     = $enabled;
+                    $tabMenu[$b]['type']        = $menu['type'];
+                    //$tabMenu[$b]['langs']       = $menu['langs'];
+                    $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
+                    $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
+                    //$tabMenu[$b]['position']    = $menu['position'];
+
+                    $b++;
+                }
+
                 $a++;
             }
             $this->db->free($resql);
@@ -615,6 +620,30 @@ class Menubase
             return -1;
         }
     }
+
+    /**
+     *  Complete this->newmenu with menu entry found in $tab
+     *
+     *  @param  array	$tab			Tab array
+     *  @param  int		$pere			Id of parent
+     *  @param  int		$level			Level
+     *  @return	void
+     */
+    private function recur($tab, $pere, $level)
+    {
+        // Loop on tab array
+        $num = count($tab);
+        for ($x = 0; $x < $num; $x++)
+        {
+            //si un element a pour pere : $pere
+            if ($tab[$x]['fk_menu'] == $pere && $tab[$x]['enabled'])
+            {
+                //print 'mainmenu='.$tab[$x]['mainmenu'];
+                $this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level-1), $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu']);
+                $this->recur($tab, $tab[$x]['rowid'], ($level+1));
+            }
+        }
+   }
 
 }
 

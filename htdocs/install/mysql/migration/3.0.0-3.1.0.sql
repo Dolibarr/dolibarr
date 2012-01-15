@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 2.8.0 or higher. 
+-- when current version is 3.0.0 or higher. 
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -444,6 +444,7 @@ ALTER TABLE llx_extrafields ADD COLUMN elementtype varchar(64) NOT NULL DEFAULT 
 ALTER TABLE llx_extrafields ADD UNIQUE INDEX uk_extrafields_name (name, entity, elementtype);
 ALTER TABLE llx_adherent_options rename to llx_adherent_extrafields;
 ALTER TABLE llx_adherent_extrafields CHANGE COLUMN fk_member fk_object integer NOT NULL;
+alter table llx_extrafields add column type varchar(8);
 
 -- drop tables renamed into llx_advanced_extra_xxx
 drop table llx_extra_fields_options;
@@ -476,15 +477,28 @@ ALTER TABLE llx_c_type_contact    ADD COLUMN module        varchar(32) NULL;
 ALTER TABLE llx_c_type_fees       ADD COLUMN module        varchar(32) NULL;
 ALTER TABLE llx_c_typent          ADD COLUMN module        varchar(32) NULL;
 
+ALTER TABLE llx_user ADD ref_ext varchar(30) AFTER entity;
+ALTER TABLE llx_user ADD civilite varchar(6) AFTER pass_temp;
 ALTER TABLE llx_user ADD signature text DEFAULT NULL AFTER email;
 
 ALTER TABLE llx_don ADD   phone_mobile    varchar(24) after email;
 ALTER TABLE llx_don ADD   phone           varchar(24) after email;
-
-ALTER TABLE llx_user ADD civilite varchar(6) after entity;
 
 ALTER TABLE llx_element_element MODIFY sourcetype varchar(32) NOT NULL;
 ALTER TABLE llx_element_element MODIFY targettype varchar(32) NOT NULL;
 
 ALTER TABLE llx_societe_prices MODIFY tms timestamp NULL;
 -- ALTER TABLE llx_societe_prices ALTER COLUMN tms DROP NOT NULL;
+
+-- Fix: It seems this is missing for some users
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1,  'AC_TEL',     'system', 'Phone call'                            ,NULL, 2);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 2,  'AC_FAX',     'system', 'Send Fax'                            ,NULL, 3);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 3,  'AC_PROP',    'system', 'Send commercial proposal by email'    ,'propal',  10);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 4,  'AC_EMAIL',   'system', 'Send Email'                            ,NULL, 4);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 5,  'AC_RDV',     'system', 'Rendez-vous'                            ,NULL, 1);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 8,  'AC_COM',     'system', 'Send customer order by email'        ,'order',   8);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 9,  'AC_FAC',     'system', 'Send customer invoice by email'        ,'invoice', 6);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 10, 'AC_SHIP',    'system', 'Send shipping by email'                ,'shipping', 11);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 30, 'AC_SUP_ORD', 'system', 'Send supplier order by email'        ,'order_supplier',    9);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values  (31, 'AC_SUP_INV', 'system', 'Send supplier invoice by email'        ,'invoice_supplier', 7);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 50, 'AC_OTH',     'system', 'Other'                                ,NULL, 5);

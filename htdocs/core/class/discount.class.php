@@ -208,7 +208,7 @@ class DiscountAbsolute
             }
             else
             {
-                dol_print_error($db);
+                dol_print_error($this->db);
                 return -1;
             }
         }
@@ -352,7 +352,7 @@ class DiscountAbsolute
         $sql.= " WHERE (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)";	// Available
         if (is_object($company)) $sql.= " AND rc.fk_soc = ".$company->id;
         if (is_object($user))    $sql.= " AND rc.fk_user = ".$user->id;
-        if ($filter)   $sql.=' AND '.$filter;
+        if ($filter)   $sql.=' AND ('.$filter.')';
         if ($maxvalue) $sql.=' AND rc.amount_ttc <= '.price2num($maxvalue);
 
         dol_syslog(get_class($this)."::getAvailableDiscounts sql=".$sql,LOG_DEBUG);

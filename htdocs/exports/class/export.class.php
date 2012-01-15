@@ -69,11 +69,12 @@ class Export
 	{
 		global $langs,$conf,$mysoc;
 
-		dol_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
+		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
         $var=true;
         $i=0;
 
+        // Define list of modules directories into modulesdir
         foreach ($conf->file->dol_document_root as $type => $dirroot)
 		{
 			$modulesdir[] = $dirroot . "/core/modules/";
@@ -188,7 +189,7 @@ class Export
 									$this->array_export_sql_end[$i]=$module->export_sql_end[$r];
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
-									dol_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".count($module->export_fields_code[$r]));
+									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".count($module->export_fields_code[$r]));
 									$i++;
 									//	          }
 								}
@@ -217,7 +218,7 @@ class Export
 		// Build the sql request
 		$sql=$this->array_export_sql_start[$indice];
 		$i=0;
-		
+
 		//print_r($array_selected);
 		foreach ($this->array_export_fields[$indice] as $key => $value)
 		{
@@ -254,20 +255,20 @@ class Export
 		asort($array_selected);
 
 		dol_syslog("Export::build_file $model, $datatoexport, $array_selected");
-		
+
 		// Check parameters or context properties
 		if (! is_array($this->array_export_fields[$indice]))
 		{
 			$this->error="ErrorBadParameter";
 			return -1;
 		}
-		
+
 		// Creation de la classe d'export du model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
 		$file = "export_".$model.".modules.php";
 		$classname = "Export".$model;
 		require_once($dir.$file);
-		$objmodel = new $classname($db);
+		$objmodel = new $classname($this->db);
 
 		if ($sqlquery) $sql = $sqlquery;
         else $sql=$this->build_sql($indice,$array_selected);
@@ -283,7 +284,7 @@ class Export
 			$filename.='.'.$objmodel->getDriverExtension();
 			$dirname=$conf->export->dir_temp.'/'.$user->id;
 
-			$outputlangs=$langs;	// Lang for output
+			$outputlangs=dol_clone($langs);	// We clone to have an object we can modify (for example to change output charset by csv handler) without changing original value
 
 			// Open file
 			dol_mkdir($dirname);
@@ -333,7 +334,8 @@ class Export
 
 				// Close file
 				$objmodel->close_file();
-				return 1;
+
+        		return 1;
 			}
 			else
 			{

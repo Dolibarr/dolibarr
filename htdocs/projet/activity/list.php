@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 $langs->load('projects');
 
-$mode=$_REQUEST["mode"];
+$mode=GETPOST("mode");
 
 $mine=0;
 if ($mode == 'mine') $mine=1;
@@ -44,6 +44,7 @@ $projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projectid"];
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
+
 
 /*
  * Actions
@@ -80,6 +81,10 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
         $task->timespent_fk_user = $user->id;
         $task->timespent_date = dol_mktime(12,0,0,$_POST["{$id}month"],$_POST["{$id}day"],$_POST["{$id}year"]);
         $task->addTimeSpent($user);
+
+        // header to avoid submit twice on back
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$projectid);
+        exit;
     }
     else
     {
@@ -121,7 +126,8 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$pr
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
-if ($mesg) print $mesg;
+
+dol_htmloutput_mesg($mesg);
 
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
@@ -143,7 +149,7 @@ print '</form>';
 print "</table>";
 print '</div>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

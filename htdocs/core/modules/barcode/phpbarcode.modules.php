@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,13 @@
 
 /**
  *	\file       htdocs/core/modules/barcode/phpbarcode.modules.php
- *	\ingroup    facture
+ *	\ingroup    barcode
  *	\brief      Fichier contenant la classe du modele de generation code barre phpbarcode
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/barcode/modules_barcode.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/barcode/modules_barcode.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/barcode.lib.php");    // This is to include def like $genbarcode_loc and $font_loc
+
 
 /**		\class      modPhpbarcode
  *		\brief      Classe du modele de numerotation de generation code barre phpbarcode
@@ -34,8 +36,10 @@ class modPhpbarcode extends ModeleBarCode
 	var $error='';
 
 
-	/**     \brief     	Return if a module can be used or not
-	 *      \return		boolean     true if module can be used
+	/**
+	 * 	Return if a module can be used or not
+	 *
+	 *  @return		boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
@@ -43,19 +47,23 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
 
-	/**     \brief      Return description
-	 *      \return     string      Texte descripif
+	/**
+	 * 	Return description
+	 *
+	 * 	@return     string      Texte descripif
 	 */
 	function info()
 	{
 		global $langs;
 
-		return 'Php-barcode';
+		return 'Internal engine';
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *
+	 *	@return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -66,12 +74,14 @@ class modPhpbarcode extends ModeleBarCode
 
 
 	/**
-	 *	\brief		Return true if encodinf is supported
-	 *	\return		int		>0 if supported, 0 if not
+	 *	Return true if encodinf is supported
+	 *
+	 *	@return		int		>0 if supported, 0 if not
 	 */
 	function encodingIsSupported($encoding)
 	{
 		global $genbarcode_loc;
+        //print 'genbarcode_loc='.$genbarcode_loc.' encoding='.$encoding;exit;
 
 		$supported=0;
 		if ($encoding == 'EAN13') $supported=1;
@@ -113,8 +123,7 @@ class modPhpbarcode extends ModeleBarCode
 		$_GET["scale"]=$scale;
 		$_GET["mode"]=$mode;
 
-		require_once(DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/php-barcode.php');
-		dol_syslog("modPhpbarcode::buildBarCode $code,$encoding,$scale,$mode");
+		dol_syslog(get_class($this)."::buildBarCode $code,$encoding,$scale,$mode");
 		if ($code) $result=barcode_print($code,$encoding,$scale,$mode);
 
 		if (! is_array($result))

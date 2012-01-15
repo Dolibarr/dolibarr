@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -51,9 +52,10 @@ if ($file && ! $what)
  * View
 */
 
-llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
+$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
+llxHeader('','',$help_url);
 
-$html=new Form($db);
+$form=new Form($db);
 $formfile = new FormFile($db);
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
@@ -135,15 +137,14 @@ if ($what == 'mysql')
     $paramclear=$param;
     if (! empty($dolibarr_main_db_pass))
     {
-        $paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
-        $paramclear.=" -p".$dolibarr_main_db_pass;
+        $paramcrypted.=' -p"'.preg_replace('/./i','*',$dolibarr_main_db_pass).'"';
+        $paramclear.=' -p"'.str_replace('"','\"',$dolibarr_main_db_pass).'"';
     }
 
     print '<b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
     print '<textarea rows="'.ROWS_2.'" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
-
     print '<br>';
-
+    //print $paramclear;
 
     // Now run command and show result
     print '<b>'.$langs->trans("BackupResult").':</b> ';
@@ -207,7 +208,11 @@ if ($what == 'mysql')
             @dol_delete_file($outputerror,1);
             @rename($outputfile,$outputerror);
             // Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
-            if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
+            if (! $errormsg)
+            {
+            	$langs->load("errors");
+            	$errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
+            }
         }
     }
     // Fin execution commande
@@ -390,7 +395,7 @@ function backup_tables($outputfile, $tables='*')
 
     // Print headers and global mysql config vars
     $sqlhead = '';
-    $sqlhead .= "-- ".$db->label." dump via php
+    $sqlhead .= "-- ".getStaticMember($db, 'label')." dump via php
 --
 -- Host: ".$db->db->host_info."    Database: ".$db->database_name."
 -- ------------------------------------------------------

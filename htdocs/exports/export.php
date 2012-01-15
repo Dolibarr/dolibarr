@@ -75,7 +75,7 @@ $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
 
 $objmodelexport=new ModeleExports();
-$html = new Form($db);
+$form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $sqlusedforexport='';
@@ -438,7 +438,7 @@ if ($step == 2 && $datatoexport)
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>';
             //print $text.'-'.$htmltext."<br>";
-            print $html->textwithpicto($text,$htmltext);
+            print $form->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
             $bit=1;
@@ -448,7 +448,7 @@ if ($step == 2 && $datatoexport)
         	// Fields not selected
             print '<td>';
 			//print $text.'-'.$htmltext."<br>";
-			print $html->textwithpicto($text,$htmltext);
+			print $form->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
@@ -580,7 +580,7 @@ if ($step == 3 && $datatoexport)
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
         $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
-        print $html->textwithpicto($text,$htmltext);
+        print $form->textwithpicto($text,$htmltext);
 		//print ' ('.$code.')';
         print '</td>';
 
@@ -754,7 +754,7 @@ if ($step == 4 && $datatoexport)
         print '<tr '.$bc[$var].'>';
         print '<td width="16">'.img_picto_common($key,$objmodelexport->getPicto($key)).'</td>';
 	    $text=$objmodelexport->getDriverDesc($key);
-    	print '<td>'.$html->textwithpicto($objmodelexport->getDriverLabel($key),$text).'</td>';
+    	print '<td>'.$form->textwithpicto($objmodelexport->getDriverLabel($key),$text).'</td>';
         print '<td>'.$objmodelexport->getLibLabel($key).'</td><td align="right">'.$objmodelexport->getLibVersion($key).'</td></tr>'."\n";
     }
     print '</table>';
@@ -800,8 +800,9 @@ llxFooter();
 /**
  * 	Return table name of an alias. For this, we look for the "tablename as alias" in sql string.
  *
- * 	@param		code				Alias.Fieldname
- * 	@param		sqlmaxforexport		SQL request to parse
+ * 	@param	string	$code				Alias.Fieldname
+ * 	@param	string	$sqlmaxforexport	SQL request to parse
+ * 	@return	string						Table name of field
  */
 function getablenamefromfield($code,$sqlmaxforexport)
 {

@@ -37,13 +37,13 @@ class modUser extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modUser($DB)
+	function modUser($db)
 	{
 		global $conf;
 
-		$this->db = $DB ;
+		$this->db = $db;
 		$this->numero = 0;
 
 		$this->family = "base";		// Family for module (or "base" if core module)
@@ -224,13 +224,14 @@ class modUser extends DolibarrModules
 
 
     /**
-     *      Function called when module is enabled.
-     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *      It also creates data directories.
-     *
-     *      @return     int             1 if OK, 0 if KO
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
-	function init()
+	function init($options='')
 	{
 		global $conf;
 
@@ -239,7 +240,7 @@ class modUser extends DolibarrModules
 
 		$sql = array();
 
-		return $this->_init($sql);
+		return $this->_init($sql,$options);
 	}
 
     /**

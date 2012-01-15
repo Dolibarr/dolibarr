@@ -102,7 +102,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
  *
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 

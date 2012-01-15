@@ -51,10 +51,10 @@ switch ($action)
 
 		$obj_facturation->num_facture($num);
 
-		$obj_facturation->mode_reglement($_POST['hdnChoix']);
+		$obj_facturation->getSetPaymentMode($_POST['hdnChoix']);
 
 		// Si paiement autre qu'en especes, montant encaisse = prix total
-		$mode_reglement = $obj_facturation->mode_reglement();
+		$mode_reglement = $obj_facturation->getSetPaymentMode();
 		if ( $mode_reglement != 'ESP' ) {
 			$montant = $obj_facturation->prix_total_ttc();
 		} else {
@@ -103,7 +103,7 @@ switch ($action)
 			exit;
 		}
 
-		switch ( $obj_facturation->mode_reglement() )
+		switch ( $obj_facturation->getSetPaymentMode() )
 		{
 			case 'DIF':
 				$mode_reglement_id = 0;
@@ -114,8 +114,8 @@ switch ($action)
 				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement');
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
-				$note .= $langs->trans("Received").' : '.$obj_facturation->montant_encaisse()." ".$conf->monnaie."\n";
-				$note .= $langs->trans("Rendu").' : '.$obj_facturation->montant_rendu()." ".$conf->monnaie."\n";
+				$note .= $langs->trans("Received").' : '.$obj_facturation->montant_encaisse()." ".$conf->currency."\n";
+				$note .= $langs->trans("Rendu").' : '.$obj_facturation->montant_rendu()." ".$conf->currency."\n";
 				$note .= "\n";
 				$note .= '--------------------------------------'."\n\n";
 				break;
@@ -131,7 +131,7 @@ switch ($action)
 		if (empty($mode_reglement_id)) $mode_reglement_id=0;	// If mode_reglement_id not found
 		if (empty($cond_reglement_id)) $cond_reglement_id=0;	// If cond_reglement_id not found
 		$note .= $_POST['txtaNotes'];
-		dol_syslog("obj_facturation->mode_reglement()=".$obj_facturation->mode_reglement()." mode_reglement_id=".$mode_reglement_id." cond_reglement_id=".$cond_reglement_id);
+		dol_syslog("obj_facturation->getSetPaymentMode()=".$obj_facturation->getSetPaymentMode()." mode_reglement_id=".$mode_reglement_id." cond_reglement_id=".$cond_reglement_id);
 
 
 		$error=0;
@@ -141,6 +141,10 @@ switch ($action)
 
 		$user->fetch($_SESSION['uid']);
 		$user->getrights();
+
+		$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+		$societe = new Societe($db);
+		$societe->fetch($thirdpartyid);
 
 		$invoice=new Facture($db);
 
@@ -152,13 +156,17 @@ switch ($action)
 		for ($i=0;$i < $tab_liste_size;$i++)
 		{
 			// Recuperation de l'article
-			$res = $db->query('SELECT label, tva_tx, price FROM '.MAIN_DB_PREFIX.'product WHERE rowid = '.$tab_liste[$i]['fk_article']);
-			$ret=array();
-			$tab = $db->fetch_array($res);
-			foreach ( $tab as $cle => $valeur )
-			{
-				$ret[$cle] = $valeur;
-			}
+			$product = new Product($db);
+			$product->fetch($tab_liste[$i]['fk_article']);
+			$ret=array('label'=>$product->label,'tva_tx'=>$product->tva_tx,'price'=>$product->price);
+
+	        if ($conf->global->PRODUIT_MULTIPRICES)
+	        {
+	            if (isset($product->multiprices[$societe->price_level]))
+	            {
+	                $ret['price'] = $product->multiprices[$societe->price_level];
+	            }
+	        }
 			$tab_article = $ret;
 
 			$res = $db->query('SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$tab_liste[$i]['fk_tva']);
@@ -198,7 +206,7 @@ switch ($action)
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...
-		if ( $obj_facturation->mode_reglement() == 'DIF' )
+		if ( $obj_facturation->getSetPaymentMode() == 'DIF' )
 		{
 			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiement_le()));
 			if ($resultcreate > 0)
@@ -217,7 +225,7 @@ switch ($action)
 			$resultcreate=$invoice->create($user,0,0);
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->validate($user,$obj_facturation->num_facture());
+				$resultvalid=$invoice->validate($user, $obj_facturation->num_facture(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
 
 				$id = $invoice->id;
 
@@ -235,7 +243,7 @@ switch ($action)
 				{
                     if (! $error)
                     {
-                        $result=$payment->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$bankaccountid,'','');
+                        $result=$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
                         if (! $result > 0)
                         {
                             $errmsg=$paiement->error;
@@ -246,7 +254,7 @@ switch ($action)
                     if (! $error)
                     {
                     	if ($invoice->total_ttc == $obj_facturation->prix_total_ttc()
-                    		&& $obj_facturation->mode_reglement() != 'DIFF')
+                    		&& $obj_facturation->getSetPaymentMode() != 'DIFF')
                     	{
                     		// We set status to payed
                     		$result=$invoice->set_paid($user);

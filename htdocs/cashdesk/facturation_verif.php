@@ -77,7 +77,8 @@ switch ( $_GET['action'] )
 
 						if(isset($product->multiprices[$societe->price_level]))
 						{
-							$ret['price'] = $product->multiprices_ttc[$societe->price_level];
+							$ret['price'] = $product->multiprices[$societe->price_level];
+							$ret['price_ttc'] = $product->multiprices_ttc[$societe->price_level];
 							// $product->multiprices_min[$societe->price_level];
 							// $product->multiprices_min_ttc[$societe->price_level];
 							// $product->multiprices_base_type[$societe->price_level];

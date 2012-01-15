@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ $mode=GETPOST('mode');
 
 $mesg='';
 
+
 /*
  * View
  */
@@ -51,46 +52,8 @@ if ($mode == 'cardlogin' && empty($foruserlogin))
     $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"));
 }
 
-if ((empty($foruserid) && empty($foruserlogin) && empty($mode)) || $mesg)
+if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg)
 {
-    llxHeader('',$langs->trans("MembersCards"));
-
-    print_fiche_titre($langs->trans("LinkToGeneratedPages"));
-    print '<br>';
-
-    print $langs->trans("LinkToGeneratedPagesDesc").'<br>';
-    print '<br>';
-
-    if ($mesg) print '<div class="error">'.$mesg.'</div><br>';
-
-    print $langs->trans("DocForAllMembersCards",($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="foruserid" value="all">';
-    print '<input type="hidden" name="mode" value="card">';
-    print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
-    print '</form>';
-    print '<br>';
-
-    print $langs->trans("DocForOneMemberCards",($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="mode" value="cardlogin">';
-    print $langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="">';
-    print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
-    print '</form>';
-    print '<br>';
-
-    print $langs->trans("DocForLabels",$conf->global->ADHERENT_ETIQUETTE_TYPE).' ';
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="mode" value="label">';
-    print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
-    print '</form>';
-    print '<br>';
-
-    llxFooter();
-}
-else
-{
-
     $arrayofmembers=array();
 
     // requete en prenant que les adherents a jour de cotisation
@@ -192,25 +155,70 @@ else
     	// Build and output PDF
         if (empty($mode) || $mode=='card' || $mode='cardlogin')
         {
-        	$result=members_card_pdf_create($db, $arrayofmembers, '', $outputlangs);
+            if (! count($arrayofmembers))
+            {
+                $mesg=$langs->trans("ErrorRecordNotFound");
+            }
+
+            if (! $mesg) $result=members_card_pdf_create($db, $arrayofmembers, '', $outputlangs);
+
         }
-        if ($mode == 'label')
+        elseif ($mode == 'label')
         {
             $result=members_label_pdf_create($db, $arrayofmembers, '', $outputlangs);
         }
 
     	if ($result <= 0)
     	{
-    		dol_print_error($db,$result);
-    		exit;
+    		dol_print_error('',$result);
     	}
     }
     else
     {
     	dol_print_error($db);
-
-    	llxFooter();
     }
+
+    if (! $mesg) exit;
 }
 
+
+
+
+
+llxHeader('',$langs->trans("MembersCards"));
+
+print_fiche_titre($langs->trans("LinkToGeneratedPages"));
+print '<br>';
+
+print $langs->trans("LinkToGeneratedPagesDesc").'<br>';
+print '<br>';
+
+dol_htmloutput_errors($mesg);
+
+print $langs->trans("DocForAllMembersCards",($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="foruserid" value="all">';
+print '<input type="hidden" name="mode" value="card">';
+print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+print '</form>';
+print '<br>';
+
+print $langs->trans("DocForOneMemberCards",($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="mode" value="cardlogin">';
+print $langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
+print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+print '</form>';
+print '<br>';
+
+print $langs->trans("DocForLabels",$conf->global->ADHERENT_ETIQUETTE_TYPE).' ';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="mode" value="label">';
+print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+print '</form>';
+print '<br>';
+
+llxFooter();
+
+$db->close();
 ?>

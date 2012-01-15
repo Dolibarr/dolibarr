@@ -127,7 +127,7 @@ if ($_GET["action"] == 'del')
  */
 
 $dir = "../core/modules/dons/";
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 
@@ -249,7 +249,7 @@ if (is_resource($handle))
                 $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
                 $text='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
                 print '<td align="center">';
-                print $html->textwithpicto(' &nbsp; '.$text,$htmltooltip,-1,0);
+                print $form->textwithpicto(' &nbsp; '.$text,$htmltooltip,-1,0);
                 print '</td>';
 
                 print "</tr>\n";

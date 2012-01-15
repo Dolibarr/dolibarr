@@ -19,7 +19,7 @@ top_httphead();
 ?>
 <!DOCTYPE html>
 <html>
-<?php 
+<?php
 include('header.tpl.php');
 ?>
 <body>
@@ -51,7 +51,7 @@ include('header.tpl.php');
 			<?php if ($captcha) { ?>
 			<label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label>
 			<input type="text" id="securitycode" name="securitycode" />
-			<div align="center"><img src="<?php echo $dol_url_root.'/core/antispamimage.php'; ?>" border="0" width="256" height="48" /></div>
+			<div align="center"><img src="<?php echo $dol_url_root.'/core/antispamimage.php'; ?>" border="0" width="80" height="32" /></div>
 			<?php } ?>
 		</div>
 

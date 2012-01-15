@@ -45,8 +45,8 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 
 	/**		Return description of module
 	 *
-	 * 		@param 		$langs		Object langs
-	 * 		@return     string      Description of module
+	 * 		@param	string	$langs		Object langs
+	 * 		@return string      		Description of module
 	 */
 	function info($langs)
 	{
@@ -55,9 +55,9 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 
 	/**		Return an example of result returned by getNextValue
 	 *
-	 *      @param		$langs		Object langs
-	 *      @param		$objsoc		Object thirdparty
-	 *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 *      @param	Translate	$langs		Object langs
+	 *      @param	Societe		$objsoc		Object thirdparty
+	 *      @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
@@ -67,10 +67,10 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
-	 *  @param      db              Database handler
-	 *  @param      societe         Third party object
-	 *  @param      type			'customer' or 'supplier'
-	 *  @return		int				>=0 if OK, <0 if KO
+	 *  @param	DoliDB	$db              Database handler
+	 *  @param  Societe	$societe         Third party object
+	 *  @param  int		$type			'customer' or 'supplier'
+	 *  @return	int						>=0 if OK, <0 if KO
 	 */
 	function get_code($db, $societe, $type='')
 	{

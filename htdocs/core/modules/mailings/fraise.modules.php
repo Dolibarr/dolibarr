@@ -47,13 +47,26 @@ class mailing_fraise extends MailingTargets
     var $db;
 
 
-    function mailing_fraise($DB)
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+    function mailing_fraise($db)
     {
-        $this->db=$DB;
+        $this->db=$db;
     }
 
 
-	function getSqlArrayForStats()
+    /**
+	 *	On the main mailing area, there is a box with statistics.
+	 *	If you want to add a line in this report you must provide an
+	 *	array of SQL request that returns two field:
+	 *	One called "label", One called "nb".
+	 *
+	 *	@return		array		Array with SQL requests
+	 */
+    function getSqlArrayForStats()
 	{
         global $langs;
 
@@ -88,9 +101,9 @@ class mailing_fraise extends MailingTargets
 
 
     /**
-     *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
-     *                  des destinataires de mailings
-     *      \return     string      Retourne zone select
+     *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+     *
+     *   @return     string      Retourne zone select
      */
     function formFilter()
     {
@@ -119,8 +132,10 @@ class mailing_fraise extends MailingTargets
 
 
     /**
-     *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
-     *      \return     string      Url lien
+     *  Renvoie url lien vers fiche de la source du destinataire du mailing
+     *
+     *  @param	int		$id		ID
+     *  @return     string      Url lien
      */
     function url($id)
     {
@@ -129,10 +144,11 @@ class mailing_fraise extends MailingTargets
 
 
     /**
-     *    \brief      Ajoute destinataires dans table des cibles
-     *    \param      mailing_id    Id of emailing
-     *    \param      filterarray   Param to filter sql request. Deprecated. Should use $_POST instead.
-     *    \return     int           < 0 si erreur, nb ajout si ok
+     *  Ajoute destinataires dans table des cibles
+     *
+     *  @param	int		$mailing_id    	Id of emailing
+     *  @param  array	$filtersarray   Param to filter sql request. Deprecated. Should use $_POST instead.
+     *  @return int           			< 0 si erreur, nb ajout si ok
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {

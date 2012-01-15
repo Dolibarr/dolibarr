@@ -227,9 +227,9 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         print '<div class="error">'.$langs->trans("Error").'</div>';
     }
 
-    /*
-     * Remove deprecated indexes and constraints for Mysql
-     */
+	/*
+	 * Remove deprecated indexes and constraints for Mysql
+	 */
     if ($ok && preg_match('/mysql/',$db->type))
     {
         $versioncommande=explode('.','4.0');
@@ -238,43 +238,49 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         {
             // Suppression vieilles contraintes sans noms et en doubles
             // Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
-            $listtables=array(  'llx_adherent_options',
-								'llx_bank_class',
-								'llx_c_ecotaxe',
-								'llx_c_methode_commande_fournisseur',   // table renamed
-    		                    'llx_c_input_method');
-
+            $listtables=array(
+            					MAIN_DB_PREFIX.'adherent_options',
+            					MAIN_DB_PREFIX.'bank_class',
+            					MAIN_DB_PREFIX.'c_ecotaxe',
+            					MAIN_DB_PREFIX.'c_methode_commande_fournisseur',   // table renamed
+    		                    MAIN_DB_PREFIX.'c_input_method'
+            );
+            
             $listtables = $db->DDLListTables($conf->db->name,'');
             foreach ($listtables as $val)
             {
-                //print "x".$val."<br>";
-                $sql = "SHOW CREATE TABLE ".$val;
-                $resql = $db->query($sql);
-                if ($resql)
-                {
-                    $values=$db->fetch_array($resql);
-                    $i=0;
-                    $createsql=$values[1];
-                    while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i',$createsql,$reg) && $i < 100)
-                    {
-                        $sqldrop="ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
-                        $resqldrop = $db->query($sqldrop);
-                        if ($resqldrop)
-                        {
-                            print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
-                        }
-                        $createsql=preg_replace('/CONSTRAINT `'.$reg[1].'`/i','XXX',$createsql);
-                        $i++;
-                    }
-                    $db->free($resql);
-                }
-                else
-                {
-                    if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
-                    {
-                        print '<tr><td colspan="2"><font  class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
-                    }
-                }
+            	// Database prefix filter
+            	if (preg_match('/^'.MAIN_DB_PREFIX.'/', $val))
+            	{
+            		//print "x".$val."<br>";
+            		$sql = "SHOW CREATE TABLE ".$val;
+            		$resql = $db->query($sql);
+            		if ($resql)
+            		{
+            			$values=$db->fetch_array($resql);
+            			$i=0;
+            			$createsql=$values[1];
+            			while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i',$createsql,$reg) && $i < 100)
+            			{
+            				$sqldrop="ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
+            				$resqldrop = $db->query($sqldrop);
+            				if ($resqldrop)
+            				{
+            					print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
+            				}
+            				$createsql=preg_replace('/CONSTRAINT `'.$reg[1].'`/i','XXX',$createsql);
+            				$i++;
+            			}
+            			$db->free($resql);
+            		}
+            		else
+            		{
+            			if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
+            			{
+            				print '<tr><td colspan="2"><font  class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
+            			}
+            		}
+            	}
             }
         }
     }
@@ -321,7 +327,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             }
         }
 
-        // Boucle sur chaque fichier
+        // Loop on each migrate files
         foreach($filelist as $file)
         {
             print '<tr><td nowrap>';

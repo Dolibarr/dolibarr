@@ -81,14 +81,15 @@ class InterfacePaypalWorkflow
     }
 
     /**
-     *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre presentes dans core/triggers
-     *      \param      action      Code de l'evenement
-     *      \param      object      Objet concerne
-     *      \param      user        Objet user
-     *      \param      lang        Objet lang
-     *      \param      conf        Objet conf
-     *      \return     int         <0 if fatal error, 0 si nothing done, >0 if ok
+     *  Fonction appelee lors du declenchement d'un evenement Dolibarr.
+     *  D'autres fonctions run_trigger peuvent etre presentes dans core/triggers
+     *
+     *  @param	string			$action     Code de l'evenement
+     *  @param  CommonObject	$object     Objet concerne
+     *  @param  User			$user       Objet user
+     *  @param  Translate		$lang       Objet lang
+     *  @param  Conf			$conf       Objet conf
+     *  @return int         				<0 if fatal error, 0 si nothing done, >0 if ok
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {
@@ -123,10 +124,10 @@ class InterfacePaypalWorkflow
             if ($ret < 0) return -1;
 
             // Add payer id
-            $soc->setValueFrom('societe', $obj->socid, 'ref_int', $object->payerID);
+            $soc->setValueFrom('ref_int', $object->payerID, 'societe', $obj->socid);
 
             // Add transaction id
-            $obj->setValueFrom($obj->table_element,$obj->id,'ref_int',$object->resArray["TRANSACTIONID"]);
+            $obj->setValueFrom('ref_int',$object->resArray["TRANSACTIONID"]);
 
         }
 

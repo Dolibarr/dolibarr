@@ -22,13 +22,14 @@
 /**
  *	\file       htdocs/core/modules/supplier_order/pdf/pdf_muscadet.modules.php
  *	\ingroup    fournisseur
- *	\brief      Fichier de la classe permettant de generer les commandes fournisseurs au modele Muscadet
+ *	\brief      File of class to generate suppliers orders from muscadet model
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/modules/supplier_order/modules_commandefournisseur.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
@@ -60,7 +61,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function pdf_muscadet($db)
 	{
@@ -93,9 +94,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -116,9 +117,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     /**
      *      Write the order as a document onto disk
      *
-     *      @param      object          Object invoice to build (or id if old method)
-     *      @param      outputlangs     Lang object for output language
-     *      @return     int             1=OK, 0=KO
+     *  @param		int		$object				Id of object to generate
+     *  @param		object	$outputlangs		Lang output object
+     *  @return     int             			1=OK, 0=KO
      */
 	function write_file($object,$outputlangs='')
 	{
@@ -142,7 +143,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$object->fetch_thirdparty();
 
 			$deja_regle = "";
-            //$amount_credit_notes_included = $object->getSumCreditNotesUsed();
+			$amount_credit_notes_included = 0;
+			$amount_deposits_included = 0;
+			//$amount_credit_notes_included = $object->getSumCreditNotesUsed();
             //$amount_deposits_included = $object->getSumDepositsUsed();
 
 			// Definition de $dir et $file
@@ -214,7 +217,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				$tab_top = 90;
 				$tab_top_newpage = 50;
-				$tab_height = 150;
+				$tab_height = 110;
 				$tab_height_newpage = 150;
 
 				// Affiche notes
@@ -222,7 +225,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
 					$nexY = $pdf->GetY();
@@ -244,7 +247,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				// Boucle sur les lignes
+				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
@@ -283,7 +286,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					// Total HT line
                     $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
 					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
@@ -292,6 +295,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 
 					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
+					if ($object->remise_percent) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
+					if ($object->remise_percent) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
@@ -303,6 +308,24 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
 
 					$nexY+=2;    // Passe espace entre les lignes
+
+					// Cherche nombre de lignes a venir pour savoir si place suffisante
+					if ($i < ($nblignes - 1) && empty($hidedesc))	// If it's not last line
+					{
+						//on recupere la description du produit suivant
+						$follow_descproduitservice = $object->lines[$i+1]->desc;
+						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4;
+						// Et si on affiche dates de validite, on ajoute encore une ligne
+						if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
+						{
+							$nblineFollowDesc += 4;
+						}
+					}
+					else	// If it's last line
+					{
+						$nblineFollowDesc = 0;
+					}
 
 					// Test if a new page is required
 					if ($pagenb == 1)
@@ -353,12 +376,16 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
 				}
 
+				// Affiche zone infos
+				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+
 				// Affiche zone totaux
 				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
+				// Affiche zone versements
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
-					$this->_tableau_versements($pdf, $fac, $posy);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
                 // Pied de page
@@ -368,6 +395,16 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
+
+
+				// Add pdfgeneration hook
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+				$hookmanager=new HookManager($this->db);
+				$hookmanager->callHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -388,33 +425,170 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		return 0;   // Erreur par defaut
 	}
 
+
 	/**
-	 *   \brief      Affiche le total a payer
-	 *   \param      pdf         	Objet PDF
-	 *   \param      object        	Objet order
-	 *   \param      deja_regle  	Montant deja regle
-	 *   \return     y              Position pour suite
+	 *	Show other information
+	 *
+	 *	@param	PDF			&$pdf           Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param	int			$posy			Position start
+	 *	@param	Translate	$outputlangs	Object langs
+	 *	@return int							Position pour suite
+	 */
+	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	{
+	    global $conf;
+
+	    $default_font_size = pdf_getPDFFontSize($outputlangs);
+
+	    $pdf->SetFont('','', $default_font_size - 1);
+
+	    // If France, show VAT mention if not applicable
+	    if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
+	    {
+	        $pdf->SetFont('','B', $default_font_size - 2);
+	        $pdf->SetXY($this->marge_gauche, $posy);
+	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+
+	        $posy=$pdf->GetY()+4;
+	    }
+
+	    // Show payments conditions
+	    if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
+	    {
+	        $pdf->SetFont('','B', $default_font_size - 2);
+	        $pdf->SetXY($this->marge_gauche, $posy);
+	        $titre = $outputlangs->transnoentities("PaymentConditions").':';
+	        $pdf->MultiCell(80, 4, $titre, 0, 'L');
+
+	        $pdf->SetFont('','', $default_font_size - 2);
+	        $pdf->SetXY(52, $posy);
+	        $lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
+	        $lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
+	        $pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
+
+	        $posy=$pdf->GetY()+3;
+	    }
+
+
+	    if ($object->type != 2)
+	    {
+	        // Check a payment mode is defined
+	        /*
+	        if (empty($object->mode_reglement_code)
+	        && ! $conf->global->FACTURE_CHQ_NUMBER
+	        && ! $conf->global->FACTURE_RIB_NUMBER)
+	        {
+	            $pdf->SetXY($this->marge_gauche, $posy);
+	            $pdf->SetTextColor(200,0,0);
+	            $pdf->SetFont('','B', $default_font_size - 2);
+	            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+	            $pdf->SetTextColor(0,0,0);
+
+	            $posy=$pdf->GetY()+1;
+	        }*/
+
+	        // Show payment mode
+	        if ($object->mode_reglement_code)
+//	        && $object->mode_reglement_code != 'CHQ'
+//	        && $object->mode_reglement_code != 'VIR')
+	        {
+	            $pdf->SetFont('','B', $default_font_size - 2);
+	            $pdf->SetXY($this->marge_gauche, $posy);
+	            $titre = $outputlangs->transnoentities("PaymentMode").':';
+	            $pdf->MultiCell(80, 5, $titre, 0, 'L');
+
+	            $pdf->SetFont('','', $default_font_size - 2);
+	            $pdf->SetXY(50, $posy);
+	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
+	            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
+
+	            $posy=$pdf->GetY()+2;
+	        }
+
+	        // Show payment mode CHQ
+/*	        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
+	        {
+	            // Si mode reglement non force ou si force a CHQ
+	            if ($conf->global->FACTURE_CHQ_NUMBER)
+	            {
+	                if ($conf->global->FACTURE_CHQ_NUMBER > 0)
+	                {
+	                    $account = new Account($this->db);
+	                    $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+
+	                    $pdf->SetXY($this->marge_gauche, $posy);
+	                    $pdf->SetFont('','B', $default_font_size - 2);
+	                    $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+	                    $posy=$pdf->GetY()+1;
+
+	                    $pdf->SetXY($this->marge_gauche, $posy);
+	                    $pdf->SetFont('','', $default_font_size - 2);
+	                    $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+	                    $posy=$pdf->GetY()+2;
+	                }
+	                if ($conf->global->FACTURE_CHQ_NUMBER == -1)
+	                {
+	                    $pdf->SetXY($this->marge_gauche, $posy);
+	                    $pdf->SetFont('','B', $default_font_size - 2);
+	                    $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+	                    $posy=$pdf->GetY()+1;
+
+	                    $pdf->SetXY($this->marge_gauche, $posy);
+	                    $pdf->SetFont('','', $default_font_size - 2);
+	                    $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+	                    $posy=$pdf->GetY()+2;
+	                }
+	            }
+	        }
+
+	        // If payment mode not forced or forced to VIR, show payment with BAN
+	        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
+	        {
+	            if (! empty($conf->global->FACTURE_RIB_NUMBER))
+	            {
+	                $account = new Account($this->db);
+	                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
+
+	                $curx=$this->marge_gauche;
+	                $cury=$posy;
+
+	                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
+
+	                $posy+=2;
+	            }
+	        }
+*/
+	    }
+	    return $posy;
+	}
+
+	/**
+	 *	Show total to pay
+	 *
+	 *	@param	PDF			&$pdf           Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param  int			$deja_regle     Montant deja regle
+	 *	@param	int			$posy			Position depart
+	 *	@param	Translate	$outputlangs	Objet langs
+	 *  @return	int							Position pour suite
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf,$mysoc;
-        $default_font_size = pdf_getPDFFontSize($outputlangs);
+        
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
         $tab2_top = $posy;
 		$tab2_hl = 4;
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$pdf->SetXY($this->marge_gauche, $tab2_top + 0);
-
-		// If France, show VAT mention if not applicable
-		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
-		{
-			$pdf->MultiCell(100, $tab2_hl, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
-		}
-
 		// Tableau total
 		$lltot = 200; $col1x = 120; $col2x = 170; $largcol2 = $lltot - $col2x;
 
+		$useborder=0;
+		$index = 0;
+		
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
@@ -423,9 +597,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
-		// Affichage des totaux de TVA par taux (conformement a reglementation)
+		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
 
+		$this->atleastoneratenotnull=0;
 		foreach( $this->tva as $tvakey => $tvaval )
 		{
 			if ($tvakey > 0)    // On affiche pas taux 0
@@ -451,7 +626,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 			}
 		}
-		if (! $this->atleastoneratenotnull) // If not vat at all
+		if (! $this->atleastoneratenotnull) // If no vat at all
 		{
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -465,9 +640,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->country_code), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), 0, 'R', 1);
 			}
 
 			// Total LocalTax2
@@ -475,17 +650,17 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->country_code), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), 0, 'R', 1);
 			}
 		}
 		else
 		{
-			//Local tax 1
 			if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			{
-				foreach( $this->localtax1 as $tvakey => $tvaval )
+    			//Local tax 1
+			    foreach( $this->localtax1 as $tvakey => $tvaval )
 				{
 					if ($tvakey>0)    // On affiche pas taux 0
 					{
@@ -500,7 +675,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+						$totalvat =$outputlangs->transnoentities("TotalLT1".$mysoc->country_code).' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -510,10 +685,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				}
 			}
 
-			//Local tax 2
 			if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			{
-				foreach( $this->localtax2 as $tvakey => $tvaval )
+    			//Local tax 2
+			    foreach( $this->localtax2 as $tvakey => $tvaval )
 				{
 					if ($tvakey>0)    // On affiche pas taux 0
 					{
@@ -528,7 +703,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+						$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->country_code).' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -539,8 +714,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			}
 		}
 
-		$useborder=0;
-
+		// Total TTC
 		$index++;
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->SetTextColor(0,0,60);
@@ -552,6 +726,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetTextColor(0,0,0);
 
+        $creditnoteamount=0;
+        $depositsamount=0;
+		//$creditnoteamount=$object->getSumCreditNotesUsed();
+		//$depositsamount=$object->getSumDepositsUsed();
+		//print "x".$creditnoteamount."-".$depositsamount;exit;
+		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+		if ($object->paye) $resteapayer=0;
+		
 		if ($deja_regle > 0)
 		{
 			$index++;
@@ -564,12 +746,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
-			//$pdf->SetFont('','B', $default_font_size - 1);
+			$pdf->SetFillColor(224,224,224);
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), $useborder, 'R', 1);
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetTextColor(0,0,0);
 		}
@@ -580,7 +762,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
     /**
      *   Show the lines of order
-     *   @param      pdf     object PDF
+
+     *   @param		PDF		$pdf     object PDF
      */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -591,41 +774,41 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         // Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 2);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 		$pdf->SetDrawColor(128,128,128);
 
-		// Rect prend une longueur en 3eme param
+		// Rect prend une longueur en 3eme param et 4eme param
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
-		// line prend une position y en 3eme param
-		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
+		// line prend une position y en 2eme param et 4eme param
+		$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$pdf->SetXY($this->posxdesc-1, $tab_top+2);
+		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 
         if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
         {
     		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-    		$pdf->SetXY($this->posxtva-3, $tab_top+2);
+    		$pdf->SetXY($this->posxtva-3, $tab_top+1);
     		$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
         }
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxup-1, $tab_top+2);
+		$pdf->SetXY($this->posxup-1, $tab_top+1);
 		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxqty-1, $tab_top+2);
+		$pdf->SetXY($this->posxqty-1, $tab_top+1);
 		$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if ($this->atleastonediscount)
 		{
-			$pdf->SetXY($this->posxdiscount-1, $tab_top+2);
+			$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
 			$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
@@ -633,7 +816,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
-		$pdf->SetXY($this->postotalht-1, $tab_top+2);
+		$pdf->SetXY($this->postotalht-1, $tab_top+1);
 		$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 
 	}
@@ -663,8 +846,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B',$default_font_size + 3);
 
-        $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
+		$posx=$this->page_largeur-$this->marge_droite-100;
 
 		$pdf->SetXY($this->marge_gauche,$posy);
 
@@ -694,16 +877,19 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("SupplierOrder");
-		$pdf->MultiCell(100, 4, $title, '', 'R');
+		$pdf->MultiCell(100, 3, $title, '', 'R');
 
-		$posy+=6;
-		$pdf->SetFont('','B',$default_font_size + 2);
+		$pdf->SetFont('','B',$default_font_size);
+		
+		$posy+=5;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
-		$posy+=6;
-		$pdf->SetFont('','', $default_font_size + 2);
+		$posy+=1;
+		$pdf->SetFont('','', $default_font_size -1);
+		
+        $posy+=4;
 		$pdf->SetXY($posx,$posy);
 		if ($object->date_commande)
 		{
@@ -798,7 +984,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 	/**
-	 *   	\brief      Show footer of page
+	 *   Show footer of page
+     *
 	 *   	\param      pdf     		PDF factory
 	 * 		\param		object			Object invoice
 	 *      \param      outputlang		Object lang for output

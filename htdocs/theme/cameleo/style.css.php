@@ -38,7 +38,6 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 session_cache_limiter(FALSE);
 
 require_once("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -92,62 +91,32 @@ input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
 }
 
-input {
+input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
-    font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
+	font-family: <?php print $fontlist ?>;
+	background: #FDFDFD;
     border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
+    padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
-input.flat {
-	font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+select.flat, form.flat select {
+	font-weight: normal;
 }
 input:disabled {
-background:#ddd;
-}
-textarea  {
-	font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
-textarea.flat {
-	font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+	background:#ddd;
 }
 textarea:disabled {
-background:#ddd;
-}
-select.flat {
-	background: #FDFDFD;
-    font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-	font-weight: normal;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+	background:#ddd;
 }
 
 input.button[type=submit] {
-    background: #A51B00;
-        -moz-border-radius:8px;
-        border-radius:8px;
-        border-right: 1px solid #555555;
-        border-bottom: 1px solid #555555;
-        border-left: 1px solid #D0D0D0;
-        border-top: 1px solid #D8D8D8;
+	background: #A51B00;
+	-moz-border-radius:8px;
+	border-radius:8px;
+	border-right: 1px solid #555555;
+	border-bottom: 1px solid #555555;
+	border-left: 1px solid #D0D0D0;
+	border-top: 1px solid #D8D8D8;
 	/*border: 2px solid #063953;*/
 	color: #FFF;
 	padding: 0px 10px 0px 10px;
@@ -416,21 +385,12 @@ div.mainmenu {
 
 <?php if (empty($conf->browser->phone)) { ?>
 
-div.mainmenu.home{
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/home.png' ?>);
+div.mainmenu.agenda {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/agenda.png' ?>);
 }
 
-div.mainmenu.companies {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/company.png' ?>);
-}
-
-div.mainmenu.products {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/products.png' ?>);
-	margin-left: 10px;
-}
-
-div.mainmenu.commercial {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/commercial.png' ?>);
+div.mainmenu.cashdesk {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/pointofsale.png' ?>);
 }
 
 div.mainmenu.accountancy {
@@ -441,6 +401,45 @@ div.mainmenu.bank {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/bank.png' ?>);
 }
 
+div.mainmenu.companies {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/company.png' ?>);
+}
+
+div.mainmenu.commercial {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/commercial.png' ?>);
+}
+
+div.mainmenu.externalsite {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/externalsite.png',1) ?>);
+}
+
+div.mainmenu.ftp {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/tools.png' ?>);
+}
+
+div.mainmenu.ecm {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/ecm.png' ?>);
+}
+
+div.mainmenu.home{
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/home.png' ?>);
+}
+
+div.mainmenu.gravatar {
+}
+
+div.mainmenu.geopipmaxmind {
+}
+
+div.mainmenu.members {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/members.png' ?>);
+}
+
+div.mainmenu.products {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/products.png' ?>);
+	margin-left: 10px;
+}
+
 div.mainmenu.project {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/project.png' ?>);
 }
@@ -449,32 +448,8 @@ div.mainmenu.tools {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/tools.png' ?>);
 }
 
-div.mainmenu.ftp {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/tools.png' ?>);
-}
-
-div.mainmenu.members {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/members.png' ?>);
-}
-
 div.mainmenu.shop {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/shop.png' ?>);
-}
-
-div.mainmenu.agenda {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/agenda.png' ?>);
-}
-
-div.mainmenu.ecm {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/ecm.png' ?>);
-}
-
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/pointofsale.png' ?>);
-}
-
-div.mainmenu.webcal {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/agenda.png' ?>);
 }
 
 div.mainmenu.google {
@@ -500,31 +475,29 @@ foreach($conf->modules as $key => $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','cashdesk');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','bookmark','cashdesk','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
 foreach($mainmenuusedarray as $key => $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
 	//print "XXX".$val;
 
 	// Search img file in module dir
-	$found=0; $url='';
+	$url='';
 	foreach($conf->file->dol_document_root as $dirroot)
 	{
 		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 		{
 			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-			$found=1;
 			break;
 		}
 	}
 	// Img file not found
-	if (! $found && $generic <= 4)
+	if (! $url && $generic <= 4)
 	{
 		$url=DOL_URL_ROOT."/theme/cameleo/img/menus/generic".$generic.".png";
-		$found=1;
 		$generic++;
 	}
-	if ($found)
+	if ($url)
 	{
 		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
 		print "div.mainmenu.".$val." {\n";
@@ -1605,6 +1578,12 @@ border-radius:6px;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+.ui-datepicker-trigger {
+	vertical-align: middle;
+	cursor: pointer;
+}
+
 .bodyline {
 	padding: 0px;
 	margin-bottom: 5px;
@@ -1813,9 +1792,23 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_area:hover, .edit_text:hover, .edit_numeric:hover {
-	background: white url(<?php echo dol_buildpath($path.'/theme/cameleo/img/edit.png',1) ?>) right center no-repeat;
+.editkey_textarea, .editkey_ckeditor, .editkey_text, .editkey_numeric, .editkey_select {
+	background: url(<?php echo dol_buildpath($path.'/theme/cameleo/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
+}
+
+.editkey_datepicker {
+	background: url(<?php echo dol_buildpath($path.'/theme/cameleo/img/calendar.png',1) ?>) right center no-repeat;
+	cursor: pointer;
+}
+
+.editval_textarea:hover, .editval_ckeditor:hover, .editval_text:hover, .editval_numeric:hover, .editval_select:hover, .editval_datepicker:hover {
+	background: white;
+	cursor: pointer;
+}
+
+.editval_hover {
+	background: white;
 }
 
 

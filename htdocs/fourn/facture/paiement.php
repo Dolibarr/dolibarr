@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
@@ -34,8 +34,9 @@ $langs->load('companies');
 $langs->load('bills');
 $langs->load('banks');
 
-$facid=isset($_GET['facid'])?$_GET['facid']:$_POST['facid'];
-$action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
+$facid=GETPOST('facid');
+$action=GETPOST('action');
+$socid=GETPOST('socid','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -51,7 +52,6 @@ if (! $sortfield) $sortfield="p.rowid";
 $amounts = array();
 
 // Security check
-$socid=0;
 if ($user->societe_id > 0)
 {
     $socid = $user->societe_id;
@@ -67,7 +67,7 @@ if ($action == 'add_paiement')
 {
     $error = 0;
 
-    $datepaye = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+    $datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
     $paiement_id = 0;
     $total = 0;
 
@@ -159,7 +159,7 @@ if ($action == 'add_paiement')
                 }
             }
             if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$invoiceid;
-            else $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+            else $loc = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement_id;
             Header('Location: '.$loc);
             exit;
         }
@@ -170,6 +170,7 @@ if ($action == 'add_paiement')
     }
 }
 
+
 /*
  * View
  */
@@ -179,7 +180,7 @@ $invoicesupplierstatic = new FactureFournisseur($db);
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 if ($action == 'create' || $action == 'add_paiement')
 {
@@ -208,7 +209,7 @@ if ($action == 'create' || $action == 'add_paiement')
 
             print_fiche_titre($langs->trans('DoPayment'));
 
-            if ($mesg) dol_htmloutput_mesg($mesg);
+            if ($mesg)   dol_htmloutput_mesg($mesg);
             if ($errmsg) dol_htmloutput_errors($errmsg);
 
             print '<form name="addpaiement" action="paiement.php" method="post">';
@@ -228,11 +229,11 @@ if ($action == 'create' || $action == 'add_paiement')
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-            $html->select_date($dateinvoice,'','','','',"addpaiement",1,1);
+            $form->select_date($dateinvoice,'','','','',"addpaiement",1,1);
             print '</td>';
             print '<td>'.$langs->trans('Comments').'</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
-            $html->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
+            $form->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
             print '</td>';
             print '<td rowspan="3" valign="top">';
             print '<textarea name="comment" wrap="soft" cols="60" rows="'._ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
@@ -240,7 +241,7 @@ if ($action == 'create' || $action == 'add_paiement')
             if ($conf->banque->enabled)
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
-                $html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
+                $form->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
                 print '</td></tr>';
             }
             else
@@ -344,7 +345,7 @@ if ($action == 'create' || $action == 'add_paiement')
 }
 
 /*
- * Affichage liste
+ * Show list
  */
 if (! $_GET['action'] && ! $_POST['action'])
 {
@@ -355,16 +356,16 @@ if (! $_GET['action'] && ! $_POST['action'])
     if (! $sortorder) $sortorder='DESC';
     if (! $sortfield) $sortfield='p.datep';
 
-    $sql = 'SELECT p.rowid, p.rowid as pid, p.datep as dp, p.amount as pamount,';
-    $sql.= ' f.rowid as facid, f.rowid as ref, f.facnumber, f.amount,';
+    $sql = 'SELECT p.rowid as pid, p.datep as dp, p.amount as pamount, p.num_paiement,';
     $sql.= ' s.rowid as socid, s.nom,';
-    $sql.= ' c.libelle as paiement_type, p.num_paiement,';
-    $sql.= ' ba.rowid as bid, ba.label';
-    if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user ";
+    $sql.= ' c.libelle as paiement_type,';
+    $sql.= ' ba.rowid as bid, ba.label,';
+    if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
+    $sql.= ' SUM(f.amount)';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
     if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn ';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -378,26 +379,28 @@ if (! $_GET['action'] && ! $_POST['action'])
     // Search criteria
     if ($_REQUEST["search_ref"])
     {
-        $sql .=" AND p.rowid=".$_REQUEST["search_ref"];
+        $sql .= ' AND p.rowid='.$db->escape($_REQUEST["search_ref"]);
     }
     if ($_REQUEST["search_account"])
     {
-        $sql .=" AND b.fk_account=".$_REQUEST["search_account"];
+        $sql .= ' AND b.fk_account='.$db->escape($_REQUEST["search_account"]);
     }
     if ($_REQUEST["search_paymenttype"])
     {
-        $sql .=" AND c.code='".$_REQUEST["search_paymenttype"]."'";
+        $sql .= " AND c.code='".$db->escape($_REQUEST["search_paymenttype"])."'";
     }
     if ($_REQUEST["search_amount"])
     {
-        $sql .=" AND p.amount=".price2num($_REQUEST["search_amount"]);
+        $sql .= " AND p.amount=".price2num($_REQUEST["search_amount"]);
     }
     if ($_REQUEST["search_company"])
     {
-        $sql .=" AND s.nom LIKE '%".$db->escape($_REQUEST["search_company"])."%'";
+        $sql .= " AND s.nom LIKE '%".$db->escape($_REQUEST["search_company"])."%'";
     }
+    $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.libelle, ba.rowid, ba.label";
+    if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= $db->order($sortfield,$sortorder);
-    $sql.= $db->plimit($limit + 1 ,$offset);
+    $sql.= $db->plimit($limit+1, $offset);
 
     $resql = $db->query($sql);
     if ($resql)
@@ -413,8 +416,8 @@ if (! $_GET['action'] && ! $_POST['action'])
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, 'paiement.php',$paramlist,$sortfield,$sortorder,'',$num);
 
-        if ($mesg) print $mesg;
-        if ($errmsg) print $errmsg;
+        if ($mesg) dol_htmloutput_mesg($mesg);
+        if ($errmsg) dol_htmloutput_errors($errmsg);
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="noborder" width="100%">';
@@ -438,10 +441,10 @@ if (! $_GET['action'] && ! $_POST['action'])
         print '<input class="fat" type="text" size="6" name="search_company" value="'.$_REQUEST["search_company"].'">';
         print '</td>';
         print '<td>';
-        $html->select_types_paiements($_REQUEST["search_paymenttype"],'search_paymenttype','',2,1,1);
+        $form->select_types_paiements($_REQUEST["search_paymenttype"],'search_paymenttype','',2,1,1);
         print '</td>';
         print '<td>';
-        $html->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
+        $form->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
         print '</td>';
         print '<td align="right">';
         print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';

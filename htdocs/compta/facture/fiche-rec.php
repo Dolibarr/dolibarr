@@ -94,7 +94,7 @@ if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer)
 
 llxHeader('',$langs->trans("RepeatableInvoices"),'ch-facture.html#s-fac-facture-rec');
 
-$html = new Form($db);
+$form = new Form($db);
 
 /*
  * Create mode
@@ -135,11 +135,11 @@ if ($_GET["action"] == 'create')
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
 		print "<tr><td>".$langs->trans("PaymentConditions")."</td><td>";
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->cond_reglement_id,'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->cond_reglement_id,'none');
 		print "</td></tr>";
 
 		print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->mode_reglement_id,'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->mode_reglement_id,'none');
 		print "</td></tr>";
 
 		if ($conf->projet->enabled)
@@ -234,7 +234,7 @@ if ($_GET["action"] == 'create')
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$objp->product_label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
-					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
@@ -353,7 +353,7 @@ else
 			print '<tr><td>'.$langs->trans("Customer").'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print "<td>". $langs->trans("PaymentConditions") ." : ";
-			$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
 			print "</td></tr>";
 
 			print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">".$author->getFullName($langs)."</td>";
@@ -368,17 +368,17 @@ else
 			}
 
 			print $langs->trans("PaymentMode") ." : ";
-			$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
 			print "</td></tr>";
 
 			print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 			print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 			if ($fac->note)
 			{
 				print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
@@ -435,7 +435,7 @@ else
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$fac->lines[$i]->libelle;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($fac->lines[$i]->desc));
-					print $html->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($fac->lines[$i]->date_start,$fac->lines[$i]->date_end);

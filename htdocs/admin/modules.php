@@ -34,8 +34,7 @@ $langs->load("admin");
 $mode=isset($_GET["mode"])?GETPOST("mode"):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
 $mesg=GETPOST("mesg");
 
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) accessforbidden();
 
 
 /*
@@ -85,27 +84,25 @@ $j = 0;	// j is module number. Automatically affected if module number not defin
 
 foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
-	$modulesdir[] = $dirroot . "/core/modules/";
-	
-	if ($type == 'alt')
-	{	
-		$handle=@opendir($dirroot);
-		if (is_resource($handle))
+	$modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
+
+	$handle=@opendir($dirroot);
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle))!==false)
 		{
-			while (($file = readdir($handle))!==false)
-			{
-			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-			    {
-			    	if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-			    	{
-			    		$modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-			    	}
-			    }
-			}
-			closedir($handle);
+		    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+		    {
+		    	if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+		    	{
+		    		$modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
+		    	}
+		    }
 		}
+		closedir($handle);
 	}
 }
+//var_dump($modulesdir);
 
 foreach ($modulesdir as $dir)
 {
@@ -124,38 +121,45 @@ foreach ($modulesdir as $dir)
 
 		        if ($modName)
 		        {
-		            include_once($dir.$file);
-		            $objMod = new $modName($db);
-
-		            if ($objMod->numero > 0)
+		            try
 		            {
-		                $j = $objMod->numero;
+		                $res=include_once($dir.$file);
+		                $objMod = new $modName($db);
+
+    		            if ($objMod->numero > 0)
+    		            {
+    		                $j = $objMod->numero;
+    		            }
+    		            else
+    		            {
+    		                $j = 1000 + $i;
+    		            }
+
+    					$modulequalified=1;
+
+    					// We discard modules according to features level (PS: if module is activated we always show it)
+    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+    					if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+    					if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+
+    					if ($modulequalified)
+    					{
+    						$modules[$i] = $objMod;
+    			            $filename[$i]= $modName;
+    			            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+    						//print "x".$modName." ".$orders[$i]."\n<br>";
+    						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
+    			            else $categ[$objMod->special]=1;
+    						$dirmod[$i] = $dir;
+    						$j++;
+    			            $i++;
+    					}
+    					else dol_syslog("Module ".get_class($objMod)." not qualified");
 		            }
-		            else
+		            catch(Exception $e)
 		            {
-		                $j = 1000 + $i;
+		                 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 		            }
-
-					$modulequalified=1;
-
-					// We discard modules according to features level (PS: if module is activated we always show it)
-					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-					if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
-					if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
-
-					if ($modulequalified)
-					{
-						$modules[$i] = $objMod;
-			            $filename[$i]= $modName;
-			            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
-						//print "x".$modName." ".$orders[$i]."\n<br>";
-						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
-			            else $categ[$objMod->special]=1;
-						$dirmod[$i] = $dirroot;
-						$j++;
-			            $i++;
-					}
-					else dol_syslog("Module ".get_class($objMod)." not qualified");
 		        }
 		    }
 		}
@@ -317,8 +321,10 @@ if ($mode != 4)
                 //print $familytext;
                 $oldfamily=$family;
             }
-            
+
             $var=!$var;
+
+            //print "\n<!-- Module ".$objMod->numero." ".$objMod->getName()." found into ".$dirmod[$key]." -->\n";
             print '<tr height="18" '.$bc[$var].">\n";
 
             // Picto

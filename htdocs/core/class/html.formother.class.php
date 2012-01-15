@@ -43,12 +43,13 @@ class FormOther
 
 
 	/**
-	 *	Constructeur
-	 *	@param     DB      Database handler
+	 *	Constructor
+	 *
+	 *	@param	DoliDB		$db      Database handler
 	 */
-	function FormOther($DB)
+	function FormOther($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		return 1;
 	}
@@ -56,10 +57,12 @@ class FormOther
 
 	/**
      *    Return HTML select list of export models
-	 *    @param      selected          Id modele pre-selectionne
-	 *    @param      htmlname          Nom de la zone select
-	 *    @param      type              Type des modeles recherches
-	 *    @param      useempty          Affiche valeur vide dans liste
+     *    
+	 *    @param    string	$selected          Id modele pre-selectionne
+	 *    @param    string	$htmlname          Nom de la zone select
+	 *    @param    string	$type              Type des modeles recherches
+	 *    @param    int		$useempty          Affiche valeur vide dans liste
+	 *    @return	void
 	 */
 	function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
 	{
@@ -103,10 +106,12 @@ class FormOther
 
 	/**
      *    Return list of export models
-	 *    @param      selected          Id modele pre-selectionne
-	 *    @param      htmlname          Nom de la zone select
-	 *    @param      type              Type des modeles recherches
-	 *    @param      useempty          Affiche valeur vide dans liste
+     *    
+	 *    @param    string	$selected          Id modele pre-selectionne
+	 *    @param    string	$htmlname          Nom de la zone select
+	 *    @param    string	$type              Type des modeles recherches
+	 *    @param    int		$useempty          Affiche valeur vide dans liste
+	 *    @return	void
 	 */
 	function select_import_model($selected='',$htmlname='importmodelid',$type='',$useempty=0)
 	{
@@ -150,8 +155,10 @@ class FormOther
 
 	/**
 	 *    Retourne la liste des ecotaxes avec tooltip sur le libelle
-	 *    @param     selected    code ecotaxes pre-selectionne
-	 *    @param     htmlname    nom de la liste deroulante
+	 *    
+	 *    @param	string	$selected    code ecotaxes pre-selectionne
+	 *    @param    string	$htmlname    nom de la liste deroulante
+	 *    @return	void
 	 */
 	function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
 	{
@@ -202,6 +209,7 @@ class FormOther
 
 	/**
 	 *    Return a HTML select list to select a percent
+	 *    
 	 *    @param     selected      pourcentage pre-selectionne
 	 *    @param     htmlname      nom de la liste deroulante
 	 *    @param     increment     increment value
@@ -234,6 +242,7 @@ class FormOther
 
 	/**
 	 *  Return select list for categories (to use in form search selectors)
+	 *  
 	 *	@param    	type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
 	 *  @param     	selected     	Preselected value
 	 *  @param     	htmlname      	Name of combo list
@@ -269,6 +278,7 @@ class FormOther
 
 	/**
 	 *  Return select list for categories (to use in form search selectors)
+	 *  
 	 *  @param     	selected     	Preselected value
 	 *  @param     	htmlname      	Name of combo list
 	 *  @param      user            Object user
@@ -311,7 +321,6 @@ class FormOther
  				$moreforfilter.='>';
  				$moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')';
  				$moreforfilter.='</option>';
- 				$i++;
  			}
  			$this->db->free($resql_usr);
  		}
@@ -326,13 +335,15 @@ class FormOther
 
 	/**
 	 *	Return list of project and tasks
-	 *	@param     	selectedtask   	Pre-selected task
-	 *  @param      projectid       Project id
-	 * 	@param     	htmlname    	Name of html select
-	 * 	@param		modeproject		1 to restrict on projects owned by user
-	 * 	@param		modetask		1 to restrict on tasks associated to user
-	 * 	@param		mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-	 *  @param      useempty        0=Allow empty values
+	 *
+	 *	@param  int		$selectedtask   	Pre-selected task
+	 *  @param  int		$projectid       Project id
+	 * 	@param  string	$htmlname    	Name of html select
+	 * 	@param	int		$modeproject		1 to restrict on projects owned by user
+	 * 	@param	int		$modetask		1 to restrict on tasks associated to user
+	 * 	@param	int		$mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 *  @param  int		$useempty        0=Allow empty values
+	 *  @return	void
 	 */
 	function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0)
 	{
@@ -361,11 +372,13 @@ class FormOther
 
 	/**
 	 *		Output a HTML code to select a color
+	 *
 	 *		@param	set_color		Pre-selected color
 	 *		@param	prefix			Name of HTML field
 	 *		@param	form_name		Name of form
 	 * 		@param	showcolorbox	1=Show color code and color box, 0=Show only color code
 	 * 		@param 	arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 * 		@return	void
 	 */
 	function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
 	{
@@ -413,42 +426,6 @@ class FormOther
 		        } ); });
              </script>';
             print '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat" type="text" value="'.$set_color.'" />';
-
-            /*
-			// No list of colors forced, we can suggest any color
-			print "\n".'<table class="nobordernopadding"><tr><td valign="middle">';
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/lib/lib_colorpicker.js"></script>'."\n";
-			print '<script type="text/javascript">
-		           window.onload = function()
-		           {
-		             fctLoad();
-		           }
-		           window.onscroll = function()
-		           {
-		             fctShow();
-		           }
-		           window.onresize = function()
-		           {
-		             fctShow();
-		           }
-		         </script>'."\n";
-			print '<input type="text" size="10" name="'.$prefix.'" value="'.$set_color.'" maxlength="7" class="flat">'."\n";
-			print '</td><td valign="middle">';
-			print '<img src="'.DOL_URL_ROOT.'/theme/common/colorpicker.png" width="21" height="18" border="0" onClick="fctShow(document.'.$form_name.'.'.$prefix.');" style="cursor:pointer;">'."\n";
-			print '</td>';
-
-			if ($showcolorbox)
-			{
-				print '<td style="padding-left: 4px" nowrap="nowrap">';
-				print '<!-- Box color '.$set_color.' -->';
-				print '<table style="border-collapse: collapse; margin:0px; padding: 0px; border: 1px solid #888888; background: #'.(preg_replace('/#/','',$set_color)).';" width="12" height="10">';
-				print '<tr class="nocellnopadd"><td></td></tr>';
-				print '</table>';
-				print '</td>';
-			}
-
-			print '</tr></table>';
-			*/
 		}
 		else  // In most cases, this is not used. We used instead function with no specific list of colors
 		{
@@ -478,11 +455,12 @@ class FormOther
 
 	/**
 	 *		Creation d'un icone de couleur
-	 *		@param	color		Couleur de l'image
-	 *		@param	module  Nom du module
-	 *		@param	name	  Nom de l'image
-	 *		@param	x       Largeur de l'image en pixels
-	 *		@param	y       Hauteur de l'image en pixels
+	 *
+	 *		@param	string	$color		Couleur de l'image
+	 *		@param	string	$module 	Nom du module
+	 *		@param	string	$name		Nom de l'image
+	 *		@param	int		$x 			Largeur de l'image en pixels
+	 *		@param	int		$y      	Hauteur de l'image en pixels
 	 */
 	function CreateColorIcon($color,$module,$name,$x='12',$y='12')
 	{
@@ -515,9 +493,11 @@ class FormOther
 
     /**
      *    	Return HTML combo list of week
-     *    	@param      selected          Preselected value
-     *    	@param      htmlname          Nom de la zone select
-     *    	@param      useempty          Affiche valeur vide dans liste
+     *    
+     *    	@param	string		$selected          Preselected value
+     *    	@param  string		$htmlname          Nom de la zone select
+     *    	@param  int			$useempty          Affiche valeur vide dans liste
+     *    	@return	void
      */
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
     {
@@ -554,9 +534,11 @@ class FormOther
 
     /**
      *    	Return HTML combo list of month
-     *    	@param      selected          Preselected value
-     *    	@param      htmlname          Nom de la zone select
-     *    	@param      useempty          Affiche valeur vide dans liste
+     *    
+     *    	@param	string		$selected          Preselected value
+     *    	@param  string		$htmlname          Nom de la zone select
+     *    	@param  int			$useempty          Affiche valeur vide dans liste
+     *    	@return	void
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
@@ -587,11 +569,13 @@ class FormOther
 
     /**
      *    	Return HTML combo list of years
-     *      @param      selected          Preselected value (''=current year, -1=none, year otherwise)
-     *    	@param      htmlname          Name of HTML select object
-     *    	@param      useempty          Affiche valeur vide dans liste
-     *    	@param      $min_year         Offset of minimum year into list (by default current year -10)
-     *    	@param      $max_year         Offset of maximum year into list (by default current year + 5)
+     *    
+     *      @param  string		$selected       Preselected value (''=current year, -1=none, year otherwise)
+     *    	@param  string		$htmlname       Name of HTML select object
+     *    	@param  int			$useempty       Affiche valeur vide dans liste
+     *    	@param  int			$min_year       Offset of minimum year into list (by default current year -10)
+     *    	@param  int		    $max_year		Offset of maximum year into list (by default current year + 5)
+     *    	@return	void
      */
 	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {
@@ -600,11 +584,13 @@ class FormOther
 
     /**
      *    	Return HTML combo list of years
-     *      @param      selected          Preselected value (''=current year, -1=none, year otherwise)
-     *    	@param      htmlname          Name of HTML select object
-     *    	@param      useempty          Affiche valeur vide dans liste
-     *    	@param      $min_year         Offset of minimum year into list (by default current year -10)
-     *    	@param      $max_year         Offset of maximum year into list (by default current year + 5)
+     *    
+     *      @param  string	$selected       Preselected value (''=current year, -1=none, year otherwise)
+     *    	@param  string	$htmlname       Name of HTML select object
+     *    	@param  int	    $useempty       Affiche valeur vide dans liste
+     *    	@param  int	    $min_year		Offset of minimum year into list (by default current year -10)
+     *    	@param  int	    $max_year       Offset of maximum year into list (by default current year + 5)
+     *    	@return	void
      */
 	function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {
@@ -649,12 +635,14 @@ class FormOther
 
 /**
  * Write all lines of a project (if parent = 0)
- * @param 	$inc
- * @param 	$parent
- * @param 	$lines
- * @param 	$level
- * @param 	$selectedtask
- * @param 	$selectedproject
+ * 
+ * @param 	int		&$inc					Cursor counter
+ * @param 	int		$parent					Id parent
+ * @param 	Object	$lines					Line object
+ * @param 	int		$level					Level
+ * @param 	int		$selectedtask			Id selected task
+ * @param 	int		$selectedproject		Id selected project
+ * @return	void
  */
 function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0)
 {

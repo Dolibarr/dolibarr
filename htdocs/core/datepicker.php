@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/core/datepicker.php
- *       \brief      Fichier de gestion de la popup de selection de date eldy
+ *       \brief      File to manage popup date selector
  */
 
 if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -124,7 +124,8 @@ function xyzToUnixTimestamp($mysqldate){
 	return $unixtimestamp;
 }
 
-function displayBox($selectedDate,$month,$year){
+function displayBox($selectedDate,$month,$year)
+{
 	global $langs,$conf;
 
 	//print "$selectedDate,$month,$year";
@@ -135,7 +136,7 @@ function displayBox($selectedDate,$month,$year){
 	if($selectedDate != "00000000")
 	{
 		$selDate=xyzToUnixTimestamp($selectedDate);
-		$xyz=dol_date("Ymd",$selDate);
+		$xyz=dol_print_date($selDate,"%Y%m%d");
 	}
 	else
 	{
@@ -143,12 +144,12 @@ function displayBox($selectedDate,$month,$year){
 		$xyz=0;
 	}
 	?>
-<table class="dp" cellspacing="0" cellpadding="0" border="0">
+<table class="dp">
 	<tr>
 		<td colspan="6" class="dpHead"><?php
-		$selectMonth = dol_date("F", $thedate);
-		$selectYear = dol_date("Y", $thedate);
-		echo $langs->trans($selectMonth).", ".$selectYear;
+		$selectMonth = dol_print_date($thedate, '%m');
+		$selectYear = dol_print_date($thedate, '%Y');
+		echo $langs->trans("Month".$selectMonth).", ".$selectYear;
 		?></td>
 		<td class="dpHead">
 		<button type="button" class="dpInvisibleButtons" id="DPCancel"
@@ -161,7 +162,7 @@ function displayBox($selectedDate,$month,$year){
 		<td class="dpButtons"
 			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/core/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&lt;</td>
 		<td colspan="3" class="dpButtons"
-			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/core/' ?>','<?php echo dol_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')"><?php echo '-' ?></td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/core/' ?>','<?php echo (int) dol_print_date($today,'%m')?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')"><?php echo '-' ?></td>
 		<td class="dpButtons"
 			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/core/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&gt;</td>
 		<td class="dpButtons"
@@ -217,8 +218,8 @@ function displayBox($selectedDate,$month,$year){
 
 		// Sur click dans calendrier, appelle fonction dpClickDay
 		echo "<TD class=\"".$dayclass."\"";
-		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".dol_date("n",$thedate).",".$mydate["mday"].",tradMonths)\"";
-		echo " onClick=\"dpClickDay(".$mydate["year"].",".dol_date("n",$thedate).",".$mydate["mday"].",'".$langs->trans("FormatDateShortJava")."')\"";
+		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".dol_print_date($thedate,"%m").",".$mydate["mday"].",tradMonths)\"";
+		echo " onClick=\"dpClickDay(".$mydate["year"].",".dol_print_date($thedate,"%m").",".$mydate["mday"].",'".$langs->trans("FormatDateShortJava")."')\"";
 		echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 		$cols++;
 
@@ -249,7 +250,7 @@ function displayBox($selectedDate,$month,$year){
 		if($selDate)
 		{
 			$tempDate=dol_getdate($selDate);
-			print $langs->trans($selectMonth)." ";
+			print $langs->trans("Month".$selectMonth)." ";
 			print sprintf("%02s",$tempDate["mday"]);
 			print ", ".$selectYear;
 		}

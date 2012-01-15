@@ -64,6 +64,7 @@ llxHeader('',$langs->trans("ListOfFees"),$help_url);
 $totalnb=0;
 $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d";
+$sql.= " WHERE d.entity = ".$conf->entity;
 $sql.= " GROUP BY d.type";
 $sql.= " ORDER BY d.type";
 
@@ -102,9 +103,9 @@ print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
 $listoftype=$tripandexpense_static->listOfTypes();
-foreach ($listoftype as $typefee)
+foreach ($listoftype as $code => $label)
 {
-    $dataseries[]=array('label'=>$typefee['label'],'values'=>array(0=>(isset($nb[$typefee['code']])?$nb[$typefee['code']]:0)));
+    $dataseries[]=array('label'=>$label,'data'=>(isset($nb[$code])?(int) $nb[$code]:0));
 }
 
 if ($conf->use_javascript_ajax)

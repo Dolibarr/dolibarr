@@ -37,13 +37,13 @@ class modMyModule extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modMyModule($DB)
+	function modMyModule($db)
 	{
         global $langs,$conf;
 
-        $this->db = $DB;
+        $this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -99,8 +99,8 @@ class modMyModule extends DolibarrModules
 		$this->const = array();
 
 		// Array to add new pages in new tabs
-		// Example: $this->tabs = array('objecttype:+tabname1:Title1:@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  // To add a new tab identified by code tabname1
-        //                              'objecttype:+tabname2:Title2:@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__',  // To add another new tab identified by code tabname2
+		// Example: $this->tabs = array('objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  // To add a new tab identified by code tabname1
+        //                              'objecttype:+tabname2:Title2:langfile@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__',  // To add another new tab identified by code tabname2
         //                              'objecttype:-tabname');                                                     // To remove an existing tab identified by code tabname
 		// where objecttype can be
 		// 'thirdparty'       to add a tab in third party view
@@ -169,12 +169,12 @@ class modMyModule extends DolibarrModules
 		$r=0;
 
 		// Add here entries to declare new menus
-		// Example to declare the Top Menu entry:
+		//
+		// Example to declare a new Top Menu entry and its Left menu entry:
 		// $this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
 		//							'type'=>'top',			// This is a Top menu entry
 		//							'titre'=>'MyModule top menu',
 		//							'mainmenu'=>'mymodule',
-		//							'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor.
 		//							'url'=>'/mymodule/pagetop.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
@@ -183,11 +183,9 @@ class modMyModule extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
-		//
-		// Example to declare a Left Menu entry:
 		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 		//							'type'=>'left',			// This is a Left menu entry
-		//							'titre'=>'MyModule left menu 1',
+		//							'titre'=>'MyModule left menu',
 		//							'mainmenu'=>'mymodule',
 		//							'url'=>'/mymodule/pagelevel1.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -198,15 +196,15 @@ class modMyModule extends DolibarrModules
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
 		//
-		// Example to declare another Left Menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'r=1',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		// Example to declare a Left Menu entry into an existing Top menu entry:
+		// $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=mainmenucode',		// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy'
 		//							'type'=>'left',			// This is a Left menu entry
-		//							'titre'=>'MyModule left menu 2',
-		//							'mainmenu'=>'mymodule',
+		//							'titre'=>'MyModule left menu',
+		//							'leftmenu'=>'mymodule',
 		//							'url'=>'/mymodule/pagelevel2.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
-		//							'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+		//							'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 		//							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both

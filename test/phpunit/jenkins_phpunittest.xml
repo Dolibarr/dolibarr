@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE phpunit SYSTEM "phpunit.dtd" >
+<phpunit 
+	backupGlobals="true"
+	backupStaticAttributes="false"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	colors="true"
+	processIsolation="false"
+	stopOnFailure="false"
+	syntaxCheck="true">
+<filter>
+  <blacklist>
+    <directory suffix=".php">../../build/</directory>
+    <directory suffix=".php">../../dev/</directory>
+    <directory suffix=".php">../../doc/</directory>
+    <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/core/menus/smartphone/</directory>
+    <directory suffix=".php">../../htdocs/products/canvas/</directory>
+    <directory suffix=".php">../../htdocs/contact/canvas/</directory>
+    <directory suffix=".php">../../htdocs/societe/canvas/</directory>
+    <directory suffix=".php">../../htdocs/includes/</directory>
+  </blacklist>
+  <whitelist addUncoveredFilesFromWhitelist="true">
+    <directory suffix=".class.php">../../htdocs/</directory>
+    <directory suffix=".lib.php">../../htdocs/</directory>
+    <directory suffix=".inc.php">../../htdocs/</directory>
+    <directory suffix=".modules.php">../../htdocs/</directory>
+    <file>../../htdocs/core/modules/facture/modules_facture.php</file>
+    <file>../../htdocs/core/modules/commande/modules_commande.php</file>
+    <file>../../htdocs/core/modules/propale/modules_propale.php</file>
+    <file>../../htdocs/core/modules/project/modules_project.php</file>
+    <file>../../htdocs/core/modules/fichinter/modules_fichinter.php</file>
+    <exclude>
+    <directory suffix=".php">../../build/</directory>
+    <directory suffix=".php">../../dev/</directory>
+    <directory suffix=".php">../../doc/</directory>
+    <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/core/menus/smartphone</directory>
+    <directory suffix=".php">../../htdocs/products/canvas/</directory>
+    <directory suffix=".php">../../htdocs/contact/canvas/</directory>
+    <directory suffix=".php">../../htdocs/societe/canvas/</directory>
+    <directory suffix=".php">../../htdocs/includes/</directory>
+    <file>../../htdocs/boutique/osc_master.inc.php</file>
+    <file>../../htdocs/compta/bank/pre.inc.php</file>
+    <file>../../htdocs/compta/paiement/cheque/pre.inc.php</file>
+    <file>../../htdocs/ftp/pre.inc.php</file>
+    </exclude>
+  </whitelist>
+</filter>
+<ini name="max_execution_time" value="600"/>
+<ini name="max_input_time" value="600"/>
+</phpunit>

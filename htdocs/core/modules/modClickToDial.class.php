@@ -38,12 +38,12 @@ class modClickToDial extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modClickToDial($DB)
+	function modClickToDial($db)
 	{
-		$this->db = $DB ;
-		$this->numero = 58 ;
+		$this->db = $db;
+		$this->numero = 58;
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -78,18 +78,20 @@ class modClickToDial extends DolibarrModules
 	}
 
     /**
-     *      \brief      Function called when module is enabled.
-     *                  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *                  It also creates data directories.
-     *      \return     int             1 if OK, 0 if KO
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
-	function init()
+	function init($options='')
 	{
 		global $conf;
 
 		$sql = array();
 
-		return $this->_init($sql);
+		return $this->_init($sql,$options);
 	}
 
     /**

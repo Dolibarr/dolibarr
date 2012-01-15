@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ if ($id)
     $sql.= " WHERE ugr.fk_id = r.id";
     if(! empty($conf->multicompany->enabled))
     {
-        if(empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        if(empty($conf->multicompany->transverse_mode))
         {
         	$sql.= " AND r.entity = ".$conf->entity;
         }
@@ -250,7 +250,7 @@ if ($id)
     //$sql.= " AND r.entity = ".(empty($conf->multicompany->enabled) ? $conf->entity : $fgroup->entity);
     if(! empty($conf->multicompany->enabled))
     {
-        if(empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        if(empty($conf->multicompany->transverse_mode))
         {
         	$sql.= " AND r.entity = ".$conf->entity;
         }

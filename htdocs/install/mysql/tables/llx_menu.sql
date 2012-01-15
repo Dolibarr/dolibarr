@@ -26,7 +26,7 @@ CREATE TABLE llx_menu
 	entity        integer DEFAULT 1 NOT NULL,       -- Multi company id
 	module        varchar(64),                      -- Module name if record is added by a module
 	type          varchar(4) NOT NULL,              -- Menu top or left
-	mainmenu      varchar(100) NOT NULL,            -- Name family/module (home, companies, ...)
+	mainmenu      varchar(100) NOT NULL,            -- Name family/module for top menu (home, companies, ...)
     leftmenu      varchar(100) NULL,                -- Name family/module for left menu (setup, info, ...)
 	fk_menu       integer NOT NULL,                 -- 0 or Id of mother menu line, or -1 if we use fk_mainmenu and fk_leftmenu
     fk_mainmenu   varchar(16),                      -- 

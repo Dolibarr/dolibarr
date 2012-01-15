@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -158,7 +158,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject->note='New note after update';
+        $this->changeProperties($localobject);
     	$result=$localobject->update($user);
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -182,6 +182,13 @@ class FactureTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
     	$this->assertLessThan($result, 0);
+
+    	// Test everything are still same than specimen
+    	$newlocalobject=new Facture($this->savdb);
+    	$newlocalobject->initAsSpecimen();
+    	$this->changeProperties($newlocalobject);
+        $this->assertEquals($this->objCompare($localobject,$newlocalobject,true,array('id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','ref','statut','paye','specimen','facnumber','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement','cond_reglement_doc')), array());    // Actual, Expected
+
     	return $localobject;
     }
 
@@ -231,23 +238,53 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Edit an object to test updates
      *
+     * @param 	mixed	&$localobject		Object Facture
+     * @return	void
      */
-    /*public function testVerifyNumRef()
+    public function changeProperties(&$localobject)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        $localobject->note='New note';
+        //$localobject->note='New note after update';
+    }
 
-		$localobject=new Facture($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
+    /**
+     * Compare all public properties values of 2 objects
+     *
+     * @param 	Object		$oA				Object operand 1
+     * @param 	Object		$oB				Object operand 2
+     * @param	boolean		$ignoretype		False will not report diff if type of value differs
+     * @param	array		$fieldstoignore	Array of fields to ignore in diff
+	 * @return	array						Array with differences
+     */
+    public function objCompare($oA,$oB,$ignoretype=true,$fieldstoignorearray=array('id'))
+    {
+        $retAr=array();
 
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }*/
+        if (get_class($oA) !== get_class($oB))
+        {
+            $retAr[]="Supplied objects are not of same class.";
+        }
+        else
+        {
+            $oVarsA=get_object_vars($oA);
+            $oVarsB=get_object_vars($oB);
+            $aKeys=array_keys($oVarsA);
+            foreach($aKeys as $sKey)
+            {
+                if (in_array($sKey,$fieldstoignorearray)) continue;
+                if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
+                {
+                    $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
+                }
+                if ($ignoretype && $oVarsA[$sKey] != $oVarsB[$sKey])
+                {
+                    $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
+                }
+            }
+        }
+        return $retAr;
+    }
 }
 ?>

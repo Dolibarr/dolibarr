@@ -105,7 +105,7 @@ $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
 $sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell, p.tobuy";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.entity IN (0,".(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).")";
+$sql.= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
 $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
@@ -165,7 +165,7 @@ $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.entity IN (0,".(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).")";
+$sql.= " WHERE p.entity IN (".getEntity($sharedelement, 1).")";
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
 $sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);

@@ -24,7 +24,7 @@
 	<div class="td firstcol">
 	<a name="<?php echo $line->id; ?>"></a>
 	<?php
-	echo $html->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+	echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
 
 	// Show range
 	print_date_range($line->date_start, $line->date_end);

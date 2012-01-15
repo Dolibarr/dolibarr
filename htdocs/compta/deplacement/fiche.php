@@ -47,6 +47,7 @@ $mesg = '';
 
 $object = new Deplacement($db);
 
+
 /*
  * Actions
  */
@@ -121,6 +122,7 @@ if ($action == 'add' && $user->rights->deplacement->creer)
 	}
 }
 
+// Update record
 if ($action == 'update' && $user->rights->deplacement->creer)
 {
 	if (empty($_POST["cancel"]))
@@ -134,7 +136,7 @@ if ($action == 'update' && $user->rights->deplacement->creer)
 		$object->socid			= $_POST["socid"];
 		$object->note_private	= $_POST["note_private"];
 		$object->note_public	= $_POST["note_public"];
-		
+
 		$result = $object->update($user);
 
 		if ($result > 0)
@@ -162,6 +164,32 @@ if ($action == 'classin')
 	if ($result < 0) dol_print_error($db, $object->error);
 }
 
+// Set fields
+if ($action == 'setdated')
+{
+    $dated=dol_mktime($_POST['datedhour'], $_POST['datedmin'], $_POST['datedsec'], $_POST['datedmonth'], $_POST['datedday'], $_POST['datedyear']);
+    $object->fetch($id);
+    $result=$object->setValueFrom('dated',$dated,'','','date');
+    if ($result < 0) dol_print_error($db, $object->error);
+}
+if ($action == 'setkm')
+{
+    $object->fetch($id);
+    $result=$object->setValueFrom('km',GETPOST('km'));
+    if ($result < 0) dol_print_error($db, $object->error);
+}
+if ($action == 'setnote_public')
+{
+    $object->fetch($id);
+    $result=$object->setValueFrom('note_public',GETPOST('note_public'));
+    if ($result < 0) dol_print_error($db, $object->error);
+}
+if ($action == 'setnote')
+{
+    $object->fetch($id);
+    $result=$object->setValueFrom('note',GETPOST('note'));
+    if ($result < 0) dol_print_error($db, $object->error);
+}
 
 
 /*
@@ -217,7 +245,9 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
 	print '<td valign="top" colspan="2">';
-	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea>';
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+	$doleditor=new DolEditor('note_public',GETPOST('note_public'),600,200,'dolibarr_notes','In',false,true,true,ROWS_8,100);
+    print $doleditor->Create(1);
 	print '</td></tr>';
 
 	// Private note
@@ -226,7 +256,9 @@ if ($action == 'create')
 	    print '<tr>';
 	    print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
 	    print '<td valign="top" colspan="2">';
-	    print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea>';
+    	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    	$doleditor=new DolEditor('note_private',GETPOST('note_private'),600,200,'dolibarr_notes','In',false,true,true,ROWS_8,100);
+        print $doleditor->Create(1);
 	    print '</td></tr>';
 	}
 
@@ -248,7 +280,7 @@ else if ($id)
 
 		dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
-		if ($action == 'edit')
+		if ($action == 'edit' && $user->rights->deplacement->creer)
 		{
 			$soc = new Societe($db);
 			if ($object->socid)
@@ -285,41 +317,45 @@ else if ($id)
 			print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 			print $form->select_date($object->date,'','','','','update');
 			print '</td></tr>';
-			
+
 			// Km
 			print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td>';
 			print '<input name="km" class="flat" size="10" value="'.$object->km.'">';
 			print '</td></tr>';
-			
+
 			// Where
 			print "<tr>";
 			print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
 			print $form->select_societes($soc->id,'socid','',1);
 			print '</td></tr>';
-			
+
 			// Public note
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 			print '<td valign="top" colspan="3">';
-			print '<textarea name="note_public" cols="80" rows="8">'.$object->note_public."</textarea><br>";
+			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+			$doleditor=new DolEditor('note_public',$object->note_public,600,200,'dolibarr_notes','In',false,true,true,ROWS_8,'100');
+			print $doleditor->Create(1);
 			print "</td></tr>";
-			
+
 			// Private note
 			if (! $user->societe_id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 				print '<td valign="top" colspan="3">';
-				print '<textarea name="note_private" cols="80" rows="8">'.$object->note_private."</textarea><br>";
+    			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    			$doleditor=new DolEditor('note_private',$object->note_private,600,200,'dolibarr_notes','In',false,true,true,ROWS_8,'100');
+    			print $doleditor->Create(1);
 				print "</td></tr>";
 			}
-			
+
 			print '</table>';
-			
+
 			print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
 			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 			print '</center>';
-			
+
 			print '</form>';
-			
+
 			print '</div>';
 		}
 		else
@@ -339,13 +375,16 @@ else if ($id)
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print "<tr>";
-			print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
+			print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>';
 			print $form->showrefnav($object,'id','',1,'rowid','ref','');
 			print '</td></tr>';
-			
+
 			// Type
-			print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($object->type).'</td></tr>';
+			print '<tr><td>';
+            print $form->editfieldkey("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
+			print '</td><td>';
+            print $form->editfieldval("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
+			print '</td></tr>';
 
 			// Who
 			print '<tr><td>'.$langs->trans("Person").'</td><td>';
@@ -355,20 +394,25 @@ else if ($id)
 			print '</td></tr>';
 
 			// Date
-			print '<tr><td>'.$langs->trans("Date").'</td><td>';
-			print dol_print_date($object->date,'day');
+			print '<tr><td>';
+			print $form->editfieldkey("Date",'dated',$object->date,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'datepicker');
+			print '</td><td>';
+			print $form->editfieldval("Date",'dated',$object->date,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'datepicker');
 			print '</td></tr>';
 
 			// Km/Price
-			print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td>';
-			print '<td>'.$form->editInPlace(price($object->km), 'km', $user->rights->deplacement->creer, 'numeric').'</td></tr>';
-			
+			print '<tr><td valign="top">';
+			print $form->editfieldkey("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
+			print '</td><td>';
+			print $form->editfieldval("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
+			print "</td></tr>";
+
 			// Where
 			print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
 			print '<td>';
 			if ($soc->id) print $soc->getNomUrl(1);
 			print '</td></tr>';
-			
+
 			// Project
 			if ($conf->projet->enabled)
 			{
@@ -401,36 +445,34 @@ else if ($id)
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-			
+
 			// Public note
-			print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
-			print '<td valign="top" colspan="3">';
-			// FIXME parameter note_private must not be denatured with a format function to be propagated. dol_nl2br must be used
-			// by editInPlace if necessary according to type (4rd parameter)
-			print $form->editInPlace(dol_nl2br($object->note_public), 'note_public', $user->rights->deplacement->creer, 'area');
+			print '<tr><td valign="top">';
+			print $form->editfieldkey("NotePublic",'note_public',$object->note_public,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180');
+			print '</td><td>';
+			print $form->editfieldval("NotePublic",'note_public',$object->note_public,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180');
 			print "</td></tr>";
-			
+
 			// Private note
 			if (! $user->societe_id)
 			{
-				print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
-				print '<td valign="top" colspan="3">';
-				// FIXME parameter note_private must not be denatured with a format function to be propagated. dol_nl2br must be used
-				// by editInPlace if necessary according to type (4rd parameter)
-				print $form->editInPlace(dol_nl2br($object->note_private), 'note', $user->rights->deplacement->creer, 'area');
-				print "</td></tr>";
+    			print '<tr><td valign="top">';
+    			print $form->editfieldkey("NotePrivate",'note',$object->note_private,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180');
+    			print '</td><td>';
+    			print $form->editfieldval("NotePrivate",'note',$object->note_private,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180');
+    			print "</td></tr>";
 			}
 
 			print "</table>";
 
 			print '</div>';
-			
+
 			/*
 			 * Barre d'actions
 			 */
-			
+
 			print '<div class="tabsAction">';
-			
+
 			if ($user->rights->deplacement->creer)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
@@ -447,7 +489,7 @@ else if ($id)
 			{
 				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
 			}
-			
+
 			print '</div>';
 		}
 	}

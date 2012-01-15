@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - bills 
+# Dolibarr language file - ca_ES - bills
 CHARSET=UTF-8
 Bill=Factura
 Bills=Factures
@@ -140,6 +140,7 @@ SuppliersDraftInvoices=Factures de proveïdors esborrany
 Unpaid=Pendents
 ConfirmDeleteBill=Esteu segur de voler eliminar aquesta factura?
 ConfirmValidateBill=Esteu segur de voler validar aquesta factura amb la referència <b>%s</b>?
+ConfirmUnvalidateBill=Esteu segur de voler tornar la factura <b>%s</b> a l'estat esborrany?
 ConfirmClassifyPaidBill=Esteu segur de voler classificar la factura <b>%s</b> com pagada?
 ConfirmCancelBill=Esteu segur de voler anul·lar la factura <b>%s</b>?
 ConfirmCancelBillQuestion=Per quina raó vol abandonar la factura?
@@ -162,6 +163,7 @@ ConfirmClassifyAbandonReasonOtherDesc=Aquesta elecció serà per a qualsevol alt
 ConfirmCustomerPayment=¿Confirmeu el procés d'aquest pagament de <b>%s</b>%s?
 ConfirmValidatePayment=Esteu segur de voler validar aquest pagament (cap modificació és possible un cop el pagament estigui validat)?
 ValidateBill=Validar factura
+UnvalidateBill=Tornar factura a esborrany
 NumberOfBills=Nº de factures
 NumberOfBillsByMonth=Nº de factures per mes
 AmountOfBills=Import de les factures
@@ -229,12 +231,16 @@ ReductionsShort=Dto.
 Discount=Descompte
 Discounts=Descomptes
 ShowDiscount=Veure el abonament
+ShowReduc=Visualitzar la deducció
 RelativeDiscount=Descompte relatiu
 GlobalDiscount=Descompte fixe
 CreditNote=Abonament
 CreditNotes=Abonaments
 AddDiscount=Crear descompte fix
+AddRelativeDiscount=Crear descompte relatiu
+EditRelativeDiscount=Editar descompte relatiu
 AddGlobalDiscount=Crear descompte fixe
+EditGlobalDiscounts=Editar descompte fixe
 AddCreditNote=Crear factura de pagament
 Deposit=Bestreta
 Deposits=Bestretes
@@ -277,7 +283,7 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma de l'import dels 2 nous descomptes 
 ConfirmRemoveDiscount=Esteu segur de voler eliminar aquest descompte?
 RelatedBill=Factura associada
 RelatedBills=Factures associades
-# PaymentConditions==
+# PaymentConditions
 PaymentConditionShortRECEP=A la recepció
 PaymentConditionRECEP=A la recepció de la factura
 PaymentConditionShort30D=30 dies
@@ -288,7 +294,7 @@ PaymentConditionShort60D=60 dies
 PaymentCondition60D=Pagament als 60 dies
 PaymentConditionShort60DENDMONTH=60 dies a fi de mes
 PaymentCondition60DENDMONTH=Pagament als 60 dies a fi de mes
-# PaymentType==
+# PaymentType
 PaymentTypeVIR=Transferència bancària
 PaymentTypeShortVIR=Transferència
 PaymentTypePRE=Domiciliació bancària
@@ -337,6 +343,7 @@ LawApplicationPart2=les mercaderies romanen en propietat de
 LawApplicationPart3=venedor fins al cobrament de
 LawApplicationPart4=els seus preus
 LimitedLiabilityCompanyCapital=SRL amb capital de
+UseLine=Aplicar
 UseDiscount=Aplicar descompte
 UseCredit=Utilitzar crèdit
 UseCreditNoteInInvoicePayment=Reduir el pagament amb aquest crèdit

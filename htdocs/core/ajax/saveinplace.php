@@ -22,7 +22,7 @@
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
 top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
-//var_dump($_POST);
+//print_r($_POST);
 
 // Load original field value
 if((isset($_POST['field']) && ! empty($_POST['field']))
@@ -45,45 +45,110 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	&& (isset($_POST['table_element']) && ! empty($_POST['table_element']))
 	&& (isset($_POST['fk_element']) && ! empty($_POST['fk_element'])))
 {
-	$element		= GETPOST('element');
-	$table_element	= GETPOST('table_element');
-	$field			= GETPOST('field');
-	$fk_element		= GETPOST('fk_element');
-	$value			= GETPOST('value');
-	$type			= GETPOST('type');
-	
+	$element			= GETPOST('element');
+	$table_element		= GETPOST('table_element');
+	$fk_element			= GETPOST('fk_element');
+	$ext_element		= GETPOST('ext_element');
+	//$ext_table_element	= GETPOST('ext_table_element');
+	//$ext_fk_element		= GETPOST('ext_fk_element');
+	$field				= substr(GETPOST('field'), 4); // remove prefix val_
+	$value				= GETPOST('value');
+	$type				= GETPOST('type');
+	$savemethodname		= (GETPOST('savemethod') ? GETPOST('savemethod') : 'setValueFrom');
+
+	$format='text';
+	$return=array();
 	$error=0;
-	
-	if ($element == 'fichinter') $element = 'ficheinter';
-	
-	if ($user->rights->$element->creer || $user->rights->$element->write)
+
+	if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
 	{
-		$object = new GenericObject($db);
-		
+		$element = $regs[1];
+		$subelement = $regs[2];
+	}
+
+	if ($element == 'propal') $element = 'propale';
+	else if ($element == 'fichinter') $element = 'ficheinter';
+
+	if ($user->rights->$element->creer || $user->rights->$element->write
+	|| $user->rights->$element->$subelement->creer || $user->rights->$element->$subelement->write)
+	{
 		// Clean parameters
-		$value = trim($value);
+		$newvalue = trim($value);
+
 		if ($type == 'numeric')
 		{
-			$value = price2num($value);
-		
+			$newvalue = price2num($newvalue);
+
 			// Check parameters
-			if (! is_numeric($value))
+			if (! is_numeric($newvalue))
 			{
 				$error++;
+				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		}
-		
+		else if ($type == 'datepicker')
+		{
+			$timestamp	= GETPOST('timestamp');
+			$format		= 'date';
+			$newvalue	= ($timestamp / 1000);
+		}
+		else if ($type == 'select')
+		{
+			$loadmethodname	= 'load_cache_'.GETPOST('loadmethod');
+			$loadcachename	= 'cache_'.GETPOST('loadmethod');
+
+			$form = new Form($db);
+			if (method_exists($form, $loadmethodname))
+			{
+				$ret = $form->$loadmethodname();
+				if ($ret > 0)
+				{
+					$loadcache = $form->$loadcachename;
+					$value = $loadcache[$newvalue];
+				}
+				else
+				{
+					$error++;
+					$return['error'] = $form->error;
+				}
+			}
+			else
+			{
+				dol_include_once('/'.$ext_element.'/class/actions_'.$ext_element.'.class.php');
+				$classname = 'Actions'.ucfirst($ext_element);
+				$object = new $classname($db);
+				$ret = $object->$loadmethodname();
+				if ($ret > 0)
+				{
+					$loadcache = $object->$loadcachename;
+					$value = $loadcache[$newvalue];
+				}
+				else
+				{
+					$error++;
+					$return['error'] = $object->error;
+				}
+			}
+		}
+
 		if (! $error)
 		{
-			$ret=$object->setValueFrom($table_element, $fk_element, $field, $value);
+			if (! is_object($object)) $object = new GenericObject($db);
+			$ret=$object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
 			if ($ret > 0)
 			{
-				if ($type == 'numeric') $value = price($value);
-				else $value = (! empty($value) ? dol_nl2br($value) : '&nbsp;');
-					
-				echo $value;
+				if ($type == 'numeric') $value = price($newvalue);
+				else if ($type == 'textarea') $value = dol_nl2br($newvalue);
+
+				$return['value'] = $value;
+			}
+			else
+			{
+				$return['error'] = $object->error;
 			}
 		}
+
+		echo json_encode($return);
 	}
 	else
 	{

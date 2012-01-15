@@ -46,13 +46,15 @@ function printBoxesArea($user,$areacode)
 		print '<table width="100%" class="notopnoleftnoright">';
 		print '<tr><td class="notopnoleftnoright">'."\n";
 
-
         print '<div class="fichehalfleft">';
-
 
 		print "\n<!-- Box left container -->\n";
 		print '<div id="left" class="connectedSortable">'."\n";
 
+		// Define $box_max_lines
+		$box_max_lines=5;
+		if (! empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines=$conf->global->MAIN_BOXES_MAXLINES;
+		
 		$ii=0;
 		foreach ($boxarray as $key => $box)
 		{
@@ -62,7 +64,7 @@ function printBoxesArea($user,$areacode)
 				//print 'box_id '.$boxarray[$ii]->box_id.' ';
 				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 				// Affichage boite key
-				$box->loadBox($conf->box_max_lines);
+				$box->loadBox($box_max_lines);
 				$box->showBox();
 			}
 		}
@@ -90,7 +92,7 @@ function printBoxesArea($user,$areacode)
 				//print 'box_id '.$boxarray[$ii]->box_id.' ';
 				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 				// Affichage boite key
-				$box->loadBox($conf->box_max_lines);
+				$box->loadBox($box_max_lines);
 				$box->showBox();
 			}
 		}
@@ -156,11 +158,11 @@ class InfoBox
 	/**
 	 *      Constructor
 	 *
-	 *      @param      DoliDb     $DB        Database handler
+	 *      @param      DoliDb     $db        Database handler
 	 */
-	function InfoBox($DB)
+	function InfoBox($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
@@ -275,7 +277,7 @@ class InfoBox
 					}
 
 					dol_include_once($sourcefile);
-					$box=new $boxname($db,$obj->note);
+					$box=new $boxname($this->db,$obj->note);
 
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;
@@ -325,6 +327,8 @@ class InfoBox
 	{
 		global $conf;
 
+		$error=0;
+		
 		require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 		dol_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);

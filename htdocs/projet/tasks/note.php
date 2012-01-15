@@ -87,7 +87,7 @@ if ($_POST['action'] == 'update_private' && $user->rights->projet->creer)
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 $project = new Project($db);
 
 $id = $_GET['id'];
@@ -122,7 +122,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
 		$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
-		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
+		print $form->showrefnav($task,'id','',1,'rowid','ref','','');
 		print '</td></tr>';
 
 		// Label

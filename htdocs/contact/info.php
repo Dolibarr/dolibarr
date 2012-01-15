@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ $langs->load("companies");
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact',$contactid,'socpeople');
+$result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
 
 
 
@@ -60,7 +61,8 @@ dol_print_object_info($contact);
 
 print "</div>";
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>

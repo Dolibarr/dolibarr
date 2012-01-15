@@ -114,7 +114,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 {
     global $db, $conf, $langs, $user;
 
-    dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile, LOG_DEBUG);
+    dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler, LOG_DEBUG);
 
     $ok=0;
     $error=0;
@@ -132,17 +132,33 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
         {
             $buf = fgets($fp, 4096);
 
-            // Cas special de lignes autorisees pour certaines versions uniquement
-            if (preg_match('/^--\sV([0-9\.]+)/i',$buf,$reg))
+            // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
+            if (preg_match('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i',$buf,$reg))
             {
-                $versioncommande=explode('.',$reg[1]);
-                //print var_dump($versioncommande);
-                //print var_dump($versionarray);
-                if (count($versioncommande) && count($versionarray)
-                && versioncompare($versioncommande,$versionarray) <= 0)
+            	$qualified=1;
+
+            	// restrict on database type
+            	if (! empty($reg[1]))
+            	{
+            		if (strtolower($reg[1]) != $db->type) $qualified=0;
+            	}
+
+            	// restrict on version
+            	if ($qualified)
+            	{
+	                $versionrequest=explode('.',$reg[2]);
+	                //print var_dump($versionrequest);
+	                //print var_dump($versionarray);
+	                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
+	                {
+	                	$qualified=0;
+	                }
+            	}
+
+                if ($qualified)
                 {
                     // Version qualified, delete SQL comments
-                    $buf=preg_replace('/^--\sV([0-9\.]+)/i','',$buf);
+                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i','',$buf);
                     //print "Ligne $i qualifi?e par version: ".$buf.'<br>';
                 }
             }
@@ -220,6 +236,12 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
     {
         if ($sql)
         {
+        	// Replace the prefix tables
+        	if (MAIN_DB_PREFIX != 'llx_')
+        	{
+        		$sql=preg_replace('/llx_/i',MAIN_DB_PREFIX,$sql);
+        	}
+
             if (!empty($handler)) $sql=preg_replace('/__HANDLER__/i',"'".$handler."'",$sql);
 
             $newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
@@ -441,14 +463,14 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
     $sql.= " WHERE name = ".$db->encrypt($name,1);
-    if ($entity > 0) $sql.= " AND entity = ".$entity;
+    if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
     dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
     $resql=$db->query($sql);
 
     if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
     {
-        $sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity)";
         $sql.= " VALUES (";
         $sql.= $db->encrypt($name,1);
         $sql.= ", ".$db->encrypt($value,1);
@@ -630,16 +652,13 @@ function Activate($value,$withdeps=1)
     $ret='';
     $modName = $value;
     $modFile = $modName . ".class.php";
-    $modulesdir = array();
 
-    // Loop on each directory
-    $found=false;
+    // Loop on each directory to fill $modulesdir
+    $modulesdir = array();
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         $modulesdir[] = $dirroot."/core/modules/";
 
-        if ($type == 'alt')
-        {
             $handle=@opendir(dol_osencode($dirroot));
             if (is_resource($handle))
             {
@@ -655,9 +674,10 @@ function Activate($value,$withdeps=1)
                 }
                 closedir($handle);
             }
-        }
     }
 
+    // Loop on each directory
+    $found=false;
     foreach ($modulesdir as $dir)
     {
         if (file_exists($dir.$modFile))
@@ -745,16 +765,13 @@ function UnActivate($value, $requiredby=1)
     $ret='';
     $modName = $value;
     $modFile = $modName . ".class.php";
-    $modulesdir=array();
 
-    // Loop on each directory
-    $found=false;
+    // Loop on each directory to fill $modulesdir
+    $modulesdir = array();
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         $modulesdir[] = $dirroot."/core/modules/";
 
-        if ($type == 'alt')
-        {
             $handle=@opendir(dol_osencode($dirroot));
             if (is_resource($handle))
             {
@@ -770,9 +787,10 @@ function UnActivate($value, $requiredby=1)
                 }
                 closedir($handle);
             }
-        }
     }
 
+    // Loop on each directory
+    $found=false;
     foreach ($modulesdir as $dir)
     {
         if (file_exists($dir.$modFile))
@@ -838,19 +856,40 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
     $orders = array();
     $categ = array();
     $dirmod = array();
+    $modulesdir = array();
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
-    foreach ($conf->file->dol_document_root as $dirroot)
-    {
-        $dir = $dirroot . "/core/modules/";
 
-        // Load modules attributes in arrays (name, numero, orders) from dir directory
-        //print $dir."\n<br>";
-        dol_syslog("Scan directory ".$dir." for modules");
+    foreach ($conf->file->dol_document_root as $type => $dirroot)
+    {
+        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
+
+        $handle=@opendir($dirroot);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+                {
+                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+                    {
+                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
+                    }
+                }
+            }
+            closedir($handle);
+        }
+    }
+    //var_dump($modulesdir);
+
+    foreach ($modulesdir as $dir)
+    {
+    	// Load modules attributes in arrays (name, numero, orders) from dir directory
+    	//print $dir."\n<br>";
+    	dol_syslog("Scan directory ".$dir." for modules");
         $handle=@opendir(dol_osencode($dir));
         if (is_resource($handle))
         {
-
             while (($file = readdir($handle))!==false)
             {
                 //print "$i ".$file."\n<br>";
@@ -940,6 +979,144 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
     }
 
     return 1;
+}
+
+
+/**
+ *	Show array with constants to edit
+ *
+ *	@param	array	$tableau		Array of constants
+ *	@return	void
+ */
+function form_constantes($tableau)
+{
+    global $db,$bc,$langs,$conf,$_Avery_Labels;
+
+    $form = new Form($db);
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Description").'</td>';
+    print '<td>'.$langs->trans("Value").'*</td>';
+    print '<td>&nbsp;</td>';
+    print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+    print "</tr>\n";
+    $var=true;
+
+    $listofparam=array();
+    foreach($tableau as $const)	// Loop on each param
+    {
+        $sql = "SELECT ";
+        $sql.= "rowid";
+        $sql.= ", ".$db->decrypt('name')." as name";
+        $sql.= ", ".$db->decrypt('value')." as value";
+        $sql.= ", type";
+        $sql.= ", note";
+        $sql.= " FROM ".MAIN_DB_PREFIX."const";
+        $sql.= " WHERE ".$db->decrypt('name')." = '".$const."'";
+        $sql.= " AND entity in (0, ".$conf->entity.")";
+        $sql.= " ORDER BY name ASC, entity DESC";
+        $result = $db->query($sql);
+
+        dol_syslog("List params sql=".$sql);
+        if ($result)
+        {
+            $obj = $db->fetch_object($result);	// Take first result of select
+            $var=!$var;
+
+            print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+
+            print "<tr ".$bc[$var].">";
+
+            // Affiche nom constante
+            print '<td>';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="update">';
+            print '<input type="hidden" name="rowid" value="'.$obj->rowid.'">';
+            print '<input type="hidden" name="constname" value="'.$const.'">';
+            print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
+
+            print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
+
+            if ($const=='ADHERENT_MAILMAN_URL')
+            {
+                print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
+                //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
+                print '<div id="example1" class="hidden">';
+                print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;subscribe_or_invite=0&amp;send_welcome_msg_to_this_batch=0&amp;notification_to_list_owner=0';
+                print '</div>';
+            }
+            if ($const=='ADHERENT_MAILMAN_UNSUB_URL')
+            {
+                print '. '.$langs->trans("Example").': <a href="#" id="exampleclick2">'.img_down().'</a><br>';
+                print '<div id="example2" class="hidden">';
+                print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;send_unsub_ack_to_this_batch=0&amp;send_unsub_notifications_to_list_owner=0';
+                print '</div>';
+                //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
+            }
+
+
+            print "</td>\n";
+
+            if ($const == 'ADHERENT_CARD_TYPE' || $const == 'ADHERENT_ETIQUETTE_TYPE')
+            {
+                print '<td>';
+                // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
+                require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
+                $arrayoflabels=array();
+                foreach(array_keys($_Avery_Labels) as $codecards)
+                {
+                    $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
+                }
+                print $form->selectarray('constvalue',$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
+                print '</td><td>';
+                print '<input type="hidden" name="consttype" value="yesno">';
+                print '</td>';
+            }
+            else
+            {
+                print '<td>';
+                //print 'aa'.$const;
+                if (in_array($const,array('ADHERENT_CARD_TEXT','ADHERENT_CARD_TEXT_RIGHT')))
+                {
+                    print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">'."\n";
+                    print $obj->value;
+                    print "</textarea>\n";
+                    print '</td><td>';
+                    print '<input type="hidden" name="consttype" value="texte">';
+                }
+                else if (in_array($const,array('ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
+                {
+                    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                    $doleditor=new DolEditor('constvalue'.$const,$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
+                    $doleditor->Create();
+
+                    print '</td><td>';
+                    print '<input type="hidden" name="consttype" value="texte">';
+                }
+                else if ($obj->type == 'yesno')
+                {
+                    print $form->selectyesno('constvalue',$obj->value,1);
+                    print '</td><td>';
+                    print '<input type="hidden" name="consttype" value="yesno">';
+                }
+                else
+                {
+                    print '<input type="text" class="flat" size="48" name="constvalue" value="'.$obj->value.'">';
+                    print '</td><td>';
+                    print '<input type="hidden" name="consttype" value="chaine">';
+                }
+                print '</td>';
+            }
+            print '<td align="center">';
+            print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
+            // print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
+            print "</td>";
+            print "</tr>\n";
+            print "</form>\n";
+        }
+    }
+    print '</table>';
 }
 
 ?>

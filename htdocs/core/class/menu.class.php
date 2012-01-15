@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,31 +50,47 @@ class Menu
     }
 
     /**
-     * Add a menu entry into this->liste
+     * Add a menu entry into this->liste (at end)
      *
      * @param	string	$url        Url to follow on click
      * @param   string	$titre      Label of menu to add
      * @param   string	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not
      * @param   string	$target		Target lien
-     * @param	string	$mainmenu	Main menu
+     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
+     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
      * @return	void
      */
-    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='')
+    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
     {
-        $i = count($this->liste);
-        $this->liste[$i]['url'] = $url;
-        $this->liste[$i]['titre'] = $titre;
-        $this->liste[$i]['level'] = $level;
-        $this->liste[$i]['enabled'] = $enabled;
-        $this->liste[$i]['target'] = $target;
-        $this->liste[$i]['mainmenu'] = $mainmenu;
+        $this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu);
+    }
+
+    /**
+     * Insert a menu entry into this->liste
+     *
+     * @param	int		$idafter	Array key after which inserting new entry
+     * @param	string	$url        Url to follow on click
+     * @param   string	$titre      Label of menu to add
+     * @param   string	$level      Level of menu to add
+     * @param   int		$enabled    Menu active or not
+     * @param   string	$target		Target lien
+     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
+     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
+     * @return	void
+     */
+    function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
+    {
+        $array_start = array_slice($this->liste,0,($idafter+1));
+        $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu));
+        $array_end   = array_slice($this->liste,($idafter+1));
+        $this->liste=array_merge($array_start,$array_new,$array_end);
     }
 
     /**
      * Remove a menu entry from this->liste
      *
-     * @return	voir
+     * @return	void
      */
     function remove_last()
     {

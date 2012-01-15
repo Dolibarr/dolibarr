@@ -48,7 +48,7 @@ if ($action == 'updateMask')
 	$maskconstproject=GETPOST("maskconstproject");
 	$maskproject=GETPOST("maskproject");
 	if ($maskconstproject)  $res = dolibarr_set_const($db,$maskconstproject,$maskproject,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -100,7 +100,7 @@ if ($action == 'set')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$type='project';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
@@ -127,7 +127,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
-	
+
 	$db->begin();
 
 	if (dolibarr_set_const($db, "PROJECT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -171,7 +171,7 @@ if ($action == 'setmod')
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader();
 
@@ -227,7 +227,8 @@ if (is_resource($handle))
                 // Show example of numbering module
                 print '<td nowrap="nowrap">';
                 $tmp=$module->getExample();
-                if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+                elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                 else print $tmp;
                 print '</td>'."\n";
 
@@ -263,7 +264,7 @@ if (is_resource($handle))
 				}
 
 				print '<td align="center">';
-				print $html->textwithpicto('',$htmltooltip,1,0);
+				print $form->textwithpicto('',$htmltooltip,1,0);
 				print '</td>';
 
 				print '</tr>';
@@ -384,7 +385,7 @@ if (is_resource($handle))
     		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
     		print '<td align="center">';
     		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
-    		print $html->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
+    		print $form->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
     		print '</td>';
 
     		print "</tr>\n";

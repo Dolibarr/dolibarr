@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -245,12 +245,12 @@ class CategorieTest extends PHPUnit_Framework_TestCase
         $localobject2->initAsSpecimen();
 
         $retarray=$localobject->liste_photos('/');
-        print __METHOD__." retarry size=".count($rearray)."\n";
+        print __METHOD__." retarray size=".count($retarray)."\n";
         $this->assertTrue(is_array($retarray));
 
-        $ret=$localobject->is_fille($localobject2);
-        print __METHOD__." retarry size=".count($rearray)."\n";
-        $this->assertFalse($ret);
+        $retarray=$localobject->is_fille($localobject2);
+        print __METHOD__." retarry size=".count($retarray)."\n";
+        $this->assertFalse($retarray);
 
         return $localobject->id;
     }
@@ -292,7 +292,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__." retarray size=".count($retarray)."\n";
     	$this->assertTrue(is_array($retarray));
-    	return $result;
+    	return $retarray;
     }
 
 }

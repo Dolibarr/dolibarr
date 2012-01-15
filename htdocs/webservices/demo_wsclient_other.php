@@ -81,6 +81,7 @@ echo '<title>WebService Test: '.$WS_METHOD.'</title>';
 echo '</head>'."\n";
 
 echo '<body>'."\n";
+echo 'NUSOAP_PATH='.NUSOAP_PATH.'<br>';
 
 echo "<h2>Request:</h2>";
 echo '<h4>Function</h4>';

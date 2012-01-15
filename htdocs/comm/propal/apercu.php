@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ $result = restrictedArea($user, 'propale', $id, 'propal');
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -100,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		$absolute_discount=$soc->getAvailableDiscounts();
 		print '. ';
-		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->currency));
 		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 		print '.';
 		print '</td></tr>';
@@ -159,7 +160,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					$langs->load("other");
+					$langs->load("errors");
 					print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
 				}
 			}
@@ -170,7 +171,7 @@ if ($id > 0 || ! empty($ref))
 
 		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 		print '<td align="right" colspan="2"><b>'.price($object->price).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		print '</table>';
 	}
 	else

@@ -39,7 +39,7 @@ $export->load_arrays($user);
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader('',$langs->trans("ExportsArea"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
@@ -75,7 +75,7 @@ foreach($liste as $key => $val)
     print '<tr '.$bc[$var].'>';
     print '<td width="16">'.img_picto_common($model->getDriverLabel($key),$model->getPicto($key)).'</td>';
     $text=$model->getDriverDesc($key);
-    print '<td>'.$html->textwithpicto($model->getDriverLabel($key),$text).'</td>';
+    print '<td>'.$form->textwithpicto($model->getDriverLabel($key),$text).'</td>';
     print '<td>'.$model->getLibLabel($key).'</td>';
     print '<td nowrap="nowrap" align="right">'.$model->getLibVersion($key).'</td>';
     print '</tr>';

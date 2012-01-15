@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Juanjo Menentr       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,14 +41,14 @@ class modPropale extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modPropale($DB)
+	function modPropale($db)
 	{
 		global $conf;
 
-		$this->db = $DB ;
-		$this->numero = 20 ;
+		$this->db = $db;
+		$this->numero = 20;
 
 		$this->family = "crm";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -94,6 +95,12 @@ class modPropale extends DolibarrModules
 		$this->const[$r][3] = 'Duration of validity of business proposals';
 		$this->const[$r][4] = 0;
 		$r++;
+
+		$this->const[$r][0] = "PROPALE_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/proposals";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
 
 		// Boxes
 		$this->boxes = array();
@@ -174,22 +181,32 @@ class modPropale extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init()
+	function init($options='')
 	{
 		global $conf;
 
 		// Remove permissions and default values
 		$this->remove();
 
+		//ODT template
+		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/proposals';
+		create_exdir($dirodt);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/proposals/template_proposal.odt',$dirodt.'/template_proposal.odt',0,0);
+
 		$sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
 		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','propal',".$conf->entity.")",
 		);
 
-		return $this->_init($sql);
+		return $this->_init($sql,$options);
 
 	}
 

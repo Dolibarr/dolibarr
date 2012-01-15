@@ -290,7 +290,7 @@ if ($action == 'addline' && $user->rights->contrat->creer)
 
         if($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
         {
-            $object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie));
+            $object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency));
             $result = -1 ;
         }
         else
@@ -326,7 +326,11 @@ if ($action == 'addline' && $user->rights->contrat->creer)
              $outputlangs = new Translate("",$conf);
              $outputlangs->setDefaultLang($newlang);
              }
-             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+             {
+	            $ret=$object->fetch($id);    // Reload to get new records
+             	contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+             }
              */
         }
         else
@@ -464,7 +468,7 @@ if ($action == 'confirm_move' && $_REQUEST["confirm"] == 'yes')
 llxHeader('',$langs->trans("ContractCard"),"Contrat");
 
 $form = new Form($db);
-$html = new Form($db);
+$form = new Form($db);
 
 $objectlignestatic=new ContratLigne($db);
 
@@ -510,7 +514,7 @@ if ($action == 'create')
     else print $langs->trans("CompanyHasNoRelativeDiscount");
     $absolute_discount=$soc->getAvailableDiscounts();
     print '. ';
-    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
     else print $langs->trans("CompanyHasNoAbsoluteDiscount");
     print '.';
     print '</td></tr>';
@@ -644,7 +648,7 @@ else
 
         // Ref du contrat
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $html->showrefnav($object,'ref','',1,'ref','ref','');
+        print $form->showrefnav($object,'ref','',1,'ref','ref','');
         print "</td></tr>";
 
         // Customer
@@ -657,7 +661,7 @@ else
         else print $langs->trans("CompanyHasNoRelativeDiscount");
         $absolute_discount=$object->societe->getAvailableDiscounts();
         print '. ';
-        if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+        if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
         else print $langs->trans("CompanyHasNoAbsoluteDiscount");
         print '.';
         print '</td></tr>';
@@ -918,7 +922,7 @@ else
              */
             if ($_REQUEST["action"] == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline-1]->id == $_GET["rowid"])
             {
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
+                $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
                 if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
             }
 
@@ -938,7 +942,7 @@ else
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
                 array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-                $html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
             }
 
@@ -950,7 +954,7 @@ else
                 $dateactstart = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
                 $dateactend   = dol_mktime(12, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
                 $comment      = $_POST["comment"];
-                $html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
             }
 
@@ -962,7 +966,7 @@ else
                 $dateactstart = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
                 $dateactend   = dol_mktime(12, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
                 $comment      = $_POST["comment"];
-                $html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
             }
 
@@ -1049,11 +1053,11 @@ else
                 }
 
                 print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
-                print $html->select_date($dateactstart,'',$usehm,$usehm,'',"active");
+                print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active");
                 print '</td>';
 
                 print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
-                print $html->select_date($dateactend,"end",$usehm,$usehm,'',"active");
+                print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active");
                 print '</td>';
 
                 print '<td align="center" rowspan="2" valign="middle">';

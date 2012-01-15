@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,13 @@ require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
 
 $langs->load("companies");
 
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 // Security check
 $result=restrictedArea($user,'societe',0,'','','','');
 
 $thirdparty_static = new Societe($db);
-
-
 
 
 /*
@@ -61,8 +59,8 @@ $rowspan=2;
 print '<form method="post" action="'.DOL_URL_ROOT.'/societe/societe.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
+print '<tr class="liste_titre">';
+print '<th colspan="3">'.$langs->trans("Search").'</th></tr>';
 print "<tr $bc[0]><td>";
 print $langs->trans("Name").':</td><td><input class="flat" type="text" size="14" name="search_nom_only"></td>';
 print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
@@ -82,9 +80,9 @@ $total=0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (! $user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.entity = ".$conf->entity;
-if (! $user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
 $result = $db->query($sql);
@@ -103,14 +101,14 @@ if ($result)
 else dol_print_error($db);
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if ($conf->use_javascript_ajax && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0) >= 2))
 {
     print '<tr><td align="center">';
     $dataseries=array();
-    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) $dataseries[]=array('label'=>$langs->trans("Prospects"),'values'=>array(round($third['prospect'])));
-    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Customers"),'values'=>array(round($third['customer'])));
-    if ($conf->fournisseur->enabled && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Suppliers"),'values'=>array(round($third['supplier'])));
+    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) $dataseries[]=array('label'=>$langs->trans("Prospects"),'data'=>round($third['prospect']));
+    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Customers"),'data'=>round($third['customer']));
+    if ($conf->fournisseur->enabled && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Suppliers"),'data'=>round($third['supplier']));
     $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,1,'pie',0);
     print '</td></tr>';
@@ -151,9 +149,9 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=15;
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (! $user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.entity = ".$conf->entity;
-if (! $user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 $sql.= " AND (";
 if (! empty($conf->societe->enabled)) $sql.=" s.client IN (1,2,3)";
@@ -176,9 +174,9 @@ if ($result)
 
         print '<table class="noborder" width="100%">';
 
-        print '<tr class="liste_titre"><td colspan="2">'.$transRecordedType.'</td>';
-        print '<td>&nbsp;</td>';
-        print '<td align="right">'.$langs->trans('Status').'</td>';
+        print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</td>';
+        print '<th>&nbsp;</td>';
+        print '<th align="right">'.$langs->trans('Status').'</td>';
         print '</tr>';
 
         $var=True;
@@ -243,7 +241,8 @@ else
 
 print '</td></tr></table>';
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>

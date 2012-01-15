@@ -49,7 +49,7 @@ print_barre_liste("Liste des clients", $page, "index.php");
 $sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_newsletter";
 $sql .= " FROM ".DB_NAME_OSC.".customers as c";
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit($limit ,$offset);
+$sql .= $dbosc->plimit($limit,$offset);
 
 $resql=$dbosc->query($sql);
 if ($resql)

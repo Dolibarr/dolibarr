@@ -313,8 +313,8 @@ class pdf_soleil extends ModelePDFFicheinter
 						$curY = $nexY+3;
 
 						$pdf->SetXY($this->marge_gauche, $curY);
-						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY,
-						dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
+						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output);
+						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $txt, 0, 1, 0);
 						$nexY = $pdf->GetY();
 
 						$pdf->SetXY($this->marge_gauche, $curY + 3);

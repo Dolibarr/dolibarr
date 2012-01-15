@@ -117,7 +117,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
 
 llxHeader('', $langs->trans("Task"));
 
-$html = new Form($db);
+$form = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
@@ -161,7 +161,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
 		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
 		$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
-		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
+		print $form->showrefnav($task,'id','',1,'rowid','ref','','');
 		print '</td></tr>';
 
 		// Label
@@ -224,7 +224,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td colspan="1">';
 			// On recupere les id des users deja selectionnes
 			$contactsofproject=$project->getListContactId('internal');
-			$html->select_users($user->id,'contactid',0,'',0,'',$contactsofproject);
+			$form->select_users($user->id,'contactid',0,'',0,'',$contactsofproject);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($task, '', 'type','internal','rowid');
@@ -258,7 +258,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<td colspan="1">';
 				$contactofproject=$project->getListContactId('external');
-				$nbofcontacts=$html->select_contacts($selectedCompany,'','contactid',0,'',$contactofproject);
+				$nbofcontacts=$form->select_contacts($selectedCompany,'','contactid',0,'',$contactofproject);
 				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 				print '</td>';
 				print '<td>';

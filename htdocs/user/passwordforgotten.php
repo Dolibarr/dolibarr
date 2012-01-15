@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +29,11 @@ require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
 if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 
-$langs->load("other");
+$langs->load("errors");
 $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
+$langs->load("other");
 
 // Security check
 if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
@@ -82,13 +84,11 @@ if ($action == 'validatenewpassword' && $username && $passwordmd5)
 // Action modif mot de passe
 if ($action == 'buildnewpassword' && $username)
 {
-	require_once(ARTICHOW_PATH.'Artichow.cfg.php');
-	require_once(ARTICHOW.'/AntiSpam.class.php');
-
-    $object = new AntiSpam();
+    $sessionkey = 'dol_antispam_value';
+    $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
     // Verify code
-    if (! $object->check('dol_antispam_value',$_POST['code'],true))
+    if (! $ok)
     {
         $message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
     }
@@ -208,34 +208,27 @@ elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.
 
 // Entity combobox
 $select_entity='';
-if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX) && ! $disabled)
+if (! empty($conf->multicompany->enabled)  && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX) && ! $disabled)
 {
     $rowspan++;
     $lastuser='';
     $lastentity = GETPOST('entity');
 
-    if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
+    if (! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED))
     {
         $prefix=dol_getprefix();
         $entityCookieName = 'DOLENTITYID_'.$prefix;
         if (isset($_COOKIE[$entityCookieName]))
         {
             include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
-
-            $cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
-
-            $entityCookie = new DolCookie($cryptkey);
+            $lastuser = '';	$lastentity = '';
+            $entityCookie = new DolCookie($conf->file->cookie_cryptkey);
             $cookieValue = $entityCookie->_getCookie($entityCookieName);
             list($lastuser, $lastentity) = explode('|', $cookieValue);
         }
     }
 
-    $res=dol_include_once('/multicompany/class/actions_multicompany.class.php');
-    if ($res)
-    {
-        $mc = new ActionsMulticompany($db);
-        $select_entity = $mc->select_entities($lastentity,'tabindex="2"');
-    }
+    $select_entity = $mc->select_entities($lastentity, 'entity', ' tabindex="2"');
 }
 
 // Security graphical code

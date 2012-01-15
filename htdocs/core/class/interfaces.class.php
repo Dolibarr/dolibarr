@@ -37,11 +37,11 @@ class Interfaces
     /**
      *	Constructor
      *
-     *  @param		DoliDB		$DB      Database handler
+     *  @param		DoliDB		$db      Database handler
      */
-    function Interfaces($DB)
+    function Interfaces($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
     }
 
     /**
@@ -59,7 +59,7 @@ class Interfaces
         // Check parameters
         if (! is_object($object) || ! is_object($conf))	// Error
         {
-            dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERROR);
+            dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERR);
             return -1;
         }
         if (! is_object($user) || ! is_object($langs))	// Warning
@@ -154,7 +154,7 @@ class Interfaces
                         }
                         else
                         {
-                            dol_syslog("Interfaces::run_triggers action=".$action." Failed to instantiate trigger for file '".$file."'",LOG_ERROR);
+                            dol_syslog("Interfaces::run_triggers action=".$action." Failed to instantiate trigger for file '".$file."'",LOG_ERR);
                         }
                     }
                 }
@@ -183,7 +183,7 @@ class Interfaces
     {
         global $conf, $langs;
 
-        $html = new Form($this->db);
+        $form = new Form($this->db);
 
         $files = array();
         $modules = array();
@@ -285,7 +285,7 @@ class Interfaces
                 if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
             }
 
-            $triggers[$j]['info'] = $html->textwithpicto('',$text);
+            $triggers[$j]['info'] = $form->textwithpicto('',$text);
             $j++;
         }
         return $triggers;

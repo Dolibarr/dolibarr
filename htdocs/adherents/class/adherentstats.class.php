@@ -46,16 +46,16 @@ class AdherentStats extends Stats
 	/**
 	 *	Constructor
 	 *
-	 *	@param 		DoliDB		$DB		Database handler
-	 * 	@param 		int			$socid	   Id third party
-     * 	@param   	int			$userid    Id user for filter
+	 *	@param 		DoliDB		$db			Database handler
+	 * 	@param 		int			$socid	   	Id third party
+     * 	@param   	int			$userid    	Id user for filter
 	 * 	@return 	AdherentStats
 	 */
-	function AdherentStats($DB, $socid=0, $userid=0)
+	function AdherentStats($db, $socid=0, $userid=0)
 	{
 		global $user, $conf;
 
-		$this->db = $DB;
+		$this->db = $db;
         $this->socid = $socid;
         $this->userid = $userid;
 
@@ -79,6 +79,9 @@ class AdherentStats extends Stats
 
 	/**
 	 * Renvoie le nombre de proposition par mois pour une annee donnee
+	 *
+     * @param   int		$year       Year
+     * @return	array				Array of nb each month
 	 */
 	function getNbByMonth($year)
 	{
@@ -98,6 +101,7 @@ class AdherentStats extends Stats
 	/**
 	 * Renvoie le nombre de cotisation par annee
 	 *
+     * @return	array				Array of nb each year
 	 */
 	function getNbByYear()
 	{
@@ -112,9 +116,12 @@ class AdherentStats extends Stats
 
 		return $this->_getNbByYear($sql);
 	}
+
 	/**
 	 * Renvoie le nombre de cotisation par mois pour une annee donnee
 	 *
+     * @param   int		$year       Year
+     * @return	array				Array of amount each month
 	 */
 	function getAmountByMonth($year)
 	{
@@ -130,9 +137,12 @@ class AdherentStats extends Stats
 
 		return $this->_getAmountByMonth($year, $sql);
 	}
+
 	/**
+	 * Return average amount each month
 	 *
-	 *
+     * @param   int		$year       Year
+     * @return	array				Array of average each month
 	 */
 	function getAverageByMonth($year)
 	{
@@ -151,8 +161,9 @@ class AdherentStats extends Stats
 
 
 	/**
-	 *	\brief	Return nb, total and average
-	 *	\return	array	Array of values
+	 *	Return nb, total and average
+	 *
+	 * 	@return		array					Array with nb, total amount, average for each year
 	 */
 	function getAllByYear()
 	{

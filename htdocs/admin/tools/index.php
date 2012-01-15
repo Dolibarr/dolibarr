@@ -26,8 +26,7 @@ require("../../main.inc.php");
 $langs->load("admin");
 $langs->load("companies");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 
 

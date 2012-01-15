@@ -114,7 +114,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 
-$html=new Form($db);
+$form=new Form($db);
 
 print '<table class="noborder" width="100%">';
 $var=true;

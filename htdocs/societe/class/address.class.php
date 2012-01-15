@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,18 +48,13 @@ class Address
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB     handler acces base de donnees
-	 *    \param  id     id societe (0 par defaut)
+	 *  Constructeur de la classe
+	 *
+	 *  @param	DoliDB		$db     handler acces base de donnees
 	 */
-	function Address($DB, $id=0)
+	function Address($db)
 	{
-		global $conf;
-
-		$this->db = $DB;
-
-		$this->id = $id;
-
+		$this->db = $db;
 		return 1;
 	}
 
@@ -177,6 +172,7 @@ class Address
 		$this->cp		= trim($this->cp);
 		$this->ville	= trim($this->ville);
 		$this->pays_id	= trim($this->pays_id);
+		$this->country_id	= trim($this->country_id);
 		$this->tel		= trim($this->tel);
 		$this->tel		= preg_replace("/\s/","",$this->tel);
 		$this->tel		= preg_replace("/\./","",$this->tel);
@@ -202,7 +198,7 @@ class Address
 			if ($this->ville)
 			{ $sql .= ",ville = '" . $this->db->escape($this->ville) ."'"; }
 
-			$sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
+			$sql .= ",fk_pays = '" . ($this->country_id?$this->country_id:'0') ."'";
 			$sql.= ",note = '" . $this->db->escape($this->note) ."'";
 
 			if ($this->tel)
@@ -242,12 +238,13 @@ class Address
 	}
 
 	/**
-	 *    \brief      Charge depuis la base toutes les adresses d'une societe
-	 *    \param      socid       Id de la societe a charger en memoire
-	 *    \param      user        Objet de l'utilisateur
-	 *    \return     int         >0 si ok, <0 si ko
+	 *  Charge depuis la base toutes les adresses d'une societe
+	 *
+	 *  @param	int		$socid       Id de la societe a charger en memoire
+	 *  @param  User	$user        Objet de l'utilisateur
+	 *  @return int 			     >0 si ok, <0 si ko
 	 */
-	function fetch($socid, $user=0)
+	function fetch_lines($socid, $user=0)
 	{
 		global $langs, $conf;
 
@@ -279,8 +276,8 @@ class Address
 			{
 				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as dc';
 				$sql .= ', a.tms as date_update, a.fk_soc';
-				$sql .= ', a.cp, a.ville, a.note, a.fk_pays, a.tel, a.fax';
-				$sql .= ', p.code as pays_code, p.libelle as pays';
+				$sql .= ', a.cp as zip, a.ville as town, a.note, a.fk_pays as country_id, a.tel, a.fax';
+				$sql .= ', p.code as country_code, p.libelle as country';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
 				$sql .= ' WHERE a.fk_soc = '.$this->socid;
@@ -302,11 +299,16 @@ class Address
 						$line->label			= $objp->label;
 						$line->name				= $objp->name;
 						$line->address			= $objp->address;
-						$line->cp				= $objp->cp;
-						$line->ville			= $objp->ville;
-						$line->pays_id			= $objp->fk_pays;
-						$line->pays_code		= $objp->fk_pays?$objp->pays_code:'';
-						$line->pays				= $objp->fk_pays?($langs->trans('Country'.$objp->pays_code)!='Country'.$objp->pays_code?strtoupper($langs->trans('Country'.$objp->pays_code)):$objp->pays):'';
+						$line->cp				= $objp->zip;
+						$line->ville			= $objp->town;
+						$line->zip				= $objp->zip;
+						$line->town				= $objp->town;
+						$line->pays_id			= $objp->country_id;
+						$line->pays_code		= $objp->country_id?$objp->country_code:'';
+						$line->pays				= $objp->country_id?($langs->trans('Country'.$objp->country_code)!='Country'.$objp->country_code?strtoupper($langs->trans('Country'.$objp->country_code)):$objp->country):'';
+						$line->country_id		= $objp->country_id;
+						$line->country_code		= $objp->country_id?$objp->country_code:'';
+						$line->country			= $objp->country_id?($langs->trans('Country'.$objp->country_code)!='Country'.$objp->country_code?strtoupper($langs->trans('Country'.$objp->country_code)):$objp->country):'';
 						$line->tel				= $objp->tel;
 						$line->fax				= $objp->fax;
 						$line->note				= $objp->note;
@@ -337,10 +339,11 @@ class Address
 	}
 
 	/**
-	 *    \brief      Charge depuis la base l'objet adresse
-	 *    \param      id       Id de l'adresse a charger en memoire
-	 *    \param      user        Objet de l'utilisateur
-	 *    \return     int         >0 si ok, <0 si ko
+	 *  Charge depuis la base l'objet adresse
+	 *
+	 *  @param	int		$id       	Id de l'adresse a charger en memoire
+	 *  @param  User	$user       Objet de l'utilisateur
+	 *  @return int 				>0 si ok, <0 si ko
 	 */
 	function fetch_address($id, $user=0)
 	{
@@ -349,8 +352,8 @@ class Address
 
 		$sql = 'SELECT a.rowid, a.fk_soc, a.label, a.name, a.address, a.datec as date_creation';
 		$sql .= ', a.tms as date_update';
-		$sql .= ', a.cp,a.ville, a.note, a.fk_pays, a.tel, a.fax';
-		$sql .= ', p.code as pays_code, p.libelle as pays';
+		$sql .= ', a.cp as zip, a.ville as town, a.note, a.fk_pays as country_id, a.tel, a.fax';
+		$sql .= ', p.code as country_code, p.libelle as country';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
 		$sql .= ' WHERE a.rowid = '.$id;
@@ -370,12 +373,17 @@ class Address
 				$this->label 			= $obj->label;
 				$this->name 			= $obj->name;
 				$this->address 			= $obj->address;
-				$this->cp 				= $obj->cp;
-				$this->ville 			= $obj->ville;
+				$this->cp 				= $obj->zip;
+				$this->ville 			= $obj->town;
+				$this->zip 				= $obj->zip;
+				$this->town 			= $obj->town;
 
-				$this->pays_id 			= $obj->fk_pays;
-				$this->pays_code 		= $obj->fk_pays?$obj->pays_code:'';
-				$this->pays				= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
+				$this->pays_id 			= $obj->country_id;
+				$this->pays_code 		= $obj->country_id?$obj->country_code:'';
+				$this->pays				= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
+				$this->country_id 			= $obj->country_id;
+				$this->country_code 		= $obj->country_id?$obj->country_code:'';
+				$this->country				= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
 
 				$this->tel				= $obj->tel;
 				$this->fax				= $obj->fax;

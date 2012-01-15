@@ -74,8 +74,8 @@ function user_prepare_head($object)
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:conditiontoshow:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:conditiontoshow:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
 
     if (! $user->societe_id)
@@ -142,9 +142,10 @@ function group_prepare_head($object)
 
 /**
  * 		Show list of themes. Show all thumbs of themes
- * 		@param		fuser				User concerned or '' for global theme
- * 		@param		edit				1 to add edit form
- * 		@param		foruserprofile		Show for user profile view
+ * 
+ * 		@param	User	$fuser				User concerned or '' for global theme
+ * 		@param	int		$edit				1 to add edit form
+ * 		@param	boolean	$foruserprofile		Show for user profile view
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
@@ -166,21 +167,21 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     // Title
     if ($foruserprofile)
     {
-    	print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td>';
-    	print '<td colspan="2">&nbsp;</td>';
+    	print '<tr class="liste_titre"><th width="25%">'.$langs->trans("Parameter").'</th><th width="25%">'.$langs->trans("DefaultValue").'</th>';
+    	print '<th colspan="2">&nbsp;</th>';
 	    print '</tr>';
     }
     else
     {
-    	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("DefaultSkin").'</td>';
-    	print '<td align="right">';
+    	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
+    	print '<th align="right">';
     	$url='http://www.dolistore.com/lang-en/4-skins';
     	if (preg_match('/fr/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-fr/4-themes';
     	//if (preg_match('/es/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-es/4-themes';
     	print '<a href="'.$url.'" target="_blank">';
     	print $langs->trans('DownloadMoreSkins');
     	print '</a>';
-    	print '</td></tr>';
+    	print '</th></tr>';
     }
 
     $var=false;
@@ -190,8 +191,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '<tr '.$bc[$var].'>';
 	    print '<td>'.$langs->trans("DefaultSkin").'</td>';
 	    print '<td>'.$conf->global->MAIN_THEME.'</td>';
-	    print '<td '.$bc[$var].' align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-	    print '<td '.$bc[$var].'>&nbsp;</td>';
+	    print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+	    print '<td>&nbsp;</td>';
 	    print '</tr>';
     }
 
@@ -202,12 +203,6 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '<td'.($foruserprofile?' colspan="3"':'').'>'.$dirtheme.'</td>';
 	    print '</tr>';
     }
-
-	if ($edit)
-	{
-		if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
-		else $title=$langs->trans("ShowPreview");
-	}
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
@@ -233,7 +228,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
             $url=$urltheme."/".$subdir."/thumb.png";
             if (! file_exists($file)) $url=$urltheme."/common/nophoto.jpg";
             print '<table><tr><td>';
-			print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
+			print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST("optioncss")?'&optioncss='.GETPOST("optioncss",'alpha',1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 			if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
 			else $title=$langs->trans("ShowPreview");
             print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'">';

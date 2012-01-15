@@ -37,11 +37,11 @@ class FormAdmin
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function FormAdmin($DB)
+	function FormAdmin($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		return 1;
 	}
@@ -63,12 +63,14 @@ class FormAdmin
 
 	/**
 	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
-	 *    	@param      selected        Langue pre-selectionnee
-	 *    	@param      htmlname        Nom de la zone select
-	 *    	@param      showauto        Affiche choix auto
-	 * 		@param		filter			Array of keys to exclude in list
-	 * 		@param		showempty		Add empty value
-	 *      @param      showwarning     Show a warning if language is not complete
+	 *
+	 *    	@param      string		$selected       Langue pre-selectionnee
+	 *    	@param      string		$htmlname       Nom de la zone select
+	 *    	@param      int			$showauto       Affiche choix auto
+	 * 		@param		array		$filter			Array of keys to exclude in list
+	 * 		@param		int			$showempty		Add empty value
+	 *      @param      int			$showwarning    Show a warning if language is not complete
+	 *      @return		string						Return HTML select string with list of languages
 	 */
 	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0,$showwarning=0)
 	{
@@ -203,10 +205,11 @@ class FormAdmin
     }
 
     /**
-     *    Return combo list of available menu families
-     *    @param      selected        Menu pre-selected
-     *    @param      htmlname        Name of html select
-     *    @param      dirmenuarray    Directories to scan
+     *  Return combo list of available menu families
+     *
+     *  @param	string	$selected        Menu pre-selected
+     *  @param  string	$htmlname        Name of html select
+     *  @param	string	$dirmenuarray    Directories to scan
      */
     function select_menu_families($selected='',$htmlname,$dirmenuarray)
     {
@@ -232,6 +235,7 @@ class FormAdmin
 	        				if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 	        				{
 	        					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
+	        					if (preg_match('/^index/i',$filelib)) continue;
 	        					if (preg_match('/^default/i',$filelib)) continue;
 	        					if (preg_match('/^empty/i',$filelib)) continue;
 	        					if (preg_match('/\.lib/i',$filelib)) continue;

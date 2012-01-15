@@ -26,14 +26,6 @@
  * @since 2004-10-27
  */
 
-// DOLCHANGE RH
-if (! function_exists('getmypid')) {
-	function getmypid() {
-		return rand(1,32768);
-	}
-}
-// END DOLCHANGE
-
 // If you define the constant K_TCPDF_EXTERNAL_CONFIG, the following settings will be ignored.
 
 if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
@@ -89,7 +81,9 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	/**
 	 * cache directory for temporary files (full path)
 	 */
-	define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
+//	define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
+define ('K_PATH_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+dol_mkdir(K_PATH_CACHE);
 
 	/**
 	 * cache directory for temporary files (url path)

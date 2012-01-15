@@ -273,6 +273,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         {
             $error++;
             $errmsg=$adh->error;
+            $errmsgs=$adh->errors;
         }
 
         if (! $error)
@@ -297,21 +298,24 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         $sql ="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid;
                         $sql.=" WHERE rowid=".$crowid;
 
-                        dol_syslog("Adherent::cotisation sql=".$sql);
+                        dol_syslog("card_subscriptions::cotisation sql=".$sql);
                         $resql = $db->query($sql);
                         if (! $resql)
                         {
-                            $error=$db->lasterror();
+                            $error++;
+                            $errmsg=$db->lasterror();
                         }
                     }
                     else
                     {
-                        $error=$acct->error;
+                        $error++;
+                        $errmsg=$acct->error;
                     }
                 }
                 else
                 {
-                    $error=$acct->error;
+                    $error++;
+                    $errmsg=$acct->error;
                 }
             }
 
@@ -403,7 +407,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         }
 
                         // Update fk_bank for subscriptions
-                        $sql = 'UPDATE llx_cotisation set fk_bank='.$bank_line_id;
+                        $sql = 'UPDATE '.MAIN_DB_PREFIX.'cotisation SET fk_bank='.$bank_line_id;
                         $sql.= ' WHERE rowid='.$crowid;
                         dol_syslog('sql='.$sql);
                         $result = $db->query($sql);
@@ -454,7 +458,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 $now=dol_now();
 
@@ -487,10 +491,10 @@ if ($rowid)
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
     print '<td class="valeur" colspan="2">';
-    print $html->showrefnav($adh,'rowid');
+    print $form->showrefnav($adh,'rowid');
     print '</td></tr>';
 
-    $showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">'.$html->showphoto('memberphoto',$adh).'</td>';
+    $showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">'.$form->showphoto('memberphoto',$adh).'</td>';
 
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -559,7 +563,7 @@ if ($rowid)
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $html->select_societes($adh->fk_soc,'socid','',1);
+            print $form->select_societes($adh->fk_soc,'socid','',1);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -595,13 +599,13 @@ if ($rowid)
          {
          $include=array($adh->user_id,$user->id);
          }*/
-        print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid','');
+        print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid','');
     }
     else
     {
         if ($adh->user_id)
         {
-            print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'none');
+            print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'none');
         }
         else print $langs->trans("NoDolibarrAccess");
     }
@@ -713,9 +717,16 @@ if ($rowid)
         {
             dol_print_error($db);
         }
+
+
+        // Link for paypal payment
+        if ($conf->paypal->enabled)
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
+            print showPaypalPaymentUrl('membersubscription',$adh->ref);
+        }
+
     }
-
-
 
     /*
      * Add new subscription form
@@ -794,7 +805,7 @@ if ($rowid)
 			// Create a form array
 			$formquestion=array(			array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -835,7 +846,7 @@ if ($rowid)
                 $datefrom=mktime();
             }
         }
-        $html->select_date($datefrom,'','','','',"cotisation");
+        $form->select_date($datefrom,'','','','',"cotisation");
         print "</td></tr>";
 
         // Date end subscription
@@ -848,13 +859,13 @@ if ($rowid)
             $dateto=-1;		// By default, no date is suggested
         }
         print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-        $html->select_date($dateto,'end','','','',"cotisation");
+        $form->select_date($dateto,'end','','','',"cotisation");
         print "</td></tr>";
 
         if ($adht->cotisation)
         {
             // Amount
-            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Label
             print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
@@ -917,17 +928,17 @@ if ($rowid)
 
                 // Bank account
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
-                $html->select_comptes($_POST["accountid"],'accountid',0,'',1);
+                $form->select_comptes($_POST["accountid"],'accountid',0,'',1);
                 print "</td></tr>\n";
 
                 // Payment mode
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-                $html->select_types_paiements($_POST["operation"],'operation','',2);
+                $form->select_types_paiements($_POST["operation"],'operation','',2);
                 print "</td></tr>\n";
 
                 // Date of payment
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-                $html->select_date($paymentdate?$paymentdate:-1,'payment',0,0,1,'cotisation',1,1);
+                $form->select_date($paymentdate?$paymentdate:-1,'payment',0,0,1,'cotisation',1,1);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
@@ -973,7 +984,7 @@ if ($rowid)
             $helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
-            print $html->textwithpicto($tmp,$helpcontent,1,'help');
+            print $form->textwithpicto($tmp,$helpcontent,1,'help');
         }
         print '</td></tr>';
         print '</table>';

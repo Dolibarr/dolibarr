@@ -99,28 +99,27 @@ class Commande extends CommonObject
     /**
      *	Constructor
      *
-     *  @param		DoliDB		$DB      Database handler
+     *  @param		DoliDB		$db      Database handler
      */
-    function Commande($DB)
+    function Commande($db)
     {
         global $langs;
         $langs->load('orders');
-        $this->db = $DB;
-        $this->socid = $socid;
-        $this->id = $commandeid;
+        $this->db = $db;
 
         $this->remise = 0;
         $this->remise_percent = 0;
 
         $this->products = array();
     }
-
-    /**
-     *      \brief      Renvoie la reference de commande suivante non utilisee en fonction du module
-     *                  de numerotation actif defini dans COMMANDE_ADDON
-     *      \param	    soc  		            objet societe
-     *      \return     string                  reference libre pour la commande
-     */
+    
+    /**  
+	 *  Returns the reference to the following non used Order depending on the active numbering module
+	 *  defined into COMMANDE_ADDON
+	 *
+	 *  @param	Societe		$soc  	Object thirdparty
+	 *  @return string      		Order free reference
+	 */
     function getNextNumRef($soc)
     {
         global $db, $langs, $conf;
@@ -167,11 +166,13 @@ class Commande extends CommonObject
 
 
     /**
-     *  \brief   Validate order
-     *  \param   user     	User making status change
-     *  \return  int		<=0 if OK, >0 if KO
+     *	Validate order
+     *
+     *	@param		User	$user     		User making status change
+     *	@param		int		$idwarehouse	Id of warehouse to use for stock decrease
+     *	@return  	int						<=0 if OK, >0 if KO
      */
-    function valid($user)
+    function valid($user, $idwarehouse=0)
     {
         global $conf,$langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -181,14 +182,14 @@ class Commande extends CommonObject
         // Protection
         if ($this->statut == 1)
         {
-            dol_syslog("Commande::valid no draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
             return 0;
         }
 
         if (! $user->rights->commande->valider)
         {
             $this->error='Permission denied';
-            dol_syslog("Commande::valid ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -215,17 +216,17 @@ class Commande extends CommonObject
 
         // Validate
         $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-        $sql.= " SET ref = '".$num."'";
-        $sql.= ", fk_statut = 1";
-        $sql.= ", date_valid=".$this->db->idate($now);
-        $sql.= ", fk_user_valid = ".$user->id;
+        $sql.= " SET ref = '".$num."',";
+        $sql.= " fk_statut = 1,";
+        $sql.= " date_valid='".$this->db->idate($now)."',";
+        $sql.= " fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("Commande::valid() sql=".$sql);
+        dol_syslog(get_class($this)."::valid() sql=".$sql);
         $resql=$this->db->query($sql);
         if (! $resql)
         {
-            dol_syslog("Commande::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+            dol_syslog(get_class($this)."::valid Echec update - 10 - sql=".$sql, LOG_ERR);
             dol_print_error($this->db);
             $error++;
         }
@@ -239,15 +240,14 @@ class Commande extends CommonObject
                 $langs->load("agenda");
 
                 // Loop on each line
-                $num=count($this->lines);
-                for ($i = 0; $i < $num; $i++)
+                $cpt=count($this->lines);
+                for ($i = 0; $i < $cpt; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We decrement stock of product (and sub-products)
-                        $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$num));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -269,7 +269,7 @@ class Commande extends CommonObject
                 $dirdest = $conf->commande->dir_output.'/'.$snum;
                 if (file_exists($dirsource))
                 {
-                    dol_syslog("Commande::valid() rename dir ".$dirsource." into ".$dirdest);
+                    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
 
                     if (@rename($dirsource, $dirdest))
                     {
@@ -314,11 +314,13 @@ class Commande extends CommonObject
     }
 
     /**
-     *		\brief		Set draft status
-     *		\param		user		Object user that modify
-     *		\return		int			<0 if KO, >0 if OK
+     *	Set draft status
+     *
+     *	@param	User	$user			Object user that modify
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user)
+    function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
 
@@ -342,7 +344,7 @@ class Commande extends CommonObject
         $sql.= " SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("Commande::set_draft sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             // If stock is decremented on validate order, we must reincrement it
@@ -358,8 +360,7 @@ class Commande extends CommonObject
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
-                        $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -393,10 +394,11 @@ class Commande extends CommonObject
 
 
     /**
-     *      Tag the order as validated (opened)
-     *		Function used when order is reopend after being closed.
-     *      @param      user        Object user that change status
-     *      @return     int         <0 if KO, 0 if nothing is done, >0 if OK
+     *	Tag the order as validated (opened)
+     *	Function used when order is reopend after being closed.
+     *
+     *	@param      User	$user       Object user that change status
+     *	@return     int         		<0 if KO, 0 if nothing is done, >0 if OK
      */
     function set_reopen($user)
     {
@@ -418,8 +420,6 @@ class Commande extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);
@@ -447,9 +447,10 @@ class Commande extends CommonObject
     }
 
     /**
-     *    	Close order
-     * 		@param      user        Objet user that close
-     *		@return		int			<0 if KO, >0 if OK
+     *  Close order
+     * 
+     * 	@param      User	$user       Objet user that close
+     *	@return		int					<0 if KO, >0 if OK
      */
     function cloture($user)
     {
@@ -501,13 +502,15 @@ class Commande extends CommonObject
     }
 
     /**
-     * 	\brief		Cancel an order
-     *	\return		int			<0 if KO, >0 if OK
-     * 	\remarks	If stock is decremented on order validation, we must reincrement it
+     * 	Cancel an order
+     * 	If stock is decremented on order validation, we must reincrement it
+     * 
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function cancel($user)
+    function cancel($user, $idwarehouse=-1)
     {
-        global $conf;
+        global $conf,$langs;
 
         $error=0;
 
@@ -526,17 +529,20 @@ class Commande extends CommonObject
                 // If stock is decremented on validate order, we must reincrement it
                 if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
-                    $langs->load("agenda");
-
-                    if ($this->lines[$i]->fk_product > 0)
-                    {
-                        $mouvP = new MouvementStock($this->db);
-                        // We increment stock of product (and sub-products)
-                        $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
-                        if ($result < 0) { $error++; }
-                    }
+	                require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+	                $langs->load("agenda");
+	
+	                $num=count($this->lines);
+	                for ($i = 0; $i < $num; $i++)
+	                {
+	                    if ($this->lines[$i]->fk_product > 0)
+	                    {
+	                        $mouvP = new MouvementStock($this->db);
+	                        // We increment stock of product (and sub-products)
+	                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
+	                        if ($result < 0) { $error++; }
+	                    }
+	                }
                 }
 
                 if (! $error)
@@ -573,11 +579,12 @@ class Commande extends CommonObject
     }
 
     /**
-     *  	Create order
-     *		Note that this->ref can be set or empty. If empty, we will use "(PROV)"
-     *		@param		user 		Objet user that make creation
-     *		@param		notrigger	Disable all triggers
-     * 		@return 	int			<0 if KO, >0 if OK
+     *	Create order
+     *	Note that this->ref can be set or empty. If empty, we will use "(PROV)"
+     *	
+     *	@param		User	$user 		Objet user that make creation
+     *	@param		int		notrigger	Disable all triggers
+     *	@return 	int					<0 if KO, >0 if OK
      */
     function create($user, $notrigger=0)
     {
@@ -604,7 +611,6 @@ class Commande extends CommonObject
             dol_syslog("Commande::create ".$this->error, LOG_ERR);
             return -1;
         }
-        if (! $remise) $remise=0;
         if (! $this->fk_project) $this->fk_project = 0;
 
         // $date_commande is deprecated
@@ -764,64 +770,53 @@ class Commande extends CommonObject
 
 
     /**
-     *		Load an object from its id and create a new one in database
+     *	Load an object from its id and create a new one in database
      *
-     *		@param      int			$fromid     	Id of object to clone
-     *		@param		int			$invertdetail	Reverse sign of amounts for lines
-     *		@param		int			$socid			Id of thirdparty
-     *		@param		HookManager	$hookmanager	Hook manager instance
-     * 	 	@return		int							New id of clone
+     *	@param		int			$socid			Id of thirdparty
+     *	@param		HookManager	$hookmanager	Hook manager instance
+     *	@return		int							New id of clone
      */
-    function createFromClone($fromid,$invertdetail=0,$socid=0,$hookmanager=false)
+    function createFromClone($socid=0,$hookmanager=false)
     {
         global $conf,$user,$langs;
 
         $error=0;
 
-        $object=new Commande($this->db);
-
         $this->db->begin();
 
         // Load source object
-        $object->fetch($fromid);
-        $objFrom = $object;
+        $objFrom = dol_clone($this);
 
         // Change socid if needed
-        if (! empty($socid) && $socid != $object->socid)
+        if (! empty($socid) && $socid != $this->socid)
         {
             $objsoc = new Societe($this->db);
 
             if ($objsoc->fetch($socid)>0)
             {
-                $object->socid 					= $objsoc->id;
-                $object->cond_reglement_id		= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-                $object->mode_reglement_id		= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-                $object->fk_project				= '';
-                $object->fk_delivery_address	= '';
+                $this->socid 				= $objsoc->id;
+                $this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+                $this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+                $this->fk_project			= '';
+                $this->fk_delivery_address	= '';
             }
 
             // TODO Change product price if multi-prices
         }
 
-        $object->id=0;
-        $object->statut=0;
+        $this->id=0;
+        $this->statut=0;
 
         // Clear fields
-        $object->user_author_id     = $user->id;
-        $object->user_valid         = '';
-        $object->date_creation      = '';
-        $object->date_validation    = '';
-        $object->ref_client         = '';
+        $this->user_author_id     = $user->id;
+        $this->user_valid         = '';
+        $this->date_creation      = '';
+        $this->date_validation    = '';
+        $this->ref_client         = '';
 
         // Create clone
-        $result=$object->create($user);
-
-        // Other options
-        if ($result < 0)
-        {
-            $this->error=$object->error;
-            $error++;
-        }
+        $result=$this->create($user);
+        if ($result < 0) $error++;
 
         if (! $error)
         {
@@ -829,14 +824,15 @@ class Commande extends CommonObject
             if (is_object($hookmanager))
             {
                 $parameters=array('objFrom'=>$objFrom);
-                $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+                $action='';
+                $reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
 
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_CLONE',$object,$user,$langs,$conf);
+            $result=$interface->run_triggers('ORDER_CLONE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
         }
@@ -845,7 +841,7 @@ class Commande extends CommonObject
         if (! $error)
         {
             $this->db->commit();
-            return $object->id;
+            return $this->id;
         }
         else
         {
@@ -924,6 +920,7 @@ class Commande extends CommonObject
                 $hookmanager->callHooks(array('orderdao'));
 
                 $parameters=array('objFrom'=>$object);
+                $action='';
                 $reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
 
@@ -946,30 +943,33 @@ class Commande extends CommonObject
 
 
     /**
-     *     Add an order line into database (linked to product/service or not)
-     *     @param      commandeid      	Id of line
-     * 	   @param      desc            	Description of line
-     * 	   @param      pu_ht            Unit price (without tax)
-     * 	   @param      qty             	Quantite
-     * 	   @param      txtva           	Taux de tva force, sinon -1
-     * 	   @param      txlocaltax1		Local tax 1 rate
-     *     @param      txlocaltax2		Local tax 2 rate
-     *	   @param      fk_product      	Id du produit/service predefini
-     * 	   @param      remise_percent  	Pourcentage de remise de la ligne
-     * 	   @param      info_bits		Bits de type de lignes
-     *	   @param      fk_remise_except	Id remise
-     *	   @param      price_base_type	HT or TTC
-     * 	   @param      pu_ttc           Prix unitaire TTC
-     * 	   @param      date_start       Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     * 	   @param      date_end         End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     * 	   @param      type				Type of line (0=product, 1=service)
-     *     @param      rang             Position of line
-     *     @return     int             	>0 if OK, <0 if KO
-     *     @see        add_product
-     * 	   Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-     *	   de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-     *	   par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
-     *	   et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+     *	Add an order line into database (linked to product/service or not)
+     *     
+     *	@param      int				$commandeid      	Id of line
+     *	@param      string			$desc            	Description of line
+     *	@param      double			$pu_ht    	        Unit price (without tax)
+     *	@param      double			$qty             	Quantite
+     *	@param      double			$txtva           	Taux de tva force, sinon -1
+     *	@param      double			$txlocaltax1		Local tax 1 rate
+     *	@param      double			$txlocaltax2		Local tax 2 rate
+     *	@param      int				$fk_product      	Id du produit/service predefini
+     *	@param      double			$remise_percent  	Pourcentage de remise de la ligne
+     *	@param      int				$info_bits			Bits de type de lignes
+     *	@param      int				$fk_remise_except	Id remise
+     *	@param      string			$price_base_type	HT or TTC
+     *	@param      double			$pu_ttc    		    Prix unitaire TTC
+     *	@param      timestamp		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      timestamp		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      int				$type				Type of line (0=product, 1=service)
+     *	@param      int				$rang             	Position of line
+     *	@return     int             					>0 if OK, <0 if KO
+     *
+     *	@see        add_product
+     *
+     *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+     *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+     *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
+     *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
     function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0)
     {
@@ -1103,16 +1103,18 @@ class Commande extends CommonObject
 
 
     /**
-     * 		Add line into array
-     *		$this->client doit etre charge
-     *		@param		idproduct			Id du produit a ajouter
-     *		@param		qty					Quantite
-     *		@param		remise_percent		Remise relative effectuee sur le produit
-     * 		@param    	date_start          Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     * 		@param    	date_end            End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     * 		@return    	void
-     *		TODO	Remplacer les appels a cette fonction par generation objet Ligne
-     *				insere dans tableau $this->products
+     *	Add line into array
+     *	$this->client must be loaded
+     *
+     *	@param		int				$idproduct			Product Id
+     *	@param		double			$qty				Quantity
+     *	@param		double			$remise_percent		Product discount relative
+     * 	@param    	timestamp		$date_start         Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     * 	@param    	timestamp		$date_end           End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     * 	@return    	void
+     * 
+     *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
+     *			insere dans tableau $this->products
      */
     function add_product($idproduct, $qty, $remise_percent=0, $date_start='', $date_end='')
     {
@@ -1181,11 +1183,12 @@ class Commande extends CommonObject
 
     /**
      *	Get object and lines from database
-     *	@param      id       	Id of object to load
-     * 	@param		ref			Ref of object
-     * 	@param		ref_ext		External reference of object
-     * 	@param		ref_int		Internal reference of other object
-     *	@return     int         >0 if OK, <0 if KO
+     *
+     *	@param      int			$id       		Id of object to load
+     * 	@param		string		$ref			Ref of object
+     * 	@param		string		$ref_ext		External reference of object
+     * 	@param		string		$ref_int		Internal reference of other object
+     *	@return     int         				>0 if OK, <0 if KO
      */
     function fetch($id, $ref='', $ref_ext='', $ref_int='')
     {
@@ -1297,14 +1300,14 @@ class Commande extends CommonObject
             }
             else
             {
-                dol_syslog('Commande::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
-                $this->error='Order with id '.$rowid.' not found sql='.$sql;
+                dol_syslog('Commande::Fetch Error rowid='.$id.' numrows=0 sql='.$sql);
+                $this->error='Order with id '.$id.' not found sql='.$sql;
                 return -2;
             }
         }
         else
         {
-            dol_syslog('Commande::Fetch Error rowid='.$rowid.' Erreur dans fetch de la commande');
+            dol_syslog('Commande::Fetch Error rowid='.$id.' Erreur dans fetch de la commande');
             $this->error=$this->db->error();
             return -1;
         }
@@ -1312,9 +1315,10 @@ class Commande extends CommonObject
 
 
     /**
-     *    Ajout d'une ligne remise fixe dans la commande, en base
-     *    @param     idremise			Id de la remise fixe
-     *    @return    int          		>0 si ok, <0 si ko
+     *	Adding line of fixed discount in the order in DB
+     *    
+     *	@param     int	$idremise			Id de la remise fixe
+     *	@return    int          			>0 si ok, <0 si ko
      */
     function insert_discount($idremise)
     {
@@ -1387,9 +1391,10 @@ class Commande extends CommonObject
 
 
     /**
-     *      Load array lines
-     *		@param		only_product	Return only physical products
-     *		@return		int				<0 if KO, >0 if OK
+     *	Load array lines
+     *      
+     *	@param		int		$only_product	Return only physical products
+     *	@return		int						<0 if KO, >0 if OK
      */
     function fetch_lines($only_product=0)
     {
@@ -1473,8 +1478,9 @@ class Commande extends CommonObject
 
 
     /**
-     *      Return number of line with type product.
-     *		@return		int		<0 if KO, Nbr of product lines if OK
+     *	Return number of line with type product.
+     *
+     *	@return		int		<0 if KO, Nbr of product lines if OK
      */
     function getNbOfProductsLines()
     {
@@ -1487,10 +1493,12 @@ class Commande extends CommonObject
     }
 
     /**
-     *      Load array this->expeditions of nb of products sent by line in order
-     *      @param      filtre_statut       Filter on status
-     *      @return     int                	<0 if KO, Nb of lines found if OK
-     *      TODO deprecated, move to Shipping class
+     *	Load array this->expeditions of nb of products sent by line in order
+     *      
+     *	@param      int		$filtre_statut      Filter on status
+     * 	@return     int                			<0 if KO, Nb of lines found if OK
+     *	
+     *	TODO deprecated, move to Shipping class
      */
     function loadExpeditions($filtre_statut=-1)
     {
@@ -1535,7 +1543,8 @@ class Commande extends CommonObject
     }
 
     /**
-     * Renvoie un tableau avec nombre de lignes d'expeditions
+     * Returns a array with expeditions lines number
+     * 
      * TODO deprecated, move to Shipping class
      */
     function nb_expedition()
@@ -1557,10 +1566,12 @@ class Commande extends CommonObject
     }
 
     /**
-     *      Renvoie un tableau avec les livraisons par ligne
-     *      @param      filtre_statut       Filtre sur statut
-     *      @return     int                 0 si OK, <0 si KO
-     *      TODO  deprecated, move to Shipping class
+     *	Return a array with sendings by line
+     *      
+     *	@param      int		$filtre_statut      Filtre sur statut
+     *	@return     int                 		0 si OK, <0 si KO
+     *
+     *	TODO  deprecated, move to Shipping class
      */
     function livraison_array($filtre_statut=-1)
     {
@@ -1570,17 +1581,20 @@ class Commande extends CommonObject
     }
 
     /**
-     *      Renvoie un tableau avec les stocks restant par produit
-     *      @param      filtre_statut       Filtre sur statut
-     *      @return     int                 0 si OK, <0 si KO
-     *		TODO		FONCTION NON FINIE A FINIR
+     *	Return a array with the pending stock by product
+     *      
+     *	@param      int		$filtre_statut      Filtre sur statut
+     *	@return     int                 		0 si OK, <0 si KO
+     *      
+     *	TODO		FONCTION NON FINIE A FINIR
      */
     function stock_array($filtre_statut=-1)
     {
         $this->stocks = array();
 
         // Tableau des id de produit de la commande
-
+		$array_of_product=array();
+		
 
         // Recherche total en stock pour chaque produit
         if (count($array_of_product))
@@ -1608,8 +1622,9 @@ class Commande extends CommonObject
 
     /**
      *  Delete an order line
-     *  @param      lineid		Id of line to delete
-     *  @return     int         >0 if OK, 0 if nothing to do, <0 if KO
+     *  
+     *  @param      int		$lineid		Id of line to delete
+     *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
      */
     function deleteline($lineid)
     {
@@ -1752,11 +1767,11 @@ class Commande extends CommonObject
 
 
     /**
-     *      Set the order date
+     *	Set the order date
      *
-     *      @param      user        		Object user making change
-     *      @param      date			    Date
-     *      @return     int         		<0 if KO, >0 if OK
+     *	@param      User		$user       Object user making change
+     *	@param      timestamp	$date		Date
+     *	@return     int         			<0 if KO, >0 if OK
      */
     function set_date($user, $date)
     {
@@ -1787,11 +1802,11 @@ class Commande extends CommonObject
     }
 
     /**
-     *      Set the planned delivery date
+     *	Set the planned delivery date
      *
-     *      @param      user        		Objet utilisateur qui modifie
-     *      @param      date_livraison      Date de livraison
-     *      @return     int         		<0 si ko, >0 si ok
+     *	@param      User			$user        		Objet utilisateur qui modifie
+     *	@param      timestamp		$date_livraison     Date de livraison
+     *	@return     int         						<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison)
     {
@@ -1822,11 +1837,11 @@ class Commande extends CommonObject
     }
 
     /**
-     *      Set address
+     *	Set address
      *
-     *      @param      user        	Object user making change
-     *      @param      fk_address	    Adress of delivery
-     *      @return     int         	<0 ig KO, >0 if Ok
+     *	@param      User		$user        	Object user making change
+     *	@param      int			$fk_address	    Adress of delivery
+     *	@return     int         				<0 ig KO, >0 if Ok
      */
     function set_adresse_livraison($user, $fk_address)
     {
@@ -1850,11 +1865,11 @@ class Commande extends CommonObject
     }
 
     /**
-     *      Set availability
+     *	Set availability
      *
-     *      @param      user		  	Object user making change
-     *      @param      id				If of availability delay
-     *      @return     int           	<0 if KO, >0 if OK
+     *	@param      User	$user		Object user making change
+     *	@param      int		$id			If of availability delay
+     *	@return     int           		<0 if KO, >0 if OK
      */
     function set_availability($user, $id)
     {
@@ -1879,11 +1894,11 @@ class Commande extends CommonObject
     }
 
     /**
-     *      Set source of demand
+     *	Set source of demand
      *
-     *      @param      user		  	Object user making change
-     *      @param      id				Id of source
-     *      @return     int           	<0 if KO, >0 if OK
+     *	@param      User	$user		  	Object user making change
+     *	@param      int		$id				Id of source
+     *	@return     int           			<0 if KO, >0 if OK
      */
     function set_demand_reason($user, $id)
     {
@@ -1910,9 +1925,9 @@ class Commande extends CommonObject
     /**
      *  Return list of orders (eventuelly filtered on a user) into an array
      *
-     *  @param      brouillon       0=non brouillon, 1=brouillon
-     *  @param      user            Objet user de filtre
-     *  @return     int             -1 if KO, array with result if OK
+     *  @param      int		$brouillon      0=non brouillon, 1=brouillon
+     *  @param      User	$user           Objet user de filtre
+     *  @return     int             		-1 if KO, array with result if OK
      */
     function liste_array($brouillon=0, $user='')
     {
@@ -1953,10 +1968,10 @@ class Commande extends CommonObject
     }
 
     /**
-     *   Change les conditions de reglement de la commande
+     *	Change les conditions de reglement de la commande
      *
-     *   @param      cond_reglement_id      Id de la nouvelle condition de reglement
-     *   @return     int                    >0 if OK, <0 if KO
+     *	@param      int	$cond_reglement_id      Id de la nouvelle condition de reglement
+     *	@return     int                    		>0 if OK, <0 if KO
      */
     function cond_reglement($cond_reglement_id)
     {
@@ -1990,8 +2005,8 @@ class Commande extends CommonObject
     /**
      *  Change le mode de reglement
      *
-     *  @param      mode        Id du nouveau mode
-     *  @return     int         >0 si ok, <0 si ko
+     *  @param      int		$mode       Id du nouveau mode
+     *  @return     int         		>0 si ok, <0 si ko
      */
     function mode_reglement($mode_reglement_id)
     {
@@ -2022,9 +2037,10 @@ class Commande extends CommonObject
     }
 
     /**
-     *   Change le delai de livraison
-     *   @param      availability_id	Id du nouveau mode
-     *   @return     int         		>0 if OK, <0 if KO
+     *	Change le delai de livraison
+     *   
+     *	@param      int		$availability_id	Id du nouveau mode
+     *	@return     int         				>0 if OK, <0 if KO
      */
     function availability($availability_id)
     {
@@ -2055,9 +2071,10 @@ class Commande extends CommonObject
     }
 
     /**
-     *   \brief      Change la source de la demande
-     *   \param      mode        Id du nouveau mode
-     *   \return     int         >0 si ok, <0 si ko
+     *	Change la source de la demande
+     *
+     *  @param      int		$demand_reason_id	Id of new demand
+     *  @return     int        			 		>0 if ok, <0 if ko
      */
     function demand_reason($demand_reason_id)
     {
@@ -2088,10 +2105,10 @@ class Commande extends CommonObject
     }
 
     /**
-     *      \brief      Set customer ref
-     *      \param      user            User that make change
-     *      \param      ref_client      Customer ref
-     *      \return     int             <0 if KO, >0 if OK
+     *	Set customer ref
+     *	@param      User	$user           User that make change
+     *	@param      string	$ref_client     Customer ref
+     *	@return     int             		<0 if KO, >0 if OK
      */
     function set_ref_client($user, $ref_client)
     {
@@ -2123,8 +2140,9 @@ class Commande extends CommonObject
 
 
     /**
-     *        \brief      Classe la commande comme facturee
-     *        \return     int     <0 si ko, >0 si ok
+     *	Classify the order as invoiced
+     *
+     *	@return     int     <0 if ko, >0 if ok
      */
     function classer_facturee()
     {
@@ -2153,20 +2171,20 @@ class Commande extends CommonObject
     /**
      *  Update a line in database
      *
-     *  @param    	rowid            	Id of line to update
-     *  @param    	desc             	Description de la ligne
-     *  @param    	pu               	Prix unitaire
-     *  @param    	qty              	Quantity
-     *  @param    	remise_percent   	Pourcentage de remise de la ligne
-     *  @param    	tva_tx           	Taux TVA
-     * 	@param		txlocaltax1			Local tax 1 rate
-     *  @param		txlocaltax2			Local tax 2 rate
-     *  @param    	price_base_type		HT or TTC
-     *  @param    	info_bits        	Miscellaneous informations on line
-     *  @param    	date_start        	Start date of the line
-     *  @param    	date_end          	End date of the line
-     * 	@param		type				Type of line (0=product, 1=service)
-     *  @return   	int              	< 0 if KO, > 0 if OK
+     *  @param    	int				$rowid            	Id of line to update
+     *  @param    	string			$desc             	Description de la ligne
+     *  @param    	double			$pu               	Prix unitaire
+     *  @param    	double			$qty              	Quantity
+     *  @param    	double			$remise_percent   	Pourcentage de remise de la ligne
+     *  @param    	double			$tva_tx           	Taux TVA
+     * 	@param		double			$txlocaltax1		Local tax 1 rate
+     *  @param		double			$txlocaltax2		Local tax 2 rate
+     *  @param    	string			$price_base_type	HT or TTC
+     *  @param    	int				$info_bits        	Miscellaneous informations on line
+     *  @param    	timestamp		$date_start        	Start date of the line
+     *  @param    	timestamp		$date_end          	End date of the line
+     * 	@param		int				$type				Type of line (0=product, 1=service)
+     *  @return   	int              					< 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0)
     {
@@ -2191,8 +2209,8 @@ class Commande extends CommonObject
             $qty=price2num($qty);
             $pu = price2num($pu);
             $txtva=price2num($txtva);
-            $txlocaltax1=price2num($txtlocaltax1);
-            $txlocaltax2=price2num($txtlocaltax2);
+            $txlocaltax1=price2num($txlocaltax1);
+            $txlocaltax2=price2num($txlocaltax2);
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
@@ -2284,15 +2302,16 @@ class Commande extends CommonObject
 
     /**
      *	Delete the customer order
-     *	@param		user		User object
-     * 	@return		int		<=0 if KO, >0 if OK
+     *
+     *	@param	User	$user		User object
+     * 	@return	int					<=0 if KO, >0 if OK
      */
     function delete($user)
     {
         global $conf, $langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-        $err = 0;
+        $error = 0;
 
         $this->db->begin();
 
@@ -2302,7 +2321,7 @@ class Commande extends CommonObject
         if (! $this->db->query($sql) )
         {
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $err++;
+            $error++;
         }
 
         // Delete order
@@ -2311,7 +2330,7 @@ class Commande extends CommonObject
         if (! $this->db->query($sql) )
         {
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $err++;
+            $error++;
         }
 
         // Delete linked object
@@ -2323,7 +2342,7 @@ class Commande extends CommonObject
         if (! $this->db->query($sql) )
         {
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $err++;
+            $error++;
         }
 
         // Delete linked contacts
@@ -2331,7 +2350,7 @@ class Commande extends CommonObject
         if ($res < 0)
         {
             dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $err++;
+            $error++;
         }
 
         // On efface le repertoire de pdf provisoire
@@ -2342,7 +2361,7 @@ class Commande extends CommonObject
             $file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
             if (file_exists($file))	// We must delete all files before deleting directory
             {
-                dol_delete_preview($object);
+                dol_delete_preview($this);
 
                 if (!dol_delete_file($file))
                 {
@@ -2362,7 +2381,7 @@ class Commande extends CommonObject
             }
         }
 
-        if ($err == 0)
+        if ($error == 0)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -2383,9 +2402,10 @@ class Commande extends CommonObject
 
 
     /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *      @param          user    Objet user
-     *      @return         int     <0 if KO, >0 if OK
+     *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     * 
+     *	@param		User	$user   Object user
+     *	@return     int     		<0 if KO, >0 if OK
      */
     function load_board($user)
     {
@@ -2426,8 +2446,9 @@ class Commande extends CommonObject
     }
 
     /**
-     *    	\brief      Return source label of order
-     *    	\return     string      Label
+     *	Return source label of order
+     *
+     *	@return     string      Label
      */
     function getLabelSource()
     {
@@ -2440,9 +2461,10 @@ class Commande extends CommonObject
     }
 
     /**
-     *    	\brief      Retourne le libelle du statut de la commande
-     *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    	\return     string      Libelle
+     *	Return status label of Order
+     *
+     *	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *	@return     string      		Libelle
      */
     function getLibStatut($mode)
     {
@@ -2450,11 +2472,12 @@ class Commande extends CommonObject
     }
 
     /**
-     *		Renvoi le libelle d'un statut donne
-     *    	@param      statut      Id statut
-     *    	@param      facturee    Si facturee
-     *    	@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    	@return     string		Label of status
+     *	Return label of status
+     *
+     *	@param		int		$statut      	Id statut
+     *  @param      int		$facturee    	if invoiced
+     *	@param      int		$mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return     string					Label of status
      */
     function LibStatut($statut,$facturee,$mode)
     {
@@ -2518,12 +2541,13 @@ class Commande extends CommonObject
 
 
     /**
-     *      Return clicable link of object (with eventually picto)
-     *      @param      withpicto       Add picto into link
-     *      @param      option          Where point the link
-     *      @param      max          	Max length to show
-     *      @param      short			Use short labels
-     *      @return     string          String with URL
+     *	Return clicable link of object (with eventually picto)
+     *
+     *	@param      int			$withpicto      Add picto into link
+     *	@param      int			$option         Where point the link
+     *	@param      int			$max          	Max length to show
+     *	@param      int			$short			Use short labels
+     *	@return     string          		String with URL
      */
     function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
     {
@@ -2550,8 +2574,9 @@ class Commande extends CommonObject
 
 
     /**
-     *      \brief     Charge les informations d'ordre info dans l'objet commande
-     *      \param     id       Id de la commande a charger
+     *	Charge les informations d'ordre info dans l'objet commande
+     *
+     *	@param     int		$id       Id of order
      */
     function info($id)
     {
@@ -2690,9 +2715,9 @@ class Commande extends CommonObject
 
 
     /**
-     *      Charge indicateurs this->nb de tableau de bord
+     *	Charge indicateurs this->nb de tableau de bord
      *
-     *      @return     int         <0 si ko, >0 si ok
+     *	@return     int         <0 si ko, >0 si ok
      */
     function load_state_board()
     {
@@ -2731,6 +2756,8 @@ class Commande extends CommonObject
 
     /**
      * 	Return an array of order lines
+     * 
+     * @return	array		Lines of order
      */
     function getLinesArray()
     {
@@ -2854,7 +2881,7 @@ class OrderLine
     /**
      *      Constructor
      *
-     *      @param     DB      handler d'acces base de donnee
+     *      @param     DoliDB	$DB      handler d'acces base de donnee
      */
     function OrderLine($DB)
     {
@@ -2932,6 +2959,8 @@ class OrderLine
     {
         global $conf, $user, $langs;
 
+		$error=0;
+		
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->rowid."';";
 
         dol_syslog("OrderLine::delete sql=".$sql);
@@ -2956,15 +2985,17 @@ class OrderLine
     }
 
     /**
-     *   	Insert line into database
+     *	Insert line into database
      *
-     *   	@param      notrigger		1 = disable triggers
-     *		@return		int				<0 if KO, >0 if OK
+     *	@param      int		$notrigger		1 = disable triggers
+     *	@return		int						<0 if KO, >0 if OK
      */
     function insert($notrigger=0)
     {
         global $langs, $conf, $user;
 
+		$error=0;
+		
         dol_syslog("OrderLine::insert rang=".$this->rang);
 
         // Clean parameters
@@ -3054,14 +3085,17 @@ class OrderLine
     }
 
     /**
-     *      Mise a jour de l'objet ligne de commande en base
+     *	Update the line object into db
      *
-     *		@return		int		<0 si ko, >0 si ok
+	 *	@param      int		$notrigger		1 = disable triggers
+     *	@return		int		<0 si ko, >0 si ok
      */
     function update($notrigger=0)
     {
         global $conf,$langs,$user;
 
+		$error=0;
+		
         // Clean parameters
         if (empty($this->tva_tx)) $this->tva_tx=0;
         if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
@@ -3090,7 +3124,6 @@ class OrderLine
         $sql.= " , remise_percent=".price2num($this->remise_percent)."";
         $sql.= " , price=".price2num($this->price)."";					// TODO A virer
         $sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
-        $sql.= " , info_bits='".$this->info_bits."'";
         if (empty($this->skip_update_total))
         {
             $sql.= " , total_ht=".price2num($this->total_ht)."";
@@ -3135,9 +3168,9 @@ class OrderLine
     }
 
     /**
-     *      Mise a jour de l'objet ligne de commande en base
+     *	Update totals of order into database
      *
-     *		@return		int		<0 si ko, >0 si ok
+     *	@return		int		<0 if ko, >0 if ok
      */
     function update_total()
     {

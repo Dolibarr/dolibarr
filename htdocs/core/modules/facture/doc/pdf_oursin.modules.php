@@ -359,7 +359,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Loop on each credit note included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source,";
+		$sql.= " re.description, re.fk_facture_source,";
 		$sql.= " f.type, f.datef";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re, ".MAIN_DB_PREFIX ."facture as f";
 		$sql.= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$object->id;
@@ -578,17 +578,21 @@ class pdf_oursin extends ModelePDFFactures
 
 
 	/**
-	 *	\brief      Affiche le total a payer
-	 *	\param      pdf             Objet PDF
-	 *	\param      object          Objet facture
-	 *	\param      deja_regle      Montant deja regle
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y               Position pour suite
+	 *	Affiche le total a payer
+	 *
+	 *	@param      pdf             Objet PDF
+	 *	@param      object          Objet facture
+	 *	@param      deja_regle      Montant deja regle
+	 *	@param		posy			Position depart
+	 *	@param		outputlangs		Objet langs
+	 *	@return     y               Position pour suite
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf,$langs;
+
+		$sign=1;
+		if ($object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
 
 		$langs->load("main");
 		$langs->load("bills");
@@ -612,7 +616,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 0);
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 0);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($object->total_ht + $object->remise)), 0, 'R', 0);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -638,7 +642,7 @@ class pdf_oursin extends ModelePDFFactures
 					$totalvat.=vatrate($tvakey,1).$tvacompl;
 					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $tvaval), 0, 'R', 1);
 				}
 			}
 
@@ -648,7 +652,7 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_tva), 0, 'R', 1);
 			}
 		}
 
@@ -661,7 +665,7 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->SetFont('','B', $default_font_size + 1);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_ttc), 0, 'R', 0);
 			$pdf->SetTextColor(0,0,0);
 		}
 
@@ -909,7 +913,7 @@ class pdf_oursin extends ModelePDFFactures
 		 * ref facture
 		 */
 		$posy=78;
-		$pdf->SetFont('','B', $default_font_size + 3);
+		$pdf->SetFont('','B', $default_font_size + 2);
 		$pdf->SetXY($this->marges['g'],$posy-5);
 		$pdf->SetTextColor(0,0,0);
 		$title=$outputlangs->transnoentities("Invoice");
@@ -918,12 +922,11 @@ class pdf_oursin extends ModelePDFFactures
 		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProForma");
 		$pdf->MultiCell(100, 10, $title.' '.$outputlangs->transnoentities("Of").' '.dol_print_date($object->date,"day",false,$outputlangs,true), '', 'L');
-		$pdf->SetFont('','B', $default_font_size + 1);
+		$pdf->SetFont('','B', $default_font_size);
 		$pdf->SetXY($this->marges['g'],$posy);
 		$pdf->SetTextColor(22,137,210);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $outputlangs->transnoentities($object->ref), '', 'L');
 		$pdf->SetTextColor(0,0,0);
-		$posy+=4;
 
 		$objectidnext=$object->getIdReplacingInvoice('validated');
 		if ($object->type == 0 && $objectidnext)
@@ -957,21 +960,25 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'L');
 		}
 
+		$posy+=1;
+
 		if ($object->type != 2)
 		{
-			$posy+=5;
+			$posy+=3;
 			$pdf->SetXY($this->marges['g'],$posy);
-			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'L');
 		}
 
 		if ($object->client->code_client)
 		{
-			$posy+=4;
+			$posy+=3;
 			$pdf->SetXY($this->marges['g'],$posy);
-			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'L');
 		}
+
+		$posy+=1;
 
 		// Add list of linked orders and proposals
 		// TODO mutualiser
@@ -985,10 +992,13 @@ class pdf_oursin extends ModelePDFFactures
 	    		$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
-	    			$posy+=4;
+	    			$posy+=3;
 	    			$pdf->SetXY($this->marges['g'],$posy);
-	    			$pdf->SetFont('','', $default_font_size - 1);
-	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref));
+	    			$pdf->SetFont('','', $default_font_size - 2);
+	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref), '', 'L');
+	    			$posy+=3;
+	    			$pdf->SetXY($this->marges['g'],$posy);
+	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'L');
 	    		}
 			}
 			else if ($objecttype == 'commande')
@@ -996,12 +1006,15 @@ class pdf_oursin extends ModelePDFFactures
 				$num=count($objects);
 	    		for ($i=0;$i<$num;$i++)
 	    		{
-	    			$posy+=4;
+	    			$posy+=3;
 	    			$pdf->SetXY($this->marges['g'],$posy);
-					$pdf->SetFont('','', $default_font_size - 1);
+					$pdf->SetFont('','', $default_font_size - 2);
 					$text=$objects[$i]->ref;
 					if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
-					$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text));
+					$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'L');
+	    			$posy+=3;
+	    			$pdf->SetXY($this->marges['g'],$posy);
+	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'L');
 	    		}
 			}
 		}
@@ -1009,7 +1022,7 @@ class pdf_oursin extends ModelePDFFactures
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size-1);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
         $pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), 90);
         $pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 	}

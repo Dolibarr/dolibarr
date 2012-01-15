@@ -25,6 +25,7 @@
 
 /**
  *	Get value of an HTML field, do Ajax process and show result
+ *
  *  @param      selected            Preselecte value
  *	@param	    htmlname            HTML name of input field
  *	@param	    url                 Url for request: /chemin/fichier.php
@@ -82,6 +83,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2,
 
 /**
  *	Get value of field, do Ajax process and return result
+ *
  *	@param	    htmlname            nom et id du champ
  *	@param		fields				other fields to autocomplete
  *	@param	    url                 chemin du fichier de reponse : /chemin/fichier.php
@@ -92,14 +94,10 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2,
  */
 function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,$autoselect=0)
 {
-	$script='';
-
-	$fields = php2js($fields);
-
-	$script.= '<!-- Autocomplete -->'."\n";
+	$script = '<!-- Autocomplete -->'."\n";
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
-					var fields = '.$fields.';
+					var fields = '.json_encode($fields).';
 					var length = fields.length;
 					var autoselect = '.$autoselect.';
 					//alert(fields + " " + length);
@@ -131,7 +129,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 
     						for (i=0;i<length;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
-								if (fields[i]=="selectpays_id")
+								if (fields[i]=="selectcountry_id")
 								{
 								    if (ui.item[fields[i]] > 0)     // Do not erase country if unknown
 								    {
@@ -142,7 +140,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
                                         }
 								    }
 								}
-                                else if (fields[i]=="departement_id")
+                                else if (fields[i]=="state_id" || fields[i]=="departement_id")
                                 {
                                     if (ui.item[fields[i]] > 0)     // Do not erase state if unknown
                                     {
@@ -220,57 +218,72 @@ function ajax_combobox($htmlname)
 /**
  * 	On/off button for constant
  *
- * 	@param		code	Name of constant
- * 	@param		input	Input element
- * 	TODO add different method for other input (show/hide, disable, ..)
+ * 	@param	string	$code		Name of constant
+ * 	@param	array	$input		Input element
+ * 	@param	int		$entity		Entity to set
+ * 	@return	void
  */
-function ajax_constantonoff($code,$input=array())
+function ajax_constantonoff($code,$input=array(),$entity=false)
 {
 	global $conf, $langs;
 
+	$entity = ((! empty($entity) && is_numeric($entity) && $entity > 0) || $entity == 0 ? $entity : $conf->entity);
+
 	$out= '<script type="text/javascript">
 		$(function() {
-			var input='.json_encode($input).';
+			var input = '.json_encode($input).';
 
 			// Set constant
-			$( "#set_'.$code.'" ).click(function() {
+			$("#set_'.$code.'").click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
 					action: \'set\',
-					name: \''.$code.'\'
+					name: \''.$code.'\',
+					entity: \''.$entity.'\'
 				},
 				function() {
-					$("#set_'.$code.'" ).hide();
-					$("#del_'.$code.'" ).show();
-					// Enable another object
-					if (input.length > 0) {
-						$.each(input, function(key,value) {
+					$("#set_'.$code.'").hide();
+					$("#del_'.$code.'").show();
+					// Enable another element
+					if (input.disabled && input.disabled.length > 0) {
+						$.each(input.disabled, function(key,value) {
 							$("#" + value).removeAttr("disabled");
-							if ( $( "#" + value).hasClass("butActionRefused") == true ) {
+							if ($("#" + value).hasClass("butActionRefused") == true) {
 								$("#" + value).removeClass("butActionRefused");
 								$("#" + value).addClass("butAction");
 							}
+						});
+					// Show another element
+					} else if (input.showhide && input.showhide.length > 0) {
+						$.each(input.showhide, function(key,value) {
+							$("#" + value).show();
 						});
 					}
 				});
 			});
 
 			// Del constant
-			$( "#del_'.$code.'" ).click(function() {
+			$("#del_'.$code.'").click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
 					action: \'del\',
-					name: \''.$code.'\'
+					name: \''.$code.'\',
+					entity: \''.$entity.'\'
 				},
 				function() {
-					$("#del_'.$code.'" ).hide();
-					$("#set_'.$code.'" ).show();
-					// Disable another object
-					if (input.length > 0) {
-						$.each(input, function(key,value) {
+					$("#del_'.$code.'").hide();
+					$("#set_'.$code.'").show();
+					// Disable another element
+					if (input.disabled && input.disabled.length > 0) {
+						$.each(input.disabled, function(key,value) {
 							$("#" + value).attr("disabled", true);
-							if ( $( "#" + value).hasClass("butAction") == true ) {
+							if ($("#" + value).hasClass("butAction") == true) {
 								$("#" + value).removeClass("butAction");
 								$("#" + value).addClass("butActionRefused");
 							}
+						});
+					// Hide another element
+					} else if (input.showhide && input.showhide.length > 0) {
+						$.each(input.showhide, function(key,value) {
+							$("#" + value).hide();
 						});
 					}
 				});
@@ -283,34 +296,5 @@ function ajax_constantonoff($code,$input=array())
 
 	return $out;
 }
-
-/**
- * Convert a PHP array into a js array
- * @param       $var
- * @return      String with js array or false if error
- */
-function php2js($var)
-{
-    if (is_array($var)) {
-        $res = "[";
-        $array = array();
-        foreach ($var as $a_var) {
-            $array[] = php2js($a_var);
-        }
-        return "[" . join(",", $array) . "]";
-    }
-    elseif (is_bool($var)) {
-        return $var ? "true" : "false";
-    }
-    elseif (is_int($var) || is_integer($var) || is_double($var) || is_float($var)) {
-        return $var;
-    }
-    elseif (is_string($var)) {
-        return "\"" . addslashes(stripslashes($var)) . "\"";
-    }
-    // autres cas: objets, on ne les gère pas
-    return false;
-}
-
 
 ?>

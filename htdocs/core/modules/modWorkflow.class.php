@@ -37,11 +37,11 @@ class modWorkflow extends DolibarrModules
     /**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
      */
-    function modWorkflow($DB)
+    function modWorkflow($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
 
         // Id for module (must be unique).
         // Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -115,7 +115,6 @@ class modWorkflow extends DolibarrModules
                                 'type'=>'top',
                                 'titre'=>'Workflow',
                                 'mainmenu'=>'workflow',
-                                'leftmenu'=>'1',
                                 'url'=>'/workflow/index.php',
                                 'langs'=>'@workflow',
                                 'position'=>100,
@@ -142,14 +141,21 @@ class modWorkflow extends DolibarrModules
 
 
     /**
-     *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-     *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
-    function init()
+    function init($options='')
     {
-        //$result=$this->load_tables();
+		// Permissions
+		$this->remove();
 
-        return $this->_init($sql);
+		$sql = array();
+
+        return $this->_init($sql,$option);
     }
 
     /**

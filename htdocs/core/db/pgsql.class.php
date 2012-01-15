@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
- * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier		<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2001		Fabien Seisen			<seisen@linuxfr.org>
+ * Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +33,16 @@
  */
 class DoliDBPgsql
 {
-	var $db;                      // Database handler
-	var $type='pgsql';            // Name of manager
-	var $label='PostgreSQL';      // Label of manager
+    //! Database handler
+    var $db;
+    //! Database type
+	public $type='pgsql';            // Name of manager
+    //! Database label
+	static $label='PostgreSQL';      // Label of manager
 	//! Charset
-	var $forcecharset='latin1';
-	var $versionmin=array(8,4,0);	// Version min database
+	static $forcecharset='latin1';
+	//! Version min database
+	static $versionmin=array(8,4,0);	// Version min database
 
 	var $results;                 // Resultset de la derniere requete
 
@@ -87,7 +92,7 @@ class DoliDBPgsql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Pgsql PHP functions are not available in this version of PHP";
-			dol_syslog("DoliDB::DoliDB : Pgsql PHP functions are not available in this version of PHP",LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBPgsql : Pgsql PHP functions are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -96,7 +101,7 @@ class DoliDBPgsql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dol_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -114,7 +119,7 @@ class DoliDBPgsql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error='Host, login or password incorrect';
-			dol_syslog("DoliDB::DoliDB : Erreur Connect ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -132,7 +137,7 @@ class DoliDBPgsql
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dol_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -337,32 +342,53 @@ class DoliDBPgsql
 	/**
 	 *	Connexion to server
 	 *
-	 *	@param	    string	$host		database server host
-	 *	@param	    string	$login		login
-	 *	@param	    string	$passwd		password
-	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		string	$port		Port of database server
-	 *	@return		resource			Database access handler
+	 *	@param	    string		$host		Database server host
+	 *	@param	    string		$login		Login
+	 *	@param	    string		$passwd		Password
+	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
+	 *	@param		string		$port		Port of database server
+	 *	@return		resource				Database access handler
 	 *	@see		close
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		if (!$name){
-			$name="postgres";
+		// use pg_pconnect() instead of pg_connect() if you want to use persistent connection costing 1ms, instead of 30ms for non persistent
+
+		$this->db = false;
+
+		// connections parameters must be protected (only \ and ' according to pg_connect() manual)
+		$host = str_replace(array("\\", "'"), array("\\\\", "\\'"), $host);
+		$login = str_replace(array("\\", "'"), array("\\\\", "\\'"), $login);
+		$passwd = str_replace(array("\\", "'"), array("\\\\", "\\'"), $passwd);
+		$name = str_replace(array("\\", "'"), array("\\\\", "\\'"), $name);
+		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), $port);
+
+		//if (! $name) $name="postgres";
+
+		// try first Unix domain socket (local)
+		if (! $host || $host == "" || $host == "localhost" || $host == "127.0.0.1")
+		{
+			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";
+			$this->db = pg_connect($con_string);
 		}
-		if (!$port){
-			$port=5432;
+
+		// if local connection failed or not requested, use TCP/IP
+		if (! $this->db)
+		{
+		    if (! $host) $host = "localhost";
+			if (! $port) $port = 5432;
+
+			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
+			$this->db = pg_connect($con_string);
 		}
-		$con_string = "host=$host port=$port dbname=$name user=$login password=$passwd";
-        //print 'xxx'.$con_string;
-        //$this->db = pg_pconnect($con_string);   // To us persistent connection because this one cost 1ms, non ersisten cost 30ms
-        $this->db = pg_connect($con_string);
+
+		// now we test if at least one connect method was a success
 		if ($this->db)
 		{
 			$this->database_name = $name;
 			pg_set_error_verbosity($this->db, PGSQL_ERRORS_VERBOSE);	// Set verbosity to max
-
 		}
+
 		return $this->db;
 	}
 
@@ -412,7 +438,7 @@ class DoliDBPgsql
     {
         if ($this->db)
         {
-          //dol_syslog("DoliDB::disconnect",LOG_DEBUG);
+          //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
           $this->connected=0;
           return pg_close($this->db);
         }
@@ -446,8 +472,8 @@ class DoliDBPgsql
 	/**
      * Validate a database transaction
      *
-     * @param       log         Add more log to default log line
-     * @return      int         1 if validation is OK or transaction level no started, 0 if ERROR
+     * @param	string	$log        Add more log to default log line
+     * @return  int         		1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
 	function commit($log='')
 	{
@@ -470,6 +496,7 @@ class DoliDBPgsql
 
 	/**
 	 * 	Annulation d'une transaction et retour aux anciennes valeurs
+	 *
 	 * 	@return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
 	function rollback()
@@ -492,10 +519,10 @@ class DoliDBPgsql
 	/**
 	 * Convert request to PostgreSQL syntax, execute it and return the resultset
 	 *
-	 * @param		query			SQL query string
-	 * @param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-     * @param       type            Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @return	    resource    	Resultset of answer
+	 * @param	string	$query			SQL query string
+	 * @param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+     * @param   string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @return	resource    			Resultset of answer
 	 */
 	function query($query,$usesavepoint=0,$type='auto')
 	{
@@ -503,7 +530,7 @@ class DoliDBPgsql
 
 		// Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query,$type);
-		//print "FF\n".$query."<br>\n";
+		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
 		// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
 		$loop=true;
@@ -531,7 +558,7 @@ class DoliDBPgsql
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
-				dol_syslog("Pgsql.lib::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+				dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
 
@@ -550,8 +577,8 @@ class DoliDBPgsql
 	/**
 	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
-	 *	@param      resultset   Curseur de la requete voulue
-	 *	@return	    object 		Object result line or false if KO or end of cursor
+	 *	@param	Resultset	$resultset  Curseur de la requete voulue
+	 *	@return	Object 					Object result line or false if KO or end of cursor
 	 */
 	function fetch_object($resultset)
 	{
@@ -561,10 +588,10 @@ class DoliDBPgsql
 	}
 
 	/**
-	 * Renvoie les donnees dans un tableau
-	 *
-	 * @param      resultset   Curseur de la requete voulue
-	 * @return		array
+     *	Return datas as an array
+     *
+     *	@param	Resultset	$resultset  Resultset of request
+     *	@return	array					Array
 	 */
 	function fetch_array($resultset)
 	{
@@ -574,10 +601,10 @@ class DoliDBPgsql
 	}
 
 	/**
-	 * Renvoie les donnees comme un tableau
-	 *
-	 * @param      resultset   Curseur de la requete voulue
-	 * @return	    array
+     *	Return datas as an array
+     *
+     *	@param	Resultset	$resultset  Resultset of request
+     *	@return	array					Array
 	 */
 	function fetch_row($resultset)
 	{
@@ -587,11 +614,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 * Renvoie le nombre de lignes dans le resultat d'une requete SELECT
-	 *
-	 * @see    	   affected_rows
-	 * @param      resultset   Curseur de la requete voulue
-	 * @return     int		    Nombre de lignes
+     *	Return number of lines for result of a SELECT
+     *
+     *	@param	Resultset	$resultset  Resulset of requests
+     *	@return int		    			Nb of lines
+     *	@see    affected_rows
 	 */
 	function num_rows($resultset)
 	{
@@ -603,9 +630,9 @@ class DoliDBPgsql
 	/**
 	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
-	 * @see    	   num_rows
-	 * @param      resultset   Curseur de la requete voulue
-	 * @return     int		    Nombre de lignes
+	 * @param	Resultset	$resultset  Result set of request
+	 * @return  int		    			Nb of lines
+	 * @see 	num_rows
 	 */
 	function affected_rows($resultset)
 	{
@@ -620,7 +647,8 @@ class DoliDBPgsql
 	/**
 	 * Libere le dernier resultset utilise sur cette connexion
 	 *
-	 * @param      resultset   Curseur de la requete voulue
+	 * @param	Resultset	$resultset  Result set of request
+	 * @return	void
 	 */
 	function free($resultset=0)
 	{
@@ -634,9 +662,9 @@ class DoliDBPgsql
 	/**
 	 * Defini les limites de la requete
 	 *
-	 * @param	    limit       nombre maximum de lignes retournees
-	 * @param	    offset      numero de la ligne a partir de laquelle recuperer les lignes
-	 * @return	    string      chaine exprimant la syntax sql de la limite
+	 * @param	int		$limit      nombre maximum de lignes retournees
+	 * @param	int		$offset     numero de la ligne a partir de laquelle recuperer les lignes
+	 * @return	string      		chaine exprimant la syntax sql de la limite
 	 */
 	function plimit($limit=0,$offset=0)
 	{
@@ -650,10 +678,10 @@ class DoliDBPgsql
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	    sortfield   List of sort fields
-	 * @param	    sortorder   Sort order
-	 * @return	    string      String to provide syntax of a sort sql string
-	 * TODO			Mutualized this into a mother class
+	 * @param	string	$sortfield  List of sort fields
+	 * @param	string	$sortorder  Sort order
+	 * @return	string      		String to provide syntax of a sort sql string
+	 * TODO		Mutualized this into a mother class
 	 */
 	function order($sortfield=0,$sortorder=0)
 	{
@@ -666,8 +694,8 @@ class DoliDBPgsql
 				if (! $return) $return.=' ORDER BY ';
 				else $return.=',';
 
-				$return.=$val;
-				if ($sortorder) $return.=' '.$sortorder;
+				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
+                if ($sortorder) $return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
 			}
 			return $return;
 		}
@@ -681,8 +709,8 @@ class DoliDBPgsql
 	/**
 	 *   Escape a string to insert data
 	 *
-	 *   @param	    stringtoencode		String to escape
-	 *   @return	string				String escaped
+	 *   @param		string	$stringtoencode		String to escape
+	 *   @return	string						String escaped
 	 */
 	function escape($stringtoencode)
 	{
@@ -693,20 +721,20 @@ class DoliDBPgsql
 	 *   Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    param       Date TMS to convert
-	 *   @return	string      Date in a string YYYYMMDDHHMMSS
+	 *   @param	    string	$param      Date TMS to convert
+	 *   @return	string   			Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
-		return adodb_strftime("%Y-%m-%d %H:%M:%S",$param);
+		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
 	}
 
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
 	 * 	19700101020000 -> 3600 with TZ+1
 	 *
-	 * 	@param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@return		date			Date TMS
+	 * 	@param		string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@return		date				Date TMS
 	 */
 	function jdate($string)
 	{
@@ -719,10 +747,10 @@ class DoliDBPgsql
 	/**
      *  Formate a SQL IF
      *
-	 *  @param		test            chaine test
-	 *  @param		resok           resultat si test egal
-	 *  @param		resko           resultat si test non egal
-	 *  @return		string          chaine formate SQL
+	 *  @param	string	$test           chaine test
+	 *  @param	string	$resok          resultat si test egal
+	 *  @param	string	$resko          resultat si test non egal
+	 *  @return	string          		chaine formate SQL
 	 */
 	function ifsql($test,$resok,$resko)
 	{
@@ -782,7 +810,7 @@ class DoliDBPgsql
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		}
 		else {
-			// Constants to convert a MySql error code to a generic Dolibarr error code
+			// Constants to convert error code to a generic Dolibarr error code
 			$errorcode_map = array(
 			1004 => 'DB_ERROR_CANNOT_CREATE',
 			1005 => 'DB_ERROR_CANNOT_CREATE',
@@ -849,8 +877,9 @@ class DoliDBPgsql
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param     	tab     Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
-	 * @return     	int     id
+	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param	string	$fieldid	Field name
+	 * @return  int     			Id of row
 	 */
 	function last_insert_id($tab,$fieldid='rowid')
 	{
@@ -870,9 +899,9 @@ class DoliDBPgsql
      *  Encrypt sensitive data in database
      *  Warning: This function includes the escape, so it must use direct value
      *
-     *  @param          fieldorvalue    Field name or value to encrypt
-     *  @param          withQuotes      Return string with quotes
-     *  @return         return          XXX(field) or XXX('value') or field or 'value'
+     *  @param  string  $fieldorvalue   Field name or value to encrypt
+     *  @param	int		$withQuotes     Return string with quotes
+     *  @return return          		XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -892,8 +921,8 @@ class DoliDBPgsql
 	/**
 	 *	Decrypt sensitive data in database
 	 *
-	 *	@param	        value			Value to decrypt
-	 * 	@return	        return			Decrypted value if used
+	 *	@param	int		$value			Value to decrypt
+	 * 	@return	string					Decrypted value if used
 	 */
 	function decrypt($value)
 	{
@@ -930,11 +959,11 @@ class DoliDBPgsql
 	 *	Create a new database
 	 *  Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
 	 *
-	 *	@param	        database		Database name to create
-	 * 	@param			charset			Charset used to store data
-	 * 	@param			collation		Charset used to sort data
-	 * 	@param			owner			Username of database owner
-	 * 	@return	        resource		resource defined if OK, null if KO
+	 *	@param	string	$database		Database name to create
+	 * 	@param	string	$charset		Charset used to store data
+	 * 	@param	string	$collation		Charset used to sort data
+	 * 	@param	string	$owner			Username of database owner
+	 * 	@return	resource				Resource defined if OK, null if KO
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
@@ -946,9 +975,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *  Liste des tables dans une database.
-	 *  @param	    database	Nom de la database
-	 *  @return	    resource
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	resource				Resource
 	 */
 	function DDLListTables($database, $table='')
 	{
@@ -965,10 +996,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *	Liste les informations des champs d'une table.
-	 *	@param	    table			Nom de la table
-	 *	@return	    array			Tableau des informations des champs de la table
-	 *	TODO modifier pour postgresql
+	 *	List information of columns into a table.
+	 *
+	 *	@param	string	$table		Name of table
+	 *	@return	array				Tableau des informations des champs de la table
+	 *	TODO modify for postgresql
 	 */
 	function DDLInfoTable($table)
 	{
@@ -1066,19 +1098,19 @@ class DoliDBPgsql
 	}
 
 	/**
-	 * 	Create a user
+	 * 	Create a user to connect to database
 	 *
-	 *	@param	    dolibarr_main_db_host 		Ip serveur
-	 *	@param	    dolibarr_main_db_user 		Nom user a creer
-	 *	@param	    dolibarr_main_db_pass 		Mot de passe user a creer
-	 *	@param		dolibarr_main_db_name		Database name where user must be granted
-	 *	@return	    int							<0 si KO, >=0 si OK
+	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
+	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
+	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
+	 *	@return	int									<0 if KO, >=0 if OK
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
 		$sql = "create user \"".addslashes($dolibarr_main_db_user)."\" with password '".addslashes($dolibarr_main_db_pass)."'";
 
-		dol_syslog("pgsql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
+		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
@@ -1089,11 +1121,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *	Decrit une table dans une database
+	 *	Return a pointer of line with description of a table or field
 	 *
-	 *	@param	    table	Nom de la table
-	 *	@param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-	 *	@return	    resource
+	 *	@param	string		$table	Name of table
+	 *	@param	string		$field	Optionnel : Name of field if we want description of field
+	 *	@return	resource			Resource
 	 */
 	function DDLDescTable($table,$field="")
 	{
@@ -1107,13 +1139,13 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *	Insert a new field in table
+	 *	Create a new field into table
 	 *
-	 *	@param	    table 			Nom de la table
-	 *	@param		field_name 		Nom du champ a inserer
-	 *	@param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
-	 *	@param	    field_position 	Optionnel ex.: "after champtruc"
-	 *	@return	    int				<0 si KO, >0 si OK
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to add
+	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
+	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
@@ -1146,10 +1178,10 @@ class DoliDBPgsql
 	/**
 	 *	Update format of a field into a table
 	 *
-	 *	@param	    table 			Name of table
-	 *	@param		field_name 		Name of field to modify
-	 *	@param	    field_desc 		Array with description of field format
-	 *	@return	    int				<0 if KO, >0 if OK
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to modify
+	 *	@param	string	$field_desc 		Array with description of field format
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
@@ -1165,11 +1197,11 @@ class DoliDBPgsql
 	}
 
 	/**
-	 *	Drop a field in table
+	 *	Drop a field from table
 	 *
-	 *	@param	    table 			Nom de la table
-	 *	@param		field_name 		Nom du champ a inserer
-	 *	@return	    int				<0 si KO, >0 si OK
+	 *	@param	string	$table 			Name of table
+	 *	@param	string	$field_name 	Name of field to drop
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function DDLDropField($table,$field_name)
 	{
@@ -1315,8 +1347,8 @@ class DoliDBPgsql
 	/**
 	 *	Return value of server parameters
 	 *
-	 * 	@param		filter		Filter list on a particular value
-	 *	@return		string		Value for parameter
+	 * 	@param	string	$filter		Filter list on a particular value
+	 *	@return	string				Value for parameter
 	 */
 	function getServerParametersValues($filter='')
 	{

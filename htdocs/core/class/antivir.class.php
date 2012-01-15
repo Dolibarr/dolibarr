@@ -68,7 +68,7 @@ class AntiVir
 		$return_var=0;
         $safemode=ini_get("safe_mode");
 		// Create a clean fullcommand
-		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safe_mode?"on":"off"));
+		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safemode?"on":"off"));
 		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
 		$lastline=exec($fullcommand, $output, $return_var);
 

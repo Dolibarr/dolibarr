@@ -151,7 +151,7 @@ if ($id)
 
 	if ($action == 'rejet' && $user->rights->prelevement->bons->credit)
 	{
-		$html = new Form($db);
+		$form = new Form($db);
 
 		$soc = new Societe($db);
 		$soc->fetch($lipre->socid);
@@ -169,25 +169,25 @@ if ($id)
 		//Select yes/no
 		print '<tr><td class="valid">'.$langs->trans("WithdrawalRefusedConfirm").' '.$soc->nom.' ?</td>';
 		print '<td colspan="2" class="valid">';
-		print $html->selectyesno("confirm",1,0);
+		print $form->selectyesno("confirm",1,0);
 		print '</td></tr>';
 		
 		//Date
 		print '<tr><td class="valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td colspan="2" class="valid">';
-		print $html->select_date('','','','','',"confirm_rejet");
+		print $form->select_date('','','','','',"confirm_rejet");
 		print '</td></tr>';
 		
 		//Reason
 		print '<tr><td class="valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
-		print $html->selectarray("motif", $rej->motifs);
+		print $form->selectarray("motif", $rej->motifs);
 		print '</td></tr>';
 			
 		//Facturer
 		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
 		print '<td class="valid" colspan="2">';
-		print $html->selectarray("facturer", $rej->facturer);
+		print $form->selectarray("facturer", $rej->facturer);
 		print '</td></tr>';
 		print '</table><br>';
 		

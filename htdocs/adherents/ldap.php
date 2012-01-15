@@ -34,9 +34,10 @@ $langs->load("members");
 $langs->load("ldap");
 $langs->load("admin");
 
-// Protection quand utilisateur externe
-$rowid = isset($_GET["id"])?$_GET["id"]:'';
+$rowid = GETPOST("id");
+$action = GETPOST('action');
 
+// Protection
 $socid=0;
 if ($user->societe_id > 0)
 {
@@ -52,11 +53,12 @@ if (! $result)
 	exit;
 }
 
+
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'dolibarr2ldap')
+if ($action == 'dolibarr2ldap')
 {
 	$message="";
 
@@ -91,7 +93,7 @@ if ($_GET["action"] == 'dolibarr2ldap')
 
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-$html = new Form($db);
+$form = new Form($db);
 
 $head = member_prepare_head($adh);
 
@@ -103,7 +105,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 print '<td class="valeur">';
-print $html->showrefnav($adh,'id');
+print $form->showrefnav($adh,'id');
 print '</td></tr>';
 
 // Nom
@@ -121,7 +123,7 @@ print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'
 if ($conf->global->LDAP_MEMBER_FIELD_PASSWORD)
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
-	print '<td class="valeur">'.$fuser->pass.'</td>';
+	print '<td class="valeur">'.$adh->pass.'</td>';
 	print "</tr>\n";
 }
 
@@ -129,7 +131,7 @@ if ($conf->global->LDAP_MEMBER_FIELD_PASSWORD)
 if ($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td>';
-	print '<td class="valeur">'.$fuser->pass_crypted.'</td>';
+	print '<td class="valeur">'.$adh->pass_crypted.'</td>';
 	print "</tr>\n";
 }
 
@@ -194,26 +196,35 @@ if ($result > 0)
 	$info=$adh->_load_ldap_info();
 	$dn=$adh->_load_ldap_dn($info,1);
 	$search = "(".$adh->_load_ldap_dn($info,2).")";
-	$records=$ldap->getAttribute($dn,$search);
 
-	//print_r($records);
+	if (empty($dn))
+	{
+	    $langs->load("errors");
+	    print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font></td></tr>';
+	}
+    else
+    {
+    	$records=$ldap->getAttribute($dn,$search);
 
-	// Affichage arbre
-	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
-	{
-		if (! is_array($records))
-		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
-			$result=show_ldap_content($records,0,$records['count'],true);
-		}
-	}
-	else
-	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-	}
+    	//print_r($records);
+
+    	// Affichage arbre
+    	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    	{
+    		if (! is_array($records))
+    		{
+    			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+    		}
+    		else
+    		{
+    			$result=show_ldap_content($records,0,$records['count'],true);
+    		}
+    	}
+    	else
+    	{
+    		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+    	}
+    }
 
 	$ldap->unbind();
 	$ldap->close();
@@ -227,9 +238,7 @@ else
 print '</table>';
 
 
-
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>

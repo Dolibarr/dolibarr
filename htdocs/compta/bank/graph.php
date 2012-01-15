@@ -54,11 +54,7 @@ llxHeader();
 
 $form = new Form($db);
 
-// If lib forced
-if (! empty($_GET["lib"])) $conf->global->MAIN_GRAPH_LIBRARY=$_GET["lib"];
-
-
-$datetime = time();
+$datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
@@ -218,7 +214,7 @@ else
 			$i++;
 		}
 		// If we are the first of month, only $datas[0] is defined to an int value, others are defined to ""
-		// and this make artichow report a warning.
+		// and this may make graph lib report a warning.
 		//$datas[0]=100; KO
 		//$datas[0]=100; $datas[1]=90; OK
 		//var_dump($datas);
@@ -226,6 +222,7 @@ else
 
 		// Fabrication tableau 1
 		$file= $conf->banque->dir_temp."/balance".$account."-".$year.$month.".png";
+		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.$month.".png";
 		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
 		foreach($datas as $i => $val)
@@ -234,25 +231,26 @@ else
 			else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
 		}
 
-		$px = new DolGraph();
-		$px->SetData($graph_datas);
-		if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
-		else $px->SetLegend(array($langs->transnoentities("Balance")));
-		$px->SetLegendWidthMin(180);
-		$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-		$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-		$px->SetTitle($title);
-		$px->SetWidth($width);
-		$px->SetHeight($height);
-		$px->SetType('lines');
-		$px->setBgColor('onglet');
-		$px->setBgColorGrid(array(255,255,255));
-		$px->SetHorizTickIncrement(1);
-		$px->SetPrecisionY(0);
-		$px->draw($file);
+		$px1 = new DolGraph();
+		$px1->SetData($graph_datas);
+		if ($acct->min_desired) $px1->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+		else $px1->SetLegend(array($langs->transnoentities("Balance")));
+		$px1->SetLegendWidthMin(180);
+		$px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
+		$px1->SetMinValue($px1->GetFloorMinValue()>0?0:$px1->GetFloorMinValue());
+		$px1->SetTitle($title);
+		$px1->SetWidth($width);
+		$px1->SetHeight($height);
+		$px1->SetType(array('lines','lines'));
+		$px1->setBgColor('onglet');
+		$px1->setBgColorGrid(array(255,255,255));
+		$px1->SetHorizTickIncrement(1);
+		$px1->SetPrecisionY(0);
+		$px1->draw($file,$fileurl);
 
+		$show1=$px1->show();
 		unset($graph_datas);
-		unset($px);
+		unset($px1);
 		unset($datas);
 		unset($datamin);
 		unset($labels);
@@ -355,6 +353,7 @@ else
 
 		// Fabrication tableau 2
 		$file= $conf->banque->dir_temp."/balance".$account."-".$year.".png";
+		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.".png";
 		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
 		foreach($datas as $i => $val)
@@ -362,25 +361,27 @@ else
 			if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
 			else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
 		}
-		$px = new DolGraph();
-		$px->SetData($graph_datas);
-		if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
-		else $px->SetLegend(array($langs->transnoentities("Balance")));
-		$px->SetLegendWidthMin(180);
-		$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-		$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-		$px->SetTitle($title);
-		$px->SetWidth($width);
-		$px->SetHeight($height);
-		$px->SetType('lines');
-		$px->setBgColor('onglet');
-		$px->setBgColorGrid(array(255,255,255));
-		$px->SetHideXGrid(true);
-		//$px->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
-		$px->SetPrecisionY(0);
-		$px->draw($file);
+		$px2 = new DolGraph();
+		$px2->SetData($graph_datas);
+		if ($acct->min_desired) $px2->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+		else $px2->SetLegend(array($langs->transnoentities("Balance")));
+		$px2->SetLegendWidthMin(180);
+		$px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
+		$px2->SetMinValue($px2->GetFloorMinValue()>0?0:$px2->GetFloorMinValue());
+		$px2->SetTitle($title);
+		$px2->SetWidth($width);
+		$px2->SetHeight($height);
+		$px2->SetType(array('lines','lines'));
+		$px2->setBgColor('onglet');
+		$px2->setBgColorGrid(array(255,255,255));
+		$px2->SetHideXGrid(true);
+		//$px2->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
+		$px2->SetPrecisionY(0);
+		$px2->draw($file,$fileurl);
 
-		unset($px);
+		$show2=$px2->show();
+
+		unset($px2);
 		unset($graph_datas);
 		unset($datas);
 		unset($datamin);
@@ -461,6 +462,7 @@ else
 
 		// Fabrication tableau 3
 		$file= $conf->banque->dir_temp."/balance".$account.".png";
+		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account.".png";
 		$title=$langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
 		$graph_datas=array();
 		foreach($datas as $i => $val)
@@ -468,22 +470,25 @@ else
 			if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
 			else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
 		}
-		$px = new DolGraph();
-		$px->SetData($graph_datas);
-		if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
-		else $px->SetLegend(array($langs->transnoentities("Balance")));
-		$px->SetLegendWidthMin(180);
-		$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-		$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-		$px->SetTitle($title);
-		$px->SetWidth($width);
-		$px->SetHeight($height);
-		$px->SetType('lines');
-		$px->setBgColor('onglet');
-		$px->setBgColorGrid(array(255,255,255));
-		$px->SetPrecisionY(0);
-		$px->draw($file);
+		$px3 = new DolGraph();
+		$px3->SetData($graph_datas);
+		if ($acct->min_desired) $px3->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+		else $px3->SetLegend(array($langs->transnoentities("Balance")));
+		$px3->SetLegendWidthMin(180);
+		$px3->SetMaxValue($px3->GetCeilMaxValue()<0?0:$px3->GetCeilMaxValue());
+		$px3->SetMinValue($px3->GetFloorMinValue()>0?0:$px3->GetFloorMinValue());
+		$px3->SetTitle($title);
+		$px3->SetWidth($width);
+		$px3->SetHeight($height);
+		$px3->SetType(array('lines','lines'));
+		$px3->setBgColor('onglet');
+		$px3->setBgColorGrid(array(255,255,255));
+		$px3->SetPrecisionY(0);
+		$px3->draw($file,$fileurl);
 
+		$show3=$px3->show();
+
+		unset($px3);
 		unset($graph_datas);
 		unset($datas);
 		unset($datamin);
@@ -586,31 +591,34 @@ else
 
 		// Fabrication tableau 4a
 		$file= $conf->banque->dir_temp."/movement".$account."-".$year.$month.".png";
+		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.$month.".png";
 		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
 		foreach($data_credit as $i => $val)
 		{
 			$graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
 		}
-		$px = new DolGraph();
-		$px->SetData($graph_datas);
-		$px->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
-		$px->SetLegendWidthMin(180);
-		$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-		$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-		$px->SetTitle($title);
-		$px->SetWidth($width);
-		$px->SetHeight($height);
-		$px->SetType('bars');
-		$px->SetShading(3);
-		$px->setBgColor('onglet');
-		$px->setBgColorGrid(array(255,255,255));
-		$px->SetHorizTickIncrement(1);
-		$px->SetPrecisionY(0);
-		$px->draw($file);
+		$px4 = new DolGraph();
+		$px4->SetData($graph_datas);
+		$px4->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
+		$px4->SetLegendWidthMin(180);
+		$px4->SetMaxValue($px4->GetCeilMaxValue()<0?0:$px4->GetCeilMaxValue());
+		$px4->SetMinValue($px4->GetFloorMinValue()>0?0:$px4->GetFloorMinValue());
+		$px4->SetTitle($title);
+		$px4->SetWidth($width);
+		$px4->SetHeight($height);
+		$px4->SetType(array('bars','bars'));
+		$px4->SetShading(3);
+		$px4->setBgColor('onglet');
+		$px4->setBgColorGrid(array(255,255,255));
+		$px4->SetHorizTickIncrement(1);
+		$px4->SetPrecisionY(0);
+		$px4->draw($file,$fileurl);
+
+		$show4=$px4->show();
 
 		unset($graph_datas);
-		unset($px);
+		unset($px4);
 		unset($debits);
 		unset($credits);
 	}
@@ -692,31 +700,34 @@ else
 
 		// Fabrication tableau 4b
 		$file= $conf->banque->dir_temp."/movement".$account."-".$year.".png";
+		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.".png";
 		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
 		foreach($data_credit as $i => $val)
 		{
 			$graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
 		}
-		$px = new DolGraph();
-		$px->SetData($graph_datas);
-		$px->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
-		$px->SetLegendWidthMin(180);
-		$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-		$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-		$px->SetTitle($title);
-		$px->SetWidth($width);
-		$px->SetHeight($height);
-		$px->SetType('bars');
-		$px->SetShading(3);
-		$px->setBgColor('onglet');
-		$px->setBgColorGrid(array(255,255,255));
-		$px->SetHorizTickIncrement(1);
-		$px->SetPrecisionY(0);
-		$px->draw($file);
+		$px5 = new DolGraph();
+		$px5->SetData($graph_datas);
+		$px5->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
+		$px5->SetLegendWidthMin(180);
+		$px5->SetMaxValue($px5->GetCeilMaxValue()<0?0:$px5->GetCeilMaxValue());
+		$px5->SetMinValue($px5->GetFloorMinValue()>0?0:$px5->GetFloorMinValue());
+		$px5->SetTitle($title);
+		$px5->SetWidth($width);
+		$px5->SetHeight($height);
+		$px5->SetType(array('bars','bars'));
+		$px5->SetShading(3);
+		$px5->setBgColor('onglet');
+		$px5->setBgColorGrid(array(255,255,255));
+		$px5->SetHorizTickIncrement(1);
+		$px5->SetPrecisionY(0);
+		$px5->draw($file,$fileurl);
+
+		$show5=$px5->show();
 
 		unset($graph_datas);
-		unset($px);
+		unset($px5);
 		unset($debits);
 		unset($credits);
 	}
@@ -804,6 +815,7 @@ else
 print '<br><br></td></tr>';
 
 
+// Graphs
 if ($mode == 'standard')
 {
 	$prevyear=$year;$nextyear=$year;
@@ -817,11 +829,11 @@ if ($mode == 'standard')
 
 	print '<tr><td align="center">';
 	$file = "movement".$account."-".$year.$month.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
+	print $show4;
+	print '</td></tr>';
 
 	print '<tr><td align="center">';
-	$file = "balance".$account."-".$year.$month.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
+	print $show1;
 	print '</td></tr>';
 
 	// For year
@@ -830,21 +842,18 @@ if ($mode == 'standard')
 	print '<tr><td align="right">'.$lien.'</td></tr>';
 
 	print '<tr><td align="center">';
-	$file = "movement".$account."-".$year.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
+	print $show5;
 	print '</td></tr>';
 
 	print '<tr><td align="center">';
-	$file = "balance".$account."-".$year.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
+	print $show2;
 	print '</td></tr>';
 }
 
 if ($mode == 'showalltime')
 {
 	print '<tr><td align="center">';
-	$file = "balance".$account.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
+	print $show3;
 	print '</td></tr>';
 }
 
@@ -853,7 +862,7 @@ print '</table>';
 print "\n</div>\n";
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

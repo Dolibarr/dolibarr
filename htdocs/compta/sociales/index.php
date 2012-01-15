@@ -68,7 +68,7 @@ else
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 
 $sql = "SELECT s.rowid as id, s.fk_type as type, ";
@@ -155,7 +155,7 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.GETPOST("search_label").'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $html->select_type_socialcontrib($typeid,'typeid',1,16,0);
+	    $form->select_type_socialcontrib($typeid,'typeid',1,16,0);
 	    print '</td>';
 		// Period end date
 		print '<td class="liste_titre">&nbsp;</td>';

@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -74,14 +74,18 @@ class AllTests
 
         require_once dirname(__FILE__).'/SocieteTest.php';
         $suite->addTestSuite('SocieteTest');
+        require_once dirname(__FILE__).'/ContactTest.php';
+        $suite->addTestSuite('ContactTest');
         require_once dirname(__FILE__).'/AdherentTest.php';
         $suite->addTestSuite('AdherentTest');
 
-        require_once dirname(__FILE__).'/DiscountTest.php';
-        $suite->addTestSuite('DiscountTest');
-
         require_once dirname(__FILE__).'/ProductTest.php';
         $suite->addTestSuite('ProductTest');
+
+        require_once dirname(__FILE__).'/PricesTest.php';
+        $suite->addTestSuite('PricesTest');
+        require_once dirname(__FILE__).'/DiscountTest.php';
+        $suite->addTestSuite('DiscountTest');
 
         require_once dirname(__FILE__).'/CommandeTest.php';
         $suite->addTestSuite('CommandeTest');

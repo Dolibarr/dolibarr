@@ -52,8 +52,9 @@ $langs->load("companies");
 $langs->load("other");
 
 // Get parameters
-$action = GETPOST('action');
-$myparam = GETPOST('myparam');
+$id			= GETPOST('id','int');
+$action		= GETPOST('action','alpha');
+$myparam	= GETPOST('myparam','alpha');
 
 // Protection if external user
 if ($user->societe_id > 0)

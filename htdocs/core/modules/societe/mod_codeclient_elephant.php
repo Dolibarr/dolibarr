@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,16 +63,18 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 	/**		Return description of module
 	 *
-	 * 		@param 		$langs		Object langs
-	 * 		@return     string      Description of module
+	 * 		@param	string 		$langs		Object langs
+	 * 		@return string      			Description of module
 	 */
 	function info($langs)
 	{
-		global $conf;
+		global $conf, $mc;
 
 		$langs->load("companies");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
+		
+		$disabled = ((! empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled="disabled"' : '');
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -82,7 +84,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte.= '<input type="hidden" name="param2" value="COMPANY_ELEPHANT_MASK_SUPPLIER">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("ThirdParty"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("ThirdParty"),$langs->transnoentities("ThirdParty"));
 		//$tooltip.=$langs->trans("GenericMaskCodes2");	Not required for third party numbering
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4b");
@@ -90,15 +92,15 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix customers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.$conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.$conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER.'"'.$disabled.'>',$tooltip,1,1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 
 		$texte.= '</tr>';
 
 		// Parametrage du prefix suppliers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.$conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.$conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER.'"'.$disabled.'>',$tooltip,1,1).'</td>';
 		$texte.= '</tr>';
 
 		$texte.= '</table>';

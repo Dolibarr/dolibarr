@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,11 +41,10 @@ $userid=GETPOST('userid');
 $socid=GETPOST('socid');
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
-accessforbidden();
+if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire) accessforbidden();
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->compta->mode;
+$modecompta = $conf->global->COMPTA_MODE;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
@@ -54,7 +53,7 @@ if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
  */
 
 llxHeader();
-$html=new Form($db);
+$form=new Form($db);
 
 // Affiche en-tete du rapport
 if ($modecompta=="CREANCES-DETTES")
@@ -64,6 +63,8 @@ if ($modecompta=="CREANCES-DETTES")
 	$period="$year_start - $year_end";
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCADue");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -73,23 +74,25 @@ else {
 	$period="$year_start - $year_end";
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCAIn");
+	$description.= $langs->trans("DepositsAreIncluded");
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+$moreparam=array();
+if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam);
 
 
-if ($modecompta == 'CREANCES-DETTES') {
+if ($modecompta == 'CREANCES-DETTES')
+{
 	$sql  = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
-	$sql.= " AND (";
-	$sql.= " f.type = 0";          // Standard
-	$sql.= " OR f.type = 1";       // Replacement
-	$sql.= " OR f.type = 2";       // Credit note
-	//$sql.= " OR f.type = 3";       // We do not include deposit
-	$sql.= ")";
-} else {
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+	else $sql.= " AND f.type IN (0,1,2,3)";
+}
+else
+{
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
@@ -129,7 +132,8 @@ else {
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
-if ($modecompta != 'CREANCES-DETTES') {
+if ($modecompta != 'CREANCES-DETTES')
+{
 	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -143,7 +147,8 @@ if ($modecompta != 'CREANCES-DETTES') {
 	$sql.= " ORDER BY dm";
 
 	$result = $db->query($sql);
-	if ($result) {
+	if ($result)
+	{
 		$num = $db->num_rows($result);
 		$i = 0;
 		while ($i < $num)
@@ -158,7 +163,8 @@ if ($modecompta != 'CREANCES-DETTES') {
 			$i++;
 		}
 	}
-	else {
+	else
+	{
 		dol_print_error($db);
 	}
 }
@@ -221,7 +227,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		if ($cum[$case])
 		{
 			$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
-			print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price($cum[$case],1).'</a>';
+			print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum[$case],1).'</a>';
 		}
 		else
 		{
@@ -451,7 +457,7 @@ print "</table>";
  En attendant correction.
 
  $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.rowid as socid, p.total_ht, p.total_ttc
- FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s
+ FROM ".MAIN_DB_PREFIX."commande AS p, ".MAIN_DB_PREFIX."societe AS s
  LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid
  LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid
  WHERE p.fk_soc = s.rowid
@@ -494,8 +500,7 @@ print "</table>";
 
  */
 
-$db->close();
-
 llxFooter();
 
+$db->close();
 ?>

@@ -88,4 +88,4 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LK', 'L
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MU', 'MUR', 1, 'Roupies mauritiennes');
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'SR', 'SAR', 1, 'Saudi riyal');
 insert into llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'MX', 'MXP', 1, 'Pesos Mexicans');
-
+insert into llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'VE', 'VEF', 1, 'Venezuelan Bolívar');

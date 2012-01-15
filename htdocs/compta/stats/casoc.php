@@ -31,8 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 $langs->load("companies");
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->compta->mode;
-if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+$modecompta = $conf->global->COMPTA_MODE;
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
@@ -42,8 +42,7 @@ if (! $sortfield) $sortfield="nom";
 // Security check
 $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
-accessforbidden();
+if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire) accessforbidden();
 
 // Date range
 $year=GETPOST("year");
@@ -102,29 +101,35 @@ else
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
+$thirdparty_static=new Societe($db);
 
 // Affiche en-tete de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
 	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
 	$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCADue");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else {
 	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
 	$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCAIn");
+	$description.= $langs->trans("DepositsAreIncluded");
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+$moreparam=array();
+if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam);
 
 
 // Charge tableau
@@ -135,12 +140,8 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
-    $sql.= " AND (";
-    $sql.= " f.type = 0";          // Standard
-    $sql.= " OR f.type = 1";       // Replacement
-    $sql.= " OR f.type = 2";       // Credit note
-    //$sql.= " OR f.type = 3";       // We do not include deposit
-    $sql.= ")";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+	else $sql.= " AND f.type IN (0,1,2,3)";
 	$sql.= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
@@ -186,7 +187,7 @@ else {
 // On ajoute les paiements anciennes version, non lies par paiement_facture
 if ($modecompta != 'CREANCES-DETTES')
 {
-	$sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
+	$sql = "SELECT '0' as socid, 'Autres' as name, sum(p.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
@@ -196,8 +197,8 @@ if ($modecompta != 'CREANCES-DETTES')
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity = ".$conf->entity;
 	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-	$sql.= " GROUP BY nom, idp";
-	$sql.= " ORDER BY nom";
+	$sql.= " GROUP BY socid, name";
+	$sql.= " ORDER BY name";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -219,6 +220,7 @@ if ($modecompta != 'CREANCES-DETTES')
 }
 
 
+// Show array
 $i = 0;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
@@ -259,7 +261,10 @@ if (count($amount))
 		// Third party
 		$fullname=$name[$key];
 		if ($key > 0) {
-			$linkname='<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$key.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$fullname.'</a>';
+		    $thirdparty_static->id=$key;
+		    $thirdparty_static->name=$fullname;
+		    $thirdparty_static->client=1;
+		    $linkname=$thirdparty_static->getNomUrl(1,'customer');
 		}
 		else {
 			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");
@@ -307,7 +312,8 @@ if (count($amount))
 print "</table>";
 print '<br>';
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

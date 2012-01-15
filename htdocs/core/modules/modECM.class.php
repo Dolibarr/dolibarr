@@ -35,11 +35,11 @@ class modECM extends DolibarrModules
    /**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
     */
-	function modECM($DB)
+	function modECM($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id.
@@ -121,7 +121,6 @@ class modECM extends DolibarrModules
 							  'type'=>'top',
 							  'titre'=>'MenuECM',
 							  'mainmenu'=>'ecm',
-							  'leftmenu'=>'1',		// To say if we can overwrite leftmenu
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
@@ -187,15 +186,18 @@ class modECM extends DolibarrModules
 	}
 
 	/**
-     *		\brief      Function called when module is enabled.
-     *					The init function add previous constants, boxes and permissions into Dolibarr database.
-     *					It also creates data directories.
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
-	function init()
+	function init($options='')
   	{
     	$sql = array();
 
-    	return $this->_init($sql);
+    	return $this->_init($sql,$options);
   	}
 
 	/**

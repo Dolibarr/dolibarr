@@ -78,19 +78,20 @@ $filename = $dir."/invoicesnb-".$year.".png";
 if ($mode == 'customer') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesnb-'.$year.'.png';
 if ($mode == 'supplier') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicesnb-'.$year.'.png';
 
-$px = new DolGraph();
-$mesg = $px->isGraphKo();
+$px1 = new DolGraph();
+$mesg = $px1->isGraphKo();
 if (! $mesg)
 {
-    $px->SetData($data);
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
-    $px->SetWidth($GRAPHWIDTH);
-    $px->SetHeight($GRAPHHEIGHT);
-    $px->SetShading(3);
-	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
-    $px->draw($filename);
+    $px1->SetData($data);
+    $px1->SetYLabel($langs->trans("NumberOfBillsByMonth"));
+    $px1->SetMaxValue($px1->GetCeilMaxValue());
+    $px1->SetMinValue($px1->GetFloorMinValue());
+    $px1->SetWidth($GRAPHWIDTH);
+    $px1->SetHeight($GRAPHHEIGHT);
+    $px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->SetPrecisionY(0);
+    $px1->draw($filename,$fileurl);
 }
 
 
@@ -101,20 +102,20 @@ $filename_amount = $dir."/invoicesamount-".$year.".png";
 if ($mode == 'customer') $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesamount-'.$year.'.png';
 if ($mode == 'supplier') $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicesamount-'.$year.'.png';
 
-$px = new DolGraph();
-$mesg = $px->isGraphKo();
+$px2 = new DolGraph();
+$mesg = $px2->isGraphKo();
 if (! $mesg)
 {
-    $px->SetData($data);
-    $px->SetYLabel($langs->trans("AmountTotal"));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
-    $px->SetWidth($GRAPHWIDTH);
-    $px->SetHeight($GRAPHHEIGHT);
-    $px->SetShading(3);
-	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
-    $px->draw($filename_amount);
+    $px2->SetData($data);
+    $px2->SetYLabel($langs->trans("AmountTotal"));
+    $px2->SetMaxValue($px2->GetCeilMaxValue());
+    $px2->SetMinValue($px2->GetFloorMinValue());
+    $px2->SetWidth($GRAPHWIDTH);
+    $px2->SetHeight($GRAPHHEIGHT);
+    $px2->SetShading(3);
+	$px2->SetHorizTickIncrement(1);
+	$px2->SetPrecisionY(0);
+    $px2->draw($filename_amount,$fileurl_amount);
 }
 
 
@@ -125,47 +126,47 @@ $data = array();
 
 for ($i = 1 ; $i < 13 ; $i++)
 {
-  $data[$i-1] = array(ucfirst(substr(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
+  $data[$i-1] = array(ucfirst(dol_substr(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
 }
 
 $filename_avg = $dir."/invoicesaverage-".$year.".png";
 if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesaverage-'.$year.'.png';
 if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicesaverage-'.$year.'.png';
 
-$px = new DolGraph();
-$mesg = $px->isGraphKo();
+$px3 = new DolGraph();
+$mesg = $px3->isGraphKo();
 if (! $mesg)
 {
-    $px->SetData($data);
-    $px->SetYLabel($langs->trans("AmountAverage"));
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue());
-    $px->SetWidth($GRAPHWIDTH);
-    $px->SetHeight($GRAPHHEIGHT);
-    $px->SetShading(3);
-	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
-    $px->draw($filename_avg);
+    $px3->SetData($data);
+    $px3->SetYLabel($langs->trans("AmountAverage"));
+    $px3->SetMaxValue($px3->GetCeilMaxValue());
+    $px3->SetMinValue($px3->GetFloorMinValue());
+    $px3->SetWidth($GRAPHWIDTH);
+    $px3->SetHeight($GRAPHHEIGHT);
+    $px3->SetShading(3);
+	$px3->SetHorizTickIncrement(1);
+	$px3->SetPrecisionY(0);
+    $px3->draw($filename_avg,$fileurl_avg);
 }
 
 print '<table class="border" width="100%">';
 print '<tr><td align="center">'.$langs->trans("NumberOfBillsByMonth").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.$fileurl.'">'; }
+else { print $px1->show(); }
 print '</td></tr>';
 print '<tr><td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.$fileurl_amount.'">'; }
+else { print $px2->show(); }
 print '</td></tr>';
 print '<tr><td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.$fileurl_avg.'">'; }
+else { print $px3->show(); }
 print '</td></tr></table>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

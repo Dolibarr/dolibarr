@@ -77,8 +77,15 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 	</tr>
 	<tr>
 		<td class="label1"><?php echo $langs->trans("Password"); ?></td>
-		<td><input name="pwdPassword" class="texte_login" type="password"	value="" /></td>
+		<td><input name="pwdPassword" class="texte_login" type="password" value="" /></td>
 	</tr>
+
+	<tr>
+		<td colspan="2">
+		&nbsp;
+		</td>
+	</tr>
+
 <?php
 print "<tr>";
 print '<td class="label1">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
@@ -99,34 +106,44 @@ if ($conf->stock->enabled)
 	print '<td>';
 	$disabled=0;
 	if (! empty($conf->global->CASHDESK_ID_WAREHOUSE)) $disabled=1;	// If a particular stock is defined, we disable choice
-	$formproduct->selectWarehouses(GETPOST('warehouseid')?GETPOST('warehouseid'):$conf->global->CASHDESK_ID_WAREHOUSE,'warehouseid','',!$disabled,$disabled);
+	print $formproduct->selectWarehouses(GETPOST('warehouseid')?GETPOST('warehouseid'):$conf->global->CASHDESK_ID_WAREHOUSE,'warehouseid','',!$disabled,$disabled);
 	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 	print '</td>';
 	print "</tr>\n";
 }
 ?>
-</table>
 
-<center><span class="bouton_login"><input name="sbmtConnexion" type="submit" value=<?php echo $langs->trans("Connection"); ?> /></span></center>
+	<tr>
+		<td colspan="2">
+		&nbsp;
+		</td>
+	</tr>
+
+
+</table>
+<br>
+
+<div align="center"><span class="bouton_login"><input name="sbmtConnexion" type="submit" value=<?php echo $langs->trans("Connection"); ?> /></span></div>
 
 </form>
 </fieldset>
 
 <?php
-if ($_GET['err'] < 0) {
-
+if ($_GET['err'] < 0)
+{
 	echo ('<script type="text/javascript">');
 	echo ('	document.getElementById(\'frmLogin\').pwdPassword.focus();');
 	echo ('</script>');
-
-} else {
-
+}
+else
+{
 	echo ('<script type="text/javascript">');
 	echo ('	document.getElementById(\'frmLogin\').txtUsername.focus();');
 	echo ('</script>');
-
 }
-?></div>
+?>
+
+</div>
 </div>
 
 <?php include('affPied.php'); ?></div>

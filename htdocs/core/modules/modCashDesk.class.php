@@ -34,11 +34,11 @@ class modCashDesk extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modCashDesk ($DB)
+	function modCashDesk ($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used module id).
@@ -101,7 +101,6 @@ class modCashDesk extends DolibarrModules
 									'type'=>'top',			// This is a Top menu entry
 									'titre'=>'CashDeskMenu',
 									'mainmenu'=>'cashdesk',
-									'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
@@ -128,11 +127,12 @@ class modCashDesk extends DolibarrModules
 
 
     /**
-     *      Function called when module is enabled.
-     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *      It also creates data directories.
-     *
-     *      @return     int             1 if OK, 0 if KO
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
 	function init($options='')
   	{

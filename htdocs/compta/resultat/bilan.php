@@ -25,8 +25,7 @@ require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
 
-if (!$user->rights->compta->resultat->lire)
-  accessforbidden();
+if (!$user->rights->compta->resultat->lire) accessforbidden();
 
 
 /*
@@ -42,14 +41,14 @@ if (! $year) { $year = strftime("%Y", time()); }
 
 /* Le compte de r�sultat est un document officiel requis par l'administration selon le status ou activit� */
 
-print_titre("Bilan".($year?" ann�e $year":""));
+print_titre("Bilan".($year?" annee $year":""));
 
 print '<br>';
 
-print "Cet �tat n'est pas disponible.";
+print $langs->trans("FeatureNotYetAvailable");
 
-
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

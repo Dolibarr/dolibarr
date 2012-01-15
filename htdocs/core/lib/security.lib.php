@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 function dol_loginfunction($langs,$conf,$mysoc)
 {
 	global $dolibarr_main_demo,$db;
-	global $smartphone;
+	global $smartphone,$mc;
 
 	$langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));
 	$langs->setDefaultLang($langcode);
@@ -214,12 +214,12 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	// Entity cookie
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+	if (! empty($conf->multicompany->enabled))
 	{
 		$lastuser = '';
 		$lastentity = $_POST['entity'];
 
-		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
+		if (! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED))
 		{
 			$prefix=dol_getprefix();
 			$entityCookieName = 'DOLENTITYID_'.$prefix;
@@ -237,7 +237,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	// Login
-	$login = (!empty($lastuser)?$lastuser:(GETPOST("username")?GETPOST("username"):$demologin));
+	$login = (!empty($lastuser)?$lastuser:(GETPOST("username","alpha",2)?GETPOST("username","alpha",2):$demologin));
 	$password = $demopassword;
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
@@ -266,17 +266,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Entity field
 	$select_entity='';
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY) && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX))
+	if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX))
 	{
 		$rowspan++;
-
-		$res=dol_include_once('/multicompany/class/actions_multicompany.class.php');
-		if ($res)
-		{
-			$mc = new ActionsMulticompany($db);
-
-			$select_entity=$mc->select_entities($lastentity, 'tabindex="3"', 1);
-		}
+		$select_entity = $mc->select_entities($lastentity, 'entity', ' tabindex="3"', 1);
 	}
 
 	// Security graphical code
@@ -416,11 +409,11 @@ function encodedecode_dbpassconf($level=0)
 				// Add value at end of file
 				if ($level == 0)
 				{
-					$config .= '$dolibarr_main_db_pass="'.$passwd.'";'."\n";
+					$config .= '$dolibarr_main_db_pass=\''.$passwd.'\';'."\n";
 				}
 				if ($level == 1)
 				{
-					$config .= '$dolibarr_main_db_pass="crypted:'.$passwd_crypted.'";'."\n";
+					$config .= '$dolibarr_main_db_pass=\'crypted:'.$passwd_crypted.'\';'."\n";
 				}
 
 				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
@@ -437,7 +430,7 @@ function encodedecode_dbpassconf($level=0)
 		$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
 		if ($fp = @fopen($file,'w'))
 		{
-			fputs($fp, $config, dol_strlen($config));
+			fputs($fp, $config);
 			fclose($fp);
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch

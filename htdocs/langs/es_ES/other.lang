@@ -1,21 +1,5 @@
-# Dolibarr language file - es_ES - other 
+# Dolibarr language file - es_ES - other
 CHARSET=UTF-8
-ErrorPasswordDiffers=Las contraseñas no son idénticas, vuelva a introducirlas
-ErrorForbidden=Acceso no autorizado.<br>Intenta acceder a una página, zona o función sin estar en una sesión autentificada o que no se autoriza para su cuenta de usuario.
-ErrorForbidden2=Los permisos para este usuario pueden ser asignados por el administrador Dolibarr mediante el menú %s-> %s.
-ErrorForbidden3=Dolibarr no parece funcionar en una sesión autentificada. Consulte la documentación de instalación de Dolibarr para saber cómo administrar las autenticaciones (htaccess, mod_auth u otro...).
-ErrorNoImagickReadimage=La classe imagick_readimage no está presente en esta instalación de PHP. La reseña no está pues disponible. Los administradores pueden desactivar esta pestaña en el menú Configuración - Visualización.
-ErrorRecordAlreadyExists=Registro ya existente
-ErrorCantReadFile=Error de lectura del archivo '%s'
-ErrorCantReadDir=Error de lectura del directorio '%s'
-ErrorFailedToFindEntity=Error de lectura del entorno '%s'
-ErrorBadLoginPassword=Identificadores de usuario o contraseña incorrectos
-ErrorLoginDisabled=Su cuenta está desactivada
-ErrorFailedToRunExternalCommand=Error de ejecución del comando externo. Compruebe que está disponible y ejecutable por su servidor PHP. Si el PHP <b>Safe Mode</b> está activo, compruebe que el comando se encuentra en un directorio definido en el parámetro <b>safe_mode_exec_dir</b>.
-ErrorFailedToChangePassword=Error en la modificación de la contraseña
-ErrorLoginDoesNotExists=La cuenta de usuario de <b>%s</b> no se ha encontrado.
-ErrorLoginHasNoEmail=Este usuario no tiene e-mail. Imposible continuar.
-ErrorBadValueForCode=Valor incorrecto para el código. Vuelva a intentar con un nuevo valor...
 SecurityCode=Código seguridad
 Calendar=Calendario
 AddTrip=Crear honorario
@@ -61,8 +45,6 @@ AttachANewFile=Adjuntar nuevo archivo/documento
 LinkedObject=Objeto adjuntado
 Miscellanous=Diversos
 NbOfActiveNotifications=Número notificaciones
-WarningInstallDirExists=Atención: El directorio install (<b>htdocs/install</b>) todavía existe. Una vez concluida la instalación su presencia no es necesaria, y representa un fallo serio de seguridad. Debería eliminarla lo antes posible.
-WarningUntilDirRemoved=Las alertas de seguridad sólo son visibles a los administradores y permanecen activas hasta que el problema sea resuelto (o si la constante MAIN_REMOVE_INSTALL_WARNING es definida en Configuración->Varios)
 PredefinedMailTest=Esto es un correo de prueba.\nLas 2 líneas están separadas por un retorno de carro a la línea.
 PredefinedMailTestHtml=Esto es un e-mail de <b>prueba</b>(la palabra prueba debe de estar en negrita).<br>Las 2 líneas están separadas por un retorno de carro en la línea
 PredefinedMailContentSendInvoice=Le adjuntamos la factura __FACREF__\n\nCordialmente\n\n
@@ -201,11 +183,6 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar un URL http externo o un URL
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elegir si debe abrirse la página en una nueva ventana o en la actual
 BookmarksManagement=Gestión de marcadores
 ListOfBookmarks=Listado de marcadores
-##### Webcal #####
-LoginWebcal=Login Webcalendar
-ErrorWebcalLoginNotDefined=El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
-##### Phenix #####
-ErrorPhenixLoginNotDefined=El login Phenix asociado a su cuenta Dolibarr <b>%s</b>  no está definido
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario
 NewCompanyToDolibarr=Empresa %s insertada en Dolibarr
@@ -225,6 +202,7 @@ MemberValidatedInDolibarr=Miembro %s validado en Dolibarr
 MemberResiliatedInDolibarr=Miembro %s dado de baja en Dolibarr
 MemberDeletedInDolibarr=Miembro %s eliminado de Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscripción del miembro % añadida en Dolibarr
+ShipmentValidatedInDolibarr=Expedición %s validada en Dolibarr
 ##### Export #####
 Export=Exportación
 ExportsArea=Área de exportaciones

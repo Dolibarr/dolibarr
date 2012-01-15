@@ -45,7 +45,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 
 		$langs->load("bills");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -54,7 +54,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 		$texte.= '<input type="hidden" name="maskconstdelivery" value="LIVRAISON_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Delivery"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Delivery"),$langs->transnoentities("Delivery"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Delivery"),$langs->transnoentities("Delivery"));

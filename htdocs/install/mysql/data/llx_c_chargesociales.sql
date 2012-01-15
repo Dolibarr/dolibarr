@@ -50,6 +50,6 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 --
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (201, 'ONSS',						1,1,'TAXBEONSS'   ,'2');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (210, 'Precompte professionnel', 	1,1,'TAXBEPREPRO' ,'2');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (220, 'Prime d\'existence', 		1,1,'TAXBEPRIEXI' ,'2');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (220, 'Prime existence',    		1,1,'TAXBEPRIEXI' ,'2');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (230, 'Precompte immobilier',      1,1,'TAXBEPREIMMO','2');
 

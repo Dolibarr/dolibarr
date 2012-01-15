@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011 	   Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent			   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,12 +71,12 @@ if ($action == 'specimen')
 	$propal->initAsSpecimen();
 
 	// Charge le modele
-	$dir = "/core/modules/propale/";
-	$file = "pdf_propale_".$modele.".modules.php";
+	$dir = "/core/modules/propale/doc/";
+	$file = "pdf_".$modele.".modules.php";
 	$file = dol_buildpath($dir.$file);
 	if (file_exists($file))
 	{
-		$classname = "pdf_propale_".$modele;
+		$classname = "pdf_".$modele;
 		require_once($file);
 
 		$module = new $classname($db);
@@ -250,7 +250,7 @@ if ($action == 'setmod')
 
 llxHeader('',$langs->trans("PropalSetup"));
 
-$html=new Form($db);
+$form=new Form($db);
 
 //if ($mesg) print $mesg;
 
@@ -309,7 +309,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
                         // Show example of numbering module
                         print '<td nowrap="nowrap">';
                         $tmp=$module->getExample();
-                        if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                        if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+                        elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
@@ -348,7 +349,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						}
 
 						print '<td align="center">';
-						print $html->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print "</tr>\n";
@@ -404,101 +405,120 @@ print "</tr>\n";
 
 clearstatcache();
 
+$var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/core/modules/propale/";
+    foreach (array('','/doc') as $valdir)
+    {
+        $dir = $dirroot . "/core/modules/propale".$valdir;
 
-	if (is_dir($dir))
-	{
-		$var=true;
+        if (is_dir($dir))
+        {
+            $handle=opendir($dir);
+            if (is_resource($handle))
+            {
+                while (($file = readdir($handle))!==false)
+                {
+                    $filelist[]=$file;
+                }
+                closedir($handle);
 
-		$handle=opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle))!==false)
-			{
-				if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,12) == 'pdf_propale_')
-				{
-					$name = substr($file, 12, dol_strlen($file) - 24);
-					$classname = substr($file, 0, dol_strlen($file) -12);
-
-					$var=!$var;
-					print "<tr ".$bc[$var].">\n  <td>";
-					print $name;
-					print "</td>\n  <td>\n";
-					require_once($dir.$file);
-					$module = new $classname($db);
-					print $module->description;
-					print '</td>';
-
-					// Activate
-					print '<td align="center">'."\n";
-					if (in_array($name, $def))
-					{
-						//if ($conf->global->PROPALE_ADDON_PDF != "$name")
-						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-							print img_picto($langs->trans("Activated"),'switch_on');
-							print '</a>';
-						//}
-						//else
-						//{
-						//	print img_picto($langs->trans("Activated"),'switch_on');
-						//}
-					}
-					else
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-						print img_picto($langs->trans("Disabled"),'switch_off');
-						print '</a>';
-					}
-					print "</td>";
-
-					// Default
-					print '<td align="center">';
-					if ($conf->global->PROPALE_ADDON_PDF == "$name")
-					{
-						print img_picto($langs->trans("Yes"),'on');
-					}
-					else
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-						print img_picto($langs->trans("No"),'off');
-						print '</a>';
-					}
-					print '</td>';
-
-					// Info
-					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-                    if ($module->type == 'pdf')
+                foreach($filelist as $file)
+                {
+                    if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
                     {
-                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                    	if (file_exists($dir.'/'.$file))
+                    	{
+                    		$name = substr($file, 4, dol_strlen($file) -16);
+	                        $classname = substr($file, 0, dol_strlen($file) -12);
+
+	                        require_once($dir.'/'.$file);
+	                        $module = new $classname($db);
+
+	                        $modulequalified=1;
+	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+
+	                        if ($modulequalified)
+	                        {
+	                            $var = !$var;
+	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print (empty($module->name)?$name:$module->name);
+	                            print "</td><td>\n";
+	                            if (method_exists($module,'info')) print $module->info($langs);
+	                            else print $module->description;
+	                            print '</td>';
+
+	                            // Active
+	                            if (in_array($name, $def))
+	                            {
+	                            	print '<td align="center">'."\n";
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+	                            	print '</a>';
+	                            	print '</td>';
+	                            }
+	                            else
+	                            {
+	                                print "<td align=\"center\">\n";
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print "</td>";
+	                            }
+
+	                            // Defaut
+	                            print "<td align=\"center\">";
+	                            if ($conf->global->PROPALE_ADDON_PDF == "$name")
+	                            {
+	                                print img_picto($langs->trans("Default"),'on');
+	                            }
+	                            else
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                            }
+	                            print '</td>';
+
+	                           // Info
+	                            $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+	                            if ($module->type == 'pdf')
+	                            {
+	                                $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+	                            }
+								$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+								$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+								$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+								$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+								//$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
+								//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+								$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark,1,1);
+
+
+	                            print '<td align="center">';
+	                            print $form->textwithpicto('',$htmltooltip,1,0);
+	                            print '</td>';
+
+	                            // Preview
+	                            print '<td align="center">';
+	                            if ($module->type == 'pdf')
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+	                            }
+	                            else
+	                            {
+	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
+	                            }
+	                            print '</td>';
+
+	                            print "</tr>\n";
+	                        }
+                    	}
                     }
-    				$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-					$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-					$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-					$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-					//$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
-					//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark,1,1);
-
-					print '<td align="center">';
-					print $html->textwithpicto('',$htmltooltip,1,0);
-					print '</td>';
-					print '<td align="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'propal').'</a>';
-					print '</td>';
-
-					print "</tr>\n";
-				}
-			}
-			closedir($handle);
-		}
-	}
+                }
+            }
+        }
+    }
 }
-
 
 print '</table>';
 print '<br>';
@@ -537,7 +557,7 @@ print '<input type="hidden" name="action" value="setusecustomercontactasrecipien
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
 print '</td><td width="60" align="center">';
-print $html->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
+print $form->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -553,7 +573,7 @@ if ($conf->commande->enabled)
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("ClassifiedInvoicedWithOrder").'</td>';
 	print '<td width="60" align="center">';
-	print $html->selectyesno('value',$conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER,1);
+	print $form->selectyesno('value',$conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER,1);
 	print "</td>";
 	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';

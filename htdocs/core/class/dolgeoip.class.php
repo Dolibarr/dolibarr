@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,17 @@
 /**
  *  \file		htdocs/core/class/dolgeoip.class.php
  * 	\ingroup	geoip
- *  \brief		Library for managing module geoip
+ *  \brief		File of class to manage module geoip
  */
 
 
 /**
  * 		\class      DolGeoIP
  *      \brief      Classe to manage GeoIP
- *      \remarks    Usage:
- *		\remarks	$geoip=new GeoIP('country',$datfile);
- *		\remarks	$geoip->getCountryCodeFromIP($ip);
- *		\remarks	$geoip->close();
+ *      			Usage:
+ *					$geoip=new GeoIP('country',$datfile);
+ *					$geoip->getCountryCodeFromIP($ip);
+ *					$geoip->close();
  */
 class DolGeoIP
 {
@@ -38,8 +38,8 @@ class DolGeoIP
 	/**
 	 * Constructor
 	 *
-	 * @param 	$type		'country' or 'city'
-	 * @param	$datfile	Data file
+	 * @param 	string	$type		'country' or 'city'
+	 * @param	string	$datfile	Data file
 	 * @return 	GeoIP
 	 */
 	function DolGeoIP($type,$datfile)
@@ -56,6 +56,7 @@ class DolGeoIP
 		}
 		else { print 'ErrorBadParameterInConstructor'; return 0; }
 
+		// Here, function exists (embedded into PHP or exists because we made include)
 		if (empty($type) || empty($datfile))
 		{
 			//dol_syslog("DolGeoIP::DolGeoIP parameter datafile not defined", LOG_ERR);
@@ -73,7 +74,16 @@ class DolGeoIP
 			return 0;
 		}
 
-		$this->gi = geoip_open($datfile,GEOIP_STANDARD);
+		if (function_exists('geoip_open'))
+		{
+		    $this->gi = geoip_open($datfile,GEOIP_STANDARD);
+		}
+		else
+		{
+		    $this->gi = 'NOGI';    // We are using embedded php geoip functions
+		    //print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
+		    //print geoip_database_info();
+		}
 	}
 
 	/**
@@ -88,7 +98,16 @@ class DolGeoIP
 		{
 			return '';
 		}
-		return strtolower(geoip_country_code_by_addr($this->gi, $ip));
+		if ($this->gi == 'NOGI')
+		{
+		    // geoip_country_code_by_addr does not exists
+    		return strtolower(geoip_country_code_by_name($ip));
+		}
+		else
+		{
+		    if (! function_exists('geoip_country_code_by_addr')) return strtolower(geoip_country_code_by_name($this->gi, $ip));
+		    return strtolower(geoip_country_code_by_addr($this->gi, $ip));
+		}
 	}
 
 	/**
@@ -108,18 +127,26 @@ class DolGeoIP
 
 	/**
 	 * Return verion of data file
+	 *
+	 * @return	string		Version of datafile
 	 */
 	function getVersion()
 	{
+	    if ($this->gi == 'NOGI') return geoip_database_info();
 		return '';
 	}
 
 	/**
 	 * Close geoip object
+	 *
+	 * @return	void
 	 */
 	function close()
 	{
-		geoip_close($this->gi);
+	    if (function_exists('geoip_close'))    // With some geoip with PEAR, geoip_close function may not exists
+	    {
+	        geoip_close($this->gi);
+	    }
 	}
 }
 ?>

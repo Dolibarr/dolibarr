@@ -102,6 +102,7 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
 
 # Lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
@@ -170,9 +171,7 @@ done >%{name}.lang
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
-%_datadir/dolibarr/htdocs/lib
 %_datadir/dolibarr/htdocs/livraison
-%_datadir/dolibarr/htdocs/mantis
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/product

@@ -34,7 +34,7 @@ create table llx_societe
   datec	                   datetime,                            		-- creation date
   datea	                   datetime,                            		-- activation date
 
-  status            	   tinyint DEFAULT 1,					        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)						
+  status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)						
 
   code_client              varchar(24),                         		-- code client
   code_fournisseur         varchar(24),                         		-- code founisseur
@@ -61,7 +61,7 @@ create table llx_societe
   tva_intra                varchar(20),                         		-- tva
   capital                  real,                                		-- capital de la societe
   description              text,                                		--
-  fk_stcomm                smallint       DEFAULT 0,            		-- commercial statut
+  fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial statut
   note                     text,                                		--
   services                 tinyint        DEFAULT 0,            		--
   prefix_comm              varchar(5),                          		-- prefix commercial
@@ -80,7 +80,7 @@ create table llx_societe
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
-  gencod                   varchar(255),                        		-- barcode
+  barcode                  varchar(255),                        		-- barcode
   price_level              integer NULL,                        		-- level of price for multiprices
   default_lang             varchar(6),									-- default language
   logo                     varchar(255),

@@ -116,8 +116,9 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 				$row_array['value'] = $row['town'];
 				$row_array['zipcode'] = $row['zip'];
 			}
-			$row_array['selectpays_id'] = $row['fk_country'];
-			$row_array['departement_id'] = $row['fk_county'];
+			$row_array['departement_id'] = $row['fk_county'];    // deprecated
+			$row_array['selectcountry_id'] = $row['fk_country'];
+			$row_array['state_id'] = $row['fk_county'];
 
 			$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
 

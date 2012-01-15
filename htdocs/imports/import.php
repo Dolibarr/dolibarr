@@ -79,7 +79,7 @@ $objimport->load_arrays($user,($step==1?'':$datatoimport));
 
 $objmodelimport=new ModeleImports();
 
-$html = new Form($db);
+$form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 
@@ -421,7 +421,7 @@ if ($step == 2 && $datatoimport)
 		print '<tr '.$bc[$var].'>';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
     	$text=$objmodelimport->getDriverDesc($key);
-    	print '<td>'.$html->textwithpicto($objmodelimport->getDriverLabel($key),$text).'</td>';
+    	print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabel($key),$text).'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		// Action button
 		print '<td align="right">';
@@ -478,7 +478,7 @@ if ($step == 3 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDesc($format);
-    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
     print '</td><td align="right" nowrap="nowrap" width="100"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 
 	print '</td></tr>';
@@ -512,17 +512,17 @@ if ($step == 3 && $datatoimport)
 	print "</tr>\n";
 
 	// Search available imports
-	$dir = $conf->import->dir_temp;
-	$handle=@opendir(dol_osencode($dir));
-	if (is_resource($handle))
+	$filearray=dol_dir_list($conf->import->dir_temp,'files',0,'','','name',SORT_DESC);
+	if (count($filearray) > 0)
 	{
-		//print '<tr><td colspan="4">';
-		//print '<table class="noborder" width="100%">';
+		$dir=$conf->import->dir_temp;
 
 		// Search available files to import
 		$i=0;
-		while (($file = readdir($handle))!==false)
+		foreach ($filearray as $key => $val)
 		{
+		    $file=$val['name'];
+
 			// readdir return value in ISO and we want UTF8 in memory
 			if (! utf8_check($file)) $file=utf8_encode($file);
 
@@ -555,7 +555,6 @@ if ($step == 3 && $datatoimport)
 			print '</td>';
 			print '</tr>';
 		}
-		//print '</table></td></tr>';
 	}
 
 	print '</table></form>';
@@ -679,7 +678,7 @@ if ($step == 4 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDesc($format);
-    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
 	print '</td></tr>';
 
 	// File to import
@@ -822,9 +821,9 @@ if ($step == 4 && $datatoimport)
 				if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchfromref') $htmltext.=$langs->trans("DataComeFromIdFoundFromRef",$filecolumn,$langs->transnoentitiesnoconv($entitylang)).'<br>';
 			}
 		}
-		$htmltext.=$langs->trans("SourceRequired").': <b>'.yn(preg_match('/\*$/',$label)).'</b>';
+		$htmltext.=$langs->trans("SourceRequired").': <b>'.yn(preg_match('/\*$/',$label)).'</b><br>';
 		$example=$objimport->array_import_examplevalues[0][$code];
-		if ($example) $htmltext.='<br>'.$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
+		if ($example) $htmltext.=$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
 		$htmltext.='<br>';
 		// Target field info
 		$htmltext.='<b><u>'.$langs->trans("FieldTarget").'</u></b><br>';
@@ -838,7 +837,7 @@ if ($step == 4 && $datatoimport)
 		}
 		$htmltext.=$langs->trans("FieldTitle").": <b>".$langs->trans($newlabel)."</b><br>";
 		$htmltext.=$langs->trans("Table")." -> ".$langs->trans("Field").': <b>'.$tablename." -> ".preg_replace('/^.*\./','',$code)."</b><br>";
-		print $html->textwithpicto($more,$htmltext);
+		print $form->textwithpicto($more,$htmltext);
 		print '</td>';
 
 		print '</tr>';
@@ -1087,7 +1086,7 @@ if ($step == 5 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDesc($format);
-    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
 	print '</td></tr>';
 
 	// File to import
@@ -1413,7 +1412,7 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDesc($format);
-    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
 	print '</td></tr>';
 
 	// File to import

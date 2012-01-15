@@ -3,7 +3,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- *
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -51,7 +52,7 @@ $result=restrictedArea($user,'commande',$id,'');
 
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
-$html = new Form($db);
+$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -155,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					$langs->load("other");
+					$langs->load("errors");
 					print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
 				}
 			}
@@ -190,7 +191,7 @@ if ($id > 0 || ! empty($ref))
 		// partie Gauche
 		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 		print '<td align="right" colspan="1"><b>'.price($object->total_ht).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		print '</table>';
 	}
 	else

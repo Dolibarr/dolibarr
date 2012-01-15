@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,10 +66,7 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
 {
     $error = 0;
 
-    $datepaye = dol_mktime(12, 0 , 0,
-    $_POST['remonth'],
-    $_POST['reday'],
-    $_POST['reyear']);
+    $datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
     $paiement_id = 0;
 
     // Verifie si des paiements sont superieurs au montant facture
@@ -208,145 +205,160 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
 {
-    $facture = new Facture($db);
-    $result=$facture->fetch($facid);
-
-    if ($result >= 0)
-    {
-        $facture->fetch_thirdparty();
-
-        $title='';
-        if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
-        if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
-        print_fiche_titre($title);
-
-        dol_htmloutput_errors($errmsg);
-
-        // Bouchon
-        if ($facture->type == 2)
-        {
-            print $langs->trans("FeatureNotYetAvailable");
-            llxFooter();
-            exit;
-        }
-
-        // Initialize data for confirmation (this is used because data can be change during confirmation)
-        if ($action == 'add_paiement')
-        {
-            $i=0;
-
-            $formquestion[$i++]=array('type' => 'hidden','name' => 'facid', 'value' => $facture->id);
-            $formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
-            $formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
-        }
-
-        // Invoice with Paypal transaction
-        if ($conf->paypalplus->enabled && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && ! empty($facture->ref_int))
-        {
-        	if (! empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid=$conf->global->PAYPAL_BANK_ACCOUNT;
-        	$paymentnum=$facture->ref_int;
-        }
-        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
-        {
-            print "\n".'<script type="text/javascript" language="javascript">';
-            print 'jQuery(document).ready(function () {';
-            print 'jQuery("#selectpaiementcode").change(function() {
-                            code=jQuery("#selectpaiementcode option:selected").val();
-                            if (code == \'CHQ\')
-                            {
-                                jQuery(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
-                            	if (jQuery(\'#fieldchqemetteur\').val() == \'\')
-                            	{
-                                	jQuery(\'#fieldchqemetteur\').val(jQuery(\'#thirdpartylabel\').val());
-                            	}
-                            }
-                            else
-                            {
-                                jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
-                            }
-                        });
-
-        			function elemToJson(selector)
-            		{
-            			var subJson = {};
-            			jQuery.map(selector.serializeArray(), function(n,i)
-            			{
-            				subJson[n["name"]] = n["value"];
+	$facture = new Facture($db);
+	$result=$facture->fetch($facid);
+	
+	if ($result >= 0)
+	{
+		$facture->fetch_thirdparty();
+		
+		$title='';
+		if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
+		if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
+		print_fiche_titre($title);
+		
+		dol_htmloutput_errors($errmsg);
+		
+		// Bouchon
+		if ($facture->type == 2)
+		{
+			print $langs->trans("FeatureNotYetAvailable");
+			llxFooter();
+			exit;
+		}
+		
+		// Initialize data for confirmation (this is used because data can be change during confirmation)
+		if ($action == 'add_paiement')
+		{
+			$i=0;
+			
+			$formquestion[$i++]=array('type' => 'hidden','name' => 'facid', 'value' => $facture->id);
+			$formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
+			$formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
+		}
+		
+		// Invoice with Paypal transaction
+		// TODO add hook possibility (regis)
+		if ($conf->paypalplus->enabled && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && ! empty($facture->ref_int))
+		{
+			if (! empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid=$conf->global->PAYPAL_BANK_ACCOUNT;
+			$paymentnum=$facture->ref_int;
+		}
+		if ($conf->use_javascript_ajax)
+		{
+			print "\n".'<script type="text/javascript" language="javascript">';
+			print '$(document).ready(function () {
+            			setPaiementCode();
+            			
+            			$("#selectpaiementcode").change(function() {
+            				setPaiementCode();
             			});
-            			return subJson;
-            		}
-            		function callForResult(imgId)
-            		{
-            		    var json = {};
-		            	var form = jQuery("#payment_form");
-
-		            	json["amountPayment"] = jQuery("#amountpayment").attr("value");
-		            	json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
-		            	json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
-
-		            	if(imgId != null)json["imgClicked"] = imgId;
-
-            			jQuery.post("ajaxpayment.php", json, function(data)
+            			
+            			function setPaiementCode()
             			{
-            				json = jQuery.parseJSON(data);
-
-            				form.data(json);
-
-            				for(var key in json)
+            				var code = $("#selectpaiementcode option:selected").val();
+            				
+            				if (code == \'CHQ\')
             				{
-            					if(key == "result")	{
-            						if(json["makeRed"]) {
-            							jQuery("#"+key).css("color", "red");
-            						} else {
-            							jQuery("#"+key).removeAttr("style");
-            						}
-            						json[key]=json["label"]+" "+json[key];
-            						jQuery("#"+key).text(json[key]);
-            					} else {
-            						form.find("input[name*=\""+key+"\"]").each(function() {
-            							jQuery(this).attr("value", json[key]);
-            						});
+            					$(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
+            					if ($(\'#fieldchqemetteur\').val() == \'\')
+            					{
+            						$(\'#fieldchqemetteur\').val(jQuery(\'#thirdpartylabel\').val());
             					}
             				}
-            			});
-
-            		}
-            		function callToBreakdown(imgSelector) {
-		            	var form = jQuery("#payment_form"), imgId;
-
-		            	imgId =  imgSelector.attr("id");
-		            	callForResult(imgId);
-            		}
-
-            		jQuery("#payment_form").find("img").click(function() {
-            				callToBreakdown(jQuery(this));
-                    	});
-
-            			jQuery("#payment_form").find("input[name*=\"amount_\"]").change(function() {
-            				callForResult();
-                    	});
-
-            			jQuery("#amountpayment").change(function() {
-            				callForResult();
-                    	});
-             	});
-             </script>'."\n";
-        }
-
-        print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="add_paiement">';
-        print '<input type="hidden" name="facid" value="'.$facture->id.'">';
-        print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
-        print '<input type="hidden" name="type" value="'.$facture->type.'">';
-        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->client->name).'">';
-
-        print '<table class="border" width="100%">';
+            				else
+            				{
+            					$(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
+            					$(\'#fieldchqemetteur\').val(\'\');
+            				}
+            			}';
+			// For paiement auto-completion
+			if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+			{
+				print "\n".'
+						function elemToJson(selector)
+						{
+							var subJson = {};
+							$.map(selector.serializeArray(), function(n,i)
+							{
+								subJson[n["name"]] = n["value"];
+							});
+							return subJson;
+						}
+						function callForResult(imgId)
+						{
+							var json = {};
+							var form = $("#payment_form");
+							
+							json["amountPayment"] = $("#amountpayment").attr("value");
+							json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
+							json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
+							
+							if (imgId != null) {
+								json["imgClicked"] = imgId;
+							}
+							
+							$.post("ajaxpayment.php", json, function(data)
+							{
+								json = $.parseJSON(data);
+								
+								form.data(json);
+								
+								for (var key in json)
+								{
+									if (key == "result")	{
+										if (json["makeRed"]) {
+											$("#"+key).css("color", "red");
+										} else {
+											$("#"+key).removeAttr("style");
+										}
+										json[key]=json["label"]+" "+json[key];
+										$("#"+key).text(json[key]);
+									} else {
+										form.find("input[name*=\""+key+"\"]").each(function() {
+											$(this).attr("value", json[key]);
+										});
+									}
+								}
+							});
+						}
+						function callToBreakdown(imgSelector) {
+							var form = $("#payment_form"), imgId;
+							
+							imgId =  imgSelector.attr("id");
+							callForResult(imgId);
+						}
+						
+						$("#payment_form").find("img").click(function() {
+							callToBreakdown(jQuery(this));
+						});
+						
+						$("#payment_form").find("input[name*=\"amount_\"]").change(function() {
+							callForResult();
+						});
+						
+						$("#amountpayment").change(function() {
+							callForResult();
+						});';
+			}
+			print '});
+			</script>'."\n";
+		}
+		
+		print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="add_paiement">';
+		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
+		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
+		print '<input type="hidden" name="type" value="'.$facture->type.'">';
+		print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->client->name).'">';
+		
+		print '<table class="border" width="100%">';
 
         // Third party
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
@@ -355,7 +367,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
         $datepayment = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         $datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0) : $datepayment);
-        $html->select_date($datepayment,'','','',0,"add_paiement",1,1);
+        $form->select_date($datepayment,'','','',0,"add_paiement",1,1);
         print '</td>';
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
@@ -364,7 +376,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
-        $html->select_types_paiements((GETPOST('paiementcode')?GETPOST('paiementcode'):$facture->mode_reglement_code),'paiementcode','',2);
+        $form->select_types_paiements((GETPOST('paiementcode')?GETPOST('paiementcode'):$facture->mode_reglement_code),'paiementcode','',2);
         print "</td>\n";
         print '<td rowspan="'.$rowspan.'" valign="top">';
         print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
@@ -394,7 +406,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
             if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
             print '<td>';
-            $html->select_comptes($accountid,'accountid',0,'',2);
+            $form->select_comptes($accountid,'accountid',0,'',2);
             print '</td>';
         }
         else
@@ -598,13 +610,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $preselectedchoice=$addwarning?'no':'yes';
 
             print '<br>';
-            $text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->monnaie));
+            $text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->currency));
             if (GETPOST('closepaidinvoices'))
             {
                 $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
                 print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
             }
-            $html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+            $form->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
         }
 
         print "</form>\n";
@@ -634,7 +646,7 @@ if (! GETPOST('action'))
     }
 
     $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
-    $sql .= $db->plimit($limit +1 ,$offset);
+    $sql .= $db->plimit($limit+1, $offset);
     $resql = $db->query($sql);
 
     if ($resql)

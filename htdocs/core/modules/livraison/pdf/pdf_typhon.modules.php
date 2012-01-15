@@ -298,7 +298,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$tab_top_in_current_page=$tab_top_newpage;
 						$tab_height_in_current_page=$tab_height_newpage;
 					}
-					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
+					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblines - 1))
 					{
 						if ($pagenb == 1)
 						{
@@ -344,7 +344,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				// Check product remaining to be delivered
 				// TODO doit etre modifie
 				//$waitingDelivery = $object->getRemainingDelivered();
-
+				$waitingDelivery='';
+				
 				if (is_array($waitingDelivery) & !empty($waitingDelivery))
 				{
 					$pdf->AddPage('P', 'A4');

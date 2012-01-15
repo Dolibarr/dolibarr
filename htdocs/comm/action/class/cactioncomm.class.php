@@ -45,11 +45,11 @@ class CActionComm
     /**
      *  Constructor
      *
-     *  @param	DoliDB		$DB		Database handler
+     *  @param	DoliDB		$db		Database handler
      */
-    function CActionComm($DB)
+    function CActionComm($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
     }
 
     /**

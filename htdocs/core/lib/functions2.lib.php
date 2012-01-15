@@ -55,11 +55,11 @@ function dol_print_file($langs,$filename,$searchalt=0)
     // Test if file is in lang directory
     foreach($langs->dir as $searchdir)
     {
-        $htmlfile=($searchdir."/langs/".$langs->defaultlang."/".$filename);
-        dol_syslog('functions2::dol_print_file search file '.$htmlfile, LOG_DEBUG);
-        if (is_readable($htmlfile))
+        $formfile=($searchdir."/langs/".$langs->defaultlang."/".$filename);
+        dol_syslog('functions2::dol_print_file search file '.$formfile, LOG_DEBUG);
+        if (is_readable($formfile))
         {
-            $content=file_get_contents($htmlfile);
+            $content=file_get_contents($formfile);
             $isutf8=utf8_check($content);
             if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') print utf8_encode($content);
             elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') print utf8_decode($content);
@@ -70,13 +70,13 @@ function dol_print_file($langs,$filename,$searchalt=0)
 
         if ($searchalt) {
             // Test si fichier dans repertoire de la langue alternative
-            if ($langs->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;
-            else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
-            dol_syslog('functions2::dol_print_file search alt file '.$htmlfilealt, LOG_DEBUG);
-            //print 'getcwd='.getcwd().' htmlfilealt='.$htmlfilealt.' X '.file_exists(getcwd().'/'.$htmlfilealt);
-            if (is_readable($htmlfilealt))
+            if ($langs->defaultlang != "en_US") $formfilealt = $searchdir."/langs/en_US/".$filename;
+            else $formfilealt = $searchdir."/langs/fr_FR/".$filename;
+            dol_syslog('functions2::dol_print_file search alt file '.$formfilealt, LOG_DEBUG);
+            //print 'getcwd='.getcwd().' htmlfilealt='.$formfilealt.' X '.file_exists(getcwd().'/'.$formfilealt);
+            if (is_readable($formfilealt))
             {
-                $content=file_get_contents($htmlfilealt);
+                $content=file_get_contents($formfilealt);
                 $isutf8=utf8_check($content);
                 if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') print utf8_encode($content);
                 elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') print utf8_decode($content);
@@ -435,9 +435,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // Define $sqlwhere
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
-    if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))  $maskraz=preg_replace('/^@/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))  $maskraz=preg_replace('/^@/','',$reg[3]);
-    if ($maskraz >= 0)
+    if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$maskraz=preg_replace('/^@/','',$reg[2]);
+    if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))	$maskraz=preg_replace('/^@/','',$reg[3]);
+    if ($maskraz == 0) $maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
+    if ($maskraz > 0)
     {
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
@@ -507,10 +508,9 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $counter=0;
     $sql = "SELECT MAX(".$sqlstring.") as val";
     $sql.= " FROM ".MAIN_DB_PREFIX.$table;
-    //		$sql.= " WHERE ".$field." not like '(%'";
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
     $sql.= " AND ".$field." NOT LIKE '%PROV%'";
-    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " AND entity = ".getEntity($table);
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -674,7 +674,7 @@ function check_value($mask,$value)
         $maskrefclient_maskclientcode=$regClientRef[1];
         $maskrefclient_maskcounter=$regClientRef[2];
         $maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
-        $maskrefclient_clientcode=substr($valueforccc,0,dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
+        $maskrefclient_clientcode=substr('',0,dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
         $maskrefclient_clientcode=str_pad($maskrefclient_clientcode,dol_strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
         $maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
@@ -767,7 +767,8 @@ function binhex($bin, $pad=false, $upper=false)
 function hexbin($hexa)
 {
     $bin='';
-    for($i=0;$i<dol_strlen($hexa);$i++)
+    $strLength = dol_strlen($hexa);
+    for($i=0;$i<$strLength;$i++)
     {
         $bin.=str_pad(decbin(hexdec($hexa{$i})),4,'0',STR_PAD_LEFT);
     }
@@ -934,7 +935,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
     foreach ($tab as $key => $value)
     {
         // Set new parameters
-        if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
+        if ($value)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";

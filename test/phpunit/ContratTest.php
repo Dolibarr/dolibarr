@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -119,10 +119,11 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Contrat($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user,$langs,$conf);
-
-    	$this->assertLessThan($result, 0);
+    	$result=$localobject->create($user);
+    	
     	print __METHOD__." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+    	
     	return $result;
     }
 
@@ -140,9 +141,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Contrat($this->savdb);
     	$result=$localobject->fetch($id);
-
-    	$this->assertLessThan($result, 0);
+    	
     	print __METHOD__." id=".$id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+    	
     	return $localobject;
     }
 

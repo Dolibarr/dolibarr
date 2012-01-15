@@ -38,12 +38,12 @@ class modFckeditor extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modFckeditor($DB)
+	function modFckeditor($db)
 	{
-		$this->db = $DB ;
-		$this->numero = 2000 ;
+		$this->db = $db;
+		$this->numero = 2000;
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -68,11 +68,9 @@ class modFckeditor extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
-		$this->const[0]  = array("FCKEDITOR_ENABLE_USER","yesno","1","Activation fckeditor sur notes utilisateurs");
-        $this->const[1]  = array("FCKEDITOR_ENABLE_SOCIETE","yesno","1","Activation fckeditor sur notes societe");
-        $this->const[2]  = array("FCKEDITOR_ENABLE_PRODUCTDESC","yesno","1","Activation fckeditor sur notes produits");
-        $this->const[3]  = array("FCKEDITOR_ENABLE_MEMBER","yesno","1","Activation fckeditor sur notes adherent");
-        $this->const[4]  = array("FCKEDITOR_ENABLE_MAILING","yesno","1","Activation fckeditor sur emailing");
+        $this->const[0]  = array("FCKEDITOR_ENABLE_SOCIETE","yesno","1","Activation fckeditor sur notes autres");
+        $this->const[1]  = array("FCKEDITOR_ENABLE_PRODUCTDESC","yesno","1","Activation fckeditor sur notes produits");
+        $this->const[2]  = array("FCKEDITOR_ENABLE_MAILING","yesno","1","Activation fckeditor sur emailing");
 
 		// Boites
 		$this->boxes = array();
@@ -83,16 +81,20 @@ class modFckeditor extends DolibarrModules
 	}
 
 	/**
-	 *   \brief      Fonction appele lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init()
+	function init($options='')
 	{
 		global $conf;
 
 		$sql = array();
 
-		return $this->_init($sql);
+		return $this->_init($sql,$options);
 	}
 
 	/**

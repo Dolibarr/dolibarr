@@ -25,6 +25,44 @@
 
 
 /**
+* Prepare array for tabs of warehouses cards
+*
+* @param   $object
+* @return  array
+*/
+function tax_prepare_head($object)
+{
+    global $langs, $conf;
+
+    $h = 0;
+    $head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Card');
+	$head[$h][2] = 'card';
+	$h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'tax');
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Documents");
+	$head[$h][2] = 'documents';
+	$h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/compta/sociales/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
+
+    return $head;
+}
+
+
+/**
  *  Look for collectable VAT clients in the chosen year (and month)
  *  @param      db          Database handle
  *  @param      y           Year
@@ -49,6 +87,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         $invoicedettable='facturedet';
         $fk_facture='fk_facture';
         $total_tva='total_tva';
+        $total_localtax1='total_localtax1';
+        $total_localtax2='total_localtax2';
     }
     if ($direction == 'buy')
     {
@@ -56,6 +96,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         $invoicedettable='facture_fourn_det';
         $fk_facture='fk_facture_fourn';
         $total_tva='tva';
+        $total_localtax1='total_localtax1';
+        $total_localtax2='total_localtax2';
     }
 
     // Define sql request
@@ -74,17 +116,17 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         }
         if ($conf->global->MAIN_MODULE_COMPTABILITE)
         {
-            $sql = "SELECT s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj,";
-            $sql.= " sum(fd.total_ht) as amount, sum(fd.".$total_tva.") as tva";
+            $sql = "SELECT s.rowid as socid, s.nom as nom, s.siren as tva_intra, s.tva_assuj as assuj,";
+            $sql.= " sum(fd.total_ht) as amount, sum(fd.".$total_tva.") as tva,";
+            $sql.= " sum(fd.".$total_localtax1.") as localtax1,";
+            $sql.= " sum(fd.".$total_localtax2.") as localtax2";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
             $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as fd,";
             $sql.= " ".MAIN_DB_PREFIX."societe as s";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -120,10 +162,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
             $sql.= " WHERE ";
             $sql.= " f.fk_statut in (2)";   // Paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -195,6 +235,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         $fk_facture2='fk_facture';
         $fk_payment='fk_paiement';
         $total_tva='total_tva';
+        $total_localtax1='total_localtax1';
+        $total_localtax2='total_localtax2';
         $paymenttable='paiement';
         $paymentfacturetable='paiement_facture';
     }
@@ -206,6 +248,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         $fk_facture2='fk_facturefourn';
         $fk_payment='fk_paiementfourn';
         $total_tva='tva';
+        $total_localtax1='total_localtax1';
+        $total_localtax2='total_localtax2';
         $paymenttable='paiementfourn';
         $paymentfacturetable='paiementfourn_facturefourn';
     }
@@ -229,6 +273,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         {
             // Count on delivery date (use invoice date as delivery is unknown)
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -238,10 +283,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+            if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+            else $sql.= " AND f.type IN (0,1,2,3)";
             $sql.= " AND f.rowid = d.".$fk_facture;
             if ($y && $m)
             {
@@ -275,27 +318,19 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         {
             // Count on delivery date (use invoice date as delivery is unknown)
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
             $sql.= " 0 as payment_id, 0 as payment_amount";
-//          $sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-//          $sql.= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
-//          $sql.= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
             $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             $sql.= " AND f.rowid = d.".$fk_facture;
-//          $sql.= " AND pf.".$fk_facture2." = f.rowid";
-//          $sql.= " AND pa.rowid = pf.".$fk_payment;
-//          $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
-//          $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -331,12 +366,16 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             {
                 if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
                 if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
+                if (! isset($list[$assoc['rate']]['locatax1']))      $list[$assoc['rate']]['localtax1']=0;
+                if (! isset($list[$assoc['rate']]['locatax2']))      $list[$assoc['rate']]['localtax2']=0;
 
                 if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
                 {
                     $oldrowid=$assoc['rowid'];
                     $list[$assoc['rate']]['totalht']  += $assoc['total_ht'];
                     $list[$assoc['rate']]['vat']      += $assoc['total_vat'];
+                    $list[$assoc['rate']]['localtax1']      += $assoc['total_localtax1'];
+                    $list[$assoc['rate']]['localtax2']      += $assoc['total_localtax2'];
                 }
                 $list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
                 $list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
@@ -351,6 +390,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 
                 $list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
                 $list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
+                $list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
+                $list[$assoc['rate']]['localtax2_list'][]  = $assoc['total_localtax2'];
 
                 $list[$assoc['rate']]['pid'][] = $assoc['pid'];
                 $list[$assoc['rate']]['pref'][] = $assoc['pref'];
@@ -390,6 +431,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         {
             // Count on invoice date
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -399,10 +441,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             $sql.= " AND f.rowid = d.".$fk_facture;
             if ($y && $m)
             {
@@ -437,6 +477,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         {
             // Count on payments date
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+            $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
             $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -448,10 +489,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
             $sql.= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-            $sql.= " AND (f.type = 0";      // Standard
-            $sql.= " OR f.type = 1";        // Replacement
-            $sql.= " OR f.type = 2)";       // Credit note
-            //$sql.= " OR f.type = 3";      // We do not include deposit
+        	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        	else $sql.= " AND f.type IN (0,1,2,3)";
             $sql.= " AND f.rowid = d.".$fk_facture;;
             $sql.= " AND pf.".$fk_facture2." = f.rowid";
             $sql.= " AND pa.rowid = pf.".$fk_payment;
@@ -491,12 +530,16 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             {
                 if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
                 if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
+				if (! isset($list[$assoc['rate']]['locatax1']))      $list[$assoc['rate']]['localtax1']=0;
+                if (! isset($list[$assoc['rate']]['locatax2']))      $list[$assoc['rate']]['localtax2']=0;
 
                 if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
                 {
                     $oldrowid=$assoc['rowid'];
                     $list[$assoc['rate']]['totalht']  += $assoc['total_ht'];
                     $list[$assoc['rate']]['vat']      += $assoc['total_vat'];
+                    $list[$assoc['rate']]['localtax1']	 += $assoc['total_localtax1'];
+                    $list[$assoc['rate']]['localtax2']	 += $assoc['total_localtax2'];
                 }
                 $list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
                 $list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
@@ -511,6 +554,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 
                 $list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
                 $list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
+                $list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
+                $list[$assoc['rate']]['localtax2_list'][] = $assoc['total_localtax2'];
 
                 $list[$assoc['rate']]['pid'][] = $assoc['pid'];
                 $list[$assoc['rate']]['pref'][] = $assoc['pref'];

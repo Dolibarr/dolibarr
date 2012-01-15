@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
 $langs->load("users");
 $langs->load("admin");
 
-$id=GETPOST("id");
-$action=GETPOST("action");
-$confirm=GETPOST("confirm");
-$module=GETPOST("module");
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$module=GETPOST('module');
 
 if (! isset($id) || empty($id)) accessforbidden();
 
@@ -58,7 +58,7 @@ if ($user->id == $id)	// A user can always read its own card
 	$feature2='';
 	$canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $id, '', $feature2);
+$result = restrictedArea($user, 'user', $id, '&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 

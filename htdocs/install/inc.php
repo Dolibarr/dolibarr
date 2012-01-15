@@ -370,7 +370,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
         print '<div class="nextbutton" id="nextbutton"><input type="submit" value="'.$langs->trans("NextStep").' ->"';
         if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
         print '></div>';
-        print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br><blink>'.$langs->trans("NextStepMightLastALongTime").'</blink><br><br>'.$langs->trans("PleaseBePatient").'</div>';
+        print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';
     }
     if ($setuplang)
     {

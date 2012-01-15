@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,27 +35,28 @@ $langs->load("languages");
 // Defini si peux lire/modifier permisssions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 
-if ($_REQUEST["id"])
+$id = GETPOST('id','int');
+$action = GETPOST('action');
+
+if ($id)
 {
-    // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur edite
-    $caneditfield=( (($user->id == $_REQUEST["id"]) && $user->rights->user->self->creer)
-    || (($user->id != $_REQUEST["id"]) && $user->rights->user->user->creer));
+    // $user est le user qui edite, $id est l'id de l'utilisateur edite
+    $caneditfield=( (($user->id == $id) && $user->rights->user->self->creer)
+    || (($user->id != $id) && $user->rights->user->user->creer));
 }
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_REQUEST["id"])	// A user can always read its own card
+if ($user->id == $id)	// A user can always read its own card
 {
     $feature2='';
     $canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $_REQUEST["id"], '', $feature2);
-if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
+$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
-
-$id=! empty($_GET["id"])?$_GET["id"]:$_POST["id"];
 $dirtop = "../core/menus/standard";
 $dirleft = "../core/menus/standard";
 
@@ -69,20 +70,16 @@ $searchform=array("main_searchform_societe","main_searchform_contact","main_sear
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
 
-$html = new Form($db);
+$form = new Form($db);
 $formadmin=new FormAdmin($db);
 
 
 /*
  * Actions
  */
-if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
+if ($action == 'update' && ($caneditfield  || $user->admin))
 {
-    if ($_POST["cancel"])
-    {
-        $_GET["id"]=$_POST["id"];
-    }
-    else
+    if (! $_POST["cancel"])
     {
         $tabparam=array();
 
@@ -105,7 +102,7 @@ if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
 
         $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST["id"]);
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
         exit;
     }
 }
@@ -129,7 +126,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
-print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 print '</td>';
 print '</tr>';
 
@@ -151,7 +148,7 @@ if ($_GET["action"] == 'edit')
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+    print '<input type="hidden" name="id" value="'.$id.'">';
 
     clearstatcache();
     $var=true;

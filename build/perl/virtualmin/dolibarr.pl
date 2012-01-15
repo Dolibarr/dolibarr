@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
-# \author       (c)2009-2011 Regis Houssin  <regis@dolibarr.fr>
+# \author       (c)2009-2012 Regis Houssin  <regis@dolibarr.fr>
 #----------------------------------------------------------------------------
 
 
@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.1.0" );
+return ( "3.1.0", "3.0.1", "2.9.0" );
 }
 
 sub script_dolibarr_category
@@ -141,7 +141,7 @@ sub script_dolibarr_files
 local ($d, $ver, $opts, $upgrade) = @_;
 local @files = ( { 'name' => "source",
 	   'file' => "Dolibarr_$ver.tar.gz",
-	   'url' => "http://www.dolibarr.fr/files/stable/dolibarr-$ver.tar.gz" } );
+	   'url' => "http://prdownloads.sourceforge.net/dolibarr/dolibarr-$ver.tgz" } );
 return @files;
 }
 
@@ -173,7 +173,7 @@ return (0, "Database connection failed : $dberr") if ($dberr);
 # Extract tar file to temp dir and copy to target
 local $temp = &transname();
 local $err = &extract_script_archive($files->{'source'}, $temp, $d,
-                                     $opts->{'dir'}, undef);
+			     $opts->{'dir'}, "dolibarr-$ver/htdocs");
 $err && return (0, "Failed to extract source : $err");
 
 # Add config file
@@ -354,8 +354,13 @@ sub script_dolibarr_latest
 {
 local ($ver) = @_;
 if ($ver >= 3.0) {
+	return ( "http://sourceforge.net/projects/dolibarr/files/".
+		  "Dolibarr%20ERP-CRM",
+		  "(3\\.[0-9\\.]+)" );
+	}
+elsif ($ver >= 2.9) {
 	return ( "http://www.dolibarr.fr/files/stable/",
-		 "dolibarr\\-(3\\.[0-9\\.]+)" );
+		 "dolibarr\\-(2\\.[0-9\\.]+)" );
 	}
 return ( );
 }

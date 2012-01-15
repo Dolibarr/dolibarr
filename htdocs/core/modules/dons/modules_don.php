@@ -173,12 +173,11 @@ function don_create($db, $id, $message, $modele, $outputlangs)
         $sav_charset_output=$outputlangs->charset_output;
         if ($obj->write_file($id,$outputlangs) > 0)
         {
-            // Success. We build meta file
-            don_meta_create($db, $id);
-            // et on supprime l'image correspondant au preview
-            don_delete_preview($db, $id);
-
             $outputlangs->charset_output=$sav_charset_output;
+
+			// we delete preview files
+        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+            dol_delete_preview($obj);
             return 1;
         }
         else
@@ -194,36 +193,6 @@ function don_create($db, $id, $message, $modele, $outputlangs)
         print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
         return 0;
     }
-}
-
-/**
- *	\brief       Cree un meta fichier a cote de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non pay�e ou compliqu�e � g�rer ... avec un rgrep c'est vite fait bien fait [eric seigne
- *	\param	    db  		Objet base de donnee
- *	\param	    donid		Id du don a creer
- *	\param       message     Message
- */
-function don_meta_create($db, $donid, $message="")
-{
-    global $langs,$conf;
-
-    $don = new Don($db);
-    $don->id=$donid;
-    $don->fetch($donid);
-}
-
-
-/**
- *	\brief       Supprime l'image de previsualitation, pour le cas de r�g�n�ration de facture
- *	\param	    db  		Objet base de donnee
- *	\param	    donid		Id du don
- */
-function don_delete_preview($db, $donid)
-{
-    global $langs,$conf;
-
-    $don = new Don($db);
-    $don->id=$donid;
-    $don->fetch($donid);
 }
 
 ?>

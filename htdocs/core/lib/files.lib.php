@@ -23,8 +23,9 @@
 
 /**
  *  Return user/group account of web server
- *  @param      $mode       'user' or 'group'
- *  @return     string
+ *
+ *  @param	string	$mode       'user' or 'group'
+ *  @return string				Return user or group of web server
  */
 function dol_getwebuser($mode)
 {
@@ -37,15 +38,16 @@ function dol_getwebuser($mode)
 /**
  *  Scan a directory and return a list of files/directories.
  *  Content for string is UTF8 and dir separator is "/".
- *  @param		$path        	Starting path from which to search
- *  @param		$types        	Can be "directories", "files", or "all"
- *  @param		$recursive		Determines whether subdirectories are searched
- *  @param		$filter        	Regex for include filter
- *  @param		$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')
- *  @param		$sortcriteria	Sort criteria ("","name","date","size")
- *  @param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	@param		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- *  @return		array			Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
+ *
+ *  @param	string	$path        	Starting path from which to search
+ *  @param	string	$types        	Can be "directories", "files", or "all"
+ *  @param	int		$recursive		Determines whether subdirectories are searched
+ *  @param	string	$filter        	Regex for include filter
+ *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')
+ *  @param	string	$sortcriteria	Sort criteria ("","name","date","size")
+ *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ *	@param	int		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ *  @return	array					Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
 {
@@ -152,9 +154,10 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
- * @param 	$a		File 1
- * @param 	$b		File 2
- * @return 	int		1, 0, 1
+ *
+ * @param	string 	$a		File 1
+ * @param 	string	$b		File 2
+ * @return 	int				1, 0, 1
  */
 function dol_compare_file($a, $b)
 {
@@ -186,12 +189,11 @@ function dol_compare_file($a, $b)
 /**
  *	Return mime type of a file
  *
- *	@param      file		Filename we looking for MIME type
- *  @param      default     Default mime type if extension not found in known list
- * 	@param		mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language
- *	@return     string     	Return a mime type family
- *                          (text/xxx, application/xxx, image/xxx, audio, video, archive)
- *  @see        image_format_supported (images.lib.php)
+ *	@param	string	$file		Filename we looking for MIME type
+ *  @param  string	$default    Default mime type if extension not found in known list
+ * 	@param	int		$mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language
+ *	@return string 		    	Return a mime type family (text/xxx, application/xxx, image/xxx, audio, video, archive)
+ *  @see    image_format_supported (images.lib.php)
  */
 function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 {
@@ -232,10 +234,10 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	if (preg_match('/\.mdb$/i',$tmpfile))					   { $mime='application/msaccess'; $imgmime='mdb.png'; }
 	if (preg_match('/\.doc(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; }
 	if (preg_match('/\.dot(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; }
-	if (preg_match('/\.xls(b|m|x)?$/i',$tmpfile))			   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
 	if (preg_match('/\.xlt(x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
 	if (preg_match('/\.xla(m)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
-	if (preg_match('/\.xsl(b|m|x)?$/i',$tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; }
+	if (preg_match('/\.xls$/i',$tmpfile))			           { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
+	if (preg_match('/\.xls(b|m|x)$/i',$tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; }
 	if (preg_match('/\.pps(m|x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-powerpoint'; $imgmime='ppt.png'; }
 	if (preg_match('/\.ppt(m|x)?$/i',$tmpfile))				   { $mime='application/x-mspowerpoint'; $imgmime='ppt.png'; }
 	// Other
@@ -295,10 +297,10 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 
 
 /**
- *  Test if filename is a directory
+ * Test if filename is a directory
  *
- *  @param      folder      Name of folder
- *  @return     boolean     True if it's a directory, False if not found
+ * @param	string		$folder     Name of folder
+ * @return	boolean     			True if it's a directory, False if not found
  */
 function dol_is_dir($folder)
 {
@@ -310,8 +312,8 @@ function dol_is_dir($folder)
 /**
  * Return if path is a file
  *
- * @param   $pathoffile
- * @return  boolean         True or false
+ * @param   string		$pathoffile		Path of file
+ * @return  boolean     			    True or false
  */
 function dol_is_file($pathoffile)
 {
@@ -322,8 +324,8 @@ function dol_is_file($pathoffile)
 /**
  * Return if path is an URL
  *
- * @param   $url
- * @return  boolean         True or false
+ * @param   string		$url	Url
+ * @return  boolean      	   	True or false
  */
 function dol_is_url($url)
 {
@@ -339,8 +341,8 @@ function dol_is_url($url)
 /**
  * 	Test if a folder is empty
  *
- * 	@param		folder		Name of folder
- * 	@return 	boolean		True if dir is empty or non-existing, False if it contains files
+ * 	@param	string	$folder		Name of folder
+ * 	@return boolean				True if dir is empty or non-existing, False if it contains files
  */
 function dol_dir_is_emtpy($folder)
 {
@@ -365,8 +367,9 @@ function dol_dir_is_emtpy($folder)
 
 /**
  * 	Count number of lines in a file
- * 	@param		file		Filename
- * 	@return 	int			<0 if KO, Number of lines in files if OK
+ *
+ * 	@param	string	$file		Filename
+ * 	@return int					<0 if KO, Number of lines in files if OK
  */
 function dol_count_nb_of_line($file)
 {
@@ -395,8 +398,9 @@ function dol_count_nb_of_line($file)
 
 /**
  * Return size of a file
- * @param 	$pathoffile
- * @return 	string		File size
+ *
+ * @param 	tring		$pathoffile		Path of file
+ * @return 	string						File size
  */
 function dol_filesize($pathoffile)
 {
@@ -406,8 +410,9 @@ function dol_filesize($pathoffile)
 
 /**
  * Return time of a file
- * @param 	$pathoffile
- * @return 	timestamp	Time of file
+ *
+ * @param 	string		$pathoffile		Path of file
+ * @return 	timestamp					Time of file
  */
 function dol_filemtime($pathoffile)
 {
@@ -446,11 +451,12 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 
 /**
  * Move a file into another name
- * @param   $srcfile            Source file (can't be a directory)
- * @param   $destfile           Destination file (can't be a directory)
- * @param   $newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
- * @param   $overwriteifexists  Overwrite file if exists (1 by default)
- * @return  boolean             True if OK, false if KO
+ *
+ * @param	string  $srcfile            Source file (can't be a directory)
+ * @param   string	$destfile           Destination file (can't be a directory)
+ * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
+ * @return  boolean 		            True if OK, false if KO
  */
 function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
@@ -475,18 +481,21 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 /**
  *	Move an uploaded file after some controls.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
- *	@param	src_file			Source full path filename ($_FILES['field']['tmp_name'])
- *	@param	dest_file			Target full path filename
- * 	@param	allowoverwrite		1=Overwrite target file if it already exists
- * 	@param	disablevirusscan	1=Disable virus scan
- * 	@param	uploaderrorcode		Value of upload error code ($_FILES['field']['error'])
- * 	@param	notrigger			Disable all triggers
- *	@return int         		>0 if OK, <0 or string if KO
+ *
+ *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
+ *	@param	string	$dest_file			Target full path filename
+ * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
+ * 	@param	int		$disablevirusscan	1=Disable virus scan
+ * 	@param	string	$uploaderrorcode	Value of upload error code ($_FILES['field']['error'])
+ * 	@param	int		$notrigger			Disable all triggers
+ *	@return int       			  		>0 if OK, <0 or string if KO
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0)
 {
 	global $conf, $user, $langs, $db;
 	global $object;
+
+	$error=0;
 
 	$file_name = $dest_file;
 	// If an upload error has been reported
@@ -599,24 +608,23 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		dol_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
 		return -3;	// Unknown error
 	}
-
-	return 1;
 }
 
 /**
  *  Remove a file or several files with a mask
  *
- *  @param      file            File to delete or mask of file to delete
- *  @param      disableglob     Disable usage of glob like *
- *  @param      nophperrors     Disable all PHP output errors
- *  @param		notrigger		Disable all triggers
- *  @param      triggercode     Code of trigger TODO ???? why ?
- *  @param      object          Object for trigger
- *  @return     boolean         True if file is deleted, False if error
+ *  @param	string	$file           File to delete or mask of file to delete
+ *  @param  int		$disableglob    Disable usage of glob like *
+ *  @param  int		$nophperrors    Disable all PHP output errors
+ *  @param	int		$notrigger		Disable all triggers
+ *  @param	Object	$object         Object
+ *  @return boolean         		True if file is deleted, False if error
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$triggercode='FILE_DELETE',$object=null)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$object=null)
 {
 	global $db, $conf, $user, $langs;
+
+	$error=0;
 
     //print "x".$file." ".$disableglob;
     $ok=true;
@@ -635,10 +643,11 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$trigg
                     if (! is_object($object)) $object=(object) 'dummy';
             		$object->src_file=$file;
 
+            		// TODO Replace trigger by a hook. Triggers must be used for business events only.
             		// Appel des triggers
             		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             		$interface=new Interfaces($db);
-            		$result=$interface->run_triggers($triggercode,$object,$user,$langs,$conf);
+            		$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
             		if ($result < 0) { $error++; $errors=$interface->errors; }
             		// Fin appel triggers
             	}
@@ -660,9 +669,9 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$trigg
  *  Remove a directory (not recursive, so content must be empty).
  *  If directory is not empty, return false
  *
- *  @param      dir             Directory to delete
- *  @param      nophperrors     Disable all PHP output errors
- *  @return     boolean         True if success, false if error
+ *  @param	string	$dir            Directory to delete
+ *  @param  int		$nophperrors    Disable all PHP output errors
+ *  @return boolean         		True if success, false if error
  */
 function dol_delete_dir($dir,$nophperrors=0)
 {
@@ -726,7 +735,15 @@ function dol_delete_preview($object)
 	global $langs,$conf;
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-    if ($object->element == 'commande') $dir = $conf->commande->dir_output;
+    if ($object->element == 'commande')             $dir = $conf->commande->dir_output;
+    elseif ($object->element == 'propal')           $dir = $conf->propale->dir_output;
+    elseif ($object->element == 'ficheinter')       $dir = $conf->ficheinter->dir_output;
+    elseif ($object->element == 'order_supplier')   $dir = $conf->fournisseur->dir_output.'/commande';
+    elseif ($object->element == 'invoice_supplier') $dir = $conf->fournisseur->dir_output.'/facture';
+    elseif ($object->element == 'project')          $dir = $conf->projet->dir_output;
+    elseif ($object->element == 'delivery')         $dir = $conf->livraison->dir_output;
+    elseif ($object->element == 'facture')          $dir = $conf->facture->dir_output;
+    elseif ($object->element == 'don')              $dir = $conf->don->dir_output;
     if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';
 
 	$refsan = dol_sanitizeFileName($object->ref);
@@ -760,6 +777,89 @@ function dol_delete_preview($object)
 	}
 
 	return 1;
+}
+
+/**
+ *	Create a meta file with document file into same directory.
+ *	This should allow rgrep search
+ *
+ *	@param	Object	$object		Object
+ *	@return	void
+ */
+function dol_meta_create($object)
+{
+	global $langs,$conf;
+
+	$object->fetch_thirdparty();
+
+	if ($conf->facture->dir_output)
+	{
+		$facref = dol_sanitizeFileName($object->ref);
+		$dir = $conf->facture->dir_output . "/" . $facref;
+		$file = $dir . "/" . $facref . ".meta";
+
+		if (! is_dir($dir))
+		{
+			create_exdir($dir);
+		}
+
+		if (is_dir($dir))
+		{
+			$nblignes = count($object->lines);
+			$client = $object->client->nom . " " . $object->client->address . " " . $object->client->cp . " " . $object->client->ville;
+			$meta = "REFERENCE=\"" . $object->ref . "\"
+			DATE=\"" . dol_print_date($object->date,'') . "\"
+			NB_ITEMS=\"" . $nblignes . "\"
+			CLIENT=\"" . $client . "\"
+			TOTAL_HT=\"" . $object->total_ht . "\"
+			TOTAL_TTC=\"" . $object->total_ttc . "\"\n";
+
+			for ($i = 0 ; $i < $nblignes ; $i++)
+			{
+				//Pour les articles
+				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
+				ITEM_" . $i . "_UNIT_PRICE=\"" . $object->lines[$i]->price . "\"
+				ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
+				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
+				";
+			}
+		}
+
+		$fp = fopen($file,"w");
+		fputs($fp,$meta);
+		fclose($fp);
+		if (! empty($conf->global->MAIN_UMASK))
+		@chmod($file, octdec($conf->global->MAIN_UMASK));
+	}
+}
+
+
+
+/**
+ * Init $_SESSION with uploaded files
+ *
+ * @param	string	$pathtoscan				Path to scan
+ * @return	void
+ */
+function dol_init_file_process($pathtoscan='')
+{
+	$listofpaths=array();
+	$listofnames=array();
+	$listofmimes=array();
+
+	if ($pathtoscan)
+	{
+		$listoffiles=dol_dir_list($pathtoscan,'files');
+		foreach($listoffiles as $key => $val)
+		{
+			$listofpaths[]=$val['fullname'];
+			$listofnames[]=$val['name'];
+			$listofmimes[]=dol_mimetype($val['name']);
+		}
+	}
+	$_SESSION["listofpaths"]=join(';',$listofpaths);
+	$_SESSION["listofnames"]=join(';',$listofnames);
+	$_SESSION["listofmimes"]=join(';',$listofmimes);
 }
 
 
@@ -825,10 +925,11 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 /**
  * Remove an uploaded file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
- * @param	filenb					File nb to delete
- * @param	donotupdatesession		1=Do not edit _SESSION variable
- * @param   donotdeletefile         1=Do not delete physically file
- * @return	string					Message with result of upload and store.
+ *
+ * @param	int		$filenb					File nb to delete
+ * @param	int		$donotupdatesession		1=Do not edit _SESSION variable
+ * @param   int		$donotdeletefile        1=Do not delete physically file
+ * @return	string							Message with result of upload and store.
  */
 function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=0)
 {
@@ -904,8 +1005,6 @@ function dol_convert_file($file,$ext='png')
 	{
 		return -1;
 	}
-
-	return 1;
 }
 
 

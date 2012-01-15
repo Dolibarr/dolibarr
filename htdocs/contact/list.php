@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,14 +115,13 @@ $form=new Form($db);
 
 $sql = "SELECT s.rowid as socid, s.nom,";
 $sql.= " p.rowid as cidp, p.name, p.firstname, p.poste, p.email,";
-$sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv,";
-$sql.= " p.tms,";
+$sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " cp.code as pays_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";
@@ -145,63 +144,63 @@ else
 
 if ($search_nom)        // filtre sur le nom
 {
-    $sql .= " AND p.name like '%".$db->escape($search_nom)."%'";
+    $sql .= " AND p.name LIKE '%".$db->escape($search_nom)."%'";
 }
 if ($search_prenom)     // filtre sur le prenom
 {
-    $sql .= " AND p.firstname like '%".$db->escape($search_prenom)."%'";
+    $sql .= " AND p.firstname LIKE '%".$db->escape($search_prenom)."%'";
 }
 if ($search_societe)    // filtre sur la societe
 {
-    $sql .= " AND s.nom like '%".$db->escape($search_societe)."%'";
+    $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
 }
 if (strlen($search_poste))    // filtre sur la societe
 {
-    $sql .= " AND p.poste like '%".$db->escape($search_poste)."%'";
+    $sql .= " AND p.poste LIKE '%".$db->escape($search_poste)."%'";
 }
 if (strlen($search_phone))
 {
-    $sql .= " AND (p.phone like '%".$db->escape($search_phone)."%' OR p.phone_perso like '%".$db->escape($search_phone)."%' OR p.phone_mobile like '%".$db->escape($search_phone)."%')";
+    $sql .= " AND (p.phone LIKE '%".$db->escape($search_phone)."%' OR p.phone_perso LIKE '%".$db->escape($search_phone)."%' OR p.phone_mobile LIKE '%".$db->escape($search_phone)."%')";
 }
 if (strlen($search_phoneper))
 {
-    $sql .= " AND p.phone like '%".$db->escape($search_phoneper)."%'";
+    $sql .= " AND p.phone LIKE '%".$db->escape($search_phoneper)."%'";
 }
 if (strlen($search_phonepro))
 {
-    $sql .= " AND p.phone_perso like '%".$db->escape($search_phonepro)."%'";
+    $sql .= " AND p.phone_perso LIKE '%".$db->escape($search_phonepro)."%'";
 }
 if (strlen($search_phonemob))
 {
-    $sql .= " AND p.phone_mobile like '%".$db->escape($search_phonemob)."%'";
+    $sql .= " AND p.phone_mobile LIKE '%".$db->escape($search_phonemob)."%'";
 }
 if (strlen($search_fax))
 {
-    $sql .= " AND p.fax like '%".$db->escape($search_fax)."%'";
+    $sql .= " AND p.fax LIKE '%".$db->escape($search_fax)."%'";
 }
 if (strlen($search_email))      // filtre sur l'email
 {
-    $sql .= " AND p.email like '%".$db->escape($search_email)."%'";
+    $sql .= " AND p.email LIKE '%".$db->escape($search_email)."%'";
 }
 if ($type == "o")        // filtre sur type
 {
     $sql .= " AND p.fk_soc IS NULL";
 }
-if ($type == "f")        // filtre sur type
+else if ($type == "f")        // filtre sur type
 {
-    $sql .= " AND fournisseur = 1";
+    $sql .= " AND s.fournisseur = 1";
 }
-if ($type == "c")        // filtre sur type
+else if ($type == "c")        // filtre sur type
 {
-    $sql .= " AND client IN (1, 3)";
+    $sql .= " AND s.client IN (1, 3)";
 }
-if ($type == "p")        // filtre sur type
+else if ($type == "p")        // filtre sur type
 {
-    $sql .= " AND client IN (2, 3)";
+    $sql .= " AND s.client IN (2, 3)";
 }
 if ($sall)
 {
-    $sql .= " AND (p.name like '%".$db->escape($sall)."%' OR p.firstname like '%".$db->escape($sall)."%' OR p.email like '%".$db->escape($sall)."%') ";
+    $sql .= " AND (p.name LIKE '%".$db->escape($sall)."%' OR p.firstname LIKE '%".$db->escape($sall)."%' OR p.email LIKE '%".$db->escape($sall)."%')";
 }
 if ($socid)
 {
@@ -406,7 +405,7 @@ if ($result)
 
     print '</form>';
 
-    if ($num > $limit) print_barre_liste('', $page, "index.php", '&amp;begin='.$begin.'&amp;view='.$view.'&amp;userid='.$_GET["userid"], $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+    if ($num > $limit) print_barre_liste('', $page, $_SERVER["PHP_SELF"], '&amp;begin='.$begin.'&amp;view='.$view.'&amp;userid='.$_GET["userid"], $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
     $db->free($result);
 }

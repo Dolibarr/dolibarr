@@ -71,7 +71,7 @@ class CommandeFournisseur extends Commande
 
 
     /**  Constructeur
-     *   @param      DB      Handler d'acces aux bases de donnees
+     *   @param      DoliDB		$DB      Handler d'acces aux bases de donnees
      */
     function CommandeFournisseur($DB)
     {
@@ -94,9 +94,10 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Get object and lines from database
-     * 	@param		id			Id of order to load
-     * 	@param		ref			Ref of object
-     *	@return     int         >0 if OK, <0 if KO
+     *
+     * 	@param	int		$id			Id of order to load
+     * 	@param	string	$ref		Ref of object
+     *	@return int 		        >0 if OK, <0 if KO
      */
     function fetch($id,$ref='')
     {
@@ -238,11 +239,11 @@ class CommandeFournisseur extends Commande
 
     /**
      *   Add a line in log table
-     *   @param      user        User making action
-     *   @param      statut      Status of order
-     *   @param      datelog     Date of change
-     * 	 @param		 comment	 Comment
-     *   @return     int         <0 if KO, >0 if OK
+     *   @param      User	$user       User making action
+     *   @param      int	$statut     Status of order
+     *   @param      date	$datelog    Date of change
+     * 	 @param		 string $comment	Comment
+     *   @return     int         		<0 if KO, >0 if OK
      */
     function log($user, $statut, $datelog, $comment='')
     {
@@ -267,7 +268,9 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Validate an order
-     *	@param		user		Utilisateur qui valide
+     *
+     *	@param	User	$user		Validator User
+     *	@return	int					<0 if KO, >0 if OK
      */
     function valid($user)
     {
@@ -377,10 +380,13 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Set draft status
-     *	@param		user		Object user that modify
-     *	@return		int			<0 if KO, >0 if OK
+     *  TODO This method seems to be never called.
+     *
+     *	@param	User	$user			Object user that modify
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user)
+    function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
 
@@ -420,8 +426,7 @@ class CommandeFournisseur extends Commande
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
-                        $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -465,9 +470,10 @@ class CommandeFournisseur extends Commande
 
     /**
      *  Return label of a status
-     * 	@param      statut		Id statut
-     *  @param      mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
-     *  @return     string		Label of status
+     *  
+     * 	@param      int		$statut		Id statut
+     *  @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+     *  @return     string				Label of status
      */
     function LibStatut($statut,$mode=0)
     {
@@ -535,9 +541,10 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Renvoie nom clicable (avec eventuellement le picto)
-     *	@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *	@param		option			Sur quoi pointe le lien
-     *	@return		string			Chaine avec URL
+     *
+     *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@param		string	$option			Sur quoi pointe le lien
+     *	@return		string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$option='')
     {
@@ -561,7 +568,8 @@ class CommandeFournisseur extends Commande
     /**
      *  Renvoie la reference de commande suivante non utilisee en fonction du modele
      *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON
-     *  @param	    soc  		            objet societe
+     *                  
+     *  @param	    Societe		$soc  		objet societe
      *  @return     string                  reference libre pour la facture
      */
     function getNextNumRef($soc)
@@ -612,16 +620,18 @@ class CommandeFournisseur extends Commande
 
     /**
      * 	Accept an order
-     *	@param		user		Object user
-     *	@return		int			<0 if KO, >0 if OK
+     *
+     *	@param	User	$user			Object user
+     *	@param	int		$idwarehouse	Id of warhouse for stock change
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function approve($user)
+    function approve($user, $idwarehouse=0)
     {
         global $langs,$conf;
 
         $error=0;
 
-        dol_syslog("CommandeFournisseur::Approve");
+        dol_syslog(get_class($this)."::Approve");
 
         if ($user->rights->fournisseur->commande->approuver)
         {
@@ -632,30 +642,29 @@ class CommandeFournisseur extends Commande
 
             if ($this->db->query($sql))
             {
-                $result = 0;
                 $this->log($user, 2, time());	// Statut 2
 
                 // If stock is incremented on validate order, we must increment it
-                if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)
+                if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)
                 {
                     require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                    $langs->load("agenda");
 
-                    $num=count($this->lines);
-                    for ($i = 0; $i < $num; $i++)
+                    $cpt=count($this->lines);
+                    for ($i = 0; $i < $cpt; $i++)
                     {
                         // Product with reference
                         if ($this->lines[$i]->fk_product > 0)
                         {
                             $mouvP = new MouvementStock($this->db);
                             // We decrement stock of product (and sub-products)
-                            $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderApprovedInDolibarr",$this->ref));
                             if ($result < 0) { $error++; }
                         }
                     }
                 }
 
-                if ($error == 0)
+                if (! $error)
                 {
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -665,7 +674,7 @@ class CommandeFournisseur extends Commande
                     // Fin appel triggers
                 }
 
-                if ($error == 0)
+                if (! $error)
                 {
                     $this->db->commit();
                     return 1;
@@ -694,12 +703,16 @@ class CommandeFournisseur extends Commande
 
     /**
      * 	Refuse an order
-     * 	@param		user		User making action
+     * 
+     * 	@param		User	$user		User making action
+     *	@return		int					0 if Ok, <0 if Ko
      */
     function refuse($user)
     {
         global $conf, $langs;
 
+		$error=0;
+		
         dol_syslog("CommandeFournisseur::Refuse");
         $result = 0;
         if ($user->rights->fournisseur->commande->approuver)
@@ -738,12 +751,16 @@ class CommandeFournisseur extends Commande
     /**
      * 	Cancel an approved order.
      *	L'annulation se fait apres l'approbation
-     * 	@param		user		User making action
+     *
+     * 	@param		User	$user		User making action
+     * 	@return		int					>0 if Ok, <0 if Ko
      */
     function Cancel($user)
     {
         global $langs,$conf;
 
+		$error=0;
+		
         //dol_syslog("CommandeFournisseur::Cancel");
         $result = 0;
         if ($user->rights->fournisseur->commande->commander)
@@ -797,10 +814,10 @@ class CommandeFournisseur extends Commande
 
     /**
      * 	Send a supplier order to supplier
-     * 	@param		user		User making change
-     * 	@param		date		Date
-     * 	@param		methode		Method
-     * 	@param		comment		Comment
+     * 	@param		User	$user		User making change
+     * 	@param		date	$date		Date
+     * 	@param		int		$methode	Method
+     * 	@param		string	$comment	Comment
      * 	@return		int			<0 if KO, >0 if OK
      */
     function commande($user, $date, $methode, $comment='')
@@ -833,15 +850,16 @@ class CommandeFournisseur extends Commande
 
     /**
      *      Create order with draft status
-     *      @param      user        User making creation
-     *      @return     int         <0 if KO, Id of supplier order if OK
+     *      @param      User	$user       User making creation
+     *      @return     int         		<0 if KO, Id of supplier order if OK
      */
     function create($user)
     {
         global $langs,$conf;
 
         $this->db->begin();
-
+	
+		$error=0;
         $now=dol_now();
 
         /* On positionne en mode brouillon la commande */
@@ -913,22 +931,23 @@ class CommandeFournisseur extends Commande
 
     /**
      *	Add order line
-     *	@param      desc            	Description
-     *	@param      pu_ht              	Unit price
-     *	@param      qty             	Quantity
-     *	@param      txtva           	Taux tva
-     *	@param      txlocaltax1        	Localtax1 tax
-     *  @param      txlocaltax2        	Localtax2 tax
-     *	@param      fk_product      	Id produit
-     *  @param      fk_prod_fourn_price	Id supplier price
-     *  @param      fourn_ref			Supplier reference
-     *	@param      remise_percent  	Remise
-     *	@param      price_base_type		HT or TTC
-     *	@param		pu_ttc				Unit price TTC
-     *	@param		type				Type of line (0=product, 1=service)
-     *	@return     int             	<=0 if KO, >0 if OK
+     *
+     *	@param      string	$desc            		Description
+     *	@param      double	$pu_ht              	Unit price
+     *	@param      double	$qty             		Quantity
+     *	@param      double	$txtva           		Taux tva
+     *	@param      double	$txlocaltax1        	Localtax1 tax
+     *  @param      double	$txlocaltax2        	Localtax2 tax
+     *	@param      int		$fk_product      		Id produit
+     *  @param      int		$fk_prod_fourn_price	Id supplier price
+     *  @param      string	$fourn_ref				Supplier reference
+     *	@param      double	$remise_percent  		Remise
+     *	@param      string	$price_base_type		HT or TTC
+     *	@param		double	$pu_ttc					Unit price TTC
+     *	@param		int		$type					Type of line (0=product, 1=service)
+     *	@return     int             				<=0 if KO, >0 if OK
      */
-    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0)
+    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0, $info_bits=0)
     {
         global $langs,$mysoc;
 
@@ -1074,13 +1093,14 @@ class CommandeFournisseur extends Commande
 
     /**
      * Add a product into a stock warehouse.
-     * @param 	$user		User object making change
-     * @param 	$product	Id of product to dispatch
-     * @param 	$qty		Qty to dispatch
-     * @param 	$entrepot	Id of warehouse to add product
-     * @param 	$price		Price for PMP value calculation
-     * @param	$comment	Comment for stock movement
-     * @return 	int			<0 if KO, >0 if OK
+     *
+     * @param 	User		$user		User object making change
+     * @param 	int			$product	Id of product to dispatch
+     * @param 	double		$qty		Qty to dispatch
+     * @param 	int			$entrepot	Id of warehouse to add product
+     * @param 	double		$price		Price for PMP value calculation
+     * @param	string		$comment	Comment for stock movement
+     * @return 	int						<0 if KO, >0 if OK
      */
     function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='')
     {
@@ -1127,7 +1147,6 @@ class CommandeFournisseur extends Commande
                         $error++;
                     }
                 }
-                $i++;
             }
 
             if ($error == 0)
@@ -1150,7 +1169,9 @@ class CommandeFournisseur extends Commande
 
     /**
      * 	Delete line
-     *	@param		idligne
+     *
+     *	@param	int		$idligne	Id of line to delete
+     *	@return						0 if Ok, <0 ik Ko
      */
     function deleteline($idligne)
     {
@@ -1159,7 +1180,7 @@ class CommandeFournisseur extends Commande
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idligne;
             $resql=$this->db->query($sql);
 
-            dol_syslog("Fournisseur.commande.class::deleteline sql=".$sql);
+            dol_syslog(get_class($this)."::deleteline sql=".$sql);
             if ($resql)
             {
                 $result=$this->update_price();
@@ -1178,14 +1199,16 @@ class CommandeFournisseur extends Commande
     }
 
     /**
-     * 		Delete an order
-     *		@return		int		<0 if KO, >0 if OK
+     *  Delete an order
+     *
+     *	@param	User	$user		Object user
+     *	@return	int					<0 if KO, >0 if OK
      */
-    function delete()
+    function delete($user='')
     {
         global $langs,$conf;
 
-        $err = 0;
+        $error = 0;
 
         $this->db->begin();
 
@@ -1193,7 +1216,7 @@ class CommandeFournisseur extends Commande
         dol_syslog("FournisseurCommande::delete sql=".$sql, LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
-            $err++;
+            $error++;
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
@@ -1202,15 +1225,15 @@ class CommandeFournisseur extends Commande
         {
             if ($this->db->affected_rows($resql) < 1)
             {
-                $err++;
+                $error++;
             }
         }
         else
         {
-            $err++;
+            $error++;
         }
 
-        if ($err == 0)
+        if ($error == 0)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1231,7 +1254,9 @@ class CommandeFournisseur extends Commande
     }
 
     /**
-     *	Return list of order methods
+     *	Get list of order methods
+     *	
+     *	@return 0 if Ok, <0 if Ko
      */
     function get_methodes_commande()
     {
@@ -1263,8 +1288,9 @@ class CommandeFournisseur extends Commande
 
     /**
      *  Change les conditions de reglement de la commande
-     *  @param      cond_reglement_id      Id de la nouvelle condition de reglement
-     *  @return     int                    >0 si ok, <0 si ko
+     *  
+     *  @param      int		$cond_reglement_id      Id de la nouvelle condition de reglement
+     *  @return     int                    			>0 si ok, <0 si ko
      */
     function cond_reglement($cond_reglement_id)
     {
@@ -1296,8 +1322,9 @@ class CommandeFournisseur extends Commande
 
     /**
      *  Change le mode de reglement
-     *  @param      mode_reglement_id        Id du nouveau mode
-     *  @return     int         			>0 if OK, <0 if KO
+     *  
+     *  @param      int		$mode_reglement_id      Id du nouveau mode
+     *  @return     int         					>0 if OK, <0 if KO
      */
     function mode_reglement($mode_reglement_id)
     {
@@ -1329,10 +1356,11 @@ class CommandeFournisseur extends Commande
 
     /**
      * 	Set a delivery in database for this supplier order
-     *	@param		user		User that input data
-     *	@param		date		Date of reception
-     *	@param		type		Type of receipt
-     *	@param		comment		Comment
+     * 
+     *	@param		User	$user		User that input data
+     *	@param		date	$date		Date of reception
+     *	@param		string	$type		Type of receipt
+     *	@param		string	$comment	Comment
      */
     function Livraison($user, $date, $type, $comment)
     {
@@ -1389,9 +1417,9 @@ class CommandeFournisseur extends Commande
 
     /**
      *  Cree la commande depuis une propale existante
-     *  @param      user            Utilisateur qui cree
-     *  @param      idc				Id de la propale qui sert de modele
-     *  @param		comclientid		Id thirdparty
+     *  @param      User	$user           Utilisateur qui cree
+     *  @param      int		$idc			Id de la propale qui sert de modele
+     *  @param		int		$comclientid	Id thirdparty
      */
     function updateFromCommandeClient($user, $idc, $comclientid)
     {
@@ -1435,6 +1463,7 @@ class CommandeFournisseur extends Commande
      *	@param		string		$note			Private note
      *	@param		string		$note_public	Public note
      *	@return		int							<0 if KO, >=0 if OK
+     *
      *	TODO Use instead update_note_public and update_note
      */
     function UpdateNote($user, $note, $note_public)
@@ -1506,9 +1535,10 @@ class CommandeFournisseur extends Commande
 
     /**
      *  Tag order with a particular status
-     *  @param      user        Object user that change status
-     *  @param      status		New status
-     *  @return     int         <0 if KO, >0 if OK
+     *  
+     *  @param      User	$user       Object user that change status
+     *  @param      int		$status		New status
+     *  @return     int         		<0 if KO, >0 if OK
      */
     function setStatus($user,$status)
     {
@@ -1549,18 +1579,18 @@ class CommandeFournisseur extends Commande
     /**
      *	Update line
      *
-     *	@param     	rowid           Id de la ligne de facture
-     *	@param     	desc            Description de la ligne
-     *	@param     	pu              Prix unitaire
-     *	@param     	qty             Quantity
-     *	@param     	remise_percent  Pourcentage de remise de la ligne
-     *	@param     	tva_tx          Taux TVA
-     *  @param     	localtax1	    Localtax1 tax
-     *  @param     	localtax2   	Localtax2 tax
-     *  @param     	price_base_type Type of price base
-     *	@param		info_bits		Miscellanous informations
-     *	@param		type			Type of line (0=product, 1=service)
-     *	@return    	int             < 0 if error, > 0 if ok
+     *	@param     	int		$rowid           	Id de la ligne de facture
+     *	@param     	string	$desc            	Description de la ligne
+     *	@param     	double	$pu              	Prix unitaire
+     *	@param     	double	$qty             	Quantity
+     *	@param     	double	$remise_percent  	Pourcentage de remise de la ligne
+     *	@param     	double	$tva_tx          	Taux TVA
+     *  @param     	double	$localtax1	    	Localtax1 tax
+     *  @param     	double	$localtax2   		Localtax2 tax
+     *  @param     	double	$price_base_type 	Type of price base
+     *	@param		int		$info_bits			Miscellanous informations
+     *	@param		int		$type				Type of line (0=product, 1=service)
+     *	@return    	int             			< 0 if error, > 0 if ok
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0)
     {
@@ -1621,10 +1651,10 @@ class CommandeFournisseur extends Commande
             $sql.= ",localtax1_tx='".price2num($txlocaltax1)."'";
             $sql.= ",localtax2_tx='".price2num($txlocaltax2)."'";
             $sql.= ",qty='".price2num($qty)."'";
-            if ($date_end) { $sql.= ",date_start='$date_end'"; }
+            /*if ($date_end) { $sql.= ",date_start='$date_end'"; }
             else { $sql.=',date_start=null'; }
             if ($date_end) { $sql.= ",date_end='$date_end'"; }
-            else { $sql.=',date_end=null'; }
+            else { $sql.=',date_end=null'; }*/
             $sql.= ",info_bits='".$info_bits."'";
             $sql.= ",total_ht='".price2num($total_ht)."'";
             $sql.= ",total_tva='".price2num($total_tva)."'";
@@ -1750,10 +1780,10 @@ class CommandeFournisseur extends Commande
     }
 
     /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
-     *      @param          user    Objet user
-     *      @return         int     <0 if KO, >0 if OK
+     *	@param          User	$user   Objet user
+     *	@return         int    			<0 if KO, >0 if OK
      */
     function load_board($user)
     {
@@ -1889,6 +1919,7 @@ class CommandeFournisseurLigne extends OrderLine
 
     /**
      *  Mise a jour de l'objet ligne de commande en base
+     *  
      *  @return		int		<0 si ko, >0 si ok
      */
     function update_total()

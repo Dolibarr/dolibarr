@@ -167,7 +167,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->Output($_file,'F');
 		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
+			@chmod($_file, octdec($conf->global->MAIN_UMASK));
 
         $outputlangs->charset_output=$sav_charset_output;
 	    return 1;   // Pas d'erreur
@@ -359,7 +359,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
 		$nbofline=dol_nboflines_bis($line,0,$outputlangs->charset_output);
 		//print 'e'.$line.'t'.dol_nboflines($line);exit;
-		$posy=$marge_basse + ($nbofline*3) + ($line1?3:0) + ($line2?3:0);
+		$posy=$marge_basse + ($nbofline*3);
 
 		if ($line)	// Free text
 		{
@@ -372,7 +372,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
 		$posy--;
 
-		if ($line1)
+		/*if ($line1)
 		{
 			$pdf->SetXY($marge_gauche,-$posy);
 			$pdf->MultiCell(200, 2, $line1, 0, 'C', 0);
@@ -383,7 +383,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$posy-=3;
 			$pdf->SetXY($marge_gauche,-$posy);
 			$pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
-		}
+		}*/
 
         // Show page nb only on iso languages (so default Helvetica font)
         if (pdf_getPDFFont($outputlangs) == 'Helvetica')

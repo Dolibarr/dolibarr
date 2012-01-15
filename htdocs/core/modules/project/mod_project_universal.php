@@ -47,7 +47,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$langs->load("projects");
 		$langs->load("admin");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -56,7 +56,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$texte.= '<input type="hidden" name="maskconstproject" value="PROJECT_UNIVERSAL_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Project"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Project"),$langs->transnoentities("Project"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Project"),$langs->transnoentities("Project"));

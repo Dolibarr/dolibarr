@@ -1,33 +1,37 @@
 <?php
+/* Copyright (C) 2007-2008	Jeremie Ollivier	<jeremie.o@laposte.net>
+ * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 $langs->load("main");
+
 ?>
-<!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
-	Copyright (C) 2011 		Juanjo Menent	 <jmenent@2byte.es>
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
--->
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Summary"); ?></legend>
 
 	<table class="table_resume">
 
 		<tr><td class="resume_label"><?php echo $langs->trans("Invoice"); ?></td><td><?php  echo $obj_facturation->num_facture(); ?></td></tr>
-		<tr><td class="resume_label"><?php echo $langs->trans("TotalHT"); ?></td><td><?php echo price2num($obj_facturation->prix_total_ht(),'MT').' '.$conf->monnaie; ?></td></tr>
+		<tr><td class="resume_label"><?php echo $langs->trans("TotalHT"); ?></td><td><?php echo price2num($obj_facturation->prix_total_ht(),'MT').' '.$conf->currency; ?></td></tr>
 		<?php
 			// Affichage de la tva par taux
 			if ( $obj_facturation->montant_tva() ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price2num($obj_facturation->montant_tva(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price2num($obj_facturation->montant_tva(),'MT').' '.$conf->currency.'</td></tr>');
 
 			}
 			else
@@ -37,10 +41,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 			}
 		?>
-		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->monnaie; ?></td></tr>
+		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->currency; ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
 		<?php
-		switch ($obj_facturation->mode_reglement())
+		switch ($obj_facturation->getSetPaymentMode())
 		{
 			case 'ESP':
 				echo $langs->trans("Cash");
@@ -75,20 +79,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 		<?php
 			// Affichage des infos en fonction du mode de paiement
-			if ( $obj_facturation->mode_reglement() == 'DIF' ) {
+			if ( $obj_facturation->getsetPaymentMode() == 'DIF' ) {
 
 				echo ('<tr><td class="resume_label">'.$langs->trans("DateEcheance").'</td><td>'.$obj_facturation->paiement_le().'</td></tr>');
 
 			} else {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price2num($obj_facturation->montant_encaisse(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price2num($obj_facturation->montant_encaisse(),'MT').' '.$conf->currency.'</td></tr>');
 
 			}
 
 			// Affichage du montant rendu (reglement en especes)
 			if ( $obj_facturation->montant_rendu() ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price2num($obj_facturation->montant_rendu(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price2num($obj_facturation->montant_rendu(),'MT').' '.$conf->currency.'</td></tr>');
 
 			}
 
@@ -101,8 +105,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<p class="note_label">
 			<?php
 				echo $langs->trans("BankToPay"). "<br>";
-				$html = new Form($db);
-				$html->select_comptes($selected,'cashdeskbank',0,$filtre);
+				$form = new Form($db);
+				$form->select_comptes($selected,'cashdeskbank',0,$filtre);
 			?>
 		</p>
 		<p class="note_label"><?php echo $langs->trans("Notes"); ?><br><textarea class="textarea_note" name="txtaNotes"></textarea></p>

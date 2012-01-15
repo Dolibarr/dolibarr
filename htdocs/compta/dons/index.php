@@ -87,7 +87,7 @@ print "</tr>\n";
 $listofstatus=array(0,1,-1,2);
 foreach ($listofstatus as $status)
 {
-    $dataseries[]=array('label'=>$donstatic->LibStatut($status,1),'values'=>array(0=>(isset($nb[$status])?$nb[$status]:0)));
+    $dataseries[]=array('label'=>$donstatic->LibStatut($status,1),'data'=>(isset($nb[$status])?(int) $nb[$status]:0));
 }
 
 if ($conf->use_javascript_ajax)

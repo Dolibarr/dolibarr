@@ -36,6 +36,7 @@ if (!$user->admin)
 
 $action=GETPOST("action");
 
+// Shipment note
 if ($action == 'activate_sending')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
@@ -48,11 +49,13 @@ else if ($action == 'disable_sending')
     Header("Location: confexped.php");
     exit;
 }
+// Delivery note
 else if ($action == 'activate_delivery')
 {
-			dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
-			Header("Location: confexped.php");
-			exit;
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);    // We must also enable this
+    dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
+	Header("Location: confexped.php");
+	exit;
 }
 else if ($action == 'disable_delivery')
 {
@@ -66,7 +69,7 @@ else if ($action == 'disable_delivery')
  * Affiche page
  */
 $dir = DOL_DOCUMENT_ROOT."/core/modules/expedition/";
-$html=new Form($db);
+$form=new Form($db);
 
 llxHeader("","");
 

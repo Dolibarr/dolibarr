@@ -357,10 +357,11 @@ class pdf_standard {
 
 
 	/**
-	 *		\brief      Function to build PDF on disk, then output on HTTP strem.
-	 *		\param	    arrayofmembers	Array of members informations
-	 *		\param		outputlangs		Lang object for output language
-	 *		\return	    int     		1=ok, 0=ko
+	 *	Function to build PDF on disk, then output on HTTP strem.
+	 *
+	 *	@param	    arrayofmembers	Array of members informations
+	 *	@param		outputlangs		Lang object for output language
+	 *	@return	    int     		1=ok, 0=ko
 	 */
 	function write_file($arrayofmembers,$outputlangs)
 	{
@@ -457,7 +458,7 @@ class pdf_standard {
 		$filename='tmpcards.pdf';
 		$type=dol_mimetype($filename);
 
-		if ($encoding)   header('Content-Encoding: '.$encoding);
+		//if ($encoding)   header('Content-Encoding: '.$encoding);
 		if ($type)       header('Content-Type: '.$type);
 		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 		else header('Content-Disposition: inline; filename="'.$filename.'"');

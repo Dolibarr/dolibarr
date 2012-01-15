@@ -168,7 +168,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
 	{
 		if ($atleastonerpm && ! $ENV{"DESTI"})
 		{
-			print "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell package it must create subdirs for each package.\n";
+			print "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell packager where it can create subdirs for each generated package.\n";
 			exit;
 		}
 		$atleastonerpm=1;			
@@ -259,9 +259,10 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
+	    $ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/default.properties`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/git2cvs.sh`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/README.md`;
         
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
@@ -290,15 +291,19 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README`;
 
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/codesniffer`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/fpdf`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdata`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpcheckstyle`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpunit`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/security`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/flyer`;
@@ -318,8 +323,7 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/tshirt`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom2`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 	    #$ret=`rm -fr $BUILDROOT/$PROJECT/build/deb/po/CVS*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
@@ -327,17 +331,11 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.svn $BUILDROOT/$PROJECT/*/.svn $BUILDROOT/$PROJECT/*/*/.svn $BUILDROOT/$PROJECT/*/*/*/.svn $BUILDROOT/$PROJECT/*/*/*/*/.svn`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore $BUILDROOT/$PROJECT/*/.gitignore $BUILDROOT/$PROJECT/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.gitignore`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/fonts/AerialMono*.ttf`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/fonts/Tymes*.ttf`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/fonts/Veranda*.ttf`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode`;
    	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/fckeditor`;
    	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/jquery.js`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/jquery.min.js`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jcrop/js/jquery.min.js`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/datatables`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/lightbox`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jstree`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/license.txt`;
@@ -346,8 +344,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-20100919`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/free*.ctg.z`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/free*.z`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/langs/*/html`;
 		# Removed because not stable yet
@@ -440,7 +436,8 @@ if ($nboftargetok) {
     		next;
     	}
     
-    	if ($target =~ /RPM/) {                 # Linux only
+    	if ($target =~ /RPM/)	                 # Linux only 
+    	{
     		$NEWDESTI=$DESTI;
     		$subdir="package_rpm_generic";
     		if ($target =~ /FEDO/i) { $subdir="package_rpm_redhat-fedora"; }
@@ -479,65 +476,6 @@ if ($nboftargetok) {
             print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2\n";
     		$cmd="cp -pr '$BUILDROOT/$PROJECT' '$BUILDROOT/$FILENAMETGZ2'";
             $ret=`$cmd`;
-			
-#			print "Fix filefunc.inc.php, install/inc.php, support/inc.php\n";
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/filefunc.inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/filefunc.inc.php\"";
-#			$ret=`$cmd`;
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/install/inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/install/inc.php\"";
-#			$ret=`$cmd`;
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/support/inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$FILENAMETGZ2/htdocs/support/inc.php\"";
-#			$ret=`$cmd`;
-				
- 			#print "Remove other files\n";
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/ChangeLog`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/COPYING`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/INSTALL`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/README`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/README-FR`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/README`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/README-FR`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/aps`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/deb`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/dmg`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/pad/README`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/tgz/README`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/deb/README`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/doap`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/exe`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/live`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/patch`;
-	        #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/rpm/conf.php`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/zip`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/perl`;
-            # We remove embedded libraries or fonts
-            #if ($target !~ /GENE/i) 
-            #{            
-			#	$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/artichow/font`,
-			#	$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/fonts`,
-            #}
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip`;
-            #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip/gnu-lgpl.txt`;
-
-			# Conf files
-    		#print "Copy config files into $BUILDROOT/$FILENAMETGZ2/etc/$PROJECT\n";
-    		#$ret=`mkdir -p "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT"`;
-    		#$ret=`cp "$SOURCE/build/rpm/httpd-dolibarr.conf" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/apache.conf"`;
-    		#$ret=`cp "$SOURCE/build/rpm/file_contexts.dolibarr" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/file_contexts.dolibarr"`;
-    		#$ret=`cp "$SOURCE/build/rpm/conf.php" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/conf.php"`;
-    		#$installfile="install.forced.php.generic";
-    		#if ($target =~ /FEDO/i) { $installfile="install.forced.php.fedora"; }
-    		#if ($target =~ /MAND/i) { $installfile="install.forced.php.mandriva"; }
-    		#if ($target =~ /OPEN/i) { $installfile="install.forced.php.opensuse"; }
-    		#$ret=`cp "$SOURCE/build/rpm/$installfile" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/install.forced.php"`;
 
 			# Set owners
             print "Set owners on files/dir\n";
@@ -547,18 +485,6 @@ if ($nboftargetok) {
 		    $ret=`chmod -R 755 $BUILDROOT/$FILENAMETGZ2`;
 		    $cmd="find $BUILDROOT/$FILENAMETGZ2 -type f -exec chmod 644 {} \\; ";
             $ret=`$cmd`;
-            #$cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build -name '*.php' -type f -exec chmod 755 {} \\; ";
-            #$ret=`$cmd`;
-            #$cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
-            #$ret=`$cmd`;
-            #$cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
-            #$ret=`$cmd`;
-            #$ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/translation/langAutoParser.class.php`;
-            #$ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/skeletons/skeleton_page.php`;
-            #$ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/skeletons/modMyModule.class.php`;
-            #$ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/skeletons/skeleton_class.class.php`;
-            #$cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
-            #$ret=`$cmd`;
 
 			# Build tgz
     		print "Compress $FILENAMETGZ2 into $FILENAMETGZ2.tgz...\n";
@@ -626,6 +552,8 @@ if ($nboftargetok) {
             $build = $newbuild;
             $build =~ s/-.*$//g;
 			# now build is 0 for example
+			$build .= '+nmu1';
+			# now build is 0+nmu1 for example
 			
     		print "Remove target ${FILENAMEDEB}_all.deb...\n";
     		unlink("$NEWDESTI/${FILENAMEDEB}_all.deb");
@@ -671,7 +599,7 @@ if ($nboftargetok) {
             $ret=`cp -f  "$SOURCE/build/deb/postinst"         "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
             $ret=`cp -f  "$SOURCE/build/deb/postrm"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
             $ret=`cp -f  "$SOURCE/build/deb/templates"        "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`cp -fr "$SOURCE/build/deb/po"              "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -fr "$SOURCE/build/deb/po"               "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
             $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/DEBIAN/po/CVS*"`;
             
             print "Edit version in file $BUILDROOT/$PROJECT.tmp/DEBIAN/control\n";
@@ -726,9 +654,10 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/rpm`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/zip`;
             # We remove embedded libraries or fonts
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/artichow/font`,
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/fonts`,
+	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/ckeditor`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/fonts`,
 	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/geoip`;
+	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/nusoap`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip`;
 
 			# Apache and lighttpd conf files
@@ -776,13 +705,14 @@ if ($nboftargetok) {
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/translation/langAutoParser.class.php`;
-            $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/skeletons/skeleton_page.php`;
             $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/skeletons/modMyModule.class.php`;
             $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/skeletons/skeleton_class.class.php`;
+            $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/skeletons/skeleton_page.php`;
+            $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/skeletons/skeleton_webservice_server.php`;
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             
-             # Creation of binary package (to build without sources)
+            # Creation of binary package (to build without sources)
      		#print "Go to directory $BUILDROOT\n";
      		#chdir("$BUILDROOT");
     		#$cmd="dpkg -b $BUILDROOT/$PROJECT.tmp $BUILDROOT/${FILENAMEDEB}_all.deb";
@@ -839,7 +769,8 @@ if ($nboftargetok) {
         	next;
         }
         
-    	if ($target eq 'APS') {
+    	if ($target eq 'APS') 
+    	{
 			$NEWDESTI=$DESTI;
 			if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; } 
 			

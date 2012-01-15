@@ -1,0 +1,50 @@
+
+This file describe changes made on external library after beeing included
+in Dolibarr root.
+
+
+
+ALL:
+----
+Replace "& new" by "new"
+
+
+
+NUSOAP:
+-------
+* In file nusoap.php, to avoid a warning,
+Replace
+	if (isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
+By
+	if (! is_array($this->methodreturn) && isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
+
+* In file nusoap.php, to avoid a warning,
+Replace call to serialize_val with no bugged value
+
+
+
+TCPDF:
+------
+* To be compatible with FPDF, replace line
+public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0, $valign='T', $fitcell=false) {
+by
+public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=false, $maxh=0, $valign='T', $fitcell=false) {
+
+* Removed all fonts except dejavu* (greek, arab, persan, romanian, turkish), freemono* (russian), stsongstdlight* (chinese), helvetica* (all other) and useless directories (fonts/utils, docs, cache, images)
+
+* Replace in tcpdf_config.php
+define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
+with
+define ('K_PATH_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+dol_mkdir(K_PATH_CACHE);
+
+
+JSGANTT:
+--------
+* Replace in function JSGantt.taskLink
+var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+with
+// LDR To open in same window
+//var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+window.location.href=pRef
+* Replace hard coded string with i18n["String"];

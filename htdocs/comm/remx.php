@@ -32,6 +32,8 @@ $langs->load("orders");
 $langs->load("bills");
 $langs->load("companies");
 
+$action=GETPOST('action');
+
 // Security check
 $socid = GETPOST("id");
 if ($user->societe_id > 0)
@@ -50,7 +52,7 @@ if (GETPOST('cancel') && GETPOST('backtopage'))
      exit;
 }
 
-if (GETPOST("action") == 'confirm_split' && GETPOST("confirm") == 'yes')
+if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -127,7 +129,7 @@ if (GETPOST("action") == 'confirm_split' && GETPOST("confirm") == 'yes')
 	}
 }
 
-if (GETPOST("action") == 'setremise')
+if ($action == 'setremise')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -145,13 +147,13 @@ if (GETPOST("action") == 'setremise')
 		{
 			$soc = new Societe($db);
 			$soc->fetch($_GET["id"]);
-			$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
+			$discountid=$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
 
-			if ($result > 0)
+			if ($discountid > 0)
 			{
 			    if (GETPOST("backtopage"))
 			    {
-			        Header("Location: ".GETPOST("backtopage"));
+			        Header("Location: ".GETPOST("backtopage").'&discountid='.$discountid);
 			        exit;
 			    }
 				else
@@ -256,17 +258,17 @@ if ($socid > 0)
 	}
 
 	print '<tr><td width="38%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
-	print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT").'</td></tr>';
+	print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT").'</td></tr>';
+	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 	print '</table>';
 	print '<br>';
 
 	print_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
 	print '<table class="border" width="100%">';
 	print '<tr><td width="38%">'.$langs->trans("AmountHT").'</td>';
-	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
 	print '<td>';
 	print $form->load_tva('tva_tx',GETPOST('tva_tx'),'',$mysoc,'');
@@ -390,7 +392,7 @@ if ($socid > 0)
 				array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 				);
 				$langs->load("dict");
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$obj->rowid, $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($obj->amount_ttc),$langs->transnoentities("Currency".$conf->monnaie)), 'confirm_split', $formquestion, 0, 0);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$obj->rowid, $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($obj->amount_ttc),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
 				print '</td>';
 				print '</tr>';
 			}

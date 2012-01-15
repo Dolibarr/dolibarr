@@ -30,31 +30,38 @@ if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 
 require_once("../main.inc.php");
-require_once(ARTICHOW_PATH.'Artichow.cfg.php');
-require_once(ARTICHOW.'/AntiSpam.class.php');
 
-$object = new AntiSpam();
 
-// Value of image will contains 5 characters
-$value=$object->setRand(5);
-$object->setSize(128,36);
+/*
+ * View
+ */
 
-// Set value in session variable dol_antispam_value
-$object->save('dol_antispam_value');
+$length=5;
+$letters = 'aAbBCDeEFgGhHJKLmMnNpPqQRsStTuVwWXYZz2345679';
+$number = strlen($letters);
+$string = '';
+for($i = 0; $i < $length; $i++)
+{
+    $string .= $letters{mt_rand(0, $number - 1)};
+}
+//print $string;
 
-$object->setNoise(0);
-$object->setAntiAliasing(false);
 
-$colorbg1=new Color(250,250,250);
-$colorbg2=new Color(230,220,210);
-$colorfg=new Color(100,100,100);
-$colorbr=new Color(220,210,200);
-$colorra=new LinearGradient($colorbg1,$colorbg2,90);
-//$object->setBackgroundColor($colorbg);
-$object->setBackgroundGradient($colorra);
-$object->border->setColor($colorbr);
+$sessionkey='dol_antispam_value';
+$_SESSION[$sessionkey]=$string;
 
-// On affiche l'image à l'écran
-$object->draw();
+header("Content-type: image/png");
+
+$img = imagecreate(80,32);
+if (empty($img))
+{
+    dol_print_error('',"Problem with GD creation");
+    exit;
+}
+
+$background_color = imagecolorallocate($img, 250, 250, 250);
+$ecriture_color = imagecolorallocate($img, 0, 0, 0);
+imagestring($img, 4, 24, 8, $string, $ecriture_color);
+imagepng($img);
 
 ?>

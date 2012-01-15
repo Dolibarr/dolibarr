@@ -122,17 +122,21 @@ class modDeplacement extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init()
+	function init($options='')
 	{
 		// Permissions
 		$this->remove();
 
 		$sql = array();
 
-		return $this->_init($sql);
+		return $this->_init($sql,$options);
 	}
 
 	/**

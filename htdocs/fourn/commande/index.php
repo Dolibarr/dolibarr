@@ -118,7 +118,7 @@ if ($resql)
     print "</tr>\n";
     foreach (array(0,1,2,3,4,5,6) as $statut)
     {
-        $dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'values'=>array(0=>(isset($vals[$statut])?$vals[$statut]:0)));
+        $dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'data'=>(isset($vals[$statut])?(int) $vals[$statut]:0));
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;

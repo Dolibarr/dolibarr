@@ -165,7 +165,7 @@ asort($listofmethods);
 
 if ($action == 'edit')
 {
-	$html=new Form($db);
+	$form=new Form($db);
 
 	if (! count($listofmethods)) print '<div class="error">'.$langs->trans("NoSmsEngine").'</div>';
 
@@ -182,7 +182,7 @@ if ($action == 'edit')
 	// Disable
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
-	print $html->selectyesno('MAIN_DISABLE_ALL_SMS',$conf->global->MAIN_DISABLE_ALL_SMS,1);
+	print $form->selectyesno('MAIN_DISABLE_ALL_SMS',$conf->global->MAIN_DISABLE_ALL_SMS,1);
 	print '</td></tr>';
 
 	// Separator
@@ -192,7 +192,7 @@ if ($action == 'edit')
 	// Method
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	if (count($listofmethods)) print $html->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE,1);
+	if (count($listofmethods)) print $form->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE,1);
 	else print '<font class="error">'.$langs->trans("None").'</font>';
     print '</td></tr>';
 
@@ -306,7 +306,7 @@ else
 		else
 		{
 			print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
-			if ($mail->error) print ' - '.$langs->convToOutputCharset($mail->error,'ISO-8859-1');
+			if ($mail->error) print ' - '.$mail->error;
 			print '</div>';
 		}
 		print '<br>';

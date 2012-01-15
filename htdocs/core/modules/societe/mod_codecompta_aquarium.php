@@ -52,8 +52,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 	/**		Return description of module
 	 *
-	 * 		@param 		$langs		Object langs
-	 * 		@return     string      Description of module
+	 * 		@param	string	$langs		Object langs
+	 * 		@return string      		Description of module
 	 */
 	function info($langs)
 	{
@@ -61,7 +61,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 		$langs->load("companies");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
         $tooltip='';
 		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

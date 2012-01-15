@@ -83,7 +83,7 @@ DetailMenuIdParent= Id du menu parent (0 pour un menu du haut)
 DetailPosition= Numéro d'ordre déterminant la position du menu
 PersonalizedMenusNotSupported= Menus personnalisés non gérés
 AllMenus= Tous
-NotConfigured= Non configuré
+NotConfigured=Module non configuré
 Setup= Configuration
 Activation= Activation
 Active= Actif
@@ -260,12 +260,12 @@ ThisIsProcessToFollow= Voici la procédure à suivre:
 StepNb= Etape %s
 FindPackageFromWebSite=Recherche le package qui répond à votre besoin (par exemple sur le site web %s).
 DownloadPackageFromWebSite= Télécharger le package.
-UnpackPackageInDolibarrRoot= Décompresser le package dans le répertoire document de Dolibarr <b>%s</b> par dessus les fichiers existants (sans déplacer ou effacer cet existant sous peine de perdre sa configuration ou les modules non officiels installés)
+UnpackPackageInDolibarrRoot= Décompresser le package dans le répertoire racine de Dolibarr <b>%s</b> par dessus les fichiers existants (sans déplacer ou effacer cet existant sous peine de perdre sa configuration ou les modules non officiels installés)
 SetupIsReadyForUse= L'installation est terminée et Dolibarr est prêt à être utilisé avec le nouveau composant.
 CurrentVersion= Version en cours de Dolibarr
 CallUpdatePage= Appeler la page de l'outil de mise à jour de la structure et données de la base: %s.
 LastStableVersion= Dernière version stable disponible
-GenericMaskCodes= Vous pouvez saisir tout masque de numérotation. Dans ce masque, les balises suivantes peuvent être utilisées:<br><b>{000000}</b> correspond à un numéro qui sera incrémenté à chaque %s. Mettre autant de zéro que la longueur désirée du compteur. Le compteur sera complété par des 0 à gauche afin d'avoir autant de zéro que dans le masque.<br><b>{000000+000}</b> idem précédemment mais un offset correspondant au nombre à droite du + est appliqué dès la première %s.<br><b>{000000@x}</b> idem précédemment mais le compteur est remis à zéro le xème mois de l'année (x entre 1 et 12). Si cette option est utilisée et x vaut 2 ou plus, alors la séquence {yy}{mm} ou {yyyy}{mm} est obligatoire. <br><b>{dd}</b> jour (01 à 31).<br><b>{mm}</b> mois (01 à 12).<br><b>{yy}</b>, <b>{yyyy}</b> ou <b>{y}</b> année sur 2, 4 ou 1 chiffres.<br>
+GenericMaskCodes= Vous pouvez saisir tout masque de numérotation. Dans ce masque, les balises suivantes peuvent être utilisées:<br><b>{000000}</b> correspond à un numéro qui sera incrémenté à chaque %s. Mettre autant de zéro que la longueur désirée du compteur. Le compteur sera complété par des 0 à gauche afin d'avoir autant de zéro que dans le masque.<br><b>{000000+000}</b> idem précédemment mais un offset correspondant au nombre à droite du + est appliqué dès la première %s.<br><b>{000000@x}</b> idem précédemment mais le compteur est remis à zéro le xème mois de l'année (x entre 1 et 12, ou 0 pour utiliser le mois de début d'exercice fiscal défini dans votre configuration). Si cette option est utilisée et x vaut 2 ou plus, alors la séquence {yy}{mm} ou {yyyy}{mm} est obligatoire. <br><b>{dd}</b> jour (01 à 31).<br><b>{mm}</b> mois (01 à 12).<br><b>{yy}</b>, <b>{yyyy}</b> ou <b>{y}</b> année sur 2, 4 ou 1 chiffres.<br>
 GenericMaskCodes2= <b>{cccc}</b> le code client sur n lettres<br><b>{cccc000}</b> le code client sur n lettres est suivi d'un compteur propre au client sans offset, complété par des zéros pour en avoir autant que dans le masque, et remis à zéro en même temps que le compteur global.<br><b>{tttt}</b> Le code type entreprise sur n caractères (voir dictionnaires-types de sociétés).<br>
 GenericMaskCodes3= Tout autre caractère dans le masque sera laissé inchangé.<br>Les espaces ne sont pas permis.<br>
 GenericMaskCodes4a= <u>Exemple sur la 99eme %s du tiers LaCompanie faite le 31/03/2007:</u><br>
@@ -797,11 +797,12 @@ LogEvents= Événements d'audit de sécurité
 Audit= Audit
 ListEvents= Audit événements
 ListOfSecurityEvents= Liste des événements de sécurité Dolibarr
+SecurityEventsPurged=Evenement de sécurité purgés
 LogEventDesc= Vous pouvez activer ici, le traçage des événements d'audit de sécurité. Cet historique est consultable aux administrateurs dans le menu <b>Outils systèmes - Audit</b>. Attention, cette fonctionnalité peut consommer un gros volume de données.
 AreaForAdminOnly= Ces fonctions ne sont accessibles qu'à un utilisateur administrateur.
 SystemInfoDesc= Les informations systèmes sont des informations techniques diverses accessibles en lecture seule aux administrateurs uniquement.
 SystemAreaForAdminOnly= Cet espace n'est accessible qu'aux utilisateurs de type administrateurs. Aucune permission Dolibarr ne permet d'étendre le cercle des utilisateurs autorisés à cet espace.
-CompanyFundationDesc= Éditez sur cette page toutes les informations connues sur la société ou association que vous devez gérer
+CompanyFundationDesc= Éditez sur cette page toutes les informations connues sur la société ou association que vous devez gérer (pour cela cliquer sur le bouton "Modifier" en bas de page)
 DisplayDesc= Vous pouvez choisir ici tous les paramètres liés à l'apparence de Dolibarr
 AvailableModules= Modules disponibles
 ToActivateModule= Pour activer des modules, aller dans l'espace Configuration (Accueil->Configuration->Modules).
@@ -864,6 +865,8 @@ DefineHereComplementaryAttributes=Definissez ici la liste des attributs supplém
 ExtraFields=Attributs suplémentaires
 SendingMailSetup=Configuration de l'envoi par mail
 SendmailOptionNotComplete=Attention, sur certains systèmes Linux, avec cette méthode d'envoi, pour pouvoir envoyer des mails en votre nom, la configuration d'exécution de sendmail doit contenir l'option <b>-ba</b> (paramètre <b>mail.force_extra_parameters</b> dans le fichier <b>php.ini</b>). Si certains de vos destinataires ne reçoivent pas de message, essayer de modifer ce paramètre PHP avec <b>mail.force_extra_parameters = -ba</b>.
+PathToDocuments= Chemin d'accès aux documents
+PathDirectory= Répertoire
 
 ##### Module password generation= undefined
 PasswordGenerationStandard= Renvoie un mot de passe généré selon algorithme interne Dolibarr: 8 caractères, chiffres et caractères en minuscules mélangés.
@@ -937,8 +940,6 @@ WatermarkOnDraftInvoices= Filigrane sur les brouillons de factures (aucun si vid
 PropalSetup= Configuration du module Propositions Commerciales
 CreateForm= Création formulaire
 NumberOfProductLines= Nombre de lignes produits
-PathToDocuments= Chemin d'accès aux documents
-PathDirectory= Répertoire
 ProposalsNumberingModules= Modèles de numérotation des propositions commerciales
 ProposalsPDFModules= Modèles de documents de propositions commerciales
 ClassifiedInvoiced= Classer facturée
@@ -1110,12 +1111,15 @@ LDAPDescGroups= Cette page permet de définir le nom des attributs de l'arbre LD
 LDAPDescMembers= Cette page permet de définir le nom des attributs de l'arbre LDAP pour chaque information des membres du module adhérents Dolibarr.
 LDAPDescValues= Les valeurs exemples sont adaptées à <b>OpenLDAP</b> avec les schémas suivant chargés: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si vous utilisez les valeurs suggérées et OpenLDAP, modifiez votre fichier de configuration LDAP <b>slapd.conf</b> pour avoir tous ces schémas actifs.
 ForANonAnonymousAccess= Pour un accès authentifié (pour accès en écriture par exemple)
-##### Products #####
+##### Products/Services #####
 ProductSetup= Configuration du module Produits
+ServiceSetup= Configuration du module Services
+ProductServiceSetup= Configuration des modules Produits et Services
 NumberOfProductShowInSelect= Nombre de produits max dans les listes déroulantes (0=aucune limite)
 ConfirmDeleteProductLineAbility= Confirmation de suppression d'une ligne produit dans les formulaires
 ModifyProductDescAbility= Personnalisation des descriptions produits dans les formulaires
 ViewProductDescInFormAbility= Visualisation des descriptions produits dans les formulaires (sinon en tant que tooltip)
+ViewProductDescInThirdpartyLanguageAbility= Visualisation des descriptions produits dans la langue du tiers
 UseSearchToSelectProduct= Utiliser un formulaire de recherche pour le choix d'un produit (plutôt qu'une liste déroulante).<br>Notez que si vous avez un nombre important de produits ou services (> 100 000), vous pouvez améliorer les performances en définissant la constante PRODUCT_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limitée au début de la chaine.
 UseEcoTaxeAbility= Prise en charge des éco-taxes (DEEE)
 SetDefaultBarcodeTypeProducts= Type de code-barres utilisé par défaut pour les produits
@@ -1176,12 +1180,9 @@ FreeLegalTextOnDeliveryReceipts= Mention complémentaire sur les bons de récept
 ##### FCKeditor #####
 AdvancedEditor=Editeur avancé
 ActivateFCKeditor= Activer éditeur avancé pour :
-FCKeditorForUsers= Création/édition WYSIWIG de la description et note des utilisateurs
-FCKeditorForCompany= Création/édition WYSIWIG de la description et note des tiers
+FCKeditorForCompany= Création/édition WYSIWIG de la description et note des éléments (autre que produits/services)
 FCKeditorForProduct= Création/édition WYSIWIG de la description et note des produits/services
-FCKeditorForMembers= Création/édition WYSIWIG de la description et note des adhérents
 FCKeditorForProductDetails= Création/édition WYSIWIG des lignes détails produits (sur commandes, propales, factures, etc...). <font class="warning">Attention: L'utilisation pour ce cas est fortement déconseillée car peut poser des problèmes dans la gestion de caractères et mise en page des fichiers PDF générés.</font>
-FCKeditorForProductDetailsPerso= Création/édition WYSIWIG des lignes détails produits personnalisées (sur commandes, propales, factures, etc...)
 FCKeditorForMailing= Création/édition WYSIWIG des mailings
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase= La connexion a réussi mais la base ne semble pas être une base OSCommerce (clé %s  non trouvée dans la table %s).
@@ -1276,11 +1277,13 @@ EndPointIs=Les clients SOAP doivent envoyer leur requêtes vers l'endpoint Dolib
 ##### Bank #####
 BankSetupModule=Configuration du module Banque
 FreeLegalTextOnChequeReceipts=Mention complémentaire sur les bordereaux de remises de chèques
-BankOrderShow=Ordre d'affichage des information bancaires pour les pays les détaillant
+BankOrderShow=Ordre d'affichage des informations bancaires (pour les pays les détaillant)
 BankOrderGlobal=Général
 BankOrderGlobalDesc=Ordre d'affichage général
-BankOrderES=Espagnole
-BankOrderESDesc=Ordre d'affichage Espagnole
+BankOrderES=Espagnol
+BankOrderESDesc=Ordre d'affichage Espagnol
+##### MailmanSpip #####
+MailmanSpipSetup=Configuration du module Mailman et Spip
 ##### Multicompany #####
 MultiCompanySetup=Configuration du module Multi-société
 ##### Suppliers #####

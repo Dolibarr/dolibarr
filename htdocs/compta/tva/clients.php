@@ -88,7 +88,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * View
  */
 
-$html=new Form($db);
+$form=new Form($db);
 $company_static=new Societe($db);
 
 $morequerystring='';
@@ -111,12 +111,16 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByCustomersInDueDebtMode");
     //$nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
-    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
-    $description=$langs->trans("RulesVATDue");
+    $description=$langs->trans("RulesVATDueServices");
+    $description.='<br>';
+    $description.=$langs->trans("RulesVATDueProducts");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
-    $description.=$fsearch;
+    //if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
+	else  $description.='<br>'.$langs->trans("DepositsAreIncluded");
+	$description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
@@ -134,11 +138,16 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans("VATReportByCustomersInInputOutputMode");
     //$nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
-    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
-    $description=$langs->trans("RulesVATIn");
+    $description=$langs->trans("RulesVATInServices");
+    $description.=' '.$langs->trans("DepositsAreIncluded");
+    $description.='<br>';
+    $description.=$langs->trans("RulesVATInProducts");
+    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.=' '.$langs->trans("DepositsAreNotIncluded");
+	else  $description.=' '.$langs->trans("DepositsAreIncluded");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    //if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $builddate=time();
@@ -201,7 +210,8 @@ if (is_array($coll_list))
 			print "<td nowrap>".$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->nom=$coll->nom;
-			print '<td nowrap>'.$company_static->getNomUrl(1).'</td>';
+			$company_static->client=1;
+			print '<td nowrap>'.$company_static->getNomUrl(1,'customer').'</td>';
 			$find = array(' ','.');
 			$replace = array('','');
 			print "<td nowrap>".$intra."</td>";
@@ -278,7 +288,8 @@ if (is_array($coll_list))
 			print "<td nowrap>".$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->nom=$coll->nom;
-			print '<td nowrap>'.$company_static->getNomUrl(1).'</td>';
+			$company_static->fournisseur=1;
+			print '<td nowrap>'.$company_static->getNomUrl(1,'supplier').'</td>';
 			$find = array(' ','.');
 			$replace = array('','');
 			print "<td nowrap>".$intra."</td>";
@@ -323,7 +334,7 @@ else
 print '</table>';
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

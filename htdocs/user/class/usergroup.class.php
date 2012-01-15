@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (c) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,8 +19,7 @@
 
 /**
  *	 \file       htdocs/user/class/usergroup.class.php
- *	 \brief      Fichier de la classe des groupes d'utilisateur
- *	 \author     Rodolphe Qiedeville
+ *	 \brief      File of class to manage user groups
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -45,6 +44,8 @@ class UserGroup extends CommonObject
 	var $datec;			// Creation date of group
 	var $datem;			// Modification date of group
 	var $members=array();	// Array of users
+
+	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
 	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
@@ -78,7 +79,7 @@ class UserGroup extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 		$sql.= " WHERE g.rowid = ".$this->id;
 
-		dol_syslog("Usergroup::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -105,7 +106,7 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("UserGroup::Fetch ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::Fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -138,7 +139,7 @@ class UserGroup extends CommonObject
 		}
 		$sql.= " ORDER BY g.nom";
 
-		dol_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::listGroupsForUser sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -158,7 +159,7 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("UserGroup::listGroupsForUser ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::listGroupsForUser ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -187,7 +188,7 @@ class UserGroup extends CommonObject
 		{
 			$sql.= " AND u.entity IN (0,".$conf->entity.")";
 		}
-		dol_syslog("UserGroup::listUsersForGroup sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::listUsersForGroup sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -207,7 +208,7 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("UserGroup::listUsersForGroup ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::listUsersForGroup ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -224,6 +225,7 @@ class UserGroup extends CommonObject
 	{
 		global $conf;
 
+		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms");
 		$err=0;
 		$whereforadd='';
 
@@ -253,8 +255,8 @@ class UserGroup extends CommonObject
 			// Where pour la liste des droits a ajouter
 			$whereforadd="id=".$rid;
 			// Ajout des droits induits
-			if ($subperms) $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
-			if ($perms)    $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+			if ($subperms)   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
+			else if ($perms) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
 
 			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
 			// TODO A virer quand sera gere par l'appelant
@@ -285,7 +287,7 @@ class UserGroup extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=$nid";
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid;
 					if (! $this->db->query($sql)) $err++;
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (fk_usergroup, fk_id) VALUES ($this->id, $nid)";
 					if (! $this->db->query($sql)) $err++;
@@ -385,7 +387,8 @@ class UserGroup extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=$nid";
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
+					$sql.= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
 					if (! $this->db->query($sql)) $err++;
 
 					$i++;
@@ -416,9 +419,15 @@ class UserGroup extends CommonObject
 	 *  @param      string	$module    	Nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function getrights($module='')
+	function getrights($moduletag='')
 	{
 		global $conf;
+
+		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+		{
+			// Le fichier de ce module est deja charge
+			return;
+		}
 
 		if ($this->all_permissions_are_loaded)
 		{
@@ -435,6 +444,9 @@ class UserGroup extends CommonObject
 		$sql.= " AND r.entity = ".$conf->entity;
 		$sql.= " AND u.fk_usergroup = ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
+		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
+
+		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -442,30 +454,39 @@ class UserGroup extends CommonObject
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row($resql);
+				$obj = $this->db->fetch_object($resql);
 
-				if (dol_strlen($row[1]) > 0)
+				$module=$obj->module;
+				$perms=$obj->perms;
+				$subperms=$obj->subperms;
+
+				if ($perms)
 				{
-
-					if (dol_strlen($row[2]) > 0)
+					if ($subperms)
 					{
-						$this->rights->$row[0]->$row[1]->$row[2] = 1;
+						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
-						$this->rights->$row[0]->$row[1] = 1;
+						$this->rights->$module->$perms = 1;
 					}
 				}
 
 				$i++;
 			}
+			$this->db->free($resql);
 		}
 
-		if ($module == '')
+		if ($moduletag == '')
 		{
 			// Si module etait non defini, alors on a tout charge, on peut donc considerer
-			// que les droits sont en cache (car tous charges) pour cet instance de user
+			// que les droits sont en cache (car tous charges) pour cet instance de group
 			$this->all_permissions_are_loaded=1;
+		}
+		else
+		{
+		    // Si module defini, on le marque comme charge en cache
+		    $this->_tab_loaded[$moduletag]=1;
 		}
 
         return 1;
@@ -479,6 +500,8 @@ class UserGroup extends CommonObject
 	function delete()
 	{
 		global $user,$conf,$langs;
+
+		$error=0;
 
 		$this->db->begin();
 
@@ -523,6 +546,7 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf, $langs;
 
+		$error=0;
 		$now=dol_now();
 
 		$entity=$conf->entity;

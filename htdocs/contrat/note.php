@@ -88,7 +88,7 @@ if ($_POST["action"] == 'update' && $user->rights->contrat->creer)
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($_GET["id"])
 {
@@ -119,7 +119,7 @@ if ($_GET["id"])
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	$absolute_discount=$contrat->societe->getAvailableDiscounts();
 	print '. ';
-	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->currency));
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	print '.';
 	print '</td></tr>';

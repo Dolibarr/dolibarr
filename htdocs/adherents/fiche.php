@@ -236,9 +236,9 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
         $object->ville       = trim($_POST["town"]);       // deprecated
         $object->town        = trim($_POST["town"]);
 		$object->state_id    = $_POST["departement_id"];
-		$object->country_id  = $_POST["pays_id"];
+		$object->country_id  = $_POST["country_id"];
 		$object->fk_departement = $_POST["departement_id"];   // deprecated
-		$object->pays_id        = $_POST["pays_id"];   // deprecated
+		$object->pays_id     = $_POST["country_id"];   // deprecated
 
 		$object->phone       = trim($_POST["phone"]);
 		$object->phone_perso = trim($_POST["phone_perso"]);
@@ -247,7 +247,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$object->naiss       = $datenaiss;
 
 		$object->typeid      = $_POST["typeid"];
-		$object->note        = trim($_POST["comment"]);
+		//$object->note        = trim($_POST["comment"]);
 		$object->morphy      = $_POST["morphy"];
 
 		$object->amount      = $_POST["amount"];
@@ -361,8 +361,8 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $address=$_POST["address"];
     $zip=$_POST["zipcode"];
     $town=$_POST["town"];
-	$departement_id=$_POST["departement_id"];
-    $pays_id=$_POST["pays_id"];
+	$state_id=$_POST["departement_id"];
+    $country_id=$_POST["country_id"];
 
     $phone=$_POST["phone"];
     $phone_perso=$_POST["phone_perso"];
@@ -371,7 +371,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $login=$_POST["member_login"];
     $pass=$_POST["password"];
     $photo=$_POST["photo"];
-    $comment=$_POST["comment"];
+    //$comment=$_POST["comment"];
     $morphy=$_POST["morphy"];
     $cotisation=$_POST["cotisation"];
     $public=$_POST["public"];
@@ -389,8 +389,10 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $object->zip         = $zip;
     $object->ville       = $town;    // deprecated
     $object->town        = $town;
-    $object->fk_departement = $departement_id;
-    $object->pays_id     = $pays_id;
+    $object->fk_departement = $state_id;
+    $object->state_id    = $state_id;
+    $object->pays_id     = $country_id;
+    $object->country_id  = $country_id;
     $object->phone       = $phone;
     $object->phone_perso = $phone_perso;
     $object->phone_mobile= $phone_mobile;
@@ -400,7 +402,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $object->naiss       = $datenaiss;
     $object->photo       = $photo;
     $object->typeid      = $typeid;
-    $object->note        = $comment;
+    //$object->note        = $comment;
     $object->morphy      = $morphy;
     $object->user_id     = $userid;
     $object->fk_soc      = $socid;
@@ -607,8 +609,8 @@ $extralabels=$extrafields->fetch_name_optionals_label('member');
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('',$langs->trans("Member"),$help_url);
 
-$html = new Form($db);
-$htmlcompany = new FormCompany($db);
+$form = new Form($db);
+$formcompany = new FormCompany($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -621,25 +623,15 @@ if ($action == 'create')
     /* ************************************************************************** */
     $object->fk_departement = $_POST["departement_id"];
 
-    // We set pays_id, pays_code and label for the selected country
-    $object->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-    if ($object->pays_id)
+    // We set country_id, country_code and country for the selected country
+    $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+    if ($object->country_id)
     {
-        $sql = "SELECT rowid, code, libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-        $sql.= " WHERE rowid = ".$object->pays_id;
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $obj = $db->fetch_object($resql);
-        }
-        else
-        {
-            dol_print_error($db);
-        }
-        $object->pays_id=$obj->rowid;
-        $object->pays_code=$obj->code;
-        $object->pays=$obj->libelle;
+    	$tmparray=getCountry($object->country_id,'all');
+        $object->pays_code=$tmparray['code'];
+        $object->pays=$tmparray['code'];
+        $object->country_code=$tmparray['code'];
+        $object->country=$tmparray['label'];
     }
 
     $adht = new AdherentType($db);
@@ -653,7 +645,7 @@ if ($action == 'create')
     {
         print "\n".'<script type="text/javascript" language="javascript">';
         print 'jQuery(document).ready(function () {
-                    jQuery("#selectpays_id").change(function() {
+                    jQuery("#selectcountry_id").change(function() {
                         document.formsoc.action.value="create";
                         document.formsoc.submit();
                     });
@@ -677,7 +669,7 @@ if ($action == 'create')
     $morphys["phy"] = $langs->trans("Physical");
     $morphys["mor"] = $langs->trans("Moral");
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature")."</span></td><td>\n";
-    print $html->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy, 1);
+    print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy, 1);
     print "</td>\n";
 
     // Type
@@ -685,7 +677,7 @@ if ($action == 'create')
     $listetype=$adht->liste_array();
     if (count($listetype))
     {
-        print $html->selectarray("typeid", $listetype, isset($_POST["typeid"])?$_POST["typeid"]:$typeid, 1);
+        print $form->selectarray("typeid", $listetype, isset($_POST["typeid"])?$_POST["typeid"]:$typeid, 1);
     } else {
         print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
     }
@@ -696,7 +688,7 @@ if ($action == 'create')
 
     // Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-    print $htmlcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id,'civilite_id').'</td>';
+    print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id,'civilite_id').'</td>';
     print '</tr>';
 
     // Lastname
@@ -704,7 +696,7 @@ if ($action == 'create')
     print '</tr>';
 
     // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
     print '</tr>';
 
     // Password
@@ -723,15 +715,15 @@ if ($action == 'create')
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+    print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','departement_id'),6);
     print ' ';
-    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','departement_id'));
     print '</td></tr>';
 
     // Country
-    $object->pays_id=$object->pays_id?$object->pays_id:$mysoc->pays_id;
+    $object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;
     print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
-    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$object->pays_id,'pays_id');
+    print $form->select_country(isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'country_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
@@ -739,9 +731,9 @@ if ($action == 'create')
     if (empty($conf->global->MEMBER_DISABLE_STATE))
     {
         print '<tr><td>'.$langs->trans('State').'</td><td>';
-        if ($object->pays_id)
+        if ($object->country_id)
         {
-            $htmlcompany->select_departement(isset($_POST["departement_id"])?$_POST["departement_id"]:$object->fk_departement,$object->pays_code);
+            print $formcompany->select_state(isset($_POST["departement_id"])?$_POST["departement_id"]:$object->fk_departement,$object->country_code);
         }
         else
         {
@@ -764,12 +756,12 @@ if ($action == 'create')
 
     // Birthday
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $html->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
+    $form->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
     print "</td></tr>\n";
 
     // Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $html->selectyesno("public",$object->public,1);
+    print $form->selectyesno("public",$object->public,1);
     print "</td></tr>\n";
 
     // Other attributes
@@ -791,13 +783,13 @@ if ($action == 'create')
     if ($conf->societe->enabled)
     {
         print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
-        print $html->select_societes($object->fk_soc,'socid','',1);
+        print $form->select_societes($object->fk_soc,'socid','',1);
         print '</td></tr>';
     }
 
     // Login Dolibarr
     print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
-    print $html->select_users($object->user_id,'userid',1);
+    print $form->select_users($object->user_id,'userid',1);
     print '</td></tr>';
 */
     print "</table>\n";
@@ -826,10 +818,10 @@ if ($action == 'edit')
 	$adht = new AdherentType($db);
     $adht->fetch($object->typeid);
 
-	// We set pays_id, and pays_code label of the chosen country
-	if (isset($_POST["pays"]) || $object->pays_id)
+	// We set country_id, and country_code, country of the chosen country
+	if (isset($_POST["pays"]) || $object->country_id)
 	{
-		$sql = "SELECT rowid, code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays"])?$_POST["pays"]:$object->pays_id);
+		$sql = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays"])?$_POST["pays"]:$object->country_id);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -841,7 +833,10 @@ if ($action == 'edit')
 		}
 		$object->pays_id=$obj->rowid;
 		$object->pays_code=$obj->code;
-		$object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+		$object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
+		$object->country_id=$obj->rowid;
+		$object->country_code=$obj->code;
+		$object->country=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
 	}
 
 	$head = member_prepare_head($object);
@@ -856,7 +851,7 @@ if ($action == 'edit')
 	{
         print "\n".'<script type="text/javascript" language="javascript">';
         print 'jQuery(document).ready(function () {
-                    jQuery("#selectpays").change(function() {
+                    jQuery("#selectcountry_id").change(function() {
 	               	    document.formsoc.action.value="edit";
                         document.formsoc.submit();
                     });
@@ -889,11 +884,11 @@ if ($action == 'edit')
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
-	print $html->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
+	print $form->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 	print "</td>";
     // Photo
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-    print $html->showphoto('memberphoto',$object)."\n";
+    print $form->showphoto('memberphoto',$object)."\n";
     if ($caneditfieldmember)
     {
         if ($object->photo) print "<br>\n";
@@ -909,7 +904,7 @@ if ($action == 'edit')
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Type").'</span></td><td>';
     if ($user->rights->adherent->creer)
     {
-        print $html->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
+        print $form->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
     }
     else
     {
@@ -923,7 +918,7 @@ if ($action == 'edit')
 
 	// Civilite
 	print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
-	print $htmlcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id)."\n";
+	print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id)."\n";
 	print '</td>';
 	print '</tr>';
 
@@ -932,7 +927,7 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Firstname
-	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
 	print '</tr>';
 
 	// Password
@@ -948,15 +943,15 @@ if ($action == 'edit')
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+    print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','departement_id'),6);
     print ' ';
-    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','departement_id'));
     print '</td></tr>';
 
     // Country
-    //$object->pays_id=$object->pays_id?$object->pays_id:$mysoc->pays_id;    // In edit mode we don't force to company country if not defined
+    //$object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;    // In edit mode we don't force to company country if not defined
     print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
-    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$object->pays_id,'pays_id');
+    print $form->select_country(isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'country_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
@@ -964,7 +959,7 @@ if ($action == 'edit')
     if (empty($conf->global->MEMBER_DISABLE_STATE))
     {
     	print '<tr><td>'.$langs->trans('State').'</td><td>';
-    	$htmlcompany->select_departement($object->fk_departement,$object->pays_code);
+    	print $formcompany->select_state($object->fk_departement,isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id);
     	print '</td></tr>';
     }
 
@@ -982,12 +977,12 @@ if ($action == 'edit')
 
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $html->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
+    $form->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
     print "</td></tr>\n";
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $html->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
+    print $form->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
     print "</td></tr>\n";
 
 	// Other attributes
@@ -1025,7 +1020,7 @@ if ($action == 'edit')
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td colspan="2" class="valeur">';
 	if ($object->user_id)
 	{
-		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
+		print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
 	}
 	else print $langs->trans("NoDolibarrAccess");
 	print '</td></tr>';
@@ -1093,7 +1088,7 @@ if ($rowid && $action != 'edit')
             if ($object->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
             else $text.=$langs->trans("UserWillBeInternalUser");
         }
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -1113,7 +1108,7 @@ if ($rowid && $action != 'edit')
 		// Create a form array
 		$formquestion=array(		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -1139,19 +1134,19 @@ if ($rowid && $action != 'edit')
         $helpcontent.="<br>";
         $helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
         $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
-		$label=$html->textwithpicto($tmp,$helpcontent,1,'help');
+		$label=$form->textwithpicto($tmp,$helpcontent,1,'help');
 
         // Cree un tableau formulaire
         $formquestion=array();
 		if ($object->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
+        $ret=$form->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
         if ($ret == 'html') print '<br>';
     }
 
     // Confirm send card by mail
     if ($action == 'sendinfo')
     {
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
+        $ret=$form->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
         if ($ret == 'html') print '<br>';
     }
 
@@ -1177,19 +1172,19 @@ if ($rowid && $action != 'edit')
         $helpcontent.="<br>";
         $helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
         $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
-        $label=$html->textwithpicto($tmp,$helpcontent,1,'help');
+        $label=$form->textwithpicto($tmp,$helpcontent,1,'help');
 
         // Cree un tableau formulaire
 		$formquestion=array();
 		if ($object->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?'true':'false'));
-		$ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
+		$ret=$form->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
         if ($ret == 'html') print '<br>';
     }
 
 	// Confirm remove member
     if ($action == 'delete')
     {
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",'',0,1);
+        $ret=$form->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",'',0,1);
         if ($ret == 'html') print '<br>';
     }
 
@@ -1198,7 +1193,7 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'add_spip')
     {
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
+        $ret=$form->form_confirm("fiche.php?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
         if ($ret == 'html') print '<br>';
     }
 
@@ -1207,7 +1202,7 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'del_spip')
     {
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
+        $ret=$form->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
         if ($ret == 'html') print '<br>';
     }
 
@@ -1220,11 +1215,11 @@ if ($rowid && $action != 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="2">';
-	print $html->showrefnav($object,'rowid');
+	print $form->showrefnav($object,'rowid');
 	print '</td></tr>';
 
     $showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-    $showphoto.=$html->showphoto('memberphoto',$object);
+    $showphoto.=$form->showphoto('memberphoto',$object);
     $showphoto.='</td>';
 
     // Login
@@ -1273,22 +1268,22 @@ if ($rowid && $action != 'edit')
 
 	// Country
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">';
-	$img=picto_from_langcode($object->pays_code);
+	$img=picto_from_langcode($object->country_code);
 	if ($img) print $img.' ';
-    print getCountry($object->pays_code);
+    print getCountry($object->country_code);
     print '</td></tr>';
 
 	// State
 	print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$object->departement.'</td>';
 
     // Tel pro.
-    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($object->phone,$object->pays_code,0,$object->fk_soc,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($object->phone,$object->country_code,0,$object->fk_soc,1).'</td></tr>';
 
     // Tel perso
-    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.dol_print_phone($object->phone_perso,$object->pays_code,0,$object->fk_soc,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.dol_print_phone($object->phone_perso,$object->country_code,0,$object->fk_soc,1).'</td></tr>';
 
     // Tel mobile
-    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($object->phone_mobile,$object->pays_code,0,$object->fk_soc,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($object->phone_mobile,$object->country_code,0,$object->fk_soc,1).'</td></tr>';
 
     // EMail
     print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
@@ -1335,7 +1330,7 @@ if ($rowid && $action != 'edit')
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
-			print $html->select_societes($object->fk_soc,'socid','',1);
+			print $form->select_societes($object->fk_soc,'socid','',1);
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
@@ -1374,13 +1369,13 @@ if ($rowid && $action != 'edit')
 	print '</td><td colspan="2" class="valeur">';
 	if ($_GET['action'] == 'editlogin')
 	{
-	    print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
+	    print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
 	}
 	else
 	{
 		if ($object->user_id)
 		{
-			print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
+			print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
 		}
 		else print $langs->trans("NoDolibarrAccess");
 	}
@@ -1435,18 +1430,22 @@ if ($rowid && $action != 'edit')
 			}
 		}
 
-		// Envoi fiche par mail
-		if ($object->statut >= 1)
+		// Send card by email
+		if ($user->rights->adherent->creer)
 		{
-			if ($user->rights->adherent->creer)
-			{
+       		if ($object->statut >= 1)
+       		{
 				if ($object->email) print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
 				else print "<a class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NoEMail"))."\">".$langs->trans("SendCardByMail")."</a>\n";
-		    }
-			else
-			{
-				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
-			}
+       		}
+       		else
+       		{
+       		    print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("ValidateBefore"))."\">".$langs->trans("SendCardByMail")."</font>";
+       		}
+	    }
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
 		}
 
 		// Resilier

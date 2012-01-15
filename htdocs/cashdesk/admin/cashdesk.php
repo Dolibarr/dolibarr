@@ -131,7 +131,7 @@ if ($conf->stock->enabled)
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';
 	print '<td colspan="2">';
-	$formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE','',1);
+	print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE','',1);
 	print '</td></tr>';
 }
 

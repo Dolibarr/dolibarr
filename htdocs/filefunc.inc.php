@@ -33,30 +33,29 @@ if (! defined('DOL_VERSION')) define('DOL_VERSION','3.2.0-alpha');	// Also defin
 if (! defined('EURO')) define('EURO',chr(128));
 
 // Definition des constantes syslog
-if (function_exists("define_syslog_variables"))
+if (! defined('LOG_DEBUG'))
 {
-	if (version_compare(PHP_VERSION, '5.3.0', '<'))
-	{
-		define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
-	}
+    if (function_exists("define_syslog_variables"))
+    {
+    	define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
+    }
+    else
+    {
+    	// Pour PHP sans syslog (comme sous Windows)
+    	define('LOG_EMERG',0);
+    	define('LOG_ALERT',1);
+    	define('LOG_CRIT',2);
+    	define('LOG_ERR',3);
+    	define('LOG_WARNING',4);
+    	define('LOG_NOTICE',5);
+    	define('LOG_INFO',6);
+    	define('LOG_DEBUG',7);
+    }
 }
-else
-{
-	// Pour PHP sans syslog (comme sous Windows)
-	define('LOG_EMERG',0);
-	define('LOG_ALERT',1);
-	define('LOG_CRIT',2);
-	define('LOG_ERR',3);
-	define('LOG_WARNING',4);
-	define('LOG_NOTICE',5);
-	define('LOG_INFO',6);
-	define('LOG_DEBUG',7);
-}
-
 
 // Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
 error_reporting(E_ALL ^ E_NOTICE);
-//error_reporting(E_ALL);
+//error_reporting(E_ALL | E_STRICT);
 
 
 // Define vars
@@ -87,6 +86,7 @@ if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
 if (empty($dolibarr_mailing_limit_sendbyweb)) $dolibarr_mailing_limit_sendbyweb=0;
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
+if (empty($multicompany_transverse_mode)) $multicompany_transverse_mode=0;
 
 // Security: CSRF protection
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
@@ -137,7 +137,7 @@ foreach($paths as $tmppath)
 {
     if ($tmppath) $concatpath.='/'.$tmppath;
     //print $real_$dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
-    if ($real_dolibarr_main_document_root == realpath($pathroot.$concatpath))
+    if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath))    // @ avoid warning when safe_mode is on.
     {
         $tmp3=$concatpath;
         //print "Found relative url = ".$tmp3;
@@ -189,13 +189,14 @@ if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        (!isset(
 if (! defined('GEOIP_PATH'))           { define('GEOIP_PATH',           (!isset($dolibarr_lib_GEOIP_PATH))?DOL_DOCUMENT_ROOT.'/includes/geoip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_GEOIP_PATH.'/')); }
 if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH',          (!isset($dolibarr_lib_ODTPHP_PATH))?DOL_DOCUMENT_ROOT.'/includes/odtphp/':(empty($dolibarr_lib_ODTPHP_PATH)?'':$dolibarr_lib_ODTPHP_PATH.'/')); }
 if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP',  (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP))?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':(empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP)?'':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/')); }
-if (! defined('ARTICHOW_PATH'))        { define('ARTICHOW_PATH',        (!isset($dolibarr_lib_ARTICHOW))?DOL_DOCUMENT_ROOT.'/includes/artichow/':(empty($dolibarr_lib_ARTICHOW)?'':$dolibarr_lib_ARTICHOW.'/')); }
+if (! defined('JS_CKEDITOR'))          { define('JS_CKEDITOR',          (!isset($dolibarr_js_CKEDITOR))?'':(empty($dolibarr_js_CKEDITOR)?'':$dolibarr_js_CKEDITOR.'/')); }
 // Other required path
-if (! defined('ARTICHOW_FONT'))        { define('ARTICHOW_FONT',        (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/artichow/font':dirname($dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
-if (! defined('ARTICHOW_FONT_NAMES'))  { define('ARTICHOW_FONT_NAMES',  (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?'Tuffy,TuffyBold,TuffyBoldItalic,TuffyItalic':'DejaVuSans,DejaVuSans-Bold,DejaVuSans-BoldOblique,DejaVuSans-Oblique'); }
-if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/Aerial.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
-if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
+if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
+if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
 // Old path to root deprecated (no more used).
+//if (! defined('ARTICHOW_FONT'))        { define('ARTICHOW_FONT',        (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/fonts':dirname($dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
+//if (! defined('ARTICHOW_FONT_NAMES'))  { define('ARTICHOW_FONT_NAMES',  (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?'Aerial,AerialBd,AerialBdIt,AerialIt':'DejaVuSans,DejaVuSans-Bold,DejaVuSans-BoldOblique,DejaVuSans-Oblique'); }
+//if (! defined('ARTICHOW_PATH'))        { define('ARTICHOW_PATH',        (!isset($dolibarr_lib_ARTICHOW))?DOL_DOCUMENT_ROOT.'/includes/artichow/':(empty($dolibarr_lib_ARTICHOW)?'':$dolibarr_lib_ARTICHOW.'/')); }
 //if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
 
 

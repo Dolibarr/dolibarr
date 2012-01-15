@@ -128,7 +128,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 $sql.= ", ".MAIN_DB_PREFIX."c_pays as p";
 $sql.= " WHERE t.fk_pays = p.rowid";
 $sql.= " AND t.active = 1";
-$sql.= " AND p.code = '".$mysoc->pays_code."'";
+$sql.= " AND p.code = '".$mysoc->country_code."'";
 //print $request;
 
 $res = $db->query($sql);
@@ -151,7 +151,7 @@ $tab_tva = $ret;
 
 
 // Reinitialisation du mode de paiement, en cas de retour aux achats apres validation
-$obj_facturation->mode_reglement('RESET');
+$obj_facturation->getSetPaymentMode('RESET');
 $obj_facturation->montant_encaisse('RESET');
 $obj_facturation->montant_rendu('RESET');
 $obj_facturation->paiement_le('RESET');

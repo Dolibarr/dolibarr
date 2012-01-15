@@ -633,8 +633,8 @@ class Ldap
 		//Create file
 		$result=create_exdir($conf->ldap->dir_temp);
 
-		$file=$conf->ldap->dir_temp.'/ldapinput.in';
-		$fp=fopen($file,"w");
+		$outputfile=$conf->ldap->dir_temp.'/ldapinput.in';
+		$fp=fopen($outputfile,"w");
 		if ($fp)
 		{
 			fputs($fp, $content);
@@ -1290,12 +1290,13 @@ class Ldap
 
 
 	/**
-	 *  \brief      Convert a string into output/memory charset
-	 *  \param      str            	String to convert
-	 *  \param		pagecodefrom	Page code of src string
-	 *  \return     string         	Converted string
+	 *  Convert a string into output/memory charset
+     *
+	 *  @param      str            	String to convert
+	 *  @param		pagecodefrom	Page code of src string
+	 *  @return     string         	Converted string
 	 */
-	function convToOutputCharset($str,$pagecodefrom='UTF-8')
+	private function convToOutputCharset($str,$pagecodefrom='UTF-8')
 	{
 		global $conf;
 		if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_encode($str);
@@ -1304,10 +1305,11 @@ class Ldap
 	}
 
 	/**
-	 *  \brief      Convert a string from output/memory charset
-	 *  \param      str            	String to convert
-	 *  \param		pagecodeto		Page code for result string
-	 *  \return     string         	Converted string
+	 *  Convert a string from output/memory charset
+     *
+	 *  @param      str            	String to convert
+	 *  @param		pagecodeto		Page code for result string
+	 *  @return     string         	Converted string
 	 */
 	function convFromOutputCharset($str,$pagecodeto='UTF-8')
 	{
@@ -1316,16 +1318,16 @@ class Ldap
 		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1')	$str=utf8_encode($str);
 		return $str;
 	}
-	
+
 
 	/**
-	 *	Return available value of group GID   
+	 *	Return available value of group GID
 	 *	@return     int         	gid number
-	 */	
+	 */
 	function getNextGroupGid()
 	{
 		global $conf;
-		
+
 		$search='('.$conf->global->LDAP_KEY_GROUPS.'=*)';
 		$result = $this->search($this->groups,$search);
 		if($result)
@@ -1337,11 +1339,11 @@ class Ldap
 				$gids[] = $result[$i]['gidnumber'][0];
 			}
 			rsort($gids);
-			
+
 			return $gids[0]+1;
 		}
-		
-		return 0;		
+
+		return 0;
 	}
 }
 

@@ -500,7 +500,11 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
-        elseif ($action == 'SHIPPINGL_DELETE')
+        elseif ($action == 'SHIPPING_DELETE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'SHIPPING_BUILDDOC')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }

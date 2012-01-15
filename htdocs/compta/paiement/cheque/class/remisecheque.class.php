@@ -471,6 +471,7 @@ class RemiseCheque extends CommonObject
 
 	/**
 	 *	Build document
+	 *
 	 *	@param 		model 			Model name
 	 *	@param 		outputlangs		Object langs
 	 * 	@return  	int        		<0 if KO, >0 if OK
@@ -493,7 +494,7 @@ class RemiseCheque extends CommonObject
 			require_once($dir.$file);
 
 			$classname='BordereauCheque'.ucfirst($model);
-			$docmodel = new $classname($db);
+			$docmodel = new $classname($this->db);
 
 			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -535,14 +536,14 @@ class RemiseCheque extends CommonObject
 			$result=$docmodel->write_file($conf->banque->dir_output.'/bordereau', $this->number, $outputlangs);
 			if ($result > 0)
 			{
-				$outputlangs->charset_output=$sav_charset_output;
+				//$outputlangs->charset_output=$sav_charset_output;
 				return 1;
 			}
 			else
 			{
-				$outputlangs->charset_output=$sav_charset_output;
+				//$outputlangs->charset_output=$sav_charset_output;
 				dol_syslog("Error");
-				dol_print_error($db,$docmodel->error);
+				dol_print_error($this->db,$docmodel->error);
 				return 0;
 			}
 		}

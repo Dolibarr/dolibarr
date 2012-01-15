@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,17 +39,14 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 	$canreadperms=($user->admin || $user->rights->user->group_advance->read);
 }
 
-// Protection quand utilisateur externe
-$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
 
 $socid=0;
-if ($user->societe_id > 0)
-{
-    $socid = $user->societe_id;
-}
+if ($user->societe_id > 0) $socid = $user->societe_id;
 
-$fgroup = new Usergroup($db, $_GET["id"]);
-$fgroup->fetch($_GET["id"]);
+$fgroup = new Usergroup($db);
+$fgroup->fetch($id);
 $fgroup->getrights();
 
 
@@ -57,7 +54,7 @@ $fgroup->getrights();
  * Actions
  */
 
-if ($_GET["action"] == 'dolibarr2ldap')
+if ($action == 'dolibarr2ldap')
 {
 	$message="";
 
@@ -83,8 +80,6 @@ if ($_GET["action"] == 'dolibarr2ldap')
 		$db->rollback();
 	}
 }
-
-
 
 
 /*
@@ -209,10 +204,8 @@ else
 
 print '</table>';
 
-
-
+llxFooter();
 
 $db->close();
 
-llxFooter();
 ?>

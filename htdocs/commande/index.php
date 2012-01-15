@@ -47,7 +47,7 @@ if ($user->societe_id > 0)
  */
 
 $commandestatic=new Commande($db);
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo Pedidos de clientes";
 
@@ -121,7 +121,7 @@ if ($resql)
     $bool=false;
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,1),'values'=>array(0=>(isset($vals[$status.$bool])?$vals[$status.$bool]:0)));
+        $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,1),'data'=>(isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
         if ($status==3 && $bool==false) $bool=true;
         else $bool=false;
     }

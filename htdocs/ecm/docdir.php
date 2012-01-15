@@ -61,7 +61,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$ecmdir = new ECMDirectory($db);
+$ecmdir = new EcmDirectory($db);
 if (! empty($_GET["section"]))
 {
 	$result=$ecmdir->fetch($_GET["section"]);
@@ -158,7 +158,7 @@ if ($_GET["action"] == 'create')
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
-	print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
+	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $formecm->select_all_sections(! empty($_GET["catParent"])?$_GET["catParent"]:$ecmdir->fk_parent,'catParent');
 	print '</td></tr>'."\n";
 

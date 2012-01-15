@@ -40,12 +40,25 @@ class mailing_pomme extends MailingTargets
 	var $db;
 
 
-	function mailing_pomme($DB)
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	function mailing_pomme($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
+    /**
+	 *	On the main mailing area, there is a box with statistics.
+	 *	If you want to add a line in this report you must provide an
+	 *	array of SQL request that returns two field:
+	 *	One called "label", One called "nb".
+	 *
+	 *	@return		array		Array with SQL requests
+	 */
 	function getSqlArrayForStats()
 	{
 		global $conf, $langs;
@@ -86,9 +99,9 @@ class mailing_pomme extends MailingTargets
 
 
 	/**
-	 *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
-	 *                  des destinataires de mailings
-	 *      \return     string      Retourne zone select
+	 *  Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *
+	 *  @return     string      Retourne zone select
 	 */
 	function formFilter()
 	{
@@ -107,8 +120,10 @@ class mailing_pomme extends MailingTargets
 
 
 	/**
-	 *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
-	 *      \return     string      Url lien
+	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *
+     *  @param	int		$id		ID
+	 *  @return     string      Url lien
 	 */
 	function url($id)
 	{
@@ -117,10 +132,11 @@ class mailing_pomme extends MailingTargets
 
 
 	/**
-	 *    \brief      Ajoute destinataires dans table des cibles
-	 *    \param      mailing_id    Id of emailing
-	 *    \param      filterarray   Requete sql de selection des destinataires
-	 *    \return     int           < 0 si erreur, nb ajout si ok
+	 *  Ajoute destinataires dans table des cibles
+	 *
+	 *  @param	int		$mailing_id    	Id of emailing
+	 *  @param  array	$filtersarray   Requete sql de selection des destinataires
+	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
 	{

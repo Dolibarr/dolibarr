@@ -26,7 +26,7 @@
 <div id="principal_content" style="margin-left: 0px;">
 <div style="margin-left: 0; position: relative;" class="gantt" id="GanttChartDIV"></div>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 
 function DisplayHideRessources(boxName) {
 	graphFormat = g.getFormat();
@@ -149,7 +149,7 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
 	$name=$task['task_name'];
 	for($i=0; $i < $level; $i++) { $name=' &nbsp; &nbsp; '.$name; }
 	// Add line to gantt
-	$s = "// Add taks id=".$tasks["task_id"]." level = ".$level."\n";
+	$s = "// Add taks id=".$task["task_id"]." level = ".$level."\n";
 	//$s.= "g.AddElementItem(new JSGantt.ElementItem('task',".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', '".$task['task_color']."', '', ".$task['task_milestone'].", '".$resources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", ".$parent.", 1".($depend?", ".$depend:"")."));";
 	$s = "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."'));";
 	echo $s."\n";

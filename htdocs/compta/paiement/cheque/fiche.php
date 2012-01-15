@@ -229,7 +229,7 @@ if (GETPOST('removefilter'))
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 
 
@@ -269,7 +269,7 @@ else
 	 */
 	if ($action == 'delete')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -279,7 +279,7 @@ else
 	if ($action == 'valide')
 	{
 		$facid = $_GET['facid'];
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
 		if ($ret == 'html') print '<br>';
 	}
 }
@@ -304,10 +304,10 @@ if ($action == 'new')
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td width="200">'.$langs->trans("DateChequeReceived").'</td><td>';
-	print $html->select_date($filterdate,'fd',0,0,1,'',1,1);
+	print $form->select_date($filterdate,'fd',0,0,1,'',1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
-    print $html->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
+    print $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
 	print '</table>';
     print '<center>';
@@ -448,7 +448,7 @@ else
 	print '<table class="border" width="100%">';
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="2" >';
 
-	print $html->showrefnav($remisecheque,'ref',$linkback, 1, 'number');
+	print $form->showrefnav($remisecheque,'ref',$linkback, 1, 'number');
 
 	print "</td>";
 	print "</tr>\n";
@@ -466,7 +466,7 @@ else
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="setdate">';
-        $html->select_date($object->date_bordereau,'datecreate_','','','',"setdate");
+        $form->select_date($object->date_bordereau,'datecreate_','','','',"setdate");
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
         print '</form>';
     }

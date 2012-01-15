@@ -255,7 +255,7 @@ if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == "yes" && $use
  *	View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $userstatic = new User($db);
 
@@ -301,25 +301,25 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
     // Customer
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    $text=$html->select_company(GETPOST("socid"),'socid','',1,1);
+    $text=$form->select_company(GETPOST("socid"),'socid','',1,1);
     $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-    print $html->textwithtooltip($text.' '.img_help(),$texthelp,1);
+    print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
     print '</td></tr>';
 
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
     $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-    print $html->selectarray('public',$array,$project->public);
+    print $form->selectarray('public',$array,$project->public);
     print '</td></tr>';
 
     // Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print $html->select_date('','project');
+    print $form->select_date('','project');
     print '</td></tr>';
 
     // Date end
     print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-    print $html->select_date(-1,'projectend');
+    print $form->select_date(-1,'projectend');
     print '</td></tr>';
 
     // Description
@@ -363,19 +363,19 @@ else
     // Confirmation validation
     if ($_GET['action'] == 'validate')
     {
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$project->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$project->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
         if ($ret == 'html') print '<br>';
     }
     // Confirmation close
     if ($_GET["action"] == 'close')
     {
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
         if ($ret == 'html') print '<br>';
     }
     // Confirmation reopen
     if ($_GET["action"] == 'reopen')
     {
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
         if ($ret == 'html') print '<br>';
     }
     // Confirmation delete
@@ -386,7 +386,7 @@ else
         $taskarray=$task->getTasksArray(0,0,$project->id,0,0);
         $nboftask=count($taskarray);
         if ($nboftask) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoRemoveTasks",$nboftask);
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
         if ($ret == 'html') print '<br>';
     }
 
@@ -410,13 +410,13 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("Company").'</td><td>';
-        print $html->select_societes($project->societe->id,'socid','',1,1);
+        print $form->select_societes($project->societe->id,'socid','',1,1);
         print '</td></tr>';
 
         // Visibility
         print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
         $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-        print $html->selectarray('public',$array,$project->public);
+        print $form->selectarray('public',$array,$project->public);
         print '</td></tr>';
 
         // Statut
@@ -424,12 +424,12 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print $html->select_date($project->date_start,'project');
+        print $form->select_date($project->date_start,'project');
         print '</td></tr>';
 
         // Date end
         print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-        print $html->select_date($project->date_end?$project->date_end:-1,'projectend');
+        print $form->select_date($project->date_end?$project->date_end:-1,'projectend');
         print '</td></tr>';
 
         // Description
@@ -456,7 +456,7 @@ else
             $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
             $project->next_prev_filter=" rowid in (".$projectsListId.")";
         }
-        print $html->showrefnav($project,'ref','',1,'ref','ref');
+        print $form->showrefnav($project,'ref','',1,'ref','ref');
         print '</td></tr>';
 
         // Label

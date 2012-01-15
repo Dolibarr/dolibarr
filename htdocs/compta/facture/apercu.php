@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ $now=dol_now();
 
 llxHeader('',$langs->trans("Bill"),'Facture');
 
-$html = new Form($db);
+$form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -147,21 +148,21 @@ if ($id > 0 || ! empty($ref))
             {
                 if ($object->statut == 0)
                 {
-                    print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                    print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                     print '. ';
                 }
                 else
                 {
                     if ($object->statut < 1 || $object->type == 2 || $object->type == 3)
                     {
-                        $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                        $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         print '<br>'.$text.'.<br>';
                     }
                     else
                     {
-                        $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+                        $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         $text2=$langs->trans("AbsoluteDiscountUse");
-                        print $html->textwithpicto($text,$text2);
+                        print $form->textwithpicto($text,$text2);
                     }
                 }
             }
@@ -170,7 +171,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type remise fixe (not credit note)
                 $filter='fk_facture_source IS NULL';
                 print '<br>';
-                $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
             }
         }
         else
@@ -189,12 +190,12 @@ if ($id > 0 || ! empty($ref))
             {
                 if ($object->statut == 0 && $object->type != 3)
                 {
-                    $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie));
-                    print $html->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
+                    $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
+                    print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
                 }
                 else
                 {
-                    print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'.';
+                    print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'.';
                 }
             }
             else
@@ -202,7 +203,7 @@ if ($id > 0 || ! empty($ref))
                 // Remise dispo de type avoir
                 $filter='fk_facture_source IS NOT NULL';
                 if (! $absolute_discount) print '<br>';
-                $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
+                $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
             }
         }
         if (! $absolute_discount && ! $absolute_creditnote)
@@ -237,7 +238,7 @@ if ($id > 0 || ! empty($ref))
         {
             if ($action == 'editpaymentterm')
             {
-                $html->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date_lim_reglement,'paymentterm');
+                $form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date_lim_reglement,'paymentterm');
             }
             else
             {
@@ -253,7 +254,7 @@ if ($id > 0 || ! empty($ref))
 
         // Conditions reglement
         print '<tr><td>'.$langs->trans("PaymentConditionsShort").'</td><td colspan="5">';
-        $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$object->id",$object->cond_reglement_id,"none");
+        $form->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$object->id",$object->cond_reglement_id,"none");
         print '</td>';
         print '</td></tr>';
 
@@ -267,11 +268,11 @@ if ($id > 0 || ! empty($ref))
         print '</td><td colspan="3">';
         if ($action == 'editmode')
         {
-            $html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
         }
         else
         {
-            $html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
+            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
         }
         print '</td>';
 
@@ -334,7 +335,7 @@ if ($id > 0 || ! empty($ref))
                 }
                 else
                 {
-                    $langs->load("other");
+                    $langs->load("errors");
                     print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
                 }
             }
@@ -343,12 +344,12 @@ if ($id > 0 || ! empty($ref))
 
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
         print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';

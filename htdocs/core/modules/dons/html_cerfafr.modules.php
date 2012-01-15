@@ -114,28 +114,28 @@ class html_cerfafr extends ModeleDon
             {
 		        // Defini contenu
 		        $donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
-		        $html = implode('', file($donmodel));
-		        $html = str_replace('__REF__',$id,$html);
-		        $html = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$html);
-		        $html = str_replace('__IP__',$user->ip,$html);
-		        $html = str_replace('__AMOUNT__',$don->amount,$html);
-		        $html = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie),$html);
-		        $html = str_replace('__CURRENCYCODE__',$conf->monnaie,$html);
-		        $html = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->name,$html);
-		        $html = str_replace('__MAIN_INFO_SOCIETE_ADRESSE__',$mysoc->address,$html);
-		        $html = str_replace('__MAIN_INFO_SOCIETE_CP__',$mysoc->zip,$html);
-		        $html = str_replace('__MAIN_INFO_SOCIETE_VILLE__',$mysoc->town,$html);
-		        $html = str_replace('__DONATOR_NAME__',$don->nom,$html);
-		        $html = str_replace('__DONATOR_ADDRESS__',$don->adresse,$html);
-		        $html = str_replace('__DONATOR_ZIP__',$don->cp,$html);
-		        $html = str_replace('__DONATOR_TOWN__',$don->ville,$html);
-		        $html = str_replace('__PAYMENTMODE_LIB__ ',$don->modepaiement,$html);
-		        $html = str_replace('__NOW__',dol_print_date($now,'',false,$outputlangs),$html);
+		        $form = implode('', file($donmodel));
+		        $form = str_replace('__REF__',$id,$form);
+		        $form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);
+		        $form = str_replace('__IP__',$user->ip,$form);
+		        $form = str_replace('__AMOUNT__',$don->amount,$form);
+		        $form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$conf->currency),$form);
+		        $form = str_replace('__CURRENCYCODE__',$conf->currency,$form);
+		        $form = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->name,$form);
+		        $form = str_replace('__MAIN_INFO_SOCIETE_ADRESSE__',$mysoc->address,$form);
+		        $form = str_replace('__MAIN_INFO_SOCIETE_CP__',$mysoc->zip,$form);
+		        $form = str_replace('__MAIN_INFO_SOCIETE_VILLE__',$mysoc->town,$form);
+		        $form = str_replace('__DONATOR_NAME__',$don->nom,$form);
+		        $form = str_replace('__DONATOR_ADDRESS__',$don->adresse,$form);
+		        $form = str_replace('__DONATOR_ZIP__',$don->cp,$form);
+		        $form = str_replace('__DONATOR_TOWN__',$don->ville,$form);
+		        $form = str_replace('__PAYMENTMODE_LIB__ ',$don->modepaiement,$form);
+		        $form = str_replace('__NOW__',dol_print_date($now,'',false,$outputlangs),$form);
 
 		        // Sauve fichier sur disque
 		        dol_syslog("html_cerfafr::write_file $file");
 		        $handle=fopen($file,"w");
-		        fwrite($handle,$html);
+		        fwrite($handle,$form);
 		        fclose($handle);
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

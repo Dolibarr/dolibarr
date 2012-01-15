@@ -80,7 +80,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
  * View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 llxHeader("","",$langs->trans("Categories"));
 
@@ -101,7 +101,7 @@ dol_fiche_head($head, 'card', $title, 0, 'category');
  */
 if ($action == 'delete')
 {
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
+	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
 	if ($ret == 'html') print '<br>';
 }
 

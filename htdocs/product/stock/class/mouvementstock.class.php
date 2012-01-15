@@ -44,26 +44,28 @@ class MouvementStock
 	}
 
 	/**
-	 *      Add a movement of stock (in one direction only)
-	 * 		@param		user		User object
-	 * 		@param		fk_product	Id of product
-	 * 		@param		entrepot_id	Id of warehouse
-	 * 		@param		qty			Qty of movement (can be <0 or >0)
-	 * 		@param		type		Direction of movement:
-	 * 								0=input (stock increase after stock transfert), 1=output (stock decrease after stock transfer),
-	 * 								2=output (stock decrease), 3=input (stock increase)
-	 * 		@param		price		Unit price HT of product
-	 * 		@param		label		Label of stock movement
-	 *      @return     int     	<0 if KO, >0 if OK
+	 *	Add a movement of stock (in one direction only)
+	 *
+	 *	@param		User	$user			User object
+	 *	@param		int		$fk_product		Id of product
+	 *	@param		int		$entrepot_id	Id of warehouse
+	 *	@param		int		$qty			Qty of movement (can be <0 or >0)
+	 *	@param		int		$type			Direction of movement:
+	 *										0=input (stock increase after stock transfert), 1=output (stock decrease after stock transfer),
+	 *										2=output (stock decrease), 3=input (stock increase)
+	 *	@param		int		$price			Unit price HT of product
+	 *	@param		string	$label			Label of stock movement
+	 *	@param		string	$datem			Force date of movement
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$error = 0;
 		dol_syslog("MouvementStock::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
 
-		$now=dol_now();
+		$now=(! empty($datem) ? $datem : dol_now());
 
 		$this->db->begin();
 
@@ -78,7 +80,7 @@ class MouvementStock
 		$movestock=0;
 		if ($product->type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
 
-		if ($movestock)	// Change stock for current product, change for subproduct is done after
+		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
 			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price)";
@@ -305,11 +307,12 @@ class MouvementStock
 	 * 	@param		int		$qty			Quantity
 	 * 	@param		int		$price			Price
 	 * 	@param		string	$label			Label of stock movement
+	 * 	@param		string	$datem			Force date of movement
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
+	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $datem);
 	}
 
 

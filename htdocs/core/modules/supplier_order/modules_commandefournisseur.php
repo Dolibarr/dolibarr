@@ -42,7 +42,8 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 	/**
 	 *  Return list of active generation modules
-	 *  @param		$db		Database handler
+	 *  
+	 *  @param	DoliDB		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -71,7 +72,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Return if a module can be used or not
 	 *
-	 *   @return		boolean     true if module can be used
+	 *   @return	boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
@@ -80,7 +81,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Renvoie la description par defaut du modele de numerotation
 	 *
-	 *   @return     string      Texte descripif
+	 *   @return    string      Texte descripif
 	 */
 	function info()
 	{
@@ -91,7 +92,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**   Renvoie un exemple de numerotation
 	 *
-	 *    @return     string      Example
+	 *    @return   string      Example
 	 */
 	function getExample()
 	{
@@ -102,7 +103,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
 	 *
-	 *   @return     boolean     false si conflit, true si ok
+	 *   @return	boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -141,7 +142,7 @@ abstract class ModeleNumRefSuppliersOrders
  *
  *  @param	    DoliDB		$db  			data base object
  *  @param	    Object		$object			object order
- *  @param	    string		$modele			force le modele a utiliser ('' to not force)
+ *  @param	    string		$model			force le modele a utiliser ('' to not force)
  *  @param		Translate	$outputlangs	Objet lang a utiliser pour traduction
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
@@ -167,7 +168,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 	// Si model pas encore bon
 	if (! $modelisok)
 	{
-		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF) $modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
+		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF) $model = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 		$file = "pdf_".$model.".modules.php";
 		// On verifie l'emplacement du modele
         $file = dol_buildpath($dir.$file);
@@ -178,7 +179,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 	if (! $modelisok)
 	{
 		$liste=ModelePDFSuppliersOrders::liste_modeles($db);
-		$modele=key($liste);        // Renvoie la premiere valeur de cle trouvee dans le tableau
+		$model=key($liste);        // Renvoie la premiere valeur de cle trouvee dans le tableau
 		$file = "pdf_".$model.".modules.php";
 		// On verifie l'emplacement du modele
         $file = dol_buildpath($dir.$file);
@@ -199,8 +200,10 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			// on supprime l'image correspondant au preview
-			supplier_order_delete_preview($db, $object->id);
+
+			// we delete preview files
+        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			dol_delete_preview($object);
 			return 1;
 		}
 		else
@@ -219,68 +222,10 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		}
 		return 0;
 	}
 }
 
-/**
- * Delete preview files, pour le cas de regeneration de commande
- * @param   $db		   data base object
- * @param   $comfournid  id de la commande a effacer
- * @param   $comfournref reference de la commande si besoin
- * @return  int
- */
-function supplier_order_delete_preview($db, $comfournid, $comfournref='')
-{
-	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
-	if (!$comfournref)
-	{
-		$comfourn = new CommandeFournisseur($db,"",$comfournid);
-		$comfourn->fetch($comfournid);
-		$comfournref = $comfourn->ref;
-		$soc = new Societe($db);
-		$soc->fetch($comfourn->socid);
-	}
-
-
-
-	if ($conf->fournisseur->dir_output.'/commande')
-	{
-		$suppordref = dol_sanitizeFileName($comfournref);
-		$dir = $conf->fournisseur->dir_output . "/" . $suppordref ;
-		$file = $dir . "/" . $suppordref . ".pdf.png";
-		$multiple = $file . ".";
-
-		if ( file_exists( $file ) && is_writable( $file ) )
-		{
-			if ( ! dol_delete_file($file,1) )
-			{
-				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-				return 0;
-			}
-		}
-		else
-		{
-			for ($i = 0; $i < 20; $i++)
-			{
-				$preview = $multiple.$i;
-
-				if ( file_exists( $preview ) && is_writable( $preview ) )
-				{
-					if ( ! dol_delete_file($preview,1) )
-					{
-						$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
-						return 0;
-					}
-				}
-			}
-		}
-	}
-
-	return 1;
-}
 ?>

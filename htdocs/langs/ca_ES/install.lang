@@ -51,6 +51,7 @@ ServerAddressDescription=Nom o adreça IP del servidor de base de dades, general
 ServerPortDescription=Port del servidor de la base de dades. Deixar en blanc si ho desconeix.
 DatabaseServer=Servidor de la base de dades
 DatabaseName=Nom de la base de dades
+DatabasePrefix=Prefixe per a les taules
 Login=Usuari
 AdminLogin=Usuari de l'administrador de la base de dades Dolibarr. Deixi buit si es connecta com a anonymous
 Password=Contrasenya
@@ -152,8 +153,9 @@ MigrationShippingDelivery=Actualització de les dades de expedicions
 MigrationShippingDelivery2=Actualització de les dades expedicions 2
 MigrationFinished=Acabada l'actualització
 LastStepDesc=<strong>Últim pas</strong>: Indiqueu aquí el compte i la contrasenya del primer usuari que fareu servir per connectar-se a l'aplicació. No perdi aquests identificadors, és el compte que permet administrar la resta.
-#########
-# upgrade
+ActivateModule=Activació del mòdul %s
+#########=
+# upgrade=
 MigrationFixData=Correcció de dades desnormalitzades
 MigrationOrder=Migració de dades de les comandes clients
 MigrationSupplierOrder=Migració de dades de les comandes a proveïdors
@@ -163,56 +165,58 @@ MigrationContract=Migració de dades dels contractes
 MigrationSuccessfullUpdate=Actualització finalitzada
 MigrationUpdateFailed=L'actualització ha fallat
 MigrationRelationshipTables=Migració de les taules de relació (%s)
-# Payments Update 
+# Payments Update
 MigrationPaymentsUpdate=Actualització dels pagaments (vincle nn pagaments-factures)
 MigrationPaymentsNumberToUpdate=%s pagament(s) a actualitzar
 MigrationProcessPaymentUpdate=Actualització pagament(s) %s
 MigrationPaymentsNothingToUpdate=No hi ha més pagaments orfes que hagin de corregir.
 MigrationPaymentsNothingUpdatable=Cap pagament orfe de correcció.
-# Contracts Update 
+# Contracts Update
 MigrationContractsUpdate=Actualització dels contractes sense detalls (gestió del contracte + detall de contracte)
 MigrationContractsNumberToUpdate=%s contracte(s) a actualitzar
 MigrationContractsLineCreation=Creació linia contracte per contracte Ref. %s
 MigrationContractsNothingToUpdate=No hi ha més contractes (vinculats a un producte) sense línies de detalls que hagin de corregir.
 MigrationContractsFieldDontExist=Els camps fk_facture no existeixen ja. No hi ha operació pendent.
-# Contracts Empty Dates Update 
+# Contracts Empty Dates Update
 MigrationContractsEmptyDatesUpdate=Actualització de les dades de contractes no indicades
 MigrationContractsEmptyDatesUpdateSuccess=Ok per data de contracte
 MigrationContractsEmptyDatesNothingToUpdate=No hi ha més properes dates de contractes.
 MigrationContractsEmptyCreationDatesUpdateSuccess=Ok per la data de creació
 MigrationContractsEmptyCreationDatesNothingToUpdate=No hi ha més properes dates de creació.
-# Contracts Invalid Dates Update 
+# Contracts Invalid Dates Update
 MigrationContractsInvalidDatesUpdate=Actualització dades contracte incorrectes (per contractes amb detall en servei)
 MigrationContractsInvalidDateFix=Corregir contracte %s (data contracte=%s, Data posada en servei min=%s)
 MigrationContractsInvalidDatesNumber=%s contractes modificats
 MigrationContractsInvalidDatesNothingToUpdate=No hi ha més de contractes que hagin de corregir-se.
-# Contracts Incoherent Dates Update 
+# Contracts Incoherent Dates Update
 MigrationContractsIncoherentCreationDateUpdate=Actualització de les dades de creació de contracte que tenen un valor incoherent
 MigrationContractsIncoherentCreationDateUpdateSuccess=Ok
 MigrationContractsIncoherentCreationDateNothingToUpdate=No hi ha més dades de contractes.
-# Reopening Contracts 
+# Reopening Contracts
 MigrationReopeningContracts=Reobertura dels contractes que tenen almenys un servei actiu no tancat
 MigrationReopenThisContract=Reobertura contracte %s
 MigrationReopenedContractsNumber=%s contractes modificats
 MigrationReopeningContractsNothingToUpdate=No hi ha més contractes que hagin de reobrirse.
-# Migration transfert 
+# Migration transfert
 MigrationBankTransfertsUpdate=Actualització dels vincles entre registres bancaris i una transferència entre compte
 MigrationBankTransfertsNothingToUpdate=Cap vincle desfasat
-# Migration delivery 
+# Migration delivery
 MigrationShipmentOrderMatching=Actualitzar notes d'expedició
 MigrationDeliveryOrderMatching=Actualitzar recepcions
 MigrationDeliveryDetail=Actualitzar recepcions
-# Migration stock 
+# Migration stock
 MigrationStockDetail=Actualitzar valor en stock dels productes
-# Migration menus 
+# Migration menus
 MigrationMenusDetail=Actualització de la taula de menús dinàmics
-# Migration delivery address 
+# Migration delivery address
 MigrationDeliveryAddress=Actualització de les adreces d'enviament en les notes de lliurament
-# Migration project task actors 
+# Migration project task actors
 MigrationProjectTaskActors=Migració de la taula llx_projet_task_actors
-# Migration project user resp 
+# Migration project user resp
 MigrationProjectUserResp=Migració del camp fk_user_resp de llx_projet a llx_element_contact
-# Migration project task time 
+# Migration project task time
 MigrationProjectTaskTime=Actualització de temps dedicat en segons
 # Migration Acctioncom
 MigrationActioncommElement=Actualització de les dades de accions sobre elements
+# Migration payment mode
+MigrationPaymentMode=Actualització de les formes de pagament

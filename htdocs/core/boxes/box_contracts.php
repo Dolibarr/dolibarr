@@ -39,7 +39,7 @@ class box_contracts extends ModeleBoxes {
 
 
     /**
-     *      \brief      Constructeur de la classe
+     *  Constructor
      */
     function box_contracts()
     {
@@ -51,8 +51,10 @@ class box_contracts extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les donnees en memoire pour affichage ulterieur
-     *      \param      $max        Nombre maximum d'enregistrements a charger
+     *  Load data for box to show them later
+     *
+     *  @param	int		$max        Maximum number of records to load
+     *  @return	void
      */
     function loadBox($max=5)
     {
@@ -143,6 +145,13 @@ class box_contracts extends ModeleBoxes {
     	}
     }
 
+	/**
+	 *	Method to show box
+	 *
+	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$contents   Array with properties of box lines
+	 *	@return	void
+	 */
     function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);

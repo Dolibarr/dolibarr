@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2011 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011 	   Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2011 	   Philippe Grand			    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,12 +107,13 @@ if ($action == 'specimen')
 	$inter->initAsSpecimen();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
+	$dir = "/core/modules/fichinter/";
 	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	$file = dol_buildpath($dir.$file);
+	if (file_exists($file))
 	{
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 
@@ -219,7 +221,7 @@ if ($action == 'setmod')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'setup');
@@ -276,7 +278,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
                         // Show example of numbering module
                         print '<td nowrap="nowrap">';
                         $tmp=$module->getExample();
-                        if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                        if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+                        elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
@@ -303,7 +306,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							$htmltooltip.=''.$langs->trans("NextValue").': '.$nextval;
 						}
 						print '<td align="center">';
-						print $html->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print '</tr>';
@@ -431,7 +434,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 		    		print '<td align="center">';
 		    		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'intervention').'</a>';
-		    		print $html->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
+		    		print $form->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
 		    		print '</td>';
 
 		    		print '</tr>';

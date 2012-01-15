@@ -34,8 +34,8 @@ if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->compta
 accessforbidden();
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->compta->mode;
-if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+$modecompta = $conf->global->COMPTA_MODE;
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
@@ -99,29 +99,35 @@ else
 llxHeader();
 
 
-$html=new Form($db);
+$form=new Form($db);
 
 // Affiche en-tete du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
     $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
     $description=$langs->trans("RulesCADue");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	else  $description.= $langs->trans("DepositsAreIncluded");
     $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
 else {
     $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
     $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
     $description=$langs->trans("RulesCAIn");
+	$description.= $langs->trans("DepositsAreIncluded");
     $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+$moreparam=array();
+if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
+
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam);
 
 
 // Charge tableau
@@ -131,13 +137,9 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
-    $sql.= " WHERE f.fk_statut in (1,2) ";
-    $sql.= " AND (";
-    $sql.= " f.type = 0";          // Standard
-    $sql.= " OR f.type = 1";       // Replacement
-    $sql.= " OR f.type = 2";       // Credit note
-    //$sql.= " OR f.type = 3";       // We do not include deposit
-    $sql.= ")";
+    $sql.= " WHERE f.fk_statut in (1,2)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+	else $sql.= " AND f.type IN (0,1,2,3)";
 	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
 else
@@ -299,7 +301,8 @@ if (count($amount))
 
 print "</table>";
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

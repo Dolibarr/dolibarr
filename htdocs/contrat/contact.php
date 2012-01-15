@@ -108,7 +108,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
 
 llxHeader('', $langs->trans("ContractCard"), "Contrat");
 
-$html = new Form($db);
+$form = new Form($db);
 $formcompany= new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
@@ -157,7 +157,7 @@ if ($id > 0)
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		$absolute_discount=$contrat->societe->getAvailableDiscounts();
 		print '. ';
-		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->currency));
 		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 		print '.';
 		print '</td></tr>';
@@ -208,7 +208,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			//$userAlreadySelected = $contrat->getListContactId('internal'); 	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
-			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
+			$form->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($contrat, '', 'type','internal');
@@ -238,7 +238,7 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid');
+			$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid');
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';

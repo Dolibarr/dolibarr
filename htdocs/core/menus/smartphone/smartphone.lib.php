@@ -51,7 +51,7 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 	{
 		if ($newTabMenu[$i]['enabled'] == true)
 		{
-			if ($newTabMenu[$i]['right'] == true)	// Is allowed
+			if ($newTabMenu[$i]['perms'] == true)	// Is allowed
 			{
 				// Define url
 				if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
@@ -92,7 +92,7 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 							if ($menus[$j]['level'] == 0)
 							{
 								print_start_menu_entry();
-								if (empty($menus[$j+1]['level'])) print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
+								if (empty($menus[$j+1]['level'])) print '<a href="'.$url.'"'.($menus[$j]['target']?" target='".$menus[$j]['target']."'":($atarget?" target=$atarget":'')).'>';
 								$title=$menus[$j]['titre'];
 								// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($menus[$j]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
 								print_text_menu_entry($title);
@@ -104,7 +104,7 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 								if ($menus[$j-1]['level'] == 0) print_start_submenu_array();
 
 								print_start_menu_entry();
-								print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
+								print '<a href="'.$url.'"'.($menus[$j]['target']?" target='".$menus[$j]['target']."'":($atarget?" target=$atarget":'')).'>';
 								$title=$menus[$j]['titre'];
 								// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($menus[$j]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
 								print_text_menu_entry($title);
@@ -124,7 +124,7 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 						$url=dol_buildpath($newTabMenu[$i]['url'],1);
 						$url=preg_replace('/&amp.*/i','',$url);
 
-						print '<a href="'.$url.'"'.($newTabMenu[$i]['atarget']?" target='".$newTabMenu[$i]['atarget']."'":($atarget?" target=$atarget":'')).'>';
+						print '<a href="'.$url.'"'.($newTabMenu[$i]['target']?" target='".$newTabMenu[$i]['target']."'":($atarget?" target=$atarget":'')).'>';
 						$title=$newTabMenu[$i]['titre'];
 						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($newTabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
 						print_text_menu_entry($title);

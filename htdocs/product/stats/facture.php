@@ -60,7 +60,7 @@ if (! $sortfield) $sortfield="f.datef";
 
 $invoicestatic=new Facture($db);
 
-$html = new Form($db);
+$form = new Form($db);
 
 
 if ($_GET["id"] || $_GET["ref"])
@@ -90,7 +90,7 @@ if ($_GET["id"] || $_GET["ref"])
 		// Reference
 		print '<tr>';
 		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $html->showrefnav($product,'ref','',1,'ref');
+		print $form->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
 

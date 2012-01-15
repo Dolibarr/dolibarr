@@ -43,7 +43,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function doc_generic_odt($db)
 	{
@@ -71,7 +71,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
 
 
@@ -88,7 +88,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$langs->load("companies");
 		$langs->load("errors");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -187,11 +187,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			{
 				$id = $object;
 				$object = new Societe($this->db);
-				$object->fetch($id);
-
+				$result=$object->fetch($id);
 				if ($result < 0)
 				{
-					dol_print_error($db,$object->error);
+					dol_print_error($this->db,$object->error);
 					return -1;
 				}
 			}
@@ -226,11 +225,14 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				// Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
-				$odfHandler = new odf($srctemplatepath, array(
-						'PATH_TO_TMP'	  => $conf->societe->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}')
+				$odfHandler = new odf(
+				    $srctemplatepath,
+				    array(
+    					'PATH_TO_TMP'	  => $conf->societe->dir_temp,
+    					'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+    					'DELIMITER_LEFT'  => '{',
+    					'DELIMITER_RIGHT' => '}'
+					)
 				);
 
 				//print $odfHandler->__toString()."\n";
@@ -255,6 +257,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                     }
                     catch(OdfException $e)
                     {
+                        // setVars failed, probably because key not found
                     }
                 }
                 // Make substitutions into odt of mysoc info
@@ -276,11 +279,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 					catch(OdfException $e)
 					{
+                        // setVars failed, probably because key not found
 					}
 				}
                 // Make substitutions into odt of thirdparty + external modules
 				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
-                complete_substitutions_array($tmparray, $langs, $object);
+                complete_substitutions_array($tmparray, $outputlangs, $object);
                 //var_dump($object->id); exit;
 				foreach($tmparray as $key=>$value)
 				{
@@ -297,6 +301,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 					catch(OdfException $e)
 					{
+                        // setVars failed, probably because key not found
 					}
 				}
 

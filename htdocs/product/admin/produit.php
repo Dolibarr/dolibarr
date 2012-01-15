@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,10 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
 
 $langs->load("admin");
+$langs->load("products");
 
 // Security check
 if (! $user->admin) accessforbidden();
@@ -68,6 +69,11 @@ else if ($action == 'viewProdDescInForm')
 	$view = GETPOST("activate_viewProdDescInForm");
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $view,'chaine',0,'',$conf->entity);
 }
+else if ($action == 'viewProdDescInThirdpartyLanguage')
+{
+	$view = GETPOST("activate_viewProdDescInThirdpartyLanguage");
+	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE", $view,'chaine',0,'',$conf->entity);
+}
 else if ($action == 'usesearchtoselectproduct')
 {
 	$usesearch = GETPOST("activate_usesearchtoselectproduct");
@@ -91,11 +97,11 @@ if($action)
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        $mesg = '<font class="ok">'.$langs->trans("SetupSaved").'</font>';
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        $mesg = '<font class="error">'.$langs->trans("Error").'</font>';
     }
 }
 
@@ -105,27 +111,40 @@ if($action)
 
 $formbarcode=new FormBarCode($db);
 
-llxHeader('',$langs->trans("ProductSetup"));
+$title = $langs->trans('ProductServiceSetup');
+$tab = $langs->trans("ProductsAndServices");
+if (empty($conf->produit->enabled))
+{
+	$title = $langs->trans('ServiceSetup');
+	$tab = $langs->trans('Services');
+}
+else if (empty($conf->service->enabled))
+{
+	$title = $langs->trans('ProductSetup');
+	$tab = $langs->trans('Products');
+}
+
+llxHeader('',$title);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ProductSetup"),$linkback,'setup');
+print_fiche_titre($title,$linkback,'setup');
 
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/product/admin/produit.php";
-$head[$h][1] = $langs->trans("Products");
+$head[$h][1] = $tab;
 $hselected=$h;
 $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
-$html=new Form($db);
+$form=new Form($db);
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print "  <td>".$langs->trans("Parameters")."</td>\n";
-print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
-print "  <td width=\"80\">&nbsp;</td></tr>\n";
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td width="80">&nbsp;</td></tr>'."\n";
 
 /*
  * Formulaire parametres divers
@@ -133,16 +152,16 @@ print "  <td width=\"80\">&nbsp;</td></tr>\n";
 
 // multiprix activation/desactivation
 $var=!$var;
-print "<form method=\"post\" action=\"produit.php\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"multiprix\">";
-print "<tr ".$bc[$var].">";
+print '<input type="hidden" name="action" value="multiprix">';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("MultiPricesAbility").'</td>';
 print '<td width="60" align="right">';
-print $html->selectyesno("activate_multiprix",$conf->global->PRODUIT_MULTIPRICES,1);
+print $form->selectyesno("activate_multiprix",$conf->global->PRODUIT_MULTIPRICES,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
+print '</td>';
 print '</tr>';
 print '</form>';
 
@@ -151,12 +170,12 @@ print '</form>';
 if($conf->global->PRODUIT_MULTIPRICES)
 {
 	$var=!$var;
-	print "<form method=\"post\" action=\"produit.php\">";
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"multiprix_num\">";
-	print "<tr ".$bc[$var].">";
+	print '<input type="hidden" name="action" value="multiprix_num">';
+	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
-	print "<td align=\"right\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_MULTIPRICES_LIMIT."\"></td>";
+	print '<td align="right"><input size="3" type="text" class="flat" name="value" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
 	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';
 	print '</form>';
@@ -164,31 +183,31 @@ if($conf->global->PRODUIT_MULTIPRICES)
 
 // sousproduits activation/desactivation
 $var=!$var;
-print "<form method=\"post\" action=\"produit.php\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"sousproduits\">";
-print "<tr ".$bc[$var].">";
+print '<input type="hidden" name="action" value="sousproduits">';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td width="60" align="right">';
-print $html->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
+print $form->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
+print '</td>';
 print '</tr>';
 print '</form>';
 
 // utilisation formulaire Ajax sur choix produit
 $var=!$var;
-print "<form method=\"post\" action=\"produit.php\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectproduct\">";
-print "<tr ".$bc[$var].">";
+print '<input type="hidden" name="action" value="usesearchtoselectproduct">';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UseSearchToSelectProduct").'</td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td nowrap="nowrap" align="right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
-	print "</td>";
+	print '</td>';
 }
 else
 {
@@ -198,10 +217,10 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $html->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print "</td>";
+	print '</td>';
 }
 print '</tr>';
 print '</form>';
@@ -209,12 +228,12 @@ print '</form>';
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 {
 	$var=!$var;
-	print "<form method=\"post\" action=\"produit.php\">";
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"nbprod\">";
-	print "<tr ".$bc[$var].">";
+	print '<input type="hidden" name="action" value="nbprod">';
+	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
-	print "<td align=\"right\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_LIMIT_SIZE."\"></td>";
+	print '<td align="right"><input size="3" type="text" class="flat" name="value" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
 	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';
 	print '</form>';
@@ -222,35 +241,37 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 
 // Visualiser description produit dans les formulaires activation/desactivation
 $var=!$var;
-print "<form method=\"post\" action=\"produit.php\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInForm\">";
-print "<tr ".$bc[$var].">";
+print '<input type="hidden" name="action" value="viewProdDescInForm">';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
-print $html->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
+print '</td>';
 print '</tr>';
 print '</form>';
 
-// Confirmation de suppression d'un ligne produit dans les formulaires activation/desactivation
-/*
- $var=!$var;
- print "<form method=\"post\" action=\"produit.php\">";
- print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
- print "<input type=\"hidden\" name=\"action\" value=\"confirmDeleteProdLineInForm\">";
- print "<tr ".$bc[$var].">";
- print '<td>'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
- print '<td width="60" align="right">';
- print $html->selectyesno("activate_confirmDeleteProdLineInForm",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
- print '</td><td align="right">';
- print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
- print "</td>";
- print '</tr>';
- print '</form>';
- */
+// View product description in thirdparty language
+if (! empty($conf->global->MAIN_MULTILANGS))
+{
+	$var=!$var;
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="viewProdDescInThirdpartyLanguage">';
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
+	print '<td width="60" align="right">';
+	print $form->selectyesno("activate_viewProdDescInThirdpartyLanguage",$conf->global->PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE,1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</td>';
+	print '</tr>';
+	print '</form>';
+}
+
 
 if ($conf->global->PRODUCT_CANVAS_ABILITY)
 {
@@ -322,7 +343,8 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 
 dol_htmloutput_mesg($mesg);
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>

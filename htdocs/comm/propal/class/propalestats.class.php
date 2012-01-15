@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (c) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,10 +47,9 @@ class PropaleStats extends Stats
 	/**
 	 * Constructor
 	 *
-	 * @param 	$DB		   Database handler
-	 * @param 	$socid	   Id third party
-     * @param   $userid    Id user for filter
-	 * @return 	PropaleStats
+	 * @param 	DoliDB	$DB		   Database handler
+	 * @param 	int		$socid	   Id third party
+     * @param   int		$userid    Id user for filter
 	 */
 	function PropaleStats($DB, $socid=0, $userid=0)
 	{
@@ -64,7 +64,7 @@ class PropaleStats extends Stats
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
 		$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 
-		$this->field='total';
+		$this->field='total_ht';
 
 		$this->where.= " fk_statut > 0";
 		$this->where.= " AND p.fk_soc = s.rowid AND s.entity = ".$conf->entity;
@@ -78,8 +78,10 @@ class PropaleStats extends Stats
 
 
 	/**
-	 * Renvoie le nombre de proposition par mois pour une ann�e donn�e
-	 *
+	 * Return propals number by month for a year
+	 * 
+	 * @param	int		$year	year for stats
+	 * @return	array			array with number by month
 	 */
 	function getNbByMonth($year)
 	{
@@ -97,7 +99,9 @@ class PropaleStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de propale par annee
+	 * Return propals number by year
+	 * 
+	 * @return	array	array with number by year
 	 *
 	 */
 	function getNbByYear()
@@ -113,9 +117,12 @@ class PropaleStats extends Stats
 
 		return $this->_getNbByYear($sql);
 	}
+	
 	/**
-	 * Renvoie le nombre de propale par mois pour une annee donnee
+	 * Return the propals amount by month for a year
 	 *
+	 * @param	int		$year	year for stats
+	 * @return	array			array with number by month
 	 */
 	function getAmountByMonth($year)
 	{
@@ -131,9 +138,12 @@ class PropaleStats extends Stats
 
 		return $this->_getAmountByMonth($year, $sql);
 	}
+	
 	/**
+	 * Return the propals amount average by month for a year
 	 *
-	 *
+	 * @param	int		$year	year for stats
+	 * @return	array			array with number by month
 	 */
 	function getAverageByMonth($year)
 	{
@@ -150,10 +160,10 @@ class PropaleStats extends Stats
 		return $this->_getAverageByMonth($year, $sql);
 	}
 
-
 	/**
-	 *	\brief	Return nb, total and average
-	 *	\return	array	Array of values
+	 *	Return nb, total and average
+	 *	
+	 *	@return	array	Array of values
 	 */
 	function getAllByYear()
 	{

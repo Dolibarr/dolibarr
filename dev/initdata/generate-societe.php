@@ -96,8 +96,8 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     $soc->code_client='CU'.time()."$s";
     $soc->code_fournisseur='SU'.time()."$s";
     $soc->tva_assuj=1;
-    $soc->pays_id=1;
-    $soc->pays_code='FR';
+    $soc->country_id=1;
+    $soc->country_code='FR';
 	// Un client sur 3 a une remise de 5%
     $user_remise=rand(1,3); if ($user_remise==3) $soc->remise_client=5;
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_client."\n";

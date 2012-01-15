@@ -149,6 +149,8 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 
 	$langs->load("bills");
 
+	$error=0;
+	
 	// Increase limit for PDF build
     $err=error_reporting();
     error_reporting(0);
@@ -209,12 +211,14 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
 		{
-			// Success in building document. We build meta file.
-			facture_meta_create($db, $object->id);
-			// et on supprime l'image correspondant au preview
-			facture_delete_preview($db, $object->id);
-
 			$outputlangs->charset_output=$sav_charset_output;
+
+			// We delete old preview
+			require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			dol_delete_preview($object);
+
+			// Success in building document. We build meta file.
+			dol_meta_create($object);
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -235,98 +239,9 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 	}
 	else
 	{
-		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
+		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
 		return -1;
 	}
-}
-
-/**
- *	Create a meta file with document file into same directory.
- *  This should allow rgrep search
- *
- *	@param	    db  		Objet base de donnee
- *	@param	    facid		Id de la facture a creer
- *	@param      message     Message
- */
-function facture_meta_create($db, $facid, $message="")
-{
-	global $langs,$conf;
-
-	$fac = new Facture($db);
-	$fac->fetch($facid);
-	$fac->fetch_thirdparty();
-
-	if ($conf->facture->dir_output)
-	{
-		$facref = dol_sanitizeFileName($fac->ref);
-		$dir = $conf->facture->dir_output . "/" . $facref ;
-		$file = $dir . "/" . $facref . ".meta";
-
-		if (! is_dir($dir))
-		{
-			create_exdir($dir);
-		}
-
-		if (is_dir($dir))
-		{
-			$nblignes = count($fac->lines);
-			$client = $fac->client->nom . " " . $fac->client->address . " " . $fac->client->cp . " " . $fac->client->ville;
-			$meta = "REFERENCE=\"" . $fac->ref . "\"
-			DATE=\"" . dol_print_date($fac->date,'') . "\"
-			NB_ITEMS=\"" . $nblignes . "\"
-			CLIENT=\"" . $client . "\"
-			TOTAL_HT=\"" . $fac->total_ht . "\"
-			TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
-
-			for ($i = 0 ; $i < $nblignes ; $i++)
-			{
-				//Pour les articles
-				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lines[$i]->qty . "\"
-				ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lines[$i]->price . "\"
-				ITEM_" . $i . "_TVA=\"" .$fac->lines[$i]->tva_tx . "\"
-				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lines[$i]->desc)) . "\"
-				";
-			}
-		}
-		$fp = fopen($file,"w");
-		fputs($fp,$meta);
-		fclose($fp);
-		if (! empty($conf->global->MAIN_UMASK))
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
-}
-
-
-/**
- *	Supprime l'image de previsualitation, pour le cas de regeneration de facture
- *
- *	@param	   db  		objet base de donnee
- *	@param	   facid	id de la facture a creer
- */
-function facture_delete_preview($db, $facid)
-{
-	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
-	$fac = new Facture($db);
-	$fac->fetch($facid);
-
-	if ($conf->facture->dir_output)
-	{
-		$facref = dol_sanitizeFileName($fac->ref);
-		$dir = $conf->facture->dir_output . "/" . $facref ;
-		$file = $dir . "/" . $facref . ".pdf.png";
-
-		if ( file_exists( $file ) && is_writable( $file ) )
-		{
-			if ( ! dol_delete_file($file,1) )
-			{
-				return 0;
-			}
-		}
-	}
-
-	return 1;
 }
 
 ?>

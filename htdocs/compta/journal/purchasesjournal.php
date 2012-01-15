@@ -55,7 +55,7 @@ if ($user->societe_id > 0)
 
 llxHeader('','','');
 
-$html=new Form($db);
+$form=new Form($db);
 
 $year_current = strftime("%Y",dol_now());
 $pastmonth = strftime("%m",dol_now()) - 1;
@@ -78,7 +78,7 @@ $nom=$langs->trans("PurchasesJournal");
 //$nomlink=;
 $builddate=time();
 $description=$langs->trans("DescPurchasesJournal");
-$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_PAYS);
@@ -161,7 +161,7 @@ foreach ($tabfac as $key => $val)
 	$invoicestatic->ref=$val["ref"];
 	$invoicestatic->type=$val["type"];
 
-	print "<tr ".$bc[$var]." >";
+	print "<tr ".$bc[$var].">";
 	// third party
 	//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 	print "<td>".$val["date"]."</td>";
@@ -194,7 +194,7 @@ foreach ($tabfac as $key => $val)
 			//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 			print "<td>".$val["date"]."</td>";
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			print "<td>".$k."</td><td>".$langs->trans("VAT")." ".$key."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
+			print "<td>".$k."</td><td>".$langs->trans("VAT")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
 		}
 	}
 

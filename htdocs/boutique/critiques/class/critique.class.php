@@ -26,22 +26,31 @@
  *		\class 		Critique
  *		\brief      Classe permettant la gestion des critiques OSCommerce
  */
-class Critique {
-	var $db ;
+class Critique
+{
+	var $db;
 
-	var $id ;
+	var $id;
 	var $nom;
 
-	function Critique($DB, $id=0) {
-		$this->db = $DB;
-		$this->id = $id ;
-	}
-	/*
+	/**
+	 * Constructor
 	 *
-	 *
-	 *
+	 * @param	DoliDB		$db		Database handler
 	 */
-	function fetch ($id) {
+	function Critique($db)
+	{
+		$this->db = $DB;
+	}
+
+	/**
+	 * Load instance
+	 *
+	 *	@param	int		$id		Id to load
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
+	function fetch ($id)
+	{
 		global $conf;
 
 		$sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name";
@@ -67,8 +76,7 @@ class Critique {
 		}
 		else
 		{
-			print $this->db->error();
-			print "<p>$sql";
+			print $this->db->lasterror();
 		}
 
 		return $result;

@@ -4,9 +4,10 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
+ * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,50 +58,64 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 		}
 		$_GET     = array_map('stripslashes_deep', $_GET);
 		$_POST    = array_map('stripslashes_deep', $_POST);
-		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
+		//$_COOKIE  = array_map('stripslashes_deep', $_COOKIE); // Useless because a cookie should never be outputed on screen nor used into sql
 		@set_magic_quotes_runtime(0);
 	}
 }
 
 /**
- * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST)
+ * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
  * @param		string		$val		Value
- * @param		string		$get		1=GET, 0=POST
+ * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
  * @return		boolean					true if there is an injection
  */
-function test_sql_and_script_inject($val, $get)
+function test_sql_and_script_inject($val, $type)
 {
 	$sql_inj = 0;
-	// For SQL Injection
-	$sql_inj += preg_match('/delete[\s]+from/i', $val);
-	$sql_inj += preg_match('/create[\s]+table/i', $val);
-	$sql_inj += preg_match('/update.+set.+=/i', $val);
-	$sql_inj += preg_match('/insert[\s]+into/i', $val);
-	$sql_inj += preg_match('/select.+from/i', $val);
-	$sql_inj += preg_match('/union.+select/i', $val);
-	$sql_inj += preg_match('/(\.\.%2f)+/i', $val);
+	// For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
+	if ($type != 2)
+	{
+    	$sql_inj += preg_match('/delete[\s]+from/i', $val);
+    	$sql_inj += preg_match('/create[\s]+table/i', $val);
+    	$sql_inj += preg_match('/update.+set.+=/i', $val);
+    	$sql_inj += preg_match('/insert[\s]+into/i', $val);
+    	$sql_inj += preg_match('/select.+from/i', $val);
+    	$sql_inj += preg_match('/union.+select/i', $val);
+    	$sql_inj += preg_match('/(\.\.%2f)+/i', $val);
+	}
 	// For XSS Injection done by adding javascript with script
-	$sql_inj += preg_match('/<script/i', $val);
-	// For XSS Injection done by adding javascript with onmousemove, etc... (closing a src or href tag with not cleaned param)
-	if ($get) $sql_inj += preg_match('/"/i', $val);	// We refused " in GET parameters value
+	// This is all cases a browser consider text is javascript:
+	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
+	// All examples on page: http://ha.ckers.org/xss.html#XSScalc
+    $sql_inj += preg_match('/<script/i', $val);
+    $sql_inj += preg_match('/<style/i', $val);
+    $sql_inj += preg_match('/base[\s]+href/i', $val);
+    if ($type == 1)
+    {
+	    $sql_inj += preg_match('/javascript:/i', $val);
+	    $sql_inj += preg_match('/vbscript:/i', $val);
+    }
+	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
+	if ($type == 1) $sql_inj += preg_match('/"/i', $val);      // We refused " in GET parameters value
+	if ($type == 2) $sql_inj += preg_match('/[\s;"]/', $val);    // PHP_SELF is an url and must match url syntax
 	return $sql_inj;
 }
 
 /**
- * Security: Return true if OK, false otherwise
+ * Security: Return true if OK, false otherwise.
  *
  * @param		string		&$var		Variable name
- * @param		string		$get		1=GET, 0=POST
+ * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
  * @return		boolean					true if ther is an injection
  */
-function analyse_sql_and_script(&$var, $get)
+function analyse_sql_and_script(&$var, $type)
 {
 	if (is_array($var))
 	{
 		foreach ($var as $key => $value)
 		{
-			if (analyse_sql_and_script($value,$get))
+			if (analyse_sql_and_script($value,$type))
 			{
 				$var[$key] = $value;
 			}
@@ -114,7 +129,7 @@ function analyse_sql_and_script(&$var, $get)
 	}
 	else
 	{
-		return (test_sql_and_script_inject($var,$get) <= 0);
+		return (test_sql_and_script_inject($var,$type) <= 0);
 	}
 }
 
@@ -122,7 +137,7 @@ function analyse_sql_and_script(&$var, $get)
 if (! empty($_SERVER["PHP_SELF"]))
 {
     $morevaltochecklikepost=array($_SERVER["PHP_SELF"]);
-    analyse_sql_and_script($morevaltochecklikepost,0);
+    analyse_sql_and_script($morevaltochecklikepost,2);
 }
 // Sanity check on GET parameters
 if (! empty($_SERVER["QUERY_STRING"]))
@@ -228,7 +243,6 @@ if (! empty($conf->file->main_force_https))
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/core/class/menu.class.php");			// Need 10ko memory (11ko in 2.2)
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");	    // Need 660ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php');	// Need 22ko memory
-//dol_stopwithmem();
 
 // If install or upgrade process not done or not completely finished, we call the install page.
 if (! empty($conf->global->MAIN_NOT_INSTALLED) || ! empty($conf->global->MAIN_NOT_UPGRADED))
@@ -294,10 +308,7 @@ $login='';
 if (! defined('NOLOGIN'))
 {
 	// $authmode lists the different means of identification to be tested in order of preference.
-	// Example: 'http'
-	// Example: 'dolibarr'
-	// Example: 'ldap'
-	// Example: 'http,forceuser'
+	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser'
 
 	// Authentication mode
 	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
@@ -335,21 +346,19 @@ if (! defined('NOLOGIN'))
         }
 
 		// Verification security graphic code
-		if (isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+		if (GETPOST("username","alpha",2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
-			require_once(ARTICHOW_PATH.'Artichow.cfg.php');
-			require_once(ARTICHOW.'/AntiSpam.class.php');
-
-			$object = new AntiSpam();
+            $sessionkey = 'dol_antispam_value';
+            $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
 			// Verifie code
-			if (! $object->check('dol_antispam_value',$_POST['code'],true))
+			if (! $ok)
 			{
 				dol_syslog('Bad value for code, connexion refused');
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
-				$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
+				$user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
 
@@ -362,7 +371,7 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : $_POST["username"]);
+		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
 		$passwordtotest	= (! empty($_COOKIE['password_dolibarr']) ? $_COOKIE['password_dolibarr'] : $_POST["password"]);
 		$entitytotest	= (! empty($_POST["entity"]) ? $_POST["entity"] : 1);
 
@@ -371,7 +380,7 @@ if (! defined('NOLOGIN'))
 		// If error, we will put error message in session under the name dol_loginmesg
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
-		if (isset($_POST["username"]) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
+		if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
 		if ($test && $goontestloop)
 		{
@@ -380,7 +389,18 @@ if (! defined('NOLOGIN'))
 			{
 				$dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
 				$dol_tz=$_POST["tz"];
-				$dol_dst=$_POST["dst"];
+				$dol_dst=0;
+				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
+				{
+                    $datenow=dol_now();
+                    $datefirst=dol_stringtotime($_POST["dst_first"]);
+                    $datesecond=dol_stringtotime($_POST["dst_second"]);
+                    if ($datenow >= $datefirst && $datenow < $datesecond) $dol_dst=1;
+				}
+				//print $datefirst.'-'.$datesecond.'-'.$datenow; exit;
+				$dol_dst_observed=$_POST["dst_observed"];
+				$dol_dst_first=$_POST["dst_first"];
+				$dol_dst_second=$_POST["dst_second"];
 				$dol_screenwidth=$_POST["screenwidth"];
 				$dol_screenheight=$_POST["screenheight"];
 			}
@@ -389,16 +409,16 @@ if (! defined('NOLOGIN'))
 			{
 				dol_syslog('Bad password, connexion refused',LOG_DEBUG);
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				// Bad password. No authmode has found a good password.
-				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
+				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($db);
-				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
 				if ($result < 0) { $error++; }
 				// Fin appel triggers
 			}
@@ -428,7 +448,7 @@ if (! defined('NOLOGIN'))
 			if ($resultFetchUser == 0)
 			{
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
@@ -468,7 +488,7 @@ if (! defined('NOLOGIN'))
 			if ($resultFetchUser == 0)
 			{
 				$langs->load('main');
-				$langs->load('other');
+				$langs->load('errors');
 
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
@@ -504,7 +524,7 @@ if (! defined('NOLOGIN'))
 	}
 
 	// Is it a new session that has started ?
-	// If we are here this means authentication was successfull.
+	// If we are here, this means authentication was successfull.
 	if (! isset($_SESSION["dol_login"]))
 	{
 		$error=0;
@@ -514,10 +534,13 @@ if (! defined('NOLOGIN'))
 		$_SESSION["dol_authmode"]=isset($dol_authmode)?$dol_authmode:'';
 		$_SESSION["dol_tz"]=isset($dol_tz)?$dol_tz:'';
 		$_SESSION["dol_dst"]=isset($dol_dst)?$dol_dst:'';
+		$_SESSION["dol_dst_observed"]=isset($dol_dst_observed)?$dol_dst_observed:'';
+		$_SESSION["dol_dst_first"]=isset($dol_dst_first)?$dol_dst_first:'';
+		$_SESSION["dol_dst_second"]=isset($dol_dst_second)?$dol_dst_second:'';
 		$_SESSION["dol_screenwidth"]=isset($dol_screenwidth)?$dol_screenwidth:'';
 		$_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
 		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
-		if (! empty($conf->multicompany->enabled)) $_SESSION["dol_entity"]=$conf->entity;
+		$_SESSION["dol_entity"]=$conf->entity;
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 		$db->begin();
@@ -544,7 +567,7 @@ if (! defined('NOLOGIN'))
 		}
 
 		// Create entity cookie, just used for login page
-		if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && !empty($conf->global->MAIN_MULTICOMPANY_COOKIE) && isset($_POST["entity"]))
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
 		{
 			include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
 
@@ -553,7 +576,7 @@ if (! defined('NOLOGIN'))
 			$prefix=dol_getprefix();
 			$entityCookieName = 'DOLENTITYID_'.$prefix;
 			// TTL : is defined in the config page multicompany
-			$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
+			$ttl = (! empty($conf->global->MULTICOMPANY_COOKIE_TTL) ? dol_now()+$conf->global->MULTICOMPANY_COOKIE_TTL : dol_now()+60*60*8 );
 			// Cryptkey : will be created randomly in the config page multicompany
 			$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 
@@ -561,34 +584,14 @@ if (! defined('NOLOGIN'))
 			$entityCookie->_setCookie($entityCookieName, $entity, $ttl);
 		}
 
-		// Module webcalendar
-		if (! empty($conf->webcalendar->enabled) && $user->webcal_login != "")
-		{
-			$domain='';
-
-			// Creation of a cookie to save login
-			$cookiename='webcalendar_login';
-			if (! isset($_COOKIE[$cookiename]))
-			{
-				setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
-			}
-			// Creation of a cookie to save session
-			$cookiename='webcalendar_session';
-			if (! isset($_COOKIE[$cookiename]))
-			{
-				setcookie($cookiename, 'TODO', 0, "/", $domain, 0);
-			}
-		}
-
-		// Module Phenix
-		if (! empty($conf->phenix->enabled) && $user->phenix_login != "" && $conf->phenix->cookie)
-		{
-			// Creation du cookie permettant la connexion automatique, valide jusqu'a la fermeture du browser
-			if (!isset($_COOKIE[$conf->phenix->cookie]))
-			{
-				setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
-			}
-		}
+        // Hooks on successfull login
+        $action='';
+        include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+        $hookmanager=new HookManager($db);
+        $hookmanager->callHooks(array('login'));
+        $parameters=array('dol_authmode'=>$dol_authmode);
+        $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) $error++;
 	}
 
 
@@ -731,22 +734,12 @@ else
 $heightforframes=48;
 
 // Switch to another entity
-if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
 {
-	if (GETPOST('action') == 'switchentity')
+	if ($mc->switchEntity(GETPOST('entity')) >= 0)
 	{
-		$res = @dol_include_once("/multicompany/class/actions_multicompany.class.php");
-
-		if ($res)
-		{
-			$mc = new ActionsMulticompany($db);
-
-			if($mc->switchEntity(GETPOST('entity')) >= 0)
-			{
-				Header("Location: ".DOL_URL_ROOT.'/');
-				exit;
-			}
-		}
+		Header("Location: ".DOL_URL_ROOT.'/');
+		exit;
 	}
 }
 
@@ -844,7 +837,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		else print "<title>".$appli."</title>";
 		print "\n";
 
-        if (! defined('DISABLE_JQUERY'))
+        if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {
             print '<!-- Includes for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
@@ -872,7 +865,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         // Output style sheets (optioncss='print' or '')
         $themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
         //print 'themepath='.$themepath;exit;
-		print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'').'">'."\n";
+		print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss','alpha',1):'').'">'."\n";
 		// CSS forced by modules (relative url starting with /)
 		if (is_array($conf->css_modules))
 		{
@@ -880,7 +873,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{	// cssfile is an absolute path
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
-				if (!preg_match('/\.css$/i',$cssfile)) print '?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'');
+				if (!preg_match('/\.css$/i',$cssfile)) print '?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss','alpha',1):'');
 				print '">'."\n";
 			}
 		}
@@ -891,7 +884,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
-				if (!preg_match('/\.css$/i',$cssfile)) print '?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'');
+				if (!preg_match('/\.css$/i',$cssfile)) print '?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss','alpha',1):'');
 				print '">'."\n";
 			}
 		}
@@ -922,20 +915,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
 			}
 			// jQuery jnotify
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
-            // jQuery jeditable
-			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))
 			{
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min'.$ext.'"></script>'."\n";
-				print '<script type="text/javascript">'."\n";
-				print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
-				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
-				print 'var tooltipInPlace = \''.$langs->trans('ClickToEdit').'\';'."\n";
-				print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
-				print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
-				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
-				print '</script>'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/editinplace.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify.js"></script>'."\n";
 			}
 			// Flot
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT))
@@ -946,11 +929,38 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js"></script>'."\n";
 			}
             // CKEditor
-            if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
+            if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
-                print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
+                if (constant('JS_CKEDITOR'))
+                {
+                    print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.JS_CKEDITOR.'\';</script>'."\n";
+                    print '<script type="text/javascript" src="'.JS_CKEDITOR.'ckeditor_basic.js"></script>'."\n";
+                }
+                else
+                {
+                    print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
+                    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
+                }
+            }
+            // jQuery jeditable
+            if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+            {
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min'.$ext.'"></script>'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js"></script>'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js"></script>'."\n";
+            	print '<script type="text/javascript">'."\n";
+            	print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
+            	print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
+            	print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n";
+            	print 'var placeholderInPlace = \''.$langs->trans('ClickToEdit').'\';'."\n";
+            	print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
+            	print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
+            	print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
+            	print 'var ckeditorConfig = \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";
+            	print '</script>'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/editinplace.js"></script>'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js"></script>'."\n";
             }
             // File Upload
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
@@ -968,84 +978,32 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/js/ColVis.min'.$ext.'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/js/TableTools.min'.$ext.'"></script>'."\n";
             }
+
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js"></script>'."\n";
+
+            // Add datepicker default options
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
+
+            // Output module javascript
+            if (is_array($arrayofjs))
+            {
+            	print '<!-- Includes JS specific to page -->'."\n";
+            	foreach($arrayofjs as $jsfile)
+            	{
+            		if (preg_match('/^http/i',$jsfile))
+            		{
+            			print '<script type="text/javascript" src="'.$jsfile.'"></script>'."\n";
+            		}
+            		else
+            		{
+            			if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
+            			print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
+            		}
+            	}
+            }
 		}
-
-		// Output module javascript
-		if (is_array($arrayofjs))
-		{
-			print '<!-- Includes JS specific to page -->'."\n";
-			foreach($arrayofjs as $jsfile)
-			{
-				if (preg_match('/^http/i',$jsfile))
-				{
-					print '<script type="text/javascript" src="'.$jsfile.'"></script>'."\n";
-				}
-				else
-				{
-					if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
-					print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
-				}
-			}
-		}
-
-		// Define tradMonths javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
-        print '<script type="text/javascript">'."\n";
-		$tradMonths=array($langs->trans("January"),
-		$langs->trans("February"),
-		$langs->trans("March"),
-		$langs->trans("April"),
-		$langs->trans("May"),
-		$langs->trans("June"),
-		$langs->trans("July"),
-		$langs->trans("August"),
-		$langs->trans("September"),
-		$langs->trans("October"),
-		$langs->trans("November"),
-		$langs->trans("December")
-		);
-		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
-
-		// Define tradMonthsMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
-		$tradMonthsMin=array($langs->trans("JanuaryMin"),
-		$langs->trans("FebruaryMin"),
-		$langs->trans("MarchMin"),
-		$langs->trans("AprilMin"),
-		$langs->trans("MayMin"),
-		$langs->trans("JuneMin"),
-		$langs->trans("JulyMin"),
-		$langs->trans("AugustMin"),
-		$langs->trans("SeptemberMin"),
-		$langs->trans("OctoberMin"),
-		$langs->trans("NovemberMin"),
-		$langs->trans("DecemberMin")
-		);
-		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';'."\n";
-
-		// Define tradDays javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
-		$tradDays=array($langs->trans("Monday"),
-		$langs->trans("Tuesday"),
-		$langs->trans("Wednesday"),
-		$langs->trans("Thursday"),
-		$langs->trans("Friday"),
-		$langs->trans("Saturday"),
-		$langs->trans("Sunday")
-		);
-		print 'var tradDays = '.json_encode($tradDays).';'."\n";
-
-		// Define tradDaysMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
-		$tradDaysMin=array($langs->trans("MondayMin"),
-		$langs->trans("TuesdayMin"),
-		$langs->trans("WednesdayMin"),
-		$langs->trans("ThursdayMin"),
-		$langs->trans("FridayMin"),
-		$langs->trans("SaturdayMin"),
-		$langs->trans("SundayMin")
-		);
-		print 'var tradDaysMin = '.json_encode($tradDaysMin).';'."\n";
-		print '</script>'."\n";
 
 		if (! empty($head)) print $head."\n";
 		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
@@ -1072,9 +1030,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  */
 function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 {
-	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
+	global $user, $conf, $langs, $db;
+	global $dolibarr_main_authentication;
+	global $mc;
 
-	$html=new Form($db);
+	$form=new Form($db);
 
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 
@@ -1255,21 +1215,15 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	print '<div class="login_block">'."\n";
     print '<table class="nobordernopadding" summary=""><tr>';
 
-	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
+	print $form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
 
-	// Select entity
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+	// Show entity info
+	if (! empty($conf->multicompany->enabled))
 	{
-		$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
-
-		if ($res)
-		{
-			$mc = new ActionsMulticompany($db);
-			$mc->showInfo($conf->entity);
-		}
+		$mc->showInfo($conf->entity);
 	}
 
-	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
+	print $form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
 
 	// Link to print main content area
 	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
@@ -1279,7 +1233,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
 		$text.=' title="" alt="">';
 		$text.='</a>';
-		print $html->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
+		print $form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
 	}
 
 	print '</tr></table>'."\n";
@@ -1465,7 +1419,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	// Execute hook printLeftBlock
 	$parameters=array();
-    $leftblock.=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
     print $leftblock;
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
@@ -1598,7 +1552,7 @@ if (! function_exists("llxFooter"))
 {
     /**
      * Show HTML footer
-     * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML
+     * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML.
      *
      * @param	string	$foot    		A text to add in HTML generated page
      * @return	void

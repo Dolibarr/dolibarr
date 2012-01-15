@@ -39,11 +39,11 @@ class modAgenda extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modAgenda($DB)
+	function modAgenda($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->numero = 2400;
 
 		$this->family = "projects";
@@ -168,7 +168,6 @@ class modAgenda extends DolibarrModules
 		//							'type'=>'top',			// This is a Top menu entry
 		//							'titre'=>'MyModule top menu',
 		//							'mainmenu'=>'mymodule',
-		//							'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor.
 		//							'url'=>'/mymodule/pagetop.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
@@ -181,7 +180,6 @@ class modAgenda extends DolibarrModules
 													'type'=>'top',
 													'titre'=>'Agenda',
 													'mainmenu'=>'agenda',
-													'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor.
 													'url'=>'/comm/action/index.php',
 													'langs'=>'agenda',
 													'position'=>100,

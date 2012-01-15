@@ -41,7 +41,7 @@ $langs->load("categories");
  */
 
 $categstatic = new Categorie($db);
-$html = new Form($db);
+$form = new Form($db);
 
 if ($type == 0) $title=$langs->trans("ProductsCategoriesArea");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoriesArea");
@@ -75,7 +75,7 @@ print $langs->trans("Name").':</td><td><input class="flat" type="text" size="20"
 print '<tr '.$bc[0].'><td>';
 print $langs->trans("SubCatOf").':</td><td>';
 
-print $html->select_all_categories('','subcatof');
+print $form->select_all_categories('','subcatof');
 print '</td>';
 print '<td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
 */

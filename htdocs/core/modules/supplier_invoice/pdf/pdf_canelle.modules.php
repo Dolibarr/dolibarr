@@ -94,7 +94,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
         // Get source company
         if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
         $this->emetteur=$object->thirdparty;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+        if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
         // Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -355,6 +355,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				// Affiche zone totaux
 				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
+				$amount_credit_notes_included=0;
+				$amount_deposits_included=0;
+				
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
@@ -405,7 +408,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$pdf->SetXY($this->marge_gauche, $tab2_top + 0);
 		// If France, show VAT mention if not applicable
-		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
+		if ($this->emetteur->country_code == 'FR' && $this->franchise == 1)
 		{
 			$pdf->MultiCell(100, $tab2_hl, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 		}
@@ -423,6 +426,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		// Affichage des totaux de TVA par taux (conformement a reglementation)
 		$pdf->SetFillColor(248,248,248);
 
+		$index=0;
 		foreach( $this->tva as $tvakey => $tvaval )
 		{
 			if ($tvakey > 0)    // On affiche pas taux 0
@@ -461,9 +465,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->country_code), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), 0, 'R', 1);
 			}
 
 			// Total LocalTax2
@@ -471,9 +475,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->country_code), 0, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), 0, 'R', 1);
 			}
 		}
 		else
@@ -496,7 +500,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+						$totalvat =$outputlangs->transnoentities("TotalLT1".$mysoc->country_code).' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -587,7 +591,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
         // Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',$default_font_size - 2);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 

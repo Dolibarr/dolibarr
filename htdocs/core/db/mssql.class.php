@@ -34,15 +34,15 @@ class DoliDBMssql
 	//! Database handler
 	var $db;
 	//! Database type
-	var $type='mssql';
+	public $type='mssql';
 	//! Database label
-	var $label='MSSQL';
+	static $label='MSSQL';
 	//! Charset used to force charset when creating database
-	var $forcecharset='latin1';
+	static $forcecharset='latin1';
 	//! Collate used to force collate when creating database
-	var $forcecollate='latin1_swedish_ci';
+	static $forcecollate='latin1_swedish_ci';
 	//! Version min database
-	var $versionmin=array(2000);
+	static $versionmin=array(2000);
 	//! Resultset de la derniere requete
 	var $results;
 	//! 1 si connecte, 0 sinon
@@ -92,7 +92,7 @@ class DoliDBMssql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Mssql PHP functions for using MSSql driver are not available in this version of PHP";
-			dol_syslog("DoliDB::DoliDB : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMssql : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -101,7 +101,7 @@ class DoliDBMssql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dol_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -120,7 +120,7 @@ class DoliDBMssql
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=mssql_get_last_message();
-			dol_syslog("DoliDB::DoliDB : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -138,7 +138,7 @@ class DoliDBMssql
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dol_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::DoliDBMssql : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -186,7 +186,7 @@ class DoliDBMssql
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dol_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
+		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
 		$newhost=$host;
 		if ($port) $newhost.=':'.$port;
 		$this->db  = @mssql_connect($newhost, $login, $passwd);
@@ -242,7 +242,7 @@ class DoliDBMssql
     {
         if ($this->db)
         {
-          //dol_syslog("DoliDB::disconnect",LOG_DEBUG);
+          //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
           $this->connected=0;
           return mssql_close($this->db);
         }
@@ -277,8 +277,8 @@ class DoliDBMssql
 	/**
      * Validate a database transaction
      *
-     * @param       $log        Add more log to default log line
-     * @return      int         1 if validation is OK or transaction level no started, 0 if ERROR
+     * @param	string	$log        Add more log to default log line
+     * @return  int         		1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
 	function commit($log='')
 	{
@@ -323,11 +323,11 @@ class DoliDBMssql
 	/**
      *  Execute a SQL request and return the resultset
      *
-     *  @param      query           SQL query string
-     *  @param      usesavepoint    0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
-     *                              Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-     *  @param      type            Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-     *  @return     resource        Resultset of answer
+     *  @param	string	$query          SQL query string
+     *  @param  int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+     *                   		 		Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+     *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+     *  @return resource        		Resultset of answer
 	 */
 	function query($query,$usesavepoint=0,$type='auto')
 	{
@@ -403,7 +403,7 @@ class DoliDBMssql
                 $this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
-                dol_syslog("Mssql.lib::query SQL error: ".$query, LOG_WARNING);
+                dol_syslog(get_class($this)."::query SQL error: ".$query, LOG_WARNING);
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;
@@ -415,8 +415,8 @@ class DoliDBMssql
 	/**
 	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
-	 *	@param      resultset   Curseur de la requete voulue
-	 *	@return	    object		Object result line or false if KO or end of cursor
+	 *	@param	Resultset	$resultset  Curseur de la requete voulue
+	 *	@return	Object					Object result line or false if KO or end of cursor
 	 */
 	function fetch_object($resultset)
 	{
@@ -426,10 +426,10 @@ class DoliDBMssql
 	}
 
 	/**
-	 * 	Renvoie les donnees dans un tableau
-	 *
-	 * 	@param      resultset           Curseur de la requete voulue
-	 * 	@return	   array
+     *	Return datas as an array
+     *
+     *	@param	Resultset	$resultset  Resultset of request
+     *	@return	array					Array
 	 */
 	function fetch_array($resultset)
 	{
@@ -440,9 +440,10 @@ class DoliDBMssql
 
 
 	/**
-	 * \brief      Renvoie les donnees comme un tableau.
-	 * \param      resultset           Curseur de la requete voulue
-	 * \return	   array
+     *	Return datas as an array
+     *
+     *	@param	Resultset	$resultset  Resultset of request
+     *	@return	array					Array
 	 */
 	function fetch_row($resultset)
 	{
@@ -452,10 +453,11 @@ class DoliDBMssql
 	}
 
 	/**
-	 * \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
-	 * \see    	   affected_rows
-	 * \param      resultset           Curseur de la requete voulue
-	 * \return     int		           Nombre de lignes
+     *	Return number of lines for result of a SELECT
+     *
+     *	@param	Resultset	$resultset  Resulset of requests
+     *	@return int		    			Nb of lines
+     *	@see    affected_rows
 	 */
 	function num_rows($resultset)
 	{
@@ -528,8 +530,8 @@ class DoliDBMssql
 				if (! $return) $return.=' ORDER BY ';
 				else $return.=',';
 
-				$return.=$val;
-				if ($sortorder) $return.=' '.$sortorder;
+				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
+				if ($sortorder) $return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
 			}
 			return $return;
 		}
@@ -542,6 +544,7 @@ class DoliDBMssql
 
 	/**
 	 *     Escape a string to insert data.
+	 *
 	 *     @param	    stringtoencode		String to escape
 	 *     @return	    string				String escaped
 	 */
@@ -554,19 +557,21 @@ class DoliDBMssql
 	/**
 	 *   Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
-	 *   @param	    param       Date TMS to convert
-	 *   @return	string      Date in a string YYYYMMDDHHMMSS
+	 *
+	 *   @param	    string	$param      Date TMS to convert
+	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
-		return adodb_strftime("%Y-%m-%d %H:%M:%S",$param);
+		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
 	}
 
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
 	 * 	19700101020000 -> 3600 with TZ+1
-	 * 	@param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@return		date			Date TMS
+	 *
+	 * 	@param		string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@return		date				Date TMS
 	 */
 	function jdate($string)
 	{
@@ -690,11 +695,13 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief     Recupere l'id genere par le dernier INSERT.
-	 \param     tab     Nom de la table concernee par l'insert. Ne sert pas sous mssql mais requis pour compatibilite avec Postgresql
-	 \return    int     id
+	 * Get last ID after an insert INSERT
+	 *
+	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param	string	$fieldid	Field name
+	 * @return  int     			Id of row
 	 */
-	function last_insert_id($tab)
+	function last_insert_id($tab,$fieldid='rowid')
 	{
 		$res = $this->query("SELECT @@IDENTITY as id");
 		if ($data = $this->fetch_array($res))
@@ -769,7 +776,7 @@ class DoliDBMssql
 	 * 	\param			collation		Charset used to sort data
 	 * 	\return	        resource		resource defined if OK, null if KO
 	 * 	\remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mssql, ...) car elles sont deprecated
-	 *					On force creation de la base avec le charset forcecharset
+	 *					We force to create database with charset this->forcecharset and collate this->forcecollate
 	 */
 	function DDLCreateDb($database,$charset='',$collation='')
 	{
@@ -788,10 +795,11 @@ class DoliDBMssql
 	}
 
 	/**
-	 *	\brief     	List tables into a database.
-	 *	\param	    database		Name of database
-	 *	\param	    table   		Filter on some tables
-	 *	\return	    array			Array list of tables
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	resource				Resource
 	 */
 	function DDLListTables($database,$table='')
 	{
@@ -877,11 +885,12 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief      decrit une table dans une database.
-		\param	    table	Nom de la table
-		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-		\return	    resource
-		*/
+	 *	Return a pointer of line with description of a table or field
+	 *
+	 *	@param	string		$table	Name of table
+	 *	@param	string		$field	Optionnel : Name of field if we want description of field
+	 *	@return	resource			Resource
+	 */
 	function DDLDescTable($table,$field="")
 	{
 		$sql="DESC ".$table." ".$field;
@@ -892,12 +901,13 @@ class DoliDBMssql
 	}
 
 	/**
-	 *	\brief      Insert a new field in table
-	 *	\param	    table 			Nom de la table
-	 *	\param		field_name 		Nom du champ a inserer
-	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
-	 *	\param	    field_position 	Optionnel ex.: "after champtruc"
-	 *	\return	    int				<0 si KO, >0 si OK
+	 *	Create a new field into table
+	 *
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to add
+	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
+	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
@@ -928,10 +938,11 @@ class DoliDBMssql
 
 	/**
 	 *	Update format of a field into a table
-	 *	@param	    table 			Name of table
-	 *	@param		field_name 		Name of field to modify
-	 *	@param	    field_desc 		Array with description of field format
-	 *	@return	    int				<0 if KO, >0 if OK
+	 *
+	 *	@param	string	$table 				Name of table
+	 *	@param	string	$field_name 		Name of field to modify
+	 *	@param	string	$field_desc 		Array with description of field format
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
@@ -947,10 +958,11 @@ class DoliDBMssql
 	}
 
 	/**
-	 *	\brief      Drop a field in table
-	 *	\param	    table 			Nom de la table
-	 *	\param		field_name 		Nom du champ a inserer
-	 *	\return	    int				<0 si KO, >0 si OK
+	 *	Drop a field from table
+	 *
+	 *	@param	string	$table 			Name of table
+	 *	@param	string	$field_name 	Name of field to drop
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function DDLDropField($table,$field_name)
 	{
@@ -965,7 +977,13 @@ class DoliDBMssql
 	}
 
 
-	function getDefaultCharacterSetDatabase(){
+    /**
+     *	Return charset used to store data in database
+     *
+     *	@return		string		Charset
+     */
+    function getDefaultCharacterSetDatabase()
+	{
 		/*
 		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
 		 if (!$resql)
@@ -978,7 +996,13 @@ class DoliDBMssql
 		return '';
 	}
 
-	function getListOfCharacterSet(){
+	/**
+	 *	Return list of available charset that can be used to store data in database
+	 *
+	 *	@return		array		List of Charset
+	 */
+	function getListOfCharacterSet()
+	{
 		/*
 		 $resql=$this->query('SHOW CHARSET');
 		 $liste = array();
@@ -1000,6 +1024,11 @@ class DoliDBMssql
 		return ''; // attente debuggage
 	}
 
+	/**
+	 *	Return collation used in database
+	 *
+	 *	@return		string		Collation value
+	 */
 	function getDefaultCollationDatabase()
 	{
 		$resql=$this->query("SELECT SERVERPROPERTY('collation')");
@@ -1011,6 +1040,11 @@ class DoliDBMssql
 		return $liste['computed'];
 	}
 
+	/**
+	 *	Return list of available collation that can be used for database
+	 *
+	 *	@return		array		Liste of Collation
+	 */
 	function getListOfCollation()
 	{
 		/*
@@ -1033,8 +1067,9 @@ class DoliDBMssql
 		return ''; // attente debugage
 	}
 
-	/*
-	 *  Return full path of dump program
+	/**
+	 *	Return full path of dump program
+	 *
 	 *	@return		string		Full path of dump program
 	 */
 	function getPathOfDump()
@@ -1043,10 +1078,11 @@ class DoliDBMssql
 	    return '';
 	}
 
-    /**
-     *	Return full path of restore program
-     *	@return		string		Full path of restore program
-     */
+	/**
+	 *	Return full path of restore program
+	 *
+	 *	@return		string		Full path of restore program
+	 */
 	function getPathOfRestore()
 	{
 

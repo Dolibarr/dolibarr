@@ -92,7 +92,7 @@ abstract class DolibarrModules
         // Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
         if (! $err) $err+=$this->insert_permissions(1);
 
-        // Insere les constantes associees au module dans llx_const
+        // Insert specific menus entries into database
         if (! $err) $err+=$this->insert_menus();
 
         // Create module's directories
@@ -408,7 +408,7 @@ abstract class DolibarrModules
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules";
         $sql.= " WHERE numero = ".$this->numero;
-        $sql.= " AND entity in (0, ".$conf->entity.")";
+        $sql.= " AND entity IN (0, ".$conf->entity.")";
 
         dol_syslog(get_class($this)."::_dbunactive sql=".$sql, LOG_DEBUG);
         $this->db->query($sql);
@@ -1089,6 +1089,8 @@ abstract class DolibarrModules
      */
     function insert_menus()
     {
+    	global $user;
+
         require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
         $err=0;
@@ -1120,11 +1122,18 @@ abstract class DolibarrModules
                         $foundparent=1;
                     }
                 }
-                elseif (preg_match('/mainmenu=(.*),leftmenu=(.*)/',$fk_parent,$reg))
+                elseif (preg_match('/fk_mainmenu=(.*),fk_leftmenu=(.*)/',$fk_parent,$reg))
                 {
                     $menu->fk_menu=-1;
                     $menu->fk_mainmenu=$reg[1];
                     $menu->fk_leftmenu=$reg[2];
+                    $foundparent=1;
+                }
+                elseif (preg_match('/fk_mainmenu=(.*)/',$fk_parent,$reg))
+                {
+                    $menu->fk_menu=-1;
+                    $menu->fk_mainmenu=$reg[1];
+                    $menu->fk_leftmenu='';
                     $foundparent=1;
                 }
                 if (! $foundparent)
@@ -1136,20 +1145,19 @@ abstract class DolibarrModules
             }
             $menu->type=$this->menu[$key]['type'];
             $menu->mainmenu=$this->menu[$key]['mainmenu'];
+            $menu->leftmenu=isset($this->menu[$key]['leftmenu'])?$this->menu[$key]['leftmenu']:'';
             $menu->titre=$this->menu[$key]['titre'];
-            $menu->leftmenu=isset($this->menu[$key]['leftmenu'])?$this->menu[$key]['leftmenu']:0;
             $menu->url=$this->menu[$key]['url'];
             $menu->langs=$this->menu[$key]['langs'];
             $menu->position=$this->menu[$key]['position'];
             $menu->perms=$this->menu[$key]['perms'];
             $menu->target=$this->menu[$key]['target'];
             $menu->user=$this->menu[$key]['user'];
-            //$menu->constraint=$this->menu[$key]['constraint'];
             $menu->enabled=isset($this->menu[$key]['enabled'])?$this->menu[$key]['enabled']:0;
 
             if (! $err)
             {
-                $result=$menu->create();
+                $result=$menu->create($user);
                 if ($result > 0)
                 {
                     $this->menu[$key]['rowid']=$result;
@@ -1157,7 +1165,7 @@ abstract class DolibarrModules
                 else
                 {
                     $this->error=$menu->error;
-                    dol_syslog('DolibarrModules::insert_menus result='.$result." ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this).'::insert_menus result='.$result." ".$this->error, LOG_ERR);
                     $err++;
                     break;
                 }

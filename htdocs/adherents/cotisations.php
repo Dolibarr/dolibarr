@@ -167,10 +167,10 @@ if ($result)
                 {
                     print '<input type="hidden" name="action" value="2bank">';
                     print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
-                    $html = new Form($db);
-                    $html->select_comptes('','accountid',0,'',1);
+                    $form = new Form($db);
+                    $form->select_comptes('','accountid',0,'',1);
                     print '<br>';
-                    $html->select_types_paiements('','paymenttypeid');
+                    $form->select_types_paiements('','paymenttypeid');
                     print '<input name="num_chq" type="text" class="flat" size="5">';
                 }
                 else

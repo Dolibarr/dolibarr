@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+$langs->load("dict");
 
 if (empty($user->id))
 {
@@ -172,11 +173,16 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$localobject->address='New address';
 		$localobject->zip='New zip';
 		$localobject->town='New town';
+		$localobject->country_id=2;
 		$localobject->status=0;
 		$localobject->tel='New tel';
 		$localobject->fax='New fax';
-		$localobject->email='New email';
+		$localobject->email='newemail@newemail.com';
 		$localobject->url='New url';
+		$localobject->idprof1='new idprof1';
+		$localobject->idprof2='new idprof2';
+		$localobject->idprof3='new idprof3';
+		$localobject->idprof4='new idprof4';
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
@@ -198,11 +204,17 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals($localobject->address, $newobject->address);
     	$this->assertEquals($localobject->zip, $newobject->zip);
     	$this->assertEquals($localobject->town, $newobject->town);
+    	$this->assertEquals($localobject->country_id, $newobject->country_id);
+    	$this->assertEquals('BE', $newobject->country_code);
     	$this->assertEquals($localobject->status, $newobject->status);
     	$this->assertEquals($localobject->tel, $newobject->tel);
     	$this->assertEquals($localobject->fax, $newobject->fax);
     	$this->assertEquals($localobject->email, $newobject->email);
     	$this->assertEquals($localobject->url, $newobject->url);
+    	$this->assertEquals($localobject->idprof1, $newobject->idprof1);
+    	$this->assertEquals($localobject->idprof2, $newobject->idprof2);
+    	$this->assertEquals($localobject->idprof3, $newobject->idprof3);
+    	$this->assertEquals($localobject->idprof4, $newobject->idprof4);
 
     	return $localobject;
     }
@@ -218,10 +230,6 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-
-    	$result=$localobject->factures_impayes();
-    	print __METHOD__." id=".$localobject->id." result=".join(',',$result)."\n";
-    	//$this->assertLessThan($result, 0);
 
         $result=$localobject->set_as_client();
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -239,12 +247,12 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertNotEquals($result, '');
 
-        $result=$localobject->getFullAddress();
+        $result=$localobject->getFullAddress(1);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town", $result);
+        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
 
         $result=$localobject->isInEEC();
-        print __METHOD__." id=".$localobject->id." pays_code=".$this->pays_code." result=".$result."\n";
+        print __METHOD__." id=".$localobject->id." country_code=".$this->country_code." result=".$result."\n";
         $this->assertTrue(true, $result);
 
         $localobject->info($localobject->id);

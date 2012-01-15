@@ -77,7 +77,7 @@ if ($_GET["action"] == 'addthumb' && $_GET["file"])
  *	View
  */
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($_GET["id"] || $_GET["ref"])
 {
@@ -103,7 +103,7 @@ if ($_GET["id"] || $_GET["ref"])
 		 */
 		if ($_GET['action'] == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -114,7 +114,7 @@ if ($_GET["id"] || $_GET["ref"])
 		// Reference
 		print '<tr>';
 		print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-		print $html->showrefnav($product,'ref','',1,'ref');
+		print $form->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
 

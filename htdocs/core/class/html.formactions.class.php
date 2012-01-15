@@ -134,7 +134,7 @@ class FormActions
 
         	$total = 0;	$var=true;
         	print '<table class="border" width="100%">';
-        	print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+        	print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans('Ref').'</th><th class="liste_titre">'.$langs->trans('Date').'</th><th class="liste_titre">'.$langs->trans('Action').'</th><th class="liste_titre">'.$langs->trans('By').'</th></tr>';
         	print "\n";
 
         	foreach($actioncomm->actions as $action)

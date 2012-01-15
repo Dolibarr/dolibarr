@@ -82,7 +82,7 @@ DetailMenuIdParent=ID of parent menu (0 for a top menu)
 DetailPosition=Sort number to define menu position
 PersonalizedMenusNotSupported=Personalized menus not supported
 AllMenus=All
-NotConfigured=Not configured
+NotConfigured=Module not configured
 Setup=Setup
 Activation=Activation
 Active=Active
@@ -259,12 +259,12 @@ ThisIsProcessToFollow=This is setup to process:
 StepNb=Step %s
 FindPackageFromWebSite=Find a package that provides feature you want (for example on official web site %s).
 DownloadPackageFromWebSite=Download package.
-UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr's document directory <b>%s</b>
+UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr's root directory <b>%s</b>
 SetupIsReadyForUse=Install is finished and Dolibarr is ready to use with this new component.
 CurrentVersion=Dolibarr current version
 CallUpdatePage=Go to the page that updates the database structure and datas: %s.
 LastStableVersion=Last stable version
-GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags could be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but an offset corresponding to the number to the right of the + sign is applied starting on first %s. <br><b>{000000@x}</b> same as previous but the counter is reset to zero when month x is reached (x between 1 and 12). If this option is used and x is 2 or higher, then sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags could be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but an offset corresponding to the number to the right of the + sign is applied starting on first %s. <br><b>{000000@x}</b> same as previous but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration). If this option is used and x is 2 or higher, then sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
 GenericMaskCodes2=<b>{cccc}</b> the client code<br><b>{cccc000}</b> the client code on n characters is followed by a client's ref counter without offset and zeroized with the global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionnary-company types).<br>
 GenericMaskCodes3=All other characters in the mask will remain intact.<br>Spaces are not allowed.<br>
 GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany done 2007-01-31:</u><br>
@@ -789,11 +789,12 @@ LogEvents=Security audit events
 Audit=Audit
 ListEvents=Audit events
 ListOfSecurityEvents=List of Dolibarr security events
+SecurityEventsPurged=Security events purged
 LogEventDesc=You can enable here the logging for Dolibarr security events. Administrators can then see its content via menu <b>System tools - Audit</b>. Warning, this feature can consume a large amount of data in database.
 AreaForAdminOnly=Those features can be used by <b>administrator users</b> only.
 SystemInfoDesc=System information is miscellaneous technical information you get in read only mode and visible for administrators only.
 SystemAreaForAdminOnly=This area is available for administrator users only. None of the Dolibarr permissions can reduce this limit.
-CompanyFundationDesc=Edit on this page all known information of the company or foundation you need to manage
+CompanyFundationDesc=Edit on this page all known information of the company or foundation you need to manage (For this click, on "Modify" button at bottom of page)
 DisplayDesc=You can choose each parameter related to the Dolibarr look and feel here
 AvailableModules=Available modules
 ToActivateModule=To activate modules, go on setup Area (Home->Setup->Modules).
@@ -856,6 +857,8 @@ DefineHereComplementaryAttributes=Define here all atributes, not already availab
 ExtraFields=Complementary attributes
 SendingMailSetup=Setup of sendings by email
 SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must conatins option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
+PathToDocuments=Path to documents
+PathDirectory=Directory
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
@@ -929,8 +932,6 @@ WatermarkOnDraftInvoices=Watermark on draft invoices (any if empty)
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
 NumberOfProductLines=Number of product lines
-PathToDocuments=Path to documents
-PathDirectory=Directory
 ProposalsNumberingModules=Commercial proposal numbering modules
 ProposalsPDFModules=Commercial proposal documents models
 ClassifiedInvoiced=Classified invoiced
@@ -1104,10 +1105,13 @@ LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following lo
 ForANonAnonymousAccess=For an authenticated acces (for a write access for example)
 ##### Products #####
 ProductSetup=Products module setup
+ServiceSetup=Services module setup
+ProductServiceSetup=Products and Services modules setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
 ConfirmDeleteProductLineAbility=Confirmation when removing product lines in forms
 ModifyProductDescAbility=Personalization of product descriptions in forms
 ViewProductDescInFormAbility=Visualization of product descriptions in the forms (otherwise as popup tooltip)
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the thirdparty language
 UseSearchToSelectProduct=Use a search form to choose a product (instead of using a list box).<br>Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Default barcode type to use for products
@@ -1168,12 +1172,9 @@ FreeLegalTextOnDeliveryReceipts=Free text on delivery receipts
 ##### FCKeditor #####
 AdvancedEditor=Advanced editor
 ActivateFCKeditor=Activate advanced editor for:
-FCKeditorForUsers=WYSIWIG creation/edition of user's description and note
-FCKeditorForCompany=WYSIWIG creation/edition of companie's description and note
+FCKeditorForCompany=WYSIWIG creation/edition of element's description and note (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of products/service's description and note
-FCKeditorForMembers=WYSIWIG creation/edition of member's description and note
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <font class="warning">Warning: Using this option for this case is seriously not recommanded as it can create problems with special characters and page formating when building PDF files.</font>
-FCKeditorForProductDetailsPerso=WYSIWIG creation/edition of products personalized details lines for all entities (proposals, orders, invoices, etc...)
 FCKeditorForMailing=WYSIWIG creation/edition of mailings
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be an OSCommerce database (Key %s not found in table %s).
@@ -1273,6 +1274,8 @@ BankOrderGlobal=General
 BankOrderGlobalDesc=General display order
 BankOrderES=Spanish
 BankOrderESDesc=Spanish display order
+##### MailmanSpip #####
+MailmanSpipSetup=Mailman and Spip module Setup
 ##### Multicompany #####
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####

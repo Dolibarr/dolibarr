@@ -58,17 +58,17 @@ if ($reqstock=='epuise')
 }
 
 //$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit($limit ,$offset);
+$sql .= $dbosc->plimit($limit,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-print '<TR class="liste_titre">';
+print '<tr class="liste_titre">';
 print "<td>id</td>";
 print "<td>Ref</td>";
 print "<td>Titre</td>";
 print "<td>Groupe</td>";
 print '<td align="center">Stock</td>';
-print '<TD align="center">Status</TD>';
-print "</TR>\n";
+print '<td align="center">Status</td>';
+print '</tr>'."\n";
 
 $resql=$dbosc->query($sql);
 if ($resql)

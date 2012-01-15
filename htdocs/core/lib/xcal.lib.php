@@ -306,17 +306,17 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
 		$date=date("r");
 
 		// Print header
-		$html='<?xml version="1.0" encoding="'.$langs->charset_output.'"?>';
-		fwrite($fichier, $html);
+		$form='<?xml version="1.0" encoding="'.$langs->charset_output.'"?>';
+		fwrite($fichier, $form);
 		fwrite($fichier, "\n");
-		$html='<rss version="2.0">';
-		fwrite($fichier, $html);
+		$form='<rss version="2.0">';
+		fwrite($fichier, $form);
 		fwrite($fichier, "\n");
 
-		$html="<channel>\n<title>".$title."</title>\n";
-		fwrite($fichier, $html);
+		$form="<channel>\n<title>".$title."</title>\n";
+		fwrite($fichier, $form);
 
-		$html='<description><![CDATA['.$desc.'.]]></description>'."\n".
+		$form='<description><![CDATA['.$desc.'.]]></description>'."\n".
 //		'<language>fr</language>'."\n".
 		'<copyright>Dolibarr</copyright>'."\n".
 		'<lastBuildDate>'.$date.'</lastBuildDate>'."\n".
@@ -324,10 +324,10 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
 
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
   		$url=$urlwithouturlroot.DOL_URL_ROOT.'/public/agenda/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
-		$html.='<link><![CDATA['.$url.']]></link>'."\n";
+		$form.='<link><![CDATA['.$url.']]></link>'."\n";
 
-		//print $html;
-		fwrite($fichier, $html);
+		//print $form;
+		fwrite($fichier, $form);
 
 
 		foreach ($events_array as $date => $event)
@@ -386,7 +386,6 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
 
 /**
  * 	Encode for cal export
- * 	string must be encoded in conf->file->character_set_client
  *
  * 	@param		string	$format		vcal or ical
  * 	@param 		string	$string		string to encode
@@ -396,10 +395,8 @@ function format_cal($format,$string)
 {
 	global $conf;
 
-	if ($conf->file->character_set_client == 'ISO-8859-1') $newstring=utf8_encode($string);
-	else $newstring=$string;
+	$newstring=$string;
 
-	// Now newstring is always UTF8 string
 	if ($format == 'vcal')
 	{
 		$newstring=quotedPrintEncode($newstring);

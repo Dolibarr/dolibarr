@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2009	Laurent Destailleur	<eldy@users.sourceforge.org>
- * Copyright (C) 2011	Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2009-2012	Laurent Destailleur	<eldy@users.sourceforge.org>
+ * Copyright (C) 2011	    Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,20 +129,27 @@ print $langs->trans("YouCanDownloadAdvancedDatFileTo",'<a href="'.$url2.'" targe
 if ($geoip)
 {
 	print '<br><br>';
-	print '<br>';
+	print '<br>'.$langs->trans("TestGeoIPResult",$ip).':';
+
 	$ip='24.24.24.24';
-	print $langs->trans("TestGeoIPResult",$ip).':<br>';
-	print $ip.' -> ';
+	print '<br>'.$ip.' -> ';
 	$result=dol_print_ip($ip,1);
 	if ($result) print $result;
 	else print $langs->trans("Error");
 
+	/* We disable this test because dol_print_ip need an ip as input
+	$ip='www.google.com';
+	print '<br>'.$ip.' -> ';
+	$result=dol_print_ip($ip,1);
+	if ($result) print $result;
+	else print $langs->trans("Error");
+	*/
 	$geoip->close();
 }
 
 dol_htmloutput_mesg($mesg);
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

@@ -39,15 +39,16 @@ class LignePrelevement
 
 
 	/**
-	 *    \brief      Constructeur de la classe
-	 *    \param      DB          Handler acces base de donnees
-	 *    \param      user        Objet user
+	 *  Constructor
+	 *
+	 *  @param	DoliDb	$db			Database handler
+	 *  @param 	User	$user       Objet user
 	 */
-	function LignePrelevement($DB, $user)
+	function LignePrelevement($db, $user)
 	{
 		global $conf,$langs;
 
-		$this->db = $DB ;
+		$this->db = $db;
 		$this->user = $user;
 
 		// List of language codes for status
@@ -59,8 +60,10 @@ class LignePrelevement
 	}
 
 	/**
-	 *    \brief      Recupere l'objet prelevement
-	 *    \param      rowid       id de la facture a recuperer
+	 *  Recupere l'objet prelevement
+	 *
+	 *  @param	int		$rowid       id de la facture a recuperer
+	 *  @return	void
 	 */
 	function fetch($rowid)
 	{
@@ -110,8 +113,9 @@ class LignePrelevement
 
 /**
 	 *    Return status label of object
-	 *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-	 * 	  @return     string      Label
+	 *
+	 *    @param	int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+	 * 	  @return   string      		Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -120,9 +124,10 @@ class LignePrelevement
 
 	/**
 	 *    Return status label for a status
-	 *    @param      statut      id statut
-	 *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-	 * 	  @return     string      Label
+	 *
+	 *    @param	int		$statut     id statut
+	 *    @param    int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+	 * 	  @return   string      		Label
 	 */
 	function LibStatut($statut,$mode=0)
 	{

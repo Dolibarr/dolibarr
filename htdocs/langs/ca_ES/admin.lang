@@ -796,11 +796,12 @@ LogEvents=Auditoria de la seguretat d'esdeveniments
 Audit=Auditoria
 ListEvents=Auditoria d'esdeveniments
 ListOfSecurityEvents=Llistat d'esdeveniments de seguretat Dolibarr
+SecurityEventsPurged=Esdeveniments de seguretat purgats
 LogEventDesc=Podeu habilitar el registre d'esdeveniments de seguretat Dolibarr aquí. Els administradors poden veure el seu contingut a través de menú <b>Eines del sistema->Auditoria</b>. Atenció, aquesta característica pot consumir una gran quantitat de dades a la base de dades.
 AreaForAdminOnly=Aquestes funcions només són accessibles a un usuari administrador.
 SystemInfoDesc=La informació del sistema és informació tècnica accessible només en només lectura als administradors.
 SystemAreaForAdminOnly=Aquesta àrea només és accessible als usuaris de tipus administradors. Cap permís Dolibarr permet estendre el cercle de usuaris autoritzats a aquesta áera.
-CompanyFundationDesc=Edita en aquesta pàgina tota la informació coneguda sobre l'empresa o associació a administrar
+CompanyFundationDesc=Edita en aquesta pàgina tota la informació coneguda sobre l'empresa o associació a administrar  (per això feu clic al botó "Modificar" a peu de pàgina)
 DisplayDesc=Podeu trobar aquí tots els paràmetres relacionats amb l'aparença d'Dolibarr
 AvailableModules=Mòduls disponibles
 ToActivateModule=Per activar els mòduls, aneu a l'àrea de Configuració (Inici->Configuració->Mòduls).
@@ -1108,8 +1109,10 @@ LDAPDescGroups=Aquesta pàgina permet definir el nom dels atributs de l'arbre LD
 LDAPDescMembers=Aquesta pàgina permet definir el nom dels atributs de l'arbre LDAP per a cada informació dels membres del mòdul Associacions Dolibarr.
 LDAPDescValues=Els valors d'exemples s'adapten a <b>OpenLDAP</b> amb els schemas carregats: <b>core.schema, cosine.schema, inetorgperson.schema </b>). Si vostè utilitza els a valors suggerits i OpenLDAP, modifiqui el seu fitxer de configuració LDAP <b>slapd.conf </b> per a tenir tots aquests schemas actius.
 ForANonAnonymousAccess=Per un accés autentificat
-##### Products #####
+##### Products/Services #####
 ProductSetup=Configuració del mòdul Productes
+ServiceSetup=Configuració del mòdul Serveis
+ProductServiceSetup= Configuración dels mòduls Productos i Serveis
 NumberOfProductShowInSelect=Nº de productes màx a les llistes (0= sense límit)
 ConfirmDeleteProductLineAbility=Confirmació d'eliminació d'una línia de producte en els formularis
 ModifyProductDescAbility=Personalització de les descripcions dels productes en els formularis

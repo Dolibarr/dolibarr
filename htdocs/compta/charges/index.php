@@ -30,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/paymentsocialcontribution
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 $langs->load("compta");
+$langs->load("bills");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

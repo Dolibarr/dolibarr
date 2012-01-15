@@ -43,7 +43,7 @@ class mod_contract_magre extends ModelNumRefContracts
 
 		$langs->load("bills");
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -52,7 +52,7 @@ class mod_contract_magre extends ModelNumRefContracts
 		$texte.= '<input type="hidden" name="maskconstcontract" value="CONTRACT_MAGRE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Contract"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Contract"),$langs->transnoentities("Contract"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Contract"),$langs->transnoentities("Contract"));

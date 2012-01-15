@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -42,33 +42,28 @@ require_once("filefunc.inc.php");	// May have been already require by main.inc.p
 require_once(DOL_DOCUMENT_ROOT."/core/class/conf.class.php");
 
 $conf = new Conf();
-
 // Identifiant propres au serveur base de donnee
-$conf->db->host   = $dolibarr_main_db_host;
-$conf->db->port   = $dolibarr_main_db_port;
-$conf->db->name   = $dolibarr_main_db_name;
-$conf->db->user   = $dolibarr_main_db_user;
-$conf->db->pass   = $dolibarr_main_db_pass;
-$conf->db->type   = $dolibarr_main_db_type;
-$conf->db->prefix = $dolibarr_main_db_prefix;
-$conf->db->character_set=$dolibarr_main_db_character_set;
-$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
-$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
-$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
-$conf->file->main_limit_users = $dolibarr_main_limit_users;
-$conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
-if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');	// For test purpose
-// Identifiant autres
-$conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
+$conf->db->host							= $dolibarr_main_db_host;
+$conf->db->port							= $dolibarr_main_db_port;
+$conf->db->name							= $dolibarr_main_db_name;
+$conf->db->user							= $dolibarr_main_db_user;
+$conf->db->pass							= $dolibarr_main_db_pass;
+$conf->db->type							= $dolibarr_main_db_type;
+$conf->db->prefix						= $dolibarr_main_db_prefix;
+$conf->db->character_set				= $dolibarr_main_db_character_set;
+$conf->db->dolibarr_main_db_collation	= $dolibarr_main_db_collation;
+$conf->db->dolibarr_main_db_encryption	= $dolibarr_main_db_encryption;
+$conf->db->dolibarr_main_db_cryptkey	= $dolibarr_main_db_cryptkey;
+$conf->file->main_limit_users			= $dolibarr_main_limit_users;
+$conf->file->mailing_limit_sendbyweb	= $dolibarr_mailing_limit_sendbyweb;
+// Identification mode
+$conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
 // Force https
-$conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
-// Define charset for HTML Output (can set hidden value force_charset in conf file)
-$conf->file->character_set_client=strtoupper($force_charset_do_notuse);
+$conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
 // Cookie cryptkey
-$conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
-
+$conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
 // Define array of document root directories
-$conf->file->dol_document_root=array('main' => DOL_DOCUMENT_ROOT);
+$conf->file->dol_document_root			= array('main' => DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories
@@ -78,6 +73,11 @@ if (! empty($dolibarr_main_document_root_alt))
 		$conf->file->dol_document_root['alt']=$value;
 	}
 }
+// Force db type (for test purpose)
+if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');
+
+// Multi-Company transverse mode
+$conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;
 
 // Chargement des includes principaux de librairies communes
 if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");		// Need 500ko memory
@@ -89,11 +89,11 @@ if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe/class/
  */
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs = new Translate("",$conf);	// A mettre apres lecture de la conf
+	$langs = new Translate('',$conf);	// A mettre apres lecture de la conf
 }
 
 /*
- * Creation objet $db
+ * Object $db
  */
 if (! defined('NOREQUIREDB'))
 {
@@ -105,12 +105,13 @@ if (! defined('NOREQUIREDB'))
 		exit;
 	}
 }
+
 // Now database connexion is known, so we can forget password
-//$dolibarr_main_db_pass=''; 	// Comment this because this constant is used in a lot of pages
-$conf->db->pass='';				// This is to avoid password to be shown in memory/swap dump
+//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in a lot of pages
+unset($conf->db->pass);				// This is to avoid password to be shown in memory/swap dump
 
 /*
- * Creation objet $user
+ * Object $user
  */
 if (! defined('NOREQUIREUSER'))
 {
@@ -124,34 +125,17 @@ if (! defined('NOREQUIREUSER'))
 if (! defined('NOREQUIREDB'))
 {
 	// By default conf->entity is 1, but we change this if we ask another value.
-	if (session_id() && ! empty($_SESSION["dol_entity"]))				// Entity inside an opened session
+	if (session_id() && ! empty($_SESSION["dol_entity"]))			// Entity inside an opened session
 	{
 		$conf->entity = $_SESSION["dol_entity"];
 	}
-	elseif (! empty($_ENV["dol_entity"]))								// Entity inside a CLI script
+	else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 	{
 		$conf->entity = $_ENV["dol_entity"];
 	}
-	elseif (isset($_POST["loginfunction"]) && ! empty($_POST["entity"]))	// Just after a login page
+	else if (isset($_POST["loginfunction"]) && GETPOST("entity"))	// Just after a login page
 	{
-		$conf->entity = $_POST["entity"];
-	}
-	else
-	{
-		$prefix=dol_getprefix();
-	    $entityCookieName = 'DOLENTITYID_'.$prefix;
-		if (! empty($_COOKIE[$entityCookieName]) && ! empty($conf->file->cookie_cryptkey)) 						// Just for view specific login page
-		{
-			include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
-
-			$lastuser = '';
-			$lastentity = '';
-
-			$entityCookie = new DolCookie($conf->file->cookie_cryptkey);
-			$cookieValue = $entityCookie->_getCookie($entityCookieName);
-			list($lastuser, $lastentity) = explode('|', $cookieValue);
-			$conf->entity = $lastentity;
-		}
+		$conf->entity = GETPOST("entity",'int');
 	}
 
 	//print "Will work with data into entity instance number '".$conf->entity."'";
@@ -219,7 +203,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
-    // We define pays_id, pays_code and pays_label
+    // We define pays_id, pays_code and country
     $tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
     $country_id=$tmp[0];
     if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"
@@ -246,11 +230,6 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
     $mysoc->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
 	$mysoc->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
 	$mysoc->url=empty($conf->global->MAIN_INFO_SOCIETE_WEB)?'':$conf->global->MAIN_INFO_SOCIETE_WEB;
-	// Anciens id prof
-	$mysoc->siren=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
-	$mysoc->siret=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
-	$mysoc->ape=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
-	$mysoc->rcs=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
 	// Id prof generiques
 	$mysoc->idprof1=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
 	$mysoc->idprof2=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
@@ -273,7 +252,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->localtax2_assuj=((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')?1:0);
 
 	// For some countries, we need to invert our address with customer address
-	if ($mysoc->pays_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;
+	if ($mysoc->country_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;
 }
 
 

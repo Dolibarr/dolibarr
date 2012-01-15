@@ -46,7 +46,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         $langs->load("bills");
 
-        $form = new Form($db);
+        $form = new Form($this->db);
 
         $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
         $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -56,7 +56,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $texte.= '<input type="hidden" name="maskconstcredit" value="FACTURE_MERCURE_MASK_CREDIT">';
         $texte.= '<table class="nobordernopadding" width="100%">';
 
-        $tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"));
+        $tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"));
         $tooltip.=$langs->trans("GenericMaskCodes2");
         $tooltip.=$langs->trans("GenericMaskCodes3");
         $tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"));
@@ -98,7 +98,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         if (! $numExample)
         {
-            $numExample = $langs->trans('NotConfigured');
+            $numExample = 'NotConfigured';
         }
         return $numExample;
     }

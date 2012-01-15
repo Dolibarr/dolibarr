@@ -66,7 +66,10 @@ class DolEditor
     {
     	global $conf,$langs;
 
-    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
+    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." toolbarname=".$toolbarname);
+
+    	if (! $rows) $rows=round($height/20);
+    	if (! $cols) $cols=($width?round($width/6):80);
 
         // Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
         $defaulteditor='ckeditor';
@@ -136,14 +139,15 @@ class DolEditor
      *		Output edit area inside the HTML stream.
      *		Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
      *
-     *      @param      noprint     1=Return HTML string instead of printing it to output
+     *      @param	int		$noprint     1=Return HTML string instead of printing it to output
+     *      @return	void
      */
     function Create($noprint=0)
     {
     	global $conf;
 
         $found=0;
-        $out='';
+		$out='';
 
         if ($this->tool == 'fckeditor')
         {

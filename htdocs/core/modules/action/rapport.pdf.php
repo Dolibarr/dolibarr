@@ -43,7 +43,14 @@ class CommActionRapport
 	var $title;
 	var $subject;
 
-	function CommActionRapport($db=0, $month, $year)
+	/**
+	 * Constructor
+	 *
+	 * @param 	DoliDB	$db		Database handler
+	 * @param	int		$month	Month
+	 * @param	int		$year	Year
+	 */
+	function CommActionRapport($db, $month, $year)
 	{
 		global $langs;
 		$langs->load("commercial");
@@ -71,10 +78,11 @@ class CommActionRapport
 
 	/**
      *      Write the object to document file to disk
-     *      @param      socid
-     *      @param      catid
-     *      @param      outputlangs     Lang object for output language
-     *      @return     int             1=OK, 0=KO
+     *
+     *      @param	int			$socid			Thirdparty id
+     *      @param  int			$catid			Cat id
+     *      @param  Translate	$outputlangs    Lang object for output language
+     *      @return int             			1=OK, 0=KO
 	 */
 	function write_file($socid = 0, $catid = 0, $outputlangs='')
 	{
@@ -143,9 +151,9 @@ class CommActionRapport
 	/**
 	 * Write content of pages
 	 *
-	 * @param      $pdf
-     * @param      $outputlangs
-	 * @return     int				1
+	 * @param   PDF			&$pdf			Object pdf
+     * @param	Translate   $outputlangs	Object langs
+	 * @return  int							1
 	 */
 	function _pages(&$pdf, $outputlangs)
 	{
@@ -168,7 +176,7 @@ class CommActionRapport
 		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year,$this->month,false))."'";
 		$sql.= " ORDER BY a.datep DESC";
 
-		dol_syslog("Rapport.pdf::_page sql=".$sql);
+		dol_syslog(get_class($this)."::_page sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -224,11 +232,12 @@ class CommActionRapport
 	}
 
 	/**
-	 *      Show page head
+	 *  Show page head
 	 *
-	 *      @param      pdf             Objet PDF
-	 *      @param      outputlangs		Objet lang cible
-	 * 		@param		pagenb			Page nb
+	 *  @param  PDF			&$pdf           Object PDF
+	 *  @param  Translate	$outputlangs	Object langs
+	 * 	@param	int			$pagenb			Page nb
+	 * 	@return	int							Pos y
 	 */
 	function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{
@@ -253,9 +262,7 @@ class CommActionRapport
 
 		$y=$pdf->GetY()+2;
 
-		$pdf->Rect($this->marge_gauche, $y,
-		$this->page_largeur - $this->marge_gauche - $this->marge_droite,
-		$this->page_hauteur - $this->marge_haute - $this->marge_basse);
+		$pdf->Rect($this->marge_gauche, $y, ($this->page_largeur - $this->marge_gauche - $this->marge_droite), ($this->page_hauteur - $this->marge_haute - $this->marge_basse));
 		$y=$pdf->GetY()+1;
 
 		return $y;

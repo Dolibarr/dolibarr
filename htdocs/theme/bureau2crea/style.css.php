@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2004-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2010	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011		Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 
 require_once("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -121,46 +120,22 @@ body {
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
-input {
+input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
-    font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
-input.flat {
-	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
-textarea  {
-	font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
-textarea.flat {
-	font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
-select.flat {
 	background: #FDFDFD;
-    font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-	font-weight: normal;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+select.flat, form.flat select {
+	font-weight: normal;
+}
+input:disabled {
+	background:#ddd;
+}
+textarea:disabled {
+	background:#ddd;
 }
 
 input.button[type=submit] {
@@ -1705,6 +1680,12 @@ opacity: 1;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+.ui-datepicker-trigger {
+	vertical-align: middle;
+	cursor: pointer;
+}
+
 .bodyline {
 	-moz-border-radius:8px;
 	border: 1px #E4ECEC outset;
@@ -1863,9 +1844,23 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.edit_area:hover, .edit_text:hover, .edit_numeric:hover {
-	background: white url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/edit.png',1) ?>) right center no-repeat;
+.editkey_textarea, .editkey_ckeditor, .editkey_text, .editkey_numeric, .editkey_select {
+	background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
+}
+
+.editkey_datepicker {
+	background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/calendar.png',1) ?>) right center no-repeat;
+	cursor: pointer;
+}
+
+.editval_textarea:hover, .editval_ckeditor:hover, .editval_text:hover, .editval_numeric:hover, .editval_select:hover, .editval_datepicker:hover {
+	background: white;
+	cursor: pointer;
+}
+
+.editval_hover {
+	background: white;
 }
 
 

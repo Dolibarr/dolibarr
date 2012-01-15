@@ -98,7 +98,7 @@ body {
 </div>
 <div class="infos">
 <p class="address"><?php echo $mysoc->name; ?><br>
-<?php print dol_nl2br(dol_format_address($langs,$mysoc)); ?><br>
+<?php print dol_nl2br(dol_format_address($mysoc)); ?><br>
 </p>
 
 <p class="date_heure"><?php
@@ -130,7 +130,7 @@ print $object->ref;
     for($i=0;$i < $tab_size;$i++)
     {
         $remise = $tab[$i]['remise'];
-        echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.price2num($tab[$i]['total_ht'],'MT').' '.$conf->monnaie.'</td></tr>'."\n");
+        echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.price2num($tab[$i]['total_ht'],'MT').' '.$conf->currency.'</td></tr>'."\n");
     }
 
 	?>
@@ -138,9 +138,9 @@ print $object->ref;
 
 <table class="totaux">
 <?php
-echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalHT").'</th><td nowrap="nowrap">'.price2num($obj_facturation->prix_total_ht(),'MT')." ".$conf->monnaie."</td></tr>\n";
-echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalVAT").'</th><td nowrap="nowrap">'.price2num($obj_facturation->montant_tva(),'MT')." ".$conf->monnaie."</td></tr>\n";
-echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalTTC").'</th><td nowrap="nowrap">'.price2num($obj_facturation->prix_total_ttc(),'MT')." ".$conf->monnaie."</td></tr>\n";
+echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalHT").'</th><td nowrap="nowrap">'.price2num($obj_facturation->prix_total_ht(),'MT')." ".$conf->currency."</td></tr>\n";
+echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalVAT").'</th><td nowrap="nowrap">'.price2num($obj_facturation->montant_tva(),'MT')." ".$conf->currency."</td></tr>\n";
+echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalTTC").'</th><td nowrap="nowrap">'.price2num($obj_facturation->prix_total_ttc(),'MT')." ".$conf->currency."</td></tr>\n";
 ?>
 </table>
 

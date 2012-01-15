@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE phpunit SYSTEM "phpunit.dtd" >
-<phpunit>
+<phpunit
+	backupGlobals="true"
+	backupStaticAttributes="false"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	colors="true"
+	processIsolation="false"
+	stopOnFailure="false"
+	syntaxCheck="true">
 <filter>
   <blacklist>
-    <directory suffix=".php">../CVS/</directory>
     <directory suffix=".php">../../build/</directory>
     <directory suffix=".php">../../dev/</directory>
     <directory suffix=".php">../../doc/</directory>
-    <directory suffix=".php">../../htdocs/CVS/</directory>
     <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/core/menus/smartphone/</directory>
     <directory suffix=".php">../../htdocs/custom/</directory>
     <directory suffix=".php">../../htdocs/custom2/</directory>
     <directory suffix=".php">../../htdocs/products/canvas/</directory>
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
-    <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
-    <directory suffix=".php">../../htdocs/includes/artichow/</directory>
-    <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
-    <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
-    <directory suffix=".php">../../htdocs/includes/fpdfi/</directory>
-    <directory suffix=".php">../../htdocs/includes/geoip/</directory>
-    <directory suffix=".php">../../htdocs/includes/jquery/</directory>
-    <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">../../htdocs/core/menus/smartphone/</directory>
-    <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
-    <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
-    <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
-    <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
+    <directory suffix=".php">../../htdocs/includes/</directory>
   </blacklist>
-  <whitelist>
+  <whitelist addUncoveredFilesFromWhitelist="true">
     <directory suffix=".class.php">../../htdocs/</directory>
     <directory suffix=".lib.php">../../htdocs/</directory>
     <directory suffix=".inc.php">../../htdocs/</directory>
@@ -39,31 +35,24 @@
     <file>../../htdocs/core/modules/project/modules_project.php</file>
     <file>../../htdocs/core/modules/fichinter/modules_fichinter.php</file>
     <exclude>
-    <directory suffix=".php">../CVS/</directory>
     <directory suffix=".php">../../build/</directory>
     <directory suffix=".php">../../dev/</directory>
     <directory suffix=".php">../../doc/</directory>
-    <directory suffix=".php">../../htdocs/CVS/</directory>
     <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/core/menus/smartphone</directory>
     <directory suffix=".php">../../htdocs/custom/</directory>
     <directory suffix=".php">../../htdocs/custom2/</directory>
     <directory suffix=".php">../../htdocs/products/canvas/</directory>
     <directory suffix=".php">../../htdocs/contact/canvas/</directory>
     <directory suffix=".php">../../htdocs/societe/canvas/</directory>
-    <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
-    <directory suffix=".php">../../htdocs/includes/artichow/</directory>
-    <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
-    <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
-    <directory suffix=".php">../../htdocs/includes/fpdfi/</directory>
-    <directory suffix=".php">../../htdocs/includes/geoip/</directory>
-    <directory suffix=".php">../../htdocs/includes/jquery/</directory>
-    <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">../../htdocs/core/menus/smartphone</directory>
-    <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
-    <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
-    <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
-    <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
+    <directory suffix=".php">../../htdocs/includes/</directory>
+    <file>../../htdocs/boutique/osc_master.inc.php</file>
+    <file>../../htdocs/compta/bank/pre.inc.php</file>
+    <file>../../htdocs/compta/paiement/cheque/pre.inc.php</file>
+    <file>../../htdocs/ftp/pre.inc.php</file>
     </exclude>
   </whitelist>
 </filter>
+<ini name="max_execution_time" value="600"/>
+<ini name="max_input_time" value="600"/>
 </phpunit>

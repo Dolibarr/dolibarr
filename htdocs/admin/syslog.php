@@ -51,6 +51,10 @@ if ($action == 'set')
     $res = dolibarr_del_const($db,"SYSLOG_SYSLOG_ON",0);
     $res = dolibarr_del_const($db,"SYSLOG_FIREPHP_ON",0);
 
+    $syslog_file_on=0;
+    $syslog_syslog_on=0;
+    $syslog_firephp_on=0;
+
 	if (! $error && GETPOST("filename"))
 	{
 		$filename=GETPOST("filename");
@@ -138,7 +142,7 @@ if ($action == 'setlevel')
 
 llxHeader();
 
-$html=new Form($db);
+$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("SyslogSetup"),$linkback,'setup');
@@ -176,14 +180,14 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FILE_ON" '.$option.' value="1" '.($syslog_file_on?' checked="checked"':'').'> '.$langs->trans("SyslogSimpleFile").'</td>';
 print '<td width="250" nowrap="nowrap">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" '.$option.' size="60" value="'.$defaultsyslogfile.'">';
 print '</td>';
-print "<td align=\"left\">".$html->textwithpicto('',$langs->trans("YouCanUseDOL_DATA_ROOT"));
+print "<td align=\"left\">".$form->textwithpicto('',$langs->trans("YouCanUseDOL_DATA_ROOT"));
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_SYSLOG_ON" '.$option.' value="1" '.($syslog_syslog_on?' checked="checked"':'').'> '.$langs->trans("SyslogSyslog").'</td>';
 print '<td width="250" nowrap="nowrap">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" '.$option.' value="'.$defaultsyslogfacility.'">';
 print '</td>';
-print "<td align=\"left\">".$html->textwithpicto('','Only LOG_USER supported on Windows');
+print "<td align=\"left\">".$form->textwithpicto('','Only LOG_USER supported on Windows');
 print '</td></tr>';
 
 try
@@ -198,7 +202,7 @@ try
     print '> '.$langs->trans("FirePHP").'</td>';
     print '<td width="250" nowrap="nowrap">';
     print '</td>';
-    print "<td align=\"left\">".$html->textwithpicto('','FirePHP must be installed onto PHP and FirePHP plugin for Firefox must also be installed');
+    print "<td align=\"left\">".$form->textwithpicto('','FirePHP must be installed onto PHP and FirePHP plugin for Firefox must also be installed');
     print '</td></tr>';
 }
 catch(Exception $e)

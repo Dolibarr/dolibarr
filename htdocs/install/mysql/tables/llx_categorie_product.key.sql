@@ -18,7 +18,7 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_categorie_product ADD PRIMARY KEY (fk_categorie, fk_product);
+ALTER TABLE llx_categorie_product ADD PRIMARY KEY pk_categorie_product (fk_categorie, fk_product);
 ALTER TABLE llx_categorie_product ADD INDEX idx_categorie_product_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_product ADD INDEX idx_categorie_product_fk_product (fk_product);
 

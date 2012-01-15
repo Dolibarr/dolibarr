@@ -42,7 +42,7 @@ class box_produits extends ModeleBoxes {
 
 
 	/**
-	 *      \brief      Constructeur de la classe
+     *  Constructor
 	 */
 	function box_produits()
 	{
@@ -53,8 +53,10 @@ class box_produits extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les donnees en memoire pour affichage ulterieur
-	 *      \param      $max        Nombre maximum d'enregistrements a charger
+	 *  Load data into info_box_contents array to show array later.
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+     *  @return	void
 	 */
 	function loadBox($max=5)
 	{
@@ -71,7 +73,7 @@ class box_produits extends ModeleBoxes {
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
+			$sql.= ' WHERE p.entity IN (0,'.getEntity($productstatic->element, 1).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
 			$sql.= $db->order('p.datec', 'DESC');
@@ -154,6 +156,13 @@ class box_produits extends ModeleBoxes {
 		}
 	}
 
+	/**
+	 *	Method to show box
+	 *
+	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$contents   Array with properties of box lines
+	 *	@return	void
+	 */
 	function showBox($head = null, $contents = null)
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);

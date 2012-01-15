@@ -41,15 +41,21 @@ class mailing_contacts3 extends MailingTargets
     var $db;
 
 
-    function mailing_contacts3($DB)
+    /**
+    *	Constructor
+    *
+    *  @param		DoliDB		$db      Database handler
+    */
+    function mailing_contacts3($db)
     {
-        $this->db=$DB;
+        $this->db=$db;
     }
 
-
     /**
-     *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
-     *      \return     string      Url lien
+     *  Renvoie url lien vers fiche de la source du destinataire du mailing
+     *
+     *  @param	int		$id		ID
+     *  @return	string      	Url lien
      */
     function url($id)
     {
@@ -58,9 +64,10 @@ class mailing_contacts3 extends MailingTargets
 
     /**
      *    This is the main function that returns the array of emails
-     *    @param      mailing_id    Id of mailing. No need to use it.
-     *    @param      filterarray   Category
-     *    @return     int           <0 if error, number of emails added if ok
+     *
+     *    @param	int		$mailing_id    	Id of mailing. No need to use it.
+     *    @param    array	$filtersarray   Category
+     *    @return   int           			<0 if error, number of emails added if ok
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
@@ -73,15 +80,15 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " sp.name as name, sp.firstname as firstname, sp.civilite,";
         $sql.= " s.nom as companyname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
-        $sql.= " ".MAIN_DB_PREFIX."societe as s,";
-    	$sql.= " ".MAIN_DB_PREFIX."categorie as c,";
-    	$sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c,";
+    	if ($filtersarray[0] <> 'all') $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
         $sql.= " WHERE s.rowid = sp.fk_soc";
     	$sql.= " AND sp.email != ''";     // Note that null != '' is false
     	$sql.= " AND sp.entity = ".$conf->entity;
-    	$sql.= " AND cs.fk_categorie = c.rowid";
-    	$sql.= " AND cs.fk_societe = sp.fk_soc";
-    	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$filtersarray[0]."'";
+    	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
+    	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
+    	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.name, sp.firstname";
 
     	$resql = $this->db->query($sql);
@@ -114,13 +121,14 @@ class mailing_contacts3 extends MailingTargets
 
 
     /**
-	 *		On the main mailing area, there is a box with statistics.
-	 *		If you want to add a line in this report you must provide an
-	 *		array of SQL request that returns two field:
-	 *		One called "label", One called "nb".
-	 *		@return		array
+	 *	On the main mailing area, there is a box with statistics.
+	 *	If you want to add a line in this report you must provide an
+	 *	array of SQL request that returns two field:
+	 *	One called "label", One called "nb".
+	 *
+	 *	@return		array		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
+    function getSqlArrayForStats()
 	{
 		global $conf, $langs;
 
@@ -147,7 +155,8 @@ class mailing_contacts3 extends MailingTargets
 
     /**
      *		Return here number of distinct emails returned by your selector.
-     *		@return		int
+     *
+     *		@return		int		Number of recipients
      */
     function getNbOfRecipients()
     {
@@ -183,7 +192,8 @@ class mailing_contacts3 extends MailingTargets
 
     /**
      *      This is to add a form filter to provide variant of selector
-     *		If used, the HTML select must be called "filter"
+     *		If used, the HTML select must be called "filter".
+     *
      *      @return     string      A html select zone
      */
     function formFilter()

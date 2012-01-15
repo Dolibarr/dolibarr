@@ -23,8 +23,10 @@ You can download this at:
 http://www.dolibarr.org/downloads/
 
 If you already have installed a Web server and a Mysql database, you can
-install this version like this:
+install the standard version like this:
 
+- Uncompress the downloaded archive.
+ 
 - Copy directory "dolibarr" and all its files inside your web server root,
   or copy directory anywhere and set up your web server to use "dolibarr/htdocs"
   as root for a new web server virtual host (second choice need to be web 
@@ -70,7 +72,7 @@ To upgrade Dolibarr from an old version to this one:
 III - WHAT'S NEW
 ----------------
 
-See ChangeLog file.
+See ChangeLog file found into package.
 
 
 
@@ -127,11 +129,11 @@ Miscellanous:
 V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
 ------------------------------------------
 This is features that Dolibarr does not support completely yet:
-- Accountancy.
-- Dolibarr can manage only one currency.
-- Dolibarr does not support the double Canadian Tax.
-- Dolibarr does not make coffee (not yet).
-- Stock management with option increase/decrease on invoice works on
-  warehouse number one only (no way to choose warehouse).
-- Stock management with option increase/decrease on orders works on
-  warehouse number one only (no way to choose warehouse).
+- No accountancy (only bank management).
+- Dolibarr manage one currency at once (mono-currency).
+- Dolibarr manage one company/foundation (mono-company). If you want to manage several companies or foundations, you must install several time the software (on same server or not). Another solution is to extend Dolibarr with the addon Module MultiCompany that allows to manage several companies in one Dolibarr instance (one database but with a logical isolation of datas).
+- Does not support double VAT (Federal / provincial) for Canada.
+- Dolibarr does not contains Payroll module.
+- Tasks on module project can't have dependencies between each other.
+- Dolibarr does not include any Webmail.
+- Dolibarr can't do coffee (not yet). 

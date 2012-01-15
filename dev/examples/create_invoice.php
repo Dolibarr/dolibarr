@@ -55,7 +55,6 @@ $user->getrights();
 
 print "***** ".$script_file." (".$version.") *****\n";
 
-
 // Start of transaction
 $db->begin();
 
@@ -63,6 +62,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 // Create invoice object
 $obj = new Facture($db);
+//$obj->initAsSpecimen();
 
 $obj->ref            = 'ABCDE';
 $obj->socid          = 4;	// Put id of third party (rowid in llx_societe table)

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2011	Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -32,8 +32,8 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 
 /**
- \class 		modTax
- \brief      Classe de description et activation du module Tax
+ *	\class 		modTax
+ *	\brief      Classe de description et activation du module Tax
  */
 class modTax extends DolibarrModules
 {
@@ -41,14 +41,14 @@ class modTax extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modTax($DB)
+	function modTax($db)
 	{
 		global $conf;
 
-		$this->db = $DB ;
-		$this->numero = 500 ;
+		$this->db = $db;
+		$this->numero = 500;
 
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -139,22 +139,30 @@ class modTax extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init()
+	function init($options='')
 	{
 		global $conf;
 
 		// Nettoyage avant activation
 		$this->remove();
 
-		return $this->_init($sql);
+		$sql = array();
+
+		return $this->_init($sql,$options);
 	}
 
 	/**
-	 *    \brief      Fonction appelee lors de la desactivation d'un module.
-	 *                Supprime de la base les constantes, boites et permissions du module.
+	 *  Fonction appelee lors de la desactivation d'un module.
+	 *  Supprime de la base les constantes, boites et permissions du module.
+	 *
+     * 	@return     int              	1 if OK, 0 if KO
 	 */
 	function remove()
 	{

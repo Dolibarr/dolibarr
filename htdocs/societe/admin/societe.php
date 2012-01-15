@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/admin/societe.php
+ *	\file       htdocs/societe/admin/societe.php
  *	\ingroup    company
  *	\brief      Third party module setup page
  */
@@ -222,8 +222,8 @@ dol_htmloutput_mesg($mesg);
 
 print_titre($langs->trans("CompanyCodeChecker"));
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
@@ -235,7 +235,7 @@ $var = true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/core/modules/societe/";
-    $handle = opendir($dir);
+    $handle = @opendir($dir);
     if (is_resource($handle))
     {
     	// Loop on each module find in opened directory
@@ -245,7 +245,13 @@ foreach ($conf->file->dol_document_root as $dirroot)
     		{
     			$file = substr($file, 0, dol_strlen($file)-4);
 
-    			dol_include_once("/core/modules/societe/".$file.".php");
+    			try {
+        			dol_include_once("/core/modules/societe/".$file.".php");
+    			}
+    			catch(Exception $e)
+    			{
+    			    dol_syslog($e->getMessage(), LOG_ERR);
+    			}
 
     			$modCodeTiers = new $file;
 
@@ -254,22 +260,25 @@ foreach ($conf->file->dol_document_root as $dirroot)
     			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
     			$var = !$var;
-    			print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
-    			print $modCodeTiers->info($langs);
-    			print "</td>\n";
-    			print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs)."</td>\n";
+    			print '<tr '.$bc[$var].'>'."\n";
+    			print '<td width="140">'.$modCodeTiers->nom.'</td>'."\n";
+    			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
+    			print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
     			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
     			{
-    				print "<td align=\"center\">\n";
+    				print '<td align="center">'."\n";
     				print img_picto($langs->trans("Activated"),'switch_on');
     				print "</td>\n";
     			}
     			else
     			{
-    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
+    				$disabled = ((is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+    				print '<td align="center">';
+    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
     				print img_picto($langs->trans("Disabled"),'switch_off');
-    				print '</a></td>';
+    				if (! $disabled) print '</a>';
+    				print '</td>';
     			}
 
     			print '<td align="center">';
@@ -306,7 +315,7 @@ $var = true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/core/modules/societe/";
-    $handle = opendir($dir);
+    $handle = @opendir($dir);
     if (is_resource($handle))
     {
     	while (($file = readdir($handle))!==false)
@@ -500,13 +509,13 @@ print '<td align="center">'.$langs->trans("MustBeUnique").'</td>';
 print "</tr>\n";
 
 $profid[0][0]=$langs->trans("ProfId1");
-$profid[0][1]=$langs->transcountry('ProfId1', $mysoc->pays_code);
+$profid[0][1]=$langs->transcountry('ProfId1', $mysoc->country_code);
 $profid[1][0]=$langs->trans("ProfId2");
-$profid[1][1]=$langs->transcountry('ProfId2', $mysoc->pays_code);
+$profid[1][1]=$langs->transcountry('ProfId2', $mysoc->country_code);
 $profid[2][0]=$langs->trans("ProfId3");
-$profid[2][1]=$langs->transcountry('ProfId3', $mysoc->pays_code);
+$profid[2][1]=$langs->transcountry('ProfId3', $mysoc->country_code);
 $profid[3][0]=$langs->trans("ProfId4");
-$profid[3][1]=$langs->transcountry('ProfId4', $mysoc->pays_code);
+$profid[3][1]=$langs->transcountry('ProfId4', $mysoc->country_code);
 
 $var = true;
 $i=0;
@@ -559,7 +568,7 @@ print "</table><br>\n";
 print_titre($langs->trans("Other"));
 
 // Autres options
-$html=new Form($db);
+$form=new Form($db);
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -588,7 +597,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $html->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT",$arrval,$conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT",$arrval,$conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td>";

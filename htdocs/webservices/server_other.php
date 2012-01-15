@@ -92,16 +92,17 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 // Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
 
 // Register WSDL
-$server->register('getVersions',
-// Entry values
-array('authentication'=>'tns:authentication'),
-// Exit values
-array('result'=>'tns:result','dolibarr'=>'xsd:string','os'=>'xsd:string','php'=>'xsd:string','webserver'=>'xsd:string'),
-$ns,
-$ns.'#getVersions',
-$styledoc,
-$styleuse,
-'WS to get Versions'
+$server->register(
+    'getVersions',
+    // Entry values
+    array('authentication'=>'tns:authentication'),
+    // Exit values
+    array('result'=>'tns:result','dolibarr'=>'xsd:string','os'=>'xsd:string','php'=>'xsd:string','webserver'=>'xsd:string'),
+    $ns,
+    $ns.'#getVersions',
+    $styledoc,
+    $styleuse,
+    'WS to get Versions'
 );
 
 

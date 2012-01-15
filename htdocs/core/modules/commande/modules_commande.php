@@ -155,6 +155,8 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 	global $conf,$user,$langs;
 	$langs->load("orders");
 
+	$error=0;
+	
 	$dir = "/core/modules/commande/";
 	$srctemplatepath='';
 	$modelisok=0;
@@ -231,7 +233,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		}
 		return 0;
 	}

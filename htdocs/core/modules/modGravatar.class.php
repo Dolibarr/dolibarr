@@ -34,11 +34,11 @@ class modGravatar extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modGravatar($DB)
+	function modGravatar($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -126,7 +126,6 @@ class modGravatar extends DolibarrModules
 		//							'type'=>'top',			// This is a Top menu entry
 		//							'titre'=>'MyModule top menu',
 		//							'mainmenu'=>'mymodule',
-		//							'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 		//							'url'=>'/mymodule/pagetop.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
@@ -182,18 +181,20 @@ class modGravatar extends DolibarrModules
 	}
 
 	/**
-	 *		\brief      Function called when module is enabled.
-	 *					The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *					It also creates data directories.
-	 *      \return     int             1 if OK, 0 if KO
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init()
+	function init($options='')
 	{
 		$sql = array();
 
 		$result=$this->load_tables();
 
-		return $this->_init($sql);
+		return $this->_init($sql,$options);
 	}
 
 	/**

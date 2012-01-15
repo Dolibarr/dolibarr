@@ -130,7 +130,7 @@ $result=$object->fetch($socid);
 
 if ($result > 0)
 {
-    $html = new Form($db);
+    $form = new Form($db);
     $langs->load("other");
 
 
@@ -236,14 +236,14 @@ if ($result > 0)
             $actions[$notifiedevent['rowid']]=$label;
         }
         print '<tr '.$bc[$var].'><td>';
-        print $html->selectarray("contactid",$listofemails);
+        print $form->selectarray("contactid",$listofemails);
         print '</td>';
         print '<td>';
-        print $html->selectarray("actionid",$actions,'',1);
+        print $form->selectarray("actionid",$actions,'',1);
         print '</td>';
         print '<td>';
         $type=array('email'=>$langs->trans("EMail"));
-        print $html->selectarray("typeid",$type);
+        print $form->selectarray("typeid",$type);
         print '</td>';
         print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
         print '</tr>';

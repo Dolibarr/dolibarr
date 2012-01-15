@@ -223,7 +223,7 @@ class FormMail
         if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
 
 
-        $form=new Form($DB);
+        $form=new Form($this->db);
 
         $out.= "\n<!-- Debut form mail -->\n";
         if ($this->withform)

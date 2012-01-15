@@ -61,7 +61,7 @@ $facturestatic=new Facture($db);
 $facturefournstatic=new FactureFournisseur($db);
 $socialcontribstatic=new ChargeSociales($db);
 
-$html = new Form($db);
+$form = new Form($db);
 
 if ($_REQUEST["account"] || $_REQUEST["ref"])
 {
@@ -99,7 +99,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	// Ref
 	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print $html->showrefnav($acct,'ref','',1,'ref');
+	print $form->showrefnav($acct,'ref','',1,'ref');
 	print '</td></tr>';
 
 	// Label

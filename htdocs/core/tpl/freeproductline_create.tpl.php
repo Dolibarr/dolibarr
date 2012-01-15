@@ -27,7 +27,7 @@
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
 <tr class="liste_titre nodrag nodrop">
-	<td><a name="add"></a><?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?></td>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><a name="add"></a><?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?></td>
 	<td align="right"><?php echo $langs->trans('VAT'); ?></td>
 	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
@@ -41,9 +41,9 @@
 <input type="hidden" name="id" value="<?php echo $this->id; ?>" />
 
 <tr <?php echo $bcnd[$var]; ?>>
-	<td>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<?php
-	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
+	echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 
 	if (is_object($hookmanager))
@@ -56,7 +56,7 @@
 	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
     $nbrows=ROWS_2;
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-	$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+	$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
 	$doleditor->Create();
 	?>
 	</td>
@@ -64,7 +64,7 @@
 	<td align="right">
 	<?php
 	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
-	else echo $html->load_tva('np_tva_tx', (isset($_POST["np_tva_tx"])?$_POST["np_tva_tx"]:-1), $seller, $buyer);
+	else echo $form->load_tva('np_tva_tx', (isset($_POST["np_tva_tx"])?$_POST["np_tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
 	<td align="right"><input type="text" size="5" name="np_price" value="<?php echo (isset($_POST["np_price"])?$_POST["np_price"]:''); ?>"></td>
@@ -75,12 +75,12 @@
 
 <?php if ($conf->service->enabled && $dateSelector) { ?>
 <tr <?php echo $bcnd[$var]; ?>>
-	<td colspan="9">
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="10"' : ' colspan="9s"'); ?>>
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-	echo $html->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+	echo $form->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
 	echo ' '.$langs->trans('to').' ';
-	echo $html->select_date('','date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+	echo $form->select_date('','date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
 	?>
 	</td>
 </tr>

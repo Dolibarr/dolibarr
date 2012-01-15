@@ -374,6 +374,7 @@ function actions_prepare_head($action)
 
 /**
  *  Define head array for tabs of agenda setup pages
+ * 
  *  @return     Array of head
  */
 function calendars_prepare_head($param)
@@ -388,6 +389,8 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'card';
     $h++;
 
+	$object=(object) array();
+	
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,21 +32,17 @@ $langs->load("admin");
 $langs->load("companies");
 $langs->load("ldap");
 
-// Protection quand utilisateur externe
-$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id', 'int');
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_GET["id"])	// A user can always read its own card
-{
-    $feature2='';
-}
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+if ($user->id == $id) $feature2=''; // A user can always read its own card
+$result = restrictedArea($user, 'user', $id, '&user', $feature2);
 
 $fuser = new User($db);
-$fuser->fetch($_GET["id"]);
+$fuser->fetch($id);
 $fuser->getrights();
 
 

@@ -163,8 +163,8 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
             $createuser->id=0;
 
             $newuser = new User($db);
-            $newuser->nom='SuperAdmin';
-            $newuser->prenom='';
+            $newuser->lastname='SuperAdmin';
+            $newuser->firstname='';
             $newuser->login=$_POST["login"];
             $newuser->pass=$_POST["pass"];
             $newuser->admin=1;
@@ -197,18 +197,18 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
                 $db->begin();
 
                 dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const to '.$targetversion, LOG_DEBUG);
-                $resql=$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_INSTALL'");
+                $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_INSTALL'");
                 if (! $resql) dol_print_error($db,'Error in setup program');
-                $resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version when install',0)");
+                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version when install',0)");
                 if (! $resql) dol_print_error($db,'Error in setup program');
                 $conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 
                 if ($useforcedwizard)
                 {
                     dolibarr_install_syslog('install/etape5.php set MAIN_REMOVE_INSTALL_WARNING const to 1', LOG_DEBUG);
-                    $resql=$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name')."='MAIN_REMOVE_INSTALL_WARNING'");
+                    $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_REMOVE_INSTALL_WARNING'");
                     if (! $resql) dol_print_error($db,'Error in setup program');
-                    $resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING',1).",".$db->encrypt(1,1).",'chaine',1,'Disable install warnings',0)");
+                    $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING',1).",".$db->encrypt(1,1).",'chaine',1,'Disable install warnings',0)");
                     if (! $resql) dol_print_error($db,'Error in setup program');
                     $conf->global->MAIN_REMOVE_INSTALL_WARNING=1;
                 }
@@ -235,7 +235,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
                 }
 
                 dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_DEBUG);
-                $resql=$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name')."='MAIN_NOT_INSTALLED'");
+                $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_NOT_INSTALLED'");
                 if (! $resql) dol_print_error($db,'Error in setup program');
 
                 $db->commit();
@@ -266,9 +266,9 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
             if ($tagdatabase)
             {
                 dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const to value '.$targetversion, LOG_DEBUG);
-                $resql=$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_UPGRADE'");
+                $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_UPGRADE'");
                 if (! $resql) dol_print_error($db,'Error in setup program');
-                $resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_UPGRADE',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version for last upgrade',0)");
+                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_VERSION_LAST_UPGRADE',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version for last upgrade',0)");
                 if (! $resql) dol_print_error($db,'Error in setup program');
                 $conf->global->MAIN_VERSION_LAST_UPGRADE=$targetversion;
             }
@@ -288,7 +288,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
     }
 
     // May fail if parameter already defined
-    $resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_LANG_DEFAULT',1).",".$db->encrypt($setuplang,1).",'chaine',0,'Default language',1)");
+    $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT',1).",".$db->encrypt($setuplang,1).",'chaine',0,'Default language',1)");
     //if (! $resql) dol_print_error($db,'Error in setup program');
 
     print '</table>';

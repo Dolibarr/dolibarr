@@ -171,7 +171,7 @@ class ExportCsv extends ModeleExports
 		foreach($array_selected_sorted as $code => $value)
 		{
 			$newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
-			$newvalue=$this->csv_clean($newvalue);
+			$newvalue=$this->csv_clean($newvalue,$outputlangs->charset_output);
 
 			fwrite($this->handle,$newvalue.$this->separator);
 		}
@@ -206,7 +206,6 @@ class ExportCsv extends ModeleExports
 		{
 			$alias=str_replace(array('.','-'),'_',$code);
 			if (empty($alias)) dol_print_error('','Bad value for field with key='.$code.'. Try to redefine export.');
-
 			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
 
 			// Translation newvalue
@@ -215,7 +214,7 @@ class ExportCsv extends ModeleExports
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
 
-			$newvalue=$this->csv_clean($newvalue);
+			$newvalue=$this->csv_clean($newvalue,$outputlangs->charset_output);
 
 			fwrite($this->handle,$newvalue.$this->separator);
 			$this->col++;
@@ -251,14 +250,15 @@ class ExportCsv extends ModeleExports
 	 * Clean a cell to respect rules of CSV file cells
 	 *
 	 * @param 	string	$newvalue	String to clean
+	 * @param	string	$charset	Output character set
 	 * @return 	string				Value cleaned
 	 */
-	function csv_clean($newvalue)
+	function csv_clean($newvalue, $charset)
 	{
 		$addquote=0;
 
 		// Rule Dolibarr: No HTML
-		$newvalue=dol_string_nohtmltag($newvalue);
+		$newvalue=dol_string_nohtmltag($newvalue,1,$charset);
 
 		// Rule 1 CSV: No CR, LF in cells
 		$newvalue=str_replace("\r",'',$newvalue);

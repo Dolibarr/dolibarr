@@ -119,8 +119,8 @@ llxFooterVierge();
 /**
  * Show header for card member
  *
- * @param 	string		$title
- * @param 	string		$head
+ * @param 	string		$title		Title
+ * @param 	string		$head		More info into header
  * @return	void
  */
 function llxHeaderVierge($title, $head = "")

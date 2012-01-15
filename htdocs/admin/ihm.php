@@ -37,24 +37,21 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("members");
 
-if (!$user->admin)
-  accessforbidden();
+if (! $user->admin) accessforbidden();
+
+$action = GETPOST('action');
 
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 // List of supported permanent search area
-$searchform=array(	"MAIN_SEARCHFORM_SOCIETE","MAIN_SEARCHFORM_CONTACT",
-					"MAIN_SEARCHFORM_PRODUITSERVICE","MAIN_SEARCHFORM_ADHERENT");
-$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,
-					$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT);
-$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),
-					$langs->trans("ProductsAndServices"),$langs->trans("Members"));
-$searchformmodule=array('Module1Name','Module1Name',
-					'Module50Name','Module310Name');
+$searchform=array("MAIN_SEARCHFORM_SOCIETE","MAIN_SEARCHFORM_CONTACT", "MAIN_SEARCHFORM_PRODUITSERVICE","MAIN_SEARCHFORM_ADHERENT");
+$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE,$conf->global->MAIN_SEARCHFORM_ADHERENT);
+$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"),$langs->trans("Members"));
+$searchformmodule=array('Module1Name','Module1Name','Module50Name','Module310Name');
 
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update')
+if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"],'chaine',0,'',$conf->entity);
@@ -92,7 +89,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 $wikihelp='EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-$html=new Form($db);
+$form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
@@ -102,7 +99,7 @@ print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";
 
 
-if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
+if ($action == 'edit')	// Edit
 {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -128,7 +125,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	// Multilangual GUI
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
-    print $html->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
+    print $form->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -149,7 +146,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
-        print $html->selectyesno($searchform[$key],$searchformconst[$key],1);
+        print $form->selectyesno($searchform[$key],$searchformconst[$key],1);
         print '</td></tr>';
     }
     print '</table>';
@@ -164,7 +161,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	// Show logo
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableShowLogo").'</td><td>';
-    print $html->selectyesno('MAIN_SHOW_LOGO',$conf->global->MAIN_SHOW_LOGO,1);
+    print $form->selectyesno('MAIN_SHOW_LOGO',$conf->global->MAIN_SHOW_LOGO,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -178,7 +175,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     // Desactivation javascript et ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
-    print $html->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
+    print $form->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -188,7 +185,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	{
 	    $var=!$var;
 	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-	    print $html->selectyesno('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0,1);
+	    print $form->selectyesno('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0,1);
 	    print '</td>';
 		print '<td width="20">&nbsp;</td>';
 		print '</tr>';
@@ -206,7 +203,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
 	$array=array(0=>$langs->trans("Firstname").' '.$langs->trans("Lastname"),1=>$langs->trans("Lastname").' '.$langs->trans("Firstname"));
-    print $html->selectarray('MAIN_FIRSTNAME_NAME_POSITION',$array,(isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
+    print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION',$array,(isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -214,7 +211,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     // Hide helpcenter link on login page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
-    print $html->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
+    print $form->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -222,7 +219,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	// Hide wiki link on login page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1)).'</td><td>';
-    print $html->selectyesno('MAIN_HELP_DISABLELINK',isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
+    print $form->selectyesno('MAIN_HELP_DISABLELINK',isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -248,7 +245,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	// Show bugtrack link
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-    print $html->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_BUGTRACK_ENABLELINK,1);
+    print $form->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_BUGTRACK_ENABLELINK,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';

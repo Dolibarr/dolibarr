@@ -40,19 +40,20 @@ class mailing_framboise extends MailingTargets
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function mailing_framboise($DB)
+	function mailing_framboise($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
 	/**
-	 *    \brief      This is the main function that returns the array of emails
-	 *    \param      mailing_id    Id of mailing. No need to use it.
-	 *    \param      filterarray   If you used the formFilter function. Empty otherwise.
-	 *    \return     int           <0 if error, number of emails added if ok
+	 *  This is the main function that returns the array of emails.
+	 *
+	 *  @param	int		$mailing_id    	Id of mailing. No need to use it.
+	 *  @param  array	$filtersarray   If you used the formFilter function. Empty otherwise.
+	 *  @return int           			<0 if error, number of emails added if ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
@@ -63,14 +64,17 @@ class mailing_framboise extends MailingTargets
 		// CHANGE THIS
 		// Select the members from category
 		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname,";
-		if ($_POST['filter']) $sql.= " llx_categorie.label as label";
+		if ($_POST['filter']) $sql.= " c.label";
 		else $sql.=" null as label";
-		$sql.= " FROM llx_adherent as s";
-		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie_member ON llx_categorie_member.fk_member=s.rowid";
-		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie ON llx_categorie.rowid = llx_categorie_member.fk_categorie";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s";
+		if ($_POST['filter'])
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = s.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie";
+		}
 		$sql.= " WHERE s.email != ''";
 		$sql.= " AND s.entity = ".$conf->entity;
-		if ($_POST['filter']) $sql.= " AND llx_categorie.rowid='".$_POST['filter']."'";
+		if ($_POST['filter']) $sql.= " AND c.rowid='".$_POST['filter']."'";
 		$sql.= " ORDER BY s.email";
 
 		// Stocke destinataires dans cibles
@@ -117,12 +121,13 @@ class mailing_framboise extends MailingTargets
 	}
 
 
-	/**
-	 *		\brief		On the main mailing area, there is a box with statistics.
-	 *					If you want to add a line in this report you must provide an
-	 *					array of SQL request that returns two field:
-	 *					One called "label", One called "nb".
-	 *		\return		array
+    /**
+	 *	On the main mailing area, there is a box with statistics.
+	 *	If you want to add a line in this report you must provide an
+	 *	array of SQL request that returns two field:
+	 *	One called "label", One called "nb".
+	 *
+	 *	@return		array		Array with SQL requests
 	 */
 	function getSqlArrayForStats()
 	{
@@ -134,11 +139,12 @@ class mailing_framboise extends MailingTargets
 	}
 
 
-	/*
-	 *		\brief		Return here number of distinct emails returned by your selector.
-	 *					For example if this selector is used to extract 500 different
-	 *					emails from a text file, this function must return 500.
-	 *		\return		int
+	/**
+	 *	Return here number of distinct emails returned by your selector.
+	 *	For example if this selector is used to extract 500 different
+	 *	emails from a text file, this function must return 500.
+	 *
+	 *	@return		int			Nb of recipients
 	 */
 	function getNbOfRecipients()
 	{
@@ -155,9 +161,10 @@ class mailing_framboise extends MailingTargets
 	}
 
 	/**
-	 *      \brief      This is to add a form filter to provide variant of selector
-	 *					If used, the HTML select must be called "filter"
-	 *      \return     string      A html select zone
+	 *  This is to add a form filter to provide variant of selector
+	 *	If used, the HTML select must be called "filter"
+	 *
+	 *  @return     string      A html select zone
 	 */
 	function formFilter()
 	{
@@ -198,7 +205,7 @@ class mailing_framboise extends MailingTargets
 		}
 		else
 		{
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		$s.='</select>';
@@ -208,9 +215,10 @@ class mailing_framboise extends MailingTargets
 
 
 	/**
-	 *      \brief      Can include an URL link on each record provided by selector
-	 *					shown on target page.
-	 *      \return     string      Url link
+	 *   Can include an URL link on each record provided by selector shown on target page.
+	 *
+	 *   @param		int			$id		Id of member
+	 *   @return    string      		Url link
 	 */
 	function url($id)
 	{

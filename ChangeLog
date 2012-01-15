@@ -5,6 +5,10 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.2 compared to 3.1 *****
 
 For users:
+- New: Can attach files on social contributions.
+- New: Show payments terms and conditions onto muscadet template.
+- New: Can open back a closed commercial proposal.
+- New: show thirdparty barcode on main tab.
 - New: Can input note (private and public) during note and expenses creation.
 - New: Print ticket show invoice ref into POS module.
 - New: Can edit customer discounts from invoice create and edit card.
@@ -18,28 +22,43 @@ For users:
 - New: task #11278 : Option into point of sale module to add services in list.
 - New: task #11261 : Add an entry into menu called "New shipment".
 - New: Make option MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT available by default.
-- New: Can build PDF in USLetter format or canada format.
+- New: Can build PDF in USLetter format or canada format (change paper size).
 - New: Can export into Excel 2007 format.
 - New: Add hidden option CASHDESK_FORCE_STOCK_ON_BILL
 - New: Can search on part of barcode into POS module.
 - New: Cheques into cheques receipts are ordered by operation date.
+- New: Add hidden option MAIN_DISABLE_PDF_AUTOUPDATE to avoid generating pdf each time data change.
+- New: Add hidden option PROJECT_HIDE_UNSELECTABLES to hide project you can't select into combo list.
+- New: Add option INVOICE_POSITIVE_CREDIT_NOTE.
+- New: Support zip/town autocompletion into warehouses.
+- New: Add box for last expired services.
+- New: Reduce seriously size of packages.
+- New: Can define country code for import.
+- New: When invoice was generated from order, order date is visible on PDF, after order ref.
+- New: [ task #181 ] Hide password of click2dial in user card
+- New: Chart are faster to build
+- New: Value of data into charts are visible on mouse hover.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
-- New: Add webservice to get or create a product, service.
+- New: Can add a left menu into an existing top menu or left menu.
+- New: Add webservice to get or create a product or service.
 - New: Add webservice to get a user.
-- New: Add hooks to change way of showing/editing lines into dictionnaries.
-- New: Add webservice to get or create a prodcut or service.
+- New: Add more "hooks" (like hooks to change way of showing/editing lines into dictionnaries).
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
+- New: Add trigger ACTION_DELETE and ACTION_MODIFY.
+- New: Can define different requests according to database type into migration files.
+- New: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
+- New: Removed artichow deprecated libraries.
+- Qual: Add a lot of more PHPUnit tests.
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.
 - Qual: Cleaned a lot of dead code.
-- Qual: Add more "hooks".
-- Qual: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
 - Qual: More OOP (usage of "abstract", "static", ...), uniformize constructors.
-- Qual: task #216 : Move /lib in /core/lib directory
-- Qual: task #217 : Move core files in core directory (login, menus, triggers, boxes, modules)
+- Qual: Fix a lot of checkstyle warnings.
+- Qual: task #216 : Move /lib into /core/lib directory
+- Qual: task #217 : Move core files into core directory (login, menus, triggers, boxes, modules)
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****

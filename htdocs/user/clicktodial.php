@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
 $langs->load("users");
 $langs->load("admin");
 
+$action=GETPOST('action','alpha');
+$id=GETPOST('id','int');
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -41,10 +44,10 @@ $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
  * Actions
  */
 
-if ($_POST["action"] == 'update' && ! $_POST['cancel'])
+if ($action == 'update' && ! $_POST['cancel'])
 {
 	$edituser = new User($db);
-	$edituser->fetch($_GET["id"]);
+	$edituser->fetch($id);
 
 	$edituser->clicktodial_login    = $_POST["login"];
 	$edituser->clicktodial_password = $_POST["password"];
@@ -64,10 +67,10 @@ $form = new Form($db);
 llxHeader("","ClickToDial");
 
 
-if ($_GET["id"])
+if ($id)
 {
     $fuser = new User($db);
-    $fuser->fetch($_GET["id"]);
+    $fuser->fetch($id);
     $fuser->fetch_clicktodial();
 
 
@@ -92,21 +95,21 @@ if ($_GET["id"])
 	print '</td>';
 	print '</tr>';
 
-    // Nom
+    // Name
     print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-    print '<td colspan="2">'.$fuser->nom.'</td>';
+    print '<td colspan="2">'.$fuser->lastname.'</td>';
     print "</tr>\n";
 
     // Prenom
     print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-    print '<td colspan="2">'.$fuser->prenom.'</td>';
+    print '<td colspan="2">'.$fuser->name.'</td>';
     print "</tr>\n";
 
     print "</table>\n";
     print "<br>\n";
 
 
-    if ($_GET["action"] == 'edit')
+    if ($action == 'edit')
     {
         print '<form action="clicktodial.php?id='.$_GET["id"].'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -115,7 +118,7 @@ if ($_GET["id"])
 
         if ($user->admin)
         {
-        	print "<tr>".'<td width="25%" valign="top">ClickToDial URL</td>';
+        	print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
         	print '<td class="valeur">';
             if (empty($conf->global->CLICKTODIAL_URL))
             {
@@ -127,17 +130,17 @@ if ($_GET["id"])
         	print '</tr>';
         }
 
-        print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("Login").'</td>';
+        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">';
         print '<input name="login" value="'.$fuser->clicktodial_login.'"></td>';
 		print '</tr>';
 
-        print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("Password").'</td>';
+        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("Password").'</td>';
         print '<td class="valeur">';
         print '<input name="password" value="'.$fuser->clicktodial_password.'"></td>';
         print "</tr>\n";
 
-        print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
         print '<td class="valeur">';
         print '<input name="poste" value="'.$fuser->clicktodial_poste.'"></td>';
         print "</tr>\n";
@@ -167,13 +170,13 @@ if ($_GET["id"])
         	print '</td>';
         	print '</tr>';
         }
-        print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("Login").'</td>';
+        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">'.$fuser->clicktodial_login.'</td>';
         print '</tr>';
-        print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("Password").'</td>';
-        print '<td class="valeur">'.$fuser->clicktodial_password.'</a></td>';
+        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("Password").'</td>';
+        print '<td class="valeur">'.preg_replace('/./','*',$fuser->clicktodial_password).'</a></td>';
         print "</tr>\n";
-        print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
         print '<td class="valeur">'.$fuser->clicktodial_poste.'</td>';
         print "</tr></table>\n";
     }
@@ -185,7 +188,7 @@ if ($_GET["id"])
      */
     print '<div class="tabsAction">';
 
-    if ($user->admin && $_GET["action"] <> 'edit')
+    if ($user->admin && $action <> 'edit')
     {
         print '<a class="butAction" href="clicktodial.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
@@ -196,8 +199,7 @@ if ($_GET["id"])
 }
 
 
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>

@@ -82,14 +82,11 @@ class FactureFournisseur extends Facture
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
      */
-    function FactureFournisseur($DB)
+    function FactureFournisseur($db)
     {
-        $this->db = $DB ;
-
-        $this->id = $facid;
-        $this->socid = $socid;
+        $this->db = $db;
 
         $this->amount = 0;
         $this->remise = 0;
@@ -115,6 +112,7 @@ class FactureFournisseur extends Facture
     {
         global $langs,$conf;
 
+		$error=0;
         $now=dol_now();
 
         // Clear parameters
@@ -255,6 +253,7 @@ class FactureFournisseur extends Facture
     function fetch($id='',$ref='')
     {
         global $langs;
+
         $sql = "SELECT";
         $sql.= " t.rowid,";
         $sql.= " t.facnumber,";
@@ -356,8 +355,8 @@ class FactureFournisseur extends Facture
             }
             else
             {
-                $this->error='Bill with id '.$rowid.' not found sql='.$sql;
-                dol_syslog(get_class($this).'::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
+                $this->error='Bill with id '.$id.' not found sql='.$sql;
+                dol_syslog(get_class($this).'::Fetch rowid='.$id.' numrows=0 sql='.$sql);
                 return -2;
             }
 
@@ -462,9 +461,9 @@ class FactureFournisseur extends Facture
         if (isset($this->tva)) $this->tva=trim($this->tva);
         if (isset($this->localtax1)) $this->localtax1=trim($this->localtax1);
         if (isset($this->localtax2)) $this->localtax2=trim($this->localtax2);
-        if (isset($this->total)) $this->total=trim($this->total);
-        if (isset($this->total_ht)) $this->total_ht=trim($this->total_ht);
-        if (isset($this->total_tva)) $this->total_tva=trim($this->total_tva);
+        if (empty($this->total)) $this->total=0;
+        if (empty($this->total_ht)) $this->total_ht=0;
+        if (empty($this->total_tva)) $this->total_tva=0;
         //	if (isset($this->total_localtax1)) $this->total_localtax1=trim($this->total_localtax1);
         //	if (isset($this->total_localtax2)) $this->total_localtax2=trim($this->total_localtax2);
         if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);
@@ -557,9 +556,10 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *     Delete invoice from database
-     *     @param     	rowid      	Id of invoice to delete
-     *     @return		int			<0 if KO, >0 if OK
+     *	Delete invoice from database
+     *
+     *	@param     	int		$rowid      	Id of invoice to delete
+     *	@return		int						<0 if KO, >0 if OK
      */
     function delete($rowid)
     {
@@ -607,10 +607,11 @@ class FactureFournisseur extends Facture
     }
 
     /**
-     *      Set supplier ref
-     *      @param      user            User that make change
-     *      @param      ref_supplier    Supplier ref
-     *      @return     int             <0 if KO, >0 if OK
+     *	Set supplier ref
+     *
+     *	@param      User	$user            	User that make change
+     *	@param      string	$ref_supplier    	Supplier ref
+     *	@return     int             			<0 if KO, >0 if OK
      */
     function set_ref_supplier($user, $ref_supplier)
     {
@@ -639,9 +640,10 @@ class FactureFournisseur extends Facture
     }
 
     /**
-     *      Tag invoice as a payed invoice
-     *      @param      user        Object user
-     *      @return     int         <0 si ko, >0 si ok
+     *	Tag invoice as a payed invoice
+     *
+     *	@param      User	$user       Object user
+     *	@return     int         		<0 si ko, >0 si ok
      */
     function set_paid($user)
     {
@@ -658,8 +660,6 @@ class FactureFournisseur extends Facture
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);
@@ -688,11 +688,12 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *      Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
-     *		Fonction utilisee quand un paiement prelevement est refuse,
-     * 		ou quand une facture annulee et reouverte.
-     *      @param      user        Object user that change status
-     *      @return     int         <0 si ok, >0 si ok
+     *	Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
+     *	Fonction utilisee quand un paiement prelevement est refuse,
+     *	ou quand une facture annulee et reouverte.
+     * 
+     *	@param      User	$user       Object user that change status
+     *	@return     int         		<0 si ok, >0 si ok
      */
     function set_unpaid($user)
     {
@@ -709,8 +710,6 @@ class FactureFournisseur extends Facture
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);
@@ -738,12 +737,14 @@ class FactureFournisseur extends Facture
     }
 
     /**
-     *      Tag invoice as validated + call trigger BILL_VALIDATE
-     *      @param      user            Object user that validate
-     *      @param      force_number    Reference to force on invoice
-     *      @return     int             <0 if KO, =0 if nothing to do, >0 if OK
+     *	Tag invoice as validated + call trigger BILL_VALIDATE
+     *
+     *	@param	User	$user           Object user that validate
+     *	@param  string	$force_number   Reference to force on invoice
+     *	@param	int		$idwarehouse	Id of warehouse for stock change
+     *	@return int 			        <0 if KO, =0 if nothing to do, >0 if OK
      */
-    function validate($user, $force_number='')
+    function validate($user, $force_number='', $idwarehouse=0)
     {
         global $conf,$langs;
 
@@ -752,7 +753,7 @@ class FactureFournisseur extends Facture
         // Protection
         if ($this->statut > 0)	// This is to avoid to validate twice (avoid errors on logs and stock management)
         {
-            dol_syslog("FactureFournisseur::validate no draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
             return 0;
         }
 
@@ -783,31 +784,30 @@ class FactureFournisseur extends Facture
         $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("FactureFournisseur::validate sql=".$sql);
+        dol_syslog(get_class($this)."::validate sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
             // Si on incrémente le produit principal et ses composants à la validation de facture fournisseur
-            if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
+            if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
                 $langs->load("agenda");
 
-                $num=count($this->lines);
-                for ($i = 0; $i < $num; $i++)
+                $cpt=count($this->lines);
+                for ($i = 0; $i < $cpt; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increase stock for product
-                        $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->pu_ht, $langs->trans("InvoiceValidatedInDolibarr",$num));
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->pu_ht, $langs->trans("InvoiceValidatedInDolibarr",$num));
                         if ($result < 0) { $error++; }
                     }
                 }
             }
 
-            if ($error == 0)
+            if (! $error)
             {
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -817,7 +817,7 @@ class FactureFournisseur extends Facture
                 // Fin appel triggers
             }
 
-            if ($error == 0)
+            if (! $error)
             {
                 $this->db->commit();
                 return 1;
@@ -838,11 +838,13 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *		Set draft status
-     *		@param		user		Object user that modify
-     *		@param		int			<0 if KO, >0 if OK
+     *	Set draft status
+     *
+     *	@param	User	$user			Object user that modify
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user)
+    function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
 
@@ -850,7 +852,7 @@ class FactureFournisseur extends Facture
 
         if ($this->statut == 0)
         {
-            dol_syslog("FactureFournisseur::set_draft already draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
             return 0;
         }
 
@@ -860,8 +862,9 @@ class FactureFournisseur extends Facture
         $sql.= " SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("FactureFournisseur::set_draft sql=".$sql, LOG_DEBUG);
-        if ($this->db->query($sql))
+        dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
+        $result=$this->db->query($sql);
+        if ($result)
         {
             // Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
             if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
@@ -869,15 +872,14 @@ class FactureFournisseur extends Facture
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
                 $langs->load("agenda");
 
-                $num=count($this->lines);
-                for ($i = 0; $i < $num; $i++)
+                $cpt=count($this->lines);
+                for ($i = 0; $i < $cpt; $i++)
                 {
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increase stock for product
-                        $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
+                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
                     }
                 }
             }
@@ -904,35 +906,49 @@ class FactureFournisseur extends Facture
 
     /**
      *	Ajoute une ligne de facture (associe a aucun produit/service predefini)
-     *		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-     *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-     *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
-     *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
-     *
-     *	@param    	desc            Description de la ligne
-     *	@param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
-     *	@param    	txtva           Taux de tva force, sinon -1
-     *	@param		txlocaltax1		LocalTax1 Rate
-     *	@param		txlocaltax2		LocalTax2 Rate
-     *	@param    	qty             Quantite
-     *	@param    	fk_product      Id du produit/service predefini
-     *	@param    	remise_percent  Pourcentage de remise de la ligne
-     *	@param    	date_start      Date de debut de validite du service
-     * 	@param    	date_end        Date de fin de validite du service
-     * 	@param    	ventil          Code de ventilation comptable
-     *	@param    	info_bits		Bits de type de lines
-     *	@param    	price_base_type HT ou TTC
-     *	@param		type			Type of line (0=product, 1=service)
-     *	@return    	int             >0 if OK, <0 if KO
+     *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+     *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+     *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
+     *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+
+     *	@param    	string	$desc            	Description de la ligne
+     *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
+     *	@param    	double	$txtva           	Taux de tva force, sinon -1
+     *	@param		double	$txlocaltax1		LocalTax1 Rate
+     *	@param		double	$txlocaltax2		LocalTax2 Rate
+     *	@param    	double	$qty             	Quantite
+     *	@param    	int		$fk_product      	Id du produit/service predefini
+     *	@param    	double	$remise_percent  	Pourcentage de remise de la ligne
+     *	@param    	date	$date_start      	Date de debut de validite du service
+     * 	@param    	date	$date_end        	Date de fin de validite du service
+     * 	@param    	string	$ventil          	Code de ventilation comptable
+     *	@param    	int		$ºinfo_bits			Bits de type de lines
+     *	@param    	string	$price_base_type 	HT ou TTC
+     *	@param		int		$type				Type of line (0=product, 1=service)
+     *  @param      int		$rang            	Position of line
+     *	@return    	int             			>0 if OK, <0 if KO
      */
-    function addline($desc, $pu, $txtva, $txlocaltax1=0, $txlocaltax2=0, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
+    function addline($desc, $pu, $txtva, $txlocaltax1=0, $txlocaltax2=0, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1)
     {
-        dol_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
+        dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         // Clean parameters
-        if ($txtva == '') $txtva=0;
+        if (empty($remise_percent)) $remise_percent=0;
+        if (empty($qty)) $qty=0;
+        if (empty($info_bits)) $info_bits=0;
+        if (empty($rang)) $rang=0;
+        if (empty($ventil)) $ventil=0;
+        if (empty($txtva)) $txtva=0;
+        if (empty($txlocaltax1)) $txlocaltax1=0;
+        if (empty($txlocaltax2)) $txlocaltax2=0;
+
+        $remise_percent=price2num($remise_percent);
+        $qty=price2num($qty);
+        $pu=price2num($pu);
         $txtva=price2num($txtva);
+        $txlocaltax1=price2num($txlocaltax1);
+        $txlocaltax2=price2num($txlocaltax2);
 
         // Check parameters
         if ($type < 0) return -1;
@@ -941,7 +957,7 @@ class FactureFournisseur extends Facture
         $this->db->begin();
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
-        $sql .= ' VALUES ('.$this->id.');';
+        $sql.= ' VALUES ('.$this->id.')';
         dol_syslog("Fournisseur.facture::addline sql=".$sql);
 
         $resql = $this->db->query($sql);
@@ -949,7 +965,7 @@ class FactureFournisseur extends Facture
         {
             $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type);
+            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type, $remise_percent);
             if ($result > 0)
             {
                 $this->db->commit();
@@ -957,8 +973,7 @@ class FactureFournisseur extends Facture
             }
             else
             {
-                $this->error=$this->db->error();
-                dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
+                dol_syslog("Error error=".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -973,21 +988,23 @@ class FactureFournisseur extends Facture
 
     /**
      * Update a line detail into database
-     * @param     	id            	Id of line invoice
-     * @param     	label         	Description of line
-     * @param     	pu          	Prix unitaire (HT ou TTC selon price_base_type)
-     * @param     	vatrate       	VAT Rate
-     * @param		txlocaltax1		LocalTax1 Rate
-     * @param		txlocaltax2		LocalTax2 Rate
-     * @param     	qty           	Quantity
-     * @param     	idproduct		Id produit
-     * @param	  	price_base_type	HT or TTC
-     * @param	  	info_bits		Miscellanous informations of line
-     * @param		type			Type of line (0=product, 1=service)
-     * @return    	int           	<0 if KO, >0 if OK
+     * @param     	int		$id            		Id of line invoice
+     * @param     	string	$label         		Description of line
+     * @param     	double	$pu          		Prix unitaire (HT ou TTC selon price_base_type)
+     * @param     	double	$vatrate       		VAT Rate
+     * @param		double	$txlocaltax1		LocalTax1 Rate
+     * @param		double	$txlocaltax2		LocalTax2 Rate
+     * @param     	double	$qty           		Quantity
+     * @param     	int		$idproduct			Id produit
+     * @param	  	double	$price_base_type	HT or TTC
+     * @param	  	int		$info_bits			Miscellanous informations of line
+     * @param		int		$type				Type of line (0=product, 1=service)
+     * @param     	double	$remise_percent  	Pourcentage de remise de la ligne
+     * @return    	int           				<0 if KO, >0 if OK
      */
-    function updateline($id, $label, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0)
+    function updateline($id, $label, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0)
     {
+        dol_syslog(get_class($this)."::updateline $id,$label,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         $pu = price2num($pu);
@@ -1001,7 +1018,6 @@ class FactureFournisseur extends Facture
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
 
-
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
 
@@ -1009,7 +1025,7 @@ class FactureFournisseur extends Facture
         // qty, pu, remise_percent et txtva
         // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-        $tabprice = calcul_price_total($qty, $pu, 0, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];
@@ -1067,7 +1083,7 @@ class FactureFournisseur extends Facture
 
     /**
      * Delete a detail line from database
-     * @param     rowid      id of line to delete
+     * @param     int	$rowid      id of line to delete
      */
     function deleteline($rowid)
     {
@@ -1086,8 +1102,8 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *      \brief     Charge les informations d'ordre info dans l'objet facture
-     *      \param     id       	Id de la facture a charger
+     *	Charge les informations d'ordre info dans l'objet facture
+     *	@param     int	$id       	Id de la facture a charger
      */
     function info($id)
     {
@@ -1129,9 +1145,9 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *      @param      user                Objet user
-     *      @return     int                 <0 if KO, >0 if OK
+     *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *	@param      User	$user       Objet user
+     *	@return     int                 <0 if KO, >0 if OK
      */
     function load_board($user)
     {
@@ -1170,11 +1186,12 @@ class FactureFournisseur extends Facture
 
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
-     *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		option			Sur quoi pointe le lien
-     * 		@param		max				Max length of shown ref
-     * 		@return		string			Chaine avec URL
+     *	Renvoie nom clicable (avec eventuellement le picto)
+     *
+     *		@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		@param		string	$option			Sur quoi pointe le lien
+     * 		@param		int		$max			Max length of shown ref
+     * 		@return		string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$option='',$max=0)
     {
@@ -1294,10 +1311,11 @@ class FactureFournisseur extends Facture
     }
 
     /**
-     *		Load an object from its id and create a new one in database
-     *		@param      fromid     		Id of object to clone
-     *		@param		invertdetail	Reverse sign of amounts for lines
-     * 	 	@return		int				New id of clone
+     *	Load an object from its id and create a new one in database
+     *
+     *	@param      int		$fromid     	Id of object to clone
+     *	@param		int		$invertdetail	Reverse sign of amounts for lines
+     * 	@return		int						New id of clone
      */
     function createFromClone($fromid,$invertdetail=0)
     {

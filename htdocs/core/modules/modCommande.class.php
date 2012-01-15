@@ -41,14 +41,14 @@ class modCommande extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modCommande($DB)
+	function modCommande($db)
 	{
 		global $conf;
 
-		$this->db = $DB ;
-		$this->numero = 25 ;
+		$this->db = $db;
+		$this->numero = 25;
 
 		$this->family = "crm";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -178,10 +178,14 @@ class modCommande extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init()
+	function init($options='')
 	{
 		global $conf;
 
@@ -193,7 +197,7 @@ class modCommande extends DolibarrModules
 		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES('".$this->const[0][2]."','order')"
 		 );
 
-		 return $this->_init($sql);
+		 return $this->_init($sql,$options);
 	}
 
 

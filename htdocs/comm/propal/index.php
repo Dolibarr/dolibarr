@@ -30,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT ."/comm/propal/class/propal.class.php");
 if (!$user->rights->propale->lire) accessforbidden();
 
 $langs->load("propal");
+$langs->load("companies");
 
 // Security check
 $socid='';
@@ -47,7 +48,7 @@ if ($user->societe_id > 0)
  */
 
 $propalstatic=new Propal($db);
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES:Módulo Presupuestos";
 
@@ -121,7 +122,7 @@ if ($resql)
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$propalstatic->LibStatut($status,1),'values'=>array(0=>(isset($vals[$status])?$vals[$status]:0)));
+        $dataseries[]=array('label'=>$propalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;

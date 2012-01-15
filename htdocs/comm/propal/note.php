@@ -90,7 +90,7 @@ if ($_POST['action'] == 'update' && $user->rights->propale->creer)
 
 llxHeader();
 
-$html = new Form($db);
+$form = new Form($db);
 
 $id = $_GET["id"];
 $ref= $_GET["ref"];
@@ -115,7 +115,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-			print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+			print $form->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
 			print '</td></tr>';
 
 			// Ref client
@@ -141,7 +141,7 @@ if ($id > 0 || ! empty($ref))
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$societe->getAvailableDiscounts();
 			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';

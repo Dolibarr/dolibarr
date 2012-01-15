@@ -187,13 +187,18 @@ if ($result >= 0)
 			$member->pass=$ldapuser[$conf->global->LDAP_FIELD_PASSWORD];
 
 			//$member->societe;
-			$member->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
 			$member->adresse=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS]; // TODO obsolete
-			$member->cp=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
-			$member->ville=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
-			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	// Pays en libelle
-			$member->pays_id=$countries[$hashlib2rowid[strtolower($member->pays)]]['rowid'];
-			$member->pays_code=$countries[$hashlib2rowid[strtolower($member->pays)]]['code'];
+			$member->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
+			$member->cp=$ldapuser[$conf->global->LDAP_FIELD_ZIP];    // TODO obsolete
+			$member->zip=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
+			$member->ville=$ldapuser[$conf->global->LDAP_FIELD_TOWN];    // TODO obsolete
+			$member->town=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
+			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	// TODO obsolete
+			$member->country=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];
+			$member->pays_id=$countries[$hashlib2rowid[strtolower($member->country)]]['rowid'];    // TODO obsolete
+			$member->country_id=$countries[$hashlib2rowid[strtolower($member->country)]]['rowid'];
+			$member->pays_code=$countries[$hashlib2rowid[strtolower($member->country)]]['code'];    // TODO obsolete
+			$member->country_code=$countries[$hashlib2rowid[strtolower($member->country)]]['code'];
 
 			$member->phone=$ldapuser[$conf->global->LDAP_FIELD_PHONE];
 			$member->phone_perso=$ldapuser[$conf->global->LDAP_FIELD_PHONE_PERSO];

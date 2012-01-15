@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin          <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,9 +66,9 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *    \brief      Load payment object
-	 *    \param      id      id paiement to get
-	 *    \return     int     <0 si ko, >0 si ok
+	 *	Load payment object
+	 *	@param      int		$id      id paiement to get
+	 *	@return     int     		<0 if ko, >0 if ok
 	 */
 	function fetch($id)
 	{
@@ -112,10 +113,11 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *    Create payment in database
-	 *    @param      user        			Object of creating user
-	 *    @param       closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
-	 *    @return     int         			id of created payment, < 0 if error
+	 *	Create payment in database
+	 *
+	 *	@param		User	$user        			Object of creating user
+	 *	@param		int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *	@return     int         					id of created payment, < 0 if error
 	 */
 	function create($user,$closepaidinvoices=0)
 	{
@@ -233,10 +235,11 @@ class PaiementFourn extends Paiement
 
 
 	/**
-	 *      \brief      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
-	 *                  Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
-	 *                  Si le paiement porte sur au moins une facture a "payee", on refuse
-	 *      \return     int     <0 si ko, >0 si ok
+	 *	Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
+	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
+	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *	
+	 *	@return     int     <0 si ko, >0 si ok
 	 */
 	function delete()
 	{
@@ -316,9 +319,9 @@ class PaiementFourn extends Paiement
 		}
 	}
 
-	/*
-	 *    \brief      Information sur l'objet
-	 *    \param      id      id du paiement dont il faut afficher les infos
+	/**
+	 *	Information sur l'objet
+	 *	@param      int		$id      id du paiement dont il faut afficher les infos
 	 */
 	function info($id)
 	{
@@ -358,9 +361,10 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *      \brief      Retourne la liste des factures sur lesquels porte le paiement
-	 *      \param      filter          Critere de filtre
-	 *      \return     array           Tableau des id de factures
+	 *	Retourne la liste des factures sur lesquels porte le paiement
+	 *
+	 *	@param      string	$filter         Critere de filtre
+	 *	@return     array           		Tableau des id de factures
 	 */
 	function getBillsArray($filter='')
 	{
@@ -393,9 +397,10 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	*    	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
-	*    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	*    	\return     string		Libelle
+	*	Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	*
+	*	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	*	@return     string				Libelle
 	*/
 	function getLibStatut($mode=0)
 	{
@@ -403,10 +408,11 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	*    	\brief      Renvoi le libelle d'un statut donne
-	*    	\param      status      Statut
-	*		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	*    	\return     string      Libelle du statut
+	*	Renvoi le libelle d'un statut donne
+	*
+	*	@param      int		$status     Statut
+	*	@param      int		$mode      0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	*	@return     string      		Libelle du statut
 	*/
 	function LibStatut($status,$mode=0)
 	{
@@ -448,10 +454,11 @@ class PaiementFourn extends Paiement
 
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\return		string			Chaine avec URL
+	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *
+	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		string	$option			Sur quoi pointe le lien
+	 *	@return		string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{

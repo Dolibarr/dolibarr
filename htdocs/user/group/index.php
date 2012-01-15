@@ -33,7 +33,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 $langs->load("users");
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+$sall=GETPOST("sall");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -58,7 +58,7 @@ print_fiche_titre($langs->trans("ListOfGroups"));
 $sql = "SELECT g.rowid, g.nom, g.entity, g.datec, COUNT(ugu.rowid) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE g.entity IS NOT NULL";
 }
@@ -68,9 +68,9 @@ else
 }
 if ($_POST["search_group"])
 {
-    $sql .= " AND (g.nom LIKE '%".$_POST["search_group"]."%' OR g.note LIKE '%".$_POST["search_group"]."%')";
+    $sql .= " AND (g.nom LIKE '%".$db->escape($_POST["search_group"])."%' OR g.note LIKE '%".$db->escape($_POST["search_group"])."%')";
 }
-if ($sall) $sql.= " AND (g.nom LIKE '%".$sall."%' OR g.note LIKE '%".$sall."%')";
+if ($sall) $sql.= " AND (g.nom LIKE '%".$db->escape($sall)."%' OR g.note LIKE '%".$db->escape($sall)."%')";
 $sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -80,12 +80,12 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $param="search_group=$search_group&amp;sall=$sall";
+    $param="search_group=".$search_group."&amp;sall=".$sall;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany
-    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+    if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
     {
     	print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     }
@@ -106,10 +106,8 @@ if ($resql)
         }
         print "</td>";
         //multicompany
-        if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+        if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
         {
-            dol_include_once("/multicompany/class/actions_multicompany.class.php");
-            $mc = new ActionsMulticompany($db);
             $mc->getInfo($obj->entity);
             print '<td align="center">'.$mc->label.'</td>';
         }

@@ -87,7 +87,7 @@ $now=dol_now();
 $facturestatic=new Facture($db);
 $facturesupplierstatic=new FactureFournisseur($db);
 
-$html = new Form($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $thirdpartystatic = new Societe($db);
 

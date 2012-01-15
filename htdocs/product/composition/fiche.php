@@ -157,10 +157,10 @@ if ($action == 'search')
 //print $sql;
 
 $productstatic = new Product($db);
-$html = new Form($db);
+$form = new Form($db);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
-$html = new Form($db);
+$form = new Form($db);
 
 
 dol_htmloutput_errors($mesg);
@@ -192,7 +192,7 @@ if ($id || $ref)
 
 			// Reference
 			print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
-			print $html->showrefnav($product,'ref','',1,'ref');
+			print $form->showrefnav($product,'ref','',1,'ref');
 			print '</td></tr>';
 
 			// Libelle
@@ -276,7 +276,7 @@ if ($id || $ref)
 
 			// Reference
 			print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
-			print $html->showrefnav($product,'ref','',1,'ref');
+			print $form->showrefnav($product,'ref','',1,'ref');
 			print '</td>';
 
 		print '</tr>';
@@ -368,7 +368,7 @@ if ($id || $ref)
 		if ($conf->categorie->enabled)
 		{
 			print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
-			print '<td>'.$html->select_all_categories(0,$catMere).'</td></tr>';
+			print '<td>'.$form->select_all_categories(0,$catMere).'</td></tr>';
 		}
 
 		print '</table>';

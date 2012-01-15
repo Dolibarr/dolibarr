@@ -51,11 +51,11 @@ class EcmDirectory // extends CommonObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function EcmDirectory($DB)
+	function EcmDirectory($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		return 1;
 	}
 
@@ -70,6 +70,7 @@ class EcmDirectory // extends CommonObject
 	{
 		global $conf, $langs;
 
+		$error=0;
 		$now=dol_now();
 
 		// Clean parameters
@@ -86,14 +87,14 @@ class EcmDirectory // extends CommonObject
 		$relativepath=$this->label;
 		if ($this->fk_parent)
 		{
-			$parent = new ECMDirectory($this->db);
+			$parent = new EcmDirectory($this->db);
 			$parent->fetch($this->fk_parent);
 			$relativepath=$parent->getRelativePath().$relativepath;
 		}
 		$relativepath=preg_replace('/([\/])+/i','/',$relativepath);	// Avoid duplicate / or \
 		//print $relativepath.'<br>';
 
-		$cat = new ECMDirectory($this->db);
+		$cat = new EcmDirectory($this->db);
 		$cate_arbo = $cat->get_full_arbo(1);
 		$pathfound=0;
 		foreach ($cate_arbo as $key => $categ)
@@ -174,10 +175,11 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 *      \brief      Update database
-	 *      \param      user        	User that modify
-	 *      \param      notrigger	    0=no, 1=yes (no update trigger)
-	 *      \return     int         	<0 if KO, >0 if OK
+	 *	Update database
+	 *
+	 *  @param	User	$user        	User that modify
+	 *  @param 	int		$notrigger	    0=no, 1=yes (no update trigger)
+	 *  @return int 			       	<0 if KO, >0 if OK
 	 */
 	function update($user=0, $notrigger=0)
 	{
@@ -235,9 +237,10 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 *      Update cache of nb of documents into database
-	 * 		@param		sign		'+' or '-'
-	 *      @return     int         	<0 if KO, >0 if OK
+	 *	Update cache of nb of documents into database
+	 *
+	 * 	@param	string	$sign		'+' or '-'
+	 *  @return int		         	<0 if KO, >0 if OK
 	 */
 	function changeNbOfFiles($sign)
 	{
@@ -262,9 +265,10 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 *    \brief      Load object in memory from database
-	 *    \param      id          id object
-	 *    \return     int         <0 if KO, 0 if not found, >0 if OK
+	 * 	Load object in memory from database
+	 *
+	 *  @param	int		$id			Id of object
+	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
 	 */
 	function fetch($id)
 	{
@@ -315,14 +319,17 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 * 		\brief      Delete object on database and on disk
-	 *		\param      user        User that delete
-	 *		\return		int			<0 if KO, >0 if OK
+	 * 	Delete object on database and on disk
+	 *
+	 *	@param	User	$user		User that delete
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function delete($user)
 	{
 		global $conf, $langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+		$error=0;
 
 		$relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
 
@@ -391,10 +398,12 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 *  \brief      	Return directory name you can click (and picto)
-	 *  \param			withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *  \param			option			Sur quoi pointe le lien
-	 *  \return			string			Chaine avec URL
+	 *  Return directory name you can click (and picto)
+	 *
+	 *  @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *  @param	string	$option			Sur quoi pointe le lien
+	 *  @param	int		$max			Max length
+	 *  @return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$max=0)
 	{
@@ -415,7 +424,7 @@ class EcmDirectory // extends CommonObject
 		$newref=$this->ref;
 		$newlabel=$langs->trans("ShowECMSection").': '.$newref;
 
-		if ($withpicto) $result.=($lien.img_object($newlabel,$picto,'',1).$lienfin);
+		if ($withpicto) $result.=($lien.img_object($newlabel,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.($max?dol_trunc($newref,$max,'middle'):$newref).$lienfin;
 		return $result;
@@ -423,8 +432,9 @@ class EcmDirectory // extends CommonObject
 
 	/**
 	 *  Return relative path of a directory on disk
-	 * 	@param		force		Force reload of full arbo even if already loaded
-	 *	@return		string		Relative physical path
+	 *
+	 * 	@param	int		$force		Force reload of full arbo even if already loaded
+	 *	@return	string				Relative physical path
 	 */
 	function getRelativePath($force=0)
 	{
@@ -461,8 +471,9 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 * 	\brief		Load this->motherof that is array(id_son=>id_parent, ...)
-	 *	\return		int		<0 if KO, >0 if OK
+	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
+	 *
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function load_motherof()
 	{
@@ -488,7 +499,7 @@ class EcmDirectory // extends CommonObject
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -509,8 +520,9 @@ class EcmDirectory // extends CommonObject
      *              fullrelativename    Full path name (Added by build_path_from_id_categ call)
 	 * 				fulllabel	        Full label (Added by build_path_from_id_categ call)
 	 * 				level		        Level of line (Added by build_path_from_id_categ call)
-	 *  @param		force		        Force reload of full arbo even if already loaded in cache $this->cats
-	 *	@return		array		        Tableau de array
+	 *
+	 *  @param	int		$force	        Force reload of full arbo even if already loaded in cache $this->cats
+	 *	@return	array			        Tableau de array
 	 */
 	function get_full_arbo($force=0)
 	{
@@ -576,7 +588,7 @@ class EcmDirectory // extends CommonObject
 		}
 		else
 		{
-			dol_print_error ($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 
@@ -594,10 +606,12 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 *	\brief		Calcule les proprietes fullpath, fullrelativename, fulllabel d'un repertoire
-	 *				du tableau this->cats et de toutes ces enfants
-	 * 	\param		id_categ		id_categ entry to update
-	 * 	\param		protection		Deep counter to avoid infinite loop
+	 *	Calcule les proprietes fullpath, fullrelativename, fulllabel d'un repertoire
+	 *	du tableau this->cats et de toutes ces enfants.
+	 *
+	 * 	@param	int		$id_categ		id_categ entry to update
+	 * 	@param	int		$protection		Deep counter to avoid infinite loop
+	 * 	@return	void
 	 */
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
@@ -635,10 +649,10 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 *	\brief		Refresh value for cachenboffile
-	 * 	\param		directory		Directory to scan
-	 *  \param		all         	0=refresh this id , 1=refresh this entity
-	 * 	\return		int				<0 if KO, Nb of files in directory if OK
+	 *	Refresh value for cachenboffile
+	 *
+	 *  @param		int		$all       	0=refresh this id , 1=refresh this entity
+	 * 	@return		int					<0 if KO, Nb of files in directory if OK
 	 */
 	function refreshcachenboffile($all=0)
 	{

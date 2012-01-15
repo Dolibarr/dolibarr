@@ -5,9 +5,9 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,148 @@
  */
 
 
+if (! function_exists('json_encode'))
+{
+    /**
+     * Implement json_encode for PHP that does not support it
+     *
+     * @param	mixed	$elements		PHP Object to json encode
+     * @return 	string					Json encoded string
+     */
+    function json_encode($elements)
+    {
+    	$num = count($elements);
+
+    	// determine type
+    	if (is_numeric(key($elements)))
+    	{
+    		// indexed (list)
+    		$output = '[';
+    		for ($i = 0, $last = ($num - 1); isset($elements[$i]); ++$i)
+    		{
+    			if (is_array($elements[$i])) $output.= json_encode($elements[$i]);
+    			else $output .= _val($elements[$i]);
+    			if($i !== $last) $output.= ',';
+    		}
+    		$output.= ']';
+    	}
+    	else
+    	{
+    		// associative (object)
+    		$output = '{';
+    		$last = $num - 1;
+    		$i = 0;
+    		foreach($elements as $key => $value)
+    		{
+    			$output .= '"'.$key.'":';
+    			if (is_array($value)) $output.= json_encode($value);
+    			else $output .= _val($value);
+    			if ($i !== $last) $output.= ',';
+    			++$i;
+    		}
+    		$output.= '}';
+    	}
+
+    	// return
+    	return $output;
+    }
+
+    /**
+     * Return text according to type
+     *
+     * @param 	mixed	$val	Value to show
+     * @return	string			Formated value
+     */
+    function _val($val)
+    {
+    	if (is_string($val)) return '"'.rawurlencode($val).'"';
+    	elseif (is_int($val)) return sprintf('%d', $val);
+    	elseif (is_float($val)) return sprintf('%F', $val);
+    	elseif (is_bool($val)) return ($val ? 'true' : 'false');
+    	else  return 'null';
+    }
+}
+
+if (! function_exists('json_decode'))
+{
+	/**
+	 * Implement json_decode for PHP that does not support it
+	 *
+	 * @param	string	$json		Json encoded to PHP Object or Array
+	 * @param	bool	$assoc		False return an object, true return an array
+	 * @return 	mixed				Object or Array
+	 */
+	function json_decode($json, $assoc=false)
+	{
+		$comment = false;
+
+		$strLength = dol_strlen($json);
+		for ($i=0; $i<$strLength; $i++)
+		{
+			if (! $comment)
+			{
+				if (($json[$i] == '{') || ($json[$i] == '[')) $out.= 'array(';
+				else if (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
+				else if ($json[$i] == ':') $out.= ' => ';
+				else $out.= $json[$i];
+			}
+			else $out.= $json[$i];
+			if ($json[$i] == '"' && $json[($i-1)]!="\\") $comment = !$comment;
+		}
+
+		// Return an array
+		eval('$array = '.$out.';');
+
+		// Return an object
+		if (! $assoc)
+		{
+			if (! empty($array))
+			{
+				$object = false;
+
+				foreach ($array as $key => $value)
+				{
+					$object->{$key} = $value;
+				}
+
+				return $object;
+			}
+
+			return false;
+		}
+
+		return $array;
+	}
+}
+
+/**
+ * Function to return value of a static property when class
+ * name is dynamically defined (not hard coded).
+ * This is because $myclass::$myvar works from PHP 5.3.0+ only
+ *
+ * @param	string 	$class		Class name
+ * @param 	string 	$member		Name of property
+ * @return 	string				Return value of static property.
+ */
+function getStaticMember($class, $member)
+{
+	if (is_object($class)) $class = get_class($class);
+	$classObj = new ReflectionClass($class);
+	$result = null;
+
+	foreach($classObj->getStaticProperties() as $prop => $value)
+	{
+		if($prop == $member)
+		{
+			$result = $value;
+			break;
+		}
+	}
+
+	return $result;
+}
+
+
 /**
  * Return a DoliDB instance (database handler).
  *
@@ -51,17 +193,32 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
     return $dolidb;
 }
 
-
 /**
- *  This function output memory used by PHP and exit everything. Used for debugging purpose.
+ * 	Get entity to use
  *
- *  @return	void
+ * 	@param	string	$element	Current element
+ * 	@param	int		$shared		1=Return shared entities
+ * 	@return	mixed				Entity id(s) to use
  */
-function dol_stopwithmem()
+function getEntity($element=false, $shared=false)
 {
-    print memory_get_usage();
-    llxFooter();
-    exit;
+	global $conf, $mc;
+
+	if (is_object($mc))
+	{
+		return $mc->getEntity($element, $shared);
+	}
+	else
+	{
+		$out='';
+
+		$addzero = array('user', 'usergroup');
+		if (in_array($element, $addzero)) $out.= '0,';
+
+		$out.= $conf->entity;
+
+		return $out;
+	}
 }
 
 /**
@@ -74,8 +231,9 @@ function dol_shutdown()
     global $conf,$user,$langs,$db;
     $disconnectdone=false;
     if (is_object($db) && ! empty($db->connected)) $disconnectdone=$db->close();
-    dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced)':''));
+    dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced)':''), ($disconnectdone?LOG_WARNING:LOG_DEBUG));
 }
+
 
 /**
  *  Return value of a param into GET or POST supervariable
@@ -87,21 +245,22 @@ function dol_shutdown()
  */
 function GETPOST($paramname,$check='',$method=0)
 {
-    if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
-    elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
-    elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
-    elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
+	if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
+	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
+	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
 
-    if (!empty($check))
-    {
-        // Check if numeric
-        if ($check == 'int' && ! preg_match('/^[\.,0-9]+$/i',trim($out))) $out='';
-        // Check if alpha
-        //if ($check == 'alpha' && ! preg_match('/^[ =:@#\/\\\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
-        if ($check == 'alpha' && preg_match('/"/',trim($out))) $out='';    // Only " is dangerous because param in url can close the href= or src= and add javascript functions
-    }
+	if (! empty($check))
+	{
+		// Check if numeric
+		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',trim($out))) $out='';
+		// Check if alpha
+		//if ($check == 'alpha' && ! preg_match('/^[ =:@#\/\\\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
+		// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+		if ($check == 'alpha' && preg_match('/"/',trim($out))) $out='';
+	}
 
-    return $out;
+	return $out;
 }
 
 
@@ -268,8 +427,8 @@ function dol_now($mode='gmt')
  */
 function dol_sanitizeFileName($str,$newstr='_')
 {
-    global $conf;
-    return dol_string_nospecial(dol_string_unaccent($str),$newstr,$conf->filesystem_forbidden_chars);
+	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+    return dol_string_nospecial(dol_string_unaccent($str), $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -302,19 +461,21 @@ function dol_string_unaccent($str)
     }
     else
     {
-        $string = strtr($str,
-		"\xC0\xC1\xC2\xC3\xC5\xC7
+        $string = strtr(
+            $str,
+			"\xC0\xC1\xC2\xC3\xC5\xC7
 	        \xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF\xD0\xD1
 	        \xD2\xD3\xD4\xD5\xD8\xD9\xDA\xDB\xDD
 	        \xE0\xE1\xE2\xE3\xE5\xE7\xE8\xE9\xEA\xEB
 	        \xEC\xED\xEE\xEF\xF0\xF1\xF2\xF3\xF4\xF5\xF8
 	        \xF9\xFA\xFB\xFD\xFF",
-		"AAAAAC
+			"AAAAAC
 	        EEEEIIIIDN
 	        OOOOOUUUY
 	        aaaaaceeee
 	        iiiidnooooo
-	        uuuyy");
+	        uuuyy"
+        );
         $string = strtr($string, array("\xC4"=>"Ae", "\xC6"=>"AE", "\xD6"=>"Oe", "\xDC"=>"Ue", "\xDE"=>"TH", "\xDF"=>"ss", "\xE4"=>"ae", "\xE6"=>"ae", "\xF6"=>"oe", "\xFC"=>"ue", "\xFE"=>"th"));
         return $string;
     }
@@ -485,21 +646,26 @@ function dol_syslog($message, $level=LOG_INFO)
         }
 
         // Check if log is to syslog (SYSLOG_FIREPHP_ON defined)
-        if (defined("SYSLOG_FIREPHP_ON") && constant("SYSLOG_FIREPHP_ON"))
+        if (defined("SYSLOG_FIREPHP_ON") && constant("SYSLOG_FIREPHP_ON") && ! empty($_SERVER["SERVER_NAME"]))     //! empty($_SERVER["SERVER_NAME"]) to be sure to enable this in Web mode only
         {
             try
             {
                 // Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once() a constant from
                 // database or config file because we must be able to log data before database or config file read.
+			    $oldinclude=get_include_path();
                 set_include_path('/usr/share/php/');
                 require_once('FirePHPCore/FirePHP.class.php');
-                restore_include_path();
+                set_include_path($oldinclude);
                 ob_start();
                 $firephp = FirePHP::getInstance(true);
-                $firephp->log($message);
+                if ($level == LOG_ERR) $firephp->error($message);
+                elseif ($level == LOG_WARNING) $firephp->warn($message);
+                elseif ($level == LOG_INFO) $firephp->log($message);
+                else $firephp->log($message);
             }
             catch(Exception $e)
             {
+                // Do not use dol_syslog to avoid infinite loop
             }
         }
     }
@@ -585,14 +751,6 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
     $out.="</div>\n";
 
     if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
-    
-    // Parameters for edit in place
-    if (! empty($GLOBALS['object']))
-    {
-    	$out.='<div id="element" class="hidden">'.$GLOBALS['object']->element.'</div>'."\n";
-    	$out.='<div id="table_element" class="hidden">'.$GLOBALS['object']->table_element.'</div>'."\n";
-    	$out.='<div id="fk_element" class="hidden">'.$GLOBALS['object']->id.'</div>'."\n";
-    }
 
     return $out;
 }
@@ -631,34 +789,33 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
 /**
  *      Return a formated address (part address/zip/town/state) according to country rules
  *
- *      @param      outputlangs     Output langs object
- *      @param      object          A company or contact object
- *      @return     string          Formated string
+ *      @param  Object		$object         A company or contact object
+ *      @return string          			Formated string
  */
-function dol_format_address($outputlangs,$object)
+function dol_format_address($object)
 {
 	$ret='';
 	$countriesusingstate=array('US','IN');
 
 	// Address
-	$ret .= $outputlangs->convToOutputCharset($object->address);
+	$ret .= $object->address;
 	// Zip/Town/State
 	if (in_array($object->country_code,array('US')))   // US: town, state, zip
 	{
-		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->town);
+		$ret .= ($ret ? "\n" : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$outputlangs->convToOutputCharset($object->departement);
+			$ret.=", ".$object->departement;
 		}
-		if ($object->zip) $ret .= ', '.$outputlangs->convToOutputCharset($object->zip);
+		if ($object->zip) $ret .= ', '.$object->zip;
 	}
 	else                                        // Other: zip town, state
 	{
-		$ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->zip);
-		$ret .= ' '.$outputlangs->convToOutputCharset($object->town);
+		$ret .= ($ret ? "\n" : '' ).$object->zip;
+		$ret .= ' '.$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$outputlangs->convToOutputCharset($object->state);
+			$ret.=", ".$object->state;
 		}
 	}
 
@@ -701,13 +858,13 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
                 $to_gmt=false;
                 $offsettz=$offsetdst=0;
             }
-            if ($tzoutput == 'tzuser')
+            elseif ($tzoutput == 'tzuser')
             {
                 $to_gmt=true;
                 $offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
                 $offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
             }
-            if ($tzoutput == 'tzcompany')
+            elseif ($tzoutput == 'tzcompany')
             {
                 $to_gmt=false;
                 $offsettz=$offsetdst=0;	// TODO Define this and use it later
@@ -824,11 +981,11 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
  *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
  *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
- *		                		19700101020000 -> 7200
  *  @param	int		$gm         1=Input date is GM date, 0=Input date is local date
+ *		                		19700101020000 -> 7200 with gm=1
  *  @return	date				Date
  *
- *  @see        dol_print_date, dol_mktime, dol_getdate
+ *  @see    dol_print_date, dol_mktime, dol_getdate
  */
 function dol_stringtotime($string, $gm=1)
 {
@@ -925,17 +1082,17 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  * 	Replace function mktime not available under Windows if year < 1970
  *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *
- * 	@param		hour			Hour	(can be -1 for undefined)
- *	@param		minute			Minute	(can be -1 for undefined)
- *	@param		second			Second	(can be -1 for undefined)
- *	@param		month			Month (1 to 12)
- *	@param		day				Day (1 to 31)
- *	@param		year			Year
- *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
- *	@param		check			0=No check on parameters (Can use day 32, etc...)
- *  @param		isdst			Dayling saving time
- *	@return		timestamp		Date as a timestamp, '' if error
- * 	@see 		dol_print_date, dol_stringtotime
+ * 	@param	int		$hour			Hour	(can be -1 for undefined)
+ *	@param	int		$minute			Minute	(can be -1 for undefined)
+ *	@param	int		$second			Second	(can be -1 for undefined)
+ *	@param	int		$month			Month (1 to 12)
+ *	@param	int		$day			Day (1 to 31)
+ *	@param	int		$year			Year
+ *	@param	int		$gm				1=Input informations are GMT values, otherwise local to server TZ
+ *	@param	int		$check			0=No check on parameters (Can use day 32, etc...)
+ *  @param	int		$isdst			Dayling saving time
+ *	@return	timestamp				Date as a timestamp, '' if error
+ * 	@see 							dol_print_date, dol_stringtotime
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$isdst=true)
 {
@@ -979,41 +1136,6 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$
         $date=mktime($hour,$minute,$second,$month,$day,$year);
     }
     return $date;
-}
-
-
-/* For backward compatibility */
-function dolibarr_date($fmt, $timestamp, $gm=false)
-{
-    return dol_date($fmt, $timestamp, $gm);
-}
-
-/**
- *	Returns formated date
- *
- *	@param		string		$fmt			Format (Exemple: 'Y-m-d H:i:s')
- *	@param		timestamp	$timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
- *	@param		boolean		$gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
- *	@return		string						Formated date
- *
- *  @deprecated Replaced by dol_print_date
- */
-function dol_date($fmt, $timestamp, $gm=false)
-{
-    $usealternatemethod=false;
-    if ($timestamp <= 0) $usealternatemethod=true;
-    if ($timestamp >= 2145913200) $usealternatemethod=true;
-
-    if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
-    {
-        $string=adodb_date($fmt,$timestamp,$gm);
-    }
-    else
-    {
-        $string=date($fmt,$timestamp);
-    }
-
-    return $string;
 }
 
 
@@ -1212,7 +1334,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
  * 	Return an IP formated to be shown on screen
  *
  * 	@param	string	$ip			IP
- * 	@param	int		$mode		1=return only country/flag,2=return only IP
+ * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
  * 	@return string 				Formated IP, with country if GeoIP module is enabled
  */
 function dol_print_ip($ip,$mode=0)
@@ -1277,12 +1399,12 @@ function dol_user_country()
  *  Format address string
  *
  *  @param	string	$address     Address
- *  @param  int		$htmlid      Html ID
+ *  @param  int		$htmlid      Html ID (for example 'gmap')
  *  @param  int		$mode        thirdparty|contact|member|other
  *  @param  int		$id          Id of object
  *  @return void
  */
-function dol_print_address($address, $htmlid='gmap', $mode, $id)
+function dol_print_address($address, $htmlid, $mode, $id)
 {
     global $conf,$user,$langs;
 
@@ -1364,8 +1486,6 @@ function isValidPhone($address)
  */
 function dol_strlen($string,$stringencoding='UTF-8')
 {
-    //    print $stringencoding."xxx";
-    //    $stringencoding='rrr';
     if (function_exists('mb_strlen')) return mb_strlen($string,$stringencoding);
     else return strlen($string);
 }
@@ -1407,213 +1527,161 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
 
 /**
  *  Show a javascript graph
- *  @param      htmlid          Html id name
- *  @param      width           Width in pixel
- *  @param      height          Height in pixel
- *  @param      data            Data array
- *  @param      showlegend      1 to show legend, 0 otherwise
- *  @param      type            Type of graph ('pie', 'barline')
- *  @param      showpercent     Show percent (with type='pie' only)
- *  @param      url             Param to add an url to click values
+ *
+ *  @param		string	$htmlid			Html id name
+ *  @param		int		$width			Width in pixel
+ *  @param		int		$height			Height in pixel
+ *  @param		array	$data			Data array
+ *  @param		int		$showlegend		1 to show legend, 0 otherwise
+ *  @param		string	$type			Type of graph ('pie', 'barline')
+ *  @param		int		$showpercent	Show percent (with type='pie' only)
+ *  @param		string	$url			Param to add an url to click values
+ *  @return		void
  */
 function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='')
 {
-    global $conf,$langs;
-    global $theme_datacolor;    // To have var kept when function is called several times
-    if (empty($conf->use_javascript_ajax)) return;
-    $jsgraphlib='flot';
-    $datacolor=array();
+	global $conf,$langs;
+	global $theme_datacolor;    // To have var kept when function is called several times
+	if (empty($conf->use_javascript_ajax)) return;
+	$jsgraphlib='flot';
+	$datacolor=array();
 
 	// Load colors of theme into $datacolor array
-    $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
-    if (is_readable($color_file))
-    {
-        include_once($color_file);
-        if (isset($theme_datacolor))
-        {
-            $datacolor=array();
-            foreach($theme_datacolor as $val)
-            {
-                $datacolor[]="#".sprintf("%02x",$val[0]).sprintf("%02x",$val[1]).sprintf("%02x",$val[2]);
-            }
-        }
-    }
-    print '<div id="'.$htmlid.'" style="width:'.$width.'px;height:'.$height.'px;"></div>';
+	$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+	if (is_readable($color_file))
+	{
+		include_once($color_file);
+		if (isset($theme_datacolor))
+		{
+			$datacolor=array();
+			foreach($theme_datacolor as $val)
+			{
+				$datacolor[]="#".sprintf("%02x",$val[0]).sprintf("%02x",$val[1]).sprintf("%02x",$val[2]);
+			}
+		}
+	}
+	print '<div id="'.$htmlid.'" style="width:'.$width.'px;height:'.$height.'px;"></div>';
 
-    // We use Flot js lib
-    if ($jsgraphlib == 'flot')
-    {
-        if ($type == 'pie')
-        {
-            // data is   array('series'=>array(serie1,serie2,...),
-            //                 'seriestype'=>array('bar','line',...),
-            //                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
-            //                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
-            // serieX is array('label'=>'label', values=>array(0=>val))
-        	print '
-        	<script type="text/javascript">
-			jQuery(function () {
-        	var data = ['."\n";
-            $i=0;
-            foreach($data['series'] as $serie)
-            {
-                //print '{ label: "'.($showlegend?$serie['values'][0]:$serie['label'].'<br>'.$serie['values'][0]).'", data: '.$serie['values'][0].' }';
-                print '{ label: "'.dol_escape_js($serie['label']).'", data: '.$serie['values'][0].' }';
-                if ($i < count($data['series'])) print ',';
-                print "\n";
-                $i++;
-            }
-            print '];
+	// We use Flot js lib
+	if ($jsgraphlib == 'flot')
+	{
+		if ($type == 'pie')
+		{
+			// data is   array('series'=>array(serie1,serie2,...),
+			//                 'seriestype'=>array('bar','line',...),
+			//                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
+			//                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
+			// serieX is array('label'=>'label', data=>val)
+			print '
+			<script type="text/javascript">
+			$(function () {
+				var data = '.json_encode($data['series']).';
 
-            function plotWithOptions() {
-                jQuery.plot(jQuery("#'.$htmlid.'"), data,
-                {
-                    series: {
-                            pie: {
-                            show: true,
-                            radius: 3/4,
-                            label: {
-                                show: true,
-                                radius: 3/4,
-                                formatter: function(label, series) {
-                                    var percent=Math.round(series.percent);
-                                    var number=series.data[0][1];
-                                    return \'';
-                            print '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">';
-                            if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'=">';
-                            print '\'+'.($showlegend?'number':'label+\'<br/>\'+number');
-                            if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
-                            print '+\'';
-                            if ($url) print '</a>';
-                            print '</div>\';
-                                },
-                                background: {
-                                    opacity: 0.5,
-                                    color: \'#000000\'
-                                }
-                            }
-                    } },
-                    zoom: {
-                        interactive: true
-                    },
-                    pan: {
-                        interactive: true
-                    },
-                    ';
-                    $i=0; $outputserie=0;
-            		if (count($datacolor))
-            		{
-	                    print 'colors: [';
-	                    foreach($datacolor as $val)
-	                    {
-                            if ($outputserie > 0) print ',';
-	                        print '"'.(empty($data['seriescolor'][$i])?$val:$data['seriescolor'][$i]).'"';
-	                        $outputserie++;
-	                        $i++;
-	                    }
-            			print '], ';
-            		}
-                    print 'legend: {show: '.($showlegend?'true':'false').', position: \'ne\' }
-                });
-            }
-            plotWithOptions();
-            });
-            </script>';
-        }
-        else if ($type == 'barline')
-        {
-            // data is   array('series'=>array(serie1,serie2,...),
-            //                 'seriestype'=>array('bar','line',...),
-            //                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
-            //                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
-            // serieX is array('label'=>'label', values=>array(0=>y1,1=>y2,...)) with same nb of value than into xlabel
-            print '
-            <script type="text/javascript">
-            jQuery(function () {
-            var data = [';
-            $i=1; $outputserie=0;
-            foreach($data['series'] as $serie)
-            {
-                if ($data['seriestype'][$i-1]=='line') { $i++; continue; };
-                if ($outputserie > 0) print ',';
-                print '{ bars: { stack: 0, show: true, barWidth: 0.9, align: \'center\' }, label: \''.dol_escape_js($serie['label']).'\', data: [';
-                $j=1;
-                foreach($serie['values'] as $val)
-                {
-                    print '['.$j.','.$val.']';
-                    if ($j < count($serie['values'])) print ', ';
-                    $j++;
-                }
-                print ']}'."\n";
-                $outputserie++;
-                $i++;
-            }
-            if ($outputserie) print ', ';
-            //print '];
-            //var datalines = [';
-            $i=1; $outputserie=0;
-            foreach($data['series'] as $serie)
-            {
-                if (empty($data['seriestype'][$i-1]) || $data['seriestype'][$i-1]=='bar') { $i++; continue; };
-                if ($outputserie > 0) print ',';
-                print '{ lines: { show: true }, label: \''.dol_escape_js($serie['label']).'\', data: [';
-                $j=1;
-                foreach($serie['values'] as $val)
-                {
-                    print '['.$j.','.$val.']';
-                    if ($j < count($serie['values'])) print ', ';
-                    $j++;
-                }
-                print ']}'."\n";
-                $outputserie++;
-                $i++;
-            }
-            print '];
-            var dataticks = [';
-            $i=1;
-            foreach($data['xlabel'] as $label)
-            {
-                print '['.$i.',\''.$label.'\']';
-                if ($i < count($data['xlabel'])) print ',';
-                $i++;
-            }
-            print '];
+				function plotWithOptions() {
+					$.plot($("#'.$htmlid.'"), data,
+					{
+						series: {
+							pie: {
+								show: true,
+								radius: 3/4,
+								label: {
+									show: true,
+									radius: 3/4,
+									formatter: function(label, series) {
+										var percent=Math.round(series.percent);
+										var number=series.data[0][1];
+										return \'';
+										print '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">';
+										if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'=">';
+										print '\'+'.($showlegend?'number':'label+\'<br/>\'+number');
+										if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
+										print '+\'';
+										if ($url) print '</a>';
+										print '</div>\';
+									},
+									background: {
+										opacity: 0.5,
+										color: \'#000000\'
+									}
+								}
+							}
+						},
+						zoom: {
+							interactive: true
+						},
+						pan: {
+							interactive: true
+						},';
+						if (count($datacolor))
+						{
+							print 'colors: '.(! empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor)).',';
+						}
+						print 'legend: {show: '.($showlegend?'true':'false').', position: \'ne\' }
+					});
+				}
+				plotWithOptions();
+			});
+			</script>';
+		}
+		else if ($type == 'barline')
+		{
+			// data is   array('series'=>array(serie1,serie2,...),
+			//                 'seriestype'=>array('bar','line',...),
+			//                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
+			//                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
+			// serieX is array('label'=>'label', data=>array(0=>y1,1=>y2,...)) with same nb of value than into xlabel
+			print '
+			<script type="text/javascript">
+			$(function () {
+				var data = [';
+				$i=0; $outputserie=0;
+				foreach($data['series'] as $serie)
+				{
+					if ($data['seriestype'][$i]=='line') { $i++; continue; };
+					if ($outputserie > 0) print ',';
+					print '{ bars: { stack: 0, show: true, barWidth: 0.9, align: \'center\' }, label: \''.dol_escape_js($serie['label']).'\', data: '.json_encode($serie['data']).'}'."\n";
+					$outputserie++; $i++;
+				}
+				if ($outputserie) print ', ';
+				//print '];
+				//var datalines = [';
+				$i=0; $outputserie=0;
+				foreach($data['series'] as $serie)
+				{
+					if (empty($data['seriestype'][$i]) || $data['seriestype'][$i]=='bar') { $i++; continue; };
+					if ($outputserie > 0) print ',';
+					print '{ lines: { show: true }, label: \''.dol_escape_js($serie['label']).'\', data: '.json_encode($serie['data']).'}'."\n";
+					$outputserie++; $i++;
+				}
+				print '];
+				var dataticks = '.json_encode($data['xlabel']).'
 
-            function plotWithOptions() {
-                jQuery.plot(jQuery("#'.$htmlid.'"), data,
-                {
-                    series: {
-                            stack: 0
-                    },
-                    zoom: {
-                        interactive: true
-                    },
-                    pan: {
-                        interactive: true
-                    },
-                    ';
-                    if (count($datacolor))
-                    {
-                        print 'colors: [';
-                        $j=0;
-                        foreach($datacolor as $val)
-                        {
-                            print '"'.$val.'"';
-                            if ($j < count($datacolor)) print ',';
-                            $j++;
-                        }
-                        print '], ';
-                    }
-                    print 'legend: {show: '.($showlegend?'true':'false').'},
-                    xaxis: {ticks: dataticks},
-                });
-            }
-            plotWithOptions();
-            });
-            </script>';
-        }
-        else print 'BadValueForPArameterType';
-    }
+				function plotWithOptions() {
+					$.plot(jQuery("#'.$htmlid.'"), data,
+					{
+						series: {
+							stack: 0
+						},
+						zoom: {
+							interactive: true
+						},
+						pan: {
+							interactive: true
+						},';
+						if (count($datacolor))
+						{
+							print 'colors: '.json_encode($datacolor).',';
+						}
+						print 'legend: {show: '.($showlegend?'true':'false').'},
+						xaxis: {ticks: dataticks}
+					});
+				}
+				plotWithOptions();
+			});
+			</script>';
+		}
+		else print 'BadValueForPArameterType';
+	}
 }
 
 /**
@@ -1621,61 +1689,57 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
- *	@param      string				String to truncate
- *	@param      size				Max string size. 0 for no limit.
- *	@param		trunc				Where to trunc: right, left, middle, wrap
- * 	@param		stringencoding		Tell what is source string encoding
- *	@return     string				Truncated string
+ *	@param	string	$string				String to truncate
+ *	@param  int		$size				Max string size visible. 0 for no limit. finale string size can be 1 more (if size was max+1) or 3 more (if we added ...)
+ *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
+ * 	@param	string	$stringencoding		Tell what is source string encoding
+ *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
+ *	@return string						Truncated string
  */
-function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
+function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0)
 {
     global $conf;
 
-    if ($size==0) return $string;
-    if (empty($conf->global->MAIN_DISABLE_TRUNC))
+    if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+
+    // We go always here
+    if ($trunc == 'right')
     {
-        // We go always here
-        if ($trunc == 'right')
-        {
-            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-            if (dol_strlen($newstring,$stringencoding) > ($size+1))
-            return dol_substr($newstring,0,$size,$stringencoding).'...';
-            else
-            return $string;
-        }
-        if ($trunc == 'middle')
-        {
-            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-            if (dol_strlen($newstring,$stringencoding) > 2 && dol_strlen($newstring,$stringencoding) > ($size+1))
-            {
-                $size1=round($size/2);
-                $size2=round($size/2);
-                return dol_substr($newstring,0,$size1,$stringencoding).'...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size2,$size2,$stringencoding);
-            }
-            else
-            return $string;
-        }
-        if ($trunc == 'left')
-        {
-            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-            if (dol_strlen($newstring,$stringencoding) > ($size+1))
-            return '...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size,$size,$stringencoding);
-            else
-            return $string;
-        }
-        if ($trunc == 'wrap')
-        {
-            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-            if (dol_strlen($newstring,$stringencoding) > ($size+1))
-            return dol_substr($newstring,0,$size,$stringencoding)."\n".dol_trunc(dol_substr($newstring,$size,dol_strlen($newstring,$stringencoding)-$size,$stringencoding),$size,$trunc);
-            else
-            return $string;
-        }
-    }
-    else
-    {
+        $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+        if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
+        return dol_substr($newstring,0,$size,$stringencoding).($nodot?'':'...');
+        else
         return $string;
     }
+    elseif ($trunc == 'middle')
+    {
+        $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+        if (dol_strlen($newstring,$stringencoding) > 2 && dol_strlen($newstring,$stringencoding) > ($size+1))
+        {
+            $size1=round($size/2);
+            $size2=round($size/2);
+            return dol_substr($newstring,0,$size1,$stringencoding).'...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size2,$size2,$stringencoding);
+        }
+        else
+        return $string;
+    }
+    elseif ($trunc == 'left')
+    {
+        $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+        if (dol_strlen($newstring,$stringencoding) > ($size+1))
+        return '...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size,$size,$stringencoding);
+        else
+        return $string;
+    }
+    elseif ($trunc == 'wrap')
+    {
+        $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+        if (dol_strlen($newstring,$stringencoding) > ($size+1))
+        return dol_substr($newstring,0,$size,$stringencoding)."\n".dol_trunc(dol_substr($newstring,$size,dol_strlen($newstring,$stringencoding)-$size,$stringencoding),$size,$trunc);
+        else
+        return $string;
+    }
+    else return 'BadParam3CallingDolTrunc';
 }
 
 
@@ -1685,7 +1749,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
  *	@param      string		$alt           		Text of alt on image
  *	@param      string		$picto         		Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
  *							 		       		For external modules use imagename@mymodule to search into directory "img" of module.
- *  @param      string		$options       		Add more attribute on img tag
+ *  @param      string		$options       		Add more attribute on img tag (ie: class="datecallink")
  *  @param      int			$pictoisfullpath    If 1, image path is a full path
  *	@return     string      					Return img tag
  *  @see        #img_picto, #img_picto_common
@@ -1780,19 +1844,19 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 /**
  *	Show logo action
  *
- *	@param      alt         Text for image alt and title
- *	@param      numaction   Action to show
- *	@return     string      Return an img tag
+ *	@param	string	$alt         	Text for image alt and title
+ *	@param  int		$numaction   	Action to show
+ *	@return string      			Return an img tag
  */
 function img_action($alt = "default", $numaction)
 {
     global $conf,$langs;
     if ($alt=="default") {
-        if ($numaction == -1) $alt=$langs->trans("ChangeDoNotContact");
-        if ($numaction == 0)  $alt=$langs->trans("ChangeNeverContacted");
-        if ($numaction == 1)  $alt=$langs->trans("ChangeToContact");
-        if ($numaction == 2)  $alt=$langs->trans("ChangeContactInProcess");
-        if ($numaction == 3)  $alt=$langs->trans("ChangeContactDone");
+        if ($numaction == -1) $alt=$langs->transnoentitiesnoconv("ChangeDoNotContact");
+        if ($numaction == 0)  $alt=$langs->transnoentitiesnoconv("ChangeNeverContacted");
+        if ($numaction == 1)  $alt=$langs->transnoentitiesnoconv("ChangeToContact");
+        if ($numaction == 2)  $alt=$langs->transnoentitiesnoconv("ChangeContactInProcess");
+        if ($numaction == 3)  $alt=$langs->transnoentitiesnoconv("ChangeContactDone");
     }
     return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
 }
@@ -1800,9 +1864,9 @@ function img_action($alt = "default", $numaction)
 /**
  *  Show pdf logo
  *
- *  @param      alt         Texte sur le alt de l'image
- *  @param      $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
- *  @return     string      Retourne tag img
+ *  @param	string		$alt        Texte sur le alt de l'image
+ *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
+ *  @return string      			Retourne tag img
  */
 function img_pdf($alt = "default",$size=3)
 {
@@ -2159,7 +2223,9 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
     // More features to check
     $features = explode("&",$features);
-    //var_dump($features);
+
+    // More parameters
+    list($dbtablename, $sharedelement) = explode('&', $dbtablename);
 
     // Check read permission from module
     // TODO Replace "feature" param into caller by first level of permission
@@ -2353,7 +2419,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                 }
                 else
                 {
-                	$sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
+                	$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
             else if (in_array($feature,$checksoc))
@@ -2372,7 +2438,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " WHERE sc.fk_soc = ".$objectid;
                     $sql.= " AND sc.fk_user = ".$user->id;
                     $sql.= " AND sc.fk_soc = s.rowid";
-                    $sql.= " AND s.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
+                    $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
                 else if (! empty($conf->multicompany->enabled))
@@ -2380,7 +2446,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql = "SELECT s.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
                     $sql.= " WHERE s.rowid = ".$objectid;
-                    $sql.= " AND s.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
+                    $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
             else if (in_array($feature,$checkother))
@@ -2401,7 +2467,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
                     $sql.= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)";	// Contact not linked to a company or to a company of user
-                    $sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
+                    $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
                 else if (! empty($conf->multicompany->enabled))
@@ -2409,7 +2475,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql = "SELECT dbt.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
-                    $sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
+                    $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
             else if (in_array($feature,$checkproject))
@@ -2443,7 +2509,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
                     $sql.= " AND sc.fk_soc = dbt.".$dbt_keyfield;
                     $sql.= " AND dbt.".$dbt_keyfield." = s.rowid";
-                    $sql.= " AND s.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
+                    $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
                     $sql.= " AND sc.fk_user = ".$user->id;
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
@@ -2452,7 +2518,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql = "SELECT dbt.".$dbt_select;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-                    $sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
+                    $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
 
@@ -2494,7 +2560,7 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
         $langs=new Translate('',$conf);
     }
 
-    $langs->load("other");
+    $langs->load("errors");
 
     if ($printheader)
     {
@@ -2658,6 +2724,7 @@ function dol_print_error_email()
 
 /**
  *	Show title line of an array
+ *
  *	@param	    name        Label of field
  *	@param	    file        Url used when we click on sort picto
  *	@param	    field       Field to use for new sorting
@@ -2968,7 +3035,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		Fonction utilisee dans les pdf et les pages html
  *
  *		@param	float		$amount			Montant a formater
- *		@param	string		$html			Type de formatage, html ou pas (par defaut)
+ *		@param	string		$form			Type de formatage, html ou pas (par defaut)
  *		@param	Translate	$outlangs		Objet langs pour formatage text
  *		@param	int			$trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
  *		@param	int			$rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
@@ -2977,7 +3044,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *
  *		@see	price2num					Revert function of price
  */
-function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
+function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
 {
     global $langs,$conf;
 
@@ -2996,7 +3063,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
     if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
     if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
     if ($thousand == 'None') $thousand='';
-    //print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
+    //print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
     //print "amount=".$amount."-";
     $amount = str_replace(',','.',$amount);	// should be useless
@@ -3024,7 +3091,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
     if ($forcerounding >= 0) $nbdecimal = $forcerounding;
 
     // Format number
-    if ($html)
+    if ($form)
     {
         $output=preg_replace('/\s/','&nbsp;',number_format($amount, $nbdecimal, $dec, $thousand));
     }
@@ -3063,7 +3130,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
     if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
     if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
     if ($thousand == 'None') $thousand='';
-    //print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
+    //print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
     // Convert value to universal number format (no thousand separator, '.' as decimal separator)
     if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
@@ -3281,14 +3348,14 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         return 0;
     }
 
-    //if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
+    //if (is_object($societe_acheteuse) && ($societe_vendeuse->country_id == $societe_acheteuse->country_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
     // Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
 
     // Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-    if ($societe_vendeuse->pays_code == $societe_acheteuse->pays_code) // Warning ->pays_code not always defined
+    if ($societe_vendeuse->country_code == $societe_acheteuse->country_code) // Warning ->country_code not always defined
     {
         //print 'VATRULE 3';
-        return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
+        return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
     }
 
     // Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -3307,7 +3374,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         else
         {
             //print 'VATRULE 5';
-            return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
+            return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
         }
     }
 
@@ -3319,7 +3386,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
         {
             //print 'VATRULE 6';
-            return get_product_vat_for_country($idprod,$societe_acheteuse->pays_code);
+            return get_product_vat_for_country($idprod,$societe_acheteuse->country_code);
         }
     }
 
@@ -3357,7 +3424,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
     if (!is_object($societe_vendeuse)) return -1;
     if (!is_object($societe_acheteuse)) return -1;
 
-    if ($societe_vendeuse->pays_id=='ES' || $societe_vendeuse->pays_code=='ES')
+    if ($societe_vendeuse->country_id=='ES' || $societe_vendeuse->country_code=='ES')
     {
         if ($local==1) //RE
         {
@@ -3372,7 +3439,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
             if (! is_numeric($societe_vendeuse->localtax2_assuj) && $societe_vendeuse->localtax2_assuj=='localtax2off') return 0;
         } else return -1;
 
-        if ($idprod) return get_product_localtax_for_country($idprod, $local, $societe_vendeuse->pays_code);
+        if ($idprod) return get_product_localtax_for_country($idprod, $local, $societe_vendeuse->country_code);
         else return -1;
     }
     return 0;
@@ -3511,14 +3578,15 @@ function picto_required()
 /**
  *	Clean a string from all HTML tags and entities
  *
- *	@param   	StringHtml			String to clean
- *	@param		removelinefeed		Replace also all lines feeds by a space
- *	@return  	string	    		String cleaned
+ *	@param	string	$StringHtml			String to clean
+ *	@param	string	$removelinefeed		Replace also all lines feeds by a space
+ *  @param  string	$pagecodeto      	Encoding of input string
+ *	@return string	    				String cleaned
  */
-function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
+function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
     $pattern = "/<[^>]+>/";
-    $temp = dol_entity_decode($StringHtml);
+    $temp = dol_entity_decode($StringHtml,$pagecodeto);
     $temp = preg_replace($pattern,"",$temp);
 
     // Supprime aussi les retours
@@ -3537,10 +3605,10 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 /**
  *	Replace CRLF in string with a HTML BR tag
  *
- *	@param		stringtoencode		String to encode
- *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
- *  @param      forxml              false=Use <br>, true=Use <br />
- *	@return		string				String encoded
+ *	@param	string	$stringtoencode		String to encode
+ *	@param	string	$nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+ *  @param  string	$forxml             false=Use <br>, true=Use <br />
+ *	@return	string						String encoded
  */
 function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
@@ -3568,9 +3636,10 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *              Because writeHTMLCell convert also \n into <br>, if function
  *              is used to build PDF, nl2brmode must be 1
  *
- *	@param		stringtoencode		String to encode
- *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
- *  @param      pagecodefrom        Pagecode stringtoencode is encoded
+ *	@param	string	$stringtoencode		String to encode
+ *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
+ *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
+ *  @return	string						String encoded
  */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
@@ -3584,19 +3653,21 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
         $newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
         //$newstring=strtr($newstring,array('__li__'=>"<li>\n")); // Restore <li>\n
     }
-    else {
+    else
+    {
         $newstring=dol_nl2br(dol_htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
     }
     // Other substitutions that htmlentities does not do
-    $newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.
+    //$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.     // Seems useles with TCPDF. Make bug with UTF8 languages
     return $newstring;
 }
 
 /**
  *	This function is called to decode a HTML string (it decodes entities and br tags)
  *
- *	@param		stringtodecode		String to decode
- *	@param		pagecodeto			Page code for result
+ *	@param	string	$stringtodecode		String to decode
+ *	@param	string	$pagecodeto			Page code for result
+ *	@return	string						String decoded
  */
 function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
@@ -3611,7 +3682,8 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 /**
  *	This function remove all ending \n and br at end
  *
- *	@param		stringtodecode		String to decode
+ *	@param	string	$stringtodecode		String to decode
+ *	@return	string						String decoded
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
@@ -3622,9 +3694,9 @@ function dol_htmlcleanlastbr($stringtodecode)
 /**
  *	This function is called to decode a string with HTML entities (it decodes entities tags)
  *
- * 	@param   	stringhtml      stringhtml
- *  @param      pagecodeto      Encoding of input string
- * 	@return  	string	  	    decodestring
+ * 	@param	string	$stringhtml     stringhtml
+ *  @param  string	$pagecodeto     Encoding of input string
+ * 	@return string	  	    		decodestring
  */
 function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 {
@@ -3635,10 +3707,10 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 /**
  * Replace html_entity_decode functions to manage errors
  *
- * @param   a
- * @param   b
- * @param   c
- * @return  string      String decoded
+ * @param   string	$a		Operand a
+ * @param   string	$b		Operand b
+ * @param   string	$c		Operand c
+ * @return  string			String decoded
  */
 function dol_html_entity_decode($a,$b,$c)
 {
@@ -3650,10 +3722,10 @@ function dol_html_entity_decode($a,$b,$c)
 /**
  * Replace htmlentities functions to manage errors
  *
- * @param   a
- * @param   b
- * @param   c
- * @return  string      String encoded
+ * @param   string	$a		Operand a
+ * @param   string	$b		Operand b
+ * @param   string	$c		Operand c
+ * @return  string      	String encoded
  */
 function dol_htmlentities($a,$b,$c)
 {
@@ -3668,8 +3740,8 @@ function dol_htmlentities($a,$b,$c)
  *	If not, it will we considered not HTML encoded even if it is by FPDF.
  *	Example, if string contains euro symbol that has ascii code 128
  *
- *	@param       s       String to check
- *	@return	     int     0 if bad iso, 1 if good iso
+ *	@param	string	$s      String to check
+ *	@return	int     		0 if bad iso, 1 if good iso
  */
 function dol_string_is_good_iso($s)
 {
@@ -3848,10 +3920,10 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 /**
  *    Format output for start and end date
  *
- *    @param      	date_start    Start date
- *    @param      	date_end      End date
- *    @param      	format        Output format
- *    @param		outputlangs   Output language
+ *    @param	timestamp	$date_start    Start date
+ *    @param    timestamp	$date_end      End date
+ *    @param    string		$format        Output format
+ *    @param	Translate	$outputlangs   Output language
  *    @return	void
  */
 function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
@@ -3862,11 +3934,11 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 /**
  *    Format output for start and end date
  *
- *    @param      	date_start    Start date
- *    @param      	date_end      End date
- *    @param      	format        Output format
- *    @param		outputlangs   Output language
- *    @return	string			String
+ *    @param	timestamp	$date_start    Start date
+ *    @param    timestamp	$date_end      End date
+ *    @param    string		$format        Output format
+ *    @param	Translate	$outputlangs   Output language
+ *    @return	string						String
  */
 function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
@@ -3902,8 +3974,8 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
  *  @param  int			$keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *	@return	string						Return html output
  *
- *  @see        dol_print_error
- *  @see        dol_htmloutput_errors
+ *  @see    dol_print_error
+ *  @see    dol_htmloutput_errors
  */
 function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
@@ -3926,7 +3998,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     }
 
     // If inline message with no format, we add it.
-    if ((! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))
+    if ((empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))
     {
         $divstart='<div class="'.$style.'">';
         $divend='</div>';
@@ -3956,28 +4028,13 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 
     if ($out)
     {
-        if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
+        if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
         {
             $return = '<script type="text/javascript">
     				jQuery(document).ready(function() {
     					jQuery.jnotify("'.dol_escape_js($out).'",
     					"'.($style=="ok" ? 3000 : $style).'",
     					'.($style=="ok" ? "false" : "true").',
-                        {
-                          closeLabel: "&times;"                     // the HTML to use for the "Close" link
-                          , showClose: true                           // determines if the "Close" link should be shown if notification is also sticky
-                          , fadeSpeed: 1000                           // the speed to fade messages out (in milliseconds)
-                          , slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
-                          , classContainer: "jnotify-container"
-                          , classNotification: "jnotify-notification"
-                          , classBackground: "jnotify-background"
-                          , classClose: "jnotify-close"
-                          , classMessage: "jnotify-message"
-                          , init: null                                // callback that occurs when the main jnotify container is created
-                          , create: null                              // callback that occurs when when the note is created (occurs just before
-                                                                      // appearing in DOM)
-                          , beforeRemove: null                        // callback that occurs when before the notification starts to fade away
-                        },
     					{ remove: function (){} } );
     				});
     			</script>';
@@ -3999,8 +4056,8 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @param  int		$keepembedded       Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return string                		Return html output
  *
- *  @see        dol_print_error
- *  @see        dol_htmloutput_mesg
+ *  @see    dol_print_error
+ *  @see    dol_htmloutput_mesg
  */
 function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 {
@@ -4010,14 +4067,14 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 /**
  *	Print formated messages to output (Used to show messages on html output).
  *
- *	@param	string	$mesgstring		Message
+ *	@param	string	$mesgstring		 Message
  *	@param	array	$mesgarray       Messages array
  *  @param  string	$style           Which style to use ('ok', 'error')
  *  @param  int		$keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
  *  @return	void
  *
- *  @see        dol_print_error
- *  @see        dol_htmloutput_errors
+ *  @see    dol_print_error
+ *  @see    dol_htmloutput_errors
  */
 function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
@@ -4066,8 +4123,8 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @param  int		$keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return	void
  *
- *  @see        dol_print_error
- *  @see        dol_htmloutput_mesg
+ *  @see    dol_print_error
+ *  @see    dol_htmloutput_mesg
  */
 function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 {
@@ -4117,7 +4174,8 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 function utf8_check($str)
 {
     // We must use here a binary strlen function (so not dol_strlen)
-    for ($i=0; $i<strlen($str); $i++)
+    $strLength = dol_strlen($str);
+    for ($i=0; $i<$strLength; $i++)
     {
         if (ord($str[$i]) < 0x80) continue; // 0bbbbbbb
         elseif ((ord($str[$i]) & 0xE0) == 0xC0) $n=1; // 110bbbbb
@@ -4230,8 +4288,8 @@ function verifCond($strRights)
  * Replace eval function to add more security.
  * This function is called by verifCond()
  *
- * @param 	string	$s
- * @return	void
+ * @param 	string	$s		String to evaluate
+ * @return	mixed			Result of eval
  */
 function dol_eval($s)
 {
@@ -4284,83 +4342,88 @@ function picto_from_langcode($codelang)
 }
 
 /**
- *  Complete or removed entries into a head array (used to build tabs) with value added by external modules
+ *  Complete or removed entries into a head array (used to build tabs) with value added by external modules.
+ *  Such values are declared into $conf->tabs_modules.
  *
- *  @param      conf            Object conf
- *  @param      langs           Object langs
- *  @param      object          Object object
- *  @param      head            Object head
- *  @param      h               New position to fill
- *  @param      type            Value for object where objectvalue can be
- *                              'thirdparty'       to add a tab in third party view
- *                              'intervention'     to add a tab in intervention view
- *                              'supplier_order'   to add a tab in supplier order view
- *                              'supplier_invoice' to add a tab in supplier invoice view
- *                              'invoice'          to add a tab in customer invoice view
- *                              'order'            to add a tab in customer order view
- *                              'product'          to add a tab in product view
- *                              'propal'           to add a tab in propal view
- *                              'member'           to add a tab in fundation member view
- *                              'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
- *  @param      mode            'add' to complete head, 'remove' to remove entries
- *	@return		void
+ *  @param	Conf		$conf           Object conf
+ *  @param  Translate	$langs          Object langs
+ *  @param  Object		$object         Object object
+ *  @param  array		$head           Object head
+ *  @param  int			$h              New position to fill
+ *  @param  string		$type           Value for object where objectvalue can be
+ *                              		'thirdparty'       to add a tab in third party view
+ *		                              	'intervention'     to add a tab in intervention view
+ *     		                         	'supplier_order'   to add a tab in supplier order view
+ *          		                    'supplier_invoice' to add a tab in supplier invoice view
+ *                  		            'invoice'          to add a tab in customer invoice view
+ *                          		    'order'            to add a tab in customer order view
+ *                      		        'product'          to add a tab in product view
+ *                              		'propal'           to add a tab in propal view
+ *                              		'user'             to add a tab in user view
+ *                              		'group'            to add a tab in group view
+ * 		        	                    'member'           to add a tab in fundation member view
+ *      		                        'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
+ *  @param  string		$mode  	        'add' to complete head, 'remove' to remove entries
+ *	@return	void
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
 {
-    if (is_array($conf->tabs_modules[$type]))
-    {
-        foreach ($conf->tabs_modules[$type] as $value)
-        {
-            $values=explode(':',$value);
-            if ($mode == 'add')
-            {
-                if (count($values) == 6)       // new declaration with permissions
-                {
-                    if ($values[0] != $type) continue;
-                    if (verifCond($values[4]))
-                    {
-                        if ($values[3]) $langs->load($values[3]);
-                        $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[5]),1);
-                        $head[$h][1] = $langs->trans($values[2]);
-                        $head[$h][2] = str_replace('+','',$values[1]);
-                        $h++;
-                    }
-                }
-                else if (count($values) == 5)       // new declaration
-                {
-                    if ($values[0] != $type) continue;
-                    if ($values[3]) $langs->load($values[3]);
-                    $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[4]),1);
-                    $head[$h][1] = $langs->trans($values[2]);
-                    $head[$h][2] = str_replace('+','',$values[1]);
-                    $h++;
-                }
-                else if (count($values) == 4)   // old declaration, for backward compatibility
-                {
-                    if ($values[0] != $type) continue;
-                    if ($values[2]) $langs->load($values[2]);
-                    $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
-                    $head[$h][1] = $langs->trans($values[1]);
-                    $head[$h][2] = 'tab'.$values[1];
-                    $h++;
-                }
-            }
-            else if ($mode == 'remove')
-            {
-                if ($values[0] != $type) continue;
-                $tabname=str_replace('-','',$values[1]);
-                foreach($head as $key => $val)
-                {
-                    if ($head[$key][2]==$tabname)
-                    {
-                        //print 'on vire '.$tabname.' key='.$key;
-                        unset($head[$key]);
-                        break;
-                    }
-                }
-            }
-        }
-    }
+	if (is_array($conf->tabs_modules[$type]))
+	{
+		foreach ($conf->tabs_modules[$type] as $value)
+		{
+			$values=explode(':',$value);
+
+			if ($mode == 'add' && ! preg_match('/^\-/',$values[1]))
+			{
+				if (count($values) == 6)       // new declaration with permissions:  $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
+				{
+					if ($values[0] != $type) continue;
+
+					if (verifCond($values[4]))
+					{
+						if ($values[3]) $langs->load($values[3]);
+						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[5]),1);
+						$head[$h][1] = $langs->trans($values[2]);
+						$head[$h][2] = str_replace('+','',$values[1]);
+						$h++;
+					}
+				}
+				else if (count($values) == 5)       // new declaration
+				{
+					if ($values[0] != $type) continue;
+					if ($values[3]) $langs->load($values[3]);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[4]),1);
+					$head[$h][1] = $langs->trans($values[2]);
+					$head[$h][2] = str_replace('+','',$values[1]);
+					$h++;
+				}
+				else if (count($values) == 4)   // old declaration, for backward compatibility
+				{
+					if ($values[0] != $type) continue;
+					if ($values[2]) $langs->load($values[2]);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
+					$head[$h][1] = $langs->trans($values[1]);
+					$head[$h][2] = 'tab'.$values[1];
+					$h++;
+				}
+			}
+			else if ($mode == 'remove' && preg_match('/^\-/',$values[1]))
+			{
+				if ($values[0] != $type) continue;
+				$tabname=str_replace('-','',$values[1]);
+				foreach($head as $key => $val)
+				{
+					$condition = (! empty($values[3]) ? verifCond($values[3]) : 1);
+					if ($head[$key][2]==$tabname && $condition)
+					{
+						unset($head[$key]);
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -4376,6 +4439,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 function printCommonFooter($zone='private')
 {
     global $conf;
+	global $micro_start_time;
 
     if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
     else print "\n".'<!-- Common footer for public page -->'."\n";
@@ -4443,6 +4507,20 @@ function printCommonFooter($zone='private')
         print "End of log output -->\n";
     }
 
+}
+
+
+if (! function_exists('getmypid'))
+{
+    /**
+     * Return PID
+     *
+     * @return	void
+     */
+    function getmypid()
+    {
+        return rand(1,32768);
+    }
 }
 
 ?>

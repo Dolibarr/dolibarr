@@ -53,7 +53,7 @@ $sql .= ",".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."c
 $sql .= " WHERE n.customers_id = c.customers_id AND p.products_id=n.products_id";
 $sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit($limit ,$offset);
+$sql .= $dbosc->plimit($limit,$offset);
 
 $resql=$dbosc->query($sql);
 if ($resql)

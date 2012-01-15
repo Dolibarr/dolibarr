@@ -36,7 +36,7 @@ $langs->load("companies");
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+$sall=GETPOST('sall','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -51,6 +51,7 @@ if (! $sortorder) $sortorder="ASC";
 
 $userstatic=new User($db);
 $companystatic = new Societe($db);
+
 
 /*
  * View
@@ -68,7 +69,7 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
 }
@@ -81,8 +82,8 @@ if ($_POST["search_user"])
 {
     $sql.= " AND (u.login like '%".$_POST["search_user"]."%' OR u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
 }
-if ($sall) $sql.= " AND (u.login like '%".$sall."%' OR u.name like '%".$sall."%' OR u.firstname like '%".$sall."%' OR u.email like '%".$sall."%' OR u.note like '%".$sall."%')";
-if ($sortfield) $sql.=" ORDER BY $sortfield $sortorder";
+if ($sall) $sql.= " AND (u.login like '%".$db->escape($sall)."%' OR u.name like '%".$db->escape($sall)."%' OR u.firstname like '%".$db->escape($sall)."%' OR u.email like '%".$db->escape($sall)."%' OR u.note like '%".$db->escape($sall)."%')";
+$sql.=$db->order($sortfield,$sortorder);
 
 $result = $db->query($sql);
 if ($result)
@@ -136,7 +137,6 @@ if ($result)
         	}
         	else
         	{
-        		$mc = new ActionsMulticompany($db);
         		$mc->getInfo($obj->entity);
         		print $mc->label;
         	}

@@ -37,17 +37,23 @@ class mailing_thirdparties extends MailingTargets
 	var $db;
 
 
-	function mailing_thirdparties($DB)
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	function mailing_thirdparties($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
 	/**
-	 *    \brief      This is the main function that returns the array of emails
-	 *    \param      mailing_id    Id of mailing. No need to use it.
-	 *    \param      filterarray   If you used the formFilter function. Empty otherwise.
-	 *    \return     int           <0 if error, number of emails added if ok
+	 *    This is the main function that returns the array of emails
+	 *
+	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
+	 *    @param	array	$filtersarray   If you used the formFilter function. Empty otherwise.
+	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
@@ -55,20 +61,35 @@ class mailing_thirdparties extends MailingTargets
 
 		$cibles = array();
 
-		// CHANGE THIS
 		// Select the third parties from category
-		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname,";
-		if ($_POST['filter']) $sql.= " llx_categorie.label as label";
-		else $sql.=" null as label";
-		$sql.= " FROM llx_societe as s";
-		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie_societe ON llx_categorie_societe.fk_societe=s.rowid";
-		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie ON llx_categorie.rowid = llx_categorie_societe.fk_categorie";
-		$sql.= " WHERE s.email != ''";
-		$sql.= " AND s.entity = ".$conf->entity;
-		if ($_POST['filter']) $sql.= " AND llx_categorie.rowid='".$_POST['filter']."'";
-		$sql.= " ORDER BY s.email";
+		if (empty($_POST['filter']))
+		{
+		    $sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, null as label";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+		    $sql.= " WHERE s.email != ''";
+		    $sql.= " AND s.entity = ".$conf->entity;
+		}
+		else
+		{
+		    $sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
+		    $sql.= " WHERE s.email != ''";
+		    $sql.= " AND s.entity = ".$conf->entity;
+		    $sql.= " AND cs.fk_societe = s.rowid";
+		    $sql.= " AND c.rowid = cs.fk_categorie";
+		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
+		    $sql.= " UNION ";
+		    $sql.= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_fournisseur as cs, ".MAIN_DB_PREFIX."categorie as c";
+		    $sql.= " WHERE s.email != ''";
+		    $sql.= " AND s.entity = ".$conf->entity;
+		    $sql.= " AND cs.fk_societe = s.rowid";
+		    $sql.= " AND c.rowid = cs.fk_categorie";
+		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
+		}
+		$sql.= " ORDER BY email";
 
-		// Stocke destinataires dans cibles
+		// Stock recipients emails into targets table
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -112,12 +133,13 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 
-	/**
-	 *		\brief		On the main mailing area, there is a box with statistics.
-	 *					If you want to add a line in this report you must provide an
-	 *					array of SQL request that returns two field:
-	 *					One called "label", One called "nb".
-	 *		\return		array
+    /**
+	 *	On the main mailing area, there is a box with statistics.
+	 *	If you want to add a line in this report you must provide an
+	 *	array of SQL request that returns two field:
+	 *	One called "label", One called "nb".
+	 *
+	 *	@return		array		Array with SQL requests
 	 */
 	function getSqlArrayForStats()
 	{
@@ -150,9 +172,10 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 	/**
-	 *      \brief      This is to add a form filter to provide variant of selector
-	 *					If used, the HTML select must be called "filter"
-	 *      \return     string      A html select zone
+	 *  This is to add a form filter to provide variant of selector
+	 *	If used, the HTML select must be called "filter"
+	 *
+	 *  @return     string      A html select zone
 	 */
 	function formFilter()
 	{
@@ -196,7 +219,7 @@ class mailing_thirdparties extends MailingTargets
 		}
 		else
 		{
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		$s.='</select>';
@@ -206,9 +229,10 @@ class mailing_thirdparties extends MailingTargets
 
 
 	/**
-	 *      \brief      Can include an URL link on each record provided by selector
-	 *					shown on target page.
-	 *      \return     string      Url link
+	 *  Can include an URL link on each record provided by selector shown on target page.
+	 *
+     *  @param	int		$id		ID
+	 *  @return string      	Url link
 	 */
 	function url($id)
 	{

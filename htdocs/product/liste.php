@@ -96,7 +96,7 @@ if ($conf->categorie->enabled && GETPOST('catid'))
  */
 
 $htmlother=new FormOther($db);
-$html=new Form($db);
+$form=new Form($db);
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
@@ -136,7 +136,7 @@ else
     	//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
     //}
-    $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
+    $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
     if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
     if ($sall)
     {
@@ -405,7 +405,7 @@ else
         			    if ($product_fourn->product_fourn_price_id > 0)
         			    {
         			        $htmltext=$product_fourn->display_price_product_fournisseur();
-                            if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $html->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+                            if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
                             else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
         			    }
         			}
