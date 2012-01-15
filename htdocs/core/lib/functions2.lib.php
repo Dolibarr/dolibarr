@@ -901,6 +901,8 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *	@param	    user        Object user
  *	@param	    tab         Tableau (cle=>valeur) des parametres a sauvegarder
  *	@return     int         <0 if KO, >0 if OK
+ *
+ *	@see		dolibarr_get_const, dolibarr_set_const, dolibarr_del_const
  */
 function dol_set_user_param($db, $conf, &$user, $tab)
 {
@@ -949,8 +951,8 @@ function dol_set_user_param($db, $conf, &$user, $tab)
                 $db->rollback();
                 return -1;
             }
-
-            $user->page_param[$key] = $value;
+            $user->conf->$key = $value;
+            //print "key=".$key." user->conf->key=".$user->conf->$key;
         }
     }
 

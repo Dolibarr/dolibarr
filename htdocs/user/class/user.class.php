@@ -238,19 +238,19 @@ class User extends CommonObject
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
-			$result=$this->db->query($sql);
-			if ($result)
+			$resql=$this->db->query($sql);
+			if ($resql)
 			{
-				$num = $this->db->num_rows($result);
+				$num = $this->db->num_rows($resql);
 				$i = 0;
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object($result);
+					$obj = $this->db->fetch_object($resql);
 					$p=$obj->param;
 					if ($p) $this->conf->$p = $obj->value;
 					$i++;
 				}
-				$this->db->free($result);
+				$this->db->free($resql);
 			}
 			else
 			{
