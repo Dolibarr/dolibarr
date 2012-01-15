@@ -57,7 +57,7 @@ class FormOther
 
 	/**
      *    Return HTML select list of export models
-     *    
+     *
 	 *    @param    string	$selected          Id modele pre-selectionne
 	 *    @param    string	$htmlname          Nom de la zone select
 	 *    @param    string	$type              Type des modeles recherches
@@ -106,7 +106,7 @@ class FormOther
 
 	/**
      *    Return list of export models
-     *    
+     *
 	 *    @param    string	$selected          Id modele pre-selectionne
 	 *    @param    string	$htmlname          Nom de la zone select
 	 *    @param    string	$type              Type des modeles recherches
@@ -155,7 +155,7 @@ class FormOther
 
 	/**
 	 *    Retourne la liste des ecotaxes avec tooltip sur le libelle
-	 *    
+	 *
 	 *    @param	string	$selected    code ecotaxes pre-selectionne
 	 *    @param    string	$htmlname    nom de la liste deroulante
 	 *    @return	void
@@ -209,7 +209,7 @@ class FormOther
 
 	/**
 	 *    Return a HTML select list to select a percent
-	 *    
+	 *
 	 *    @param     selected      pourcentage pre-selectionne
 	 *    @param     htmlname      nom de la liste deroulante
 	 *    @param     increment     increment value
@@ -242,7 +242,7 @@ class FormOther
 
 	/**
 	 *  Return select list for categories (to use in form search selectors)
-	 *  
+	 *
 	 *	@param    	type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
 	 *  @param     	selected     	Preselected value
 	 *  @param     	htmlname      	Name of combo list
@@ -278,7 +278,7 @@ class FormOther
 
 	/**
 	 *  Return select list for categories (to use in form search selectors)
-	 *  
+	 *
 	 *  @param     	selected     	Preselected value
 	 *  @param     	htmlname      	Name of combo list
 	 *  @param      user            Object user
@@ -419,7 +419,7 @@ class FormOther
                       title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
                       newColor: \''.dol_escape_js($langs->trans("New")).'\',
                       currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
-                      ok: \''.dol_escape_js($langs->trans("Change")).'\',
+                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
                       cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
                     }
                   }
@@ -493,7 +493,7 @@ class FormOther
 
     /**
      *    	Return HTML combo list of week
-     *    
+     *
      *    	@param	string		$selected          Preselected value
      *    	@param  string		$htmlname          Nom de la zone select
      *    	@param  int			$useempty          Affiche valeur vide dans liste
@@ -534,7 +534,7 @@ class FormOther
 
     /**
      *    	Return HTML combo list of month
-     *    
+     *
      *    	@param	string		$selected          Preselected value
      *    	@param  string		$htmlname          Nom de la zone select
      *    	@param  int			$useempty          Affiche valeur vide dans liste
@@ -569,7 +569,7 @@ class FormOther
 
     /**
      *    	Return HTML combo list of years
-     *    
+     *
      *      @param  string		$selected       Preselected value (''=current year, -1=none, year otherwise)
      *    	@param  string		$htmlname       Name of HTML select object
      *    	@param  int			$useempty       Affiche valeur vide dans liste
@@ -584,7 +584,7 @@ class FormOther
 
     /**
      *    	Return HTML combo list of years
-     *    
+     *
      *      @param  string	$selected       Preselected value (''=current year, -1=none, year otherwise)
      *    	@param  string	$htmlname       Name of HTML select object
      *    	@param  int	    $useempty       Affiche valeur vide dans liste
@@ -635,7 +635,7 @@ class FormOther
 
 /**
  * Write all lines of a project (if parent = 0)
- * 
+ *
  * @param 	int		&$inc					Cursor counter
  * @param 	int		$parent					Id parent
  * @param 	Object	$lines					Line object

@@ -51,6 +51,7 @@ For developers:
 - New: Can define different requests according to database type into migration files.
 - New: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
 - New: Removed artichow deprecated libraries.
+- New: A page can force reload of css style sheet
 - Qual: Add a lot of more PHPUnit tests.
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.
