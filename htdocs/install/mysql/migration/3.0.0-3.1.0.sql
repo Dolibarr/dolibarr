@@ -29,7 +29,7 @@ ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_cond_reglement integer NULL D
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_mode_reglement integer NULL DEFAULT 0 after fk_cond_reglement;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN import_key varchar(14);
 
---ALTER TABLE llx_c_currencies ADD COLUMN symbole varchar(3) NOT NULL default '';
+-- ALTER TABLE llx_c_currencies ADD COLUMN symbole varchar(3) NOT NULL default '';
 
 ALTER TABLE llx_commande_fournisseur MODIFY model_pdf varchar(255);
 ALTER TABLE llx_commande MODIFY model_pdf varchar(255);
@@ -203,7 +203,7 @@ INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 
 DROP table llx_action_def;
 
---Add Chile data (id pays=67)
+-- Add Chile data (id pays=67)
 -- Regions Chile
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 6701, 67, NULL, NULL, 'Tarapacá', 1);
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6702, 6702, 67, NULL, NULL, 'Antofagasta', 1);
@@ -276,7 +276,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('135', 6713, '', 0, '135', 'Melipilla', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('136', 6713, '', 0, '136', 'Talagante', 1);
 
---Add Mexique data (id pays=154)
+-- Add Mexique data (id pays=154)
 -- Regions Mexique
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (15401,  154, 15401, '', 0, 'Mexique', 1);
 -- Provinces Mexique
@@ -320,7 +320,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15405', 'Sociedad en comandita por acciones', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15406', 'Sociedad cooperativa', 1);
 
---Add Colombie data (id pays=70)
+-- Add Colombie data (id pays=70)
 -- Regions Colombie 
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (7001,  70, 7001, '', 0, 'Colombie', 1);
 -- Provinces Colombie
@@ -358,7 +358,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CES', 7001, '', 0, 'CES', 'Cesar', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MAG', 7001, '', 0, 'MAG', 'Magdalena', 1);
 
---Add Honduras data (id pays=114)
+-- Add Honduras data (id pays=114)
 -- Regions Honduras 
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (11401,  114, 11401, '', 0, 'Honduras', 1);
 -- Provinces Honduras
@@ -394,7 +394,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (15
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1543,154,     '10','0','VAT Frontero',1);
 
 
---Add Barbados data (id pays=46)
+-- Add Barbados data (id pays=46)
 -- Region Barbados 
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (4601,  46, 4601, 'Bridgetown', 0, 'Barbados', 1);
 -- Parish Barbados
