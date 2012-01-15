@@ -6,6 +6,7 @@ $Id:$
 
 ***** ChangeLog for 3.1.1 compared to 3.1.0 *****
 
+- New: Add option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS
 - Fix: Removed warnings during install
 
 

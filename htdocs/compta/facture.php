@@ -1946,10 +1946,16 @@ else
             if ($object->paye) $resteapayer=0;
             $resteapayeraffiche=$resteapayer;
 
-            //$filterabsolutediscount="fk_facture_source IS NULL";  // If we want deposit to be substracted to payments only and not to total of final invoice
-            //$filtercreditnote="fk_facture_source IS NOT NULL";    // If we want deposit to be substracted to payments only and not to total of final invoice
-            $filterabsolutediscount="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')";
-            $filtercreditnote="fk_facture_source IS NOT NULL AND description <> '(DEPOSIT)'";
+            if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
+            {
+                $filterabsolutediscount="fk_facture_source IS NULL";  // If we want deposit to be substracted to payments only and not to total of final invoice
+                $filtercreditnote="fk_facture_source IS NOT NULL";    // If we want deposit to be substracted to payments only and not to total of final invoice
+            }
+            else
+            {
+                $filterabsolutediscount="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')";
+                $filtercreditnote="fk_facture_source IS NOT NULL AND description <> '(DEPOSIT)'";
+            }
 
             $absolute_discount=$soc->getAvailableDiscounts('',$filterabsolutediscount);
             $absolute_creditnote=$soc->getAvailableDiscounts('',$filtercreditnote);

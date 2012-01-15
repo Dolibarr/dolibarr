@@ -134,9 +134,13 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	if ($nextquarter < 4) $nextquarter++;
 	else { $nextquarter=1; $nextyear++; }
 	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
-    $description=$langs->trans("RulesVATDue");
+    $description=$langs->trans("RulesVATDueServices");
+    $description.='<br>';
+    $description.=$langs->trans("RulesVATDueProducts");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    //if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
+	else  $description.='<br>'.$langs->trans("DepositsAreIncluded");
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $description.=$fsearch;
     $builddate=time();
@@ -164,9 +168,14 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	if ($nextquarter < 4) $nextquarter++;
 	else { $nextquarter=1; $nextyear++; }
 	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
-    $description=$langs->trans("RulesVATIn");
+    $description=$langs->trans("RulesVATInServices");
+    $description.=' '.$langs->trans("DepositsAreIncluded");
+    $description.='<br>';
+    $description.=$langs->trans("RulesVATInProducts");
+    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.=' '.$langs->trans("DepositsAreNotIncluded");
+	else  $description.=' '.$langs->trans("DepositsAreIncluded");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    //if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$builddate=time();
@@ -350,6 +359,12 @@ else
 				{
 					if ($type) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
+		            if (preg_match('/^\((.*)\)$/',$fields['descr'],$reg))
+		            {
+		                if ($reg[1]=='DEPOSIT') $fields['descr']=$langs->transnoentitiesnoconv('Deposit');
+		                elseif ($reg[1]=='CREDIT_NOTE') $fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
+		                else $fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
+		            }
 					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
 
 					// Show range

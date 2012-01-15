@@ -59,13 +59,15 @@ llxHeader();
 $html=new Form($db);
 
 // Affiche en-tete du rapport
-if ($modecompta=="CREANCES-DETTES")
+if ($modecompta == 'CREANCES-DETTES')
 {
 	$nom=$langs->trans("AnnualSummaryDueDebtMode");
 	$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period="$year_start - $year_end";
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesResultDue");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -86,13 +88,18 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-if ($modecompta == 'CREANCES-DETTES') {
+if ($modecompta == 'CREANCES-DETTES')
+{
 	$sql  = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_soc = s.rowid";
 	$sql.= " AND f.fk_statut in (1,2)";
-} else {
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+	else $sql.= " AND f.type IN (0,1,2,3)";
+}
+else
+{
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
@@ -130,7 +137,8 @@ else {
 }
 
 // On ajoute les paiements clients anciennes version, non lies par paiement_facture
-if ($modecompta != 'CREANCES-DETTES') {
+if ($modecompta != 'CREANCES-DETTES')
+{
 	$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -170,11 +178,16 @@ if ($modecompta != 'CREANCES-DETTES') {
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 
-if ($modecompta == 'CREANCES-DETTES') {
+if ($modecompta == 'CREANCES-DETTES')
+{
 	$sql  = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql.= " WHERE f.fk_statut IN (1,2)";
-} else {
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+	else $sql.= " AND f.type IN (0,1,2,3)";
+}
+else
+{
 	$sql = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
 	$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -213,13 +226,16 @@ else {
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-if ($modecompta == 'CREANCES-DETTES') {
+if ($modecompta == 'CREANCES-DETTES')
+{
 	// TVA a payer
 	$sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut IN (1,2)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+	else $sql.= " AND f.type IN (0,1,2,3)";
 	$sql.= " AND f.entity = ".$conf->entity;
-	$sql.= " GROUP BY dm DESC";
+	$sql.= " GROUP BY dm";
 
 	dol_syslog("get vat to pay sql=".$sql);
 	$result=$db->query($sql);
@@ -244,6 +260,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql.= " WHERE f.fk_statut IN (1,2)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+	else $sql.= " AND f.type IN (0,1,2,3)";
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
@@ -327,14 +345,16 @@ else {
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-if ($modecompta == 'CREANCES-DETTES') {
+if ($modecompta == 'CREANCES-DETTES')
+{
 	$sql = "SELECT c.libelle as nom, date_format(s.date_ech,'%Y-%m') as dm, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
 	$sql.= " WHERE s.fk_type = c.id";
 	$sql.= " AND c.deductible = 0";
 }
-else {
+else
+{
 	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
@@ -502,7 +522,8 @@ print '<tr class="liste_total"><td>'.$langs->trans("Profit").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="right" colspan="2"> ';
-	if (isset($totentrees[$annee]) || isset($totsorties[$annee])) {
+	if (isset($totentrees[$annee]) || isset($totsorties[$annee]))
+	{
 		print price($totentrees[$annee]-$totsorties[$annee]).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}
@@ -511,8 +532,8 @@ print "</tr>\n";
 
 print "</table>";
 
-$db->close();
 
 llxFooter('$Date: 2011/08/03 00:46:31 $ - $Revision: 1.49 $');
 
+$db->close();
 ?>
