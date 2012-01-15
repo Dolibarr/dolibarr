@@ -195,7 +195,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 
 /**
  * 	Get entity to use
- * 
+ *
  * 	@param	string	$element	Current element
  * 	@param	int		$shared		1=Return shared entities
  * 	@return	mixed				Entity id(s) to use
@@ -203,7 +203,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 function getEntity($element=false, $shared=false)
 {
 	global $conf, $mc;
-	
+
 	if (is_object($mc))
 	{
 		return $mc->getEntity($element, $shared);
@@ -211,12 +211,12 @@ function getEntity($element=false, $shared=false)
 	else
 	{
 		$out='';
-		
+
 		$addzero = array('user', 'usergroup');
 		if (in_array($element, $addzero)) $out.= '0,';
-		
+
 		$out.= $conf->entity;
-		
+
 		return $out;
 	}
 }
@@ -1334,7 +1334,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
  * 	Return an IP formated to be shown on screen
  *
  * 	@param	string	$ip			IP
- * 	@param	int		$mode		1=return only country/flag,2=return only IP
+ * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
  * 	@return string 				Formated IP, with country if GeoIP module is enabled
  */
 function dol_print_ip($ip,$mode=0)
@@ -2223,7 +2223,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
     // More features to check
     $features = explode("&",$features);
-    
+
     // More parameters
     list($dbtablename, $sharedelement) = explode('&', $dbtablename);
 
