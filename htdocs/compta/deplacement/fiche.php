@@ -51,6 +51,64 @@ $object = new Deplacement($db);
 /*
  * Actions
  */
+if ($action == 'block' && $user->rights->deplacement->valider)
+{
+    $object->fetch($id);
+    if ($object->fk_statut == '2') 	// Already blocked...
+		{
+			$mesg='<div class="error">'.$langs->trans("Error").'</div>';
+			$action='';
+			$error++;
+		}
+		else
+		{
+      $result = $object->fetch($id);
+      
+		  $object->fk_statut	= '2';
+  		
+      $result = $object->update($user);
+    
+      if ($result > 0)
+		  {
+			 Header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			 exit;
+		  }
+  		else
+  		{
+  			$mesg=$object->error;
+  		}
+  	}
+}
+
+if ($action == 'unblock' && $user->rights->deplacement->unvalidate)
+{
+    $object->fetch($id);
+    if ($object->fk_statut == '1') 	// Not blocked...
+		{
+			$mesg='<div class="error">'.$langs->trans("Error").'</div>';
+			$action='';
+			$error++;
+		}
+		else
+		{
+      $result = $object->fetch($id);
+      
+		  $object->fk_statut	= '1';
+  		
+      $result = $object->update($user);
+    
+      if ($result > 0)
+		  {
+			 Header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			 exit;
+		  }
+  		else
+  		{
+  			$mesg=$object->error;
+  		}
+  	}
+}
+
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
 {
 	$result=$object->delete($id);
@@ -473,23 +531,44 @@ else if ($id)
 
 			print '<div class="tabsAction">';
 
-			if ($user->rights->deplacement->creer)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+			if ($object->fk_statut == '2') 	// if blocked...
+		  {
+  			if ($user->rights->deplacement->unvalidate)
+  			{
+  				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=unblock&id='.$id.'">'.$langs->trans('Unblock').'</a>';
+  			}
+  			else
+  			{
+  				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Unblock').'</a>';
+  			}
 			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
-			}
-			if ($user->rights->deplacement->supprimer)
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
-			}
-
+      if ($object->fk_statut == '1') 	// If not blocked...
+		  {
+  		  if ($user->rights->deplacement->valider)
+  			{
+  				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=block&id='.$id.'">'.$langs->trans('Block').'</a>';
+  			}
+  			else
+  			{
+  				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Block').'</a>';
+  			}
+        if ($user->rights->deplacement->creer)
+  			{
+  				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+  			}
+  			else
+  			{
+  				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
+  			}
+  			if ($user->rights->deplacement->supprimer)
+  			{
+  				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+  			}
+  			else
+  			{
+  				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
+  			}
+  		}	
 			print '</div>';
 		}
 	}
