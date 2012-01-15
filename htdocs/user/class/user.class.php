@@ -84,11 +84,12 @@ class User extends CommonObject
 	//! Liste des entrepots auquel a acces l'utilisateur
 	var $entrepots;
 
-	var $rights;               // Array of permissions user->rights->permx
-	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
+	var $rights;                        // Array of permissions user->rights->permx
+	var $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	var $conf;           // To store personal config
+	var $oldcopy;        // To contains a clone of this when we need to save old properties of object
 
 
 

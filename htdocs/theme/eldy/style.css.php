@@ -63,10 +63,16 @@ $fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Ar
 $img_head=dol_buildpath($path.'/theme/eldy/img/headbg2.jpg',1);
 $img_button=dol_buildpath($path.'/theme/eldy/img/button_bg.png',1);
 
-// Reference colors
-$colred=235;$colgreen=235;$colblue=235;         // 235 is standard. Must be higher than 50
+// Define reference colors
+// Example: Light grey: $colred=235;$colgreen=235;$colblue=235;
+// Example: Pink:       $colred=230;$colgreen=210;$colblue=230;
+// Example: Green:      $colred=210;$colgreen=230;$colblue=210;
+// Example: Ocean:      $colred=220;$colgreen=220;$colblue=240;
+$colred=235;$colgreen=235;$colblue=235;
+//$conf->global->THEME_ELDY_ENABLE_PERSONALIZED=0;
+//$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 
-// Generic colors
+// Colors
 $isred=max(0,(2*$colred-$colgreen-$colblue)/2);        // 0 - 255
 $isgreen=max(0,(2*$colgreen-$colred-$colblue)/2);      // 0 - 255
 $isblue=max(0,(2*$colblue-$colred-$colgreen)/2);       // 0 - 255
@@ -86,40 +92,46 @@ $colorbacklinepair2='255,255,255';    // line pair
 $colorbackbody='#ffffff url('.$img_head.') 0 0 no-repeat;';
 
 // Eldy colors
-$useeldyskin=1;
-if ($useeldyskin)
+if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1='180,196,216';    // topmenu
     $conf->global->THEME_ELDY_TOPMENU_BACK2='190,206,226';
-    $conf->global->THEME_ELDY_VERMENU_BACKTAB1='246,248,250'; // vmenu
-    $conf->global->THEME_ELDY_VERMENU_BACKTAB2='220,225,230';
+    $conf->global->THEME_ELDY_VERMENU_BACK1='246,248,250';    // vmenu
+    $conf->global->THEME_ELDY_VERMENU_BACK2='220,225,230';
     $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays
     $conf->global->THEME_ELDY_BACKTITLE2='210,220,235';
     $conf->global->THEME_ELDY_BACKTABCARD1='242,244,248';     // card
     $conf->global->THEME_ELDY_BACKTABCARD2='220,225,230';
     $conf->global->THEME_ELDY_BACKTABACTIVE='220,225,230';
     $conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
+    $conf->global->THEME_ELDY_LINEIMPAIR1='244,244,244';
+    $conf->global->THEME_ELDY_LINEIMPAIR2='250,250,250';
+    $conf->global->THEME_ELDY_LINEPAIR1='255,255,255';
+    $conf->global->THEME_ELDY_LINEPAIR2='255,255,255';
+    $conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
 }
 
-if (! empty($conf->global->THEME_ELDY_TOPMENU_BACK1))    $colorback1=$conf->global->THEME_ELDY_TOPMENU_BACK1;
-if (! empty($conf->global->THEME_ELDY_TOPMENU_BACK2))    $colorback2=$conf->global->THEME_ELDY_TOPMENU_BACK2;
-if (! empty($conf->global->THEME_ELDY_VERMENU_BACKTAB1)) $colorbacktab1=$conf->global->THEME_ELDY_VERMENU_BACKTAB1;
-if (! empty($conf->global->THEME_ELDY_VERMENU_BACKTAB2)) $colorbacktab2=$conf->global->THEME_ELDY_VERMENU_BACKTAB2;
-if (! empty($conf->global->THEME_ELDY_BACKTITLE1))       $colorbacktitle1=$conf->global->THEME_ELDY_BACKTITLE1;
-if (! empty($conf->global->THEME_ELDY_BACKTITLE2))       $colorbacktitle2=$conf->global->THEME_ELDY_BACKTITLE2;
-if (! empty($conf->global->THEME_ELDY_BACKTABCARD1))     $colorbacktabcard1=$conf->global->THEME_ELDY_BACKTABCARD1;
-if (! empty($conf->global->THEME_ELDY_BACKTABCARD2))     $colorbacktabcard2=$conf->global->THEME_ELDY_BACKTABCARD2;
-if (! empty($conf->global->THEME_ELDY_BACKTABACTIVE))    $colorbacktabactive=$conf->global->THEME_ELDY_BACKTABACTIVE;
-if (! empty($conf->global->THEME_ELDY_LINEIMPAIR1))      $colorbacklineimpair1=$conf->global->THEME_ELDY_LINEIMPAIR1;
-if (! empty($conf->global->THEME_ELDY_LINEIMPAIR2))      $colorbacklineimpair2=$conf->global->THEME_ELDY_LINEIMPAIR2;
-if (! empty($conf->global->THEME_ELDY_LINEPAIR1))        $colorbacklinepair1=$conf->global->THEME_ELDY_LINEPAIR1;
-if (! empty($conf->global->THEME_ELDY_LINEPAIR2))        $colorbacklinepair2=$conf->global->THEME_ELDY_LINEPAIR2;
-if (! empty($conf->global->THEME_ELDY_BACKBODY))         $colorbackbody=$conf->global->THEME_ELDY_BACKBODY;
+$colorback1          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$conf->global->THEME_ELDY_TOPMENU_BACK1)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorback2          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$conf->global->THEME_ELDY_TOPMENU_BACK2)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$user->conf->THEME_ELDY_TOPMENU_BACK2);
+$colorbacktab1       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbacktab1:$conf->global->THEME_ELDY_VERMENU_BACK1)     :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbacktab1:$user->conf->THEME_ELDY_VERMENU_BACK1);
+$colorbacktab2       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK2)?$colorbacktab2:$conf->global->THEME_ELDY_VERMENU_BACK2)     :(empty($user->conf->THEME_ELDY_VERMENU_BACK2)?$colorbacktab2:$user->conf->THEME_ELDY_VERMENU_BACK2);
+$colorbacktitle1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE1)   ?$colorbacktitle1:$conf->global->THEME_ELDY_BACKTITLE1)      :(empty($user->conf->THEME_ELDY_BACKTITLE1)?$colorbacktitle1:$user->conf->THEME_ELDY_BACKTITLE1);
+$colorbacktitle2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE2)   ?$colorbacktitle2:$conf->global->THEME_ELDY_BACKTITLE2)      :(empty($user->conf->THEME_ELDY_BACKTITLE2)?$colorbacktitle2:$user->conf->THEME_ELDY_BACKTITLE2);
+$colorbacktabcard1   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD1) ?$colorbacktabcard1:$conf->global->THEME_ELDY_BACKTABCARD1)  :(empty($user->conf->THEME_ELDY_BACKTABCARD1)?$colorbacktabcard1:$user->conf->THEME_ELDY_BACKTABCARD1);
+$colorbacktabcard2   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD2) ?$colorbacktabcard2:$conf->global->THEME_ELDY_BACKTABCARD2)  :(empty($user->conf->THEME_ELDY_BACKTABCARD2)?$colorbacktabcard2:$user->conf->THEME_ELDY_BACKTABCARD2);
+$colorbacktabactive  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$conf->global->THEME_ELDY_BACKTABACTIVE):(empty($user->conf->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$user->conf->THEME_ELDY_BACKTABACTIVE);
+$colorbacklineimpair1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR1)  ?$colorbacklineimpair1:$conf->global->THEME_ELDY_LINEIMPAIR1):(empty($user->conf->THEME_ELDY_LINEIMPAIR1)?$colorbacklineimpair1:$user->conf->THEME_ELDY_LINEIMPAIR1);
+$colorbacklineimpair2=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR2)  ?$colorbacklineimpair2:$conf->global->THEME_ELDY_LINEIMPAIR2):(empty($user->conf->THEME_ELDY_LINEIMPAIR2)?$colorbacklineimpair2:$user->conf->THEME_ELDY_LINEIMPAIR2);
+$colorbacklinepair1  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR1)    ?$colorbacklinepair1:$conf->global->THEME_ELDY_LINEPAIR1)    :(empty($user->conf->THEME_ELDY_LINEPAIR1)?$colorbacklinepair1:$user->conf->THEME_ELDY_LINEPAIR1);
+$colorbacklinepair2  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR2)    ?$colorbacklinepair2:$conf->global->THEME_ELDY_LINEPAIR2)    :(empty($user->conf->THEME_ELDY_LINEPAIR2)?$colorbacklinepair2:$user->conf->THEME_ELDY_LINEPAIR2);
+$colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)      ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
 
 print '/*'."\n";
 print 'isred='.$isred.' isgreen='.$isgreen.' isblue='.$isblue."\n";
 print 'colorbacklineimpair1='.$colorbacklineimpair1."\n";
 print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
+print 'colorbacklinepair1='.$colorbacklinepair1."\n";
+print 'colorbacklinepair2='.$colorbacklinepair2."\n";
 print '*/'."\n";
 
 ?>
