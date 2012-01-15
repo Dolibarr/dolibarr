@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
@@ -254,7 +254,7 @@ class Product extends CommonObject
 		    return -2;
 		}
 
-		dol_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
         $now=dol_now();
 
@@ -306,7 +306,7 @@ class Product extends CommonObject
 				$sql.= ", ".$this->finished;
 				$sql.= ")";
 
-				dol_syslog("Product::Create sql=".$sql);
+				dol_syslog(get_class($this)."::Create sql=".$sql);
 				$result = $this->db->query($sql);
 				if ( $result )
 				{
@@ -323,7 +323,7 @@ class Product extends CommonObject
 						$result = $this->_log_price($user);
 						if ($result > 0)
 						{
-							if ( $this->update($id, $user) > 0)
+							if ( $this->update($id, $user, true) > 0)
 							{
 								if ($this->catid > 0)
 								{
@@ -396,9 +396,10 @@ class Product extends CommonObject
 	 *
 	 *	@param	int		$id         Id of product
 	 *	@param  User	$user       Object user making update
+	 *	@param	int		$notrigger	Disable triggers
 	 *	@return int         		1 if OK, -1 if ref already exists, -2 if other error
 	 */
-	function update($id, $user)
+	function update($id, $user, $notrigger=false)
 	{
 		global $langs, $conf;
 
@@ -478,13 +479,16 @@ class Product extends CommonObject
 					return -2;
 				}
 			}
-
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+			
+			if (! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
 
 			return 1;
 		}
