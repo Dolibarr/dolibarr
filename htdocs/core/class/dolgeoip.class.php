@@ -38,8 +38,8 @@ class DolGeoIP
 	/**
 	 * Constructor
 	 *
-	 * @param 	$type		'country' or 'city'
-	 * @param	$datfile	Data file
+	 * @param 	string	$type		'country' or 'city'
+	 * @param	string	$datfile	Data file
 	 * @return 	GeoIP
 	 */
 	function DolGeoIP($type,$datfile)
@@ -108,6 +108,8 @@ class DolGeoIP
 
 	/**
 	 * Return verion of data file
+	 *
+	 * @return	string		Version of datafile
 	 */
 	function getVersion()
 	{
@@ -116,10 +118,15 @@ class DolGeoIP
 
 	/**
 	 * Close geoip object
+	 *
+	 * @return	void
 	 */
 	function close()
 	{
-		geoip_close($this->gi);
+	    if (function_exists('geoip_close'))    // With some geoip with PEAR, geoip_close function may not exists
+	    {
+	        geoip_close($this->gi);
+	    }
 	}
 }
 ?>
