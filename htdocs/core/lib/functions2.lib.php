@@ -954,6 +954,10 @@ function dol_set_user_param($db, $conf, &$user, $tab)
             $user->conf->$key = $value;
             //print "key=".$key." user->conf->key=".$user->conf->$key;
         }
+        else
+        {
+            unset($user->conf->$key);
+        }
     }
 
     $db->commit();
