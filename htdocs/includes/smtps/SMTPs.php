@@ -1928,7 +1928,7 @@ class SMTPs
             // Make RFC821 Compliant, replace bare linefeeds
             $strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
 
-            $strContent = rtrim(wordwrap($strContent));
+            $strContent = rtrim(wordwrap($strContent, 75, "\r\n"));
 
             $this->_msgContent[$strType] = array();
 
