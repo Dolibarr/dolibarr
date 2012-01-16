@@ -31,7 +31,9 @@
 
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
 
+    <!--
     <rule ref="Generic.Commenting.Todo" />
+    -->
 
 	<!-- Warning if action on same line than if -->
 	<!--
