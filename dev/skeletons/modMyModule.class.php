@@ -176,6 +176,7 @@ class modMyModule extends DolibarrModules
 		//							'type'=>'top',			// This is a Top menu entry
 		//							'titre'=>'MyModule top menu',
 		//							'mainmenu'=>'mymodule',
+		//							'leftmenu'=>'mymodule',
 		//							'url'=>'/mymodule/pagetop.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
@@ -188,6 +189,7 @@ class modMyModule extends DolibarrModules
 		//							'type'=>'left',			// This is a Left menu entry
 		//							'titre'=>'MyModule left menu',
 		//							'mainmenu'=>'mymodule',
+		//							'leftmenu'=>'mymodule',
 		//							'url'=>'/mymodule/pagelevel1.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
@@ -201,6 +203,7 @@ class modMyModule extends DolibarrModules
 		// $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=mainmenucode',		// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy'
 		//							'type'=>'left',			// This is a Left menu entry
 		//							'titre'=>'MyModule left menu',
+		//							'mainmenu'=>'mainmenucode',
 		//							'leftmenu'=>'mymodule',
 		//							'url'=>'/mymodule/pagelevel2.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
