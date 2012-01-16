@@ -70,10 +70,10 @@ else if ($action == 'viewProdDescInForm')
 	$view = GETPOST("activate_viewProdDescInForm");
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $view,'chaine',0,'',$conf->entity);
 }
-else if ($action == 'viewProdDescInThirdpartyLanguage')
+else if ($action == 'viewProdTextsInThirdpartyLanguage')
 {
-	$view = GETPOST("activate_viewProdDescInThirdpartyLanguage");
-	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE", $view,'chaine',0,'',$conf->entity);
+	$view = GETPOST("activate_viewProdTextsInThirdpartyLanguage");
+	$res = dolibarr_set_const($db, "PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE", $view,'chaine',0,'',$conf->entity);
 }
 else if ($action == 'usesearchtoselectproduct')
 {
@@ -261,11 +261,11 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 	$var=!$var;
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="viewProdDescInThirdpartyLanguage">';
+	print '<input type="hidden" name="action" value="viewProdTextsInThirdpartyLanguage">';
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" align="right">';
-	print $form->selectyesno("activate_viewProdDescInThirdpartyLanguage",$conf->global->PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE,1);
+	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage",$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE,1);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</td>';

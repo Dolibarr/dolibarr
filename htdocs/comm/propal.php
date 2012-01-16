@@ -747,7 +747,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 			}
 			
 			// Define output language
-			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_DESC_IN_THIRDPARTY_LANGUAGE))
+			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 			{
 				$outputlangs = $langs;
 				$newlang='';

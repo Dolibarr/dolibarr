@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2096,12 +2097,34 @@ abstract class CommonObject
             {
                 $product_static = new Product($this->db);
 
-                $product_static->type=$line->fk_product_type;
-                $product_static->id=$line->fk_product;
-                $product_static->ref=$line->ref;
-                $product_static->libelle=$line->product_label;
-                $text=$product_static->getNomUrl(1);
-                $text.= ' - '.$line->product_label;
+                // Define output language
+           			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+			          {
+                  $this->fetch_thirdparty();
+            			$prod = new Product($this->db, $line->fk_product);
+            			
+          				$outputlangs = $langs;
+          				$newlang='';
+          				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+          				if (empty($newlang)) $newlang=$this->client->default_lang;
+          				if (! empty($newlang))
+          				{
+          					$outputlangs = new Translate("",$conf);
+          					$outputlangs->setDefaultLang($newlang);
+          				}
+          
+                  $label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $line->product_label;
+                }
+                else {
+                  $label = $line->product_label;
+                }
+                
+        				$product_static->type=$line->fk_product_type;
+        				$product_static->id=$line->fk_product;
+        				$product_static->ref=$line->ref;
+        				$product_static->libelle=$label;
+        				$text=$product_static->getNomUrl(1);
+        				$text.= ' - '.$label;
                 $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 
                 // Use global variables + $seller and $buyer
