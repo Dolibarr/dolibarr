@@ -1117,6 +1117,7 @@ NumberOfProductShowInSelect=Nº de productes màx a les llistes (0= sense límit
 ConfirmDeleteProductLineAbility=Confirmació d'eliminació d'una línia de producte en els formularis
 ModifyProductDescAbility=Personalització de les descripcions dels productes en els formularis
 ViewProductDescInFormAbility=Visualització de les descripcions dels productes en els formularis
+ViewProductDescInThirdpartyLanguageAbility=Visualització de les descripcions de productes en l'idioma del tercer
 UseSearchToSelectProduct=Utilitzar un formulari de cerca per a la selecció d'un producte (en lloc de la llista desplegable). Tingueu en compte que si té un nombre important de productes o serveis (> 100 000), pot millorar el rendiment definint la constant PRODUCT_DONOTSEARCH_ANYWHERE a 1 a Configuració->Varis. La cerca quedarà limitada a l'inici de la cadena.
 UseEcoTaxeAbility=Assumir ecotaxa (DEEE)
 SetDefaultBarcodeTypeProducts=Tipus de codi de barres utilitzat per defecte per als productes
@@ -1282,6 +1283,8 @@ BankOrderGlobal=General
 BankOrderGlobalDesc=Ordre de visualització general
 BankOrderES=Espanyol
 BankOrderESDesc=Ordre de visualització espanyol
+##### MailmanSpip #####
+MailmanSpipSetup=Configuració del mòdul Mailman i Spip
 ##### Multicompany #####
 MultiCompanySetup=Configuració del mòdul Multi-empresa
 ##### Suppliers #####
