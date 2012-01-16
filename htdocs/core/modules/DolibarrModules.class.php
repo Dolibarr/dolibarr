@@ -1144,7 +1144,7 @@ abstract class DolibarrModules
                 }
             }
             $menu->type=$this->menu[$key]['type'];
-            $menu->mainmenu=$this->menu[$key]['mainmenu'];
+            $menu->mainmenu=isset($this->menu[$key]['mainmenu'])?$this->menu[$key]['mainmenu']:(isset($menu->fk_mainmenu)?$menu->fk_mainmenu:'');
             $menu->leftmenu=isset($this->menu[$key]['leftmenu'])?$this->menu[$key]['leftmenu']:'';
             $menu->titre=$this->menu[$key]['titre'];
             $menu->url=$this->menu[$key]['url'];
