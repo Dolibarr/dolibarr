@@ -5,7 +5,8 @@
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
- *
+ * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
