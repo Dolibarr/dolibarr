@@ -308,8 +308,27 @@ if ($_GET["action"] == 'create')
 				$product->fetch($line->fk_product);
 				$product->load_stock();
 
+        // Define output language
+        if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+			  {
+          $commande->fetch_thirdparty();
+    			$outputlangs = $langs;
+          $newlang='';
+          if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+          if (empty($newlang)) $newlang=$commande->client->default_lang;
+          if (! empty($newlang))
+          {
+              $outputlangs = new Translate("",$conf);
+              $outputlangs->setDefaultLang($newlang);
+          }
+  
+          $label = (! empty($product->multilangs[$outputlangs->defaultlang]["libelle"])) ? $product->multilangs[$outputlangs->defaultlang]["libelle"] : $product->libelle;
+        }
+        else
+          $label = $product->libelle;
+
 				print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+				print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$label;
 				if ($line->description) print nl2br($line->description);
 				print '</td>';
 			}
@@ -530,6 +549,25 @@ else
 					$product = new Product($db);
 					$product->fetch($delivery->lines[$i]->fk_product);
 
+          // Define output language
+          if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+			    { 
+            $delivery->fetch_thirdparty();
+      			$outputlangs = $langs;
+            $newlang='';
+            if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if (empty($newlang)) $newlang=$delivery->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+    
+            $label = (! empty($product->multilangs[$outputlangs->defaultlang]["libelle"])) ? $product->multilangs[$outputlangs->defaultlang]["libelle"] : $delivery->lines[$i]->product_label;
+          }
+          else
+            $label = $delivery->lines[$i]->product_label;
+
 					print '<td>';
 
 					// Affiche ligne produit
@@ -537,7 +575,7 @@ else
 					if ($delivery->lines[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
 					else $text.= img_object($langs->trans('ShowProduct'),'product');
 					$text.= ' '.$delivery->lines[$i]->ref.'</a>';
-					$text.= ' - '.$delivery->lines[$i]->label;
+					$text.= ' - '.$label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($delivery->lines[$i]->description));
 					//print $description;
 					print $form->textwithtooltip($text,$description,3,'','',$i);
