@@ -21,7 +21,6 @@
  *		\file       htdocs/core/modules/import/import_csv.modules.php
  *		\ingroup    import
  *		\brief      File to load import files with CSV format
- *		\author	    Laurent Destailleur
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/modules/import/modules_import.php");
@@ -29,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/modules/import/modules_import.php");
 
 /**
  *	    \class      ImportCsv
- *		\brief      Classe permettant de lire les fichiers imports CSV
+ *		\brief      Class to import CSV files
  */
 class ImportCsv extends ModeleImports
 {
@@ -48,12 +47,14 @@ class ImportCsv extends ModeleImports
 
 	var $handle;    // Handle fichier
 
-	var $cachefieldtable=array();   // Array to cache list of value into fields@tables
+	var $cacheconvert=array();      // Array to cache list of value found after a convertion
+	var $cachefieldtable=array();   // Array to cache list of value found into fields@tables
 
 
 	/**
-	 *		\brief      Constructeur
-	 *		\param	    db      Handler acces base de donnee
+	 *	Constructor
+	 *
+	 *	@param	DoliDB		$db		Database handler
 	 */
 	function ImportCsv($db)
 	{
@@ -115,7 +116,9 @@ class ImportCsv extends ModeleImports
 
 	/**
 	 * 	Output header of an example file for this format
-	 * 	@param		outputlangs		Output language
+	 *
+	 * 	@param	Translate	$outputlangs		Output language
+	 *  @return	string
 	 */
 	function write_header_example($outputlangs)
 	{
@@ -124,7 +127,9 @@ class ImportCsv extends ModeleImports
 
 	/**
 	 * 	Output title line of an example file for this format
-	 * 	@param		outputlangs		Output language
+	 *
+	 * 	@param	Translate	$outputlangs		Output language
+	 * 	@return	string
 	 */
 	function write_title_example($outputlangs,$headerlinefields)
 	{
@@ -134,7 +139,10 @@ class ImportCsv extends ModeleImports
 
 	/**
 	 * 	Output record of an example file for this format
-	 * 	@param		outputlangs		Output language
+	 *
+	 * 	@param	Translate	$outputlangs		Output language
+	 * 	@param	array		$contentlinevalues	Array of lines
+	 * 	@return	string
 	 */
 	function write_record_example($outputlangs,$contentlinevalues)
 	{
@@ -144,7 +152,9 @@ class ImportCsv extends ModeleImports
 
 	/**
 	 * 	Output footer of an example file for this format
-	 * 	@param		outputlangs		Output language
+	 *
+	 * 	@param	Translate	$outputlangs		Output language
+	 *  @return	string
 	 */
 	function write_footer_example($outputlangs)
 	{
@@ -155,8 +165,9 @@ class ImportCsv extends ModeleImports
 
 	/**
 	 *	Open input file
-	 *	@param		file		Path of filename
-	 *	@return		int			<0 if KO, >=0 if OK
+	 *
+	 *	@param	string	$file		Path of filename
+	 *	@return	int					<0 if KO, >=0 if OK
 	 */
 	function import_open_file($file)
 	{
@@ -183,7 +194,9 @@ class ImportCsv extends ModeleImports
 	}
 
 	/**
-	 * 	\brief		Input header line from file
+	 * 	Input header line from file
+	 *
+	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
 	function import_read_header()
 	{
@@ -192,9 +205,9 @@ class ImportCsv extends ModeleImports
 
 
 	/**
-	 * 	\brief		Return array of next record in input file.
-	 * 	\return		Array		Array of field values. Data are UTF8 encoded.
-	 * 							[0] => (['val']=>val, ['type']=>-1=null,0=blank,1=string)
+	 * 	Return array of next record in input file.
+	 *
+	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string)
 	 */
 	function import_read_record()
 	{
@@ -252,7 +265,9 @@ class ImportCsv extends ModeleImports
 	}
 
 	/**
-	 * 	\brief		Close file handle
+	 * 	Close file handle
+	 *
+	 *  @return	void
 	 */
 	function import_close_file()
 	{
@@ -263,11 +278,12 @@ class ImportCsv extends ModeleImports
 
 	/**
 	 * Insert a record into database
-	 * @param 	arrayrecord						Array of field values
-	 * @param	array_match_file_to_database
-	 * @param 	objimport
-	 * @param	maxfields						Max number of fiels to use
-	 * @return	int								<0 if KO, >0 if OK
+	 *
+	 * @param	array	$arrayrecord					Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param	array	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
+	 * @param 	Object	$objimport						Object import (contains objimport->import_tables_array, objimport->import_fields_array, objimport->import_convertvalue_array, ...)
+	 * @param	int		$maxfields						Max number of fields to use
+	 * @return	int										<0 if KO, >0 if OK
 	 */
 	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
 	{
@@ -288,8 +304,7 @@ class ImportCsv extends ModeleImports
 
 		//var_dump($sort_array_match_file_to_database);
 
-		if (count($arrayrecord) == 0 ||
-		(count($arrayrecord) == 1 && empty($arrayrecord[0]['val'])))
+		if (count($arrayrecord) == 0 || (count($arrayrecord) == 1 && empty($arrayrecord[0]['val'])))
 		{
 			//print 'W';
 			$this->warnings[$warning]['lib']=$langs->trans('EmptyLine');
@@ -307,31 +322,19 @@ class ImportCsv extends ModeleImports
 				$listvalues='';
 				$i=0;
 				$errorforthistable=0;
+
 				// Loop on each fields in the match array ($key = 1..n, $val=alias of field)
 				foreach($sort_array_match_file_to_database as $key => $val)
 				{
 					if ($key <= $maxfields)
 					{
-						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
-						$listfields.=preg_replace('/^.*\./i','',$val);
+						// Set $newval with value to insert and set $listvalues with sql request part for insert
 						$newval='';
-						if ($arrayrecord[($key-1)]['type'] < 0)
-						{
-							$listvalues.="null";
-						}
-						else if ($arrayrecord[($key-1)]['type'] == 0)
-						{
-							$listvalues.="''";
-						}
-						else if ($arrayrecord[($key-1)]['type'] > 0)
-						{
-							$newval=$arrayrecord[($key-1)]['val'];
-							$listvalues.="'".$this->db->escape($arrayrecord[($key-1)]['val'])."'";
-						}
+						if ($arrayrecord[($key-1)]['type'] > 0) $newval=$arrayrecord[($key-1)]['val'];    // If type of field is not null or '' but string
 
-						// Make some tests
+						// Make some tests on $newval
 
-						// Required field is ok
+						// Is it a required field ?
 						if (preg_match('/\*/',$objimport->array_import_fields[0][$val]) && ($newval==''))
 						{
 							$this->errors[$error]['lib']=$langs->trans('ErrorMissingMandatoryValue',$key);
@@ -340,8 +343,52 @@ class ImportCsv extends ModeleImports
 							$error++;
 						}
 						// Test format only if field is not a missing mandatory field
-						else {
-							if (! empty($objimport->array_import_regex[0][$val]))
+						else
+						{
+						    // We convert fields if required
+						    if (! empty($objimport->array_import_convertvalue[0][$val]))
+						    {
+                                //print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
+                                if ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeid' || $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromref')
+                                {
+                                    if (! is_numeric($newval))
+                                    {
+                                        $file=$objimport->array_import_convertvalue[0][$val]['classfile'];
+                                        $class=$objimport->array_import_convertvalue[0][$val]['class'];
+                                        $method=$objimport->array_import_convertvalue[0][$val]['method'];
+                                        if (empty($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]))
+                                        {
+                                            dol_include_once($file);
+                                            $classinstance=new $class($this->db);
+                                            call_user_func_array(array($classinstance, $method),array('', $newval));
+                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]=$classinstance->id;
+                                            //print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
+                                            if (! empty($classinstance->id))
+                                            {
+                                                $newval=$classinstance->id;
+                                            }
+                                            else
+                                            {
+                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,'code',$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                                else if (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn',$key,$newval,$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+                                                else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                                $this->errors[$error]['type']='FOREIGNKEY';
+                                                $errorforthistable++;
+                                                $error++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            $newval=$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
+                                        }
+                                    }
+
+                                }
+                                //print 'Val to use as insert is '.$newval.'<br>';
+						    }
+
+						    // Test regexp
+							if (! empty($objimport->array_import_regex[0][$val]) && ($newval != ''))
 							{
 								// If test is "Must exist in a field@table"
 								if (preg_match('/^(.*)@(.*)$/',$objimport->array_import_regex[0][$val],$reg))
@@ -349,7 +396,8 @@ class ImportCsv extends ModeleImports
 									$field=$reg[1];
 									$table=$reg[2];
 
-									if (! is_array($this->cachefieldtable[$field.'@'.$table])) // If content of field@table no already loaded into cache
+									// Load content of field@table into cache array
+									if (! is_array($this->cachefieldtable[$field.'@'.$table])) // If content of field@table not already loaded into cache
 									{
 										$sql="SELECT ".$field." as aliasfield FROM ".$table;
 										$resql=$this->db->query($sql);
@@ -375,6 +423,7 @@ class ImportCsv extends ModeleImports
 									{
 										$this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,$field,$table);
 										$this->errors[$error]['type']='FOREIGNKEY';
+									    $errorforthistable++;
 										$error++;
 									}
 								}
@@ -391,10 +440,30 @@ class ImportCsv extends ModeleImports
 							// Other tests
 							// ...
 						}
+
+						// Define $listfields and $listvalues to build SQL request
+						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
+						$listfields.=preg_replace('/^.*\./i','',$val);
+						if ($arrayrecord[($key-1)]['type'] < 0)      	$listvalues.="null";
+						else if ($arrayrecord[($key-1)]['type'] == 0) 	$listvalues.="''";
+						else if ($arrayrecord[($key-1)]['type'] > 0)	$listvalues.="'".$this->db->escape($newval)."'";
 					}
 					$i++;
 				}
-				//print $listvalues;
+
+				// Loop on each hidden fields
+				foreach($objimport->array_import_fieldshidden[0] as $key => $val)
+				{
+				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
+				    if ($listfields) { $listfields.=', '; $listvalues.=', '; }
+				    if ($val == 'user->id')
+				    {
+				        $listfields.=preg_replace('/^'.preg_quote($alias).'\./','',$key);
+				        $listvalues.=$user->id;
+				    }
+				}
+
+				//print 'Show listfields='.$listfields.'<br>listvalues='.$listvalues.'<br>';
 
 				if (! $errorforthistable)
 				{
@@ -402,10 +471,10 @@ class ImportCsv extends ModeleImports
 					{
 						// If some values need to be found somewhere else than in source file: Case we need a rowid found from a fetch on a reference.
 						// This is used when insert must be done when a parent row already exists
-						// $objimport->array_import_convertvalue=array('s.fk_soc'=>array('rule'=>'fetchfromref',file='/societe.class.php','class'=>'Societe','method'=>'fetch'));
+						// $objimport->array_import_convertvalue=array('s.fk_soc'=>array('rule'=>'fetchidfromref',file='/societe.class.php','class'=>'Societe','method'=>'fetch'));
 						foreach($objimport->array_import_convertvalue as $alias => $rulearray)
 						{
-							if (empty($rulearray['rule']) || $rulearray['rule']!='fetchfromref') continue;
+							if (empty($rulearray['rule']) || $rulearray['rule']!='fetchidfromref') continue;
 							dol_syslog("We need to get rowid from ref=".$alias." using value found in column ".$array_match_database_to_file." in source file, so ".$arrayrecord[$array_match_database_to_file]['val']);
 						}
 

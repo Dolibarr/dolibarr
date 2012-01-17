@@ -66,6 +66,7 @@ ErrorPasswordsMustMatch=Les 2 mots de passe saisis doivent correspondre
 ErrorContactEMail=Une erreur technique est apparue. Merci de contacter l'administrateur à l'email suivant <b>%s</b> en lui indiquant le code erreur <b>%s</b> dans votre message ou mieux en fournissant une copie d'écran de cette page.
 ErrorWrongValueForField=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' ne respecte pas la règle <b>%s</b>)
 ErrorFieldValueNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une valeure présente dans le champ <b>%s</b> de la table <b>%s</b>)
+ErrorFieldRefNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une référence existante comme <b>%s</b>)
 ErrorsOnXLines=Erreurs sur <b>%s</b> lignes sources
 ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est probablement infecté par un virus) !
 ErrorSpecialCharNotAllowedForField=Les caractères spéciaux ne sont pas admis pour le champ "%s"

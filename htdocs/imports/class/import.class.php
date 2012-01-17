@@ -43,19 +43,19 @@ class Import
 	/**
 	 *    Constructor
 	 *
-	 *    @param  	DoliDB		$DB		Database handler
+	 *    @param  	DoliDB		$db		Database handler
 	 */
-	function Import($DB)
+	function Import($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
 	/**
-	 *  Load description of an importable dataset
+	 *  Load description int this->array_import_module, this->array_import_fields, ... of an importable dataset
 	 *
 	 *  @param		User	$user      	Object user making import
-	 *  @param  	string	$filter		Load a particular dataset only
+	 *  @param  	string	$filter		Load a particular dataset only. Index will start to 0.
  	 *  @return		int					<0 if KO, >0 if OK
 	 */
 	function load_arrays($user,$filter='')
@@ -127,8 +127,6 @@ class Import
 							}
 						}
 
-						// Module
-						$this->array_import_module[$i]=$module;
 						// Permission
 						$this->array_import_perms[$i]=$user->rights->import->run;
 						// Icon
@@ -141,8 +139,10 @@ class Import
 						$this->array_import_tables[$i]=$module->import_tables_array[$r];
 						// Array of tables creator field to import (key=alias, value=creator field)
 						$this->array_import_tables_creator[$i]=$module->import_tables_creator_array[$r];
-						// Array of fiels to import (key=field, value=label)
+						// Array of fields to import (key=field, value=label)
 						$this->array_import_fields[$i]=$module->import_fields_array[$r];
+						// Array of hidden fields to import (key=field, value=label)
+						$this->array_import_fieldshidden[$i]=$module->import_fieldshidden_array[$r];
 						// Tableau des entites a exporter (cle=champ, valeur=entite)
 						$this->array_import_entities[$i]=$module->import_entities_array[$r];
 						// Tableau des alias a exporter (cle=champ, valeur=alias)
@@ -151,8 +151,10 @@ class Import
 						$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
 						$this->array_import_convertvalue[$i]=$module->import_convertvalue_array[$r];
+						// Module
+						$this->array_import_module[$i]=$module;
 
-						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_code[$r]));
+						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_array[$r]));
 						$i++;
 					}
 				}

@@ -41,6 +41,7 @@ For users:
 - New: [ task #181 ] Hide password of click2dial in user card
 - New: Chart are faster to build
 - New: Value of data into charts are visible on mouse hover.
+- New: Import wizard can import contacts.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
@@ -55,6 +56,7 @@ For developers:
 - New: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
 - New: Removed artichow deprecated libraries.
 - New: A page can force reload of css style sheet
+- New: A module can add import description for import wizard, even for tables with foreign keys.
 - Qual: Add a lot of more PHPUnit tests.
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.

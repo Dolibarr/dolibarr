@@ -46,6 +46,7 @@ llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Modu
 
 $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
+$contact->info($_GET["id"]);
 
 
 $head = contact_prepare_head($contact);
@@ -54,7 +55,6 @@ dol_fiche_head($head, 'info', $langs->trans("ContactsAddresses"), 0, 'contact');
 
 
 print '<table width="100%"><tr><td>';
-$contact->info($_GET["id"]);
 print '</td></tr></table>';
 
 dol_print_object_info($contact);
@@ -64,5 +64,4 @@ print "</div>";
 llxFooter();
 
 $db->close();
-
 ?>

@@ -80,6 +80,7 @@ class Contact extends CommonObject
 
 	var $user_id;
 	var $user_login;
+	var $import_key;
 
 	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
@@ -468,6 +469,7 @@ class Contact extends CommonObject
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
 		$sql.= " c.priv, c.note, c.default_lang, c.canvas,";
+		$sql.= " c.import_key,";
 		$sql.= " p.libelle as country, p.code as country_code,";
 		$sql.= " d.nom as departement, d.code_departement as departement_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
@@ -539,6 +541,8 @@ class Contact extends CommonObject
 				$this->user_id			= $obj->user_id;
 				$this->user_login		= $obj->user_login;
 				$this->canvas			= $obj->canvas;
+
+				$this->import_key		= $obj->import_key;
 
 				// Recherche le user Dolibarr lie a ce contact
 				$sql = "SELECT u.rowid ";

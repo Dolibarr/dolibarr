@@ -325,6 +325,7 @@ NoDolibarrAccess=No Dolibarr access
 ExportDataset_company_1=Third parties (Companies/foundations) and properties
 ExportDataset_company_2=Contacts and properties
 ImportDataset_company_1=Third parties (Companies/foundations) and properties
+ImportDataset_company_2=Contacts (of thirdparties or not) and attributes
 PriceLevel=Price level
 DeliveriesAddress=Delivery addresses
 DeliveryAddress=Delivery address

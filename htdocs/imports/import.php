@@ -685,7 +685,7 @@ if ($step == 4 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
 	$modulepart='import';
-	//$relativepath=$filetoimport;
+	$relativepath=GETPOST('filetoimport');
     print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
     print $filetoimport;
     print '</a>';
@@ -818,12 +818,22 @@ if ($step == 4 && $datatoimport)
 			}
 			else
 			{
-				if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchfromref') $htmltext.=$langs->trans("DataComeFromIdFoundFromRef",$filecolumn,$langs->transnoentitiesnoconv($entitylang)).'<br>';
+				if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')    $htmltext.=$langs->trans("DataComeFromIdFoundFromRef",$filecolumn,$langs->transnoentitiesnoconv($entitylang)).'<br>';
+				if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("DataComeFromIdFoundFromCodeId",$filecolumn,$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).'<br>';
 			}
 		}
 		$htmltext.=$langs->trans("SourceRequired").': <b>'.yn(preg_match('/\*$/',$label)).'</b><br>';
 		$example=$objimport->array_import_examplevalues[0][$code];
-		if ($example) $htmltext.=$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
+
+		if (empty($objimport->array_import_convertvalue[0][$code]))	// If source file does not need convertion
+		{
+		    if ($example) $htmltext.=$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
+		}
+		else
+		{
+		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')    $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement",$entitylang).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		    if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionnary",$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example?' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')':'').'</b><br>';
+		}
 		$htmltext.='<br>';
 		// Target field info
 		$htmltext.='<b><u>'.$langs->trans("FieldTarget").'</u></b><br>';
@@ -833,7 +843,8 @@ if ($step == 4 && $datatoimport)
 		}
 		else
 		{
-			if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchfromref') $htmltext.=$langs->trans("DataIDSourceIsInsertedInto").'<br>';
+			if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromref')    $htmltext.=$langs->trans("DataIDSourceIsInsertedInto").'<br>';
+			if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchidfromcodeid') $htmltext.=$langs->trans("DataCodeIDSourceIsInsertedInto").'<br>';
 		}
 		$htmltext.=$langs->trans("FieldTitle").": <b>".$langs->trans($newlabel)."</b><br>";
 		$htmltext.=$langs->trans("Table")." -> ".$langs->trans("Field").': <b>'.$tablename." -> ".preg_replace('/^.*\./','',$code)."</b><br>";
@@ -1093,8 +1104,8 @@ if ($step == 5 && $datatoimport)
 	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
 	$modulepart='import';
-	//$relativepath=$filetoimport;
-    print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($filtetoimport).'&step=4'.$param.'" target="_blank">';
+	$relativepath=GETPOST('filetoimport');
+    print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
     print $filetoimport;
     print '</a>';
     print '</td></tr>';
@@ -1209,7 +1220,6 @@ if ($step == 5 && $datatoimport)
     }
     else
     {
-
         // Launch import
         $arrayoferrors=array();
         $arrayofwarnings=array();
@@ -1235,10 +1245,13 @@ if ($step == 5 && $datatoimport)
             while ($sourcelinenb < $nboflines)
             {
                 $sourcelinenb++;
+                // Read line and stor it into $arrayrecord
                 $arrayrecord=$obj->import_read_record();
                 if ($excludefirstline && $sourcelinenb == 1) continue;
 
+                //
                 $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
+
                 if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
                 if (count($obj->warnings)) $arrayofwarnings[$sourcelinenb]=$obj->warnings;
                 if (! count($obj->errors) && ! count($obj->warnings)) $nbok++;
@@ -1419,8 +1432,8 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
 	$modulepart='import';
-	//$relativepath=$filetoimport;
-    print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($filetoimport).'&step=4'.$param.'" target="_blank">';
+    $relativepath=GETPOST('filetoimport');
+    print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
     print $filetoimport;
     print '</a>';
 	print '</td></tr>';
@@ -1571,9 +1584,9 @@ if ($step == 6 && $datatoimport)
 print '<br>';
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 
 
 /**

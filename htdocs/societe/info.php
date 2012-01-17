@@ -44,7 +44,6 @@ $result = restrictedArea($user, 'societe','','');
 llxHeader();
 
 $soc = new Societe($db);
-$soc->id = $socid;
 $soc->fetch($socid);
 $soc->info($socid);
 
@@ -64,7 +63,7 @@ print '</td></tr></table>';
 print '</div>';
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
