@@ -576,7 +576,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf,$mysoc;
-        
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
         $tab2_top = $posy;
@@ -588,7 +588,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$useborder=0;
 		$index = 0;
-		
+
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
@@ -733,7 +733,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
 		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
 		if ($object->paye) $resteapayer=0;
-		
+
 		if ($deja_regle > 0)
 		{
 			$index++;
@@ -880,7 +880,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->MultiCell(100, 3, $title, '', 'R');
 
 		$pdf->SetFont('','B',$default_font_size);
-		
+
 		$posy+=5;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
@@ -888,7 +888,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$posy+=1;
 		$pdf->SetFont('','', $default_font_size -1);
-		
+
         $posy+=4;
 		$pdf->SetXY($posx,$posy);
 		if ($object->date_commande)
@@ -993,7 +993,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FACTURESUPPLIER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }
