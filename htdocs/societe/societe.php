@@ -184,10 +184,7 @@ if (dol_strlen($stcomm))
 {
 	$sql.= " AND s.fk_stcomm=".$stcomm;
 }
-if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
-{
-	if (! $user->rights->fournisseur->lire) $sql.=" AND s.fournisseur != 1";
-}
+if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 // Insert sale filter
 if ($search_sale)
 {
