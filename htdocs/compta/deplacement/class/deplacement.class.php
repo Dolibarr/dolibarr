@@ -177,6 +177,7 @@ class Deplacement extends CommonObject
 		$sql .= " SET km = ".$this->km;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->type."'";
+		$sql .= " , fk_statut = '".$this->fk_statut."'";
 		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_user_modif = ".$user->id;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
