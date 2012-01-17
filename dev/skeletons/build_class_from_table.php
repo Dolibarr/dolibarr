@@ -37,7 +37,7 @@ require_once($path."../../htdocs/master.inc.php");
 // After this $db is a defined handler to database.
 
 // Main
-$version='1.34';
+$version='3.2';
 @set_time_limit(0);
 $error=0;
 
@@ -127,13 +127,13 @@ else
 
 // Define working variables
 $table=strtolower($table);
-$tablenollx=preg_replace('/llx_/i','',$table);
-$classname=ucfirst($tablenollx);
-$classmin=strtolower($classname);
+$tablenoprefix=preg_replace('/'.preg_quote(MAIN_DB_PREFIX).'/i','',$table);
+$classname=preg_replace('/_/','',ucfirst($tablenoprefix));
+$classmin=preg_replace('/_/','',strtolower($classname));
 
 
 // Read skeleton_class.class.php file
-$skeletonfile='skeleton_class.class.php';
+$skeletonfile=$path.'skeleton_class.class.php';
 $sourcecontent=file_get_contents($skeletonfile);
 if (! $sourcecontent)
 {
@@ -159,7 +159,7 @@ $targetcontent=preg_replace('/\s*\/\/\.\.\./', '', $targetcontent);
 $targetcontent=preg_replace('/Put here some comments/','Initialy built by build_class_from_table on '.strftime('%Y-%m-%d %H:%M',mktime()), $targetcontent);
 
 // Substitute table name
-$targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenollx, $targetcontent);
+$targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenoprefix, $targetcontent);
 
 // Substitute declaration parameters
 $varprop="\n";
@@ -366,7 +366,7 @@ else $error++;
 //--------------------------------
 
 // Read skeleton_script.php file
-$skeletonfile='skeleton_script.php';
+$skeletonfile=$path.'skeleton_script.php';
 $sourcecontent=file_get_contents($skeletonfile);
 if (! $sourcecontent)
 {
@@ -393,7 +393,7 @@ $targetcontent=preg_replace('/\s*\/\/\.\.\./', '', $targetcontent);
 $targetcontent=preg_replace('/Put here some comments/','Initialy built by build_class_from_table on '.strftime('%Y-%m-%d %H:%M',mktime()), $targetcontent);
 
 // Substitute table name
-$targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenollx, $targetcontent);
+$targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenoprefix, $targetcontent);
 
 // Build file
 $fp=fopen($outfile,"w");
@@ -407,6 +407,6 @@ else $error++;
 
 // -------------------- END OF BUILD_CLASS_FROM_TABLE SCRIPT --------------------
 
-print "You must rename files by removing the 'out.' prefix in their name.\n";
+print "You can now rename generated files by removing the 'out.' prefix in their name and store them in a directory of your choice.\n";
 return $error;
 ?>

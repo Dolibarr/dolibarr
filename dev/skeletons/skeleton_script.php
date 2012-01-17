@@ -21,8 +21,7 @@
  *      \file       dev/skeletons/skeleton_script.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a command line script
- *		\author		Put author name here
- *		\remarks	Put here some comments
+ *					Put here some comments
  */
 
 $sapi_type = php_sapi_name();

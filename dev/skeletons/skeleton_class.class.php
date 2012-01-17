@@ -20,8 +20,7 @@
  *      \file       dev/skeletons/skeleton_class.class.php
  *      \ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *		\author		Put author name here
- *		\remarks	Put here some comments
+ *					Put here some comments
  */
 
 // Put here all includes required by your class file
@@ -33,7 +32,6 @@
 /**
  *      \class      Skeleton_Class
  *      \brief      Put here description of your class
- *		\remarks	Put here some comments
  */
 class Skeleton_Class // extends CommonObject
 {

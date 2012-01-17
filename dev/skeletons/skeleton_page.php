@@ -20,8 +20,7 @@
  *   	\file       dev/skeletons/skeleton_page.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *		\brief      This file is an example of a php page
- *		\author		Put author name here
- *		\remarks	Put here some comments
+ *					Put here some comments
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
