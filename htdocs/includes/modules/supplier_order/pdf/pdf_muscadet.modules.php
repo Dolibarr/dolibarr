@@ -667,7 +667,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
-		
+
 		$pdf->SetFont('','B',$default_font_size + 3);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
@@ -739,7 +739,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
-			
+
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','BILLING');
 			if (sizeof($arrayidcontact) > 0)
@@ -783,7 +783,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FACTURESUPPLIER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }
