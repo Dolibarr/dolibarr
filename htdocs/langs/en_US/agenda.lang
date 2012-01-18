@@ -63,7 +63,7 @@ ExtSites=External calendars
 
 # External Sites ical
 ExtSites=External Calendars
-ExtSitesEnableThisTool=how external calendars into agenda
+ExtSitesEnableThisTool=Show external calendars into agenda
 ExtSitesNbOfAgenda=Number of calendars
 AgendaExtNb=Calendar nb %s
 ExtSiteUrlAgenda=URL to access .ical file
