@@ -178,3 +178,4 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (23
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2323,232,     '8','0','VAT 8%',1);
 
 update llx_cotisation set fk_bank = null where fk_bank not in (select rowid from llx_bank);
+

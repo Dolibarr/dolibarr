@@ -192,8 +192,6 @@ foreach ($data as $val)
 print '</table>';
 
 
-$db->close();
-
 print '</td>';
 print '<td align="center" valign="top">';
 
@@ -209,7 +207,7 @@ print '</td></tr></table>';
 
 print '</td></tr></table>';
 
-llxFooter();
-
 $db->close();
+
+llxFooter();
 ?>

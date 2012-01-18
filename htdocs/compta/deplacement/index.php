@@ -131,7 +131,7 @@ $max=10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.name, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km";
+$sql = "SELECT u.rowid as uid, u.name, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user";
@@ -164,18 +164,18 @@ if ($result)
         $userstatic=new User($db);
         while ($i < $num && $i < $max)
         {
-            $objp = $db->fetch_object($result);
-            $deplacementstatic->ref=$objp->rowid;
-            $deplacementstatic->id=$objp->rowid;
-            $userstatic->id=$objp->uid;
-            $userstatic->nom=$objp->name;
-            $userstatic->prenom=$objp->firstname;
+            $obj = $db->fetch_object($result);
+            $deplacementstatic->ref=$obj->rowid;
+            $deplacementstatic->id=$obj->rowid;
+            $userstatic->id=$obj->uid;
+            $userstatic->nom=$obj->name;
+            $userstatic->prenom=$obj->firstname;
             print '<tr '.$bc[$var].'>';
             print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(1).'</td>';
-            print '<td align="right">'.$objp->km.'</td>';
-            print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
-            print '<td>'.$deplacementstatic->LibStatut($objp->fk_statut,3).'</td>';
+            print '<td align="right">'.$obj->km.'</td>';
+            print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
+            print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
             print '</tr>';
             $var=!$var;
             $i++;
@@ -191,7 +191,7 @@ if ($result)
 else dol_print_error($db);
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

@@ -177,7 +177,7 @@ class Deplacement extends CommonObject
 		$sql .= " SET km = ".$this->km;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->type."'";
-		$sql .= " , fk_statut = '".$this->fk_statut."'";
+		$sql .= " , fk_statut = '".$this->statut."'";
 		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_user_modif = ".$user->id;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
@@ -226,7 +226,7 @@ class Deplacement extends CommonObject
 			$this->socid		= $obj->fk_soc;
 			$this->km			= $obj->km;
 			$this->type			= $obj->type;
-			$this->fk_statut	= $obj->fk_statut;
+			$this->statut	    = $obj->fk_statut;
 			$this->note_private	= $obj->note;
 			$this->note_public	= $obj->note_public;
 			$this->fk_project	= $obj->fk_projet;
@@ -249,7 +249,7 @@ class Deplacement extends CommonObject
 	function delete($id)
 	{
 		$this->db->begin();
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".$id;
 
 		dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
@@ -300,23 +300,24 @@ class Deplacement extends CommonObject
 		}
 		if ($mode == 2)
 		{
-			//if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==0 || $statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
 		}
 		if ($mode == 3)
 		{
-			//if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==0 || $statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
 		}
 		if ($mode == 4)
 		{
 			//if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==0 || $statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
-			//if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==0 || $statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
 		}
 	}
 

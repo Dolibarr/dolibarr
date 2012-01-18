@@ -95,19 +95,19 @@ class modDeplacement extends DolibarrModules
 		$this->rights[3][2] = 'd';
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'supprimer';
-    		
+/*
 		$this->rights[4][0] = 174;
 		$this->rights[4][1] = 'Bloquer les deplacements';
 		$this->rights[4][2] = 'a';
 		$this->rights[4][3] = 0;
 		$this->rights[4][4] = 'valider';
-		
+
 		$this->rights[5][0] = 175;
 		$this->rights[5][1] = 'Debloquer les deplacements';
 		$this->rights[5][2] = 'a';
 		$this->rights[5][3] = 0;
 		$this->rights[5][4] = 'unvalidate';
-
+*/
 		$this->rights[6][0] = 178;
 		$this->rights[6][1] = 'Exporter les deplacements';
 		$this->rights[6][2] = 'd';
