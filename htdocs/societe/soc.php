@@ -590,12 +590,9 @@ else
 
         // We set country_id, country_code and country for the selected country
         $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-        $object->pays_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         if ($object->country_id)
         {
             $tmparray=getCountry($object->country_id,'all');
-            $object->pays_code=$tmparray['code'];
-            $object->pays=$tmparray['label'];
             $object->country_code=$tmparray['code'];
             $object->country=$tmparray['label'];
         }
@@ -1212,9 +1209,9 @@ else
 
             // Zip / Town
             print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-            print $formcompany->select_ziptown($object->cp,'zipcode',array('town','selectcountry_id','departement_id'),6);
+            print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
             print '</td><td>'.$langs->trans('Town').'</td><td>';
-            print $formcompany->select_ziptown($object->ville,'town',array('zipcode','selectcountry_id','departement_id'));
+            print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
             print '</td></tr>';
 
             // Country
@@ -1533,15 +1530,15 @@ else
 
         // Zip / Town
         print '<tr><td width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
-        print $object->cp.($object->cp && $object->ville?" / ":"").$object->ville;
+        print $object->zip.($object->zip && $object->town?" / ":"").$object->town;
         print "</td>";
         print '</tr>';
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" nowrap="nowrap">';
         $img=picto_from_langcode($object->country_code);
-        if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->pays,$langs->trans("CountryIsInEEC"),1,0);
-        else print ($img?$img.' ':'').$object->pays;
+        if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+        else print ($img?$img.' ':'').$object->country;
         print '</td></tr>';
 
         // State
@@ -1769,7 +1766,7 @@ else
                 $socm = new Societe($db);
                 $socm->fetch($object->parent);
                 print $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
-                print $socm->ville?' - '.$socm->ville:'';
+                print $socm->town?' - '.$socm->town:'';
             }
             else {
                 print $langs->trans("NoParentCompany");
