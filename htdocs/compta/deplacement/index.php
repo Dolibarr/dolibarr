@@ -168,8 +168,8 @@ if ($result)
             $deplacementstatic->ref=$obj->rowid;
             $deplacementstatic->id=$obj->rowid;
             $userstatic->id=$obj->uid;
-            $userstatic->nom=$obj->name;
-            $userstatic->prenom=$obj->firstname;
+            $userstatic->lastname=$obj->name;
+            $userstatic->firstname=$obj->firstname;
             print '<tr '.$bc[$var].'>';
             print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(1).'</td>';
