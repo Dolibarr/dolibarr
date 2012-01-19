@@ -251,7 +251,6 @@ if ($nboftargetok) {
 	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/$PROJECT"`;
 	    }
 	    print "Clean $BUILDROOT\n";
-        $ret=`rm -f  $BUILDROOT/$PROJECT/index.php`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.buildpath`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git`;
@@ -260,15 +259,11 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/default.properties`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/git2cvs.sh`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/README.md`;
         
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliW*-*`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliM*-*`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.changes`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/Doli*-*`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.deb`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.dsc`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.tar.gz`;
@@ -306,8 +301,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/flyer`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/font`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot2.png`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot3.png`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot4.png`;
@@ -319,8 +312,7 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot10.png`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot11.png`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot12.png`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/rollup`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/doc/tshirt`;
+
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom*`;
@@ -336,7 +328,6 @@ if ($nboftargetok) {
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/lightbox`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jstree`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/license.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PDF`;
@@ -345,7 +336,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-20100919`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/langs/*/html`;
 		# Removed because not stable yet
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
 	}
