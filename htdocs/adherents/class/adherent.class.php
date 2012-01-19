@@ -976,7 +976,7 @@ class Adherent extends CommonObject
         $sql.= " d.pays,";
         $sql.= " d.fk_departement,";
         $sql.= " p.rowid as country_id, p.code as country_code, p.libelle as country,";
-        $sql.= " dep.nom as departement, dep.code_departement as departement_code,";
+        $sql.= " dep.nom as state, dep.code_departement as state_code,";
         $sql.= " t.libelle as type, t.cotisation as cotisation,";
         $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
@@ -1016,19 +1016,19 @@ class Adherent extends CommonObject
                 $this->town           = $obj->town;
 
                 $this->state_id       = $obj->fk_departement;
-                $this->state_code     = $obj->fk_departement?$obj->departement_code:'';
-                $this->state          = $obj->fk_departement?$obj->departement:'';
-                $this->fk_departement = $obj->fk_departement;    // TODO deprecated
-                $this->departement_code = $obj->fk_departement?$obj->departement_code:'';    // TODO deprecated
-                $this->departement	  = $obj->fk_departement?$obj->departement:'';    // TODO deprecated
+                $this->state_code     = $obj->fk_departement?$obj->state_code:'';
+                $this->state          = $obj->fk_departement?$obj->state:'';
+                $this->fk_departement   = $obj->fk_departement;                        // deprecated
+                $this->departement_code = $obj->fk_departement?$obj->state_code:'';    // deprecated
+                $this->departement	    = $obj->fk_departement?$obj->state:'';         // deprecated
 
                 $this->country_id     = $obj->country_id;
                 $this->country_code   = $obj->country_code;
-                $this->pays_id        = $obj->country_id;    // TODO deprecated
-                $this->pays_code      = $obj->country_code;    // TODO deprecated
                 if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) $this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
                 else $this->country=$obj->country;
-				$this->pays           = $this->country;     // TODO deprecated
+                $this->pays_id        = $obj->country_id;      // deprecated
+                $this->pays_code      = $obj->country_code;    // deprecated
+                $this->pays           = $this->country;        // deprecated
 
                 $this->phone          = $obj->phone;
                 $this->phone_perso    = $obj->phone_perso;

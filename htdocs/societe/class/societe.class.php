@@ -57,13 +57,13 @@ class Societe extends CommonObject
     var $state_id;
     var $state_code;
     var $state;
-    var $departement_id;
-    var $departement_code;
-    var $departement;
+    var $departement_id;     // deprecated
+    var $departement_code;   // deprecated
+    var $departement;        // deprecated
 
-    var $pays_id;   // TODO obsolete
-    var $pays_code; // TODO obsolete
-    var $pays;	    // TODO obsolete
+    var $pays_id;   // deprecated
+    var $pays_code; // deprecated
+    var $pays;	    // deprecated
     var $country_id;
     var $country_code;
     var $country;
@@ -639,7 +639,7 @@ class Societe extends CommonObject
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', p.code as country_code, p.libelle as country';
-        $sql .= ', d.code_departement as departement_code, d.nom as departement';
+        $sql .= ', d.code_departement as state_code, d.nom as state';
         $sql .= ', st.libelle as stcomm';
         $sql .= ', te.code as typent_code';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -700,8 +700,8 @@ class Societe extends CommonObject
                 $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
 
                 $this->state_id     = $obj->fk_departement;
-                $this->state_code   = $obj->departement_code;
-                $this->state        = $obj->departement;
+                $this->state_code   = $obj->state_code;
+                $this->state        = $obj->state;
 
                 $transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
                 $libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);

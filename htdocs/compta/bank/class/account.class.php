@@ -64,13 +64,19 @@ class Account extends CommonObject
     var $adresse_proprio;
 
 
-    var $fk_departement;
-    var $departement_code;
-    var $departement;
+    var $fk_departement;    // deprecated
+    var $departement_code;    // deprecated
+    var $departement;        // deprecated
+    var $state_id;
+    var $state_code;
+    var $state;
 
-    var $fk_pays;
-    var $pays_code;
-    var $pays;
+    var $fk_pays;            // deprecated
+    var $pays_code;            // deprecated
+    var $pays;                // deprecated
+    var $country_id;
+    var $country_code;
+    var $country;
 
     var $type_lib=array();
 
@@ -575,7 +581,7 @@ class Account extends CommonObject
         $sql.= " ba.account_number, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
         $sql.= ' p.code as country_code, p.libelle as country,';
-        $sql.= ' d.code_departement as departement_code, d.nom as departement';
+        $sql.= ' d.code_departement as state_code, d.nom as state';
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON ba.fk_pays = p.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.fk_departement = d.rowid';
@@ -613,13 +619,16 @@ class Account extends CommonObject
                 $this->proprio       = $obj->proprio;
                 $this->adresse_proprio = $obj->adresse_proprio;
 
-                $this->fk_departement  = $obj->fk_departement;
-                $this->departement_code= $obj->departement_code;
-                $this->departement     = $obj->departement;
+                $this->fk_departement  = $obj->fk_departement;    // deprecated
+                $this->departement_code= $obj->state_code;        // deprecated
+                $this->departement     = $obj->state;             // deprecated
+                $this->state_id        = $obj->fk_departement;
+                $this->state_code      = $obj->state_code;
+                $this->state           = $obj->state;
 
-                $this->fk_pays       = $obj->country_id;
-                $this->pays_code     = $obj->country_code;
-                $this->pays          = $obj->country;
+                $this->fk_pays       = $obj->country_id;          // deprecated
+                $this->pays_code     = $obj->country_code;        // deprecated
+                $this->pays          = $obj->country;             // deprecated
                 $this->country_id    = $obj->country_id;
                 $this->country_code  = $obj->country_code;
                 $this->country       = $obj->country;

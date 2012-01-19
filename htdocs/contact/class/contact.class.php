@@ -50,19 +50,19 @@ class Contact extends CommonObject
 	var $ville;	       // TODO deprecated
 	var $town;
 
-	var $fk_departement;		// Id of department
-	var $departement_code;		// Code of department
-	var $departement;			// Label of department
+	var $fk_departement;		// deprecated
+	var $departement_code;		// deprecated
+	var $departement;			// deprecated
 	var $state_id;	        	// Id of department
 	var $state_code;		    // Code of department
 	var $state;			        // Label of department
 
-	var $fk_pays;				// Id of country
-	var $pays_code;				// Code of country
-	var $pays;					// Label of country
-	var $country_id;				// Id of country
-	var $country_code;				// Code of country
-	var $country;					// Label of country
+	var $fk_pays;				// deprecated
+	var $pays_code;				// deprecated
+	var $pays;					// deprecated
+	var $country_id;			// Id of country
+	var $country_code;			// Code of country
+	var $country;				// Label of country
 
 	var $socid;					// fk_soc
 	var $status;				// 0=brouillon, 1=4=actif, 5=inactif
@@ -471,7 +471,7 @@ class Contact extends CommonObject
 		$sql.= " c.priv, c.note, c.default_lang, c.canvas,";
 		$sql.= " c.import_key,";
 		$sql.= " p.libelle as country, p.code as country_code,";
-		$sql.= " d.nom as departement, d.code_departement as departement_code,";
+		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
@@ -505,12 +505,12 @@ class Contact extends CommonObject
 				$this->ville			= $obj->town;			// TODO deprecated
 				$this->town				= $obj->town;
 
-				$this->fk_departement	= $obj->fk_departement;
+				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
-				$this->departement_code = $obj->departement_code;	// TODO deprecated
-				$this->state_code       = $obj->departement_code;
-				$this->departement		= $obj->departement;	    // TODO deprecated
-				$this->state			= $obj->departement;
+				$this->departement_code = $obj->state_code;	       // deprecated
+				$this->state_code       = $obj->state_code;
+				$this->departement		= $obj->state;	           // deprecated
+				$this->state			= $obj->state;
 
 				$this->fk_pays			= $obj->country_id;
 				$this->country_id 		= $obj->country_id;

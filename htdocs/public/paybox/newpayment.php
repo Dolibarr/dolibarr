@@ -282,7 +282,7 @@ if (GETPOST("source") == 'order')
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
+	$fulltag='IR='.$order->ref.'.TPID='.$order->thirdparty->id.'.TP='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -296,7 +296,7 @@ if (GETPOST("source") == 'order')
 	// Debitor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->client->nom.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
 
 	// Object
 	$var=!$var;
@@ -335,7 +335,7 @@ if (GETPOST("source") == 'order')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	$email=$order->client->email;
+	$email=$order->thirdparty->email;
 	$email=(GETPOST("email")?GETPOST("email"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.$email.'"></td></tr>'."\n";
 }
@@ -365,7 +365,7 @@ if (GETPOST("source") == 'invoice')
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
+	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->thirdparty->id.'.TP='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -379,7 +379,7 @@ if (GETPOST("source") == 'invoice')
 	// Debitor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->client->nom.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
 
 	// Object
 	$var=!$var;
@@ -418,7 +418,7 @@ if (GETPOST("source") == 'invoice')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-    $email=$invoice->client->email;
+    $email=$invoice->thirdparty->email;
     $email=(GETPOST("email")?GETPOST("email"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.$email.'"></td></tr>'."\n";
 }
@@ -470,9 +470,9 @@ if (GETPOST("source") == 'contractline')
 		// We define price for product (TODO Put this in a method in product class)
 		if ($conf->global->PRODUIT_MULTIPRICES)
 		{
-			$pu_ht = $product->multiprices[$contract->client->price_level];
-			$pu_ttc = $product->multiprices_ttc[$contract->client->price_level];
-			$price_base_type = $product->multiprices_base_type[$contract->client->price_level];
+			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
+			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
+			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
 		}
 		else
 		{
@@ -491,7 +491,7 @@ if (GETPOST("source") == 'contractline')
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
+	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->thirdparty->id.'.TP='.strtr($contract->thirdparty->name,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -508,7 +508,7 @@ if (GETPOST("source") == 'contractline')
 	// Debitor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->client->nom.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->thirdparty->name.'</b>';
 
 	// Object
 	$var=!$var;
@@ -589,7 +589,7 @@ if (GETPOST("source") == 'contractline')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-    $email=$contract->client->email;
+    $email=$contract->thirdparty->email;
     $email=(GETPOST("email")?GETPOST("email"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.$email.'"></td></tr>'."\n";
 
@@ -689,7 +689,7 @@ if (GETPOST("source") == 'membersubscription')
 	// EMail
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
-    $email=$member->client->email;
+    $email=$member->email;
     $email=(GETPOST("email")?GETPOST("email"):(isValidEmail($email)?$email:''));
 	if (empty($email)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.$email.'"></td></tr>'."\n";
