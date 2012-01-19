@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,7 +195,7 @@ if ($action == 'addline' && $user->rights->contrat->creer)
         $ret=$object->fetch($_GET["id"]);
         if ($ret < 0)
         {
-            dol_print_error($db,$commande->error);
+            dol_print_error($db,$object->error);
             exit;
         }
         $ret=$object->fetch_thirdparty();
@@ -236,16 +236,16 @@ if ($action == 'addline' && $user->rights->contrat->creer)
             $prod = new Product($db);
             $prod->fetch($_POST['idprod']);
 
-            $tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
-            $tva_npr = get_default_npr($mysoc,$object->client,$prod->id);
+            $tva_tx = get_default_tva($mysoc,$object->thirdparty,$prod->id);
+            $tva_npr = get_default_npr($mysoc,$object->thirdparty,$prod->id);
 
             // On defini prix unitaire
-            if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)
+            if ($conf->global->PRODUIT_MULTIPRICES && $object->thirdparty->price_level)
             {
-                $pu_ht = $prod->multiprices[$object->client->price_level];
-                $pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
-                $price_min = $prod->multiprices_min[$object->client->price_level];
-                $price_base_type = $prod->multiprices_base_type[$object->client->price_level];
+                $pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+                $pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+                $price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+                $price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
             }
             else
             {
@@ -282,8 +282,8 @@ if ($action == 'addline' && $user->rights->contrat->creer)
             $desc=$_POST['desc'];
         }
 
-        $localtax1_tx=get_localtax($tva_tx,1,$object->client);
-        $localtax2_tx=get_localtax($tva_tx,2,$object->client);
+        $localtax1_tx=get_localtax($tva_tx,1,$object->societe);
+        $localtax2_tx=get_localtax($tva_tx,2,$object->societe);
 
         $info_bits=0;
         if ($tva_npr) $info_bits |= 0x01;
@@ -342,6 +342,14 @@ if ($action == 'addline' && $user->rights->contrat->creer)
 
 if ($action == 'updateligne' && $user->rights->contrat->creer && ! $_POST["cancel"])
 {
+	$ret=$object->fetch($_GET["id"]);
+	if ($ret < 0)
+	{
+		dol_print_error($db,$object->error);
+		exit;
+	}
+
+	$object->fetch_thirdparty();
     $objectline = new ContratLigne($db);
     if ($objectline->fetch($_POST["elrowid"]))
     {
@@ -350,8 +358,8 @@ if ($action == 'updateligne' && $user->rights->contrat->creer && ! $_POST["cance
         if ($date_start_real_update == '') $date_start_real_update=$objectline->date_ouverture;
         if ($date_end_real_update == '')   $date_end_real_update=$objectline->date_cloture;
 
-        $localtax1_tx=get_localtax($_POST["eltva_tx"],1,$object->client);
-        $localtax2_tx=get_localtax($_POST["eltva_tx"],2,$object->client);
+		$localtax1_tx=get_localtax($_POST["eltva_tx"],1,$object->thirdparty);
+        $localtax2_tx=get_localtax($_POST["eltva_tx"],2,$object->thirdparty);
 
         $objectline->description=$_POST["eldesc"];
         $objectline->price_ht=$_POST["elprice"];
