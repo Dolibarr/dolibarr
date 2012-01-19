@@ -1,6 +1,4 @@
 # Embedded libraries, which don't seem to be available in Debian in correct version
 # or because they were modified and are specific dolibarr code
 #
-#None
-#embedded-javascript-library usr/share/dolibarr/htdocs/includes/ckeditor/adapters/jquery.js
-#embedded-javascript-library usr/share/dolibarr/htdocs/includes/ckeditor/ckeditor.js
+# There is no embeded library in this package that are available into other Debian packages.

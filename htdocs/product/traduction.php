@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010      Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012 Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ $_POST["cancel"] != $langs->trans("Cancel") &&
 	$current_lang = $langs->getDefaultLang();
 
 	// update de l'objet
-	if ( $_POST["translang"] == $current_lang )
+	if ( $_POST["forcelangprod"] == $current_lang )
 	{
 		$product->libelle		= $_POST["libelle"];
 		$product->description	= dol_htmlcleanlastbr($_POST["desc"]);
@@ -71,9 +71,9 @@ $_POST["cancel"] != $langs->trans("Cancel") &&
 	}
 	else
 	{
-		$product->multilangs[$_POST["translang"]]["libelle"]		= $_POST["libelle"];
-		$product->multilangs[$_POST["translang"]]["description"]	= dol_htmlcleanlastbr($_POST["desc"]);
-		$product->multilangs[$_POST["translang"]]["note"]		= dol_htmlcleanlastbr($_POST["note"]);
+		$product->multilangs[$_POST["forcelangprod"]]["libelle"]		= $_POST["libelle"];
+		$product->multilangs[$_POST["forcelangprod"]]["description"]	= dol_htmlcleanlastbr($_POST["desc"]);
+		$product->multilangs[$_POST["forcelangprod"]]["note"]		= dol_htmlcleanlastbr($_POST["note"]);
 	}
 
 	// sauvegarde en base
@@ -240,7 +240,7 @@ if ($_GET["action"] == 'add' && ($user->rights->produit->creer || $user->rights-
 
 	print '<table class="border" width="100%">';
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Translation').'</td><td>';
-    print $formadmin->select_language('','translang',0,$product->multilangs);
+    print $formadmin->select_language('','forcelangprod',0,$product->multilangs);
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
