@@ -686,7 +686,10 @@ class Societe extends CommonObject
 
                 $this->departement_id = $obj->fk_departement;				// TODO obsolete
                 $this->state_id       = $obj->fk_departement;
-                $this->departement	= $obj->fk_departement?$obj->departement:'';
+                $this->departement_code = $obj->fk_departement?$obj->departement_code:'';
+                $this->state_code       = $obj->fk_departement?$obj->departement_code:'';
+                $this->departement	  = $obj->fk_departement?$obj->departement:'';
+                $this->state    	  = $obj->fk_departement?$obj->departement:'';
 
                 $transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
                 $libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
