@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -132,7 +132,7 @@ if ($fourn_id > 0)
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
-$sql .= $db->plimit($limit + 1 ,$offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 
 dol_syslog("fourn/product/liste: sql=".$sql);
@@ -164,7 +164,7 @@ if ($resql)
 	if (isset($catid))
 	{
 		print "<div id='ways'>";
-		$c = new Categorie ($db, $catid);
+		$c = new Categorie($db, $catid);
 		$ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";

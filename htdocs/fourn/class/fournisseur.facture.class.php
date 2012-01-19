@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
@@ -691,7 +691,7 @@ class FactureFournisseur extends Facture
      *	Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
      *	Fonction utilisee quand un paiement prelevement est refuse,
      *	ou quand une facture annulee et reouverte.
-     * 
+     *
      *	@param      User	$user       Object user that change status
      *	@return     int         		<0 si ok, >0 si ok
      */
@@ -909,8 +909,8 @@ class FactureFournisseur extends Facture
      *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
      *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
-     *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
-
+     *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue).
+     *
      *	@param    	string	$desc            	Description de la ligne
      *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
      *	@param    	double	$txtva           	Taux de tva force, sinon -1
@@ -922,13 +922,13 @@ class FactureFournisseur extends Facture
      *	@param    	date	$date_start      	Date de debut de validite du service
      * 	@param    	date	$date_end        	Date de fin de validite du service
      * 	@param    	string	$ventil          	Code de ventilation comptable
-     *	@param    	int		$ºinfo_bits			Bits de type de lines
+     *	@param    	int		$info_bits			Bits de type de lines
      *	@param    	string	$price_base_type 	HT ou TTC
      *	@param		int		$type				Type of line (0=product, 1=service)
      *  @param      int		$rang            	Position of line
      *	@return    	int             			>0 if OK, <0 if KO
      */
-    function addline($desc, $pu, $txtva, $txlocaltax1=0, $txlocaltax2=0, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1)
+    function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1)
     {
         dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
@@ -988,6 +988,7 @@ class FactureFournisseur extends Facture
 
     /**
      * Update a line detail into database
+     *
      * @param     	int		$id            		Id of line invoice
      * @param     	string	$label         		Description of line
      * @param     	double	$pu          		Prix unitaire (HT ou TTC selon price_base_type)
@@ -1083,7 +1084,9 @@ class FactureFournisseur extends Facture
 
     /**
      * Delete a detail line from database
-     * @param     int	$rowid      id of line to delete
+     *
+     * @param   int		$rowid      Id of line to delete
+     * @return	void
      */
     function deleteline($rowid)
     {
@@ -1103,7 +1106,9 @@ class FactureFournisseur extends Facture
 
     /**
      *	Charge les informations d'ordre info dans l'objet facture
-     *	@param     int	$id       	Id de la facture a charger
+     *
+     *	@param  int		$id       	Id de la facture a charger
+     *	@return	void
      */
     function info($id)
     {
@@ -1146,7 +1151,8 @@ class FactureFournisseur extends Facture
 
     /**
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *	@param      User	$user       Objet user
+     *
+     *	@param      User	$user       Object user
      *	@return     int                 <0 if KO, >0 if OK
      */
     function load_board($user)
@@ -1188,10 +1194,10 @@ class FactureFournisseur extends Facture
     /**
      *	Renvoie nom clicable (avec eventuellement le picto)
      *
-     *		@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		string	$option			Sur quoi pointe le lien
-     * 		@param		int		$max			Max length of shown ref
-     * 		@return		string					Chaine avec URL
+     *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@param		string	$option			Sur quoi pointe le lien
+     * 	@param		int		$max			Max length of shown ref
+     * 	@return		string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$option='',$max=0)
     {

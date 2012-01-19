@@ -104,47 +104,6 @@ class Fournisseur extends Societe
 		}
 	}
 
-    /**
-     *  Create the order from an existing
-     *
-     *  @param      User	$user            	Creator user
-     *  @param      int		$idc				Id source
-     *  @param		int		$comclientid		Id thirdparty
-     */
-	function updateFromCommandeClient($user, $idc, $comclientid)
-	{
-		$comm = new CommandeFournisseur($this->db);
-		$comm->socid = $this->id;
-
-		$comm->updateFromCommandeClient($user, $idc, $comclientid);
-	}
-
-	/**
-	 *	Create the order with draft status
-
-	 *	@param      User	$user		Creator user
-	 *	@return     int         		<0 if ko, id of order if ok
-	 */
-	function create_commande($user)
-	{
-		dol_syslog("Fournisseur::Create_Commande");
-		$comm = new CommandeFournisseur($this->db);
-		$comm->socid = $this->id;
-
-		if ($comm->create($user) > 0)
-		{
-			$this->single_open_commande = $comm->id;
-			return $comm->id;
-		}
-		else
-		{
-			$this->error=$comm->error;
-			dol_syslog("Fournisseur::Create_Commande Failed ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
-
-
 	/**
 	 * Load statistics indicators
 	 *

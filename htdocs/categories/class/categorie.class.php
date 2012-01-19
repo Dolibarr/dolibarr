@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,12 +54,12 @@ class Categorie
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB     Database handler
+	 *  @param		DoliDB		$db     Database handler
 	 *  @param		int			$id		Id of category to fetch during init
 	 */
-	function Categorie($DB, $id=-1)
+	function Categorie($db, $id=-1)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->id = $id;
 
 		if ($id != -1) $this->fetch($this->id);
@@ -132,7 +132,7 @@ class Categorie
 		$langs->load('categories');
 
 		$error=0;
-		
+
 		// Clean parameters
 		if (empty($this->visible)) $this->visible=0;
 		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;
@@ -214,7 +214,7 @@ class Categorie
 		global $conf, $langs;
 
 		$error=0;
-		
+
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);

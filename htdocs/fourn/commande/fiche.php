@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
@@ -161,18 +161,18 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
                 $localtax2_tx= get_localtax($tva_tx, 2, $object->thirdparty);
 
                 $result=$object->addline(
-                $desc,
-                $pu,
-                $qty,
-                $tva_tx,
-                $localtax1_tx,
-                $localtax2_tx,
-                $productsupplier->id,
-                $_POST['idprodfournprice'],
-                $productsupplier->fourn_ref,
-                $remise_percent,
-    				'HT',
-                $type
+                    $desc,
+                    $pu,
+                    $qty,
+                    $tva_tx,
+                    $localtax1_tx,
+                    $localtax2_tx,
+                    $productsupplier->id,
+                    $_POST['idprodfournprice'],
+                    $productsupplier->fourn_ref,
+                    $remise_percent,
+       				'HT',
+                    $type
                 );
             }
             if ($idprod == -1)
@@ -566,27 +566,32 @@ if ($action=='remove_file')
     }
 }
 
-
 /*
  * Create an order
  */
 if ($action	== 'create')
 {
+    $error=0;
+
     $fourn = new Fournisseur($db);
     $result=$fourn->fetch($socid);
 
+    $object->socid = $fourn->id;
+
     $db->begin();
 
-    $orderid=$fourn->create_commande($user);
-
-    if ($orderid > 0)
+    $orderid=$object->create($user);
+    if (! $orderid > 0)
     {
-        $idc = $fourn->single_open_commande;
+        $error++;
+        $mesg=$object->error;
+    }
 
+    if (! $error)
+    {
         if ($comclientid !=	'')
         {
-            $fourn->updateFromCommandeClient($user,$idc,$comclientid);
-
+    		$object->updateFromCommandeClient($user, $orderid, $comclientid);
         }
 
         $id=$orderid;
@@ -596,7 +601,6 @@ if ($action	== 'create')
     else
     {
         $db->rollback();
-        $mesg=$fourn->error;
     }
 }
 
@@ -733,7 +737,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('ORDER_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
-                        if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                        if ($result < 0) { $error++; $errors=$interface->errors; }
                         // Fin appel triggers
 
                         if ($error)

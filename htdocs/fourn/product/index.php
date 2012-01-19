@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p ";
 $sql .= " WHERE p.fk_product_type <> 1";
 $sql .= " ORDER BY p.datec DESC ";
-$sql .= $db->plimit(15 ,0);
+$sql .= $db->plimit(15, 0);
 
 $resql = $db->query($sql);
 

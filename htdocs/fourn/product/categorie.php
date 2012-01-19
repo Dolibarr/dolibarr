@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +131,7 @@ if ($_GET["id"])
 	  foreach ($cats as $cat)
 	    {
 
-	      $ways = $cat->print_all_ways ();
+	      $ways = $cat->print_all_ways();
 	      foreach ($ways as $way)
 		{
 		  $i = !$i;

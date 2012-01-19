@@ -58,17 +58,18 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function PaiementFourn($DB)
+	function PaiementFourn($db)
 	{
-		$this->db = $DB ;
+		$this->db = $db;
 	}
 
 	/**
 	 *	Load payment object
-	 *	@param      int		$id      id paiement to get
-	 *	@return     int     		<0 if ko, >0 if ok
+	 *
+	 *	@param	int		$id     Id if payment to get
+	 *	@return int     		<0 if ko, >0 if ok
 	 */
 	function fetch($id)
 	{
@@ -238,7 +239,7 @@ class PaiementFourn extends Paiement
 	 *	Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
-	 *	
+	 *
 	 *	@return     int     <0 si ko, >0 si ok
 	 */
 	function delete()
@@ -320,8 +321,10 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *	Information sur l'objet
-	 *	@param      int		$id      id du paiement dont il faut afficher les infos
+	 *	Information on object
+	 *
+	 *	@param	int		$id      Id du paiement dont il faut afficher les infos
+	 *	@return	void
 	 */
 	function info($id)
 	{
