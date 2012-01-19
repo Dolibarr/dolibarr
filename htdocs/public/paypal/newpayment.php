@@ -194,9 +194,10 @@ if (GETPOST("action") == 'dopayment')
 		dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
 
 		// Other
-		$PAYPAL_API_DEVISE="EUR";
-		if ($CURRENCY == 'EUR') $PAYPAL_API_DEVISE="EUR";
-		if ($CURRENCY == 'USD') $PAYPAL_API_DEVISE="USD";
+		$PAYPAL_API_DEVISE="USD";
+		//if ($currency == 'EUR') $PAYPAL_API_DEVISE="EUR";
+		//if ($currency == 'USD') $PAYPAL_API_DEVISE="USD";
+        if (! empty($currency)) $PAYPAL_API_DEVISE=$currency;
 
 	    dol_syslog("Submit Paypal form", LOG_DEBUG);
 	    dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
