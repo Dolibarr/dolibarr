@@ -171,8 +171,8 @@ if (GETPOST("action") == 'dopayment')
 
 		// Other
 		$PAYPAL_API_DEVISE="EUR";
-		if ($CURRENCY == 'EUR') $PAYPAL_API_DEVISE="EUR";
-		if ($CURRENCY == 'USD') $PAYPAL_API_DEVISE="USD";
+		if ($currency == 'EUR') $PAYPAL_API_DEVISE="EUR";
+		if ($currency == 'USD') $PAYPAL_API_DEVISE="USD";
 
 	    dol_syslog("Submit Paypal form", LOG_DEBUG);
 	    dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
