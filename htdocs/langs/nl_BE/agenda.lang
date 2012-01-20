@@ -27,7 +27,6 @@ ViewCal=Bekijk kalender
 ViewWithPredefinedFilters=Bekijk met voorgedefinieerde filters
 AutoActions=Automatisch invullen van de agenda
 AgendaAutoActionDesc=Definieer hier evenementen waarvoor u wilt dat Dolibarr automatisch een actie op de agenda creëert. Als er niets is aangevinkt (standaard), alleen handmatige acties zullen worden opgenomen in de agenda.
-AgendaSetupOtherDesc=This page allows to configure other parameters of agenda module.
 ActionsEvents=Evenementen waarvan Dolibarr automatisch een actie in de agenda zal creëren
 PropalValidatedInDolibarr=Voorstel gevalideerd
 InvoiceValidatedInDolibarr=Factuur gevalideerd

@@ -26,7 +26,7 @@
 
 /**
  * Show filter form in agenda view
- * 
+ *
  * @param	string	$form			Form name
  * @param	int		$canedit		Can edit filter fields
  * @param	int		$status			Status
@@ -84,7 +84,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print ' &nbsp;</td><td nowrap="nowrap">';
 				print $form->select_dolusers($filterd,'userdone',1,'',!$canedit);
 				print '</td></tr>';
-				
+
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
 				$htmlactions=new FormActions($db);
 				print '<tr>';
@@ -169,7 +169,7 @@ function show_array_actions_to_do($max=5)
 
 		$staticaction=new ActionComm($db);
 	    $customerstatic=new Client($db);
-		
+
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
@@ -328,7 +328,7 @@ function agenda_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
-	$head[$h][1] = $langs->trans("Export");
+	$head[$h][1] = $langs->trans("ExportCal");
 	$head[$h][2] = 'xcal';
 	$h++;
 
@@ -374,7 +374,7 @@ function actions_prepare_head($action)
 
 /**
  *  Define head array for tabs of agenda setup pages
- * 
+ *
  *  @return     Array of head
  */
 function calendars_prepare_head($param)
@@ -390,7 +390,7 @@ function calendars_prepare_head($param)
     $h++;
 
 	$object=(object) array();
-	
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
