@@ -125,5 +125,55 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		return $result;
     }
 
+   /**
+     */
+    public function testDolIsFileDir()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$file=dirname(__FILE__).'/Example_import_company_1.csv';
+
+		$result=dol_is_file($file);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result);
+
+		$result=dol_is_dir($file);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertFalse($result);
+
+		return $result;
+    }
+
+    /**
+    */
+    public function testDolOther()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $url='http://www.dolibarr.org';
+  		$result=dol_is_url($url);
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result);
+
+        $url='https://www.dolibarr.org';
+  		$result=dol_is_url($url);
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result);
+
+        $url='file://www.dolibarr.org/download/file.zip';
+        $result=dol_is_url($file);
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result);
+
+        return $result;
+    }
 }
 ?>
