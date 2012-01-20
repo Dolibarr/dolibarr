@@ -344,6 +344,7 @@ function dol_dir_is_emtpy($folder)
 
 /**
  * 	Count number of lines in a file
+ *
  * 	@param		file		Filename
  * 	@return 	int			<0 if KO, Number of lines in files if OK
  */
@@ -359,7 +360,8 @@ function dol_count_nb_of_line($file)
 		while (!feof($fp))
 		{
 			$line=fgets($fp);
-			$nb++;
+            // We increase count only if read was success. We need test because feof return true only after fgets so we do n+1 fgets for a file with n lines.
+			if (! $line === false) $nb++;
 		}
 		fclose($fp);
 	}
@@ -710,7 +712,7 @@ function dol_init_file_process($pathtoscan='')
 		$listoffiles=dol_dir_list($pathtoscan,'files');
 		foreach($listoffiles as $key => $val)
 		{
-			$listofpaths[]=$val['fullname'];		
+			$listofpaths[]=$val['fullname'];
 			$listofnames[]=$val['name'];
 			$listofmimes[]=dol_mimetype($val['name']);
 		}
