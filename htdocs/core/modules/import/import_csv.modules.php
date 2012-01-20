@@ -452,17 +452,19 @@ class ImportCsv extends ModeleImports
 				}
 
 				// Loop on each hidden fields
-				foreach($objimport->array_import_fieldshidden[0] as $key => $val)
+				if (is_array($objimport->array_import_fieldshidden[0]))
 				{
-				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
-				    if ($listfields) { $listfields.=', '; $listvalues.=', '; }
-				    if ($val == 'user->id')
-				    {
-				        $listfields.=preg_replace('/^'.preg_quote($alias).'\./','',$key);
-				        $listvalues.=$user->id;
-				    }
+    				foreach($objimport->array_import_fieldshidden[0] as $key => $val)
+    				{
+    				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
+    				    if ($listfields) { $listfields.=', '; $listvalues.=', '; }
+    				    if ($val == 'user->id')
+    				    {
+    				        $listfields.=preg_replace('/^'.preg_quote($alias).'\./','',$key);
+    				        $listvalues.=$user->id;
+    				    }
+    				}
 				}
-
 				//print 'Show listfields='.$listfields.'<br>listvalues='.$listvalues.'<br>';
 
 				if (! $errorforthistable)

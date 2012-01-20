@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -21,10 +21,13 @@
 
 /**
  *	\defgroup   produit     Module products
- *	\brief      Module pour gerer le suivi de produits predefinis
+ *	\brief      Module to manage catalog of predefined products
+ */
+
+/**
  *	\file       htdocs/core/modules/modProduct.class.php
  *	\ingroup    produit
- *	\brief      Fichier de description et activation du module Produit
+ *	\brief      File to describe module to manage catalog of predefined products
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
@@ -154,7 +157,7 @@ class modProduct extends DolibarrModules
 		$this->import_tables_creator_array[$r]=array('p'=>'fk_user_author');	// Fields to store import user id
 		$this->import_fields_array[$r]=array('p.ref'=>"Ref*",'p.label'=>"Label*",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell*",'p.tobuy'=>"OnBuy*",'p.fk_product_type'=>"Type*",'p.finished'=>'Nature','p.duration'=>"Duration",'p.weight'=>"Weight",'p.volume'=>"Volume",'p.datec'=>'DateCreation*');
 		$this->import_entities_array[$r]=array();	// We define here only fields that use another picto
-		$this->import_regex_array[$r]=array('p.ref'=>'[^ ]','p.tosell'=>'^[0|1]','p.tobuy'=>'^[0|1]','p.fk_product_type'=>'^[0|1]','p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
+		$this->import_regex_array[$r]=array('p.ref'=>'[^ ]','p.tosell'=>'^[0|1]$','p.tobuy'=>'^[0|1]$','p.fk_product_type'=>'^[0|1]$','p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r]=array('p.ref'=>"PR123456",'p.label'=>"My product",'p.description'=>"This is a description example for record",'p.note'=>"Some note",'p.price'=>"100",'p.price_ttc'=>"110",'p.tva_tx'=>'10','p.tosell'=>"0 or 1",'p.tobuy'=>"0 or 1",'p.fk_product_type'=>"0 for product/1 for service",'p.finished'=>'','p.duration'=>"1y",'p.datec'=>'2008-12-31');
 	}
 

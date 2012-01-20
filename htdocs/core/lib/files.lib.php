@@ -383,7 +383,8 @@ function dol_count_nb_of_line($file)
 		while (!feof($fp))
 		{
 			$line=fgets($fp);
-			$nb++;
+            // We increase count only if read was success. We need test because feof return true only after fgets so we do n+1 fgets for a file with n lines.
+			if (! $line === false) $nb++;
 		}
 		fclose($fp);
 	}
