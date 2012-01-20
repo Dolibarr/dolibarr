@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011 Regis Houssin			<regis@dolibarr.fr>
+/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class AllTests
         //$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
-		require_once dirname(__FILE__).'/DateLibTest.php';
+		require_once dirname(__FILE__).'/FilesLibTest.php';
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/FunctionsTest.php';
         $suite->addTestSuite('FunctionsTest');
