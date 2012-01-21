@@ -329,7 +329,7 @@ function dol_is_file($pathoffile)
  */
 function dol_is_url($url)
 {
-    $tmpprot=array('file','http','ftp','zlib','data','ssh2','ogg','expect');
+    $tmpprot=array('file','http','https','ftp','zlib','data','ssh','ssh2','ogg','expect');
     foreach($tmpprot as $prot)
     {
         if (preg_match('/^'.$prot.':/i',$url)) return true;
