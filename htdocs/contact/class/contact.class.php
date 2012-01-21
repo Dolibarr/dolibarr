@@ -533,6 +533,8 @@ class Contact extends CommonObject
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
+				// TODO Replace birthday with a date selector
+                require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 				$this->birthday			= dol_stringtotime($obj->birthday);
 				//print "fetch: ".$obj->birthday.'-'.$this->birthday;
 				$this->birthday_alert 	= $obj->birthday_alert;

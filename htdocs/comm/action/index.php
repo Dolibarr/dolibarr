@@ -510,7 +510,7 @@ if (count($listofextcals))
     require_once(DOL_DOCUMENT_ROOT."/comm/action/class/ical.class.php");
     foreach($listofextcals as $extcal)
     {
-        $url=$extcal['src'];
+        $url=$extcal['src'];    // Example: https://www.google.com/calendar/ical/eldy10%40gmail.com/private-cde92aa7d7e0ef6110010a821a2aaeb/basic.ics
         $namecal = $extcal['name'];
         $colorcal = $extcal['color'];
         //print "url=".$url." namecal=".$namecal." colorcal=".$colorcal;
@@ -520,14 +520,34 @@ if (count($listofextcals))
         if (is_array($ical->get_event_list())) $icalevents=array_merge($icalevents,$ical->get_event_list());
         if (is_array($ical->get_freebusy_list())) $icalevents=array_merge($icalevents,$ical->get_freebusy_list());
 
-        if(count($icalevents)>0)
+        if (count($icalevents)>0)
         {
+            // Duplicate all repeatable events into new entries
             foreach($icalevents as $icalevent)
             {
+                if (is_array($icalevent['RRULE'])) //repeatable event
+                {
+                    //if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
+                    //if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+                    $datecur=$icalevent['DTSTART']['unixtime'];
+                    if ($icalevent['RRULE']['FREQ']=='WEEKLY')
+                    {
+                        $until=dol_stringtotime($icalevent['RRULE']['UNTIL'],1);
+
+                    }
+
+                }
+            }
+
+            // Loop on each entry into cal file to know if entry is qualified and add an ActionComm into $eventarray
+            foreach($icalevents as $icalevent)
+            {
+                //print $icalevent['SUMMARY'].'->'.var_dump($icalevent).'<br>';exit;
+
                 // Create a new object action
                 $event=new ActionComm($db);
                 $addevent = false;
-                if($icalevent['DTSTART;VALUE=DATE']) //fullday event
+                if ($icalevent['DTSTART;VALUE=DATE']) //fullday event
                 {
                     // For full day events, date are also GMT but they wont but converted using tz during output
                     $datestart=dol_stringtotime($icalevent['DTSTART;VALUE=DATE'],1);
@@ -537,18 +557,21 @@ if (count($listofextcals))
                     $event->fulldayevent=true;
                     $addevent=true;
                 }
-                elseif (is_array($icalevent['RRULE'])) //repeatable event
-                {
-                    $addevent=false; //TODO: a faire
-                }
-                elseif(!is_array($icalevent['DTSTART'])) //non-repeatable and not fullday event
+                elseif (!is_array($icalevent['DTSTART'])) //non-repeatable and not fullday event    DTSTART;TZID=Europe/Paris:20120102T100000
                 {
                     $datestart=$icalevent['DTSTART'];
                     $dateend=$icalevent['DTEND'];
                     $addevent=true;
                 }
+                //elseif (is_array($icalevent['DTSTART']) && ! empty($icalevent['DTSTART']['unixtime']) && ! is_array($icalevent['RRULE']))
+                elseif (is_array($icalevent['DTSTART']) && ! empty($icalevent['DTSTART']['unixtime']))
+                {
+                    $datestart=$icalevent['DTSTART']['unixtime'];
+                    $dateend=$icalevent['DTEND']['unixtime'];
+                    $addevent=true;
+                }
 
-                if($addevent)
+                if ($addevent)
                 {
                     $event->id=$icalevent['UID'];
                     $event->icalname=$namecal;
@@ -573,7 +596,7 @@ if (count($listofextcals))
                         $event->ponctuel=1;
                     }
 
-                    // Check values
+                    // Add event into $eventarray if date range are ok.
                     if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar > $lastdaytoshow)
                     {
                         // This record is out of visible range

@@ -23,6 +23,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/modules/export/modules_export.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 
 /**

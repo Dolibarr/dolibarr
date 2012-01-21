@@ -392,6 +392,7 @@ if (! defined('NOLOGIN'))
 				$dol_dst=0;
 				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
 				{
+				    include_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
                     $datenow=dol_now();
                     $datefirst=dol_stringtotime($_POST["dst_first"]);
                     $datesecond=dol_stringtotime($_POST["dst_second"]);
@@ -416,7 +417,7 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
 				$interface=new Interfaces($db);
 				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
 				if ($result < 0) { $error++; }

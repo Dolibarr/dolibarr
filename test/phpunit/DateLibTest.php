@@ -211,6 +211,39 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 
     /**
     */
+    public function testDolStringToTime()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $stime='1970-01-01T02:00:00Z';
+        $result=dol_stringtotime($stime);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(7200,$result);
+
+        $stime='19700101T020000Z';
+        $result=dol_stringtotime($stime);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(7200,$result);
+
+		$stime='19700101020000';
+		$result=dol_stringtotime($stime);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(7200,$result);
+
+		$stime='19700101';
+		$result=dol_stringtotime($stime);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(0,$result);
+
+        return $result;
+    }
+
+    /**
+    */
     public function testDolGetFirstDay()
     {
         global $conf,$user,$langs,$db;

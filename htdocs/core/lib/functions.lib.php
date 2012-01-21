@@ -973,58 +973,6 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 
 
 /**
- *	Convert a string date into a GM Timestamps date
- *
- *	@param	string	$string		Date in a string
- *				     	        YYYYMMDD
- *	                 			YYYYMMDDHHMMSS
- *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
- *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
- *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
- *  @param	int		$gm         1=Input date is GM date, 0=Input date is local date
- *		                		19700101020000 -> 7200 with gm=1
- *  @return	date				Date
- *
- *  @see    dol_print_date, dol_mktime, dol_getdate
- */
-function dol_stringtotime($string, $gm=1)
-{
-    if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
-    {
-        // This part of code should not be used.
-        dol_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARNING);
-        // Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
-        // Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
-        $sday = $reg[1];
-        $smonth = $reg[2];
-        $syear = $reg[3];
-        $shour = $reg[4];
-        $smin = $reg[5];
-        $ssec = $reg[6];
-        if ($syear < 50) $syear+=1900;
-        if ($syear >= 50 && $syear < 100) $syear+=2000;
-        $string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
-    }
-    // Convert date RFC3339
-    else if (preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg))
-    {
-        $syear = $reg[1];
-        $smonth = $reg[2];
-        $sday = $reg[3];
-        $shour = $reg[4];
-        $smin = $reg[5];
-        $ssec = $reg[6];
-        $string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
-    }
-
-    $string=preg_replace('/([^0-9])/i','',$string);
-    $tmp=$string.'000000';
-    $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
-    return $date;
-}
-
-
-/**
  *	Return an array with date info
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *
