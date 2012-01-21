@@ -44,7 +44,8 @@ class DoliDBPgsql
 	//! Version min database
 	static $versionmin=array(8,4,0);	// Version min database
 
-	var $results;                 // Resultset de la derniere requete
+	//! Resultset of last request
+	private $results;
 
 	var $connected;               // 1 si connecte, 0 sinon
 	var $database_selected;       // 1 si base selectionne, 0 sinon

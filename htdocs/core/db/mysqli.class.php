@@ -43,8 +43,8 @@ class DoliDBMysqli
     static $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
     //! Version min database
     static $versionmin=array(4,1,0);
-    //! Resultset of last request
-    var $results;
+	//! Resultset of last request
+	private $results;
     //! 1 if connected, 0 else
     var $connected;
     //! 1 if database selected, 0 else

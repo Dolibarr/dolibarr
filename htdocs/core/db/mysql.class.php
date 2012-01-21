@@ -44,7 +44,7 @@ class DoliDBMysql
 	//! Version min database
 	static $versionmin=array(3,1,0);
 	//! Resultset of last request
-	var $results;
+	private $results;
 	//! 1 if connected, 0 else
 	var $connected;
 	//! 1 if database selected, 0 else

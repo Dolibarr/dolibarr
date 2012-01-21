@@ -43,8 +43,8 @@ class DoliDBMssql
 	static $forcecollate='latin1_swedish_ci';
 	//! Version min database
 	static $versionmin=array(2000);
-	//! Resultset de la derniere requete
-	var $results;
+	//! Resultset of last request
+	private $results;
 	//! 1 si connecte, 0 sinon
 	var $connected;
 	//! 1 si base selectionne, 0 sinon
