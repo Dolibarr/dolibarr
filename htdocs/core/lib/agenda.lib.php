@@ -27,7 +27,7 @@
 /**
  * Show filter form in agenda view
  *
- * @param	string	$form			Form name
+ * @param	Object	$form			Form object
  * @param	int		$canedit		Can edit filter fields
  * @param	int		$status			Status
  * @param 	int		$year			Year
@@ -39,8 +39,10 @@
  * @param 	string	$filterd		Filter of done by user
  * @param 	int		$pid			Product id
  * @param 	int		$socid			Third party id
+ * @param	array	$showextcals	Array with list of external calendars, or -1 to show no legend
+ * @return	void
  */
-function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid)
+function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$showextcals=array())
 {
 	global $conf,$langs,$db;
 
@@ -86,12 +88,12 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '</td></tr>';
 
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
-				$htmlactions=new FormActions($db);
+				$formactions=new FormActions($db);
 				print '<tr>';
 				print '<td nowrap="nowrap">';
 				print $langs->trans("Type");
 				print ' &nbsp;</td><td nowrap="nowrap">';
-				print $htmlactions->select_type_actions(GETPOST('actioncode'), "actioncode");
+				print $formactions->select_type_actions(GETPOST('actioncode'), "actioncode");
 				print '</td></tr>';
 			}
 
@@ -118,6 +120,41 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 			print '<br>';
 			print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" style="width:120px" name="viewlist" value="'.$langs->trans("ViewList").'">';
 			print '</td>';
+
+			// Legend
+			if ($conf->use_javascript_ajax && is_array($showextcals))
+			{
+    			print '<td align="center" valign="middle" nowrap="nowrap">';
+                print '<script type="text/javascript">'."\n";
+                print 'jQuery(document).ready(function () {'."\n";
+                print 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });'."\n";
+                print 'jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });'."\n";
+                print 'jQuery(".family_birthday").toggle();'."\n";
+                print '});'."\n";
+                print '</script>'."\n";
+                print '<table>';
+                if (! empty($conf->global->MAIN_JS_SWITCH_AGENDA))
+                {
+                    if (count($showextcals) > 0)
+                    {
+                        print '<tr><td><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> '.$langs->trans("LocalAgenda").'</td></tr>';
+                        foreach($showextcals as $val)
+                        {
+                            $htmlname=dol_string_nospecial($val['name']);
+                            print '<script type="text/javascript">'."\n";
+                            print 'jQuery(document).ready(function () {'."\n";
+                            print 'jQuery("#check_'.$htmlname.'").click(function() { jQuery(".family_'.$htmlname.'").toggle(); });'."\n";
+                            print '});'."\n";
+                            print '</script>'."\n";
+                            print '<tr><td><input type="checkbox" id="check_'.$htmlname.'" name="check_'.$htmlname.'" checked="true"> '.$val['name'].'</td></tr>';
+                        }
+                    }
+                }
+                print '<tr><td><input type="checkbox" id="check_birthday" name="check_birthday checked="false"> '.$langs->trans("AgendaShowBirthdayEvents").'</td></tr>';
+                print '</table>';
+                print '</td>';
+			}
+
 			print '</tr>';
 		}
 		print '</table>';
@@ -128,7 +165,9 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 
 /**
  *  Show actions to do array
- *  @param		max		Max nb of records
+ *
+ *  @param	int		$max		Max nb of records
+ *  @return	void
  */
 function show_array_actions_to_do($max=5)
 {
@@ -227,7 +266,9 @@ function show_array_actions_to_do($max=5)
 
 /**
  *  Show last actions array
- *  @param		max		Max nb of records
+ *
+ *  @param	int		$max		Max nb of records
+ *  @return	void
  */
 function show_array_last_actions_done($max=5)
 {
@@ -314,6 +355,7 @@ function show_array_last_actions_done($max=5)
 
 /**
  *  Define head array for tabs of agenda setup pages
+ *
  *  @return		Array of head
  */
 function agenda_prepare_head()
