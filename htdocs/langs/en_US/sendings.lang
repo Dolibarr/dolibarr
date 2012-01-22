@@ -50,9 +50,9 @@ WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
 StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated
 DateDeliveryPlanned=Planed date of delivery
 DateReceived=Date delivery received
-SendShippingByEMail=Send shipping by EMail
-SendShippingRef=Send shipping %s
-ActionsOnShipping=Acions on shipping
+SendShippingByEMail=Send shipment by EMail
+SendShippingRef=Send shipment %s
+ActionsOnShipping=Events on shipment
 LinkToTrackYourPackage=Link to track your package
 ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the order card.
 
