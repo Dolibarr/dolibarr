@@ -179,6 +179,6 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (23
 
 update llx_cotisation set fk_bank = null where fk_bank not in (select rowid from llx_bank);
 
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 12, 'Cotisation fonciere des entreprises', 0,1,'TAXCFE' ,'1');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 13, 'Cotisation sur la valeur ajoutee des entreprises', 0,1,'TAXCVAE' ,'1');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (12, 'Cotisation foncière des entreprises', 0, 1, 'TAXCFE', '1');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (13, 'Cotisation sur la valeur ajoutée des entreprises', 0, 1, 'TAXCVAE', '1');
 
