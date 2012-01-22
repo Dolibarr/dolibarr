@@ -155,11 +155,11 @@ class ical
     }
 
     /**
-     * Add to $this->ical array one value and key. Type is VTODO, VEVENT, VFREEBUSY, VCALENDAR ... .
+     * Add to $this->ical array one value and key.
      *
-     * @param 	string $type	Type
-     * @param 	string $key		Key
-     * @param 	string $value	Value
+     * @param 	string 	$type		Type ('VTODO', 'VEVENT', 'VFREEBUSY', 'VCALENDAR'...)
+     * @param 	string 	$key		Key	('DTSTART', ...). Note: Field is never 'DTSTART;TZID=...' because ';...' was before removed and added as another property
+     * @param 	string 	$value		Value
      * @return	void
      */
     function add_to_array($type, $key, $value)

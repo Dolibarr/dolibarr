@@ -825,9 +825,9 @@ function dol_format_address($object)
 
 /**
  *	Output date in a string format according to outputlangs (or langs if not defined).
- * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset
+ * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
  *
- *	@param	timestamp	$time        	GM Timestamps date (or deprecated strings 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
+ *	@param	timestamp	$time        	GM Timestamps date
  *	@param	string		$format      	Output date format
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
@@ -973,8 +973,11 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 
 
 /**
- *	Return an array with date info
+ *	Return an array with locale date info.
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
+ *
+ *  WARNING: This function always use PHP server timezone to return locale informations.
+ *  Usage must be avoid.
  *
  *	@param	timestamp	$timestamp		Timestamp
  *	@param	boolean		$fast			Fast mode
@@ -1000,6 +1003,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *										'yday' => floor($secsInYear/$_day_power),
  *										'leap' => $leaf,
  *										'ndays' => $ndays
+ * 	@see 								dol_print_date, dol_stringtotime, dol_mktime
  */
 function dol_getdate($timestamp,$fast=false)
 {
@@ -1030,17 +1034,17 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  * 	Replace function mktime not available under Windows if year < 1970
  *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *
- * 	@param	int		$hour			Hour	(can be -1 for undefined)
- *	@param	int		$minute			Minute	(can be -1 for undefined)
- *	@param	int		$second			Second	(can be -1 for undefined)
- *	@param	int		$month			Month (1 to 12)
- *	@param	int		$day			Day (1 to 31)
- *	@param	int		$year			Year
- *	@param	int		$gm				1=Input informations are GMT values, otherwise local to server TZ
- *	@param	int		$check			0=No check on parameters (Can use day 32, etc...)
- *  @param	int		$isdst			Dayling saving time
- *	@return	timestamp				Date as a timestamp, '' if error
- * 	@see 							dol_print_date, dol_stringtotime
+ * 	@param	int			$hour			Hour	(can be -1 for undefined)
+ *	@param	int			$minute			Minute	(can be -1 for undefined)
+ *	@param	int			$second			Second	(can be -1 for undefined)
+ *	@param	int			$month			Month (1 to 12)
+ *	@param	int			$day			Day (1 to 31)
+ *	@param	int			$year			Year
+ *	@param	int			$gm				1=Input informations are GMT values, otherwise local to server TZ
+ *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
+ *  @param	int			$isdst			Dayling saving time
+ *	@return	timestamp					Date as a timestamp, '' if error
+ * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$isdst=true)
 {

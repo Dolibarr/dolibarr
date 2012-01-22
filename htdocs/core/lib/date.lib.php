@@ -31,32 +31,33 @@
  */
 function get_tz_array()
 {
-    $tzarray=array( -11=>"Pacific/Midway",
-                    -10=>"Pacific/Fakaofo",
-                    -9=>"America/Anchorage",
-                    -8=>"America/Los_Angeles",
-                    -7=>"America/Dawson_Creek",
-                    -6=>"America/Chicago",
-                    -5=>"America/Bogota",
-                    -4=>"America/Anguilla",
-                    -3=>"America/Araguaina",
-                    -2=>"America/Noronha",
-                    -1=>"Atlantic/Azores",
-                    0=>"Africa/Abidjan",
-                    1=>"Europe/Paris",
-                    2=>"Europe/Helsinki",
-                    3=>"Europe/Moscow",
-                    4=>"Asia/Dubai",
-                    5=>"Asia/Karachi",
-                    6=>"Indian/Chagos",
-                    7=>"Asia/Jakarta",
-                    8=>"Asia/Hong_Kong",
-                    9=>"Asia/Tokyo",
-                    10=>"Australia/Sydney",
-                    11=>"Pacific/Noumea",
-                    12=>"Pacific/Auckland",
-                    13=>"Pacific/Enderbury"
-                    );
+    $tzarray=array(
+        -11=>"Pacific/Midway",
+        -10=>"Pacific/Fakaofo",
+        -9=>"America/Anchorage",
+        -8=>"America/Los_Angeles",
+        -7=>"America/Dawson_Creek",
+        -6=>"America/Chicago",
+        -5=>"America/Bogota",
+        -4=>"America/Anguilla",
+        -3=>"America/Araguaina",
+        -2=>"America/Noronha",
+        -1=>"Atlantic/Azores",
+        0=>"Africa/Abidjan",
+        1=>"Europe/Paris",
+        2=>"Europe/Helsinki",
+        3=>"Europe/Moscow",
+        4=>"Asia/Dubai",
+        5=>"Asia/Karachi",
+        6=>"Indian/Chagos",
+        7=>"Asia/Jakarta",
+        8=>"Asia/Hong_Kong",
+        9=>"Asia/Tokyo",
+        10=>"Australia/Sydney",
+        11=>"Pacific/Noumea",
+        12=>"Pacific/Auckland",
+        13=>"Pacific/Enderbury"
+    );
     return $tzarray;
 }
 
@@ -79,16 +80,32 @@ function getCurrentTimeZone()
 
 
 /**
+ *  Add a delay of a timezone to a date
+ *
+ *  @param      timestamp	$time               Date timestamp
+ *  @param      string		$timezone			Timezone
+ *  @return     timestamp      			        New timestamp
+ */
+function dol_time_plus_timezone($time,$timezone)
+{
+    // TODO Finish function
+
+    return $time;
+}
+
+
+/**
  *  Add a delay to a date
  *
  *  @param      timestamp	$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
- *  @param      int			$duration_unit      Unit of added delay (d, m, y)
+ *  @param      int			$duration_unit      Unit of added delay (d, m, y, w)
  *  @return     timestamp      			        New timestamp
  */
 function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
-	if ($duration_value == 0) return $time;
+	if ($duration_value == 0)  return $time;
+	if ($duration_unit == 'w') return $time + (3600*24*7*$duration_value);
 	if ($duration_value > 0) $deltastring="+".abs($duration_value);
 	if ($duration_value < 0) $deltastring="-".abs($duration_value);
 	if ($duration_unit == 'd') { $deltastring.=" day"; }
@@ -98,7 +115,7 @@ function dol_time_plus_duree($time,$duration_value,$duration_unit)
 }
 
 
-/**   Converti les heures et minutes en secondes
+/**   Convert hours and minutes into seconds
  *
  *    @param      int		$iHours      Heures
  *    @param      int		$iMinutes    Minutes
@@ -208,13 +225,16 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
  *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
  *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
  *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
- *  @param	int		$gm         1=Input date is GM date, 0=Input date is local date
- *		                		19700101020000 -> 7200 with gm=1
+ *  @param	int		$gm         1 =Input date is GM date,
+ *                              0 =Input date is local date using PHP server timezone
+ *                              -1=Input date is local date using timezone provided as third parameter
+ *	@param	string	$tz			Timezone to use of $gm=-1
  *  @return	date				Date
+ *		                		19700101020000 -> 7200 with gm=1
  *
  *  @see    dol_print_date, dol_mktime, dol_getdate
  */
-function dol_stringtotime($string, $gm=1)
+function dol_stringtotime($string, $gm=1, $tz='')
 {
     // Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
     if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
@@ -257,7 +277,12 @@ function dol_stringtotime($string, $gm=1)
 
     $string=preg_replace('/([^0-9])/i','',$string);
     $tmp=$string.'000000';
-    $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
+    $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),($gm?1:0));
+    if ($gm == -1)
+    {
+        // TODO Define offset according to TZ
+        $date+=0;
+    }
     return $date;
 }
 
