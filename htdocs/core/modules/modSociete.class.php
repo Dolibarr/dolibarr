@@ -267,10 +267,10 @@ class modSociete extends DolibarrModules
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]='ImportDataset_company_1';
 		$this->import_icon[$r]='company';
+		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('s'=>MAIN_DB_PREFIX.'societe');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array('s.nom'=>"Name*",'s.status'=>"Status",'s.client'=>"Customer*",'s.fournisseur'=>"Supplier*",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'s.fk_pays'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note",'s.fk_typent'=>"ThirdPartyType",'s.fk_effectif'=>"Effectif","s.fk_forme_juridique"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus','s.default_lang'=>'DefaultLanguage','s.barcode'=>'BarCode','s.datec'=>"DateCreation");
 		$this->import_fieldshidden_array[$r]=array('s.fk_user_creat'=>'user->id');
-		$this->import_entities_array[$r]=array();	// We define here only fields that use another picto
 		$this->import_convertvalue_array[$r]=array(
 			's.fk_typent'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/ctypent.class.php','class'=>'Ctypent','method'=>'fetch','dict'=>'DictionnaryCompanyType'),
 			's.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/cpays.class.php','class'=>'Cpays','method'=>'fetch','dict'=>'DictionnaryCountry'),
@@ -284,11 +284,10 @@ class modSociete extends DolibarrModules
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]='ImportDataset_company_2';
 		$this->import_icon[$r]='contact';
-		//$this->import_permission[$r]=array(array("societe","export"));
+		$this->import_entities_array[$r]=array('s.fk_soc'=>'company');	// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('s'=>MAIN_DB_PREFIX.'socpeople');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array('s.fk_soc'=>'ThirdPartyName*','s.civilite'=>'Civility','s.name'=>"Name*",'s.firstname'=>"Firstname",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'s.fk_pays'=>"CountryCode",'s.birthday'=>"BirthdayDate",'s.poste'=>"Role",'s.phone'=>"Phone",'s.phone_perso'=>"PhonePerso",'s.phone_mobile'=>"PhoneMobile",'s.fax'=>"Fax",'s.email'=>"Email",'s.note'=>"Note",'s.datec'=>"DateCreation");
 		$this->import_fieldshidden_array[$r]=array('s.fk_user_creat'=>'user->id');
-		$this->import_entities_array[$r]=array('s.fk_soc'=>'company');	// We define here only fields that use another picto
 		$this->import_convertvalue_array[$r]=array(
 			's.fk_soc'=>array('rule'=>'fetchidfromref','file'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
 			's.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/cpays.class.php','class'=>'Cpays','method'=>'fetch','dict'=>'DictionnaryCountry'),

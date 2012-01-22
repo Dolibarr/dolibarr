@@ -210,10 +210,10 @@ class modAdherent extends DolibarrModules
         $this->import_code[$r]=$this->rights_class.'_'.$r;
         $this->import_label[$r]="Members"; // Translation key
         $this->import_icon[$r]=$this->picto;
+        $this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
         $this->import_tables_array[$r]=array('a'=>MAIN_DB_PREFIX.'adherent');
         $this->import_tables_creator_array[$r]=array('a'=>'fk_user_author');    // Fields to store import user id
         $this->import_fields_array[$r]=array('a.civilite'=>"Civility",'a.nom'=>"Lastname*",'a.prenom'=>"Firstname",'a.login'=>"Login*","a.pass"=>"Password","a.fk_adherent_type"=>"MemberType*",'a.morphy'=>'MorPhy*','a.societe'=>'Company','a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.naiss'=>"Birthday",'a.statut'=>"Status*",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datefin'=>'DateEndSubscription');
-        $this->import_entities_array[$r]=array();   // We define here only fields that use another picto
         $this->import_regex_array[$r]=array('a.civilite'=>'code@'.MAIN_DB_PREFIX.'c_civilite','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type','a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
         $this->import_examplevalues_array[$r]=array('a.civilite'=>"MR",'a.nom'=>'Smith','a.prenom'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.adresse'=>'21 jump street','a.cp'=>'55000','a.ville'=>'New York','a.pays'=>'1','a.email'=>'jsmith@example.com','a.naiss'=>'1972-10-10','a.statut'=>"0 or 1",'a.note'=>"This is a comment on member",'a.datec'=>dol_print_date($now,'%Y-%m-%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
     }
