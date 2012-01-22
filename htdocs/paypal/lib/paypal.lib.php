@@ -26,8 +26,8 @@
 /**
  * Show header
  *
- * @param 	string	$title
- * @param 	string	$head
+ * @param 	string	$title		Title
+ * @param 	string	$head		More header to add
  * @return	void
  */
 function llxHeaderPaypal($title, $head = "")
@@ -334,8 +334,8 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
         $landingPage='Billing';
     }
 
-    dol_syslog("expresscheckout redirect with CallSetExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
-    $resArray = CallSetExpressCheckout(
+    dol_syslog("expresscheckout redirect with callSetExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
+    $resArray = callSetExpressCheckout(
         $paymentAmount,
         $currencyCodeType,
         $paymentType,
@@ -404,7 +404,7 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  '      desc:               Product description
  '--------------------------------------------------------------------------------------------------------------------------------------------
  */
-function CallSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email='', $desc='')
+function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email='', $desc='')
 {
     //------------------------------------------------------------------------------------------------------------------------------------
     // Construct the parameter string that describes the SetExpressCheckout API call in the shortcut implementation
@@ -461,9 +461,10 @@ function CallSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 /**
  * 	Prepares the parameters for the GetExpressCheckoutDetails API Call.
  *
- *	@return	array		The NVP Collection object of the GetExpressCheckoutDetails Call Response.
+ *	@param	string	$token		Token
+ *	@return	array				The NVP Collection object of the GetExpressCheckoutDetails Call Response.
  */
-function GetDetails($token)
+function getDetails($token)
 {
     //'--------------------------------------------------------------
     //' At this point, the buyer has completed authorizing the payment
@@ -504,9 +505,16 @@ function GetDetails($token)
 /**
  *	Validate payment
  *
+ *	@param	string	$token				Token
+ *	@param	string	$paymentType		Type
+ *	@param	string	$currencyCodeType	Currency
+ *	@param	string	$payerID			Payer ID
+ *	@param	string	$ipaddress			IP Address
+ *	@param	string	$FinalPaymentAmt	Amount
+ *	@param	string	$tag				Tag
  *	@return	void
  */
-function ConfirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag)
+function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag)
 {
     /* Gather the information to make the final call to
      finalize the PayPal payment.  The variable nvpstr
@@ -696,31 +704,6 @@ function hash_call($methodName,$nvpStr)
     }
 
     return $nvpResArray;
-}
-
-
-/**
- * Get API errors
- *
- * @return	array		Array of errors
- */
-function GetApiError()
-{
-	$errors=array();
-
-	$resArray=$_SESSION['reshash'];
-
-	if(isset($_SESSION['curl_error_no']))
-	{
-		$errors[] = $_SESSION['curl_error_no'].'-'.$_SESSION['curl_error_msg'];
-	}
-
-	foreach($resArray as $key => $value)
-	{
-		$errors[] = $key.'-'.$value;
-	}
-
-	return $errors;
 }
 
 
