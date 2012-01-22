@@ -969,15 +969,17 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 if ($i < $maxPrint || $maxPrint == 0)
                 {
                     $ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
-                    // Show rect of event
-                    $colorindex=0;
-                    if ($event->author->id == $user->id || $event->usertodo->id == $user->id || $event->userdone->id == $user->id) $colorindex=1;
-                    if ($event->type_code == 'BIRTHDAY') $colorindex=2;
-                    if ($event->type_code == 'ICALEVENT') $color=$event->icalcolor;
-                    else $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
+
+                    // Define $color and $cssclass of event
+                    $color=-1; $cssclass=''; $colorindex=-1;
+                    if ($event->author->id == $user->id || $event->usertodo->id == $user->id || $event->userdone->id == $user->id) { $colorindex=1; $cssclass='family_mytasks'; }
+                    if ($event->type_code == 'ICALEVENT') { $color=$event->icalcolor; $cssclass=($event->icalname?'family_'.dol_string_nospecial($event->icalname):'family_other'); }
+                    if ($event->type_code == 'BIRTHDAY')  { $colorindex=2; $cssclass='family_birthday'; }
+                    if ($color == -1) $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
                     //print "x".$color;
 
-                    print '<div id="event_'.sprintf("%04d",$annee).sprintf("%02d",$mois).sprintf("%02d",$jour).'_'.$i.'" class="event">';
+                    // Show rect of event
+                    print '<div id="event_'.sprintf("%04d",$annee).sprintf("%02d",$mois).sprintf("%02d",$jour).'_'.$i.'" class="event '.$cssclass.'">';
                     print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; " width="100%"><tr>';
                     print '<td nowrap="nowrap">';
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
