@@ -62,8 +62,8 @@ $sql = "SELECT e.label, e.rowid, e.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.statut in (0,1)";
 $sql.= " AND e.entity = ".$conf->entity;
-$sql.= " ORDER BY e.statut DESC ";
-$sql.= $db->plimit(15 ,0);
+$sql.= $db->order('e.statut','DESC');
+$sql.= $db->plimit(15, 0);
 
 $result = $db->query($sql);
 

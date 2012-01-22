@@ -124,7 +124,7 @@ class Entrepot extends CommonObject
 	 *	Update properties of a warehouse
 	 *
 	 *	@param		int		$id     id of warehouse to modify
-	 *	@param      User	$user
+	 *	@param      User	$user	User object
 	 *	@return		int				>0 if OK, <0 if KO
 	 */
 	function update($id, $user)
@@ -225,7 +225,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Load warehouse data
 	 *
-	 *	@param		int		$id     Warehouse id 
+	 *	@param		int		$id     Warehouse id
 	 *	@return		int				>0 if OK, <0 if KO
 	 */
 	function fetch($id)
@@ -287,6 +287,7 @@ class Entrepot extends CommonObject
 	 * 	Load warehouse info data
 	 *
 	 *  @param	int		$id      warehouse id
+	 *  @return	void
 	 */
 	function info($id)
 	{
@@ -333,8 +334,9 @@ class Entrepot extends CommonObject
 
 	/**
 	 *  Return list of all warehouses
-	 *  
-	 * 	@return 	array		Array list of warehouses
+	 *
+	 *	@param	int		$status		Status
+	 * 	@return array				Array list of warehouses
 	 */
 	function list_array($status=1)
 	{
@@ -407,9 +409,9 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return label of a given status
 	 *
-	 *	@param      status      Statut
-	 *	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *	@return     string      Label of status
+	 *	@param	int		$statut     Status
+	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return string      		Label of status
 	 */
 	function LibStatut($statut,$mode=0)
 	{

@@ -191,12 +191,12 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</tr>';
 
 		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
 		print $product->getLibStatut(2,0);
 		print '</td></tr>';
 
 		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
 		print $product->getLibStatut(2,1);
 		print '</td></tr>';
 

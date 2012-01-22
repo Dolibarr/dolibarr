@@ -148,7 +148,7 @@ $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
 if ($toolowstock) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit + 1 ,$offset);
+$sql.= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
 
 if ($resql)

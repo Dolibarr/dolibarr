@@ -201,7 +201,7 @@ if ($id || $ref)
 
 			// Number of subproducts
 			$prodsfather = $product->getFather(); //Parent Products
-			$product->get_sousproduits_arbo ();
+			$product->get_sousproduits_arbo();
 			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.count($product->get_arbo_each_prod()).'</td>';
 
 			dol_fiche_end();
@@ -287,7 +287,7 @@ if ($id || $ref)
 
 		// Number of subproducts
 		$prodsfather = $product->getFather(); //Parent Products
-		$product->get_sousproduits_arbo ();
+		$product->get_sousproduits_arbo();
 		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.count($product->get_arbo_each_prod()).'</td>';
 		print '</tr>';
 

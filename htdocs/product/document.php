@@ -154,12 +154,12 @@ if ($product->id)
     print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
 
 	// Status (to sell)
-	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
 	print $product->getLibStatut(2,0);
 	print '</td></tr>';
 
 	// Status (to buy)
-	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
 	print $product->getLibStatut(2,1);
 	print '</td></tr>';
 

@@ -162,7 +162,7 @@ else
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
     $sql.= $db->order($sortfield,$sortorder);
-    $sql.= $db->plimit($limit + 1 ,$offset);
+    $sql.= $db->plimit($limit + 1, $offset);
 
     dol_syslog("sql=".$sql);
     $resql = $db->query($sql);
@@ -202,7 +202,7 @@ else
     	if (isset($catid))
     	{
     		print "<div id='ways'>";
-    		$c = new Categorie ($db, $catid);
+    		$c = new Categorie($db, $catid);
     		$ways = $c->print_all_ways(' &gt; ','product/liste.php');
     		print " &gt; ".$ways[0]."<br>\n";
     		print "</div><br>";

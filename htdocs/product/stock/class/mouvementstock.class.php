@@ -325,6 +325,7 @@ class MouvementStock
 	 * 	@param		int		$qty			Quantity
 	 * 	@param		int		$price			Price
 	 * 	@param		string	$label			Label of stock movement
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
 	{

@@ -122,7 +122,7 @@ if (! empty($_GET['idproduct']))
 	$sql.= " AND p.rowid = '".$_GET['idproduct']."'";
 }
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 //print $sql;
 $resql = $db->query($sql);

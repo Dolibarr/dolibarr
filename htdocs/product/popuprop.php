@@ -104,7 +104,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 if (isset($_GET['type'])) $sql.= " AND fk_product_type = ".$_GET['type'];
 $sql.= " GROUP BY (p.rowid)";
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit ,$offset);
+$sql.= $db->plimit($limit, $offset);
 
 $result=$db->query($sql);
 if ($result)

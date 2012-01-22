@@ -226,7 +226,7 @@ if ($id || $ref)
             print '</td></tr>';
 
 			// Status (to buy)
-			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
 			print $product->getLibStatut(2,1);
 			print '</td></tr>';
 
