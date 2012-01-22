@@ -228,7 +228,7 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
  *  @param	int		$gm         1 =Input date is GM date,
  *                              0 =Input date is local date using PHP server timezone
  *                              -1=Input date is local date using timezone provided as third parameter
- *	@param	string	$tz			Timezone to use of $gm=-1
+ *	@param	string	$tz			Timezone to use. This means param $gm=-1
  *  @return	date				Date
  *		                		19700101020000 -> 7200 with gm=1
  *
@@ -280,8 +280,7 @@ function dol_stringtotime($string, $gm=1, $tz='')
     $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),($gm?1:0));
     if ($gm == -1)
     {
-        // TODO Define offset according to TZ
-        $date+=0;
+        $date=dol_time_plus_timezone($date,$tz);
     }
     return $date;
 }
