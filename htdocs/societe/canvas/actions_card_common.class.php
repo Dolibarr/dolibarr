@@ -72,9 +72,9 @@ abstract class ActionsCardCommon
 	/**
      *  Get object from id or ref and save it into this->object
 	 *
-     *  @param		int			Object id
-     *  @param		ref			Object ref
-     *  @return		object		Object loaded
+     *  @param		int		$id			Object id
+     *  @param		ref		$ref		Object ref
+     *  @return		object				Object loaded
      */
     protected function getObject($id,$ref='')
     {

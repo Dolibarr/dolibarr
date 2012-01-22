@@ -206,7 +206,7 @@ if (empty($reshook))
 					if($object->id_prof_exists($i,$_POST["$slabel"],$object->id))
 					{
 						$langs->load("errors");
-                		$error++; $errors[] = $langs->transcountry('ProfId'.$i ,$object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist",$_POST["$slabel"]);
+                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $_POST[$slabel]);
                 		$action = ($action=='add'?'create':'edit');
 					}
 				}

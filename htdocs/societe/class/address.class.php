@@ -48,22 +48,21 @@ class Address
 
 
 	/**
-	 *  Constructeur de la classe
+	 *  Constructor
 	 *
-	 *  @param	DoliDB		$db     handler acces base de donnees
+	 *  @param	DoliDB		$db     Database handler
 	 */
 	function Address($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 	/**
 	 *  Create address into database
 	 *
-	 *  @param      socid       Company socid
-	 *  @param      user        Object user making creation
-	 *  @return     int         0 if OK, < 0 if KO
+	 *  @param	int		$socid      Company socid
+	 *  @param  User	$user       Object user making creation
+	 *  @return int         		0 if OK, < 0 if KO
 	 */
 	function create($socid, $user='')
 	{
@@ -152,10 +151,10 @@ class Address
 	/**
 	 *  Mise a jour des parametres de l'adresse
 	 *
-	 *  @param      id              id address
-	 *  @param		socid			id third party
-	 *  @param      user            Utilisateur qui demande la mise a jour
-	 *  @return     int             <0 si ko, >=0 si ok
+	 *  @param	int		$id             id address
+	 *  @param	int		$socid			id third party
+	 *  @param  User	$user           Utilisateur qui demande la mise a jour
+	 *  @return int             		<0 if KO, >=0 if OK
 	 */
 	function update($id, $socid, $user='')
 	{
@@ -415,8 +414,9 @@ class Address
 	/**
 	 * 	Suppression d'une adresse
 	 *
-	 *  @param      id      id de la societe a supprimer
-	 *  @param		socid	id third party
+	 *  @param	int		$id      id de la societe a supprimer
+	 *  @param	int		$socid	id third party
+	 *  @return	void
 	 */
 	function delete($id,$socid)
 	{
@@ -438,7 +438,8 @@ class Address
 	/**
 	 * 	Charge les informations d'ordre info dans l'objet societe
 	 *
-	 *  @param     id     id de la societe a charger
+	 *  @param  int		$id     id de la societe a charger
+	 *  @return	void
 	 */
 	function info($id)
 	{
@@ -506,8 +507,15 @@ class AddressLine
 	var $fax;
 	var $note;
 
-	function AddressLine()
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDB		$db     Database handler
+	 */
+	function AddressLine($db)
 	{
+		$this->db = $db;
 	}
 }
 ?>

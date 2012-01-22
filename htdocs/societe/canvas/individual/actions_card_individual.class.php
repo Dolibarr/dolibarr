@@ -75,8 +75,9 @@ class ActionsCardIndividual extends ActionsCardCommon
 	/**
 	 * Execute actions
 	 *
-	 * @param	int		$id		Id of object (may be empty for creation)
-	 * @return	int				<0 if KO, >0 if OK
+	 * @param	string	&$action	Action
+	 * @param	int		$id			Id of object (may be empty for creation)
+	 * @return	int					<0 if KO, >0 if OK
 	 */
 	function doActions(&$action, $id)
 	{

@@ -605,15 +605,15 @@ class Societe extends CommonObject
     /**
      *    Load a third party from database into memory
      *
-     *    @param      rowid			Id of third party to load
-     *    @param      ref			Reference of third party, name (Warning, this can return several records)
-     *    @param      ref_ext       External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-     *    @param      ref_int       Internal reference of third party
-     *    @param      idprof1		Prof id 1 of third party (Warning, this can return several records)
-     *    @param      idprof2		Prof id 2 of third party (Warning, this can return several records)
-     *    @param      idprof3		Prof id 3 of third party (Warning, this can return several records)
-     *    @param      idprof4		Prof id 4 of third party (Warning, this can return several records)
-     *    @return     int			>0 if OK, <0 if KO or if two records found for same ref or idprof.
+     *    @param	int		$rowid			Id of third party to load
+     *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
+     *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
+     *    @param    string	$ref_int       	Internal reference of third party
+     *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
+     *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
+     *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
+     *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
+     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof.
      */
     function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
@@ -950,6 +950,8 @@ class Societe extends CommonObject
 
     /**
      *    Update record to set prefix
+     *
+     *    @return	void
      */
     function attribute_prefix()
     {
@@ -980,7 +982,7 @@ class Societe extends CommonObject
                     {
                         $sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='".$prefix."' WHERE rowid='".$this->id."'";
 
-                        if ( $this->db->query( $sql) )
+                        if ( $this->db->query($sql) )
                         {
 
                         }
@@ -1004,10 +1006,11 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Genere le prefix de la societe
-     *    \param      nom         nom de la societe
-     *    \param      taille      taille du prefix a retourner
-     *    \param      mot         l'indice du mot a utiliser
+     *  Genere le prefix de la societe
+     *
+     *  @param      nom         nom de la societe
+     *  @param      taille      taille du prefix a retourner
+     *  @param      mot         l'indice du mot a utiliser
      */
     function genprefix($nom, $taille=4, $mot=0)
     {
