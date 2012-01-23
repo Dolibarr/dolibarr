@@ -1,0 +1,22 @@
+README (English)
+##################################################
+Launchpad Package tools
+##################################################
+
+This directory contains files to explain how to publish
+a package onto LaunchPad
+
+
+# This is standard command to work on RPM packaging:
+#
+# To install all packagers tools:
+# apt-get install bzr-builder bzr pbuilder
+
+To submit a package on LaunchPad:
+- Create account on launchpad.org
+- Create Project
+- Link project to official SCM server
+- Upload SSH public key onto account
+- Run from command line: bzr launchpad-login yourlogin
+
+- ...
