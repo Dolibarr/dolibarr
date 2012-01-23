@@ -1401,7 +1401,6 @@ padding-bottom: 4px;
 }
 
 tr.box_titre {
-/*background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/liste_titre2.png' ?>);*/
 background-repeat: repeat-x;
 color: #842F00;
 font-weight: normal;
