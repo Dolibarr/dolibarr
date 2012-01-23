@@ -291,9 +291,11 @@ class autoTranslator
 		$src_text_to_translate=preg_replace('/'.preg_quote('\n\n').'/',' NNNNN ',$src_text_to_translate);
 
 		// Define GET URL v1
-		$url = "http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=".urlencode($src_text_to_translate)."&langpair=".urlencode($lang_pair);
+		//$url = "http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=".urlencode($src_text_to_translate)."&langpair=".urlencode($lang_pair);
+		// Example: http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=Setup%20area&langpair=en_US|fr_FR
         // Define GET URL v2
-		// Example: "https://www.googleapis.com/language/translate/v2?key=".$this->apikey."&q=".urlencode($src_text_to_translate)."&source=".$src_lang."&target=".$dest_lang
+		$url = "https://www.googleapis.com/language/translate/v2?key=".$this->apikey."&q=".urlencode($src_text_to_translate)."&source=".urlencode($src_lang)."&target=".urlencode($dest_lang);
+		// Example: https://www.googleapis.com/language/translate/v2?key=APIKEY&q=Setup%20area&source=en_US&target=fr_FR
 
 		// Send request
 		print "Url to translate: ".$url."\n";

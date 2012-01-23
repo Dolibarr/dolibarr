@@ -56,8 +56,8 @@ $dir=DOL_DOCUMENT_ROOT."/langs";
 
 // Check parameters
 if (! isset($argv[2])) {
-    print "Usage:   ".$script_file."  lang_code_src lang_code_dest|all [langfile.lang]\n";
-    print "Example: ".$script_file."  en_US         pt_PT\n";
+    print "Usage:   ".$script_file."  lang_code_src lang_code_dest|all APIKEY [langfile.lang]\n";
+    print "Example: ".$script_file."  en_US         pt_PT              123456\n";
     print "Rem:     lang_code to use can be found on http://www.google.com/language_tools\n";
     exit;
 }
@@ -65,11 +65,12 @@ if (! isset($argv[2])) {
 // Show parameters
 print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
+print 'Argument 3='.$argv[3]."\n";
 $file='';
-if (isset($argv[3]))
+if (isset($argv[4]))
 {
-	$file=$argv[3];
-	print 'Argument 3='.$argv[3]."\n";
+	$file=$argv[4];
+	print 'Argument 4='.$argv[4]."\n";
 }
 print 'Files will be generated/updated in directory '.$dir."\n";
 
@@ -89,7 +90,7 @@ if ($argv[2] != 'all')
 
 require_once(DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php");
 
-$langParser = new autoTranslator($argv[2],$argv[1],$dir,$file,$apikey);
+$langParser = new autoTranslator($argv[2],$argv[1],$dir,$file,$argv[3]);
 
 print "***** Finished *****\n";
 
