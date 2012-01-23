@@ -45,17 +45,21 @@ top_httphead();
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Registering the location of boxes
-if((isset($_GET['action']) && ! empty($_GET['action'])) && (isset($_GET['name']) && ! empty($_GET['name'])) )
+if ((isset($_GET['action']) && ! empty($_GET['action'])) && (isset($_GET['name']) && ! empty($_GET['name'])) )
 {
+	$entity = (GETPOST('entity','int') ? GETPOST('entity','int') : $conf->entity);
+	$action = GETPOST('action', 'alpha');
+	$name = GETPOST('name', 'alpha');
+	
 	if ($user->admin)
 	{
-		if ($_GET['action'] == 'set')
+		if ($action == 'set')
 		{
-			dolibarr_set_const($db, GETPOST('name','alpha'), 1, 'chaine', 0, '', GETPOST('entity','int'));
+			dolibarr_set_const($db, $name, 1, 'chaine', 0, '', $entity);
 		}
-		else if ($_GET['action'] == 'del')
+		else if ($action == 'del')
 		{
-			dolibarr_del_const($db, GETPOST('name','alpha'), GETPOST('entity','int'));
+			dolibarr_del_const($db, $name, $entity);
 		}
 	}
 }
