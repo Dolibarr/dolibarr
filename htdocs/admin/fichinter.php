@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin                <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011 	   Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011 	   Philippe Grand			    <philippe.grand@atoo-net.com>
@@ -107,7 +107,7 @@ if ($action == 'specimen')
 	$inter->initAsSpecimen();
 
 	// Charge le modele
-	$dir = "/core/modules/fichinter/";
+	$dir = "/core/modules/fichinter/doc/";
 	$file = "pdf_".$modele.".modules.php";
 	$file = dol_buildpath($dir.$file);
 	if (file_exists($file))
@@ -363,7 +363,7 @@ clearstatcache();
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$dir = $dirroot . "/core/modules/fichinter/";
+	$dir = $dirroot . "/core/modules/fichinter/doc/";
 
 	if (is_dir($dir))
 	{

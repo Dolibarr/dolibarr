@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011      Fabrice CHERRIER (12/05/2011) http://www.fcinc.fr
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis@dolibarr.fr>
+ * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2011		Fabrice CHERRIER
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/fichinter/pdf_soleil.modules.php
+ *	\file       htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
  *	\ingroup    ficheinter
  *	\brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
  */
