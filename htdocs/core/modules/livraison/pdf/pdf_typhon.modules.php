@@ -345,7 +345,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				// TODO doit etre modifie
 				//$waitingDelivery = $object->getRemainingDelivered();
 				$waitingDelivery='';
-				
+
 				if (is_array($waitingDelivery) & !empty($waitingDelivery))
 				{
 					$pdf->AddPage('P', 'A4');
@@ -385,7 +385,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 
 							$pdf-> SetY(40);
-							
+
 							$num = count($header);
 							for($i = 0; $i < $num; $i++)
 							{
@@ -422,9 +422,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 
-	/*
-	 *   \brief      Affiche la grille des lignes
-	 *   \param      pdf     objet PDF
+	/**
+	 *   Show table for lines
+	 *
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		string		$tab_top		Top position of table
+	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int			$nexY			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -468,14 +474,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *   	Show header of page
+	 *  Show top header of page.
 	 *
-	 *   	@param      $pdf     		Object PDF
-	 *   	@param      $object     	Object order
-	 *      @param      $showaddress    0=no, 1=yes
-	 *      @param      $outputlangs	Object lang for output
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object     	Object to show
+	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -649,12 +656,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *   	Show footer of page
-	 * 		Need this->emetteur object
-	 *
-	 *   	@param      pdf     		PDF factory
-	 * 		@param		object			Object invoice
-	 *      @param      outputlangs		Object lang for output
+	 *   	Show footer of page. Need this->emetteur object
+     *
+	 *   	@param	PDF			&$pdf     			PDF
+	 * 		@param	Object		$object				Object to show
+	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @return	void
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{

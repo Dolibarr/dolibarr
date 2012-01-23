@@ -559,13 +559,13 @@ class pdf_crabe extends ModelePDFFactures
 
 
 	/**
-	 *	Show other information
+	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *	@param	PDF			&$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
-	 *	@param	int			$posy			Position start
-	 *	@param	Translate	$outputlangs	Object langs
-	 *	@return int							Position pour suite
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		Object		$object			Object to show
+	 *   @param		int			$posy			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -689,7 +689,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 			}
 		}
-		
+
 		return $posy;
 	}
 
@@ -918,9 +918,14 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	/**
-	 *   Show the lines of invoice
+	 *   Show table for lines
 	 *
-	 *   @param		PDF		$pdf     object PDF
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		string		$tab_top		Top position of table
+	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int			$nexY			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -979,14 +984,15 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	/**
-	 *   	Show header of page
+	 *  Show top header of page.
 	 *
-	 *      @param      pdf             Object PDF
-	 *      @param      object          Object invoice
-	 *      @param      showaddress     0=no, 1=yes
-	 *      @param      outputlangs		Object lang for output
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object     	Object to show
+	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
 
@@ -1231,12 +1237,12 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	/**
-	 *   Show footer of page
+	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlangs		Object lang for output
-	 * 		\remarks	Need this->emetteur object
+	 *   	@param	PDF			&$pdf     			PDF
+	 * 		@param	Object		$object				Object to show
+	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @return	void
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{

@@ -289,9 +289,15 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 
-	/*
-	 *   \brief      Affiche la grille des lignes
-	 *   \param      pdf     objet PDF
+	/**
+	 *   Show table for lines
+	 *
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		string		$tab_top		Top position of table
+	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int			$nexY			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -315,14 +321,15 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 	/**
-	 *   	Show header of page
+	 *  Show top header of page.
 	 *
-	 *   	@param      $pdf     		Object PDF
-	 *   	@param      $object     	Object project
-	 *      @param      $showaddress    0=no, 1=yes
-	 *      @param      $outputlangs	Object lang for output
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object     	Object to show
+	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -399,12 +406,12 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 	/**
-	 *   	Show footer of page
-	 * 		Need this->emetteur object
-	 *
-	 *   	@param      pdf     		PDF factory
-	 * 		@param		object			Object invoice
-	 *      @param      outputlangs		Object lang for output
+	 *   	Show footer of page. Need this->emetteur object
+     *
+	 *   	@param	PDF			&$pdf     			PDF
+	 * 		@param	Object		$object				Object to show
+	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @return	void
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{

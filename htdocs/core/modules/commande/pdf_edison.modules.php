@@ -88,7 +88,7 @@ class pdf_edison extends ModelePDFCommandes
 
 	/**
      *  Function to build pdf onto disk
-     *  
+     *
      *  @param		int		$object				Id of object to generate
      *  @param		object	$outputlangs		Lang output object
      *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
@@ -182,7 +182,7 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('','', $default_font_size - 1);
 
-				$pdf->SetXY(10, $tab_top + 10 );
+				$pdf->SetXY(10, $tab_top + 10);
 
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
@@ -307,12 +307,13 @@ class pdf_edison extends ModelePDFCommandes
 	}
 
 	/**
-	 *	\brief      Affiche infos divers
-	 *	\param      pdf             Objet PDF
-	 *	\param      object          Objet commande
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y               Position pour suite
+	 *   Show miscellaneous information (payment mode, payment term, ...)
+	 *
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		Object		$object			Object to show
+	 *   @param		int			$posy			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -441,13 +442,14 @@ class pdf_edison extends ModelePDFCommandes
 	}
 
 	/**
-	 * Enter description here...
+	 *   Show table for lines
 	 *
-	 * @param $pdf
-	 * @param $tab_top
-	 * @param $tab_height
-	 * @param $nexY
-	 * @param $outputlangs
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		string		$tab_top		Top position of table
+	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int			$nexY			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -494,14 +496,15 @@ class pdf_edison extends ModelePDFCommandes
 
 
 	/**
-	 *   	Show header of page
+	 *  Show top header of page.
 	 *
-	 *   	@param      pdf     		Objet PDF
-	 *   	@param      object     		Objet commande
-	 *      @param      showaddress     0=no, 1=yes
-	 *      @param      outputlangs		Object lang for output
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object     	Object to show
+	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
@@ -624,12 +627,12 @@ class pdf_edison extends ModelePDFCommandes
 	}
 
 	/**
-	 *   	Show footer of page
-	 * 		Need this->emetteur object
+	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param      pdf     		PDF factory
-	 * 		@param		object			Object invoice
-	 *      @param      outputlangs		Object lang for output
+	 *   	@param	PDF			&$pdf     			PDF
+	 * 		@param	Object		$object				Object to show
+	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @return	void
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
     {
