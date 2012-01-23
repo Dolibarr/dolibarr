@@ -39,10 +39,11 @@ class pdf_soleil extends ModelePDFFicheinter
 {
 
 	/**
-	 *	\brief      Constructeur
-	 *	\param	    db		Handler acces base de donnee
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$DB      Database handler
 	 */
-	function pdf_soleil($db=0)
+	function pdf_soleil($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -78,12 +79,13 @@ class pdf_soleil extends ModelePDFFicheinter
 	}
 
 	/**
-	 *	\brief      Fonction generant la fiche d'intervention sur le disque
-	 *	\param	    fichinter		Object fichinter
-	 *	\param		outputlangs		Lang output object
-	 *	\return	    int     		1=ok, 0=ko
+     *  Function to build pdf onto disk
+     *
+     *  @param		object	$object				Object to generate
+     *  @param		object	$outputlangs		Lang output object
+     *  @return	    int							1=ok, 0=ko
 	 */
-	function write_file($fichinter,$outputlangs)
+	function write_file($object,$outputlangs)
 	{
 		global $user,$langs,$conf,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -99,24 +101,12 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		if ($conf->ficheinter->dir_output)
 		{
-			// If $fichinter is id instead of object
-			if (! is_object($fichinter))
-			{
-				$id = $fichinter;
-				$fichinter = new Fichinter($this->db);
-				$result=$fichinter->fetch($id);
-				if ($result < 0)
-				{
-					dol_print_error($this->db,$fichinter->error);
-				}
-			}
+            $object->fetch_thirdparty();
 
-            $fichinter->fetch_thirdparty();
-
-			$fichref = dol_sanitizeFileName($fichinter->ref);
+			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->ficheinter->dir_output;
-			if (! preg_match('/specimen/i',$fichref)) $dir.= "/" . $fichref;
-			$file = $dir . "/" . $fichref . ".pdf";
+			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
+			$file = $dir . "/" . $objectref . ".pdf";
 
 			if (! file_exists($dir))
 			{
@@ -141,6 +131,13 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->Open();
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
+				
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
+				$pdf->SetSubject($outputlangs->transnoentities("InterventionCard"));
+				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("InterventionCard"));
+				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
@@ -148,116 +145,27 @@ class pdf_soleil extends ModelePDFFicheinter
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 
-				// Pagehead
-
-				//Affiche le filigrane brouillon - Print Draft Watermark
-				if($fichinter->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
-				{
-                    pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->FICHINTER_DRAFT_WATERMARK);
-				}
-
-				$posy=$this->marge_haute;
-
-				$pdf->SetXY($this->marge_gauche,$posy);
-
-				// Logo
-				$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-				if ($mysoc->logo)
-				{
-					if (is_readable($logo))
-					{
-						$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
-					}
-					else
-					{
-						$pdf->SetTextColor(200,0,0);
-						$pdf->SetFont('','B', $default_font_size - 2);
-						$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-						$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
-					}
-				}
-
-				// Nom emetteur
-				$posy=40;
-				$hautcadre=40;
-				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('','', $default_font_size - 2);
-
-				$pdf->SetXY($this->marge_gauche,$posy);
-				$pdf->SetFillColor(230,230,230);
-				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
-
-				$pdf->SetXY($this->marge_gauche+2,$posy+3);
-
-				// Sender name
-				$pdf->SetTextColor(0,0,60);
-				$pdf->SetFont('','B', $default_font_size);
-				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-
-				// Sender properties
-				$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
-
-				$pdf->SetFont('','', $default_font_size - 1);
-				$pdf->SetXY($this->marge_gauche+2,$posy+9);
-				$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-
-				$object=$fichinter;
-
-				// Recipient name
-				if (! empty($usecontact))
-				{
-					// On peut utiliser le nom de la societe du contact
-					if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
-					else $socname = $object->client->nom;
-					$carac_client_name=$outputlangs->convToOutputCharset($socname);
-				}
-				else
-				{
-					$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-				}
-
-				$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
-
-				// Client destinataire
-				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('','B', $default_font_size);
-				$fichinter->fetch_thirdparty();
-				$pdf->SetXY(102,42);
-				$pdf->MultiCell(86,4, $carac_client_name, 0, 'L');
-				$pdf->SetFont('','', $default_font_size - 1);
-				$pdf->SetXY(102,$pdf->GetY());
-				$pdf->MultiCell(66,4, $carac_client, 0, 'L');
-				$pdf->rect(100, 40, 100, 40);
-
-
-				$pdf->SetTextColor(0,0,100);
-				$pdf->SetFont('','B', $default_font_size + 2);
-				$pdf->SetXY(10,86);
-				$pdf->MultiCell(120, 4, $outputlangs->transnoentities("InterventionCard")." : ".$outputlangs->convToOutputCharset($fichinter->ref), 0, 'L');
-
-				$pdf->SetFillColor(220,220,220);
-				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('','', $default_font_size);
-
-
 				$tab_top = 100;
+				$tab_top_middlepage = 50;
 				$tab_top_newpage = 50;
 				$tab_height = 110;
 				$tab_height_newpage = 150;
+				$tab_height_middlepage = 200;
+				$tab_height_endpage = 170;
 
 				// Affiche notes
-				if (! empty($fichinter->note_public))
+				if (! empty($object->note_public))
 				{
-					$tab_top = 98;
+					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fichinter->note_public), 0, 'L');
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -272,7 +180,11 @@ class pdf_soleil extends ModelePDFFicheinter
 				{
 					$height_note=0;
 				}
-
+				
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
+				$nexY = $tab_top + 7;
+/*
 				$pdf->SetXY($this->marge_gauche, $tab_top);
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8 );
@@ -281,10 +193,10 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetXY($this->marge_gauche, $tab_top + 8 );
-				$text=$fichinter->description;
-				if ($fichinter->duree > 0)
+				$text=$object->description;
+				if ($object->duree > 0)
 				{
-				    $totaltime=ConvertSecondToTime($fichinter->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
+				    $totaltime=ConvertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
 				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
 				}
 				$desc=dol_htmlentitiesbr($text,1);
@@ -296,37 +208,84 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
 
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
-
-				//dol_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
-				$nblignes = count($fichinter->lines);
-
-				$curY = $pdf->GetY();
-				$nexY = $pdf->GetY();
+*/
+				$nblines = count($object->lines);
 
 				// Loop on each lines
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0; $i < $nblines; $i++)
 				{
-					$fichinterligne = $fichinter->lines[$i];
+					$objectligne = $object->lines[$i];
 
-					$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
-					if ($valide>0 || $fichinter->specimen)
+					$valide = $objectligne->id ? $objectligne->fetch($objectligne->id) : 0;
+					if ($valide > 0 || $object->specimen)
 					{
-						$curY = $nexY+3;
+						$curY = $nexY;
 
 						$pdf->SetXY($this->marge_gauche, $curY);
-						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output);
+						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($objectligne->duration),1,$outputlangs->charset_output);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $txt, 0, 1, 0);
 						$nexY = $pdf->GetY();
 
 						$pdf->SetXY($this->marge_gauche, $curY + 3);
-						$desc = dol_htmlentitiesbr($fichinterligne->desc,1);
+						$desc = dol_htmlentitiesbr($objectligne->desc,1);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY + 3, $desc, 0, 1, 0);
-						$nexY+=dol_nboflines_bis($fichinterligne->desc,52,$outputlangs->charset_output)*3;
+						//$nexY+=dol_nboflines_bis($objectligne->desc,52,$outputlangs->charset_output)*3;
+						
+						$nexY+=2;    // Passe espace entre les lignes
+						
+						// Cherche nombre de lignes a venir pour savoir si place suffisante
+						if ($i < ($nblines - 1) && empty($hidedesc))	// If it's not last line
+						{
+							//on recupere la description du produit suivant
+							$follow_descproduitservice = $objectligne->desc;
+							//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
+							$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*3);
+						}
+						else	// If it's last line
+						{
+							$nblineFollowDesc = 0;
+						}
+						
+						// Test if a new page is required
+						if ($pagenb == 1)
+						{
+							$tab_top_in_current_page=$tab_top;
+							$tab_height_in_current_page=$tab_height;
+						}
+						else
+						{
+							$tab_top_in_current_page=$tab_top_newpage;
+							$tab_height_in_current_page=$tab_height_middlepage;
+						}
+						if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblines - 1))
+						{
+							if ($pagenb == 1)
+							{
+								$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+							}
+							else
+							{
+								$this->_tableau($pdf, $tab_top_newpage, $tab_height_middlepage, $nexY, $outputlangs);
+							}
+						
+							$this->_pagefoot($pdf,$object,$outputlangs);
+						
+							// New page
+							$pdf->AddPage();
+							$pagenb++;
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
+							$pdf->SetFont('','', $default_font_size - 1);
+							$pdf->MultiCell(0, 3, '');		// Set interline to 3
+							$pdf->SetTextColor(0,0,0);
+						
+							$nexY = $tab_top_newpage + 7;
+						}
 					}
 				}
 				//$pdf->line(10, $tab_top+$tab_height+3, 200, $tab_top+$tab_height+3);
 
 				// Rectangle for title and all lines
+				/*
 				$pdf->Rect($this->marge_gauche, $tab_top, ($this->page_largeur-$this->marge_gauche-$this->marge_droite), $tab_height+3);
 				$pdf->SetXY($this->marge_gauche, $pdf->GetY() + 20);
 				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
@@ -342,10 +301,10 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetXY(110,225);
 				$pdf->MultiCell(80,30, '', 1);
-
+*/
 				$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
-				$this->_pagefoot($pdf,$fichinter,$outputlangs);
+				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -370,13 +329,239 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->error=$langs->trans("ErrorUnknown");
 		return 0;   // Erreur par defaut
 	}
+	
+	/**
+	 *	Affiche la grille des lignes d'intervention
+	 *
+	 *	@param	object	$pdf		Object PDF
+	 */
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
+	{
+		global $conf;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		
+		$pdf->SetXY($this->marge_gauche, $tab_top);
+		$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
+		$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8 );
+		
+		$pdf->SetFont('','', $default_font_size - 1);
+		
+		$pdf->MultiCell(0, 3, '');		// Set interline to 3
+		$pdf->SetXY($this->marge_gauche, $tab_top + 8 );
+		$text=$object->description;
+		if ($object->duree > 0)
+		{
+			$totaltime=ConvertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
+			$text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
+		}
+		$desc=dol_htmlentitiesbr($text,1);
+		//print $outputlangs->convToOutputCharset($desc); exit;
+		
+		$pdf->writeHTMLCell(180, 3, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
+		$nexY = $pdf->GetY();
+		
+		$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
+		
+		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
+		
+		$pdf->Rect($this->marge_gauche, $tab_top, ($this->page_largeur-$this->marge_gauche-$this->marge_droite), $tab_height+3);
+		$pdf->SetXY($this->marge_gauche, $pdf->GetY() + 20);
+		$pdf->MultiCell(60, 5, '', 0, 'J', 0);
+		
+		$pdf->SetXY(20,220);
+		$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
+		
+		$pdf->SetXY(20,225);
+		$pdf->MultiCell(80,30, '', 1);
+		
+		$pdf->SetXY(110,220);
+		$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+		
+		$pdf->SetXY(110,225);
+		$pdf->MultiCell(80,30, '', 1);
+	}
+	
+	/**
+	 *	Show header of document
+	 *
+	 *	@param	object	$pdf			Object PDF
+	 *	@param	object	$object			Object fichinter
+	 *	@param	int		$showaddress	0=no, 1=yes
+	 *	@param	object	$outputlangs	Object lang for output
+	 */
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
+	{
+		global $conf,$langs;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		
+		$outputlangs->load("main");
+		$outputlangs->load("dict");
+		$outputlangs->load("companies");
+		$outputlangs->load("interventions");
+		
+		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
+		
+		//Affiche le filigrane brouillon - Print Draft Watermark
+		if($object->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
+		{
+			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->FICHINTER_DRAFT_WATERMARK);
+		}
+		
+		//Prepare la suite
+		$pdf->SetTextColor(0,0,60);
+		$pdf->SetFont('','B', $default_font_size + 3);
+		
+		$posx=$this->page_largeur-$this->marge_droite-100;
+		$posy=$this->marge_haute;
+		
+		$pdf->SetXY($this->marge_gauche,$posy);
+		
+		// Logo
+		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+		if ($this->emetteur->logo)
+		{
+			if (is_readable($logo))
+			{
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+			}
+			else
+			{
+				$pdf->SetTextColor(200,0,0);
+				$pdf->SetFont('','B',$default_font_size - 2);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+			}
+		}
+		else
+		{
+			$text=$this->emetteur->name;
+			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+		}
+		
+		$pdf->SetFont('','B',$default_font_size + 3);
+		$pdf->SetXY($posx,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$title=$outputlangs->transnoentities("InterventionCard");
+		$pdf->MultiCell(100, 4, $title, '', 'R');
+		
+		$pdf->SetFont('','B',$default_font_size + 2);
+		
+		$posy+=5;
+		$pdf->SetXY($posx,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
+		
+		$posy+=1;
+		$pdf->SetFont('','', $default_font_size);
+		
+		$posy+=4;
+		$pdf->SetXY($posx,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->datec,"day",false,$outputlangs,true), '', 'R');
+		
+		if ($object->client->code_client)
+		{
+			$posy+=4;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+		}
+		
+		if ($showaddress)
+		{
+			// Sender properties
+			$carac_emetteur='';
+			// Add internal contact of proposal if defined
+			$arrayidcontact=$object->getIdContact('internal','INTERREPFOLL');
+			if (count($arrayidcontact) > 0)
+			{
+				$object->fetch_user($arrayidcontact[0]);
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+			}
+		
+			$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
+		
+			// Show sender
+			$posy=42;
+			$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
+			$hautcadre=40;
+		
+			// Show sender frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFillColor(230,230,230);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+		
+			// Show sender name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->SetFont('','B',$default_font_size);
+			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+		
+			// Show sender information
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+		
+		
+			// If CUSTOMER contact defined, we use it
+			$usecontact=false;
+			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+			if (count($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
+		
+			// Recipient name
+			if (! empty($usecontact))
+			{
+				// On peut utiliser le nom de la societe du contact
+				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				else $socname = $object->client->nom;
+				$carac_client_name=$outputlangs->convToOutputCharset($socname);
+			}
+			else
+			{
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+			}
+		
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+		
+			// Show recipient
+			$posy=42;
+			$posx=$this->page_largeur-$this->marge_droite-100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+		
+			// Show recipient frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->rect($posx, $posy, 100, $hautcadre);
+			$pdf->SetTextColor(0,0,0);
+		
+			// Show recipient name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell(100,4, $carac_client_name, 0, 'L');
+		
+			// Show recipient information
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->MultiCell(100,4, $carac_client, 0, 'L');
+		}
+	}
 
 	/**
-	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlangs		Object lang for output
-	 * 		\remarks	Need this->emetteur object
+	 *	Show footer of page
+	 *
+	 *	@param	object	$pdf			Object PDF
+	 *	@param	object	$object			Object fichinter
+	 *	@param	object	$outputlangs	Object lang for output
+	 *	\remarks	Need this->emetteur object
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{
