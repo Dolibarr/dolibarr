@@ -205,14 +205,15 @@ class pdf_paiement
 	}
 
 	/**
-	 *   	Show header of page
+	 *  Show top header of page.
 	 *
-	 *   	@param      $pdf     		Object PDF
-	 *   	@param      $object     	Object
-	 *      @param      $showaddress    0=no, 1=yes
-	 *      @param      $outputlangs	Object lang for output
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object     	Object to show
+	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $page, $showaddress=1, $outputlangs)
+	function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
 	{
 		global $langs;
 

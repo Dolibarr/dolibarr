@@ -442,12 +442,13 @@ class pdf_oursin extends ModelePDFFactures
 	}
 
 	/**
-	 *	\brief      Affiche infos divers
-	 *	\param      pdf             Objet PDF
-	 *	\param      object          Objet facture
-	 *	\param		posy			Position depart
-	 *	\param		outputlangs		Objet langs
-	 *	\return     y               Position pour suite
+	 *   Show miscellaneous information (payment mode, payment term, ...)
+	 *
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		Object		$object			Object to show
+	 *   @param		int			$posy			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -578,14 +579,14 @@ class pdf_oursin extends ModelePDFFactures
 
 
 	/**
-	 *	Affiche le total a payer
+	 *	Show total to pay
 	 *
-	 *	@param      pdf             Objet PDF
-	 *	@param      object          Objet facture
-	 *	@param      deja_regle      Montant deja regle
-	 *	@param		posy			Position depart
-	 *	@param		outputlangs		Objet langs
-	 *	@return     y               Position pour suite
+	 *	@param	PDF			&$pdf           Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param  int			$deja_regle     Montant deja regle
+	 *	@param	int			$posy			Position depart
+	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@return int							Position pour suite
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -726,9 +727,15 @@ class pdf_oursin extends ModelePDFFactures
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
-	/*
-	 *   Affiche la grille des lignes de factures
-	 *   @param      pdf     objet PDF
+	/**
+	 *   Show table for lines
+	 *
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		string		$tab_top		Top position of table
+	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int			$nexY			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs)
 	{
@@ -777,13 +784,16 @@ class pdf_oursin extends ModelePDFFactures
 		return $pdf->GetY();
 	}
 
-	/*
-	 *   Affiche en-tete facture
+	/**
+	 *  Show top header of page.
 	 *
-	 *   @param      pdf     objet PDF
-	 *   @param      fac     objet facture
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object     	Object to show
+	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress=0, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs,$conf;
 		$langs->load("main");
@@ -1028,11 +1038,12 @@ class pdf_oursin extends ModelePDFFactures
 	}
 
 	/**
-	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlang		Object lang for output
-	 * 		\remarks	Need this->emetteur object
+	 *   	Show footer of page. Need this->emetteur object
+     *
+	 *   	@param	PDF			&$pdf     			PDF
+	 * 		@param	Object		$object				Object to show
+	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @return	void
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{

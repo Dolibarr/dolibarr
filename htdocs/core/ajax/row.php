@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +35,6 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
  * View
  */
 
-// Ajout directives pour resoudre bug IE
-//header('Cache-Control: Public, must-revalidate');
-//header('Pragma: public');
-
-//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
@@ -52,21 +47,16 @@ if((isset($_GET['roworder']) && !empty($_GET['roworder'])) && (isset($_GET['tabl
 
 	foreach($roworder as $value)
 	{
-		if (!empty($value))
-		{
-			$newroworder[] = $value;
-		}
+		if (! empty($value)) $newroworder[] = $value;
 	}
 
-	$roworder = implode(',',$newroworder);
-
-	dol_syslog("AjaxRow roworder=".$_GET['roworder']." neworder=".$roworder." element=".$_GET['element'], LOG_DEBUG);
+	dol_syslog("AjaxRow roworder=".$_GET['roworder']." fk_element=".$_GET['fk_element'], LOG_DEBUG);
 
 	$row=new GenericObject($db);
 	$row->table_element_line = $_GET['table_element_line'];
 	$row->fk_element = $_GET['fk_element'];
 	$row->id = $_GET['element_id'];
-	$result=$row->line_ajaxorder($roworder);
+	$result=$row->line_ajaxorder($newroworder);
 	$result=$row->line_order(true);
 }
 

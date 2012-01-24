@@ -232,12 +232,12 @@ class CommActionRapport
 	}
 
 	/**
-	 *  Show page head
+	 *  Show top header of page.
 	 *
-	 *  @param  PDF			&$pdf           Object PDF
-	 *  @param  Translate	$outputlangs	Object langs
+	 * 	@param	PDF			&$pdf     		Object PDF
+	 *  @param  Translate	$outputlangs	Object lang for output
 	 * 	@param	int			$pagenb			Page nb
-	 * 	@return	int							Pos y
+	 *  @return	void
 	 */
 	function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{

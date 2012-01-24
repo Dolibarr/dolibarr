@@ -357,7 +357,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				$amount_credit_notes_included=0;
 				$amount_deposits_included=0;
-				
+
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
@@ -391,11 +391,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 	/**
-	 *   \brief      Show total to pay
-	 *   \param      pdf         	Object PDF
-	 *   \param      object        	Object invoice
-	 *   \param      deja_regle  	Amount payed
-	 *   \return     y              Next position
+	 *	Show total to pay
+	 *
+	 *	@param	PDF			&$pdf           Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param  int			$deja_regle     Montant deja regle
+	 *	@param	int			$posy			Position depart
+	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@return int							Position pour suite
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -579,8 +582,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 	/**
-	 *   Show the lines of invoice
-	 *   @param      pdf     object PDF
+	 *   Show table for lines
+	 *
+	 *   @param		PDF			&$pdf     		Object PDF
+	 *   @param		string		$tab_top		Top position of table
+	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int			$nexY			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -718,14 +727,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 	/**
-	 *   	Show header of page
+	 *  Show top header of page.
 	 *
-	 *   	@param      $pdf     		Object PDF
-	 *   	@param      $object     	Object order
-	 *      @param      $showaddress    0=no, 1=yes
-	 *      @param      $outputlangs	Object lang for output
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object     	Object to show
+	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -871,11 +881,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 	/**
-	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		PDF factory
-	 * 		\param		object			Object invoice
-	 *      \param      outputlang		Object lang for output
-	 * 		\remarks	Need this->emetteur object
+	 *   	Show footer of page. Need this->emetteur object
+     *
+	 *   	@param	PDF			&$pdf     			PDF
+	 * 		@param	Object		$object				Object to show
+	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @return	void
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{

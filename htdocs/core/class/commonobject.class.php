@@ -890,24 +890,74 @@ abstract class CommonObject
 		}
 		if ($nl > 0)
 		{
+			$rows=array();
+			
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
 			dol_syslog(get_class($this)."::line_order sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
+				$i=0;
 				$num = $this->db->num_rows($resql);
-				$i = 0;
 				while ($i < $num)
 				{
 					$row = $this->db->fetch_row($resql);
-					$this->updateRangOfLine($row[0], ($i+1));
+					$rows[] = $row[0];
+					$childrens = $this->getChildrensOfLine($row[0]);
+					if (! empty($childrens))
+					{
+						foreach($childrens as $child)
+						{
+							array_push($rows, $child);
+						}
+					}
 					$i++;
+				}
+
+				if (! empty($rows))
+				{
+					foreach($rows as $key => $row)
+					{
+						$this->updateRangOfLine($row, ($key+1));
+					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 	Get childrens of line
+	 * 
+	 * 	@param	int		$id		Id of parent line
+	 */
+	function getChildrensOfLine($id)
+	{
+		$rows=array();
+		
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+		$sql.= ' AND fk_parent_line = '.$id;
+		$sql.= ' ORDER BY rang ASC';
+		
+		dol_syslog(get_class($this)."::getChildrenOfLines sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$i=0;
+			$num = $this->db->num_rows($resql);
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$rows[$i] = $row[0];
+				$i++;
+			}
+		}
+		
+		return $rows;
 	}
 
     /**
@@ -966,13 +1016,11 @@ abstract class CommonObject
     /**
      * 	Update position of line with ajax (rang)
      *
-     * 	@param		int		$roworder
+     * 	@param	array	$rows	Array of rows
      */
-    function line_ajaxorder($roworder)
+    function line_ajaxorder($rows)
     {
-        $rows = explode(',',$roworder);
         $num = count($rows);
-
         for ($i = 0 ; $i < $num ; $i++)
         {
             $this->updateRangOfLine($rows[$i], ($i+1));
