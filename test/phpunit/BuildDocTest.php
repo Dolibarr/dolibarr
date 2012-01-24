@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin 		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/doc/pdf_jaune
 require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/pdf_edison.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/pdf_einstein.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/pdf/pdf_baleine.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/pdf_soleil.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_expedition_merou.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_expedition_rouget.modules.php';
 // Mother classes of pdf generators
