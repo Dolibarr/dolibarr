@@ -1298,9 +1298,6 @@ NoteOnPathLocation=Tingueu en compte que aquest arxiu ha d'estar en una carpeta 
 YouCanDownloadFreeDatFileTo=Pot descarregar-se una <b>versió demo gratuïta</b> de l'arxiu de països  Maxmind GeoIP a l'adreça %s.
 YouCanDownloadAdvancedDatFileTo=També pot descarregar-se una <b>versió més completa</b> de l'arxiu de països Maxmind GeoIP a l'adreça %s.
 TestGeoIPResult=Test de conversió IP -> País
-##### NumberWords #####
-NumberWordsSetup=Configuració del mòdul NumberWords
-DescNumberWords=Aquest mòdul us ofereix convertir números o imports en qualsevol cadena. També realitza la substitució de les variables genèriques __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ o __TOTAL_VAT_WORDS__ pel valor d'imports totals, base o de l'IVA, en cadena dins el text al qual fan referència (text lliure de factures, ...)
 ##### Projects #####
 ProjectsNumberingModules=Mòdul de numeració per a les referències dels projectes
 ProjectsSetup=Configuració del mòdul Projectes

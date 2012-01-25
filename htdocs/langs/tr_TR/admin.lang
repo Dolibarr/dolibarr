@@ -1202,8 +1202,6 @@ SupposedToBeInvoiceDate=Kullanılan Fatura tarihinden
 InvoiceDateUsed=Kullanılan Fatura tarihinden
 AccountancyCode=Muhasebe Kodu
 PastDelayVCalExport=Daha olayı büyük vermeyin
-NumberWordsSetup=NumberWords modülü kurulumu
-DescNumberWords=Bu modül tam karakter sayısı ya da miktarı dönüştürmek için işlevler sağlar. Ayrıca __TOTAL_TTC_WORDS__ __TOTAL_HT_WORDS__ veya __TOTAL_VAT_WORDS__ toplam dahil aşağıdaki dize olaylar yerini alacak. vergisi, toplam vergi, net ve KDV toplam bunları kullanan bütün textes içine (faturalar ücretsiz metin, ...)
 ProjectsNumberingModules=Projeler modülü numaralandırma
 ProjectsSetup=Proje modülü kurulumu
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:45:12).

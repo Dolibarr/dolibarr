@@ -37,6 +37,10 @@ $langs->load("other");
 global $dolibarr_main_demo;
 if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',1,1,1);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('demo'));
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
@@ -58,6 +62,18 @@ $demoprofiles=array(
 	'disablemodules'=>'adherent,boutique,don,externalsite',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 	);
+
+/*
+$tmpaction = 'view';
+$parameters=array();
+$object=(object) 'nothing';
+$reshook=$hookmanager->executeHooks('addDemoProfile', $parameters, $object, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=$hookmanager->errors;
+$demoprofiles[]=array('default'=>'0', 'key'=>'profdemomed','label'=>'DemoCabinetMed',
+	'disablemodules'=>'adherent,boutique,don,externalsite',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
+	);
+*/
 
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
 $alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner','workflow');  // Module we never want

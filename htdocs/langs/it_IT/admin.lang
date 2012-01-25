@@ -1219,8 +1219,6 @@ DonationsReceiptModel=Modello della donazione ricevuta
 PastDelayVCalExport=Non esportare evento più grande di
 CashDesk=Punto di vendita
 SuppliersCommandModel=modello completo di ordine fornitore (logo. ..)
-NumberWordsSetup=NumberWords di installazione modulo
-DescNumberWords=Questo modulo fornisce le funzioni per convertire il numero in caratteri o importo intero. Sostituirà anche le occorrenze seguente stringa __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ o __TOTAL_VAT_WORDS__ da incl totale. fiscale, al netto delle imposte totale, o totale dell'IVA in tutte le textes che li utilizzano (testo libero sulle fatture, ...)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:00).
 
 

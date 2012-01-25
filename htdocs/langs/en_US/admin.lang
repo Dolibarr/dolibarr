@@ -1289,9 +1289,6 @@ NoteOnPathLocation=Note that your ip to country data file must be inside a direc
 YouCanDownloadFreeDatFileTo=You can download a <b>free demo version</b> of the Maxmind GeoIP country file at %s.
 YouCanDownloadAdvancedDatFileTo=You can also download a more <b>complete version, with updates,</b> of the Maxmind GeoIP country file at %s.
 TestGeoIPResult=Test of a conversion IP -> country
-##### NumberWords #####
-NumberWordsSetup=NumberWords module setup
-DescNumberWords=This module provide functions to convert number or amount in full characters. It will also replace the following string occurences __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ or __TOTAL_VAT_WORDS__ by total incl. tax, total net of tax, or total of vat into all textes that use them (free text on invoices, ...)
 ##### Projects #####
 ProjectsNumberingModules=Projects numbering module
 ProjectsSetup=Project module setup
