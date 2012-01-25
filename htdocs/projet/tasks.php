@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,15 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$langs->load("users");
+$langs->load("projects");
+
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+
+$mode = GETPOST('mode', 'alpha');
+$mine = ($mode == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Security check
@@ -39,20 +47,20 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
 
-$langs->load("users");
-$langs->load("projects");
-
-$progress=GETPOST('progress');
-$description=GETPOST('description');
+$progress=GETPOST('progress', 'int');
+$label=GETPOST('label', 'alpha');
+$description=GETPOST('description', 'alpha');
 
 $userAccess=0;
+
+$object = new Project($db);
 
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
+if ($action == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
@@ -61,16 +69,16 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 	if (empty($_POST["cancel"]))
 	{
-		if (empty($_POST['label']))
+		if (empty($label))
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-			$_GET["action"]='create';
+			$action='create';
 			$error++;
 		}
 		else if (empty($_POST['task_parent']))
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask"));
-			$_GET["action"]='create';
+			$action='create';
 			$error++;
 		}
 
@@ -78,20 +86,20 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 		{
 			$tmparray=explode('_',$_POST['task_parent']);
 			$projectid=$tmparray[0];
-			if (empty($projectid)) $projectid = $_POST["id"]; // If projectid is ''
+			if (empty($projectid)) $projectid = $id; // If projectid is ''
 			$task_parent=$tmparray[1];
 			if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
 
 			$task = new Task($db);
 
 			$task->fk_project = $projectid;
-			$task->label = $_POST["label"];
-			$task->description = $_POST['description'];
+			$task->label = $label;
+			$task->description = $description;
 			$task->fk_task_parent = $task_parent;
 			$task->date_c = dol_now();
 			$task->date_start = $date_start;
 			$task->date_end = $date_end;
-			$task->progress = $_POST['progress'];
+			$task->progress = $progress;
 
 			$taskid = $task->create($user);
 
@@ -105,7 +113,7 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 		{
 			if (empty($projectid))
 			{
-				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($_REQUEST["mode"])?'':'?mode='.$_REQUEST["mode"]));
+				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
 			else
@@ -117,10 +125,10 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 	}
 	else
 	{
-        if (empty($_GET["id"]) && empty($_POST["id"]))
+        if (empty($id))
         {
             // We go back on task list
-            Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($_REQUEST["mode"])?'':'?mode='.$_REQUEST["mode"]));
+            Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
             exit;
         }
 	}
@@ -132,27 +140,21 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 $form=new Form($db);
 $formother=new FormOther($db);
-$projectstatic = new Project($db);
 $taskstatic = new Task($db);
 
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Tasks"),$help_url);
 
-$task = new Task($db);
-
-$id = (! empty($_GET['id']))?$_GET['id']:$_POST['id'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$project = new Project($db);
-	$project->fetch($_REQUEST["id"],$_GET["ref"]);
-	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+	$object->fetch($id, $ref);
+	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 
 	// To verify role of users
-	$userAccess = $project->restrictedProjectArea($user);
+	$userAccess = $object->restrictedProjectArea($user);
 }
 
-if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($project->societe->id) || $userAccess))
+if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userAccess))
 {
 	print_fiche_titre($langs->trans("NewTask"));
 
@@ -161,18 +163,18 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
-	if ($_GET['id'])   print '<input type="hidden" name="id" value="'.$_GET['id'].'">';
-	if ($_GET['mode']) print '<input type="hidden" name="mode" value="'.$_GET['mode'].'">';
+	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if (! empty($mode)) print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	print '<table class="border" width="100%">';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input type="text" size="25" name="label" class="flat" value="'.$_POST["label"].'">';
+	print '<input type="text" size="25" name="label" class="flat" value="'.$label.'">';
 	print '</td></tr>';
 
 	// List of projects
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfTask").'</td><td>';
-	print $formother->selectProjectTasks('',$projectid?$projectid:$_GET["id"], 'task_parent', 0, 0, 1, 1);
+	print $formother->selectProjectTasks('',$projectid?$projectid:$object->id, 'task_parent', 0, 0, 1, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
@@ -220,10 +222,10 @@ else
 
 	$tab='tasks';
 
-	$head=project_prepare_head($project);
-	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
+	$head=project_prepare_head($object);
+	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
-	$param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
+	$param=($mode=='mine'?'&mode=mine':'');
 
 	print '<table class="border" width="100%">';
 
@@ -232,27 +234,27 @@ else
 	print $langs->trans("Ref");
 	print '</td><td>';
 	// Define a complementary filter for search of next/prev ref.
-	$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-	$project->next_prev_filter=" rowid in (".$projectsListId.")";
-	print $form->showrefnav($project,'ref','',1,'ref','ref','',$param);
+	$projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,1);
+	$object->next_prev_filter=" rowid in (".$projectsListId.")";
+	print $form->showrefnav($object,'ref','',1,'ref','ref','',$param);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
+	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td>';
 	print '</tr>';
 
 	// Visibility
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	if ($project->public) print $langs->trans('SharedProject');
+	if ($object->public) print $langs->trans('SharedProject');
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
 	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	print '</table>';
 
@@ -265,9 +267,9 @@ else
 
 	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 	{
-		if ($project->public || $userAccess)
+		if ($object->public || $userAccess)
 		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$project->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
 		}
 		else
 		{
@@ -286,9 +288,9 @@ else
 
 	// Link to switch in "my task" / "all task"
 	print '<table width="100%"><tr><td align="right">';
-	if ($_REQUEST["mode"] == 'mine')
+	if ($mode == 'mine')
 	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
 		//print ' - ';
 		//print $langs->trans("ShowMyTaskOnly");
 	}
@@ -296,22 +298,22 @@ else
 	{
 		//print $langs->trans("DoNotShowMyTaskOnly");
 		//print ' - ';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&mode=mine">'.$langs->trans("ShowMyTasksOnly").'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=mine">'.$langs->trans("ShowMyTasksOnly").'</a>';
 	}
 	print '</td></tr></table>';
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user
 	// can have a parent that is not affected to him).
-	$tasksarray=$task->getTasksArray(0, 0, $project->id, $socid, 0);
+	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $socid, 0);
 	// We load also tasks limited to a particular user
-	$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$project->id,0) : '');
+	$tasksrole=($mode=='mine' ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$object->id,0) : '');
 	//var_dump($tasksarray);
 	//var_dump($tasksrole);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	if ($projectstatic->id) print '<td>'.$langs->trans("Project").'</td>';
+	if (! empty($object->id)) print '<td>'.$langs->trans("Project").'</td>';
 	print '<td width="80">'.$langs->trans("RefTask").'</td>';
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="right">'.$langs->trans("Progress").'</td>';
@@ -325,14 +327,14 @@ else
 	}
 	else
 	{
-		print '<tr><td colspan="'.($projectstatic->id?"5":"4").'">'.$langs->trans("NoTasks").'</td></tr>';
+		print '<tr><td colspan="'.(! empty($object->id) ? "5" : "4").'">'.$langs->trans("NoTasks").'</td></tr>';
 	}
 	print "</table>";
 
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
-	if ($_REQUEST["mode"]=='mine')
+	if ($mode=='mine')
 	{
 		if ($nboftaskshown < count($tasksrole)) clean_orphelins($db);
 	}
@@ -342,7 +344,8 @@ else
 	}
 }
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>
