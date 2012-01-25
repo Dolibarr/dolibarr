@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -223,11 +223,18 @@ else	// Show
     // Show pdf format
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionnaryPaperFormat").'</td><td>';
-    $pdfformatlabel=$conf->global->MAIN_PDF_FORMAT;
-    if (! empty($conf->global->MAIN_PDF_FORMAT))
+
+    if (empty($conf->global->MAIN_PDF_FORMAT))
+    {
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+        $pdfformatlabel=dol_getDefaultFormat();
+    }
+    else $pdfformatlabel=$conf->global->MAIN_PDF_FORMAT;
+
+    if (! empty($pdfformatlabel))
     {
     	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
-        $sql.=" WHERE code LIKE '%".$conf->global->MAIN_PDF_FORMAT."%'";
+        $sql.=" WHERE code LIKE '%".$db->escape($pdfformatlabel)."%'";
 
         $resql=$db->query($sql);
         if ($resql)
