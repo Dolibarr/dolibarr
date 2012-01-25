@@ -542,16 +542,18 @@ class FormOther
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
+    	global $langs;
+    	
         require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
-        $month = monthArrayOrSelected(-1);	// Get array
+        $montharray = monthArray($langs);	// Get array
 
         $select_month = '<select class="flat" name="'.$htmlname.'">';
         if ($useempty)
         {
             $select_month .= '<option value="0">&nbsp;</option>';
         }
-        foreach ($month as $key => $val)
+        foreach ($montharray as $key => $val)
         {
             if ($selected == $key)
             {

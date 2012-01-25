@@ -871,7 +871,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FiscalMonthStart").'</td><td>';
     $monthstart=(! empty($conf->global->SOCIETE_FISCAL_MONTH_START)) ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1;
-    print monthArrayOrSelected($monthstart) . '</td></tr>';
+    print dol_print_date(dol_mktime(12,0,0,$monthstart,1,2000,1),'%B','gm') . '</td></tr>';
 
     print "</table>";
 

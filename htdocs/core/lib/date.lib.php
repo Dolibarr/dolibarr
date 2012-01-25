@@ -697,45 +697,27 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 /**
  *	Return array of translated months or selected month
  *
- *	@param   int		$selected		-1 to return array of all months or motnh to select
- *	@return  mixed						Month string or array if selected < 0
+ *	@param	Translate	$outputlangs	Object langs	
+ *	@return array						Month string or array if selected < 0
  */
-function monthArrayOrSelected($selected=0)
+function monthArray($outputlangs)
 {
-    global $langs;
-
-    $month = array (
-    1  => $langs->trans("January"),
-    2  => $langs->trans("February"),
-    3  => $langs->trans("March"),
-    4  => $langs->trans("April"),
-    5  => $langs->trans("May"),
-    6  => $langs->trans("June"),
-    7  => $langs->trans("July"),
-    8  => $langs->trans("August"),
-    9  => $langs->trans("September"),
-    10 => $langs->trans("October"),
-    11 => $langs->trans("November"),
-    12 => $langs->trans("December")
+    $montharray = array (
+	    1  => $outputlangs->trans("January"),
+	    2  => $outputlangs->trans("February"),
+	    3  => $outputlangs->trans("March"),
+	    4  => $outputlangs->trans("April"),
+	    5  => $outputlangs->trans("May"),
+	    6  => $outputlangs->trans("June"),
+	    7  => $outputlangs->trans("July"),
+	    8  => $outputlangs->trans("August"),
+	    9  => $outputlangs->trans("September"),
+	    10 => $outputlangs->trans("October"),
+	    11 => $outputlangs->trans("November"),
+	    12 => $outputlangs->trans("December")
     );
 
-    if ($selected >=0)
-    {
-        $return='';
-        foreach ($month as $key => $val)
-        {
-            if ($selected == $key)
-            {
-                $return = $val;
-                break;
-            }
-        }
-        return $return;
-    }
-    else
-    {
-        return $month;
-    }
+    return $montharray;
 }
 
 ?>
