@@ -44,22 +44,22 @@ $hookmanager->callHooks(array('demo'));
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-	'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,prelevement,product,stock',
+	'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,mailmanspip,prelevement,product,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-	'disablemodules'=>'adherent,boutique,categorie,don,externalsite,ficheinter,prelevement,product,stock',
+	'disablemodules'=>'adherent,boutique,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,product,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-	'disablemodules'=>'adherent,boutique,contrat,categorie,don,externalsite,ficheinter,prelevement,service',
+	'disablemodules'=>'adherent,boutique,contrat,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,service',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
-	'disablemodules'=>'adherent,boutique,don,externalsite',
+	'disablemodules'=>'adherent,boutique,don,externalsite,mailmanspip',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 	);
 
@@ -77,7 +77,7 @@ $demoprofiles[]=array('default'=>'0', 'key'=>'profdemomed','label'=>'DemoCabinet
 
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
 $alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner','workflow');  // Module we never want
-$alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mantis','memcached','notification',
+$alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mailmanspip','mantis','memcached','notification',
                             'syslog','user','webservices',
                             // Extended modules
                             'awstats','bittorrent','cabinetmed','concatpdf','filemanager','monitoring','nltechno','numberwords','ovh','phenix','phpsysinfo','postnuke','submiteverywhere',
