@@ -33,17 +33,21 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 	var $error='';
 	var $max=5;
 
-	/*
-	 *	\brief		Constructeur
-	 */
-	function ModeleBoxes($DB)
-	{
-		$this->db=$DB;
-	}
-
 
 	/**
-	 *    \brief      Renvoi le dernier message d'erreur de creation de facture
+	 *	Constructor
+	 *
+	 *	@param	DoliDB		$db		Database hanlder
+	 */
+	function ModeleBoxes($db)
+	{
+		$this->db=$db;
+	}
+
+	/**
+	 *  Return last error message
+	 *
+	 *  @return	string				Error message
 	 */
 	function error()
 	{
@@ -52,7 +56,10 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 
 
 	/**
-	 *    \brief      Charge une ligne boxe depuis son rowid
+	 *  Load a box line from its rowid
+	 *
+	 *  @param	int		$rowid		Row id to load
+	 *  @return	int					<0 if KO, >0 if OK
 	 */
 	function fetch($rowid)
 	{
@@ -60,7 +67,7 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql.= " WHERE b.rowid = ".$rowid;
-		dol_syslog("ModeleBoxes::fetch rowid=".$rowid);
+		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql)

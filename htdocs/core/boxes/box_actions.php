@@ -25,8 +25,11 @@
 
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
-
-class box_actions extends ModeleBoxes {
+/**
+ * Class to manage the box to show actions
+ */
+class box_actions extends ModeleBoxes
+{
 
 	var $boxcode="lastactions";
 	var $boximg="object_action";
