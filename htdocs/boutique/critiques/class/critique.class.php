@@ -23,8 +23,7 @@
 
 
 /**
- *		\class 		Critique
- *		\brief      Classe permettant la gestion des critiques OSCommerce
+ *		Classe permettant la gestion des critiques OSCommerce
  */
 class Critique
 {
@@ -40,7 +39,7 @@ class Critique
 	 */
 	function Critique($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 	}
 
 	/**
