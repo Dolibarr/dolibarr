@@ -275,7 +275,7 @@ if ($mil->fetch($id) >= 0)
 			}
 
 			// Sort $modulenames
-			// TODO
+			sort($modulenames);
 
 			// Loop on each submodule
             foreach($modulenames as $modulename)
