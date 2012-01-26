@@ -25,7 +25,10 @@
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 
-class box_factures extends ModeleBoxes {
+/**
+ * Class to manage the box to show last invoices
+ */
+ class box_factures extends ModeleBoxes {
 
 	var $boxcode="lastcustomerbills";
 	var $boximg="object_bill";

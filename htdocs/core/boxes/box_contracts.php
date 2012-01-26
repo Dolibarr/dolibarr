@@ -24,7 +24,10 @@
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 
-class box_contracts extends ModeleBoxes {
+/**
+ * Class to manage the box to show last contracts
+ */
+ class box_contracts extends ModeleBoxes {
 
     var $boxcode="lastcontracts";
     var $boximg="object_contract";

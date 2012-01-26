@@ -24,8 +24,7 @@
 
 
 /**
- *	    \class      ModeleBoxes
- *		\brief      Classe mere des boites
+ *		Parent class of boxes
  */
 class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" boxes
 {

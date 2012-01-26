@@ -25,7 +25,10 @@
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 
-class box_factures_fourn extends ModeleBoxes {
+/**
+ * Class to manage the box to show last supplier invoices
+ */
+ class box_factures_fourn extends ModeleBoxes {
 
 	var $boxcode="lastsupplierbills";
 	var $boximg="object_bill";

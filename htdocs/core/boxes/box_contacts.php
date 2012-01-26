@@ -27,7 +27,10 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 
-class box_contacts extends ModeleBoxes {
+/**
+ * Class to manage the box to show last contacts
+ */
+ class box_contacts extends ModeleBoxes {
 
 	var $boxcode="lastcontacts";
 	var $boximg="object_contact";

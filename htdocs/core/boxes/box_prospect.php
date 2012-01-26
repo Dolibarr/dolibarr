@@ -28,7 +28,10 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 include_once(DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php");
 
 
-class box_prospect extends ModeleBoxes {
+/**
+ * Class to manage the box to show last prospects
+ */
+ class box_prospect extends ModeleBoxes {
 
 	var $boxcode="lastprospects";
 	var $boximg="object_company";

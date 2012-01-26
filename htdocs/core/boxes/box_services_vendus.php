@@ -26,7 +26,10 @@
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 
-class box_services_vendus extends ModeleBoxes {
+/**
+ * Class to manage the box to show last services lines
+ */
+ class box_services_vendus extends ModeleBoxes {
 
 	var $boxcode="lastproductsincontract";
 	var $boximg="object_product";

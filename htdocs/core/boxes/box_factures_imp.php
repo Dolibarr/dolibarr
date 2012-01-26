@@ -27,7 +27,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 
 
-class box_factures_imp extends ModeleBoxes {
+/**
+ * Class to manage the box to show last invoices
+ */
+ class box_factures_imp extends ModeleBoxes {
 
 	var $boxcode="oldestunpaidcustomerbills";
 	var $boximg="object_bill";
