@@ -72,16 +72,8 @@ llxHeader('',$langs->trans("Setup"),$help_url);
 print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 
 
-// Search modules
-$filename = array();
-$modules = array();
-$orders = array();
-$categ = array();
-$dirmod = array();
+// Search modules dirs
 $modulesdir = array();
-$i = 0;	// is a sequencer of modules found
-$j = 0;	// j is module number. Automatically affected if module number not defined.
-
 foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
 	$modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
@@ -103,6 +95,15 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 	}
 }
 //var_dump($modulesdir);
+
+
+$filename = array();
+$modules = array();
+$orders = array();
+$categ = array();
+$dirmod = array();
+$i = 0;	// is a sequencer of modules found
+$j = 0;	// j is module number. Automatically affected if module number not defined.
 
 foreach ($modulesdir as $dir)
 {
