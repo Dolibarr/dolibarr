@@ -493,14 +493,14 @@ class FactureRec extends Facture
 			$sql.= ") VALUES (";
 			$sql.= "'".$facid."'";
 			$sql.= ", '".$this->db->escape($desc)."'";
-			$sql.= ", ".price2num($price);
+			$sql.= ", ".price2num($pu_ht);
 			$sql.= ", ".price2num($qty);
 			$sql.= ", ".price2num($txtva);
 			$sql.= ", ".($fk_product?"'".$fk_product."'":"null");
 			$sql.= ", ".$product_type;
 			$sql.= ", '".price2num($remise_percent)."'";
 			$sql.= ", '".price2num($pu_ht)."'";
-			$sql.= ", '".price2num($remise)."'";
+			$sql.= ", null";
 			$sql.= ", '".price2num($total_ht)."'";
 			$sql.= ", '".price2num($total_tva)."'";
 			$sql.= ", '".price2num($total_ttc)."'";
