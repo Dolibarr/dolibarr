@@ -68,6 +68,19 @@ For developers:
 - Qual: task #217 : Move core files into core directory (login, menus, triggers, boxes, modules)
 
 
+***** ChangeLog for 3.1.1 compared to 3.1.0 *****
+
+- New: Add option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS. With this option added, 
+       credit notes are not removed from total amount of invoice but are just 
+       payments used to reducs remain to pay.
+- Fix: Removed warnings during install.
+- Fix: State into address of paypal payments were lost
+- Fix: Removed Bare LF from emails sent with smtps method.
+- Fix: Can show report on selected period.
+- Fix: product removed from list after deleted into order.
+- Fix: pgsql can connect using socket.
+
+
 ***** ChangeLog for 3.1 compared to 3.0 *****
 WARNING: IE6 browser is no more supported in this version.
 For users:
