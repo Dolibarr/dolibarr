@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -25,11 +25,11 @@
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
 
-/**     \class      FormMail
- *      \brief      Classe permettant la generation du formulaire html d'envoi de mail unitaire
- *      \remarks    Utilisation: $formail = new FormMail($db)
- *      \remarks                 $formmail->proprietes=1 ou chaine ou tableau de valeurs
- *      \remarks                 $formmail->show_form() affiche le formulaire
+/**
+ *      Classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *      Usage: $formail = new FormMail($db)
+ *             $formmail->proprietes=1 ou chaine ou tableau de valeurs
+ *             $formmail->show_form() affiche le formulaire
  */
 class FormMail
 {
@@ -69,12 +69,13 @@ class FormMail
 
 
     /**
-     *	\brief     Constructeur
-     *  \param     DB      handler d'acces base de donnee
+     *	Constructor
+     *
+     *  @param	DoliDB	$DB      Database handler
      */
-    function FormMail($DB)
+    function FormMail($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
 
         $this->withform=1;
 
@@ -103,6 +104,8 @@ class FormMail
 
     /**
      * Clear list of attached files in send mail form (stored in session)
+     * 
+     * @return	void
      */
     function clear_attached_files()
     {
@@ -125,6 +128,7 @@ class FormMail
      * @param 	string   $path   Full absolute path on filesystem of file, including file name
      * @param 	string   $file   Only filename
      * @param 	string   $type   Mime type
+     * @return	void
      */
     function add_attached_files($path,$file,$type)
     {
@@ -148,7 +152,8 @@ class FormMail
     /**
      * Remove a file from the list of attached files (stored in SECTION array)
      *
-     * @param  $keytodelete     Key in file array
+     * @param  	string	$keytodelete     Key in file array
+     * @return	void
      */
     function remove_attached_files($keytodelete)
     {
@@ -190,8 +195,9 @@ class FormMail
      *	Show the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
      *
-     *	@param			addfileaction		Name of action when posting file attachments
-     *	@param			removefileaction	Name of action when removing file attachments
+     *	@param	string	$addfileaction		Name of action when posting file attachments
+     *	@param	string	$removefileaction	Name of action when removing file attachments
+     *	@return	void
      */
     function show_form($addfileaction='addfile',$removefileaction='removefile')
     {
@@ -202,8 +208,9 @@ class FormMail
      *	Get the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
      *
-     *	@param			addfileaction		Name of action when posting file attachments
-     *	@param			removefileaction	Name of action when removing file attachments
+     *	@param	string	$addfileaction		Name of action when posting file attachments
+     *	@param	string	$removefileaction	Name of action when removing file attachments
+     *	@return string						Form to show
      */
     function get_form($addfileaction='addfile',$removefileaction='removefile')
     {

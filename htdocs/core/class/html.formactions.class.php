@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -25,8 +25,7 @@
 
 
 /**
- *      \class  FormActions
- *      \brief  Class to manage building of HTML components
+ *      Class to manage building of HTML components
  */
 class FormActions
 {
@@ -37,23 +36,23 @@ class FormActions
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
      */
-    function FormActions($DB)
+    function FormActions($db)
     {
-        $this->db = $DB;
-
+        $this->db = $db;
         return 1;
     }
 
 
     /**
-     *      Show list of action status
+     *  Show list of action status
      *
-     * 		@param		formname	Name of form where select in included
-     * 		@param		selected	Preselected value
-     * 		@param		canedit		1=can edit, 0=read only
-     *      @param      htmlname    Name of html prefix for html fields (selectX and valX)
+     * 	@param	string	$formname	Name of form where select in included
+     * 	@param	string	$selected	Preselected value
+     * 	@param	int		$canedit	1=can edit, 0=read only
+     *  @param  string	$htmlname   Name of html prefix for html fields (selectX and valX)
+     * 	@return	void
      */
     function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete')
     {
@@ -101,11 +100,12 @@ class FormActions
 
 
     /**
-     *    	Show list of actions for element
-     *    	@param      object			Object
-     *    	@param      typeelement		'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
-     *		@param		socid			socid of user
-     *		@return		int				<0 if KO, >=0 if OK
+     *  Show list of actions for element
+     * 
+     *  @param	Object	$object			Object
+     *  @param  string	$typeelement	'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
+     *	@param	int		$socid			socid of user
+     *	@return	int						<0 if KO, >=0 if OK
      */
     function showactions($object,$typeelement,$socid=0)
     {
@@ -159,9 +159,11 @@ class FormActions
 
 
     /**
-     *    Output list of type of event
-     *    @param      selected        Type pre-selectionne
-     *    @param      htmlname        Nom champ formulaire
+     *  Output list of type of event
+     * 
+     *  @param	string		$selected        Type pre-selectionne
+     *  @param  string		$htmlname        Nom champ formulaire
+     * 	@return	void
      */
     function select_type_actions($selected='',$htmlname='actioncode')
     {

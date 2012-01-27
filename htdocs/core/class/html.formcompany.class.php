@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,8 @@
 
 
 /**
- *	\class      FormCompany
- *	\brief      Class to build HTML component for third parties management
- *	\remarks	Only common components must be here.
+ *	Class to build HTML component for third parties management
+ *	Only common components are here.
  */
 class FormCompany
 {
