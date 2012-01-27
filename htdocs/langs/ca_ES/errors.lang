@@ -65,6 +65,7 @@ ErrorPasswordsMustMatch=Les 2 contrasenyes indicades s'han de correspondre
 ErrorContactEMail=S'ha produït un error tècnic. Contacti amb l'administrador al e-mail <b>%s</b>, indicant el codi d'error <b>%s</b> en el seu missatge, o pot també adjuntar una còpia de pantalla d'aquesta pàgina.
 ErrorWrongValueForField=Valor incorrecte per al camp número <b>%s</b> (el valor '<b>%s</b>' no compleix amb la regla <b>%s</b>)
 ErrorFieldValueNotIn=Valor incorrecte per al camp nombre <b>%s</b> (el valor '<b>%s</b>' no es un valor en el camp <b>%s</b> de la taula <b>%s</b>)
+ErrorFieldRefNotIn=Valor incorrecte per al camp nombre <b>%s</b> (el valor '<b>%s</b>' no és una referència existent en <b>%s</b>)
 ErrorsOnXLines=Errors a <b>%s</b> línies font
 ErrorFileIsInfectedWithAVirus=L'antivirus no ha pogut validar aquest arxiu (és probable que estigui infectat per un virus)!
 ErrorSpecialCharNotAllowedForField=Els caràcters especials no són admesos pel camp "%s"
