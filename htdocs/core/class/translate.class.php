@@ -27,8 +27,7 @@
 
 
 /**
- *      \class      Translate
- *		\brief      Class to manage translations
+ *		Class to manage translations
  */
 class Translate
 {
