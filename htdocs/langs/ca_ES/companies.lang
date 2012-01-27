@@ -326,6 +326,7 @@ NoDolibarrAccess=Sense accés d'usuari
 ExportDataset_company_1=Tercers (empreses/institucions) i atributs
 ExportDataset_company_2=Contactes de tercers i atributs
 ImportDataset_company_1=Tercers (empreses/institucions) i atributs
+ImportDataset_company_2=Contactes (tercers o lliures) i atributs
 PriceLevel=Nivell de preus
 DeliveriesAddress=Adreça(es) d'enviament
 DeliveryAddress=Adreça d'enviament
