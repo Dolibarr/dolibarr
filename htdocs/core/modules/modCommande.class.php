@@ -200,6 +200,12 @@ class modCommande extends DolibarrModules
 		// Permissions
 		$this->remove();
 
+		//ODT template
+		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
+		create_exdir($dirodt);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt',$dirodt.'/template_order.odt',0,0);
+		
 		$sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."'",
 		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES('".$this->const[0][2]."','order')"
