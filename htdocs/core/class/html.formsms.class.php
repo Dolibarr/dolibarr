@@ -24,11 +24,11 @@
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
 
-/**     \class      FormSms
- *      \brief      Classe permettant la generation du formulaire d'envoi de Sms
- *      \remarks    Utilisation: $formsms = new FormSms($db)
- *      \remarks                 $formsms->proprietes=1 ou chaine ou tableau de valeurs
- *      \remarks                 $formsms->show_form() affiche le formulaire
+/**     
+ *      Classe permettant la generation du formulaire d'envoi de Sms
+ *      Usage: $formsms = new FormSms($db)
+ *             $formsms->proprietes=1 ou chaine ou tableau de valeurs
+ *             $formsms->show_form() affiche le formulaire
  */
 class FormSms
 {
@@ -62,11 +62,11 @@ class FormSms
     /**
      *	Constructor
      *
-     *  @param		DoliDB		$DB      Database handler
+     *  @param		DoliDB		$db      Database handler
      */
-    function FormSms($DB)
+    function FormSms($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
 
         $this->withfrom=1;
         $this->withto=1;
