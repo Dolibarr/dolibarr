@@ -19,4 +19,14 @@ To submit a package on LaunchPad:
 - Upload SSH public key onto account
 - Run from command line: bzr launchpad-login yourlogin
 
-- ...
+- Create a debian directory and upload it onto bzr branch ~yourlogin/dolibarr/debian
+
+- Create an empty directory dolibarr and go into it.
+- Create a file dolibarr.recipe with content
+    # bzr-builder format 0.3 deb-version {debupstream}+{revno}+{revno:packaging}
+    lp:dolibarr
+    merge packaging lp:~eldy/dolibarr/debian
+- Run command
+    bzr dailydeb dolibarr.recipe working-dir
+  This will create a directory "working-dir" with dolibarr sources and will add sources from ~eldy/dolibarr/debian
+

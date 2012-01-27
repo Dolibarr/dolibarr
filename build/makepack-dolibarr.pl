@@ -317,10 +317,9 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
-	    #$ret=`rm -fr $BUILDROOT/$PROJECT/build/deb/po/CVS*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/*/CVS*  $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/*/*/CVS*`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/.svn $BUILDROOT/$PROJECT/*/.svn $BUILDROOT/$PROJECT/*/*/.svn $BUILDROOT/$PROJECT/*/*/*/.svn $BUILDROOT/$PROJECT/*/*/*/*/.svn`;
+	    #$ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/*/CVS*  $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/*/*/CVS*`;
+	    #$ret=`rm -fr $BUILDROOT/$PROJECT/.svn $BUILDROOT/$PROJECT/*/.svn $BUILDROOT/$PROJECT/*/*/.svn $BUILDROOT/$PROJECT/*/*/*/.svn $BUILDROOT/$PROJECT/*/*/*/*/.svn`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore $BUILDROOT/$PROJECT/*/.gitignore $BUILDROOT/$PROJECT/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.gitignore`;
    	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/fckeditor`;
@@ -581,28 +580,6 @@ if ($nboftargetok) {
 					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/support/inc.php\"";
 			$ret=`$cmd`;
 
-            # Create DEBIAN directory
-    		print "Create directory $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
-    		$ret=`mkdir "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-    		print "Copy $SOURCE/build/deb/xxx to $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
-            $ret=`cp -f  "$SOURCE/build/deb/config"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`cp -f  "$SOURCE/build/deb/postinst"         "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`cp -f  "$SOURCE/build/deb/postrm"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`cp -f  "$SOURCE/build/deb/templates"        "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`cp -fr "$SOURCE/build/deb/po"               "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/DEBIAN/po/CVS*"`;
-            
-            print "Edit version in file $BUILDROOT/$PROJECT.tmp/DEBIAN/control\n";
-            open (SPECFROM,"<$SOURCE/build/deb/control.debianbin") || die "Error";
-            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/DEBIAN/control") || die "Error";
-            while (<SPECFROM>) {
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
-                print SPECTO $_;
-            }
-            close SPECFROM;
-            close SPECTO;
-            print "Version set to $MAJOR.$MINOR.$newbuild\n";
-            
  			print "Remove other files\n";
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/ChangeLog`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/COPYING`;
@@ -681,21 +658,18 @@ if ($nboftargetok) {
             print "Set owners on files/dir\n";
 		    $ret=`chown -R root.root $BUILDROOT/$PROJECT.tmp`;
 
+			# Set permissions
             print "Set permissions on files/dir\n";
 		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp`;
 		    $cmd="find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ";
             $ret=`$cmd`;
-            $cmd="find $BUILDROOT/$PROJECT.tmp/DEBIAN -type f -exec chmod 755 {} \\; ";
-            $ret=`$cmd`;
-            $ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/control`;
-            $ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/templates`;
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
-            $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/translation/langAutoParser.class.php`;
+            $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/translation/autotranslator.class.php`;
             $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/skeletons/modMyModule.class.php`;
             $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/skeletons/skeleton_class.class.php`;
             $ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/skeletons/skeleton_page.php`;
@@ -703,6 +677,33 @@ if ($nboftargetok) {
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             
+            
+            # Prepare binary package (init DEBIAN dir)
+    		print "Create directory $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
+    		$ret=`mkdir "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+    		print "Copy $SOURCE/build/deb/xxx to $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
+            $ret=`cp -f  "$SOURCE/build/deb/config"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -f  "$SOURCE/build/deb/postinst"         "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -f  "$SOURCE/build/deb/postrm"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -f  "$SOURCE/build/deb/templates"        "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -fr "$SOURCE/build/deb/po"               "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            
+            print "Edit version in file $BUILDROOT/$PROJECT.tmp/DEBIAN/control\n";
+            open (SPECFROM,"<$SOURCE/build/deb/control.debianbin") || die "Error";
+            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/DEBIAN/control") || die "Error";
+            while (<SPECFROM>) {
+                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
+                print SPECTO $_;
+            }
+            close SPECFROM;
+            close SPECTO;
+            print "Version set to $MAJOR.$MINOR.$newbuild\n";
+            
+            $cmd="find $BUILDROOT/$PROJECT.tmp/DEBIAN -type f -exec chmod 755 {} \\; ";
+            $ret=`$cmd`;
+            $ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/control`;
+            $ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/templates`;
+
             # Creation of binary package (to build without sources)
      		#print "Go to directory $BUILDROOT\n";
      		#chdir("$BUILDROOT");
@@ -710,13 +711,15 @@ if ($nboftargetok) {
     		#print "Launch DEB build ($cmd)\n";
     		#$ret=`$cmd`;
     		#print $ret."\n";
+    		#exit
+    		
+            $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc"`;
 
-            # Prepare source package
+            # Prepare source package (init debian dir)
             print "Create directory $BUILDROOT/$PROJECT.tmp/debian\n";
             $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian/source"`;
-            $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc"`;
             print "Copy $SOURCE/build/deb/xxx to $BUILDROOT/$PROJECT.tmp/debian\n";
             # Add files for dpkg-source
             $ret=`cp -f  "$SOURCE/ChangeLog"                "$BUILDROOT/$PROJECT.tmp/usr/share/doc/dolibarr/UserChangeLog"`;
@@ -730,7 +733,6 @@ if ($nboftargetok) {
             $ret=`cp -f  "$SOURCE/build/deb/compat"         "$BUILDROOT/$PROJECT.tmp/debian/compat"`;
             $ret=`cp -f  "$SOURCE/build/deb/format"         "$BUILDROOT/$PROJECT.tmp/debian/source/format"`;
             $ret=`cp -fr "$SOURCE/build/deb/po"             "$BUILDROOT/$PROJECT.tmp/debian/po"`;
-			$ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/debian/po/CVS"`;
             # Add files also required to build binary package with dpkg-buildpackages
             $ret=`cp -f  "$SOURCE/build/deb/config"         "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/deb/postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
