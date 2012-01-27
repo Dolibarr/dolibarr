@@ -25,8 +25,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/CMailFile.class.php");
 
 
 /**
- *      \class      Notify
- *      \brief      Classe de gestion des notifications
+ *      Class to manage notifications
  */
 class Notify
 {
