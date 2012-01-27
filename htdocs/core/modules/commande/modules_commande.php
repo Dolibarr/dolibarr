@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2012      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,46 +157,55 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 	$langs->load("orders");
 
 	$error=0;
-	
+
 	$dir = "/core/modules/commande/";
 	$srctemplatepath='';
-	$modelisok=0;
-	$liste=array();
 
-	// Positionne modele sur le nom du modele de commande a utiliser
-	$file = "pdf_".$modele.".modules.php";
-	// On verifie l'emplacement du modele
-	$file = dol_buildpath($dir.$file);
-	if ($modele && file_exists($file))   $modelisok=1;
-
-	// Si model pas encore bon
-	if (! $modelisok)
+	// Positionne le modele sur le nom du modele a utiliser
+	if (! dol_strlen($modele))
 	{
-		if ($conf->global->COMMANDE_ADDON_PDF) $modele = $conf->global->COMMANDE_ADDON_PDF;
-		$file = "pdf_".$modele.".modules.php";
-		// On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.$file);
-		if (file_exists($file))   $modelisok=1;
+	    if (! empty($conf->global->COMMANDE_ADDON_PDF))
+	    {
+	        $modele = $conf->global->COMMANDE_ADDON_PDF;
+	    }
+	    else
+	    {
+	        $modele = 'einstein';
+	    }
 	}
 
-	// Si model pas encore bon
-	if (! $modelisok)
+    // If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+    if (! empty($tmp[1]))
+    {
+        $modele=$tmp[0];
+        $srctemplatepath=$tmp[1];
+    }
+
+	// Search template file
+	$file=''; $classname=''; $filefound=0;
+	foreach(array('doc','pdf') as $prefix)
 	{
-		$liste=ModelePDFCommandes::liste_modeles($db);
-		$modele=key($liste);        // Renvoie premiere valeur de cle trouvee dans le tableau
-		$file = "pdf_".$modele.".modules.php";
-		// On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.$file);
-		if (file_exists($file))   $modelisok=1;
+        $file = $prefix."_".$modele.".modules.php";
+
+        // On verifie l'emplacement du modele
+        $file = dol_buildpath($dir.'doc/'.$file);
+
+        if (file_exists($file))
+	    {
+	        $filefound=1;
+	        $classname=$prefix.'_'.$modele;
+	        break;
+	    }
 	}
 
 	// Charge le modele
-	if ($modelisok)
+	if ($filefound)
 	{
-		$classname = "pdf_".$modele;
 		require_once($file);
 
 		$obj = new $classname($db);
+		$obj->message = $message;
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
@@ -204,9 +214,12 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 
-			// we delete preview files
-        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			// We delete old preview
+			require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			dol_delete_preview($object);
+
+			// Success in building document. We build meta file.
+			dol_meta_create($object);
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -220,22 +233,15 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_syslog("Error");
-			dol_print_error($db,$obj->error);
-			return 0;
+			dol_print_error($db,"order_pdf_create Error: ".$obj->error);
+			return -1;
 		}
+
 	}
 	else
 	{
-		if (! $conf->global->COMMANDE_ADDON_PDF)
-		{
-			print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_PDF_NotDefined");
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
-		}
-		return 0;
+		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
+		return -1;
 	}
 }
 ?>

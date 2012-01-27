@@ -65,6 +65,7 @@ ErrorPasswordsMustMatch=Las 2 contraseñas indicadas deben corresponderse
 ErrorContactEMail=Se ha producido un error técnico. Contacte con el administrador al e-mail <b>%s</b>, indicando el código de error <b>%s</b> en su mensaje, o puede también adjuntar una copia de pantalla de esta página.
 ErrorWrongValueForField=Valor incorrecto para el campo número <b>%s</b> (el valor '<b>%s</b>' no cumple con la regla <b>%s</b>)
 ErrorFieldValueNotIn=Valor incorrecto para el campo número <b>%s</b> (el valor '<b>%s</b>' no es un valor en el campo <b>%s</b> de la tabla <b>%s</b>)
+ErrorFieldRefNotIn=Valor incorrecto para el campo número <b>%s</b> (el valor '<b>%s</b>' no es una referencia existente en <b>%s</b>)
 ErrorsOnXLines=Errores en <b>%s</b> líneas fuente
 ErrorFileIsInfectedWithAVirus=¡El antivirus no ha podido validar este archivo (es probable que esté infectado por un virus)!
 ErrorSpecialCharNotAllowedForField=Los caracteres especiales no son admitidos por el campo "%s"

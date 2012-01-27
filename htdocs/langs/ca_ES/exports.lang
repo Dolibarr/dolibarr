@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - exports 
+# Dolibarr language file - ca_ES - exports
 CHARSET=UTF-8
 ExportsArea=Àrea exportació
 ImportArea=Àrea importació
@@ -103,8 +103,12 @@ NbOfLinesImported=Nombre de línies correctament importades: <b>%s</b>.
 DataComeFromNoWhere=El valor a inserir no correspon a cap camp de l'arxiu origen.
 DataComeFromFileFieldNb=El valor a inserir es correspon al camp nombre <<b>%s</b> de l'arxiu origen.
 DataComeFromIdFoundFromRef=El valor donat per el camp <b>%s</b> de l'arxiu origen serà utilitzat per trobar el ID de l'objecte pare a fer servir (l'objecte <b>%s</b> amb la referència de l'arxiu origen ha d'existir a Dolibarr).
+DataComeFromIdFoundFromCodeId=El codi del camp número <b>%s</b> de l'arxiu d'origen s'utilitzarà per trobar l'id de l'objecte pare a utilitzar (el codi de l'arxiu d'origen ha d'existir en el diccionari <b>%s</b>). Tingueu en compte que si coneix l'id, pot usar-lo en lloc del codi a l'arxiu d'origen. La importació funcionarà en els 2 casos.
 DataIsInsertedInto=Les dades de l'arxiu d'origen s'inseriran en el següent camp:
 DataIDSourceIsInsertedInto=L'ID de l'objecte pare trobat a partir de la dada origen, s'inserirà en el següent camp:
+DataCodeIDSourceIsInsertedInto=L'id de la línia pare trobada a partir del codi, s'ha d'inserir en el següent camp:
 SourceRequired=Dades d'origen obligatòries
 SourceExample=Exemple de dades d'origen possibles
+ExampleAnyRefFoundIntoElement=Totes les referències trobades per als elements <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Tots els codis (o id) trobats en el diccionari <b>%s</b>
 CSVFormatDesc=Arxiu amb format <b>Valors separats per coma</b> (.csv).<br>És un fitxer amb format de text en què els camps són separats pel caràcter [ %s ]. Si el separador es troba en el contingut d'un camp, el camp ha d'estar tancat per el caràcter [ %s ]. El caràcter d'escapament per a incloure un caràcter d'entorn en una dada és [ %s ].
