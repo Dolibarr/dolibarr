@@ -24,8 +24,7 @@
 
 
 /**
- *  \class      Menu
- *	\brief      Class to manage left menus
+ *	Class to manage left menus
  */
 class Menu
 {

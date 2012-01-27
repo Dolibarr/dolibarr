@@ -25,8 +25,7 @@
 
 
 /**
- *	\class      FormFile
- *	\brief      Class to offer components to list and upload files
+ *	Class to offer components to list and upload files
  */
 class FormFile
 {

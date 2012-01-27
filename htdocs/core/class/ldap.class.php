@@ -30,7 +30,6 @@
  */
 class Ldap
 {
-
 	/**
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
@@ -90,7 +89,6 @@ class Ldap
 	var $ldapcharset='UTF-8';	// LDAP should be UTF-8 encoded
 
 
-	// 1.2 Private properties ----------------------------------------------------
 	/**
 	* The internal LDAP connection handle
 	*/
@@ -135,15 +133,16 @@ class Ldap
 
 
 
-	// 2.1 Connection handling methods -------------------------------------------
+	// Connection handling methods -------------------------------------------
 
 	/**
-	 * 2.1.1 : Connects to the server. Just creates a connection which is used
+	 * Connects to the server. Just creates a connection which is used
 	 * in all later access to the LDAP server. If it can't connect and bind
 	 * anonymously, it creates an error code of -1. Returns true if connected,
 	 * false if failed. Takes an array of possible servers - if one doesn't work,
 	 * it tries the next and so on.
-	 *		\deprecated		Utiliser connect_bind a la place
+	 * 
+	 * @deprecated		Utiliser connect_bind a la place
 	 */
 	function connect()
 	{
@@ -181,10 +180,11 @@ class Ldap
 
 
 	/**
-	 *		\brief		Connect and bind
-	 *		\return		<0 si KO, 1 si bind anonymous, 2 si bind auth
-	 * 		\remarks	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
-	 * 					After return, this->connection and $this->bind are defined
+	 *	Connect and bind
+	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
+	 * 	After return, this->connection and $this->bind are defined
+	 *
+	 *	@return		int		<0 si KO, 1 si bind anonymous, 2 si bind auth
 	 */
 	function connect_bind()
 	{
@@ -283,8 +283,10 @@ class Ldap
 
 
 	/**
-	 * 2.1.2 : Simply closes the connection set up earlier.
+	 * Simply closes the connection set up earlier.
 	 * Returns true if OK, false if there was an error.
+	 * 
+	 * @return	boolean			true or false
 	 */
 	function close()
 	{
@@ -299,8 +301,10 @@ class Ldap
 	}
 
 	/**
-	 * 2.1.3 : Anonymously binds to the connection. After this is done,
+	 * Anonymously binds to the connection. After this is done,
 	 * queries and searches can be done - but read-only.
+	 * 
+	 * @return	boolean			true or false
 	 */
 	function bind()
 	{
@@ -318,10 +322,14 @@ class Ldap
 	}
 
 	/**
-	 * 2.1.4 : Binds as an authenticated user, which usually allows for write
+	 * Binds as an authenticated user, which usually allows for write
 	 * access. The FULL dn must be passed. For a directory manager, this is
 	 * "cn=Directory Manager" under iPlanet. For a user, it will be something
 	 * like "uid=jbloggs,ou=People,dc=foo,dc=com".
+	 *
+	 * @param	string	$bindDn			DN
+	 * @param	string	$pass			Password 
+	 * @return	boolean					true or false
 	 */
 	function bindauth($bindDn,$pass)
 	{
@@ -339,9 +347,9 @@ class Ldap
 	}
 
 	/**
-	 * 	\brief 		Unbind du serveur ldap.
-	 * 	\param		ds
-	 * 	\return		bool
+	 * Unbind du serveur ldap.
+	 * 
+	 * @return	boolean					true or false
 	 */
 	function unbind()
 	{
@@ -355,9 +363,9 @@ class Ldap
 
 
 	/**
-	 * \brief verification de la version du serveur ldap.
-	 * \param	ds
-	 * \return	version
+	 * Verification de la version du serveur ldap.
+	 * 
+	 * @return	string					version
 	 */
 	function getVersion()
 	{
@@ -367,8 +375,9 @@ class Ldap
 	}
 
 	/**
-	 * \brief changement de la version du serveur ldap.
-	 * \return	version
+	 * Change ldap protocol version to use.
+	 * 
+	 * @return	string					version
 	 */
 	function setVersion() {
 		// LDAP_OPT_PROTOCOL_VERSION est une constante qui vaut 17
@@ -377,8 +386,9 @@ class Ldap
 	}
 
 	/**
-	 * \brief changement du referrals.
-	 * \return	referrals
+	 * changement du referrals.
+	 * 
+	 * @return	string					referrals
 	 */
 	function setReferrals() {
 		// LDAP_OPT_REFERRALS est une constante qui vaut ?
@@ -388,12 +398,13 @@ class Ldap
 
 
 	/**
-	 * 	\brief		Add a LDAP entry
-	 *	\param		dn			DN entry key
-	 *	\param		info		Attributes array
-	 *	\param		user		Objet user that create
-	 *	\return		int			<0 if KO, >0 if OK
-	 *	\remarks	Ldap object connect and bind must have been done
+	 * 	Add a LDAP entry
+	 *	Ldap object connect and bind must have been done
+	 * 
+	 *	@param	string	$dn			DN entry key
+	 *	@param	string	$info		Attributes array
+	 *	@param	User	$user		Objet user that create
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function add($dn, $info, $user)
 	{
@@ -439,12 +450,13 @@ class Ldap
 	}
 
 	/**
-	 * 	\brief		Modify a LDAP entry
-	 *	\param		dn			DN entry key
-	 *	\param		info		Attributes array
-	 *	\param		user		Objet user that modify
-	 *	\return		int			<0 if KO, >0 if OK
-	 *	\remarks	Ldap object connect and bind must have been done
+	 * 	Modify a LDAP entry
+	 *	Ldap object connect and bind must have been done
+	 * 
+	 *	@param	string		$dn			DN entry key
+	 *	@param	string		$info		Attributes array
+	 *	@param	string		$user		Objet user that modify
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function modify($dn, $info, $user)
 	{
@@ -490,13 +502,14 @@ class Ldap
 	}
 
 	/**
-	 *  \brief      Modify a LDAP entry (to use if dn != olddn)
-	 *  \param      dn			DN entry key
-	 *  \param      info		Attributes array
-	 *  \param    	user		Objet user that delete
-	 * 	\param		olddn		Old DN entry key (before update)
-	 *	\return		int			<0 if KO, >0 if OK
-	 *	\remarks	Ldap object connect and bind must have been done
+	 *  Modify a LDAP entry (to use if dn != olddn)
+	 *	Ldap object connect and bind must have been done
+	 * 
+	 *  @param	string		$dn			DN entry key
+	 *  @param  string		$info		Attributes array
+	 *  @param  User		$user		Objet user that delete
+	 * 	@param	string		$olddn		Old DN entry key (before update)
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function update($dn,$info,$user,$olddn)
 	{
@@ -544,10 +557,11 @@ class Ldap
 
 
 	/**
-	 * 	\brief		Delete a LDAP entry
-	 *	\param		dn			DN entry key
-	 *	\return		int			<0 si KO, >0 si OK
-	 *	\remarks	Ldap object connect and bind must have been done
+	 * 	Delete a LDAP entry
+	 *	Ldap object connect and bind must have been done
+	 * 
+	 *	@param	string	$dn			DN entry key
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function delete($dn)
 	{
@@ -577,10 +591,11 @@ class Ldap
 	}
 
 	/**
-	 * 	\brief		Build a LDAP message
-	 *	\param		dn			DN entry key
-	 *	\param		info		Attributes array
-	 *	\return		string		Content of file
+	 * 	Build a LDAP message
+	 * 
+	 *	@param	string	$dn			DN entry key
+	 *	@param	string	$info		Attributes array
+	 *	@return	string				Content of file
 	 */
 	function dump_content($dn, $info)
 	{
@@ -618,10 +633,11 @@ class Ldap
 	}
 
 	/**
-	 * 	\brief		Dump a LDAP message to ldapinput.in file
-	 *	\param		dn			DN entry key
-	 *	\param		info		Attributes array
-	 *	\return		int			<0 if KO, >0 if OK
+	 * 	Dump a LDAP message to ldapinput.in file
+	 * 
+	 *	@param	string	$dn			DN entry key
+	 *	@param	string	$info		Attributes array
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function dump($dn, $info)
 	{
@@ -650,15 +666,16 @@ class Ldap
 	}
 
 
-	// 2.4 Attribute methods -----------------------------------------------------
+	// Attribute methods -----------------------------------------------------
 
     /**
-	 * 	\brief		Add a LDAP attribute in entry
-	 *	\param		dn			DN entry key
-	 *	\param		info		Attributes array
-	 *	\param		user		Objet user that create
-	 *	\return		int			<0 if KO, >0 if OK
-	 *	\remarks	Ldap object connect and bind must have been done
+	 * 	Add a LDAP attribute in entry
+	 *	Ldap object connect and bind must have been done
+	 * 
+	 *	@param	string	$dn			DN entry key
+	 *	@param	string	$info		Attributes array
+	 *	@param	User	$user		Objet user that create
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function addAttribute($dn, $info, $user)
 	{
@@ -704,12 +721,13 @@ class Ldap
 	}
 
     /**
-	 * 	\brief		Update a LDAP attribute in entry
-	 *	\param		dn			DN entry key
-	 *	\param		info		Attributes array
-	 *	\param		user		Objet user that create
-	 *	\return		int			<0 if KO, >0 if OK
-	 *	\remarks	Ldap object connect and bind must have been done
+	 * 	Update a LDAP attribute in entry
+	 *	Ldap object connect and bind must have been done
+	 * 
+	 *	@param	string	$dn			DN entry key
+	 *	@param	string	$info		Attributes array
+	 *	@param	User	$user		Objet user that create
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function updateAttribute($dn, $info, $user)
 	{
@@ -755,12 +773,13 @@ class Ldap
 	}
 
     /**
-	 * 	\brief		Delete a LDAP attribute in entry
-	 *	\param		dn			DN entry key
-	 *	\param		info		Attributes array
-	 *	\param		user		Objet user that create
-	 *	\return		int			<0 if KO, >0 if OK
-	 *	\remarks	Ldap object connect and bind must have been done
+	 * 	Delete a LDAP attribute in entry
+	 *	Ldap object connect and bind must have been done
+	 * 
+	 *	@param	string	$dn			DN entry key
+	 *	@param	string	$info		Attributes array
+	 *	@param	User	$user		Objet user that create
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function deleteAttribute($dn, $info, $user)
 	{
@@ -807,6 +826,10 @@ class Ldap
 
     /**
 	 *  Returns an array containing attributes and values for first record
+	 * 
+	 *	@param	string	$dn			DN entry key
+	 *	@param	string	$filter		Filter
+	 *	@return	int					<0 if KO, >0 if OK 
 	 */
 	function getAttribute($dn,$filter)
 	{
@@ -848,6 +871,10 @@ class Ldap
 
 	/**
 	 *  Returns an array containing values for an attribute and for first record matching filterrecord
+	 * 
+	 * 	@param	string	$filterrecord		Record
+	 * 	@param	string	$attribute			Attributes
+	 * 	@return void
 	 */
 	function getAttributeValues($filterrecord,$attribute)
 	{
@@ -882,14 +909,15 @@ class Ldap
 	}
 
 	/**
-	 * 		\brief		Returns an array containing a details of elements
-	 *		\param		$search			 	Valeur champ cle recherche, sinon '*' pour tous.
-	 *		\param		$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
-	 *		\param		$useridentifier 	Nom du champ cle (Ex: uid)
-	 *		\param		$attributeArray 	Array of fields required (Ex: sn,userPassword)
-	 *		\param		$activefilter		1=utilise le champ this->filter comme filtre
-	 *		\return		array				Array of [id_record][ldap_field]=value
-	 * 		\remarks	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
+	 * 	Returns an array containing a details of elements
+	 * 	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
+	 * 
+	 *	@param	string	$search			 	Valeur champ cle recherche, sinon '*' pour tous.
+	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
+	 *	@param	string	$useridentifier 	Name of key field (Ex: uid)
+	 *	@param	array	$attributeArray 	Array of fields required (Ex: sn,userPassword)
+	 *	@param	int		$activefilter		1=utilise le champ this->filter comme filtre
+	 *	@return	array						Array of [id_record][ldap_field]=value
 	 */
 	function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter=0)
 	{
@@ -980,9 +1008,12 @@ class Ldap
 
 	/**
 	 *  Converts a little-endian hex-number to one, that 'hexdec' can convert
-	 *	Indispensable pour Active Directory
+	 *	Required by Active Directory
+	 *
+	 *	@param	string		$hex
 	 */
-	function littleEndian($hex) {
+	function littleEndian($hex) 
+	{
 		for ($x=dol_strlen($hex)-2; $x >= 0; $x=$x-2) {
 			$result .= substr($hex,$x,2);
 		}
@@ -991,9 +1022,10 @@ class Ldap
 
 
 	/**
-	 * Recupere le SID de l'utilisateur
-	 * ldapuser. le login de l'utilisateur
-	 * Indispensable pour Active Directory
+	 *  Recupere le SID de l'utilisateur 
+	 *	Required by Active Directory
+	 * 
+	 * 	@param	string		$ldapuser		Login de l'utilisateur
 	 */
 	function getObjectSid($ldapUser)
 	{
@@ -1050,8 +1082,12 @@ class Ldap
 	/**
 	 * Returns the textual SID
 	 * Indispensable pour Active Directory
+	 * 
+	 * @param	string	$binsid		Binary SID
+	 * @return	string				Textual SID
 	 */
-	function binSIDtoText($binsid) {
+	function binSIDtoText($binsid) 
+	{
 		$hex_sid=bin2hex($binsid);
 		$rev = hexdec(substr($hex_sid,0,2));          // Get revision-part of SID
 		$subcount = hexdec(substr($hex_sid,2,2));    // Get count of sub-auth entries
@@ -1066,14 +1102,15 @@ class Ldap
 
 
 	/**
-	 * 	\brief 		Fonction de recherche avec filtre
-	 *	\remarks	this->connection doit etre defini donc la methode bind ou bindauth doit avoir deja ete appelee
-	 * 	\param 		checkDn			DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
-	 * 	\param 		filter			Filtre de recherche (ex: (sn=nom_personne) )
-	 *	\return		array			Tableau des reponses (cle en minuscule-valeur)
-	 *	\remarks	Ne pas utiliser pour recherche d'une liste donnee de proprietes
-	 *				car conflit majuscule-minuscule. A n'utiliser que pour les pages
-	 *				'Fiche LDAP' qui affiche champ lisibles par defaut.
+	 * 	Fonction de recherche avec filtre
+	 *	this->connection doit etre defini donc la methode bind ou bindauth doit avoir deja ete appelee
+	 *	Ne pas utiliser pour recherche d'une liste donnee de proprietes
+	 *	car conflit majuscule-minuscule. A n'utiliser que pour les pages
+	 *	'Fiche LDAP' qui affiche champ lisibles par defaut.
+	 *
+	 * 	@param 		checkDn			DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
+	 * 	@param 		filter			Filtre de recherche (ex: (sn=nom_personne) )
+	 *	@return		array			Tableau des reponses (cle en minuscule-valeur)
 	 */
 	function search($checkDn, $filter)
 	{
@@ -1105,10 +1142,11 @@ class Ldap
 
 	/**
 	 * 		Load all attribute of a LDAP user
-	 * 		@param 		$user		User to search for. Not used if a filter is provided.
-	 *      @param      filter      Filter for search. Must start with &.
-	 *                              Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
-	 *		@return		int			>0 if ok, <0 if ko
+	 * 
+	 * 		@param	User	$user		User to search for. Not used if a filter is provided.
+	 *      @param  string	$filter		Filter for search. Must start with &.
+	 *                       	       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
+	 *		@return	int					>0 if OK, <0 if KO
 	 */
 	function fetch($user,$filter)
 	{
@@ -1195,12 +1233,15 @@ class Ldap
 	}
 
 
-	// 2.6 helper methods
+	// helper methods
 
 	/**
-	 * Returns the correct user identifier to use, based on the ldap server type
+	 * 	Returns the correct user identifier to use, based on the ldap server type
+	 * 
+	 *	@return	string 				Login 
 	 */
-	function getUserIdentifier() {
+	function getUserIdentifier() 
+	{
 		if ($this->serverType == "activedirectory") {
 			return $this->attr_sambalogin;
 		} else {
@@ -1209,10 +1250,13 @@ class Ldap
 	}
 
    /**
-	* \brief UserAccountControl Flgs to more human understandable form...
+	* 	UserAccountControl Flgs to more human understandable form...
 	*
+	*	@param	string		$uacf		UACF
+	*	@return	void
 	*/
-	function parseUACF($uacf) {
+	function parseUACF($uacf) 
+	{
 		//All flags array
 		$flags = array( "TRUSTED_TO_AUTH_FOR_DELEGATION"  =>    16777216,
                     "PASSWORD_EXPIRED"                =>    8388608,
@@ -1250,10 +1294,13 @@ class Ldap
 	}
 
    /**
-	* \brief SamAccountType value to text
+	* 	SamAccountType value to text
 	*
+	*	@param	string	$samtype	SamType
+	*	@return	string				Sam string
 	*/
-	function parseSAT($samtype) {
+	function parseSAT($samtype) 
+	{
 		$stypes = array(    805306368    =>    "NORMAL_ACCOUNT",
 		805306369    =>    "WORKSTATION_TRUST",
 		805306370    =>    "INTERDOMAIN_TRUST",
@@ -1275,9 +1322,10 @@ class Ldap
 	}
 
 	/**
-	 *	\brief		Convertit le temps ActiveDirectory en Unix timestamp
-	 *	\param		string		AD time to convert
-	 *	\return		string		Unix timestamp
+	 *	Convertit le temps ActiveDirectory en Unix timestamp
+	 *
+	 *	@param	string	$value		AD time to convert
+	 *	@return	string				Unix timestamp
 	 */
 	function convert_time($value)
 	{
@@ -1292,9 +1340,9 @@ class Ldap
 	/**
 	 *  Convert a string into output/memory charset
      *
-	 *  @param      str            	String to convert
-	 *  @param		pagecodefrom	Page code of src string
-	 *  @return     string         	Converted string
+	 *  @param	string	$str            String to convert
+	 *  @param	string	$pagecodefrom	Page code of src string
+	 *  @return string         			Converted string
 	 */
 	private function convToOutputCharset($str,$pagecodefrom='UTF-8')
 	{
@@ -1307,21 +1355,22 @@ class Ldap
 	/**
 	 *  Convert a string from output/memory charset
      *
-	 *  @param      str            	String to convert
-	 *  @param		pagecodeto		Page code for result string
-	 *  @return     string         	Converted string
+	 *  @param	string	$str            String to convert
+	 *  @param	string	$pagecodeto		Page code for result string
+	 *  @return string         			Converted string
 	 */
 	function convFromOutputCharset($str,$pagecodeto='UTF-8')
 	{
 		global $conf;
-		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_decode($str);
-		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1')	$str=utf8_encode($str);
+		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') $str=utf8_decode($str);
+		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') $str=utf8_encode($str);
 		return $str;
 	}
 
 
 	/**
 	 *	Return available value of group GID
+	 *
 	 *	@return     int         	gid number
 	 */
 	function getNextGroupGid()

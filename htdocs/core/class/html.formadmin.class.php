@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  *
@@ -25,8 +25,7 @@
 
 
 /**
- *       \class      FormAdmin
- *       \brief      Class to generate html code for admin pages
+ *      Class to generate html code for admin pages
  */
 class FormAdmin
 {
@@ -42,7 +41,6 @@ class FormAdmin
 	function FormAdmin($db)
 	{
 		$this->db = $db;
-
 		return 1;
 	}
 
@@ -279,7 +277,7 @@ class FormAdmin
 
 
     /**
-     *  Retourne la liste deroulante des menus disponibles (eldy)
+     *  Return a HTML select list of timezones
      *
      *  @param	string		$selected        Menu pre-selectionnee
      *  @param  string		$htmlname        Nom de la zone select

@@ -25,8 +25,7 @@
 
 
 /**
- *    \class      Interfaces
- *    \brief      Classe de la gestion des triggers
+ *   Class to manage triggers
  */
 
 class Interfaces
@@ -45,26 +44,27 @@ class Interfaces
     }
 
     /**
-     *   \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
-     *               Cette fonction declenche tous les triggers trouves actifs.
-     *   \param      action      Trigger event code
-     *   \param      object      Objet concern
-     *   \param      user        Objet user
-     *   \param      lang        Objet lang
-     *   \param      conf        Objet conf
-     *   \return     int         Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
+     *   Function called when a Dolibarr business event occurs
+     *   This function call all qualified triggers.
+     * 
+     *   @param		string		$action     Trigger event code
+     *   @param     Object		$object     Objet concern
+     *   @param     User		$user       Objet user
+     *   @param     Lang		$lang       Objet lang
+     *   @param     Conf		$conf       Objet conf
+     *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
      */
     function run_triggers($action,$object,$user,$langs,$conf)
     {
         // Check parameters
         if (! is_object($object) || ! is_object($conf))	// Error
         {
-            dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERR);
+            dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERR);
             return -1;
         }
         if (! is_object($user) || ! is_object($langs))	// Warning
         {
-            dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
+            dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
         }
 
         foreach($conf->triggers_modules as $reldir)
@@ -175,9 +175,10 @@ class Interfaces
     }
 
     /**
-     *   Return list of triggers. Function used by admin page htdoc/admin/triggers
-     * 	@param		workflow		0=Return all triggers, 1=Return only triggers not disabled if workflow module activated
-     * 	@return		array			Array list of triggers
+     *  Return list of triggers. Function used by admin page htdoc/admin/triggers
+     * 
+     * 	@param	int		$workflow		0=Return all triggers, 1=Return only triggers not disabled if workflow module activated
+     * 	@return	array					Array list of triggers
      */
     function getTriggersList($workflow=0)
     {
