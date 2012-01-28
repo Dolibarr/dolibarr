@@ -585,13 +585,12 @@ class DoliDBSqlite
     }
 
     /**
-     *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+     *	Return number of lines for result of a SELECT
      *
-     *	@see    	num_rows
-     *	@param      resultset   Curseur de la requete voulue
-     *	@return     int		    Nombre de lignes
+     *	@param	Resultset	$resultset  Resulset of requests
+     *	@return int		    			Nb of lines
+     *	@see    affected_rows
      */
-
     function affected_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion
@@ -602,11 +601,12 @@ class DoliDBSqlite
     }
 
 
-    /**
-     *	Libere le dernier resultset utilise sur cette connexion
-     *
-     *	@param      resultset   Curseur de la requete voulue
-     */
+	/**
+	 *	Free last resultset used.
+	 *
+	 *	@param  resultset	$resultset   Curseur de la requete voulue
+	 *	@return	void
+	 */
     function free($resultset=0)
     {
         // If resultset not provided, we take the last used by connexion
@@ -616,13 +616,13 @@ class DoliDBSqlite
     }
 
 
-    /**
-     *	Defini les limites de la requete
-     *
-     *	@param	    limit       nombre maximum de lignes retournees
-     *	@param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
-     *	@return	    string      chaine exprimant la syntax sql de la limite
-     */
+	/**
+	 *	Define limits of request
+	 *
+	 *	@param	int		$limit      nombre maximum de lignes retournees
+	 *	@param	int		$offset     numero de la ligne a partir de laquelle recuperer les ligne
+	 *	@return	string      		chaine exprimant la syntax sql de la limite
+	 */
     function plimit($limit=0,$offset=0)
     {
         global $conf;
@@ -632,14 +632,14 @@ class DoliDBSqlite
     }
 
 
-    /**
-     * Define sort criteria of request
-     *
-     * @param	    sortfield   List of sort fields
-     * @param	    sortorder   Sort order
-     * @return	    string      String to provide syntax of a sort sql string
-     * TODO			Mutualized this into a mother class
-     */
+	/**
+	 * Define sort criteria of request
+	 *
+	 * @param	string	$sortfield  List of sort fields
+	 * @param	string	$sortorder  Sort order
+	 * @return	string      		String to provide syntax of a sort sql string
+	 * TODO	Mutualized this into a mother class
+	 */
     function order($sortfield=0,$sortorder=0)
     {
         if ($sortfield)
@@ -663,12 +663,12 @@ class DoliDBSqlite
     }
 
 
-    /**
-     *	Escape a string to insert data
-     *
-     *	@param	    stringtoencode		String to escape
-     *	@return	    string				String escaped
-     */
+	/**
+	 *	Escape a string to insert data
+	 *
+	 *  @param	string	$stringtoencode		String to escape
+	 *  @return	string						String escaped
+	 */
     function escape($stringtoencode)
     {
         return PDO::quote($stringtoencode);
@@ -701,14 +701,14 @@ class DoliDBSqlite
         return $date;
     }
 
-    /**
-     *  Formate a SQL IF
-     *
-     *	@param		test            chaine test
-     *	@param		resok           resultat si test egal
-     *	@param		resko           resultat si test non egal
-     *	@return		string          chaine formatee SQL
-     */
+	/**
+	 *	Formate a SQL IF
+	 *
+	 *	@param	string	$test           chaine test
+	 *	@param	string	$resok          resultat si test egal
+	 *	@param	string	$resko          resultat si test non egal
+	 *	@return	string          		SQL string
+	 */
     function ifsql($test,$resok,$resko)
     {
         return 'IF('.$test.','.$resok.','.$resko.')';
@@ -725,31 +725,31 @@ class DoliDBSqlite
         return $this->lastquery;
     }
 
-    /**
-     *	Renvoie la derniere requete en erreur
-     *
-     *	@return	    string	lastqueryerror
-     */
+	/**
+	 *	Return last query in error
+	 *
+	 *	@return	    string	lastqueryerror
+	 */
     function lastqueryerror()
     {
         return $this->lastqueryerror;
     }
 
-    /**
-     *	Renvoie le libelle derniere erreur
-     *
-     *	@return	    string	lasterror
-     */
+	/**
+	 *	Return last error label
+	 *
+	 *	@return	    string	lasterror
+	 */
     function lasterror()
     {
         return $this->lasterror;
     }
 
-    /**
-     *	Renvoie le code derniere erreur
-     *
-     *	@return	    string	lasterrno
-     */
+	/**
+	 *	Return last error code
+	 *
+	 *	@return	    string	lasterrno
+	 */
     function lasterrno()
     {
         return $this->lasterrno;
@@ -846,13 +846,12 @@ class DoliDBSqlite
     }
 
     /**
-     *	Encrypt sensitive data in database
+     *  Encrypt sensitive data in database
      *  Warning: This function includes the escape, so it must use direct value
      *
-     *	@param	        fieldorvalue	Field name or value to encrypt
-     * 	@param			withQuotes		Return string with quotes
-     * 	@return	        return			XXX(field) or XXX('value') or field or 'value'
-     *
+     *  @param  string  $fieldorvalue   Field name or value to encrypt
+     *  @param	int		$withQuotes     Return string with quotes
+     *  @return return          		XXX(field) or XXX('value') or field or 'value'
      */
     function encrypt($fieldorvalue, $withQuotes=0)
     {
@@ -882,9 +881,10 @@ class DoliDBSqlite
     }
 
     /**
-     *	\brief          Decrypt sensitive data in database
-     *	\param	        value			Value to decrypt
-     * 	\return	        return			Decrypted value if used
+     *	Decrypt sensitive data in database
+     *
+     *	@param	string	$value			Value to decrypt
+     * 	@return	string					Decrypted value if used
      */
     function decrypt($value)
     {
@@ -914,29 +914,27 @@ class DoliDBSqlite
     }
 
 
-    // Next functions are not required. Only minor features use them.
-    //---------------------------------------------------------------
-
     /**
-     *	\brief          Renvoie l'id de la connexion
-     *	\return	        string      Id connexion
+	 * Return connexion ID
+	 *
+	 * @return	        string      Id connexion
      */
     function DDLGetConnectId()
     {
-        $resql=$this->query('SELECT CONNECTION_ID()');
-        $row=$this->fetch_row($resql);
-        return $row[0];
+		return '?';
     }
 
+
     /**
-     *	\brief          Create a new database
-     *	\param	        database		Database name to create
-     * 	\param			charset			Charset used to store data
-     * 	\param			collation		Charset used to sort data
-     * 	\param			owner			Username of database owner
-     * 	\return	        resource		resource defined if OK, null if KO
-     *	\remarks        Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
-     *					We force to create database with charset this->forcecharset and collate this->forcecollate
+	 *	Create a new database
+	 *	Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
+	 *	We force to create database with charset this->forcecharset and collate this->forcecollate
+	 *
+	 *	@param	string	$database		Database name to create
+	 * 	@param	string	$charset		Charset used to store data
+	 * 	@param	string	$collation		Charset used to sort data
+	 * 	@param	string	$owner			Username of database owner
+	 * 	@return	resource				resource defined if OK, null if KO
      */
     function DDLCreateDb($database,$charset='',$collation='',$owner='')
     {
@@ -1234,19 +1232,21 @@ class DoliDBSqlite
         return 1;
     }
 
-    /**
-     *	\brief		Return charset used to store data in database
-     *	\return		string		Charset
-     */
+	/**
+	 *	Return charset used to store data in database
+	 *
+	 *	@return		string		Charset
+	 */
     function getDefaultCharacterSetDatabase()
     {
         return 'UTF-8';
     }
 
-    /**
-     *	\brief		Return list of available charset that can be used to store data in database
-     *	\return		array		List of Charset
-     */
+	/**
+	 *	Return list of available charset that can be used to store data in database
+	 *
+	 *	@return		array		List of Charset
+	 */
     function getListOfCharacterSet()
     {
         $liste = array();
@@ -1256,19 +1256,21 @@ class DoliDBSqlite
         return $liste;
     }
 
-    /**
-     *	\brief		Return collation used in database
-     *	\return		string		Collation value
-     */
+	/**
+	 *	Return collation used in database
+	 *
+	 *	@return		string		Collation value
+	 */
     function getDefaultCollationDatabase()
     {
         return 'UTF-8';
     }
 
-    /**
-     *	\brief		Return list of available collation that can be used for database
-     *	\return		array		Liste of Collation
-     */
+	/**
+	 *	Return list of available collation that can be used for database
+	 *
+	 *	@return		array		List of Collation
+	 */
     function getListOfCollation()
     {
         $liste = array();
@@ -1278,11 +1280,12 @@ class DoliDBSqlite
         return $liste;
     }
 
-    /**
+	/**
 	 *	Return full path of dump program
+	 *
 	 *	@return		string		Full path of dump program
-     */
-    function getPathOfDump()
+	 */
+	function getPathOfDump()
     {
         $fullpathofdump='/pathtomysqldump/mysqldump';
 
@@ -1296,10 +1299,11 @@ class DoliDBSqlite
         return $fullpathofdump;
     }
 
-    /**
-     *	Return full path of restore program
-     *	@return		string		Full path of restore program
-     */
+	/**
+	 *	Return full path of restore program
+	 *
+	 *	@return		string		Full path of restore program
+	 */
     function getPathOfRestore()
     {
         $fullpathofimport='/pathtomysql/mysql';
@@ -1314,11 +1318,12 @@ class DoliDBSqlite
         return $fullpathofimport;
     }
 
-    /**
-     *	\brief		Return value of server parameters
-     * 	\param		filter		Filter list on a particular value
-     * 	\return		string		Value for parameter
-     */
+	/**
+	 *	Return value of server parameters
+	 *
+	 *  @param	string	$filter		Filter list on a particular value
+	 * 	@return	string				Value for parameter
+	 */
     function getServerParametersValues($filter='')
     {
         $result=array();
@@ -1335,11 +1340,12 @@ class DoliDBSqlite
         return $result;
     }
 
-    /**
-     *	\brief		Return value of server status
-     * 	\param		filter		Filter list on a particular value
-     * 	\return		string		Value for parameter
-     */
+	/**
+	 *	Return value of server status
+	 *
+	 * 	@param	string	$filter		Filter list on a particular value
+	 * 	@return	string				Value for parameter
+	 */
     function getServerStatusValues($filter='')
     {
         $result=array();

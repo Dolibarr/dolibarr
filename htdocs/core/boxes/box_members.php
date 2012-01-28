@@ -29,7 +29,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last members
  */
- class box_members extends ModeleBoxes {
+ class box_members extends ModeleBoxes
+ {
 
 	var $boxcode="lastmembers";
 	var $boximg="object_user";
@@ -96,7 +97,7 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 					$memberstatic->nom=$objp->lastname;
 					$memberstatic->prenom=$objp->firstname;
-					
+
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/adherents/fiche.php?rowid=".$objp->rowid);

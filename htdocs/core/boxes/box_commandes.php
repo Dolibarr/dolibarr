@@ -29,7 +29,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last orders
  */
- class box_commandes extends ModeleBoxes {
+ class box_commandes extends ModeleBoxes
+ {
 
     var $boxcode="lastcustomerorders";
     var $boximg="object_order";

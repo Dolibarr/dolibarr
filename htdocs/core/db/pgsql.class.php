@@ -940,12 +940,8 @@ class DoliDBPgsql
 	}
 
 
-	// Next function are not required. Only minor features use them.
-	//--------------------------------------------------------------
-
-
 	/**
-	 * Renvoie l'id de la connexion
+	 * Return connexion ID
 	 *
 	 * @return	        string      Id connexion
 	 */
@@ -958,13 +954,14 @@ class DoliDBPgsql
 
 	/**
 	 *	Create a new database
-	 *  Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+	 *	Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
+	 *	We force to create database with charset this->forcecharset and collate this->forcecollate
 	 *
 	 *	@param	string	$database		Database name to create
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	resource				Resource defined if OK, null if KO
+	 * 	@return	resource				resource defined if OK, null if KO
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{

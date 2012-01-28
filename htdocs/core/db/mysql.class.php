@@ -446,9 +446,9 @@ class DoliDBMysql
 	/**
 	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
-	 *	@see    	num_rows
-	 *	@param      resultset   Curseur de la requete voulue
-	 *	@return     int		    Nombre de lignes
+	 *	@param	resultset	$resultset   Curseur de la requete voulue
+	 *	@return int		    Nombre de lignes
+	 *	@see    num_rows
 	 */
 	function affected_rows($resultset)
 	{
@@ -461,9 +461,10 @@ class DoliDBMysql
 
 
 	/**
-	 *	Libere le dernier resultset utilise sur cette connexion.
+	 *	Free last resultset used.
 	 *
-	 *	@param      resultset   Curseur de la requete voulue
+	 *	@param  resultset	$resultset   Curseur de la requete voulue
+	 *	@return	void
 	 */
 	function free($resultset=0)
 	{
@@ -475,11 +476,11 @@ class DoliDBMysql
 
 
 	/**
-	 *	Defini les limites de la requete
+	 *	Define limits of request
 	 *
-	 *	@param	    limit       nombre maximum de lignes retournees
-	 *	@param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
-	 *	@return	    string      chaine exprimant la syntax sql de la limite
+	 *	@param	int		$limit      nombre maximum de lignes retournees
+	 *	@param	int		$offset     numero de la ligne a partir de laquelle recuperer les ligne
+	 *	@return	string      		chaine exprimant la syntax sql de la limite
 	 */
 	function plimit($limit=0,$offset=0)
 	{
@@ -493,10 +494,10 @@ class DoliDBMysql
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	    sortfield   List of sort fields
-	 * @param	    sortorder   Sort order
-	 * @return	    string      String to provide syntax of a sort sql string
-	 * TODO			Mutualized this into a mother class
+	 * @param	string	$sortfield  List of sort fields
+	 * @param	string	$sortorder  Sort order
+	 * @return	string      		String to provide syntax of a sort sql string
+	 * TODO	Mutualized this into a mother class
 	 */
 	function order($sortfield=0,$sortorder=0)
 	{
@@ -522,10 +523,10 @@ class DoliDBMysql
 
 
 	/**
-	 *	   Escape a string to insert data
+	 *	Escape a string to insert data
 	 *
-	 *     @param	    stringtoencode		String to escape
-	 *     @return	    string				String escaped
+	 *  @param	string	$stringtoencode		String to escape
+	 *  @return	string						String escaped
 	 */
 	function escape($stringtoencode)
 	{
@@ -534,11 +535,11 @@ class DoliDBMysql
 
 
 	/**
-	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
-	 *   Function to use to build INSERT, UPDATE or WHERE predica
+	 *  Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
+	 *  Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    string	$param      Date TMS to convert
-	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 *  @param	    string	$param      Date TMS to convert
+	 *  @return	string      		Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
@@ -563,10 +564,10 @@ class DoliDBMysql
 	/**
 	 *	Formate a SQL IF
 	 *
-	 *	@param		test            chaine test
-	 *	@param		resok           resultat si test egal
-	 *	@param		resko           resultat si test non egal
-	 *	@return		string          SQL string
+	 *	@param	string	$test           chaine test
+	 *	@param	string	$resok          resultat si test egal
+	 *	@param	string	$resko          resultat si test non egal
+	 *	@return	string          		SQL string
 	 */
 	function ifsql($test,$resok,$resko)
 	{
@@ -575,8 +576,9 @@ class DoliDBMysql
 
 
 	/**
-	 *	\brief      Renvoie la derniere requete soumise par la methode query()
-	 *	\return	    lastquery
+	 *	Return last request executed with query()
+	 *
+	 *	@return	string					Last query
 	 */
 	function lastquery()
 	{
@@ -584,8 +586,9 @@ class DoliDBMysql
 	}
 
 	/**
-	 *	\brief      Renvoie la derniere requete en erreur
-	 *	\return	    string	lastqueryerror
+	 *	Return last query in error
+	 *
+	 *	@return	    string	lastqueryerror
 	 */
 	function lastqueryerror()
 	{
@@ -593,8 +596,9 @@ class DoliDBMysql
 	}
 
 	/**
-	 *	\brief      Renvoie le libelle derniere erreur
-	 *	\return	    string	lasterror
+	 *	Return last error label
+	 *
+	 *	@return	    string	lasterror
 	 */
 	function lasterror()
 	{
@@ -602,8 +606,9 @@ class DoliDBMysql
 	}
 
 	/**
-	 *	\brief      Renvoie le code derniere erreur
-	 *	\return	    string	lasterrno
+	 *	Return last error code
+	 *
+	 *	@return	    string	lasterrno
 	 */
 	function lasterrno()
 	{
@@ -611,16 +616,19 @@ class DoliDBMysql
 	}
 
 	/**
-	 *	\brief     Renvoie le code erreur generique de l'operation precedente.
-	 *	\return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+     *	Return generic error code of last operation.
+     *
+     *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	function errno()
 	{
-		if (! $this->connected) {
+		if (! $this->connected)
+		{
 			// Si il y a eu echec de connexion, $this->db n'est pas valide.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		}
-		else {
+		else
+		{
 			// Constants to convert a MySql error code to a generic Dolibarr error code
 			$errorcode_map = array(
 			1004 => 'DB_ERROR_CANNOT_CREATE',
@@ -661,8 +669,9 @@ class DoliDBMysql
 	}
 
 	/**
-	 \brief     Renvoie le texte de l'erreur mysql de l'operation precedente.
-	 \return    error_text
+	 *	Return description of last error
+	 *
+	 *	@return	string		Error text
 	 */
 	function error()
 	{
@@ -728,9 +737,10 @@ class DoliDBMysql
 	}
 
 	/**
-	 *	\brief          Decrypt sensitive data in database
-	 *	\param	        value			Value to decrypt
-	 * 	\return	        return			Decrypted value if used
+     *	Decrypt sensitive data in database
+     *
+     *	@param	string	$value			Value to decrypt
+     * 	@return	string					Decrypted value if used
 	 */
 	function decrypt($value)
 	{
@@ -761,9 +771,9 @@ class DoliDBMysql
 
 
 	/**
-	 *	Renvoie l'id de la connexion
+	 * Return connexion ID
 	 *
-	 *	@return	        string      Id connexion
+	 * @return	        string      Id connexion
 	 */
 	function DDLGetConnectId()
 	{
@@ -774,14 +784,15 @@ class DoliDBMysql
 
 
 	/**
-	 *	\brief          Create a new database
-	 *	\param	        database		Database name to create
-	 * 	\param			charset			Charset used to store data
-	 * 	\param			collation		Charset used to sort data
-	 * 	\param			owner			Username of database owner
-	 * 	\return	        resource		resource defined if OK, null if KO
-	 *	\remarks        Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
-	 *					We force to create database with charset this->forcecharset and collate this->forcecollate
+	 *	Create a new database
+	 *	Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
+	 *	We force to create database with charset this->forcecharset and collate this->forcecollate
+	 *
+	 *	@param	string	$database		Database name to create
+	 * 	@param	string	$charset		Charset used to store data
+	 * 	@param	string	$collation		Charset used to sort data
+	 * 	@param	string	$owner			Username of database owner
+	 * 	@return	resource				resource defined if OK, null if KO
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
@@ -1132,7 +1143,7 @@ class DoliDBMysql
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		array		Liste of Collation
+	 *	@return		array		List of Collation
 	 */
 	function getListOfCollation()
 	{

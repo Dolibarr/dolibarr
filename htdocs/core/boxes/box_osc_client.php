@@ -28,7 +28,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last customers of shop
  */
- class box_osc_clients extends ModeleBoxes {
+ class box_osc_clients extends ModeleBoxes
+ {
 
     var $boxcode="nbofcustomers";
     var $boximg="object_company";

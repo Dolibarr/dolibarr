@@ -30,7 +30,8 @@ include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 /**
  * Class to manage the box to show last products
  */
- class box_produits extends ModeleBoxes {
+ class box_produits extends ModeleBoxes
+ {
 
 	var $boxcode="lastproducts";
 	var $boximg="object_product";

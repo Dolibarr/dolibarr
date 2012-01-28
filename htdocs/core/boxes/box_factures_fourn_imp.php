@@ -27,7 +27,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show not payed suppliers invoices
  */
- class box_factures_fourn_imp extends ModeleBoxes {
+ class box_factures_fourn_imp extends ModeleBoxes
+ {
 
 	var $boxcode="oldestunpaidsupplierbills";
 	var $boximg="object_bill";
