@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -42,7 +42,7 @@ class DoliDBMysql
 	//! Collate used to force collate when creating database
 	static $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
 	//! Version min database
-	static $versionmin=array(3,1,0);
+	static $versionmin=array(4,1,0);
 	//! Resultset of last request
 	private $results;
 	//! 1 if connected, 0 else
@@ -566,7 +566,7 @@ class DoliDBMysql
 	 *	@param		test            chaine test
 	 *	@param		resok           resultat si test egal
 	 *	@param		resko           resultat si test non egal
-	 *	@return		string          chaine formate SQL
+	 *	@return		string          SQL string
 	 */
 	function ifsql($test,$resok,$resko)
 	{
@@ -647,6 +647,7 @@ class DoliDBMysql
 			1146 => 'DB_ERROR_NOSUCHTABLE',
 			1216 => 'DB_ERROR_NO_PARENT',
 			1217 => 'DB_ERROR_CHILD_EXISTS',
+            1396 => 'DB_ERROR_USER_ALREADY_EXISTS',    // When creating user already existing
 			1451 => 'DB_ERROR_CHILD_EXISTS'
 			);
 
@@ -694,9 +695,10 @@ class DoliDBMysql
 	/**
      *  Encrypt sensitive data in database
      *  Warning: This function includes the escape, so it must use direct value
-     *  @param          fieldorvalue    Field name or value to encrypt
-     *  @param          withQuotes      Return string with quotes
-     *  @return         return          XXX(field) or XXX('value') or field or 'value'
+	 *
+     *  @param	string	$fieldorvalue    Field name or value to encrypt
+     *  @param  int		$withQuotes      Return string with quotes
+     *  @return string			         XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -759,8 +761,9 @@ class DoliDBMysql
 
 
 	/**
-	 *	\brief          Renvoie l'id de la connexion
-	 *	\return	        string      Id connexion
+	 *	Renvoie l'id de la connexion
+	 *
+	 *	@return	        string      Id connexion
 	 */
 	function DDLGetConnectId()
 	{
@@ -1036,36 +1039,27 @@ class DoliDBMysql
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-		$sql = "INSERT INTO user ";
-		$sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-		$sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
-		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
+        $sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'";
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
+        $resql=$this->query($sql);
+        if (! $resql)
+        {
+            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
+            return -1;
+        }
+        $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
+        $resql=$this->query($sql);
+        if (! $resql)
+        {
+            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
+            return -1;
+        }
 
-		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
-		$resql=$this->query($sql);
-		if (! $resql)
-		{
-			dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
-			return -1;
-		}
+        $sql="FLUSH Privileges";
 
-		$sql = "INSERT INTO db ";
-		$sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-		$sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
-		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
-
-		dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql,LOG_DEBUG);
-		$resql=$this->query($sql);
-		if (! $resql)
-		{
-			dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
-			return -1;
-		}
-
-		$sql="FLUSH Privileges";
-
-		dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql,LOG_DEBUG);
-		$resql=$this->query($sql);
+        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+	    $resql=$this->query($sql);
 		if (! $resql)
 		{
 			dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);

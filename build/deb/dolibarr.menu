@@ -1,6 +1,0 @@
-# This file seems to be useless for Ubuntu
-# Good way to add menu on Ubuntu is adding file dolibarr.desktop
-?package(dolibarr):needs="X11" section="Applications/Office"\
-  title="Dolibarr ERP & CRM" longtitle="The manager for small and medium enterprises or foundations"\
-  description="Dolibarr ERP & CRM features agenda, orders, invoices and stock management, marketing campaigns, POS, etc."\
-  command="/usr/share/dolibarr/build/deb/rundolibarr.sh" icon="/usr/share/pixmaps/dolibarr.xpm"

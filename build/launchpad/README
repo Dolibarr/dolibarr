@@ -30,3 +30,14 @@ To submit a package on LaunchPad:
     bzr dailydeb dolibarr.recipe working-dir
   This will create a directory "working-dir" with dolibarr sources and will add sources from ~eldy/dolibarr/debian
 
+- Create a file /.pbuilderrc with content
+    $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build
+
+- Create chroot ubuntu env
+    sudo pbuilder create
+- Test package sources
+    sudo pbuilder build <working-dir>/<project>_<version>.dsc
+
+    
+    
+    

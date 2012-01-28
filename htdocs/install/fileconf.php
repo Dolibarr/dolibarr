@@ -277,7 +277,7 @@ if (! empty($force_install_message))
 		{
 		    while (($file = readdir($handle))!==false)
 		    {
-		        if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php/i',$file,$reg))
+		        if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php$/i',$file,$reg))
 		        {
 		            $type=$reg[1];
                     $class='DoliDB'.ucfirst($type);

@@ -249,9 +249,6 @@ class DoliDBMysqli
      */
     function getVersion()
     {
-        //        $resql=$this->query('SELECT VERSION()');
-        //        $row=$this->fetch_row($resql);
-        //        return $row[0];
         return mysqli_get_server_info($this->db);
     }
 
@@ -546,7 +543,7 @@ class DoliDBMysqli
     }
 
     /**
-     *   Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
+	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
      *   Function to use to build INSERT, UPDATE or WHERE predica
      *
      *   @param	    string	$param      Date TMS to convert
@@ -578,7 +575,7 @@ class DoliDBMysqli
      *	@param		test            chaine test
      *	@param		resok           resultat si test egal
      *	@param		resko           resultat si test non egal
-     *	@return		string          chaine formatee SQL
+     *	@return		string          SQL string
      */
     function ifsql($test,$resok,$resko)
     {
@@ -659,6 +656,7 @@ class DoliDBMysqli
             1146 => 'DB_ERROR_NOSUCHTABLE',
             1216 => 'DB_ERROR_NO_PARENT',
             1217 => 'DB_ERROR_CHILD_EXISTS',
+            1396 => 'DB_ERROR_USER_ALREADY_EXISTS',    // When creating user already existing
             1451 => 'DB_ERROR_CHILD_EXISTS'
             );
 
@@ -702,9 +700,9 @@ class DoliDBMysqli
      *	Encrypt sensitive data in database
      *  Warning: This function includes the escape, so it must use direct value
      *
-     *	@param	        fieldorvalue	Field name or value to encrypt
-     * 	@param			withQuotes		Return string with quotes
-     * 	@return	        return			XXX(field) or XXX('value') or field or 'value'
+     *	@param	string	$fieldorvalue	Field name or value to encrypt
+     * 	@param	int		$withQuotes		Return string with quotes
+     * 	@return	string					XXX(field) or XXX('value') or field or 'value'
      *
      */
     function encrypt($fieldorvalue, $withQuotes=0)
@@ -767,12 +765,10 @@ class DoliDBMysqli
     }
 
 
-    // Next functions are not required. Only minor features use them.
-    //---------------------------------------------------------------
-
     /**
-     *	\brief          Renvoie l'id de la connexion
-     *	\return	        string      Id connexion
+     *	Renvoie l'id de la connexion
+	 *
+     *	@return	        string      Id connexion
      */
     function DDLGetConnectId()
     {
@@ -1047,11 +1043,7 @@ class DoliDBMysqli
      */
     function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
     {
-        $sql = "INSERT INTO user ";
-        $sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-        $sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
-        $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
-
+        $sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
@@ -1059,13 +1051,8 @@ class DoliDBMysqli
             dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
-
-        $sql = "INSERT INTO db ";
-        $sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-        $sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
-        $sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
-
-        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+        $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
         {
