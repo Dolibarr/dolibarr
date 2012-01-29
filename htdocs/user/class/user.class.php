@@ -1717,6 +1717,9 @@ class User extends CommonObject
 	{
 		global $conf;
 
+		if (empty($this->lastname))  $this->lastname=($this->name?$this->name:$this->nom);
+		if (empty($this->firstname)) $this->firstname=($this->firstname?$this->firstname:$this->prenom);
+
 		$ret='';
 		if ($option && $this->civilite_id)
 		{
@@ -1729,15 +1732,15 @@ class User extends CommonObject
 
 		if ($nameorder)
 		{
-			if ($this->firstname) $ret.=$this->firstname;
+			$ret.=$this->firstname;
 			if ($this->firstname && $this->lastname) $ret.=' ';
-			if ($this->lastname)      $ret.=$this->lastname;
+			$ret.=$this->lastname;
 		}
 		else
 		{
-			if ($this->lastname)      $ret.=$this->lastname;
+			$ret.=$this->lastname;
 			if ($this->firstname && $this->lastname) $ret.=' ';
-			if ($this->firstname) $ret.=$this->firstname;
+			$ret.=$this->firstname;
 		}
 
 		return trim($ret);

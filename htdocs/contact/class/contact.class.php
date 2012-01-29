@@ -913,6 +913,9 @@ class Contact extends CommonObject
 	{
 		global $conf;
 
+		if (empty($this->lastname))  $this->lastname=($this->name?$this->name:$this->nom);
+		if (empty($this->firstname)) $this->firstname=($this->firstname?$this->firstname:$this->prenom);
+
 		$ret='';
 		if ($option && $this->civilite_id)
 		{
@@ -925,15 +928,15 @@ class Contact extends CommonObject
 
 		if ($nameorder)
 		{
-			if ($this->firstname) $ret.=$this->firstname;
-			if ($this->firstname && $this->name) $ret.=' ';
-			if ($this->name)      $ret.=$this->name;
+			$ret.=$this->firstname;
+			if ($this->firstname && $this->lastname) $ret.=' ';
+			$ret.=$this->lastname;
 		}
 		else
 		{
-			if ($this->name)      $ret.=$this->name;
-			if ($this->firstname && $this->name) $ret.=' ';
-			if ($this->firstname) $ret.=$this->firstname;
+			$ret.=$this->lastname;
+			if ($this->firstname && $this->lastname) $ret.=' ';
+			$ret.=$this->firstname;
 		}
 		return trim($ret);
 	}

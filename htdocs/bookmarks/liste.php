@@ -154,7 +154,7 @@ if ($resql)
 		if ($obj->fk_user)
 		{
         	$userstatic->id=$obj->fk_user;
-	    	$userstatic->nom=$obj->login;
+	    	$userstatic->lastname=$obj->login;
 			print $userstatic->getNomUrl(1);
 		}
 		else

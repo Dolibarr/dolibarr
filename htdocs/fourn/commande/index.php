@@ -223,8 +223,8 @@ if ($resql)
         print "<tr $bc[$var]>";
         print '<td>';
         $userstatic->id=$obj->rowid;
-        $userstatic->nom=$obj->name;
-        $userstatic->prenom=$obj->firstname;
+        $userstatic->lastname=$obj->name;
+        $userstatic->firstname=$obj->firstname;
         print $userstatic->getNomUrl(1);
         print '</td>';
         print "</tr>\n";
