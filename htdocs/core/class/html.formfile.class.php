@@ -374,7 +374,7 @@ class FormFile
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             $out.= '<div class="titre">'.$titletoshow.'</div>';
-            $out.= '<table class="border formdoc" summary="listofdocumentstable" width="100%">';
+            $out.= '<table class="liste formdoc" summary="listofdocumentstable" width="100%">';
 
             $out.= '<tr class="liste_titre">';
 
