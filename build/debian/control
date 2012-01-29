@@ -4,7 +4,7 @@ Standards-Version: 3.9.2
 Section: web
 Priority: optional
 Homepage: http://www.dolibarr.org
-Build-Depends: debhelper (>= 7), po-debconf
+Build-Depends: debhelper (>= 7), po-debconf, dpatch
 
 Package: dolibarr
 Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5,

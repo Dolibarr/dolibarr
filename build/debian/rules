@@ -6,5 +6,31 @@ export DH_OPTIONS=-v
 
 #export DH_COMPAT=7    # This is the debhelper compatability version to use, now defined into compat file
 
-%:
+
+# use dpatch
+include /usr/share/dpatch/dpatch.make
+
+
+configure:
 	dh $@
+
+build: patch
+	dh $@
+
+build-arch: patch
+	dh $@
+
+build-indep: patch
+	dh $@
+
+binary:
+	dh $@
+
+binary-indep:
+	dh $@
+	
+clean:
+	dh $@
+
+binary-arch:
+	

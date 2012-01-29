@@ -17,22 +17,35 @@ To submit a package on LaunchPad:
 - Create Project
 - Link project to official SCM server
 - Upload SSH public key onto account
-- Run from command line: bzr launchpad-login yourlogin
-
-- Create a debian directory and upload it onto bzr branch ~yourlogin/dolibarr/debian
-
-- Create an empty directory dolibarr and go into it.
+- Run from command line: 
+    bzr launchpad-login yourlogin
+    bzr whoami "Your Name <email@email.com>"
+- Create a Bazzar directory
+    mkdir bzr
+- Create debian directory and upload it onto bzr branch ~yourlogin/dolibarr/debian
+    cd bzr
+    mkdir debian
+    cd debian
+    bzr init
+    cp -pr dolibarr_root/debian bzr/debian
+    bzr add debian
+    bzr commit
+    bzr push lp:~eldy/dolibarr/debian
+  or download it from launchpad bazaar:
+    cd bzr
+    bzr branch lp:~eldy/dolibarr/debian
 - Create a file dolibarr.recipe with content
-    # bzr-builder format 0.3 deb-version {debupstream}+{revno}+{revno:packaging}
-    lp:dolibarr
-    merge packaging lp:~eldy/dolibarr/debian
+    cd bzr
+    vi dolibarr.recipe
+        # bzr-builder format 0.3 deb-version {debupstream}+{revno}+{revno:packaging}
+        lp:dolibarr
+        merge packaging lp:~eldy/dolibarr/debian
 - Run command
+    cd bzr
     bzr dailydeb dolibarr.recipe working-dir
   This will create a directory "working-dir" with dolibarr sources and will add sources from ~eldy/dolibarr/debian
-
 - Create a file /.pbuilderrc with content
     $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build
-
 - Create chroot ubuntu env
     sudo pbuilder create
 - Test package sources
