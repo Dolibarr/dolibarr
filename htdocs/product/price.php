@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
@@ -272,7 +272,8 @@ print "</table>\n";
 
 print "</div>\n";
 
-if ($mesg) print $mesg;
+
+dol_htmloutput_mesg($mesg);
 
 
 /* ************************************************************************** */
@@ -281,7 +282,7 @@ if ($mesg) print $mesg;
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($action == 'delete')
+if (! $action || $action == 'delete')
 {
 	print "\n".'<div class="tabsAction">'."\n";
 
@@ -531,5 +532,4 @@ else
 llxFooter();
 
 $db->close();
-
 ?>
