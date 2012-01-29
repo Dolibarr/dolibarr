@@ -12,7 +12,7 @@ a package onto LaunchPad
 # To install all packagers tools:
 # apt-get install bzr-builder bzr pbuilder
 
-To submit a package on LaunchPad:
+# Init local working env
 - Create account on launchpad.org
 - Create Project
 - Link project to official SCM server
@@ -20,7 +20,13 @@ To submit a package on LaunchPad:
 - Run from command line: 
     bzr launchpad-login yourlogin
     bzr whoami "Your Name <email@email.com>"
-- Create a Bazzar directory
+- Create a file /.pbuilderrc with content
+    COMPONENTS="main universe multiverse restricted"
+- Create chroot ubuntu env
+    sudo pbuilder create
+
+# Init package tools for launchpad
+- Create a Bazaar directory
     mkdir bzr
 - Create debian directory and upload it onto bzr branch ~yourlogin/dolibarr/debian
     cd bzr
@@ -29,7 +35,7 @@ To submit a package on LaunchPad:
     bzr init
     cp -pr dolibarr_root/debian bzr/debian
     bzr add debian
-    bzr commit
+    bzr commit -m "Init"
     bzr push lp:~eldy/dolibarr/debian
   or download it from launchpad bazaar:
     cd bzr
@@ -44,10 +50,6 @@ To submit a package on LaunchPad:
     cd bzr
     bzr dailydeb dolibarr.recipe working-dir
   This will create a directory "working-dir" with dolibarr sources and will add sources from ~eldy/dolibarr/debian
-- Create a file /.pbuilderrc with content
-    $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build
-- Create chroot ubuntu env
-    sudo pbuilder create
 - Test package sources
     sudo pbuilder build <working-dir>/<project>_<version>.dsc
 

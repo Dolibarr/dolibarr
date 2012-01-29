@@ -6,4 +6,4 @@ dolibarr (3.2.0+nmu1) unstable; urgency=low
     
  -- Dolibarr team <contact@dolibarr.org>  Mon, 10 Aug 2011 12:00:00 +0100     
 
-# For a changelog file dedicated to users, see /usr/share/doc/dolibarr/UserChangeLog.gz file. 
+# For a changelog file dedicated to end users, see /usr/share/doc/dolibarr/ChangeLog.gz 
