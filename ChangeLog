@@ -43,6 +43,7 @@ For users:
 - New: Chart are faster to build
 - New: Value of data into charts are visible on mouse hover.
 - New: Import wizard can import contacts.
+- New: Install process is now two times faster.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
