@@ -280,7 +280,6 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/install.lock`;
 
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mssql/README`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README`;
@@ -322,7 +321,6 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore $BUILDROOT/$PROJECT/*/.gitignore $BUILDROOT/$PROJECT/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.gitignore`;
-   	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/fckeditor`;
    	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/lightbox`;
@@ -335,8 +333,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-20100919`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
-		# Removed because not stable yet
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
 	}
     
     # Build package for each target
@@ -560,23 +556,6 @@ if ($nboftargetok) {
 			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			$ret=`$cmd`;
 
-#			print "Fix filefunc.inc.php, install/inc.php, support/inc.php\n";
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/filefunc.inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$PROJECT.tmp/htdocs/filefunc.inc.php\"";
-#			$ret=`$cmd`;
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/install/inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$PROJECT.tmp/htdocs/install/inc.php\"";
-#			$ret=`$cmd`;
-#			$cmd="cat \"$BUILDROOT/$PROJECT/htdocs/support/inc.php\" | 
-#					sed -e 's/conffile = \"\\\.\\\.\\\/conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffile = \"conf\\\/conf.php\"/conffile = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' |
-#					sed -e 's/conffiletoshow = \"htdocs\\\/conf\\\/conf.php\"/conffiletoshow = \"\\\/etc\\\/dolibarr\\\/conf.php\"/g' > \"$BUILDROOT/$PROJECT.tmp/htdocs/support/inc.php\"";
-#			$ret=`$cmd`;
-
  			print "Remove other files\n";
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/README-FR`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/README`;
@@ -613,54 +592,13 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/perl`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/rpm`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/zip`;
-            # We remove embedded libraries or fonts
+            # We remove embedded libraries or fonts (this is also inside rules file, target clean)
 	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/fonts`,
 	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/geoip`;
 	   	    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/nusoap`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/odtphp/zip/pclzip`;
 
-            # Prepare binary package (init DEBIAN dir)
-    		#print "Create directory $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
-    		#$ret=`mkdir "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-    		#print "Copy $SOURCE/build/debian/xxx to $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
-            #$ret=`cp -f  "$SOURCE/build/debian/config"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            #$ret=`cp -f  "$SOURCE/build/debian/postinst"         "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            #$ret=`cp -f  "$SOURCE/build/debian/postrm"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            #$ret=`cp -f  "$SOURCE/build/debian/templates"        "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            #$ret=`cp -fr "$SOURCE/build/debian/po"               "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            
-            # changelog (to build binary package directly without sources. Useless if we build from sources)
-            #$ret=`gzip -9 -c "$SOURCE/build/debian/changelog" > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.gz`;
-
-            #print "Edit version in file $BUILDROOT/$PROJECT.tmp/DEBIAN/control\n";
-            #open (SPECFROM,"<$SOURCE/build/debian/control.debianbin") || die "Error";
-            #open (SPECTO,">$BUILDROOT/$PROJECT.tmp/DEBIAN/control") || die "Error";
-            #while (<SPECFROM>) {
-            #    $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
-            #    print SPECTO $_;
-            #}
-            #close SPECFROM;
-            #close SPECTO;
-            #print "Version set to $MAJOR.$MINOR.$newbuild\n";
-            
-            #$cmd="find $BUILDROOT/$PROJECT.tmp/DEBIAN -type f -exec chmod 755 {} \\; ";
-            #$ret=`$cmd`;
-            #$ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/control`;
-            #$ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/templates`;
-
-            # Creation of binary package (to build without sources)
-            # Enable this to build a binary package without building sources first
-     		#print "Go into directory $BUILDROOT\n";
-     		#chdir("$BUILDROOT");
-    		#$cmd="dpkg -b $BUILDROOT/$PROJECT.tmp $BUILDROOT/${FILENAMEDEB}_all.deb";
-    		#print "Launch DEB build ($cmd)\n";
-    		#$ret=`$cmd`;
-    		#print $ret."\n";
-            #$ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            #$ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/doc"`;
-    		#exit;
-   		
             # Prepare source package (init debian dir)
             print "Create directory $BUILDROOT/$PROJECT.tmp/debian\n";
             $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian"`;
@@ -684,7 +622,6 @@ if ($nboftargetok) {
             $ret=`cp -f  "$SOURCE/build/debian/postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/postrm"         "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/templates"      "$BUILDROOT/$PROJECT.tmp/debian"`;
-            
             
 			# Set owners and permissions
             print "Set owners on files/dir\n";
