@@ -442,8 +442,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$blSocX2=$blSocW+$blSocX;
 
 		// Sender name
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetXY($blSocX,$blSocY);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('','B', $default_font_size - 3);
+		$pdf->SetXY($blSocX,$blSocY+1);
 		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 		$pdf->SetTextColor(0,0,0);
 
@@ -451,7 +452,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
 		$pdf->SetFont('','', $default_font_size - 3);
-		$pdf->SetXY($blSocX,$blSocY+3);
+		$pdf->SetXY($blSocX,$blSocY+4);
 		$pdf->MultiCell(80, 2, $carac_emetteur, 0, 'L');
 
 
@@ -504,12 +505,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		/**********************************/
 		//Emplacement Informations Expediteur (My Company)
 		/**********************************/
+		$Yoff = $blSocY;
 		$blExpX=$Xoff-20;
 		$blW=52;
-		$Yoff = $Yoff+5;
 		$Ydef = $Yoff;
-		$blSocY = 1;
-		$pdf->Rect($blExpX, $Yoff, $blW, 20);
+		$pdf->Rect($blExpX, $Yoff, $blW, 26);
 
 		$object->fetch_thirdparty();
 
@@ -542,7 +542,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$blW=50;
 		$Yoff = $Ydef +1;
 
-		$pdf->Rect($blDestX, $Yoff-1, $blW, 20);
+		$pdf->Rect($blDestX, $Yoff-1, $blW, 26);
 
 		//Titre
 		$pdf->SetFont('','B', $default_font_size - 3);
