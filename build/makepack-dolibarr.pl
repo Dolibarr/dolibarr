@@ -569,20 +569,19 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/debian/source`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/changelog`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/compat`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/config`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/control*`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/copyright`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.config`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.desktop`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.doc-base`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.install`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.lintian-overrides`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/format`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/install`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/menu`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/postrm`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/postinst`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.postrm`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.postinst`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.templates`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.templates.futur`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/rules`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/README.howto`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/templates`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/templates.futur`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/wash`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/doap`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/exe`;
@@ -608,20 +607,21 @@ if ($nboftargetok) {
             $ret=`cp -f  "$SOURCE/build/debian/compat"         "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/control"        "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/copyright"      "$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.xpm"  		      	"$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/dolibarr.desktop"        	"$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.doc-base"        	"$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.install" 	        "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/dolibarr.lintian-overrides"  "$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -f  "$SOURCE/build/debian/install"        "$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -fr "$SOURCE/build/debian/patches"        "$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -fr "$SOURCE/build/debian/po"             "$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.xpm"  		      	"$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/README.source"  "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/rules"          "$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -fr "$SOURCE/build/debian/patches"        "$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -fr "$SOURCE/build/debian/po"             "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -fr "$SOURCE/build/debian/source"         "$BUILDROOT/$PROJECT.tmp/debian"`;
             # Add files also required to build binary package
-            $ret=`cp -f  "$SOURCE/build/debian/config"         "$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -f  "$SOURCE/build/debian/postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -f  "$SOURCE/build/debian/postrm"         "$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -f  "$SOURCE/build/debian/templates"      "$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.config"         "$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.postrm"         "$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.templates"      "$BUILDROOT/$PROJECT.tmp/debian"`;
             
 			# Set owners and permissions
             print "Set owners on files/dir\n";
