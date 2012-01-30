@@ -17,6 +17,7 @@ a package onto LaunchPad
 - Create Project
 - Link project to official SCM server
 - Upload SSH public key onto account
+- Upload you GPG sign key
 - Run from command line: 
     bzr launchpad-login yourlogin
     bzr whoami "Your Name <email@email.com>"
@@ -24,6 +25,9 @@ a package onto LaunchPad
     COMPONENTS="main universe multiverse restricted"
 - Create chroot ubuntu env
     sudo pbuilder create [--distribution sid|squeeze]
+- Edit file ~/.bashrc ti add
+DEBFULLNAME="<Your name>" 
+DEBEMAIL="<Your email address>" 
 
 # Init package tools for launchpad
 - Create a Bazaar directory

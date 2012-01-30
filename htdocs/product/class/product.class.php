@@ -88,7 +88,7 @@ class Product extends CommonObject
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
 
-	var $customcode;       // Custom code
+	var $customcode;       // Customs code
     var $country_id;       // Country origin id
 	var $country_code;     // Country origin code (US, FR, ...)
 
@@ -479,7 +479,7 @@ class Product extends CommonObject
 					return -2;
 				}
 			}
-			
+
 			if (! $notrigger)
 			{
 				// Appel des triggers
