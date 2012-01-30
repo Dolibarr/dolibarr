@@ -23,8 +23,10 @@ Url depends on choice made on first step:
 
 	http://localhost/dolibarr/htdocs/install/
 or
+
 	http://localhost/dolibarr/install/
 or
+
 	http://yourdolibarrvirtualhost/install/
    
 - Follow instructions provided by installer...
@@ -45,8 +47,10 @@ This URL should looks like:
 
 	http://localhost/dolibarr/htdocs/install/
 or
+
 	http://localhost/dolibarr/install/
 or
+
 	http://yourdolibarrhost/install/
 
 Then choose the "update" option according to your case.
