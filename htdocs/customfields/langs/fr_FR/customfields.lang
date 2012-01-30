@@ -39,6 +39,8 @@ Areabox= Zone de texte étendue HTML
 YesNoBox= Choix Oui/Non
 TrueFalseBox= Choix Vrai/Faux
 DropdownBox= Liste déroulante
+DateBox= Date
+DateTimeBox= Date et heure
 
 True= Vrai
 False= Faux

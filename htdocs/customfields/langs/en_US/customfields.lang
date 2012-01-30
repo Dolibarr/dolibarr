@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - customfields standard labels â
+# Dolibarr language file - en_US - customfields standard labels - do not delete this accentuated letter: â
 CHARSET= UTF-8
 
 #### ADMIN CONFIG INTERFACE ####
@@ -39,6 +39,8 @@ Areabox= Areabox
 YesNoBox= YesNoBox
 TrueFalseBox= TrueFalseBox
 DropdownBox= DropdownBox
+DateBox= DateBox
+DateTimeBox= DateTimeBox
 
 True= True
 False= False

@@ -54,5 +54,7 @@ $sql_datatypes = array( 'varchar' => $langs->trans("Textbox"),
                                              'enum(\'Yes\',\'No\')' => $langs->trans("YesNoBox"),
                                              'boolean' => $langs->trans("TrueFalseBox"),
                                              'enum' => $langs->trans("DropdownBox"),
+                                             'date' => $langs->trans("DateBox"),
+                                             'datetime' => $langs->trans("DateTimeBox"),
                                              'other' => $langs->trans("Other").'/'.$langs->trans("Constraint"),
                                                 );

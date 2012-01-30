@@ -1,7 +1,7 @@
 =================================================
 *				CUSTOMFIELDS MODULE				*
 *			by Stephen Larroque (lrq3000)		*
-*				version	1.2.5					*
+*				version	1.2.6					*
 *			for Dolibarr >= 3.2.0				*
 *			release date 2011/10/29				*
 *			last update (see on github)			*
@@ -38,14 +38,16 @@ You can either contact the author by mail <lrq3000 at gmail dot com> or on the g
 * multilanguage user-defined custom fields labels
 * AND multilanguage custom fields values (eg: yes/no select box can be translated to any language, same for enum user defined values). You can translate the values of your dropdown boxes!
 
-- 6 natively supported fields types :
+- 8 natively supported fields types :
 * Textbox
 * Areabox
 * YesNoBox
 * TrueFalseBox
 * DropdownBox (your own options)
+* Date
+* DateTime
 * Constrained (link to other tables)
-* Other (custom type)
+* Other (custom type, defined by your own SQL command)
 
 The last one is not a native support but permits you to easily set any SQL data type that is not yet implemented, but it will be managed as best as possible by the module (by default if it's unknown it will be shown as a textbox).
 
@@ -541,7 +543,6 @@ Should do :
 * Add an AJAX select box for constained values : when a constrained type is selected and a table is selected, a hidden select box would show up with the list of the fields of this table to choose the values that will be printed as the values for this customfield (eg: for table llx_users you could select the "nom" field and then it would automatically prepend "nom_" to the field's name).
 * Add a javascript options values generator for the enum type (a hidden input that would be shown only when DropdownBox type is selected and that would permit to add options by clicking a plus button).
 * Add support for other modules
-* Add native support for date and datetime fields
 * Button to reorder the appearance of fields in editing mode (they currently appear in the same order as they were created)
 
 Known bugs :
@@ -553,3 +554,8 @@ Never/Maybe one day :
 * Add support for clonable propal at creation (same as for repeatable invoices).
 * Add variables to access products or services customfields from tags (is it really useful ? How to use them without modifying the lines printing function ?)
 add custom fields in invoices products lines (custom data per product) -> do this with by adding customfields in the products datasheet directly. This feature may be added in the future if a hook enables it to do it (and it should be fairly easy with such a hook).
+
+===== SPECIAL THANK'S =====
+- Thank's to Laurent Destailleur for supporting my work and to help me get used to the Dolibarr system.
+- Thank's to Remy Younes for his patch for datetime support and bugfixes.
+- Thank's to my wonderful fiancee for supporting me in everything I undertake.

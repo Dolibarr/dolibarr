@@ -19,7 +19,7 @@
  *      \file       htdocs/customfields/triggers/interface_modCustomFields_SaveFields.class.php
  *      \ingroup    core
  *      \brief      Core triggers file for CustomFields module. Triggers actions for the customfields module. Necessary for actions to be comitted.
- *		\version	$Id: interface_modCustomFields_SaveFields.class.php, v1.2.2
+ *		\version	$Id: interface_modCustomFields_SaveFields.class.php, v1.2.6
  */
 
 
@@ -306,7 +306,7 @@ class InterfaceSaveFields
 
 		$object->currentmodule = $triggersarray[strtolower($matches[1])]; // find the right module from the triggersarray (key_trigger=>value_module)
 
-		preg_match('/^(.*)_((CREATE|PREBUILDDOC|CLONE).*)$/i', $action, $matches);
+		preg_match('/^(.*)_((CREATE|PREBUILDDOC|CLONE|MODIFY).*)$/i', $action, $matches);
 		$action = 'CUSTOMFIELDS_'.$matches[2]; // forge the right customfields trigger
 		return $this->run_trigger($action,$object,$user,$langs,$conf);
 	    }
@@ -318,7 +318,7 @@ class InterfaceSaveFields
 		$patternsarray[] = $context;
 	    }
 	    $patterns_flattened = implode('|',$patternsarray); // we flatten the patterns array in a single regexp OR pattern
-	    if (preg_match('/^('.$patterns_flattened.')_((CREATE|PREBUILDDOC|CLONE).*)$/i', $action, $matches) ) { // if the current action is on a supported module or context, and the action is supported (for the moment only CREATE, PREBUILDDOC and CLONE)
+	    if (preg_match('/^('.$patterns_flattened.')_((CREATE|PREBUILDDOC|CLONE|MODIFY).*)$/i', $action, $matches) ) { // if the current action is on a supported module or context, and the action is supported (for the moment only CREATE, PREBUILDDOC and CLONE)
 		$triggername = $matches[1]; // module's name
 		$triggeraction = $matches[2]; // action name (create, modify, delete, clone, builddoc, prebuilddoc, etc.)
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -334,6 +334,13 @@ class InterfaceSaveFields
 	}
 
 	return 0;
+    }
+
+    function in_arrayi($needle, $haystack) {
+	for($h = 0 ; $h < count($haystack) ; $h++) {
+	    $haystack[$h] = strtolower($haystack[$h]);
+	}
+	return in_array(strtolower($needle),$haystack);
     }
 
 }
