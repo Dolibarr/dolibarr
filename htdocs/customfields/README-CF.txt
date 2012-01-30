@@ -1,16 +1,93 @@
-==================================================
-*				CUSTOMFIELDS MODULE				 *
-*			by Stephen Larroque (lrq3000)		 *
-*				   version	1.2.4                *
-*               for Dolibarr >= 3.2.0    		 *
-*			 release date 2011/10/29			 *
-==================================================
+=================================================
+*				CUSTOMFIELDS MODULE				*
+*			by Stephen Larroque (lrq3000)		*
+*				version	1.2.5					*
+*			for Dolibarr >= 3.2.0				*
+*			release date 2011/10/29				*
+*			last update (see on github)			*
+=================================================
 
 ===== DESCRIPTION =====
 
 This module will enable the user to create custom fields for the supported modules. You can choose the datatype, the size, the label(s), the possible values, the value by default, and even constraints (links to other tables) and custom sql definitions and custom sql statements!
 
 CustomFields has been made with the intention of being as portable, flexible, modular and reusable as possible, so that it can be adapted to any Dolibarr's module, and to (almost) any user's need (even if something isn't implemented, you can most probably just use a custom sql statement, the rest will be managed automatically, even with custom statements!).
+
+===== DOWNLOAD =====
+
+To download the latest release, please check the github:
+
+https://github.com/lrq3000/dolibarr/tree/develop2
+
+And also the Dolibarr github:
+
+https://github.com/Dolibarr/dolibarr
+
+===== CONTACT =====
+
+This module was created by Stephen Larroque for the Dolibarr project.
+
+You can either contact the author by mail <lrq3000 at gmail dot com> or on the github above or on the Dolibarr's forum (french or english).
+
+===== FEATURES - WHAT IT CAN DO =====
+
+- Natively support the modules: Invoices, Propales and Products/Services.
+
+- Full multilanguage support (french and english for now, but you can easily translate to other languages using the same system as Dolibarr language files):
+* multilanguage in the administration gui
+* multilanguage user-defined custom fields labels
+* AND multilanguage custom fields values (eg: yes/no select box can be translated to any language, same for enum user defined values). You can translate the values of your dropdown boxes!
+
+- 6 natively supported fields types :
+* Textbox
+* Areabox
+* YesNoBox
+* TrueFalseBox
+* DropdownBox (your own options)
+* Constrained (link to other tables)
+* Other (custom type)
+
+The last one is not a native support but permits you to easily set any SQL data type that is not yet implemented, but it will be managed as best as possible by the module (by default if it's unknown it will be shown as a textbox).
+
+It is easy too to add a native support for a new custom field type and manage the way it has to be printed on screen.
+
+- Custom sql statements to create complex fields : these custom sql statements will be executed after the creation/edition of the custom field definition.
+
+- Portable to any version of Dolibarr (in theory - as long as triggers are implemented)
+
+- Seamlessly integrate into Dolibarr (seamlessly integrate into core functions and no change in the coding habits of Dolibarr's devs).
+
+- Fully automated management of the customfields in the database and via triggers.
+
+- Extensible to any module, be it core module or third-party user-made module (instructions provided in the README-CF.txt inside).
+
+- Linked fields: Auto-detection and auto management of constraints (automatically find the primary key and choose the same data type and size) and auto management of their printing and edition (show them as a dropdown box).
+
+You can even select the right field column to show to the user from the table.
+
+Eg: if you want to link to the Dolibarr's users, select Constraint "llx_users". It will then show the rowid of the user. Now if you want to show the user's name instead of the rowid, just prefix "name_" to your custom field's name (like "name_ref") and CustomFields will automatically fetch and show the user's names!
+
+- Can define different custom fields PER module (you can have different custom fields for each module)
+
+- Totally integrated into the generation of PDF and ODT (usable just as tags - you can even access linked records values of a constrained field, more inside the readme-technical).
+
+- Elegant presentation in datasheet.
+
+- Supports all classic functions of a standard field: creation, edition, cloning, etc.
+
+- Clean: do not interfer with the normal functionning of Dolibarr, everything is separated. You can just delete the customfields and it will never do anything wrong with your Dolibarr install or your other datas.
+
+- Develop your own modules via CustomFields: CF provides many methods to automatically manage the inputs of a user and access custom fields values from anywhere in the code (from Dolibarr's core to your own module!), and even a few generic functions to issue any SQL request and help to manage them.
+
+- Code is very easy to edit/customize/reuse/port (fully commented and modular architecture, and no duplicates functionnalities).
+
+- Free and open source: free to use, redistribute and edit to your needs!
+
+- Use of strict SQL standards, so it should work for any database following the minimum standards requirement (tested on MySQL, probably works for PostGreSQL and SQLite).
+
+===== WHAT IT CANT DO =====
+What this module can NOT do (yet):
+- add custom fields in invoices products lines (custom data per product), but may be added in the future.
 
 ===== INSTALL =====
 
@@ -475,3 +552,4 @@ Never/Maybe one day :
 * Add support for repeatable (predefined) invoices (the way it is currently managed makes it very difficult to manage this without making a big exception, adding specific functions in customfields modules that would not at all will be reusable anywhere else, when customfields has been designed to be as generic as possible to support any module and any version of dolibarr, because it's managed by a totally different table while it's still managed by the same module, CustomFields work with the paradigm: one module, one table).
 * Add support for clonable propal at creation (same as for repeatable invoices).
 * Add variables to access products or services customfields from tags (is it really useful ? How to use them without modifying the lines printing function ?)
+add custom fields in invoices products lines (custom data per product) -> do this with by adding customfields in the products datasheet directly. This feature may be added in the future if a hook enables it to do it (and it should be fairly easy with such a hook).
