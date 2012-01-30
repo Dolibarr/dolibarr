@@ -10,7 +10,7 @@ a package onto LaunchPad
 # This is standard command to work on RPM packaging:
 #
 # To install all packagers tools:
-# apt-get install bzr-builder bzr pbuilder
+# sudo apt-get install bzr-builder bzr dpatch pbuilder debootstrap devscripts
 
 # Init local working env
 - Create account on launchpad.org
@@ -23,7 +23,7 @@ a package onto LaunchPad
 - Create a file /.pbuilderrc with content
     COMPONENTS="main universe multiverse restricted"
 - Create chroot ubuntu env
-    sudo pbuilder create
+    sudo pbuilder create [--distribution sid|squeeze]
 
 # Init package tools for launchpad
 - Create a Bazaar directory
