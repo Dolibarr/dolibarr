@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011   Stephen Larroque <lrq3000@gmail.com>
+/* Copyright (C) 2012   Stephen Larroque <lrq3000@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

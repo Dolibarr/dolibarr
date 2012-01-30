@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011 Stephen Larroque  <lrq3000@gmail.com>
+/* Copyright (C) 2012 Stephen Larroque  <lrq3000@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *	\file       htdocs/customfields/lib/customfields.lib.php
  *	\brief      Printing library for the customfields module, very generic and useful (but no core database managing functions, they are in customfields.class.php)
  *	\ingroup    customfields
- *	\version    $Id: customfields.lib.php, v1.1.0
+ *	\version    $Id: customfields.lib.php, v1.2.4
  */
 
 /**
