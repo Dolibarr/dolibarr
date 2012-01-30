@@ -338,7 +338,7 @@ if ($rowid > 0)
 
 		$membertypestatic=new AdherentType($db);
 
-		$sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe, ";
+		$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.nom as lastname, d.societe, ";
 		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 		$sql.= " t.libelle as type, t.cotisation";
@@ -486,17 +486,19 @@ if ($rowid > 0)
 		        $datefin=$db->jdate($objp->datefin);
 
 		        $adh=new Adherent($db);
+		        $adh->lastname=$objp->lastname;
+		        $adh->firstname=$objp->firstname;
 
 		        // Nom
 		        $var=!$var;
 		        print '<tr '.$bc[$var].'>';
 		        if ($objp->societe != '')
 		        {
-		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom.' '.dol_trunc($objp->nom,12).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
+		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
 		        }
 		        else
 		        {
-		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$objp->prenom.' '.dol_trunc($objp->nom).'</a></td>'."\n";
+		            print '<td><a href="fiche.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
 		        }
 
 		        // Login
@@ -627,7 +629,7 @@ if ($rowid > 0)
 		print "</td></tr>";
 
 		print '</table>';
-		
+
 		print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
 

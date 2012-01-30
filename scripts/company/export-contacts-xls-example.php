@@ -70,7 +70,7 @@ $objPHPExcel->getActiveSheet()->setTitle('Contacts');
 
 //$page->set_column(0,4,18); // A
 
-$sql = "SELECT distinct c.name, c.firstname, c.email, s.nom";
+$sql = "SELECT distinct c.name as lastname, c.firstname, c.email, s.nom as name";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = c.fk_soc";
 
@@ -84,27 +84,19 @@ if ($resql)
 	$i = 0;
 	$j = 1;
 
-	//$page->write_string(0, 0,  $langs->trans("ThirdParty"));
 	$objPHPExcel->getActiveSheet()->SetCellValue('A1', $langs->trans("Firstname"));
-	//$page->write_string(0, 1,  $langs->trans("Firstname"));
 	$objPHPExcel->getActiveSheet()->SetCellValue('B1', $langs->trans("Lastname"));
-	//$page->write_string(0, 2,  $langs->trans("Lastname"));
 	$objPHPExcel->getActiveSheet()->SetCellValue('C1', $langs->trans("Email"));
-	//$page->write_string(0, 3,  $langs->trans("Email"));
 	$objPHPExcel->getActiveSheet()->SetCellValue('D1', $langs->trans("ThirdPart"));
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
 
-		//$page->write_string($j, 0,  $obj->nom);
     	$objPHPExcel->getActiveSheet()->SetCellValue('A'.($i+2), $obj->firstname);
-		//$page->write_string($j, 1,  $obj->firstname);
-    	$objPHPExcel->getActiveSheet()->SetCellValue('B'.($i+2), $obj->name);
-		//$page->write_string($j, 2,  $obj->name);
+    	$objPHPExcel->getActiveSheet()->SetCellValue('B'.($i+2), $obj->lastname);
     	$objPHPExcel->getActiveSheet()->SetCellValue('C'.($i+2), $obj->email);
-		//$page->write_string($j, 3,  $obj->email);
-    	$objPHPExcel->getActiveSheet()->SetCellValue('D'.($i+2), $obj->nom);
+    	$objPHPExcel->getActiveSheet()->SetCellValue('D'.($i+2), $obj->name);
 
 		$j++;
 		$i++;

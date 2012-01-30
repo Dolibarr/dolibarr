@@ -678,7 +678,7 @@ class Societe extends CommonObject
 
                 $this->ref          = $obj->rowid;
                 $this->name 		= $obj->name;
-                $this->nom          = $obj->name;		// TODO obsolete
+                $this->nom          = $obj->name;		// deprecated
                 $this->ref_ext      = $obj->ref_ext;
                 $this->ref_int      = $obj->ref_int;
 
@@ -1333,6 +1333,8 @@ class Societe extends CommonObject
     {
         global $conf,$langs;
 
+        $name=$this->name?$this->name:$this->nom;
+
         $result='';
         $lien=$lienfin='';
 
@@ -1364,8 +1366,6 @@ class Societe extends CommonObject
         // Add type of canvas
         $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
-
-        $name=$this->name?$this->name:$this->nom;
 
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
