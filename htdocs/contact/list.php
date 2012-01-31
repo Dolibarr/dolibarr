@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -113,8 +113,8 @@ llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Modu
 
 $form=new Form($db);
 
-$sql = "SELECT s.rowid as socid, s.nom,";
-$sql.= " p.rowid as cidp, p.name, p.firstname, p.poste, p.email,";
+$sql = "SELECT s.rowid as socid, s.nom as name,";
+$sql.= " p.rowid as cidp, p.name as lastname, p.firstname, p.poste, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " cp.code as pays_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -338,7 +338,7 @@ if ($result)
 
 		// Name
 		print '<td valign="middle">';
-		$contactstatic->name=$obj->name;
+		$contactstatic->lastname=$obj->lastname;
 		$contactstatic->firstname='';
 		$contactstatic->id=$obj->cidp;
 		print $contactstatic->getNomUrl(1,'',20);
@@ -357,7 +357,7 @@ if ($result)
             if ($obj->socid)
             {
                 print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
-                print img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,20).'</a>';
+                print img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,20).'</a>';
             }
             else
             {
