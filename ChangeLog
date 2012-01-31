@@ -54,6 +54,7 @@ For developers:
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
 - New: Add trigger ACTION_DELETE and ACTION_MODIFY.
+- New: Trigger now have a priority to define sort execution order.
 - New: Can define different requests according to database type into migration files.
 - New: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
 - New: Removed artichow deprecated libraries.
