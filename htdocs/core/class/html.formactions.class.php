@@ -133,7 +133,7 @@ class FormActions
         	print_titre($title);
 
         	$total = 0;	$var=true;
-        	print '<table class="border" width="100%">';
+        	print '<table class="noborder" width="100%">';
         	print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans('Ref').'</th><th class="liste_titre">'.$langs->trans('Date').'</th><th class="liste_titre">'.$langs->trans('Action').'</th><th class="liste_titre">'.$langs->trans('By').'</th></tr>';
         	print "\n";
 
