@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/admin/triggers.php
- *       \brief      Page de configuration et activation des triggers
+ *       \brief      Page to view triggers
  */
 
 require("../main.inc.php");
@@ -25,13 +25,13 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) accessforbidden();
 
 /*
  * Action
  */
 
+// None
 
 
 /*
@@ -50,9 +50,11 @@ print "<br>\n";
 $template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 
 $interfaces = new Interfaces($db);
-$triggers = $interfaces->getTriggersList(0);
+$triggers = $interfaces->getTriggersList(0,'priority');
 
 include($template_dir.'triggers.tpl.php');
 
 llxFooter();
+
+$db->close();
 ?>
