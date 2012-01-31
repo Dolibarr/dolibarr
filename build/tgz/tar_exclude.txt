@@ -31,15 +31,6 @@ htdocs/conf/conf.php.mysql
 htdocs/conf/conf.php.old
 htdocs/conf/conf.php.postgres
 htdocs/avoir
-htdocs/core/modules/modBookmark4u.class.php
-htdocs/core/modules/modDocument.class.php
-htdocs/core/modules/modDroitPret.class.php
-htdocs/core/modules/modEditeur.class.php
-htdocs/core/modules/modPostnuke.class.php
-htdocs/core/modules/modTelephonie.class.php
-htdocs/core/triggers/interface_user.class.php
-htdocs/core/triggers/interface_contractfrombill.class.php-NORUN
-htdocs/core/triggers/interface_modEditeur_Editeur.class.php-NORUN
 htdocs/custom
 htdocs/custom2
 htdocs/customleave

@@ -18,7 +18,7 @@
 -- ========================================================================
 -- This table logs all dolibarr security events
 -- Content of this table is not managed by users but by Dolibarr
--- trigger interface_all_LogEvent.
+-- trigger interface_20_all_Logevents.
 -- ========================================================================
 
 create table llx_events

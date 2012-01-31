@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       /htdocs/core/triggers/interface_modPaypal_PaypalWorkflow.class.php
+ *      \file       /htdocs/core/triggers/interface_20_modPaypal_PaypalWorkflow.class.php
  *      \ingroup    paypal
  *      \brief      Trigger file for paypal workflow
  */
@@ -32,11 +32,12 @@ class InterfacePaypalWorkflow
 
     /**
      *   Constructor
-     *   @param      DB      Database handler
+     * 
+     *   @param		DoliDB		$db      Database handler
      */
-    function InterfacePaypalWorkflow($DB)
+    function InterfacePaypalWorkflow($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "paypal";

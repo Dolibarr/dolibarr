@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/triggers/interface_all_Logevents.class.php
+ *      \file       htdocs/core/triggers/interface_20_all_Logevents.class.php
  *      \ingroup    core
  *      \brief      Trigger file for
  */
@@ -38,12 +38,13 @@ class InterfaceLogevents
     var $desc;
 
     /**
-     *   Constructor.
-     *   @param      DB      Database handler
+     *   Constructor
+     * 
+     *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceLogevents($DB)
+    function InterfaceLogevents($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "core";
@@ -243,7 +244,7 @@ class InterfaceLogevents
                 $error ="Failed to insert security event: ".$event->error;
                 $this->error=$error;
 
-                dol_syslog("interface_all_Logevents.class.php: ".$this->error, LOG_ERR);
+                dol_syslog(get_class($this).": ".$this->error, LOG_ERR);
                 return -1;
             }
         }

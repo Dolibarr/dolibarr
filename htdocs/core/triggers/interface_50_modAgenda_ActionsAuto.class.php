@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/triggers/interface_modAgenda_ActionsAuto.class.php
+ *	\file       htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php
  *  \ingroup    agenda
  *  \brief      Trigger file for agenda module
  */
@@ -39,12 +39,13 @@ class InterfaceActionsAuto
     var $desc;
 
     /**
-     *   Constructor.
-     *   @param      DB      Database handler
+     *   Constructor
+     * 
+     *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceActionsAuto($DB)
+    function InterfaceActionsAuto($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "agenda";
