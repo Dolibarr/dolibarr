@@ -41,6 +41,9 @@ TrueFalseBox= Choix Vrai/Faux
 DropdownBox= Liste déroulante
 DateBox= Date
 DateTimeBox= Date et heure
+Integer= Nombre entier
+Float= Nombre à virgule
+Double= Nombre à virgule (double précision)
 
 True= Vrai
 False= Faux

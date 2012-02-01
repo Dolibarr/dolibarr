@@ -19,8 +19,11 @@
  *	\file       htdocs/customfields/conf/conf_customfields.lib.php
  *	\ingroup    others
  *	\brief          Contains all the configurable variables to expand the functionnalities of CustomFields
- *	\version    $Id: customfields.php, v1.2.2
+ *	\version    $Id: customfields.php, v1.2.7
  */
+
+$langs->load('customfields@customfields'); // customfields standard language support
+$langs->load('customfields-user@customfields'); // customfields language support for user's values (like enum, fields names, etc..)
 
 // Loading the translation class if it's not yet loaded (or with another name) - DO NOT EDIT!
 if (! is_object($langs))
@@ -56,5 +59,8 @@ $sql_datatypes = array( 'varchar' => $langs->trans("Textbox"),
                                              'enum' => $langs->trans("DropdownBox"),
                                              'date' => $langs->trans("DateBox"),
                                              'datetime' => $langs->trans("DateTimeBox"),
+                                             'int' => $langs->trans("Integer"),
+                                             'float' => $langs->trans("Float"),
+                                            'double' => $langs->trans("Double"),
                                              'other' => $langs->trans("Other").'/'.$langs->trans("Constraint"),
                                                 );

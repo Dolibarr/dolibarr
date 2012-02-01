@@ -41,6 +41,9 @@ TrueFalseBox= TrueFalseBox
 DropdownBox= DropdownBox
 DateBox= DateBox
 DateTimeBox= DateTimeBox
+Integer= Integer
+Float= Float
+Double= Double
 
 True= True
 False= False
