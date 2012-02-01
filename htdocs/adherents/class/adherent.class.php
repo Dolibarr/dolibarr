@@ -1680,48 +1680,6 @@ class Adherent extends CommonObject
     }
 
     /**
-     *    	Return full name (civility+' '+name+' '+lastname)
-     *
-     *		@param	Translate	$langs			Language object for translation of civility
-     *		@param	int			$option			0=No option, 1=Add civility
-     * 		@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-     * 		@param	int			$maxlen			Maximum length
-     * 		@return	string						String with full name
-     */
-    function getFullName($langs,$option=0,$nameorder=-1,$maxlen=0)
-    {
-        global $conf;
-
-        if (empty($this->lastname))  $this->lastname=($this->name?$this->name:$this->nom);
-        if (empty($this->firstname)) $this->firstname=($this->firstname?$this->firstname:$this->prenom);
-
-        $ret='';
-        if ($option && $this->civilite_id)
-        {
-            if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
-            else $ret.=$this->civilite_id.' ';
-        }
-
-        // If order not defined, we use the setup
-        if ($nameorder < 0) $nameorder=(! $conf->global->MAIN_FIRSTNAME_NAME_POSITION);
-
-        if ($nameorder)
-        {
-            $ret.=$this->firstname;
-            if ($this->firstname && $this->lastname) $ret.=' ';
-            $ret.=$this->lastname;
-        }
-        else
-        {
-            $ret.=$this->lastname;
-            if ($this->firstname && $this->lastname) $ret.=' ';
-            $ret.=$this->firstname;
-        }
-        return dol_trunc($ret,$maxlen);
-    }
-
-
-    /**
      *    Return label of a civility of a contact
      *
      *    @param	int		$nohtmlentities     0=Encode with htmlentities for HTML output, 1=No htmlentities for memory translation

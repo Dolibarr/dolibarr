@@ -686,42 +686,5 @@ class Don extends CommonObject
         return $result;
     }
 
-    /**
-     *      Return full name (civility+' '+name+' '+lastname)
-     *
-     *      @param	Translate	$langs           Language object for translation of civility
-     *      @param  int			$option          0=No option, 1=Add civility
-     *      @param  int			$nameorder       -1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-     *      @return string				         String with full name
-     */
-    function getFullName($langs,$option=0,$nameorder=-1)
-    {
-        global $conf;
-
-        $ret='';
-        if ($option && $this->civilite_id)
-        {
-            if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
-            else $ret.=$this->civilite_id.' ';
-        }
-
-        // If order not defined, we use the setup
-        if ($nameorder < 0) $nameorder=(! $conf->global->MAIN_FIRSTNAME_NAME_POSITION);
-
-        if ($nameorder)
-        {
-            if ($this->prenom) $ret.=$this->prenom;
-            if ($this->prenom && $this->nom) $ret.=' ';
-            if ($this->nom)      $ret.=$this->nom;
-        }
-        else
-        {
-            if ($this->nom)      $ret.=$this->nom;
-            if ($this->prenom && $this->nom) $ret.=' ';
-            if ($this->prenom) $ret.=$this->prenom;
-        }
-
-        return trim($ret);
-    }
 }
 ?>
