@@ -67,7 +67,7 @@ class PropaleStats extends Stats
 		$this->field='total_ht';
 
 		$this->where.= " fk_statut > 0";
-		$this->where.= " AND p.fk_soc = s.rowid AND s.entity = ".$conf->entity;
+		$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if($this->socid)
 		{

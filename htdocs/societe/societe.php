@@ -75,13 +75,13 @@ if ($mode == 'search')
 	if ($search_sale || !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     // We'll need this table joined to the select in order to filter by categ
     if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
-	$sql.= " WHERE (";
-	$sql.= " s.nom like '%".$db->escape($socname)."%'";
+    $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+	$sql.= " AND (";
+	$sql.= " s.nom LIKE '%".$db->escape($socname)."%'";
 	$sql.= " OR s.code_client LIKE '%".$db->escape($socname)."%'";
-	$sql.= " OR s.email like '%".$db->escape($socname)."%'";
-	$sql.= " OR s.url like '%".$db->escape($socname)."%'";
+	$sql.= " OR s.email LIKE '%".$db->escape($socname)."%'";
+	$sql.= " OR s.url LIKE '%".$db->escape($socname)."%'";
 	$sql.= ")";
-	$sql.= " AND s.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
     if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
@@ -175,7 +175,7 @@ if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_P
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
@@ -204,8 +204,8 @@ if ($search_all)
 	$sql.= " AND (";
 	$sql.= "s.nom LIKE '%".$db->escape($search_all)."%'";
 	$sql.= " OR s.code_client LIKE '%".$db->escape($search_all)."%'";
-	$sql.= " OR s.email like '%".$db->escape($search_all)."%'";
-	$sql.= " OR s.url like '%".$db->escape($search_all)."%'";
+	$sql.= " OR s.email LIKE '%".$db->escape($search_all)."%'";
+	$sql.= " OR s.url LIKE '%".$db->escape($search_all)."%'";
 	$sql.= ")";
 }
 if ($search_nom)
@@ -213,8 +213,8 @@ if ($search_nom)
 	$sql.= " AND (";
 	$sql.= "s.nom LIKE '%".$db->escape($search_nom)."%'";
 	$sql.= " OR s.code_client LIKE '%".$db->escape($search_nom)."%'";
-	$sql.= " OR s.email like '%".$db->escape($search_nom)."%'";
-	$sql.= " OR s.url like '%".$db->escape($search_nom)."%'";
+	$sql.= " OR s.email LIKE '%".$db->escape($search_nom)."%'";
+	$sql.= " OR s.url LIKE '%".$db->escape($search_nom)."%'";
 	$sql.= ")";
 }
 
@@ -417,7 +417,8 @@ else
 	dol_print_error($db);
 }
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>

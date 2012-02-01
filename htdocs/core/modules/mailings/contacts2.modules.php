@@ -163,8 +163,7 @@ class mailing_contacts2 extends MailingTargets
     	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE s.rowid = sp.fk_soc";
-        $sql.= " AND s.entity = ".$conf->entity;
-        $sql.= " AND sp.entity = ".$conf->entity;
+        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     	$sql.= " AND sp.email != ''";  // Note that null != '' is false
     	//$sql.= " AND sp.poste != ''";
     	// La requete doit retourner un champ "nb" pour etre comprise

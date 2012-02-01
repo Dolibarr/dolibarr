@@ -1808,7 +1808,7 @@ else
 	if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 	$sql.= ' WHERE p.fk_soc = s.rowid';
-	$sql.= ' AND s.entity = '.$conf->entity;
+	$sql.= ' AND p.entity = '.$conf->entity;
 
 	if (!$user->rights->societe->client->voir && !$socid) //restriction
 	{

@@ -69,8 +69,8 @@ class Prospect extends Societe
         	$sql.= " WHERE sc.fk_user = " .$user->id;
         	$clause = "AND";
         }
-        $sql.= " ".$clause." s.client in (1,2,3)";
-        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " ".$clause." s.client IN (1,2,3)";
+        $sql.= " AND s.entity IN (".getEntity(societe, 1).")";
         $sql.= " GROUP BY s.client";
 
         $resql=$this->db->query($sql);

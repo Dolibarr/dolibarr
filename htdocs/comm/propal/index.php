@@ -79,16 +79,16 @@ print "</form></table><br>\n";
  * Statistics
  */
 
-$sql = "SELECT count(cf.rowid), cf.fk_statut";
+$sql = "SELECT count(p.rowid), p.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."propal as cf";
+$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE cf.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
-if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+$sql.= " WHERE p.fk_soc = s.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
+if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " AND cf.fk_statut in (0,1,2,3,4)";
-$sql.= " GROUP BY cf.fk_statut";
+$sql.= " AND p.fk_statut IN (0,1,2,3,4)";
+$sql.= " GROUP BY p.fk_statut";
 $resql = $db->query($sql);
 if ($resql)
 {

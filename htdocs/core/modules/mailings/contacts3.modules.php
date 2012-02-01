@@ -169,8 +169,7 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE s.rowid = c.fk_soc";
-        $sql.= " AND c.entity = ".$conf->entity;
-        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND c.email != ''"; // Note that null != '' is false
         /*
     	$sql = "SELECT count(distinct(sp.email)) as nb";
@@ -179,8 +178,7 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " ".MAIN_DB_PREFIX."categorie as c,";
         $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
         $sql.= " WHERE s.rowid = sp.fk_soc";
-        $sql.= " AND sp.entity = ".$conf->entity;
-        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND sp.email != ''"; // Note that null != '' is false
         $sql.= " AND cs.fk_categorie = c.rowid";
         $sql.= " AND cs.fk_societe = sp.fk_soc";

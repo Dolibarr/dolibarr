@@ -87,30 +87,30 @@ if ($_GET["mode"] == 'sconly')
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"s.date_ech","",$param,'width="120"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'width="120"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"c.libelle","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"s.fk_type","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pid","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"datep","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"cs.fk_type","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pc.rowid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pc.datep","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pc.amount","",$param,'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 $sql = "SELECT c.id, c.libelle as lib,";
-$sql.= " s.rowid, s.libelle, s.fk_type as type, s.periode, s.date_ech, s.amount as total,";
+$sql.= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
 $sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
-$sql.= " ".MAIN_DB_PREFIX."chargesociales as s";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = s.rowid";
-$sql.= " WHERE s.fk_type = c.id";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
+$sql.= " WHERE cs.fk_type = c.id";
+$sql.= " AND cs.entity = ".$conf->entity;
 if ($year > 0)
 {
 	$sql .= " AND (";
 	// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
 	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-	$sql .= "   (s.periode is not null and s.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
-	$sql .= "or (s.periode is null     and s.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+	$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+	$sql .= "OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
 }
 $sql.= $db->order($sortfield,$sortorder);
@@ -145,7 +145,7 @@ if ($resql)
 		print $socialcontrib->getNomUrl(1,'20');
 		print '</td>';
 		// Type
-		print '<td><a href="../sociales/index.php?filtre=s.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
+		print '<td><a href="../sociales/index.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
 		// Expected to pay
 		print '<td align="right">'.price($obj->total).'</td>';
 		// Ref payment

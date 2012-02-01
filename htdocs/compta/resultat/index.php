@@ -346,23 +346,23 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$sql = "SELECT c.libelle as nom, date_format(s.date_ech,'%Y-%m') as dm, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc";
+	$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount_ht, sum(cs.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
-	$sql.= " WHERE s.fk_type = c.id";
+	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
+	$sql.= " WHERE cs.fk_type = c.id";
 	$sql.= " AND c.deductible = 0";
 }
 else
 {
 	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
-	$sql.= " WHERE p.fk_charge = s.rowid";
-	$sql.= " AND s.fk_type = c.id";
+	$sql.= " WHERE p.fk_charge = cs.rowid";
+	$sql.= " AND cs.fk_type = c.id";
 	$sql.= " AND c.deductible = 0";
 }
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
 
 dol_syslog("get social contributions deductible=0  sql=".$sql);
@@ -403,13 +403,13 @@ else
 {
 	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
-	$sql.= " WHERE p.fk_charge = s.rowid";
-	$sql.= " AND s.fk_type = c.id";
+	$sql.= " WHERE p.fk_charge = cs.rowid";
+	$sql.= " AND cs.fk_type = c.id";
 	$sql.= " AND c.deductible = 1";
 }
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
 
 dol_syslog("get social contributions paid deductible=1 sql=".$sql);

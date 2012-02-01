@@ -81,7 +81,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
 $sql.= " WHERE cf.fk_soc = s.rowid ";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND cf.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref)
 {
@@ -101,7 +101,7 @@ if ($sttc)
 }
 if ($sall)
 {
-	$sql.= " AND (cf.ref like '%".$db->escape($sall)."%' OR cf.note like '%".$db->escape($sall)."%')";
+	$sql.= " AND (cf.ref LIKE '%".$db->escape($sall)."%' OR cf.note LIKE '%".$db->escape($sall)."%')";
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 

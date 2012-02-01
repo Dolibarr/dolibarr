@@ -75,16 +75,16 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
         {
 
             $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " p.ref, p.tms, p.rowid,";
-            $sql.= " p.fk_statut, p.facture";
+            $sql.= " c.ref, c.tms, c.rowid,";
+            $sql.= " c.fk_statut, c.facture";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-            $sql.= ", ".MAIN_DB_PREFIX."commande as p";
+            $sql.= ", ".MAIN_DB_PREFIX."commande as c";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql.= " WHERE p.fk_soc = s.rowid";
-            $sql.= " AND s.entity = ".$conf->entity;
+            $sql.= " WHERE c.fk_soc = s.rowid";
+            $sql.= " AND c.entity = ".$conf->entity;
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-            $sql.= " ORDER BY p.date_commande DESC, p.ref DESC ";
+            $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
             $sql.= $db->plimit($max, 0);
 
             $result = $db->query($sql);

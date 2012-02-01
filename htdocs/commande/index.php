@@ -78,15 +78,15 @@ print "</form></table><br>\n";
  * Statistics
  */
 
-$sql = "SELECT count(cf.rowid), cf.fk_statut, cf.facture";
+$sql = "SELECT count(cf.rowid), c.fk_statut, c.facture";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."commande as cf";
+$sql.= ", ".MAIN_DB_PREFIX."commande as c";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE cf.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
-if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+$sql.= " WHERE c.fk_soc = s.rowid";
+$sql.= " AND c.entity = ".$conf->entity;
+if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " GROUP BY cf.fk_statut, cf.facture";
+$sql.= " GROUP BY c.fk_statut, c.facture";
 $resql = $db->query($sql);
 if ($resql)
 {
