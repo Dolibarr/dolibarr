@@ -1778,14 +1778,45 @@ abstract class CommonObject
 
 
     /**
-     *	Add/Update extra fields
+     *	Add/Update all extra fields values for the current object.
+     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
      *
      *  @return	void
      */
     function insertExtraFields()
     {
+        global $langs;
+
         if (count($this->array_options) > 0)
         {
+            // Check parameters
+            $langs->load('admin');
+            require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+            $extrafields = new ExtraFields($this->db);
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->elementType);
+
+            foreach($this->array_options as $key => $value)
+            {
+               	$attributeKey = substr($key,8);   // Remove 'options_' prefix
+               	$attributeType  = $extrafields->attribute_type[$attributeKey];
+               	$attributeSize  = $extrafields->attribute_size[$attributeKey];
+               	$attributeLabel = $extrafields->attribute_label[$attributeKey];
+               	switch ($attributeType)
+               	{
+               		case 'int':
+              			if (!is_numeric($value) && $value!='')
+               			{
+               				$error++; $this->errors[]=$langs->trans("ExtraFieldHasWrongValue",$attributeLabel);
+               				return -1;
+              			}
+               			elseif ($value=='')
+               			{
+               				$this->array_options[$key] = null;
+               			}
+             			break;
+                  	}
+            }
+
             $this->db->begin();
 
             $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;

@@ -44,6 +44,7 @@ For users:
 - New: Value of data into charts are visible on mouse hover.
 - New: Import wizard can import contacts.
 - New: Install process is now two times faster.
+- New: Extra fields support int type.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:

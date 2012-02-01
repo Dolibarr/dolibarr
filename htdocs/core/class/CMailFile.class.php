@@ -185,6 +185,8 @@ class CMailFile
 			$this->addr_bcc = $addr_bcc;
 			$this->deliveryreceipt = $deliveryreceipt;
 			$smtp_headers = $this->write_smtpheaders();
+            // TODO ? Add 'Date: '       . date("r")               . "\r\n"; before X-Mailer
+		    // TODO ? Add 'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n"; before X-Mailer
 
 			// Define mime_headers
 			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
@@ -219,16 +221,15 @@ class CMailFile
 				$files_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
 			}
 
-			// We now define $this->headers et $this->message
+			// We now define $this->headers and $this->message
 			$this->headers = $smtp_headers . $mime_headers;
-
-			$this->message = $text_body . $images_encoded . $files_encoded;
-			$this->message.= "--" . $this->mixed_boundary . "--" . $this->eol;
-
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
 			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
 			// comme des injections mail par les serveurs de messagerie.
-			//$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
+			$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
+
+			$this->message = $text_body . $images_encoded . $files_encoded;
+			$this->message.= "--" . $this->mixed_boundary . "--" . $this->eol;
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 		{
