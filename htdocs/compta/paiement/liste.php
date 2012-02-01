@@ -73,6 +73,7 @@ if (GETPOST("orphelins"))
     $sql.= " ".MAIN_DB_PREFIX."c_paiement as c)";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " WHERE p.fk_paiement = c.id";
+    $sql.= " AND p.entity = ".$conf->entity;
     $sql.= " AND pf.fk_facture IS NULL";
 }
 else

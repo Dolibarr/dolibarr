@@ -56,21 +56,22 @@ if (! $sortfield) $sortfield="p.rowid";
 $limit = $conf->liste_limit;
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
-$sql .=", c.libelle as paiement_type, p.num_paiement";
-$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
+$sql.=", c.libelle as paiement_type, p.num_paiement";
+$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
 if ($socid)
 {
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
-$sql .= " WHERE p.fk_paiement = c.id";
+$sql.= " WHERE p.fk_paiement = c.id";
+$sql.= " AND p.entity = ".$conf->entity;
 if ($socid)
 {
     $sql.= " AND f.fk_soc = ".$socid;
 }
-$sql .= " AND p.statut = 0";
-$sql .= " ORDER BY $sortfield $sortorder";
-$sql .= $db->plimit($limit +1 ,$offset);
+$sql.= " AND p.statut = 0";
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->plimit($limit +1 ,$offset);
 $resql = $db->query($sql);
 
 if ($resql)
