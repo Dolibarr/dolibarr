@@ -21,8 +21,6 @@
  *   	\file       htdocs/core/class/translate.class.php
  *      \ingroup    core
  *		\brief      File for Tanslate class
- *		\author	    Eric Seigne
- *		\author	    Laurent Destailleur
  */
 
 
@@ -165,6 +163,7 @@ class Translate
 			dol_print_error('',get_class($this)."::Load ErrorWrongParameters");
 			exit;
 		}
+		if ($this->defaultlang == 'none_NONE') return;    // Special language code to not translate keys
 
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
@@ -192,7 +191,7 @@ class Translate
 		$langarray=explode('_',$langofdir);
 		if ($alt < 1 && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
-		
+
 		foreach($this->dir as $keydir => $searchdir)
 		{
 			// Directory of translation files
