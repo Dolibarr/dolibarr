@@ -523,10 +523,11 @@ class FormCompany
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT
 			&& is_array($limitto) && count($limitto))
 			{
-				$sql.= " WHERE rowid in (".join(',',$limitto).")";
+				$sql.= " WHERE rowid IN (".join(',',$limitto).")";
 			}
 		}
-		$sql .= " ORDER BY nom ASC";
+		$sql.= " AND s.entity IN (".getEntity(societe, 1).")";
+		$sql.= " ORDER BY nom ASC";
 
 		//print $sql;
 		$resql = $this->db->query($sql);
