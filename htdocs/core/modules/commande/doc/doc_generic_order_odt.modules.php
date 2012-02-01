@@ -102,7 +102,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
             'object_ref_ext'=>$object->ref_ext,
         	'object_ref_customer'=>$object->ref_client,
         	'object_date'=>dol_print_date($object->date,'day'),
-        	'object_date_delivery'=>dol_print_date($object->date_livrasion,'dayhour'),
+        	'object_date_delivery'=>dol_print_date($object->date_livraison,'dayhour'),
         	'object_date_creation'=>dol_print_date($object->date_creation,'day'),
             'object_date_modification'=>dol_print_date($object->date_modification,'day'),
             'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
