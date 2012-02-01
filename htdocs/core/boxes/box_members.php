@@ -95,8 +95,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-					$memberstatic->nom=$objp->lastname;
-					$memberstatic->prenom=$objp->firstname;
+					$memberstatic->lastname=$objp->lastname;
+					$memberstatic->firstname=$objp->firstname;
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
