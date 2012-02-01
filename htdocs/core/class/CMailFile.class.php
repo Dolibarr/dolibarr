@@ -194,7 +194,7 @@ class CMailFile
 				if (!empty($css))
 				{
 					$this->css = $css;
-					$this->buildCSS();
+					$this->buildCSS();    // Build a css style (mode = all) into this->styleCSS and this->bodyCSS
 				}
 
 				$msg = $this->html;
@@ -228,7 +228,7 @@ class CMailFile
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
 			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
 			// comme des injections mail par les serveurs de messagerie.
-			$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
+			//$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 		{
@@ -548,7 +548,7 @@ class CMailFile
     }
 
     /**
-     * Build a css style (mode = all)
+     * Build a css style (mode = all) into this->styleCSS and this->bodyCSS
      *
      * @return css
      */
