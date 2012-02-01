@@ -39,9 +39,8 @@
 
 
 /**
- * 	\class	SMTPs
- * 	\brief	Class to construct and send SMTP compliant email, even
- * 			to a secure SMTP server, regardless of platform.
+ * 	Class to construct and send SMTP compliant email, even
+ * 	to a secure SMTP server, regardless of platform.
  */
 class SMTPs
 {

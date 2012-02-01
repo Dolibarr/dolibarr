@@ -185,11 +185,9 @@ class CMailFile
 			$this->addr_bcc = $addr_bcc;
 			$this->deliveryreceipt = $deliveryreceipt;
 			$smtp_headers = $this->write_smtpheaders();
-            // TODO ? Add 'Date: '       . date("r")               . "\r\n"; before X-Mailer
-		    // TODO ? Add 'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n"; before X-Mailer
 
 			// Define mime_headers
-			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
+			//$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
 
 			if (! empty($this->html))
 			{
@@ -587,6 +585,8 @@ class CMailFile
 		global $conf;
 		$out = "";
 
+		$host = dol_getprefix();
+
 		// Sender
 		//$out .= "X-Sender: ".getValidAddress($this->addr_from,2).$this->eol;
 		$out .= "From: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
@@ -602,6 +602,10 @@ class CMailFile
 		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol;
 
 		//$out .= "X-Priority: 3".$this->eol;
+
+		$out.= 'Date: ' . date("r") . $this->eol;
+		$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol;
+
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
 		$out.= "MIME-Version: 1.0".$this->eol;
 
