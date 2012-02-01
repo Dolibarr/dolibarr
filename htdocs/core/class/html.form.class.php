@@ -353,13 +353,13 @@ class Form
     /**
      *	Show a text with a picto and a tooltip on picto
      *
-     *	@param     	text				Text to show
-     *	@param   	htmltooltip     	Content of tooltip
-     *	@param		direction			1=Icon is after text, -1=Icon is before text, 0=no icon
-     * 	@param		type				Type of picto (info, help, warning, superadmin...)
-     *  @param  	extracss            Add a CSS style to td tags
-     *  @param      noencodehtmltext    Do not encode into html entity the htmltext
-     * 	@return		string				HTML code of text, picto, tooltip
+     *	@param	string	$text				Text to show
+     *	@param  string	$htmltooltip     	Content of tooltip
+     *	@param	int		$direction			1=Icon is after text, -1=Icon is before text, 0=no icon
+     * 	@param	string	$type				Type of picto (info, help, warning, superadmin...)
+     *  @param  string	$extracss           Add a CSS style to td tags
+     *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
+     * 	@return	string						HTML code of text, picto, tooltip
      */
     function textwithpicto($text,$htmltext,$direction=1,$type='help',$extracss='',$noencodehtmltext=0)
     {
@@ -885,13 +885,13 @@ class Form
         global $conf,$langs;
 
         // On recherche les societes
-        $sql = "SELECT s.rowid, s.name, s.firstname, s.poste FROM";
+        $sql = "SELECT s.rowid, s.name as name, s.firstname, s.poste FROM";
         $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
         $sql.= " WHERE entity = ".$conf->entity;
         if ($socid > 0) $sql.= " AND fk_soc=".$socid;
         $sql.= " ORDER BY s.name ASC";
 
-        dol_syslog("Form::select_contacts sql=".$sql);
+        dol_syslog(get_class($this)."::select_contacts sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -913,6 +913,7 @@ class Form
 
                     $contactstatic->id=$obj->rowid;
                     $contactstatic->name=$obj->name;
+                    $contactstatic->lastname=$obj->name;
                     $contactstatic->firstname=$obj->firstname;
 
                     if ($htmlname != 'none')

@@ -101,7 +101,7 @@ class FormActions
 
     /**
      *  Show list of actions for element
-     * 
+     *
      *  @param	Object	$object			Object
      *  @param  string	$typeelement	'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
      *	@param	int		$socid			socid of user
@@ -133,7 +133,7 @@ class FormActions
         	print_titre($title);
 
         	$total = 0;	$var=true;
-        	print '<table class="border" width="100%">';
+        	print '<table class="noborder" width="100%">';
         	print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans('Ref').'</th><th class="liste_titre">'.$langs->trans('Date').'</th><th class="liste_titre">'.$langs->trans('Action').'</th><th class="liste_titre">'.$langs->trans('By').'</th></tr>';
         	print "\n";
 
@@ -146,8 +146,8 @@ class FormActions
         		print '<td title="'.dol_escape_htmltag($action->label).'">'.dol_trunc($action->label,32).'</td>';
         		$userstatic = new User($this->db);
         		$userstatic->id = $action->author->id;
-        		$userstatic->prenom = $action->author->firstname;
-        		$userstatic->nom = $action->author->lastname;
+        		$userstatic->firstname = $action->author->firstname;
+        		$userstatic->lastname = $action->author->lastname;
         		print '<td>'.$userstatic->getNomUrl(1).'</td>';
         		print '</tr>';
         	}
@@ -160,7 +160,7 @@ class FormActions
 
     /**
      *  Output list of type of event
-     * 
+     *
      *  @param	string		$selected        Type pre-selectionne
      *  @param  string		$htmlname        Nom champ formulaire
      * 	@return	void

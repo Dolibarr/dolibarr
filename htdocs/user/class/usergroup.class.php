@@ -75,7 +75,7 @@ class UserGroup extends CommonObject
 
 		$this->id = $id;
 
-		$sql = "SELECT g.rowid, g.entity, g.nom, g.note, g.datec, g.tms as datem";
+		$sql = "SELECT g.rowid, g.entity, g.nom as name, g.note, g.datec, g.tms as datem";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 		$sql.= " WHERE g.rowid = ".$this->id;
 
@@ -90,7 +90,8 @@ class UserGroup extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
-				$this->nom  = $obj->nom;
+				$this->nom  = $obj->name;        // depecated
+				$this->name = $obj->name;
 				$this->note = $obj->note;
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
@@ -106,7 +107,7 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::Fetch ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

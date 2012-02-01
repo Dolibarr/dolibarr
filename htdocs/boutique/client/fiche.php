@@ -33,12 +33,7 @@ include_once(DOL_DOCUMENT_ROOT.'/boutique/client/class/boutiqueclient.class.php'
  * Actions
  */
 
-if ($action == 'update' && !$cancel)
-{
-	$client = new BoutiqueClient($dbosc);
-	$client->nom = $nom;
-	$client->update($id, $user);
-}
+// None
 
 
 

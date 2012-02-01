@@ -203,7 +203,7 @@ $var=true;
  */
 $max=5;
 
-$sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
+$sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname,";
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
 $sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
@@ -229,8 +229,8 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 			print "<tr ".$bc[$var].">";
 			$staticmember->id=$obj->rowid;
-			$staticmember->nom=$obj->nom;
-			$staticmember->prenom=$obj->prenom;
+			$staticmember->lastname=$obj->lastname;
+			$staticmember->firstname=$obj->firstname;
 			$staticmember->ref=$staticmember->getFullName($langs);
 			$statictype->id=$obj->typeid;
 			$statictype->libelle=$obj->libelle;
@@ -283,8 +283,8 @@ if ($resql)
 			$subscriptionstatic->id=$obj->cid;
 			$subscriptionstatic->ref=$obj->cid;
 			$staticmember->id=$obj->rowid;
-			$staticmember->nom=$obj->nom;
-			$staticmember->prenom=$obj->prenom;
+			$staticmember->lastname=$obj->lastname;
+			$staticmember->firstname=$obj->firstname;
 			$staticmember->ref=$staticmember->getFullName($langs);
 			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
 			print '<td>'.$staticmember->getNomUrl(1,24,'subscription').'</td>';

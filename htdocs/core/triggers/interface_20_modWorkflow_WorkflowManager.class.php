@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/triggers/interface_modWorkflow_WorkflowManager.class.php
+ *      \file       htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php
  *      \ingroup    core
  *      \brief      Trigger file for workflows
  */
@@ -33,12 +33,13 @@ class InterfaceWorkflowManager
     var $db;
 
     /**
-     *   Constructor.
-     *   @param      DB      Database handler
+     *   Constructor
+     * 
+     *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceWorkflowManager($DB)
+    function InterfaceWorkflowManager($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "core";

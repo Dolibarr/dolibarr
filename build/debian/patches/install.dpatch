@@ -1,7 +1,17 @@
-diff -up htdocs/filefunc.inc.php.patch htdocs/filefunc.inc.php
---- htdocs/filefunc.inc.php.patch	2011-09-03 02:32:48.666952000 +0200
-+++ htdocs/filefunc.inc.php	2011-09-03 02:33:00.510952001 +0200
-@@ -64,8 +64,8 @@ 
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## install.patch by <eldy@users.sourceforge.net>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Updates htdocs/filefunc.inc.php
+## DP: Updates htdocs/install/inc.php
+## DP: Updates htdocs/support/inc.php
+
+@DPATCH@
+
+
+--- old/htdocs/filefunc.inc.php 2011-09-03 02:32:48.666952000 +0200
++++ new/htdocs/filefunc.inc.php	2011-09-03 02:33:00.510952001 +0200
+@@ -64,8 +64,8 @@
  $conffile = "conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";
  // For debian/redhat like systems
@@ -12,9 +22,8 @@ diff -up htdocs/filefunc.inc.php.patch htdocs/filefunc.inc.php
  
  
  // Include configuration
-diff -up htdocs/install/inc.php.patch htdocs/install/inc.php
---- htdocs/install/inc.php.patch	2011-09-03 02:33:26.450952000 +0200
-+++ htdocs/install/inc.php	2011-09-03 02:33:36.286952001 +0200
+--- old/htdocs/install/inc.php	2011-09-03 02:33:26.450952000 +0200
++++ new/htdocs/install/inc.php	2011-09-03 02:33:36.286952001 +0200
 @@ -84,8 +84,8 @@
  $conffile = "../conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";
@@ -26,9 +35,8 @@ diff -up htdocs/install/inc.php.patch htdocs/install/inc.php
  
  
  if (! defined('DONOTLOADCONF') && file_exists($conffile))
-diff -up htdocs/support/inc.php.patch htdocs/support/inc.php
---- htdocs/support/inc.php.patch	2011-09-03 02:34:39.606952000 +0200
-+++ htdocs/support/inc.php	2011-09-03 02:33:59.814952000 +0200
+--- old/htdocs/support/inc.php	2011-09-03 02:34:39.606952000 +0200
++++ new/htdocs/support/inc.php	2011-09-03 02:33:59.814952000 +0200
 @@ -79,8 +79,8 @@
  $conffile = "../conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";

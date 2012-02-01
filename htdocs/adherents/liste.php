@@ -79,7 +79,7 @@ llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute
 
 $now=dol_now();
 
-$sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe, ";
+$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.nom as name, d.societe, ";
 $sql.= " d.datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
@@ -258,8 +258,8 @@ if ($resql)
 		// Nom
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		$memberstatic->nom=$objp->nom;
-		$memberstatic->prenom=$objp->prenom;
+		$memberstatic->lastname=$objp->lastname;
+		$memberstatic->firstname=$objp->firstname;
 		if ($objp->societe != '')
 		{
 			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.dol_trunc($memberstatic->getFullName($langs))." / ".dol_trunc($objp->societe,12)."</a></td>\n";

@@ -109,11 +109,11 @@ print $form->showrefnav($adh,'id');
 print '</td></tr>';
 
 // Nom
-print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
+print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->lastname.'&nbsp;</td>';
 print '</tr>';
 
 // Prenom
-print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
+print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->firstname.'&nbsp;</td>';
 print '</tr>';
 
 // Login

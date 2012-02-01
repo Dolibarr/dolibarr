@@ -1,0 +1,13 @@
+debian/dolibarr.desktop usr/share/applications
+debian/dolibarr.xpm usr/share/pixmaps
+ChangeLog usr/share/doc/dolibarr
+README usr/share/doc/dolibarr
+doc/install usr/share/doc/dolibarr
+doc/user usr/share/doc/dolibarr
+doc/index.html usr/share/doc/dolibarr
+build/debian/apache.conf etc/dolibarr
+build/debian/lighttpd.conf etc/dolibarr
+build usr/share/dolibarr
+dev usr/share/dolibarr
+htdocs usr/share/dolibarr
+scripts usr/share/dolibarr

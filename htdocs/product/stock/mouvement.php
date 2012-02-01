@@ -321,7 +321,7 @@ if ($resql)
 		// Author
 		print '<td>';
 		$userstatic->id=$objp->fk_user_author;
-		$userstatic->nom=$objp->login;
+		$userstatic->lastname=$objp->login;
 		print $userstatic->getNomUrl(1);
 		print "</td>\n";
 		// Value

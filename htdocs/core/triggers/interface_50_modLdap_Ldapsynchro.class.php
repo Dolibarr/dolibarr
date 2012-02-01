@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/core/triggers/interface_modLdap_Ldapsynchro.class.php
+ *      \file       htdocs/core/triggers/interface_50_modLdap_Ldapsynchro.class.php
  *      \ingroup    core
  *      \brief      Fichier de gestion des triggers LDAP
  */
@@ -34,12 +34,13 @@ class InterfaceLdapsynchro
 
 
     /**
-     *   Constructor.
-     *   @param      DB      Database handler
+     *   Constructor
+     * 
+     *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceLdapsynchro($DB)
+    function InterfaceLdapsynchro($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "ldap";

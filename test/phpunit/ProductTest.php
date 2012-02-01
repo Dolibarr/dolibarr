@@ -77,6 +77,8 @@ class ProductTest extends PHPUnit_Framework_TestCase
     {
     	global $conf,$user,$langs,$db;
 
+    	if (empty($conf->produit->enabled)) { print __METHOD__." Module Product must be enabled.\n"; die(); }
+
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";

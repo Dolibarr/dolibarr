@@ -120,11 +120,11 @@ if ($id)
     print '</tr>';
 
     // Lastname
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$adh->nom.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$adh->lastname.'&nbsp;</td>';
 	print '</tr>';
 
     // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$adh->prenom.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$adh->firstname.'&nbsp;</td></tr>';
 
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';

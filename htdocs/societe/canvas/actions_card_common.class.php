@@ -603,8 +603,8 @@ abstract class ActionsCardCommon
             	foreach($listsalesrepresentatives as $val)
             	{
             		$userstatic->id=$val['id'];
-            		$userstatic->nom=$val['name'];
-            		$userstatic->prenom=$val['firstname'];
+            		$userstatic->lastname=$val['name'];
+            		$userstatic->firstname=$val['firstname'];
             		$this->tpl['sales_representatives'].= $userstatic->getNomUrl(1);
             		$i++;
             		if ($i < $nbofsalesrepresentative) $this->tpl['sales_representatives'].= ', ';

@@ -127,7 +127,7 @@ if ($resql)
                 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
                 $societe=new Societe($db);
                 $societe->fetch($obj->rowid);
-                $obj->title=$societe->nom;
+                $obj->title=$societe->name;
             }
             $title=img_object($langs->trans("ShowCompany"),"company").' '.$obj->title;
         }
@@ -154,7 +154,7 @@ if ($resql)
 		if ($obj->fk_user)
 		{
         	$userstatic->id=$obj->fk_user;
-	    	$userstatic->nom=$obj->login;
+	    	$userstatic->lastname=$obj->login;
 			print $userstatic->getNomUrl(1);
 		}
 		else
