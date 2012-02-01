@@ -458,7 +458,7 @@ class Don extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_paiement";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.entity = ".$conf->entity;
 
-        dol_syslog("Don::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {

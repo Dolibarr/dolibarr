@@ -26,6 +26,8 @@ require("../../main.inc.php");
 
 $langs->load("donations");
 
+if (!$user->rights->don->lire) accessforbidden();
+
 
 /*
  * View
@@ -77,7 +79,7 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

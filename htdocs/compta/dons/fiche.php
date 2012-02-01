@@ -34,18 +34,24 @@ $langs->load("companies");
 $langs->load("donations");
 $langs->load("bills");
 
+$id=GETPOST('rowid')?GETPOST('rowid'):GETPOST('id');
+$action=GETPOST('action');
+
 $mesg="";
 $mesgs=array();
 
 $don = new Don($db);
 $donation_date=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
+// Security check
+$result = restrictedArea($user, 'don', $id);
+
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'update')
+if ($action == 'update')
 {
 	if (! empty($_POST['cancel']))
 	{
@@ -58,14 +64,14 @@ if ($_POST["action"] == 'update')
     if (empty($donation_date))
     {
         $mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
-        $_GET["action"] = "create";
+        $action = "create";
         $error++;
     }
 
 	if (! $_POST["amount"] > 0)
 	{
 		$mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
-		$_GET["action"] = "create";
+		$action = "create";
 		$error++;
 	}
 
@@ -100,7 +106,7 @@ if ($_POST["action"] == 'update')
 	}
 }
 
-if ($_POST["action"] == 'add')
+if ($action == 'add')
 {
 	if (! empty($_POST['cancel']))
 	{
@@ -152,19 +158,19 @@ if ($_POST["action"] == 'add')
 	}
 }
 
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
 	$don->delete($_GET["rowid"]);
 	Header("Location: liste.php");
 	exit;
 }
-if ($_POST["action"] == 'commentaire')
+if ($action == 'commentaire')
 {
 	$don->fetch($_POST["rowid"]);
 	$don->update_note($_POST["commentaire"]);
 	$_GET["rowid"] = $_POST["rowid"];
 }
-if ($_GET["action"] == 'valid_promesse')
+if ($action == 'valid_promesse')
 {
 	if ($don->valid_promesse($_GET["rowid"], $user->id) >= 0)
 	{
@@ -173,7 +179,7 @@ if ($_GET["action"] == 'valid_promesse')
 	}
     else $mesg=$don->error;
 }
-if ($_GET["action"] == 'set_cancel')
+if ($action == 'set_cancel')
 {
     if ($don->set_cancel($_GET["rowid"]) >= 0)
     {
@@ -182,7 +188,7 @@ if ($_GET["action"] == 'set_cancel')
     }
     else $mesg=$don->error;
 }
-if ($_GET["action"] == 'set_paid')
+if ($action == 'set_paid')
 {
 	if ($don->set_paye($_GET["rowid"], $modepaiement) >= 0)
 	{
@@ -191,7 +197,7 @@ if ($_GET["action"] == 'set_paid')
 	}
     else $mesg=$don->error;
 }
-if ($_GET["action"] == 'set_encaisse')
+if ($action == 'set_encaisse')
 {
 	if ($don->set_encaisse($_GET["rowid"]) >= 0)
 	{
@@ -204,7 +210,7 @@ if ($_GET["action"] == 'set_encaisse')
 /*
  * Build doc
  */
-if ($_REQUEST['action'] == 'builddoc')
+if ($action == 'builddoc')
 {
 	$donation = new Don($db);
 	$donation->fetch($_GET['rowid']);
@@ -255,7 +261,7 @@ $formcompany = new FormCompany($db);
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("AddDonation"));
 
@@ -326,10 +332,9 @@ if ($_GET["action"] == 'create')
 /*                                                              */
 /* ************************************************************ */
 
-if ($_GET["rowid"] && $_GET["action"] == 'edit')
+if ($id && $_GET["action"] == 'edit')
 {
-	$don->id = $_GET["rowid"];
-	$don->fetch($_GET["rowid"]);
+	$don->fetch($id);
 
 	$h=0;
 	$head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
@@ -420,11 +425,9 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 /* Fiche don en mode visu                                       */
 /*                                                              */
 /* ************************************************************ */
-if ($_GET["rowid"] && $_GET["action"] != 'edit')
+if ($id && $action != 'edit')
 {
-	$don->id = $_GET["rowid"];
-	$result=$don->fetch($_GET["rowid"]);
-
+	$result=$don->fetch($id);
 
 	$h=0;
 	$head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
