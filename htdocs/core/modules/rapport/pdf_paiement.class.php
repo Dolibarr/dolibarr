@@ -115,16 +115,17 @@ class pdf_paiement
 
 		$sql = "SELECT p.datep as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
-		$sql .= ", c.code as paiement_code, p.num_paiement";
-		$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
-		$sql .= ", pf.amount as pf_amount ";
-		$sql .= ", p.rowid as prowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
-		$sql .= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
-		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-		$sql .= " AND p.fk_paiement = c.id ";
-		$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
-		$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
+		$sql.= ", c.code as paiement_code, p.num_paiement";
+		$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
+		$sql.= ", pf.amount as pf_amount ";
+		$sql.= ", p.rowid as prowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
+		$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
+		$sql.= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
+		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND p.fk_paiement = c.id ";
+		$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+		$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
 		dol_syslog("pdf_paiement::write_file sql=".$sql);
 		$result = $this->db->query($sql);

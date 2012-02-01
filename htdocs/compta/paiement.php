@@ -637,16 +637,17 @@ if (! GETPOST('action'))
     if (! $sortfield) $sortfield='p.datep';
 
     $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
-    $sql .=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
-    $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
-    $sql .= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
+    $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
+    $sql.= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
+    $sql.= ' AND f.entity = '.$conf->entity;
     if ($socid)
     {
-        $sql .= ' AND f.fk_soc = '.$socid;
+        $sql.= ' AND f.fk_soc = '.$socid;
     }
 
-    $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
-    $sql .= $db->plimit($limit+1, $offset);
+    $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
+    $sql.= $db->plimit($limit+1, $offset);
     $resql = $db->query($sql);
 
     if ($resql)

@@ -56,11 +56,11 @@ class Paiement extends CommonObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Paiement($DB)
+	function Paiement($db)
 	{
-		$this->db = $DB ;
+		$this->db = $db ;
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Paiement extends CommonObject
 	 */
 	function create($user,$closepaidinvoices=0)
 	{
-		global $langs,$conf;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -151,8 +151,8 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES ('".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$totalamount."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
+		$sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$totalamount."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -619,10 +619,9 @@ class Paiement extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec, c.fk_user_creat, c.fk_user_modif,';
-		$sql.= ' c.tms';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as c';
-		$sql.= ' WHERE c.rowid = '.$id;
+		$sql = 'SELECT p.rowid, p.datec, p.fk_user_creat, p.fk_user_modif, p.tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p';
+		$sql.= ' WHERE p.rowid = '.$id;
 
 		dol_syslog(get_class($this).'::info sql='.$sql);
 		$result = $this->db->query($sql);
