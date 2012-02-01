@@ -83,7 +83,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 
 	if (create_exdir($upload_dir) >= 0)
 	{
-		$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0,0,$_FILES['addedfile']['error']);
+		$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'], 1, 0, $_FILES['addedfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
@@ -115,8 +115,8 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 		$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
 	}
 
-	if ($_POST['addfile'])     $_GET["action"]='test';
-	if ($_POST['addfilehtml']) $_GET["action"]='testhtml';
+	if ($_POST['addfile'])     $action='test';
+	if ($_POST['addfilehtml']) $action='testhtml';
 }
 
 /*
@@ -153,8 +153,8 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 			$formmail->remove_attached_files($keytodelete);
 		}
 	}
-	if ($_POST['removedfile'])     $_GET["action"]='test';
-	if ($_POST['removedfilehtml']) $_GET["action"]='testhtml';
+	if ($_POST['removedfile'] || $action='send')     $action='test';
+	if ($_POST['removedfilehtml'] || $action='sendhtml') $action='testhtml';
 }
 
 /*
@@ -189,20 +189,20 @@ if (($action == 'send' || $action == 'sendhtml')
 	if (empty($_POST["frommail"]))
 	{
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")).'</div>';
-		$_GET["action"]='test';
+		$action='test';
 		$error++;
 	}
 	if (empty($sendto))
 	{
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTo")).'</div>';
-		$_GET["action"]='test';
+		$action='test';
 		$error++;
 	}
 	if (! $error)
 	{
 		// Le message est-il en html
 		$msgishtml=0;	// Message is not HTML
-		if ($_POST['action'] == 'sendhtml') $msgishtml=1;	// Force message to HTML
+		if ($action == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
 		// Pratique les substitutions sur le sujet et message
 		$subject=make_substitutions($subject,$substitutionarrayfortest);
@@ -226,7 +226,7 @@ if (($action == 'send' || $action == 'sendhtml')
 			$message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
 		}
 
-		$_GET["action"]='';
+		$action='';
 	}
 }
 
