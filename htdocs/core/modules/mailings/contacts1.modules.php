@@ -73,8 +73,7 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
 		$statssql[0].= " ".MAIN_DB_PREFIX."societe as s";
 		$statssql[0].= " WHERE s.rowid = c.fk_soc";
-		$statssql[0].= " AND s.entity = ".$conf->entity;
-		$statssql[0].= " AND c.entity = ".$conf->entity;
+		$statssql[0].= " AND c.entity IN (".getEntity('societe', 1).")";
 		$statssql[0].= " AND s.client IN (1, 3)";
 		$statssql[0].= " AND c.email != ''";      // Note that null != '' is false
 
@@ -97,8 +96,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.rowid = c.fk_soc";
-		$sql .= " AND c.entity = ".$conf->entity;
-		$sql .= " AND s.entity = ".$conf->entity;
+		$sql .= " AND c.entity IN (".getEntity('societe', 1).")";
 		$sql .= " AND c.email != ''"; // Note that null != '' is false
 
 		// La requete doit retourner un champ "nb" pour etre comprise
@@ -204,8 +202,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.rowid = c.fk_soc";
-		$sql.= " AND c.entity = ".$conf->entity;
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('societe', 1).")";
 		$sql.= " AND c.email != ''";
 		foreach($filtersarray as $key)
 		{

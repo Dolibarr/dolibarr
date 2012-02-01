@@ -344,25 +344,25 @@ print '<tr><td colspan="4">'.$langs->trans("SocialContributions").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
+    $sql = "SELECT c.libelle as nom, sum(cs.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
-    $sql.= " WHERE s.fk_type = c.id";
+    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
+    $sql.= " WHERE cs.fk_type = c.id";
     $sql.= " AND c.deductible = 0";
-    if ($date_start && $date_end) $sql.= " AND s.date_ech >= '".$db->idate($date_start)."' AND s.date_ech <= '".$db->idate($date_end)."'";
+    if ($date_start && $date_end) $sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 }
 else
 {
     $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
-    $sql.= " WHERE p.fk_charge = s.rowid";
-    $sql.= " AND s.fk_type = c.id";
+    $sql.= " WHERE p.fk_charge = cs.rowid";
+    $sql.= " AND cs.fk_type = c.id";
     $sql.= " AND c.deductible = 0";
     if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle";
 
 dol_syslog("get social contributions deductible=0 sql=".$sql);
@@ -414,26 +414,26 @@ print '<tr><td colspan="4">'.$langs->trans("SocialContributions").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
+    $sql = "SELECT c.libelle as nom, sum(cs.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
-    $sql.= " WHERE s.fk_type = c.id";
+    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
+    $sql.= " WHERE cs.fk_type = c.id";
     $sql.= " AND c.deductible = 1";
-    if ($date_start && $date_end) $sql.= " AND s.date_ech >= '".$db->idate($date_start)."' AND s.date_ech <= '".$db->idate($date_end)."'";
-    $sql.= " AND s.entity = ".$conf->entity;
+    if ($date_start && $date_end) $sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
+    $sql.= " AND cs.entity = ".$conf->entity;
     $sql.= " GROUP BY c.libelle DESC";
 }
 else
 {
     $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
-    $sql .= " WHERE p.fk_charge = s.rowid";
-    $sql.= " AND s.fk_type = c.id";
+    $sql .= " WHERE p.fk_charge = cs.rowid";
+    $sql.= " AND cs.fk_type = c.id";
     $sql.= " AND c.deductible = 1";
     if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-    $sql.= " AND s.entity = ".$conf->entity;
+    $sql.= " AND cs.entity = ".$conf->entity;
     $sql.= " GROUP BY c.libelle";
 }
 

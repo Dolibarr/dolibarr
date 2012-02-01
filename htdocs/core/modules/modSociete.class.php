@@ -222,7 +222,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
-		$this->export_sql_end[$r] .=' WHERE s.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe', 1).')';
 
 		// Export list of contacts and attributes
 		$r++;

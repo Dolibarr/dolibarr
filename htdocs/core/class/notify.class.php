@@ -96,7 +96,7 @@ class Notify
         $sql.= " AND n.fk_soc = s.rowid";
         if (is_numeric($action)) $sql.= " AND n.fk_action = ".$action;	// Old usage
         else $sql.= " AND a.code = '".$action."'";	// New usage
-        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND s.rowid = ".$socid;
 
 		dol_syslog("Notify.class::countDefinedNotifications ".$action.", ".$socid." sql=".$sql);

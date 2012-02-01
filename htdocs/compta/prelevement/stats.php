@@ -47,9 +47,9 @@ print_fiche_titre($langs->trans("Statistics"));
 // Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE pl.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+$sql.= " WHERE pl.fk_prelevement_bons = pb.rowid";
+$sql.= " AND pb.entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -76,9 +76,9 @@ $ligne=new LignePrelevement($db,$user);
 
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE pl.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+$sql.= " WHERE pl.fk_prelevement_bons = pb.rowid";
+$sql.= " AND pb.entity = ".$conf->entity;
 $sql.= " GROUP BY pl.statut";
 
 $resql=$db->query($sql);
@@ -146,9 +146,9 @@ print_titre($langs->trans("WithdrawRejectStatistics"));
 // Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE pl.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+$sql.= " WHERE pl.fk_prelevement_bons = pb.rowid";
+$sql.= " AND pb.entity = ".$conf->entity;
 $sql.= " AND pl.statut = 3";
 $resql=$db->query($sql);
 if ($resql)
@@ -169,10 +169,10 @@ if ($resql)
  */
 $sql = "SELECT sum(pl.amount), count(pl.amount) as cc, pr.motif";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE pl.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+$sql.= ", ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql.= " WHERE pl.fk_prelevement_bons = pb.rowid";
+$sql.= " AND pb.entity = ".$conf->entity;
 $sql.= " AND pl.statut = 3";
 $sql.= " AND pr.fk_prelevement_lignes = pl.rowid";
 $sql.= " GROUP BY pr.motif";
@@ -232,8 +232,8 @@ else
 	dol_print_error($db);
 }
 
+llxFooter();
 
 $db->close();
 
-llxFooter();
 ?>

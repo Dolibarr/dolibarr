@@ -75,7 +75,7 @@ include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 			$sql = "SELECT s.rowid, s.name, s.firstname, s.civilite, s.datec, s.tms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE s.entity = ".$conf->entity;
+			$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
 			$sql.= " ORDER BY s.tms DESC";

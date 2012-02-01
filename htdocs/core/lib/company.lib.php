@@ -989,7 +989,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 	$sql = "SELECT s.rowid, s.nom as name, s.address, s.cp as zip, s.ville as town, s.code_client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= " WHERE s.parent = ".$object->id;
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 	$sql.= " ORDER BY s.nom";
 
 	$result = $db->query($sql);

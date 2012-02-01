@@ -182,7 +182,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'facturedet as fd)';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
-		$this->export_sql_end[$r] .=' AND s.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
 		$r++;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;

@@ -474,7 +474,7 @@ else
 
 			if ($fac->statut == 0 && $user->rights->facture->supprimer)
 			{
-				print '<a class="butActionDelete" href="fiche-rec.php?action=delete&facid='.$fac->id.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&facid='.$fac->id.'">'.$langs->trans('Delete').'</a>';
 			}
 
 			print '</div>';
@@ -496,7 +496,7 @@ else
 			$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND s.entity = ".$conf->entity;
+			$sql.= " AND f.entity = ".$conf->entity;
 			if ($socid)	$sql .= " AND s.rowid = ".$socid;
 
 			//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
@@ -507,13 +507,13 @@ else
 		if ($result)
 		{
 			$num = $db->num_rows($result);
-			print_barre_liste($langs->trans("RepeatableInvoices"),$page,"fiche-rec.php","&socid=$socid",$sortfield,$sortorder,'',$num);
+			print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],"&socid=$socid",$sortfield,$sortorder,'',$num);
 
 			$i = 0;
-			print "<table class=\"noborder\" width=\"100%\">";
+			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Ref").'</td>';
-			print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socid=$socid","",$sortfiled,$sortorder);
+			print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"s.nom","","&socid=$socid","",$sortfiled,$sortorder);
 			print '</td><td align="right">'.$langs->trans("Amount").'</td>';
 			print '<td>&nbsp;</td>';
 			print "</td>\n";
@@ -528,11 +528,11 @@ else
 
 					print "<tr $bc[$var]>";
 
-					print '<td><a href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
+					print '<td><a href="'.$_SERVER['PHP_SELF'].'?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 					print "</a></td>\n";
 					print '<td><a href="../fiche.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
 
-					print "<td align=\"right\">".price($objp->total)."</td>\n";
+					print '<td align="right">'.price($objp->total).'</td>'."\n";
 
 					if (! $objp->paye)
 					{
@@ -566,7 +566,8 @@ else
 
 }
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>

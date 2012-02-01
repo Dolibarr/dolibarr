@@ -125,7 +125,7 @@ class Fournisseur extends Societe
 			$clause = "AND";
 		}
 		$sql.= " ".$clause." s.fournisseur = 1";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -188,7 +188,7 @@ class Fournisseur extends Societe
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.fournisseur = 1";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$this->user->id;
 
 		$resql=$this->db->query($sql);

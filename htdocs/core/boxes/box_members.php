@@ -74,12 +74,12 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.rowid, s.nom as lastname, s.prenom as firstname, s.datec, s.tms, s.statut as status, s.datefin as date_end_subscription,";
+			$sql = "SELECT a.rowid, a.nom as lastname, a.prenom as firstname, a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql.= " t.cotisation";
-			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s, ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql.= " WHERE s.entity = ".$conf->entity;
-			$sql.= " AND s.fk_adherent_type = t.rowid";
-			$sql.= " ORDER BY s.tms DESC";
+			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
+			$sql.= " WHERE a.entity = ".$conf->entity;
+			$sql.= " AND a.fk_adherent_type = t.rowid";
+			$sql.= " ORDER BY a.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);

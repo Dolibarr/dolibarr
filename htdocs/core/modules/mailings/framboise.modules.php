@@ -63,19 +63,19 @@ class mailing_framboise extends MailingTargets
 
 		// CHANGE THIS
 		// Select the members from category
-		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname,";
+		$sql = "SELECT a.rowid as id, a.email as email, a.nom as name, null as fk_contact, null as firstname,";
 		if ($_POST['filter']) $sql.= " c.label";
 		else $sql.=" null as label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		if ($_POST['filter'])
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = s.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie";
 		}
-		$sql.= " WHERE s.email != ''";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " WHERE a.email != ''";
+		$sql.= " AND a.entity = ".$conf->entity;
 		if ($_POST['filter']) $sql.= " AND c.rowid='".$_POST['filter']."'";
-		$sql.= " ORDER BY s.email";
+		$sql.= " ORDER BY a.email";
 
 		// Stocke destinataires dans cibles
 		$result=$this->db->query($sql);
@@ -150,10 +150,10 @@ class mailing_framboise extends MailingTargets
 	{
 		global $conf;
 
-		$sql = "SELECT count(distinct(s.email)) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s";
-		$sql.= " WHERE s.email != ''";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql = "SELECT count(distinct(a.email)) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
+		$sql.= " WHERE a.email != ''";
+		$sql.= " AND a.entity = ".$conf->entity;
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients

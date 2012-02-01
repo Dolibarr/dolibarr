@@ -320,10 +320,10 @@ if ($chid > 0)
 		$sql.= "c.libelle as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
 		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
-		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql.= " WHERE p.fk_charge = ".$chid;
-		$sql.= " AND p.fk_charge = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND p.fk_charge = cs.rowid";
+		$sql.= " AND cs.entity = ".$conf->entity;
 		$sql.= " AND p.fk_typepaiement = c.id";
 		$sql.= " ORDER BY dp DESC";
 
