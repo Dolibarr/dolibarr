@@ -1320,8 +1320,8 @@ span.butAction, span.butActionDelete {
 }
 .nocellnopadd {
 list-style-type:none;
-margin: 0px;
-padding: 0px;
+margin: 0px !important;
+padding: 0px !important;
 }
 
 .notopnoleft {
