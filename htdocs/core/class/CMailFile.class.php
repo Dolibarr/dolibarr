@@ -30,10 +30,9 @@
  */
 
 /**
- *      \class      CMailFile
- *      \brief      Class to send emails (with attachments or not)
- *      \remarks    Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
- *      \remarks           $mailfile->sendfile();
+ *	Class to send emails (with attachments or not)
+ *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
+ *         $mailfile->sendfile();
  */
 class CMailFile
 {
@@ -106,8 +105,6 @@ class CMailFile
 
 		// We define end of line (RFC 822bis section 2.3)
 		$this->eol="\r\n";
-		//if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
-		//if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
 
 		// On defini mixed_boundary
 		$this->mixed_boundary = dol_hash(uniqid("dolibarr1"));
@@ -479,7 +476,7 @@ class CMailFile
 		if (is_readable($newsourcefile))
 		{
 			$contents = file_get_contents($newsourcefile);	// Need PHP 4.3
-			$encoded = chunk_split(base64_encode($contents), 68, $this->eol);
+			$encoded = chunk_split(base64_encode($contents), 76, $this->eol);    // 76 max is defined into http://tools.ietf.org/html/rfc2047
 			return $encoded;
 		}
 		else
