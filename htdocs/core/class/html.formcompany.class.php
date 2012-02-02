@@ -526,7 +526,7 @@ class FormCompany
 				$sql.= " WHERE rowid IN (".join(',',$limitto).")";
 			}
 		}
-		$sql.= " AND s.entity IN (".getEntity(societe, 1).")";
+		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 		$sql.= " ORDER BY nom ASC";
 
 		//print $sql;
