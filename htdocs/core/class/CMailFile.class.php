@@ -589,7 +589,7 @@ class CMailFile
 
 		// Sender
 		//$out .= "Sender: ".getValidAddress($this->addr_from,2).$this->eol;
-		$out .= "From: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
+		$out .= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
 		//$out .= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
 		if (isset($this->reply_to)  && $this->reply_to)  $out .= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol;
 		if (isset($this->errors_to) && $this->errors_to) $out .= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol;
@@ -952,10 +952,12 @@ class CMailFile
 	 * Return an address for SMTP protocol
 	 *
 	 * @param	string		$adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
-	 * @param	int			$format			0=Auto, 1=emails with <>, 2=emails without <>
+	 * @param	int			$format			0=auto, 1=emails with <>, 2=emails without <>, 3=auto + label between "
 	 * @param	int			$encode			1=Encode name to RFC2822
-	 * @return	string						If format 1: '<john@doe.com>' or 'John Doe <john@doe.com>'
+	 * @return	string						If format 0: '<john@doe.com>' or 'John Doe <john@doe.com>' or '=?UTF-8?B?Sm9obiBEb2U=?= <john@doe.com>'
+	 * 										If format 1: '<john@doe.com>'
 	 *										If format 2: 'john@doe.com'
+	 *										If format 3: '<john@doe.com>' or '"John Doe" <john@doe.com>' or '"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>'
 	 */
 	function getValidAddress($adresses,$format,$encode='')
 	{
@@ -986,15 +988,15 @@ class CMailFile
 				{
 					$newemail=$email;
 				}
-				if ($format == 1)
+				if ($format == 1 || $format == 3)
 				{
 					$newemail='<'.$email.'>';
 				}
-				if ($format == 0)
+				if ($format == 0 || $format == 3)
 				{
 					if ($conf->global->MAIN_MAIL_NO_FULL_EMAIL) $newemail='<'.$email.'>';
 					elseif (! $name) $newemail='<'.$email.'>';
-					else $newemail=($encode?$this->encodetorfc2822($name):$name).' <'.$email.'>';
+					else $newemail=($format==3?'"':'').($encode?$this->encodetorfc2822($name):$name).($format==3?'"':'').' <'.$email.'>';
 				}
 
 				$ret=($ret ? $ret.',' : '').$newemail;
