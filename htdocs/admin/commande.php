@@ -73,7 +73,7 @@ if ($action == 'specimen')
 	$commande->initAsSpecimen();
 
 	// Charge le modele
-	$dir = "/core/modules/commande/";
+	$dir = "/core/modules/commande/doc/";
 	$file = "pdf_".$modele.".modules.php";
 	$file = dol_buildpath($dir.$file);
 	if (file_exists($file))
