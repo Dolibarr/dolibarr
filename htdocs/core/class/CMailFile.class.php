@@ -107,13 +107,13 @@ class CMailFile
 		$this->eol="\r\n";
 
 		// On defini mixed_boundary
-		$this->mixed_boundary = dol_hash(uniqid("dolibarr1"));
+		$this->mixed_boundary = 'mul_'.dol_hash(uniqid("dolibarr1"));
 
 		// On defini related_boundary
-		$this->related_boundary = dol_hash(uniqid("dolibarr2"));
+		$this->related_boundary = 'mul_'.dol_hash(uniqid("dolibarr2"));
 
 		// On defini alternative_boundary
-		$this->alternative_boundary = dol_hash(uniqid("dolibarr3"));
+		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"));
 
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
@@ -588,9 +588,9 @@ class CMailFile
 		$host = dol_getprefix();
 
 		// Sender
-		//$out .= "X-Sender: ".getValidAddress($this->addr_from,2).$this->eol;
+		//$out .= "Sender: ".getValidAddress($this->addr_from,2).$this->eol;
 		$out .= "From: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
-		$out .= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
+		//$out .= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
 		if (isset($this->reply_to)  && $this->reply_to)  $out .= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol;
 		if (isset($this->errors_to) && $this->errors_to) $out .= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol;
 
