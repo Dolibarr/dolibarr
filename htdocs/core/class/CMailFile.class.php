@@ -226,7 +226,8 @@ class CMailFile
 			// comme des injections mail par les serveurs de messagerie.
 			$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
 
-			$this->message = $text_body . $images_encoded . $files_encoded;
+			$this->message = 'This is a message with multiple parts in MIME format.'.$this->eol;
+			$this->message.= $text_body . $images_encoded . $files_encoded;
 			$this->message.= "--" . $this->mixed_boundary . "--" . $this->eol;
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
@@ -607,7 +608,7 @@ class CMailFile
 		$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol;
 
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
-		$out.= "MIME-Version: 1.0".$this->eol;
+		$out.= "Mime-Version: 1.0".$this->eol;
 
 		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
