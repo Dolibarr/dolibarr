@@ -167,7 +167,7 @@ if (! $error)
             $db=getDoliDBInstance($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
 
             dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
-            print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
+            //print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
 
             if (empty($_POST["db_create_database"]) && $db->connected && ! $db->database_selected)
             {
@@ -467,7 +467,8 @@ if (! $error && $db->connected && $action == "set")
                     else
                     {
                         if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
-                        || $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS')
+                        || $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
+                        || $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS')
                         {
                             dolibarr_install_syslog("etape1: User already exists");
                             print '<tr><td>';
@@ -483,7 +484,7 @@ if (! $error && $db->connected && $action == "set")
                             print $langs->trans("UserCreation").' : ';
                             print $dolibarr_main_db_user;
                             print '</td>';
-                            print '<td>'.$langs->trans("Error").' '.$db->error()."</td></tr>";
+                            print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error()."</td></tr>";
                         }
                     }
 

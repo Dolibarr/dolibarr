@@ -771,7 +771,7 @@ else
             print '</td></tr>';
         }
 
-        // Custom code
+        // Customs code
         print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$_POST["customcode"].'"></td></tr>';
 
         // Origin country
@@ -961,7 +961,7 @@ else
                 print '</td></tr>';
             }
 
-            // Custom code
+            // Customs code
             print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2"><input name="customcode" size="10" value="'.$object->customcode.'"></td></tr>';
 
             // Origin country
@@ -1177,7 +1177,7 @@ else
                 print "</td></tr>\n";
             }
 
-            // Custom code
+            // Customs code
             print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
 
             // Origin country code

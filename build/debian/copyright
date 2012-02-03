@@ -5,24 +5,39 @@ Source: git@github.com:Dolibarr/dolibarr.git
 
 Files: *
 Copyright: 2002-2009, Rodolphe Quiedeville   <rodolphe@quiedeville.org>
-           2003-2011, Laurent Destailleur    <eldy@users.sourceforge.net>
-           2004-2011, Regis Houssin          <regis@dolibarr.fr>
-           2006-2011, Auguria SARL           <info@auguria.org>
-           2010-2011, Juanjo Menent          <jmenent@2byte.es>
            2003-2006, Jean-Louis Bergamo     <jlb@j1b.org>
+           2003-2012, Laurent Destailleur    <eldy@users.sourceforge.net>
            2003, Xavier Dutoit               <doli@sydesy.com>
+           2004-2012, Regis Houssin          <regis@dolibarr.fr>
            2004, Sebastien Di Cintio         <sdicintio@ressource-toi.org>
            2004, Benoit Mortier              <benoit.mortier@opensides.be>
            2004, Christophe Combelles        <ccomb@free.fr>
+           2004, Guillaume Delecourt         <guillaume.delecourt@opensides.be>
            2004, Eric Seigne                 <eric.seigne@ryxeo.com>
+           2005, Brice Davoleau              <brice.davoleau@gmail.com>
+           2005, Kai Blankenhorn             <kaib@bitfolge.de>
+           2005-2006, Marc Barilley/Ocebo    <marc@ocebo.com>
+           2005, Matthieu Valleton           <mv@seeschloss.org>
            2005, Patrick Rouillon            <patrick@rouillon.net>
-           2005, Marc Barilley / Ocebo       <marc@ocebo.com>
+           2005, Simon TOSSER                <simon@kornog-computing.com>
            2006, Andre Cianfarani            <acianfa@free.fr>
+           2006-2011, Auguria SARL           <info@auguria.org>
            2006, Jean Heimburger             <jean@tiaris.info>
+           2006, Roman Ozana                 <ozana@omdesign.cz>
+           2006, Yannick Warnier             <ywarnier@beeznest.org>
            2007, Patrick Raguin              <patrick.raguin@gmail.com>
+           2007, Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
            2007-2008, Jeremie Ollivier       <jeremie.o@laposte.net>
+           2008, Matteli                     <unknown@unknown.com>
            2008, Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+           2010, Francois Legastelois        <flegastelois@teclib.com>
+           2010-2012, Juanjo Menent          <jmenent@2byte.es>
+           2010-2012, Philippe Grand         <philippe.grand@atoo-net.com>
+           2010, Pierre Morin                <pierre.morin@auguria.net>
            2010, Servitux Servicios Informaticos <info@servitux.es>
+           2011, Herve Prot                  <herve.prot@symeos.com>
+           2011, Remy Younes                 <ryounes@gmail.com>
+           2012, Christophe Battarel         <christophe.battarel@altairis.fr>
 License: GPL-2+
  This program is free software; you can redistribute it
  and/or modify it under the terms of the GNU General Public
@@ -36,43 +51,13 @@ License: GPL-2+
  PURPOSE.  See the GNU General Public License for more
  details.
  .
- You should have received a copy of the GNU General Public
- License along with this package; if not, write to the Free
- Software Foundation, Inc., 51 Franklin St, Fifth Floor,
- Boston, MA  02110-1301 USA
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
-  
-Files: htdocs/includes/artichow/*
-Copyright: Artichow team
-License: Public Domain
- This work is not subject to copyright in any jurisdiction
 
-Files: htdocs/includes/ckeditor/*
-Copyright: CKeditor team
-License: GPL-2+
- This program is free software; you can redistribute it
- and/or modify it under the terms of the GNU General Public
- License as published by the Free Software Foundation; either
- version 2 of the License, or (at your option) any later
- version.
- .
- This program is distributed in the hope that it will be
- useful, but WITHOUT ANY WARRANTY; without even the implied
- warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the GNU General Public License for more
- details.
- .
- You should have received a copy of the GNU General Public
- License along with this package; if not, write to the Free
- Software Foundation, Inc., 51 Franklin St, Fifth Floor,
- Boston, MA  02110-1301 USA
- .
- On Debian systems, the full text of the GNU General Public
- License version 2 can be found in the file
- `/usr/share/common-licenses/GPL-2'.
 
 Files: htdocs/includes/fpdi/*
 Copyright: FPDFI team
@@ -89,14 +74,13 @@ License: GPL-2+
  PURPOSE.  See the GNU General Public License for more
  details.
  .
- You should have received a copy of the GNU General Public
- License along with this package; if not, write to the Free
- Software Foundation, Inc., 51 Franklin St, Fifth Floor,
- Boston, MA  02110-1301 USA
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
+
 
 Files: htdocs/includes/jquery/*
 Copyright: JQuery team
@@ -113,10 +97,8 @@ License: MIT or GPL-2+
  PURPOSE.  See the GNU General Public License for more
  details.
  .
- You should have received a copy of the GNU General Public
- License along with this package; if not, write to the Free
- Software Foundation, Inc., 51 Franklin St, Fifth Floor,
- Boston, MA  02110-1301 USA
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
@@ -140,10 +122,12 @@ License: MIT or GPL-2+
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 
+
 Files: htdocs/includes/jquery/plugins/flot/*
 Copyright: Flot team
 License: Public Domain
  This work is not subject to copyright in any jurisdiction
+
 
 Files: htdocs/includes/jsgantt/*
 Copyright: JSGantt team
@@ -160,19 +144,19 @@ License: GPL-2+
  PURPOSE.  See the GNU General Public License for more
  details.
  .
- You should have received a copy of the GNU General Public
- License along with this package; if not, write to the Free
- Software Foundation, Inc., 51 Franklin St, Fifth Floor,
- Boston, MA  02110-1301 USA
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
 
+
 Files: htdocs/includes/phpexcel/*
 Copyright: PHPExcel team
 License: LGPL 2.1
  See http://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html
+
 
 Files: htdocs/includes/odtphp/*
 Copyright: 2008, Julien Pauli
@@ -191,17 +175,15 @@ License: GPL-2+
  PURPOSE.  See the GNU General Public License for more
  details.
  .
- You should have received a copy of the GNU General Public
- License along with this package; if not, write to the Free
- Software Foundation, Inc., 51 Franklin St, Fifth Floor,
- Boston, MA  02110-1301 USA
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
 
+
 Files: htdocs/includes/tcpdf/*
 Copyright: TCPDF team
 License: LGPL 3.0
   See http://www.gnu.org/licenses/old-licenses/lgpl-3.0-standalone.html
- 

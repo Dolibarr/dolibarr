@@ -47,7 +47,7 @@ require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
 $error = 0;
 
-$sql = "SELECT f.facnumber, f.total_ttc, s.nom, u.name, u.firstname, u.email";
+$sql = "SELECT f.facnumber, f.total_ttc, s.nom as name, u.name, u.firstname, u.email";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -85,7 +85,7 @@ if ($resql)
                 $total = 0;
             }
 
-            $message .= "Facture ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->nom."\n";
+            $message .= "Facture ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->name."\n";
             $total += $obj->total_ttc;
 
             dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);

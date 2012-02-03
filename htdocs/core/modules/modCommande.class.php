@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +89,13 @@ class modCommande extends DolibarrModules
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_commande_marbre";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes';
+		$this->const[$r][4] = 0;
+		
+		$r++;
+		$this->const[$r][0] = "COMMANDE_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/orders";
+		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
 		// Boites
@@ -192,6 +200,12 @@ class modCommande extends DolibarrModules
 		// Permissions
 		$this->remove();
 
+		//ODT template
+		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
+		create_exdir($dirodt);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt',$dirodt.'/template_order.odt',0,0);
+		
 		$sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."'",
 		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES('".$this->const[0][2]."','order')"

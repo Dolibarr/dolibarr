@@ -850,7 +850,7 @@ else
 			$head=shipping_prepare_head($object);
 			dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
 
-			if ($mesg) print $mesg;
+			dol_htmloutput_mesg($mesg);
 
 			/*
 			 * Confirmation de la suppression
@@ -970,7 +970,7 @@ else
 
 			// Date creation
 			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
-			print '<td colspan="3">'.dol_print_date($object->date_creation,"daytext")."</td>\n";
+			print '<td colspan="3">'.dol_print_date($object->date_creation,"day")."</td>\n";
 			print '</tr>';
 
 			// Delivery date planed
@@ -1159,7 +1159,7 @@ else
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-    
+
             $label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
           }
           else

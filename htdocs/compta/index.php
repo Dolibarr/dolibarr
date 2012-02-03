@@ -429,7 +429,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.rowid = ff.fk_soc";
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND ff.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
 	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid";
@@ -503,10 +503,10 @@ if ($conf->don->enabled && $user->rights->societe->lire)
 	$langs->load("boxes");
     $donationstatic=new Don($db);
 
-	$sql = "SELECT s.rowid, s.nom, s.prenom, s.societe, s.datedon as date, s.tms as dm, s.amount, s.fk_statut";
-	$sql.= " FROM ".MAIN_DB_PREFIX."don as s";
-	$sql.= " WHERE s.entity = ".$conf->entity;
-	$sql.= $db->order("s.tms","DESC");
+	$sql = "SELECT d.rowid, d.nom, d.prenom, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut";
+	$sql.= " FROM ".MAIN_DB_PREFIX."don as d";
+	$sql.= " WHERE d.entity = ".$conf->entity;
+	$sql.= $db->order("d.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
@@ -604,8 +604,8 @@ if ($conf->deplacement->enabled && $user->rights->deplacement->lire)
 				$deplacementstatic->ref=$objp->rowid;
 				$deplacementstatic->id=$objp->rowid;
 				$userstatic->id=$objp->uid;
-				$userstatic->nom=$objp->name;
-				$userstatic->prenom=$objp->firstname;
+				$userstatic->lastname=$objp->name;
+				$userstatic->firstname=$objp->firstname;
 				print '<tr '.$bc[$var].'>';
                 print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(1).'</td>';
@@ -928,7 +928,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.rowid = ff.fk_soc";
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND ff.entity = ".$conf->entity;
 	$sql.= " AND ff.paye = 0";
 	$sql.= " AND ff.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -1027,8 +1027,8 @@ print '</td></tr>';
 
 print '</table>';
 
+llxFooter();
+
 $db->close();
 
-
-llxFooter();
 ?>

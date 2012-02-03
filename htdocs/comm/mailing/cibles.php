@@ -32,15 +32,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 $langs->load("mails");
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
-accessforbidden();
-
-
-$dirmod=DOL_DOCUMENT_ROOT."/core/modules/mailings";
+if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 
 $mesg = '';
-
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -52,50 +47,78 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="email";
 
-$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
-$search_prenom=isset($_GET["search_prenom"])?$_GET["search_prenom"]:$_POST["search_prenom"];
-$search_email=isset($_GET["search_email"])?$_GET["search_email"]:$_POST["search_email"];
+$id=GETPOST('rowid')?GETPOST('rowid'):GETPOST('id');
+$action=GETPOST("action");
+$search_nom=GETPOST("search_nom");
+$search_prenom=GETPOST("search_prenom");
+$search_email=GETPOST("search_email");
+
+// Search modules dirs
+$modulesdir = array();
+foreach ($conf->file->dol_document_root as $type => $dirroot)
+{
+    $modulesdir[$dirroot . '/core/modules/mailings/'] = $dirroot . '/core/modules/mailings/';
+
+    $handle=@opendir($dirroot);
+    if (is_resource($handle))
+    {
+        while (($file = readdir($handle))!==false)
+        {
+            if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+            {
+                if (is_dir($dirroot . '/' . $file . '/core/modules/mailings/'))
+                {
+                    $modulesdir[$dirroot . '/' . $file . '/core/modules/mailings/'] = $dirroot . '/' . $file . '/core/modules/mailings/';
+                }
+            }
+        }
+        closedir($handle);
+    }
+}
+//var_dump($modulesdir);
+
+$dirmod=DOL_DOCUMENT_ROOT."/core/modules/mailings";
 
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'add')
+if ($action == 'add')
 {
-	$modulename=$_GET["module"];
-	$result=0;
+	$module=GETPOST("module");
+	$result=-1;
 
 	$var=true;
-	foreach ($conf->file->dol_document_root as $dirmod)
+
+	foreach ($modulesdir as $dir)
 	{
-		$dir=$dirmod."/core/modules/mailings/";
+	    // Load modules attributes in arrays (name, numero, orders) from dir directory
+	    //print $dir."\n<br>";
+	    dol_syslog("Scan directory ".$dir." for modules");
 
-		if (is_dir($dir))
+	    // Chargement de la classe
+	    $file = $dir."/".$module.".modules.php";
+	    $classname = "mailing_".$module;
+
+		if (file_exists($file))
 		{
-			// Chargement de la classe
-			$file = $dir."/".$modulename.".modules.php";
-			$classname = "mailing_".$modulename;
+			require_once($file);
 
-			if (file_exists($file))
-			{
-				require_once($file);
+			// We fill $filtersarray. Using this variable is now deprecated.
+			// Kept for backward compatibility.
+			$filtersarray=array();
+			if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
 
-				// We fill $filtersarray. Using this variable is now deprecated.
-				// Kept for backward compatibility.
-				$filtersarray=array();
-				if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
-
-				// Add targets into database
-				$obj = new $classname($db);
-				$result=$obj->add_to_target($_GET["rowid"],$filtersarray);
-			}
+			// Add targets into database
+			$obj = new $classname($db);
+			$result=$obj->add_to_target($id,$filtersarray);
 		}
 	}
 
 	if ($result > 0)
 	{
-		Header("Location: cibles.php?id=".$_GET["rowid"]);
+		Header("Location: cibles.php?id=".$id);
 		exit;
 	}
 	if ($result == 0)
@@ -104,12 +127,11 @@ if ($_GET["action"] == 'add')
 	}
 	if ($result < 0)
 	{
-		$mesg='<div class="error">'.$obj->error.'</div>';
+		$mesg='<div class="error">'.$langs->trans("Error").($obj->error?' '.$obj->error:'').'</div>';
 	}
-	$_REQUEST["id"]=$_GET["rowid"];
 }
 
-if ($_GET["action"] == 'clear')
+if ($action == 'clear')
 {
 	// Chargement de la classe
 	$file = $dirmod."/modules_mailings.php";
@@ -117,16 +139,16 @@ if ($_GET["action"] == 'clear')
 	require_once($file);
 
 	$obj = new $classname($db);
-	$obj->clear_target($_GET["rowid"]);
+	$obj->clear_target($id);
 
-	Header("Location: cibles.php?id=".$_GET["rowid"]);
+	Header("Location: cibles.php?id=".$id);
 	exit;
 }
 
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql="DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles where rowid=".$_GET["rowid"];
+	$sql="DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles where rowid=".$id;
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -135,7 +157,7 @@ if ($_GET["action"] == 'delete')
 		require_once($file);
 
 		$obj = new $classname($db);
-		$obj->update_nb($_REQUEST["id"]);
+		$obj->update_nb($id);
 	}
 	else
 	{
@@ -162,7 +184,7 @@ $form = new Form($db);
 
 $mil = new Mailing($db);
 
-if ($mil->fetch($_REQUEST["id"]) >= 0)
+if ($mil->fetch($id) >= 0)
 {
 	$head = emailing_prepare_head($mil);
 
@@ -207,7 +229,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 
 	print "</div>";
 
-	if ($mesg) print "$mesg<br>\n";
+	dol_htmloutput_mesg($mesg);
 
 	$var=!$var;
 
@@ -227,102 +249,110 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		clearstatcache();
 
 		$var=true;
-		foreach ($conf->file->dol_document_root as $dirroot)
+
+		foreach ($modulesdir as $dir)
 		{
-			$dir=$dirroot."/core/modules/mailings/";
+		    $modulenames=array();
 
-			if (is_dir($dir))
+		    // Load modules attributes in arrays (name, numero, orders) from dir directory
+		    //print $dir."\n<br>";
+		    dol_syslog("Scan directory ".$dir." for modules");
+		    $handle=@opendir($dir);
+			if (is_resource($handle))
 			{
-				$handle=opendir($dir);
-				if (is_resource($handle))
+				while (($file = readdir($handle))!==false)
 				{
-					while (($file = readdir($handle))!==false)
+					if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 					{
-						if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+						if (preg_match("/(.*)\.modules\.php$/i",$file,$reg))
 						{
-							if (preg_match("/(.*)\.modules\.php$/i",$file,$reg))
-							{
-								$modulename=$reg[1];
-								if ($modulename == 'example') continue;
-
-								// Chargement de la classe
-								$file = $dir.$modulename.".modules.php";
-								$classname = "mailing_".$modulename;
-								require_once($file);
-
-								$obj = new $classname($db);
-
-								$qualified=1;
-								foreach ($obj->require_module as $key)
-								{
-									if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
-									{
-										$qualified=0;
-										//print "Les prerequis d'activation du module mailing ne sont pas respectes. Il ne sera pas actif";
-										break;
-									}
-								}
-
-								// Si le module mailing est qualifie
-								if ($qualified)
-								{
-									$var = !$var;
-									print '<tr '.$bc[$var].'>';
-
-									if ($mil->statut == 0)
-									{
-										print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
-										print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-									}
-
-									print '<td>';
-									if (! $obj->picto) $obj->picto='generic';
-									print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto).' '.$obj->getDesc();
-									print '</td>';
-
-									/*
-									 print '<td width=\"100\">';
-									 print $modulename;
-									 print "</td>";
-									 */
-									$nbofrecipient=$obj->getNbOfRecipients();
-									print '<td align="center">';
-									if ($nbofrecipient >= 0)
-									{
-										print $nbofrecipient;
-									}
-									else
-									{
-										print $langs->trans("Error").' '.img_error($obj->error);
-									}
-									print '</td>';
-
-									print '<td align="left">';
-									$filter=$obj->formFilter();
-									if ($filter) print $filter;
-									else print $langs->trans("None");
-									print '</td>';
-
-									print '<td align="right">';
-									if ($mil->statut == 0)
-									{
-										print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-									}
-									else
-									{
-										//print $langs->trans("MailNoChangePossible");
-										print "&nbsp;";
-									}
-									print '</td>';
-
-									if ($mil->statut == 0) print '</form>';
-
-									print "</tr>\n";
-								}
-							}
+							if ($reg[1] == 'example') continue;
+							$modulenames[]=$reg[1];
 						}
 					}
-					closedir($handle);
+				}
+				closedir($handle);
+			}
+
+			// Sort $modulenames
+			sort($modulenames);
+
+			// Loop on each submodule
+            foreach($modulenames as $modulename)
+            {
+				// Chargement de la classe
+				$file = $dir.$modulename.".modules.php";
+				$classname = "mailing_".$modulename;
+				require_once($file);
+
+				$obj = new $classname($db);
+
+				$qualified=1;
+				foreach ($obj->require_module as $key)
+				{
+					if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
+					{
+						$qualified=0;
+						//print "Les prerequis d'activation du module mailing ne sont pas respectes. Il ne sera pas actif";
+						break;
+					}
+				}
+
+				// Si le module mailing est qualifie
+				if ($qualified)
+				{
+					$var = !$var;
+					print '<tr '.$bc[$var].'>';
+
+					if ($mil->statut == 0)
+					{
+						print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					}
+
+					print '<td>';
+					if (! $obj->picto) $obj->picto='generic';
+					print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto).' '.$obj->getDesc();
+					print '</td>';
+
+					/*
+					 print '<td width=\"100\">';
+					 print $modulename;
+					 print "</td>";
+					 */
+					$nbofrecipient=$obj->getNbOfRecipients();
+					print '<td align="center">';
+					if ($nbofrecipient >= 0)
+					{
+						print $nbofrecipient;
+					}
+					else
+					{
+						print $langs->trans("Error").' '.img_error($obj->error);
+					}
+					print '</td>';
+
+					print '<td align="left">';
+					$filter=$obj->formFilter();
+					if ($filter) print $filter;
+					else print $langs->trans("None");
+					print '</td>';
+
+					print '<td align="right">';
+					if ($mil->statut == 0)
+					{
+						print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+					}
+					else
+					{
+						//print $langs->trans("MailNoChangePossible");
+						print "&nbsp;";
+					}
+					print '</td>';
+
+					if ($mil->statut == 0) print '</form>';
+
+					print "</tr>\n";
 				}
 			}
 		}	// End foreach dir
@@ -511,7 +541,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

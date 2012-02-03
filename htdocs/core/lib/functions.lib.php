@@ -4021,7 +4021,7 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *
  *	@param	string	$mesgstring		 Message
  *	@param	array	$mesgarray       Messages array
- *  @param  string	$style           Which style to use ('ok', 'error')
+ *  @param  string	$style           Which style to use ('ok', 'warning', 'error')
  *  @param  int		$keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
  *  @return	void
  *
@@ -4033,21 +4033,25 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     if (empty($mesgstring) && (! is_array($mesgarray) || count($mesgarray) == 0)) return;
 
     $iserror=0;
+    $iswarning=0;
     if (is_array($mesgarray))
     {
         foreach($mesgarray as $val)
         {
             if ($val && preg_match('/class="error"/i',$val)) { $iserror++; break; }
+            if ($val && preg_match('/class="warning"/i',$val)) { $iswarning++; break; }
         }
     }
     else if ($mesgstring && preg_match('/class="error"/i',$mesgstring)) $iserror++;
+    else if ($mesgstring && preg_match('/class="warning"/i',$mesgstring)) $iswarning++;
     if ($style=='error') $iserror++;
+    if ($style=='warning') $iswarning++;
 
-    if ($iserror)
+    if ($iserror || $iswarning)
     {
         // Remove div from texts
-        $mesgstring=preg_replace('/<\/div><div class="error">/','<br>',$mesgstring);
-        $mesgstring=preg_replace('/<div class="error">/','',$mesgstring);
+        $mesgstring=preg_replace('/<\/div><div class="(error|warning)">/','<br>',$mesgstring);
+        $mesgstring=preg_replace('/<div class="(error|warning)">/','',$mesgstring);
         $mesgstring=preg_replace('/<\/div>/','',$mesgstring);
         // Remove div from texts array
         if (is_array($mesgarray))
@@ -4055,14 +4059,14 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
             $newmesgarray=array();
             foreach($mesgarray as $val)
             {
-                $tmpmesgstring=preg_replace('/<\/div><div class="error">/','<br>',$val);
-                $tmpmesgstring=preg_replace('/<div class="error">/','',$tmpmesgstring);
+                $tmpmesgstring=preg_replace('/<\/div><div class="(error|warning)">/','<br>',$val);
+                $tmpmesgstring=preg_replace('/<div class="(error|warning)">/','',$tmpmesgstring);
                 $tmpmesgstring=preg_replace('/<\/div>/','',$tmpmesgstring);
                 $newmesgarray[]=$tmpmesgstring;
             }
             $mesgarray=$newmesgarray;
         }
-        print get_htmloutput_mesg($mesgstring,$mesgarray,'error',$keepembedded);
+        print get_htmloutput_mesg($mesgstring,$mesgarray,($iserror?'error':'warning'),$keepembedded);
     }
     else print get_htmloutput_mesg($mesgstring,$mesgarray,'ok',$keepembedded);
 }

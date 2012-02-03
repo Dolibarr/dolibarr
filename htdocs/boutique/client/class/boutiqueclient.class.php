@@ -37,11 +37,11 @@ class BoutiqueClient
 	/**
 	 * 	Constructor
 	 *
-	 * 	@param		DoliDB	$DB		Database handler
+	 * 	@param		DoliDB	$db		Database handler
 	 */
-    function BoutiqueClient($DB)
+    function BoutiqueClient($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
     }
 
     /**

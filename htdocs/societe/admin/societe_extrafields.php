@@ -208,7 +208,7 @@ if ($_GET["attrname"] && $action == 'edit')
 
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

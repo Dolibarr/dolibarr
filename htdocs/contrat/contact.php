@@ -308,14 +308,14 @@ if ($id > 0)
                 if ($tab[$i]['source']=='internal')
                 {
                     $userstatic->id=$tab[$i]['id'];
-                    $userstatic->nom=$tab[$i]['nom'];
-                    $userstatic->prenom=$tab[$i]['firstname'];
+                    $userstatic->lastname=$tab[$i]['lastname'];
+                    $userstatic->firstname=$tab[$i]['firstname'];
                     print $userstatic->getNomUrl(1);
                 }
                 if ($tab[$i]['source']=='external')
                 {
                     $contactstatic->id=$tab[$i]['id'];
-                    $contactstatic->name=$tab[$i]['nom'];
+                    $contactstatic->lastname=$tab[$i]['lastname'];
                     $contactstatic->firstname=$tab[$i]['firstname'];
                     print $contactstatic->getNomUrl(1);
                 }

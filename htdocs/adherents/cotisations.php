@@ -64,7 +64,7 @@ llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Modu
 if ($msg)	print $msg.'<br>';
 
 // Liste des cotisations
-$sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe,";
+$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.nom as lastname, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation,";
 $sql.= " c.dateadh,";
 $sql.= " c.datef,";
@@ -123,7 +123,9 @@ if ($result)
         $cotisation->ref=$objp->crowid;
         $cotisation->id=$objp->crowid;
 
-        $adherent->ref=trim($objp->prenom.' '.$objp->nom);
+        $adherent->lastname=$objp->lastname;
+        $adherent->firstname=$objp->firstname;
+        $adherent->ref=$adherent->getFullName($langs);
         $adherent->id=$objp->rowid;
         $adherent->login=$objp->login;
 

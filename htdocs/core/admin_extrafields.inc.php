@@ -21,17 +21,27 @@
  *  \brief			Code for actions on extrafields admin pages
  */
 
+$maxsizestring=255;
+$maxsizeint=10;
+
 // Add attribute
 if ($action == 'add')
 {
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
 	    // Check values
-        if (GETPOST('type')=='varchar' && GETPOST('size') > 255)
+        if (GETPOST('type')=='varchar' && GETPOST('size') > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
-            $mesg=$langs->trans("ErrorSizeTooLongForVarcharType");
+            $mesg=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
+            $action = 'create';
+        }
+        if (GETPOST('type')=='int' && GETPOST('size') > $maxsizeint)
+        {
+            $error++;
+            $langs->load("errors");
+            $mesg=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'create';
         }
 
@@ -69,11 +79,18 @@ if ($action == 'update')
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
         // Check values
-        if (GETPOST('type')=='varchar' && GETPOST('size') > 255)
+        if (GETPOST('type')=='varchar' && GETPOST('size') > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
-            $mesg=$langs->trans("ErrorSizeTooLongForVarcharType");
+            $mesg=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
+            $action = 'edit';
+        }
+        if (GETPOST('type')=='int' && GETPOST('size') > $maxsizeint)
+        {
+            $error++;
+            $langs->load("errors");
+            $mesg=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'edit';
         }
 

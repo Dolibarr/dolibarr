@@ -900,45 +900,6 @@ class Contact extends CommonObject
         return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : '';
 	}
 
-
-	/**
-	 *    	Return full name (civility+' '+name+' '+lastname)
-	 *
-	 *		@param		Translate	$langs			Language object for translation of civility
-	 *		@param		string		$option			0=No option, 1=Add civility
-	 * 		@param		int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-	 * 		@return		string						String with full name
-	 */
-	function getFullName($langs,$option=0,$nameorder=-1)
-	{
-		global $conf;
-
-		$ret='';
-		if ($option && $this->civilite_id)
-		{
-			if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
-			else $ret.=$this->civilite_id.' ';
-		}
-
-		// If order not defined, we use the setup
-		if ($nameorder < 0) $nameorder=(! $conf->global->MAIN_FIRSTNAME_NAME_POSITION);
-
-		if ($nameorder)
-		{
-			if ($this->firstname) $ret.=$this->firstname;
-			if ($this->firstname && $this->name) $ret.=' ';
-			if ($this->name)      $ret.=$this->name;
-		}
-		else
-		{
-			if ($this->name)      $ret.=$this->name;
-			if ($this->firstname && $this->name) $ret.=' ';
-			if ($this->firstname) $ret.=$this->firstname;
-		}
-		return trim($ret);
-	}
-
-
 	/**
 	 *  Retourne le libelle du statut du contact
 	 *

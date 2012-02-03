@@ -27,7 +27,11 @@ require_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 
 
-class box_factures_imp extends ModeleBoxes {
+/**
+ * Class to manage the box to show last invoices
+ */
+ class box_factures_imp extends ModeleBoxes
+ {
 
 	var $boxcode="oldestunpaidcustomerbills";
 	var $boximg="object_bill";
@@ -78,7 +82,7 @@ class box_factures_imp extends ModeleBoxes {
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND s.entity = ".$conf->entity;
+			$sql.= " AND f.entity = ".$conf->entity;
 			$sql.= " AND f.paye = 0";
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

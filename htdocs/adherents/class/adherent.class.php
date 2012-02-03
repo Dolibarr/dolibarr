@@ -509,8 +509,10 @@ class Adherent extends CommonObject
                     if ($result >= 0)
                     {
                         $luser->civilite_id=$this->civilite_id;
-                        $luser->prenom=$this->prenom;
-                        $luser->nom=$this->nom;
+                        $luser->firstname=$this->firstname;
+                        $luser->lastname=$this->lastname;
+                        $luser->prenom=$this->firstname;    // deprecated
+                        $luser->nom=$this->lastname;        // deprecated
                         $luser->login=$this->user_login;
                         $luser->pass=$this->pass;
                         $luser->societe_id=$this->societe;
@@ -1000,19 +1002,19 @@ class Adherent extends CommonObject
                 $this->ref            = $obj->rowid;
                 $this->id             = $obj->rowid;
                 $this->civilite_id    = $obj->civilite;
-                $this->prenom         = $obj->firstname;
+                $this->prenom         = $obj->firstname;   // deprecated
                 $this->firstname      = $obj->firstname;
-                $this->nom            = $obj->lastname;
+                $this->nom            = $obj->lastname;    // deprecated
                 $this->lastname       = $obj->lastname;
                 $this->login          = $obj->login;
                 $this->pass           = $obj->pass;
                 $this->societe        = $obj->societe;
                 $this->fk_soc         = $obj->fk_soc;
-                $this->adresse        = $obj->address;	// TODO deprecated
+                $this->adresse        = $obj->address;	// deprecated
                 $this->address        = $obj->address;
-                $this->cp             = $obj->zip;		// TODO deprecated
+                $this->cp             = $obj->zip;		// deprecated
                 $this->zip            = $obj->zip;
-                $this->ville          = $obj->town;	    // TODO deprecated
+                $this->ville          = $obj->town;	    // deprecated
                 $this->town           = $obj->town;
 
                 $this->state_id       = $obj->fk_departement;
@@ -1427,7 +1429,7 @@ class Adherent extends CommonObject
         {
             $mdpass=dol_hash($this->pass);
             $htpass=crypt($this->pass,makesalt());
-            $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+            $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->firstname." ".$this->lastname."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
 
             $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
 
@@ -1676,44 +1678,6 @@ class Adherent extends CommonObject
             return -1;
         }
     }
-
-    /**
-     *    	Return full name (civility+' '+name+' '+lastname)
-     *
-     *		@param	Translate	$langs			Language object for translation of civility
-     *		@param	int			$option			0=No option, 1=Add civility
-     * 		@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-     * 		@return	string						String with full name
-     */
-    function getFullName($langs,$option=0,$nameorder=-1)
-    {
-        global $conf;
-
-        $ret='';
-        if ($option && $this->civilite_id)
-        {
-            if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
-            else $ret.=$this->civilite_id.' ';
-        }
-
-        // If order not defined, we use the setup
-        if ($nameorder < 0) $nameorder=(! $conf->global->MAIN_FIRSTNAME_NAME_POSITION);
-
-        if ($nameorder)
-        {
-            if ($this->prenom) $ret.=$this->prenom;
-            if ($this->prenom && $this->nom) $ret.=' ';
-            if ($this->nom)      $ret.=$this->nom;
-        }
-        else
-        {
-            if ($this->nom)      $ret.=$this->nom;
-            if ($this->prenom && $this->nom) $ret.=' ';
-            if ($this->prenom) $ret.=$this->prenom;
-        }
-        return trim($ret);
-    }
-
 
     /**
      *    Return label of a civility of a contact
@@ -1983,8 +1947,8 @@ class Adherent extends CommonObject
         $this->id=0;
         $this->specimen=1;
         $this->civilite_id = 0;
-        $this->nom = 'DOLIBARR';
-        $this->prenom = 'SPECIMEN';
+        $this->lastname = 'DOLIBARR';
+        $this->firstname = 'SPECIMEN';
         $this->login='dolibspec';
         $this->pass='dolibspec';
         $this->societe = 'Societe ABC';

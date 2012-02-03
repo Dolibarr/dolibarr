@@ -27,7 +27,11 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 
-class box_produits extends ModeleBoxes {
+/**
+ * Class to manage the box to show last products
+ */
+ class box_produits extends ModeleBoxes
+ {
 
 	var $boxcode="lastproducts";
 	var $boximg="object_product";

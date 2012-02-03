@@ -75,20 +75,20 @@ $form=new Form($db);
 $formother=new FormOther($db);
 
 $sql = "SELECT p.rowid, p.label as produit, p.fk_product_type as type,";
-$sql.= " s.label as stock, s.rowid as entrepot_id,";
+$sql.= " e.label as stock, e.rowid as entrepot_id,";
 $sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label,";
 $sql.= " u.login";
-$sql.= " FROM (".MAIN_DB_PREFIX."entrepot as s,";
+$sql.= " FROM (".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m,";
 $sql.= " ".MAIN_DB_PREFIX."product as p)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql.= " WHERE m.fk_product = p.rowid";
-$sql.= " AND m.fk_entrepot = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND m.fk_entrepot = e.rowid";
+$sql.= " AND e.entity = ".$conf->entity;
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
 if ($_GET["id"])
 {
-	$sql.= " AND s.rowid ='".$_GET["id"]."'";
+	$sql.= " AND e.rowid ='".$_GET["id"]."'";
 }
 if ($month > 0)
 {
@@ -111,7 +111,7 @@ if (! empty($search_product))
 }
 if (! empty($search_warehouse))
 {
-	$sql.= " AND s.label LIKE '%".$db->escape($search_warehouse)."%'";
+	$sql.= " AND e.label LIKE '%".$db->escape($search_warehouse)."%'";
 }
 if (! empty($search_user))
 {
@@ -321,7 +321,7 @@ if ($resql)
 		// Author
 		print '<td>';
 		$userstatic->id=$objp->fk_user_author;
-		$userstatic->nom=$objp->login;
+		$userstatic->lastname=$objp->login;
 		print $userstatic->getNomUrl(1);
 		print "</td>\n";
 		// Value
@@ -341,8 +341,8 @@ else
 	dol_print_error($db);
 }
 
+llxFooter();
 
 $db->close();
 
-llxFooter();
 ?>

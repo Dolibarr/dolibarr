@@ -246,7 +246,7 @@ class modMyModule extends DolibarrModules
 
 		$result=$this->load_tables();
 
-		return $this->_init($sql);
+		return $this->_init($sql, $options);
 	}
 
 	/**
@@ -261,7 +261,7 @@ class modMyModule extends DolibarrModules
 	{
 		$sql = array();
 
-		return $this->_remove($sql);
+		return $this->_remove($sql, $options);
 	}
 
 

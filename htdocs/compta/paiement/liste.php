@@ -73,6 +73,7 @@ if (GETPOST("orphelins"))
     $sql.= " ".MAIN_DB_PREFIX."c_paiement as c)";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " WHERE p.fk_paiement = c.id";
+    $sql.= " AND p.entity = ".$conf->entity;
     $sql.= " AND pf.fk_facture IS NULL";
 }
 else
@@ -89,13 +90,14 @@ else
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid AND s.entity = ".$conf->entity;
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
     if (!$user->rights->societe->client->voir && !$socid)
     {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
     $sql.= " WHERE p.fk_paiement = c.id";
-    if (!$user->rights->societe->client->voir && !$socid)
+    $sql.= " AND p.entity = ".$conf->entity;
+    if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;
     }

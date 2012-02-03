@@ -57,7 +57,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     $arrayofmembers=array();
 
     // requete en prenant que les adherents a jour de cotisation
-    $sql = "SELECT d.rowid, d.prenom, d.nom, d.login, d.societe, d.datefin,";
+    $sql = "SELECT d.rowid, d.prenom as firstname, d.nom as lastname, d.login, d.societe, d.datefin,";
     $sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
     $sql.= " t.libelle as type,";
     $sql.= " p.libelle as pays";
@@ -81,8 +81,8 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
 
     		// List of values to scan for a replacement
             $substitutionarray = array (
-            '%PRENOM%'=>$objp->prenom,
-            '%NOM%'=>$objp->nom,
+            '%PRENOM%'=>$objp->firstname,
+            '%NOM%'=>$objp->lastname,
             '%LOGIN%'=>$objp->login,
             '%SERVEUR%'=>"http://".$_SERVER["SERVER_NAME"]."/",
             '%SOCIETE%'=>$objp->societe,

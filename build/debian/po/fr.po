@@ -45,7 +45,6 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:2001
-#, fuzzy
 msgid "Delete database and uploaded files ?"
 msgstr "Effacer la base de donnée et les fichiers uploadés ?"
 
@@ -53,7 +52,6 @@ msgstr "Effacer la base de donnée et les fichiers uploadés ?"
 #. Type: boolean
 #. Description
 #: ../templates:2001
-#, fuzzy
 msgid ""
 "Answer if you want to removed the Dolibarr MySQL database and all other "
 "datas (datas related to this question are the Dolibarr DBMS account, all "

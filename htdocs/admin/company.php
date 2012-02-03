@@ -353,7 +353,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Logo
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
-    print '<table width="100%" class="nocellnopadd"><tr><td valign="center">';
+    print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print '<input type="file" class="flat" name="logo" size="50">';
     print '</td><td valign="middle" align="right">';
     if ($mysoc->logo_mini)
@@ -708,7 +708,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
 
-    print '<table width="100%" class="nocellnopadd"><tr><td valign="center">';
+    print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print $mysoc->logo;
     print '</td><td valign="center" align="right">';
 

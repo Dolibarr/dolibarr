@@ -67,7 +67,7 @@ function tva_coll($db,$y,$q)
         $sql.= ", ".MAIN_DB_PREFIX."facturedet as d" ;
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE f.fk_soc = s.rowid";
-        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND f.entity = ".$conf->entity;
         $sql.= " AND f.fk_statut in (1,2)";
         $sql.= " AND f.rowid = d.fk_facture ";
         $sql.= " AND date_format(f.datef,'%Y') = '".$y."'";
@@ -134,7 +134,7 @@ function tva_paye($db, $y,$q)
         $sql.= ", ".MAIN_DB_PREFIX."facture_fourn_det as d" ;
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE f.fk_soc = s.rowid";
-        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND f.entity = ".$conf->entity;
         $sql.= " AND f.fk_statut = 1 ";
         $sql.= " AND f.rowid = d.fk_facture_fourn ";
         $sql.= " AND date_format(f.datef,'%Y') = '".$y."'";

@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/triggers/interface_modNotification_Notification.class.php
+ *      \file       htdocs/core/triggers/interface_50_modNotification_Notification.class.php
  *      \ingroup    notification
  *      \brief      File of class of triggers for notification module
  */
@@ -34,12 +34,13 @@ class InterfaceNotification
                             'FICHEINTER_VALIDATE','ORDER_SUPPLIER_APPROVE','ORDER_SUPPLIER_REFUSE');
 
     /**
-     *   Constructor.
-     *   @param      DB      Database handler
+     *   Constructor
+     * 
+     *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceNotification($DB)
+    function InterfaceNotification($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "notification";

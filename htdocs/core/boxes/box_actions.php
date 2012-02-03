@@ -25,8 +25,11 @@
 
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
-
-class box_actions extends ModeleBoxes {
+/**
+ * Class to manage the box to show last events
+ */
+class box_actions extends ModeleBoxes
+{
 
 	var $boxcode="lastactions";
 	var $boximg="object_action";
@@ -76,7 +79,7 @@ class box_actions extends ModeleBoxes {
 			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity IN (0, ".$conf->entity.")";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql.= " WHERE a.fk_action = ta.id";
 			$sql.= " AND a.entity = ".$conf->entity;
 			$sql.= " AND a.percent >= 0 AND a.percent < 100";

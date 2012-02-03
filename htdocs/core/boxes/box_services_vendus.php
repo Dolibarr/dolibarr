@@ -26,7 +26,11 @@
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 
-class box_services_vendus extends ModeleBoxes {
+/**
+ * Class to manage the box to show last services lines
+ */
+ class box_services_vendus extends ModeleBoxes
+ {
 
 	var $boxcode="lastproductsincontract";
 	var $boximg="object_product";
@@ -80,7 +84,7 @@ class box_services_vendus extends ModeleBoxes {
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= ")";
 			$sql.= " WHERE s.rowid = c.fk_soc";
-			$sql.= " AND s.entity = ".$conf->entity;
+			$sql.= " AND c.entity = ".$conf->entity;
 			$sql.= " AND c.rowid = cd.fk_contrat";
 			$sql.= " AND cd.fk_product = p.rowid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

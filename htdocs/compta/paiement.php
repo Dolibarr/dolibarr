@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -212,18 +212,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 {
 	$facture = new Facture($db);
 	$result=$facture->fetch($facid);
-	
+
 	if ($result >= 0)
 	{
 		$facture->fetch_thirdparty();
-		
+
 		$title='';
 		if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
 		if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
 		print_fiche_titre($title);
-		
+
 		dol_htmloutput_errors($errmsg);
-		
+
 		// Bouchon
 		if ($facture->type == 2)
 		{
@@ -231,17 +231,17 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			llxFooter();
 			exit;
 		}
-		
+
 		// Initialize data for confirmation (this is used because data can be change during confirmation)
 		if ($action == 'add_paiement')
 		{
 			$i=0;
-			
+
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'facid', 'value' => $facture->id);
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
 		}
-		
+
 		// Invoice with Paypal transaction
 		// TODO add hook possibility (regis)
 		if ($conf->paypalplus->enabled && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && ! empty($facture->ref_int))
@@ -254,15 +254,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print '$(document).ready(function () {
             			setPaiementCode();
-            			
+
             			$("#selectpaiementcode").change(function() {
             				setPaiementCode();
             			});
-            			
+
             			function setPaiementCode()
             			{
             				var code = $("#selectpaiementcode option:selected").val();
-            				
+
             				if (code == \'CHQ\')
             				{
             					$(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
@@ -294,21 +294,21 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						{
 							var json = {};
 							var form = $("#payment_form");
-							
+
 							json["amountPayment"] = $("#amountpayment").attr("value");
 							json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
 							json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
-							
+
 							if (imgId != null) {
 								json["imgClicked"] = imgId;
 							}
-							
+
 							$.post("ajaxpayment.php", json, function(data)
 							{
 								json = $.parseJSON(data);
-								
+
 								form.data(json);
-								
+
 								for (var key in json)
 								{
 									if (key == "result")	{
@@ -329,19 +329,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						}
 						function callToBreakdown(imgSelector) {
 							var form = $("#payment_form"), imgId;
-							
+
 							imgId =  imgSelector.attr("id");
 							callForResult(imgId);
 						}
-						
+
 						$("#payment_form").find("img").click(function() {
 							callToBreakdown(jQuery(this));
 						});
-						
+
 						$("#payment_form").find("input[name*=\"amount_\"]").change(function() {
 							callForResult();
 						});
-						
+
 						$("#amountpayment").change(function() {
 							callForResult();
 						});';
@@ -349,7 +349,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print '});
 			</script>'."\n";
 		}
-		
+
 		print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add_paiement">';
@@ -357,7 +357,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
 		print '<input type="hidden" name="type" value="'.$facture->type.'">';
 		print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->client->name).'">';
-		
+
 		print '<table class="border" width="100%">';
 
         // Third party
@@ -382,6 +382,22 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
         print '</tr>';
 
+        // Bank account
+        print '<tr>';
+        if ($conf->banque->enabled)
+        {
+            if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
+            if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
+            print '<td>';
+            $form->select_comptes($accountid,'accountid',0,'',2);
+            print '</td>';
+        }
+        else
+        {
+            print '<td colspan="2">&nbsp;</td>';
+        }
+        print "</tr>\n";
+
         // Payment amount
         if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
         {
@@ -399,21 +415,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '</td>';
             print '</tr>';
         }
-
-        print '<tr>';
-        if ($conf->banque->enabled)
-        {
-            if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
-            if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
-            print '<td>';
-            $form->select_comptes($accountid,'accountid',0,'',2);
-            print '</td>';
-        }
-        else
-        {
-            print '<td colspan="2">&nbsp;</td>';
-        }
-        print "</tr>\n";
 
         // Cheque number
         print '<tr><td>'.$langs->trans('Numero');
@@ -637,16 +638,17 @@ if (! GETPOST('action'))
     if (! $sortfield) $sortfield='p.datep';
 
     $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
-    $sql .=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
-    $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
-    $sql .= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
+    $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
+    $sql.= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
+    $sql.= ' AND f.entity = '.$conf->entity;
     if ($socid)
     {
-        $sql .= ' AND f.fk_soc = '.$socid;
+        $sql.= ' AND f.fk_soc = '.$socid;
     }
 
-    $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
-    $sql .= $db->plimit($limit+1, $offset);
+    $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
+    $sql.= $db->plimit($limit+1, $offset);
     $resql = $db->query($sql);
 
     if ($resql)

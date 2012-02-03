@@ -245,7 +245,7 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="id" value="'.$id.'">';
 
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				print '<td nowrap="nowrap">';
 				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
@@ -327,14 +327,14 @@ if ($id > 0 || ! empty($ref))
 				if ($tab[$i]['source']=='internal')
 				{
                     $userstatic->id=$tab[$i]['id'];
-                    $userstatic->nom=$tab[$i]['nom'];
-                    $userstatic->prenom=$tab[$i]['firstname'];
+                    $userstatic->lastname=$tab[$i]['nom'];
+                    $userstatic->firstname=$tab[$i]['firstname'];
                     print $userstatic->getNomUrl(1);
 				}
 				if ($tab[$i]['source']=='external')
 				{
                     $contactstatic->id=$tab[$i]['id'];
-                    $contactstatic->name=$tab[$i]['nom'];
+                    $contactstatic->lastname=$tab[$i]['nom'];
                     $contactstatic->firstname=$tab[$i]['firstname'];
                     print $contactstatic->getNomUrl(1);
 				}

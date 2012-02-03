@@ -24,8 +24,7 @@
 
 
 /**
- *  \class      Menubase
- *  \brief      Class to manage menu entries
+ *  Class to manage menu entries
  */
 class Menubase
 {

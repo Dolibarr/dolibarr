@@ -739,7 +739,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 			// Info
 			print '<td align="center">';
 			$userstatic->id=$val['fk_user_c'];
-			$userstatic->nom=$val['login_c'];
+			$userstatic->lastname=$val['login_c'];
 			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';

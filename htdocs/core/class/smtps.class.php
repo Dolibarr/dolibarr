@@ -39,9 +39,8 @@
 
 
 /**
- * 	\class	SMTPs
- * 	\brief	Class to construct and send SMTP compliant email, even
- * 			to a secure SMTP server, regardless of platform.
+ * 	Class to construct and send SMTP compliant email, even
+ * 	to a secure SMTP server, regardless of platform.
  */
 class SMTPs
 {
@@ -1293,7 +1292,7 @@ class SMTPs
 	{
 		if ( $strContent )
 		{
-			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n"));
+			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n"));    // 76 max is defined into http://tools.ietf.org/html/rfc2047
 
 			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
 			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;

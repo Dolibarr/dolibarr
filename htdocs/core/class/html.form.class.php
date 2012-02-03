@@ -353,13 +353,13 @@ class Form
     /**
      *	Show a text with a picto and a tooltip on picto
      *
-     *	@param     	text				Text to show
-     *	@param   	htmltooltip     	Content of tooltip
-     *	@param		direction			1=Icon is after text, -1=Icon is before text, 0=no icon
-     * 	@param		type				Type of picto (info, help, warning, superadmin...)
-     *  @param  	extracss            Add a CSS style to td tags
-     *  @param      noencodehtmltext    Do not encode into html entity the htmltext
-     * 	@return		string				HTML code of text, picto, tooltip
+     *	@param	string	$text				Text to show
+     *	@param  string	$htmltooltip     	Content of tooltip
+     *	@param	int		$direction			1=Icon is after text, -1=Icon is before text, 0=no icon
+     * 	@param	string	$type				Type of picto (info, help, warning, superadmin...)
+     *  @param  string	$extracss           Add a CSS style to td tags
+     *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
+     * 	@return	string						HTML code of text, picto, tooltip
      */
     function textwithpicto($text,$htmltext,$direction=1,$type='help',$extracss='',$noencodehtmltext=0)
     {
@@ -745,7 +745,7 @@ class Form
         $sql = "SELECT s.rowid, s.nom, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
         $sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE s.entity = ".$conf->entity;
+        $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
         if ($filter) $sql.= " AND ".$filter;
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         $sql.= " ORDER BY nom ASC";
@@ -885,13 +885,13 @@ class Form
         global $conf,$langs;
 
         // On recherche les societes
-        $sql = "SELECT s.rowid, s.name, s.firstname, s.poste FROM";
+        $sql = "SELECT s.rowid, s.name as name, s.firstname, s.poste FROM";
         $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
         $sql.= " WHERE entity = ".$conf->entity;
         if ($socid > 0) $sql.= " AND fk_soc=".$socid;
         $sql.= " ORDER BY s.name ASC";
 
-        dol_syslog("Form::select_contacts sql=".$sql);
+        dol_syslog(get_class($this)."::select_contacts sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -913,6 +913,7 @@ class Form
 
                     $contactstatic->id=$obj->rowid;
                     $contactstatic->name=$obj->name;
+                    $contactstatic->lastname=$obj->name;
                     $contactstatic->firstname=$obj->firstname;
 
                     if ($htmlname != 'none')

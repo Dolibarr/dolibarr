@@ -45,6 +45,7 @@ $search_ref=GETPOST('search_ref');
 $search_company=GETPOST('search_company');
 $search_name=GETPOST('search_name');
 
+if (!$user->rights->don->lire) accessforbidden();
 
 
 /*

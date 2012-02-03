@@ -43,6 +43,8 @@ For users:
 - New: Chart are faster to build
 - New: Value of data into charts are visible on mouse hover.
 - New: Import wizard can import contacts.
+- New: Install process is now two times faster.
+- New: Extra fields support int type.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
@@ -53,6 +55,7 @@ For developers:
 - New: Log module outputs can be setup with "or" rule (not only "xor").
 - New: Add FirePHP output for logging module.
 - New: Add trigger ACTION_DELETE and ACTION_MODIFY.
+- New: Trigger now have a priority to define sort execution order.
 - New: Can define different requests according to database type into migration files.
 - New: Add "canvas" feature to overwrite page of thirdparty, contact, product with yours.
 - New: Removed artichow deprecated libraries.
@@ -66,6 +69,19 @@ For developers:
 - Qual: Fix a lot of checkstyle warnings.
 - Qual: task #216 : Move /lib into /core/lib directory
 - Qual: task #217 : Move core files into core directory (login, menus, triggers, boxes, modules)
+
+
+***** ChangeLog for 3.1.1 compared to 3.1.0 *****
+
+- New: Add option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS. With this option added, 
+       credit notes are not removed from total amount of invoice but are just 
+       payments used to reducs remain to pay.
+- Fix: Removed warnings during install.
+- Fix: State into address of paypal payments were lost
+- Fix: Removed Bare LF from emails sent with smtps method.
+- Fix: Can show report on selected period.
+- Fix: product removed from list after deleted into order.
+- Fix: pgsql can connect using socket.
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****

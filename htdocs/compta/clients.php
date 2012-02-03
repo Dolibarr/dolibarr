@@ -80,8 +80,8 @@ if ($action == 'note')
 if ($mode == 'search') {
 	if ($modesearch == 'soc') {
 		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql.= " WHERE lower(s.nom) like '%".$db->escape(strtolower($socname))."%'";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " WHERE lower(s.nom) LIKE '%".$db->escape(strtolower($socname))."%'";
+		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 	}
 
 	$resql=$db->query($sql);
@@ -106,7 +106,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.client in (1, 3)";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (dol_strlen($stcomm))
 {
@@ -114,25 +114,25 @@ if (dol_strlen($stcomm))
 }
 if ($socname)
 {
-	$sql.= " AND s.nom like '%".$db->escape(strtolower($socname))."%'";
+	$sql.= " AND s.nom LIKE '%".$db->escape(strtolower($socname))."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
 if ($_GET["search_nom"])
 {
-	$sql.= " AND s.nom like '%".$db->escape(strtolower($_GET["search_nom"]))."%'";
+	$sql.= " AND s.nom LIKE '%".$db->escape(strtolower($_GET["search_nom"]))."%'";
 }
 if ($_GET["search_compta"])
 {
-	$sql.= " AND s.code_compta like '%".$db->escape($_GET["search_compta"])."%'";
+	$sql.= " AND s.code_compta LIKE '%".$db->escape($_GET["search_compta"])."%'";
 }
 if ($_GET["search_code_client"])
 {
-	$sql.= " AND s.code_client like '%".$db->escape($_GET["search_code_client"])."%'";
+	$sql.= " AND s.code_client LIKE '%".$db->escape($_GET["search_code_client"])."%'";
 }
 if (dol_strlen($begin))
 {
-	$sql.= " AND s.nom like '".$db->escape($begin)."'";
+	$sql.= " AND s.nom LIKE '".$db->escape($begin)."'";
 }
 if ($socid)
 {

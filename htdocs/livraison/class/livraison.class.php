@@ -57,11 +57,13 @@ class Livraison extends CommonObject
 
 
 	/**
-	 * Initialisation
+	 * Constructor
+	 *
+	 * @param	DoliDB	$db		Database handler
 	 */
-	function Livraison($DB)
+	function Livraison($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->lines = array();
 		$this->products = array();
 
@@ -72,9 +74,10 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 *    \brief      Create delivery receipt in database
-	 *    \param      user        Objet du user qui cree
-	 *    \return     int         <0 si erreur, id livraison cree si ok
+	 *  Create delivery receipt in database
+	 *
+	 *  @param 	User	$user       Objet du user qui cree
+	 *  @return int         		<0 si erreur, id livraison cree si ok
 	 */
 	function create($user)
 	{
@@ -146,7 +149,7 @@ class Livraison extends CommonObject
 					$origin_id=$this->lines[$i]->origin_line_id;
 					if (! $origin_id) $origin_id=$this->lines[$i]->commande_ligne_id;	// For backward compatibility
 
-					if (! $this->create_line(0, $origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description))
+					if (! $this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description))
 					{
 						$error++;
 					}
@@ -205,10 +208,15 @@ class Livraison extends CommonObject
 	}
 
 	/**
+	 *	Create a line
 	 *
-	 *
+	 *	@param	string	$origin_id				Id of order
+	 *	@param	string	$qty					Quantity
+	 *	@param	string	$fk_product				Id of predefined product
+	 *	@param	string	$description			Description
+	 *	@return	int								<0 if KO, >0 if OK
 	 */
-	function create_line($transaction, $commande_ligne_id, $qty, $fk_product=0, $description)
+	function create_line($origin_id, $qty, $fk_product, $description)
 	{
 		$error = 0;
 		$idprod = $fk_product;
@@ -216,12 +224,12 @@ class Livraison extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_origin_line,";
 		$sql.= " fk_product, description, qty)";
-		$sql.= " VALUES (".$this->id.",".$commande_ligne_id.",";
+		$sql.= " VALUES (".$this->id.",".$origin_id.",";
 		$sql.= " ".($idprod>0?$idprod:"null").",";
 		$sql.= " ".($description?"'".$this->db->escape($description)."'":"null").",";
 		$sql.= $qty.")";
 
-		dol_syslog("Livraison::create_line sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create_line sql=".$sql, LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			$error++;
@@ -234,7 +242,10 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 * 	\brief			Read a delivery receipt
+	 * 	Load a delivery receipt
+	 *
+	 * 	@param	int		$id			Id of object to load
+	 * 	@return	void
 	 */
 	function fetch($id)
 	{
@@ -248,7 +259,7 @@ class Livraison extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE l.rowid = ".$id;
 
-		dol_syslog("Livraison::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -294,13 +305,13 @@ class Livraison extends CommonObject
 			else
 			{
 				$this->error='Delivery with id '.$id.' not found sql='.$sql;
-				dol_syslog('Livraison::Fetch Error '.$this->error, LOG_ERR);
+				dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
 		}
 		else
 		{
-			dol_syslog('Livraison::Fetch Error '.$this->error, LOG_ERR);
+			dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -308,7 +319,7 @@ class Livraison extends CommonObject
 
 	/**
 	 *        Validate object and update stock if option enabled
-	 * 
+	 *
      *        @param 	User	$user        Object user that validate
      *        @return   int
 	 */
@@ -317,7 +328,7 @@ class Livraison extends CommonObject
 		global $conf, $langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-		dol_syslog("livraison.class.php::valid begin");
+		dol_syslog(get_class($this)."::valid begin");
 
 		$this->db->begin();
 
@@ -406,13 +417,13 @@ class Livraison extends CommonObject
 							$this->statut = 1;
 						}
 
-						dol_syslog("livraison.class.php::valid ok");
+						dol_syslog(get_class($this)."::valid ok");
 					}
 					else
 					{
 						$this->db->rollback();
 						$this->error=$this->db->error()." - sql=$sql";
-						dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
+						dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 						return -1;
 					}
 				}
@@ -421,7 +432,7 @@ class Livraison extends CommonObject
 		else
 		{
 			$this->error="Non autorise";
-			dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -434,20 +445,22 @@ class Livraison extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error = $interface->errors;
-			dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 		else
 		{
 			$this->db->commit();
-			dol_syslog("livraison.class.php::valid commit");
 			return 1;
 		}
 	}
 
-	/**     \brief      Cree le bon de livraison depuis une expedition existante
-	 *		\param      user            Utilisateur qui cree
-	 *		\param      sending_id      Id de l'expedition qui sert de modele
+	/**
+	 * 	Cree le bon de livraison depuis une expedition existante
+	 *
+	 *	@param	User	$user            Utilisateur qui cree
+	 *	@param  int		$sending_id      Id de l'expedition qui sert de modele
+	 *	@return	void
 	 */
 	function create_from_sending($user, $sending_id)
 	{
@@ -484,23 +497,28 @@ class Livraison extends CommonObject
 
 
 	/**
-	 * Ajoute une ligne
+	 * 	Add line
 	 *
+	 *	@param	int		$origin_id		Origin id
+	 *	@param	int		$qty			Qty
+	 *	@return	void
 	 */
-	function addline( $id, $qty )
+	function addline($origin_id, $qty)
 	{
 		$num = count($this->lines);
 		$line = new LivraisonLigne($this->db);
 
-		$line->commande_ligne_id = $id;
+		$line->origin_id = $origin_id;
 		$line->qty = $qty;
 
 		$this->lines[$num] = $line;
 	}
 
 	/**
+	 *	Delete line
 	 *
-	 *
+	 *	@param	int		$lineid		Line id
+	 *	@return	void
 	 */
 	function deleteline($lineid)
 	{
@@ -523,7 +541,9 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 * Supprime la fiche
+	 * Delete object
+	 *
+	 * @return	void
 	 */
 	function delete()
 	{
@@ -594,9 +614,10 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\return		string			Chaine avec URL
+	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *
+	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0)
 	{
@@ -619,8 +640,9 @@ class Livraison extends CommonObject
 	}
 
 	/**
+	 *	Load lines
 	 *
-	 *
+	 *	@return	void
 	 */
 	function fetch_lines()
 	{
@@ -634,7 +656,7 @@ class Livraison extends CommonObject
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
 		$sql.= " AND ld.fk_livraison = ".$this->id;
 
-		dol_syslog("Livraison::fetch_lines sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -672,8 +694,10 @@ class Livraison extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libelle du statut d'une expedition
-	 *    \return     string      Libelle
+	 *  Retourne le libelle du statut d'une expedition
+	 *
+	 *  @param	int			$mode		Mode
+	 *  @return string      			Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -681,10 +705,11 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 *		\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 *	Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int			$statut     Id statut
+	 *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string					Label
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -766,9 +791,10 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 *   \brief      Renvoie la quantite de produit restante a livrer pour une commande
-	 *   \return     array		Product remaining to be delivered
-	 *   TODO use new function
+	 *  Renvoie la quantite de produit restante a livrer pour une commande
+	 *
+	 *  @return     array		Product remaining to be delivered
+	 *  TODO use new function
 	 */
 	function getRemainingDelivered()
 	{
@@ -847,8 +873,7 @@ class Livraison extends CommonObject
 
 
 /**
- *  \class      LivraisonLigne
- *  \brief      Classe de gestion des lignes de bons de livraison
+ *  Classe de gestion des lignes de bons de livraison
  */
 class LivraisonLigne
 {
@@ -860,14 +885,19 @@ class LivraisonLigne
 	var $qty_shipped;
 	var $price;
 	var $fk_product;
-	var $commande_ligne_id;
+	var $origin_id;
 	var $label;       // Label produit
 	var $description;  // Description produit
 	var $ref;
 
-	function LivraisonLigne($DB)
+	/**
+	 *	Constructor
+	 *
+	 *	@param	DoliDB	$db		Database handler
+	 */
+	function LivraisonLigne($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 }

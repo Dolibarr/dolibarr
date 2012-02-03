@@ -17,8 +17,10 @@ with format .DEB (for Debian, Ubuntu, ...).
 #
 # gpg --gen-key                          Generate a GPG key
 #
-# debconf-updatepo					     To run into po dir to regenate templates.pot 
-# podebconf-report-po --from eldy@destailleur.fr	To send email to ask translations
+# debconf-updatepo					     		To run into po dir to regenate templates.pot
+# podebconf-report-po --from email@email.com	To send email to ask translations
+# Edit manually file XX.po and remove all lines "#, fuzzy" when translation is complete
+# msgfmt -v -c -o /dev/null XX.po		 		To have status of translation for language XX 
 #
 # lintian --pedantic -E -I package.deb   To test a package   
 #

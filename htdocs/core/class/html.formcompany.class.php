@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,8 @@
 
 
 /**
- *	\class      FormCompany
- *	\brief      Class to build HTML component for third parties management
- *	\remarks	Only common components must be here.
+ *	Class to build HTML component for third parties management
+ *	Only common components are here.
  */
 class FormCompany
 {
@@ -517,19 +516,19 @@ class FormCompany
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom FROM";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) $sql.= " WHERE rowid = ".$selected;
+		$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) $sql.= " AND rowid = ".$selected;
 		else
 		{
 			// For ajax search we limit here. For combo list, we limit later
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT
 			&& is_array($limitto) && count($limitto))
 			{
-				$sql.= " WHERE rowid in (".join(',',$limitto).")";
+				$sql.= " AND rowid IN (".join(',',$limitto).")";
 			}
 		}
-		$sql .= " ORDER BY nom ASC";
-
-		//print $sql;
+		$sql.= " ORDER BY nom ASC";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

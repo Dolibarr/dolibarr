@@ -40,8 +40,8 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_crabe
 require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_oursin.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/doc/pdf_azur.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/doc/pdf_jaune.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/pdf_edison.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/pdf_einstein.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/doc/pdf_edison.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/pdf/pdf_baleine.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_expedition_merou.modules.php';

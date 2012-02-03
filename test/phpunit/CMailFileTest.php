@@ -140,6 +140,11 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
         $localobject=new CMailFile('','','','');
 
         $src='John Doe <john@doe.com>';
+        $result=$localobject->getValidAddress($src,0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'John Doe <john@doe.com>');
+
+        $src='John Doe <john@doe.com>';
         $result=$localobject->getValidAddress($src,1);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'<john@doe.com>');
@@ -148,6 +153,16 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
         $result=$localobject->getValidAddress($src,2);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'john@doe.com');
+
+        $src='John Doe <john@doe.com>';
+        $result=$localobject->getValidAddress($src,3,0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'"John Doe" <john@doe.com>');
+
+        $src='John Doe <john@doe.com>';
+        $result=$localobject->getValidAddress($src,3,1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>');
 
         return $result;
     }

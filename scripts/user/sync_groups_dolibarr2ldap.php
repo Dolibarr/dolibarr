@@ -82,7 +82,7 @@ if ($resql)
 		$fgroup->id = $obj->rowid;
 		$fgroup->fetch($fgroup->id);
 
-		print $langs->trans("UpdateGroup")." rowid=".$fgroup->id." ".$fgroup->nom;
+		print $langs->trans("UpdateGroup")." rowid=".$fgroup->id." ".$fgroup->name;
 
 		$oldobject=$fgroup;
 

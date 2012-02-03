@@ -239,7 +239,7 @@ if ($socid)
 			$sql.= ", ".MAIN_DB_PREFIX."c_typent as te";
 			if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.fk_typent = te.id";
-			$sql.= " AND s.entity = ".$conf->entity;
+			$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 			if (! $user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if (dol_strlen(trim($_GET["search_nom"]))) $sql.= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
 			$sql.= $db->order("s.nom","ASC");

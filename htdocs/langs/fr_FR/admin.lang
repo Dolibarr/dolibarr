@@ -863,6 +863,7 @@ MAIN_PROXY_USER=Login pour passer le serveur proxy mandataire
 MAIN_PROXY_PASS=Mot de passe pour passer le serveur proxy mandataire
 DefineHereComplementaryAttributes=Definissez ici la liste des attributs supplémentaire, non disponible en standard, et que vous voulez voir gérez sur les %s.
 ExtraFields=Attributs suplémentaires
+ExtraFieldHasWrongValue=L'attribut %s a une valeur incorrecte.
 SendingMailSetup=Configuration de l'envoi par mail
 SendmailOptionNotComplete=Attention, sur certains systèmes Linux, avec cette méthode d'envoi, pour pouvoir envoyer des mails en votre nom, la configuration d'exécution de sendmail doit contenir l'option <b>-ba</b> (paramètre <b>mail.force_extra_parameters</b> dans le fichier <b>php.ini</b>). Si certains de vos destinataires ne reçoivent pas de message, essayer de modifer ce paramètre PHP avec <b>mail.force_extra_parameters = -ba</b>.
 PathToDocuments= Chemin d'accès aux documents
@@ -1297,9 +1298,6 @@ NoteOnPathLocation=Notez que ce fichier doit être dans un répertoire accessibl
 YouCanDownloadFreeDatFileTo=Vous pouvez télécharger une <b>version démo gratuite</b> de la base Maxmind à l'adresse %s.
 YouCanDownloadAdvancedDatFileTo=Vous pouvez aussi télécharger une <b>version plus complète avec mise à jours</b> de la base Maxmind à l'adresse %s.
 TestGeoIPResult=Test de conversion IP -> Pays
-##### NumberWords #####
-NumberWordsSetup=Configuration du module NumberWords
-DescNumberWords=Ce module amène des fonctions de conversion de nombre ou montant en toute chaine. Il effectue aussi des remplacements de variables génériques __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ ou __TOTAL_VAT_WORDS__ par leur valeur du montant ttc, ht ou de la tva, en chaine dans les textes qui y font référence (texte libre des factures, ...)
 ##### Projects #####
 ProjectsNumberingModules=Modèles de numérotation des références projets
 ProjectsSetup=Configuration du module Projets

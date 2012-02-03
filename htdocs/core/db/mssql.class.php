@@ -467,10 +467,11 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
-	 \see    	num_rows
-	 \param      resultset   Curseur de la requete voulue
-	 \return     int		    Nombre de lignes
+	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 *
+	 *	@param	resultset	$resultset   Curseur de la requete voulue
+	 *	@return int		    Nombre de lignes
+	 *	@see    num_rows
 	 */
 	function affected_rows($resultset)
 	{
@@ -485,8 +486,10 @@ class DoliDBMssql
 
 
 	/**
-	 * \brief      Libere le dernier resultset utilise sur cette connexion.
-	 * \param      resultset   Curseur de la requete voulue
+	 *	Free last resultset used.
+	 *
+	 *	@param  resultset	$resultset   Curseur de la requete voulue
+	 *	@return	void
 	 */
 	function free($resultset=0)
 	{
@@ -498,10 +501,11 @@ class DoliDBMssql
 
 
 	/**
-	 * \brief      Defini les limites de la requete.
-	 * \param	    limit       nombre maximum de lignes retournees
-	 * \param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
-	 * \return	    string      chaine exprimant la syntax sql de la limite
+	 *	Define limits of request
+	 *
+	 *	@param	int		$limit      nombre maximum de lignes retournees
+	 *	@param	int		$offset     numero de la ligne a partir de laquelle recuperer les ligne
+	 *	@return	string      		chaine exprimant la syntax sql de la limite
 	 */
 	function plimit($limit=0,$offset=0)
 	{
@@ -514,10 +518,11 @@ class DoliDBMssql
 
 	/**
 	 * Define sort criteria of request
-	 * @param	    sortfield   List of sort fields
-	 * @param	    sortorder   Sort order
-	 * @return	    string      String to provide syntax of a sort sql string
-	 * TODO			Mutualized this into a mother class
+	 *
+	 * @param	string	$sortfield  List of sort fields
+	 * @param	string	$sortorder  Sort order
+	 * @return	string      		String to provide syntax of a sort sql string
+	 * TODO	Mutualized this into a mother class
 	 */
 	function order($sortfield=0,$sortorder=0)
 	{
@@ -543,10 +548,10 @@ class DoliDBMssql
 
 
 	/**
-	 *     Escape a string to insert data.
+	 *	Escape a string to insert data
 	 *
-	 *     @param	    stringtoencode		String to escape
-	 *     @return	    string				String escaped
+	 *  @param	string	$stringtoencode		String to escape
+	 *  @return	string						String escaped
 	 */
 	function escape($stringtoencode)
 	{
@@ -582,11 +587,12 @@ class DoliDBMssql
 	}
 
 	/**
-     *  Formate a SQL IF
-	 *	@param		test            chaine test
-	 *	@param		resok           resultat si test egal
-	 *	@param		resko           resultat si test non egal
-	 *	@return		string          chaine formate SQL
+	 *	Formate a SQL IF
+	 *
+	 *	@param	string	$test           chaine test
+	 *	@param	string	$resok          resultat si test egal
+	 *	@param	string	$resko          resultat si test non egal
+	 *	@return	string          		SQL string
 	 */
 	function ifsql($test,$resok,$resko)
 	{
@@ -595,8 +601,9 @@ class DoliDBMssql
 
 
 	/**
-	 *	\brief      Renvoie la derniere requete soumise par la methode query()
-	 *	\return	    lastquery
+	 *	Return last request executed with query()
+	 *
+	 *	@return	string					Last query
 	 */
 	function lastquery()
 	{
@@ -604,8 +611,9 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief      Renvoie la derniere requete en erreur
-	 \return	    string	lastqueryerror
+	 *	Return last query in error
+	 *
+	 *	@return	    string	lastqueryerror
 	 */
 	function lastqueryerror()
 	{
@@ -613,8 +621,9 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief      Renvoie le libelle derniere erreur
-	 \return	    string	lasterror
+	 *	Return last error label
+	 *
+	 *	@return	    string	lasterror
 	 */
 	function lasterror()
 	{
@@ -622,8 +631,9 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief      Renvoie le code derniere erreur
-	 \return	    string	lasterrno
+	 *	Return last error code
+	 *
+	 *	@return	    string	lasterrno
 	 */
 	function lasterrno()
 	{
@@ -631,16 +641,19 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief     Renvoie le code erreur generique de l'operation precedente.
-	 \return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+     *	Return generic error code of last operation.
+     *
+     *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	function errno()
 	{
-		if (! $this->connected) {
+		if (! $this->connected)
+		{
 			// Si il y a eu echec de connexion, $this->db n'est pas valide.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		}
-		else {
+		else
+		{
 			// Constants to convert a MSSql error code to a generic Dolibarr error code
 			$errorcode_map = array(
 			1004 => 'DB_ERROR_CANNOT_CREATE',
@@ -680,8 +693,9 @@ class DoliDBMssql
 	}
 
 	/**
-	 \brief     Renvoie le texte de l'erreur mssql de l'operation precedente.
-	 \return    error_text
+	 *	Return description of last error
+	 *
+	 *	@return	string		Error text
 	 */
 	function error()
 	{
@@ -717,9 +731,10 @@ class DoliDBMssql
 	/**
      *  Encrypt sensitive data in database
      *  Warning: This function includes the escape, so it must use direct value
-     *  @param          fieldorvalue    Field name or value to encrypt
-     *  @param          withQuotes      Return string with quotes
-     *  @return         return          XXX(field) or XXX('value') or field or 'value'
+     *
+     *  @param  string  $fieldorvalue   Field name or value to encrypt
+     *  @param	int		$withQuotes     Return string with quotes
+     *  @return return          		XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -736,9 +751,10 @@ class DoliDBMssql
 	}
 
 	/**
-	 *	\brief          Decrypt sensitive data in database
-	 *	\param	        value			Value to decrypt
-	 * 	\return	        return			Decrypted value if used
+     *	Decrypt sensitive data in database
+     *
+     *	@param	string	$value			Value to decrypt
+     * 	@return	string					Decrypted value if used
 	 */
 	function decrypt($value)
 	{
@@ -755,12 +771,10 @@ class DoliDBMssql
 	}
 
 
-	// Next function are not required. Only minor features use them.
-	//--------------------------------------------------------------
-
 	/**
-	 *	\brief          Renvoie l'id de la connexion
-	 *	\return	        string      Id connexion
+	 * Return connexion ID
+	 *
+	 * @return	        string      Id connexion
 	 */
 	function DDLGetConnectId()
 	{
@@ -770,15 +784,17 @@ class DoliDBMssql
 	}
 
 	/**
-	 *	\brief          Create a new database
-	 *	\param	        database		Database name to create
-	 * 	\param			charset			Charset used to store data
-	 * 	\param			collation		Charset used to sort data
-	 * 	\return	        resource		resource defined if OK, null if KO
-	 * 	\remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mssql, ...) car elles sont deprecated
-	 *					We force to create database with charset this->forcecharset and collate this->forcecollate
+	 *	Create a new database
+	 *	Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
+	 *	We force to create database with charset this->forcecharset and collate this->forcecollate
+	 *
+	 *	@param	string	$database		Database name to create
+	 * 	@param	string	$charset		Charset used to store data
+	 * 	@param	string	$collation		Charset used to sort data
+	 * 	@param	string	$owner			Username of database owner
+	 * 	@return	resource				resource defined if OK, null if KO
 	 */
-	function DDLCreateDb($database,$charset='',$collation='')
+	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;

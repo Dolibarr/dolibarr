@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,11 @@
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 
-class box_members extends ModeleBoxes {
+/**
+ * Class to manage the box to show last members
+ */
+ class box_members extends ModeleBoxes
+ {
 
 	var $boxcode="lastmembers";
 	var $boximg="object_user";
@@ -70,12 +74,12 @@ class box_members extends ModeleBoxes {
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.rowid, s.nom as lastname, s.prenom as firstname, s.datec, s.tms, s.statut as status, s.datefin as date_end_subscription,";
+			$sql = "SELECT a.rowid, a.nom as lastname, a.prenom as firstname, a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql.= " t.cotisation";
-			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s, ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql.= " WHERE s.entity = ".$conf->entity;
-			$sql.= " AND s.fk_adherent_type = t.rowid";
-			$sql.= " ORDER BY s.tms DESC";
+			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
+			$sql.= " WHERE a.entity = ".$conf->entity;
+			$sql.= " AND a.fk_adherent_type = t.rowid";
+			$sql.= " ORDER BY a.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -91,9 +95,9 @@ class box_members extends ModeleBoxes {
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-					$memberstatic->nom=$objp->lastname;
-					$memberstatic->prenom=$objp->firstname;
-					
+					$memberstatic->lastname=$objp->lastname;
+					$memberstatic->firstname=$objp->firstname;
+
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/adherents/fiche.php?rowid=".$objp->rowid);

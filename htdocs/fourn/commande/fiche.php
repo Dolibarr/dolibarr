@@ -1444,7 +1444,8 @@ if ($id > 0 || ! empty($ref))
             $genallowed=$user->rights->fournisseur->commande->creer;
             $delallowed=$user->rights->fournisseur->commande->supprimer;
 
-            $somethingshown=$formfile->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+            print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$soc->default_lang);
+            $somethingshown=$formfile->numoffiles;
 
             $object=$object;
 

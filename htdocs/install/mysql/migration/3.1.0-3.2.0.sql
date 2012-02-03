@@ -182,3 +182,4 @@ update llx_cotisation set fk_bank = null where fk_bank not in (select rowid from
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (12, 'Cotisation foncière des entreprises', 0, 1, 'TAXCFE', '1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (13, 'Cotisation sur la valeur ajoutée des entreprises', 0, 1, 'TAXCVAE', '1');
 
+ALTER TABLE llx_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;

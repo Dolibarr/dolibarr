@@ -1358,7 +1358,7 @@ class Contrat extends CommonObject
 			$sql.= " AND cd.date_fin_validite < '".$this->db->idate(time())."'";
 		}
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND c.entity = ".$conf->entity;
 		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		$resql=$this->db->query($sql);
@@ -1403,7 +1403,7 @@ class Contrat extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." s.entity = ".$conf->entity;
+		$sql.= " ".$clause." c.entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);
 		if ($resql)

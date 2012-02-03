@@ -28,7 +28,11 @@ include_once(DOL_DOCUMENT_ROOT."/core/class/rssparser.class.php");
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 
-class box_external_rss extends ModeleBoxes {
+/**
+ * Class to manage the box to show RSS feeds
+ */
+ class box_external_rss extends ModeleBoxes
+ {
 
     var $boxcode="lastrssinfos";
     var $boximg="object_rss";
@@ -43,7 +47,7 @@ class box_external_rss extends ModeleBoxes {
 
     /**
      *  Constructor
-     * 
+     *
      * 	@param	DoliDB	$db		Database handler
      */
     function box_external_rss($db,$param)

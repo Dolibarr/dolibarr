@@ -38,8 +38,10 @@ abstract class ModeleDon extends CommonDocGenerator
     var $error='';
 
     /**
-     *      \brief      Return list of active generation modules
-     * 		\param		$db		Database handler
+     *  Return list of active generation modules
+     *
+     * 	@param	DoliDB		$db		Database handler
+     * 	@return	array				List of donation templates
      */
     function liste_modeles($db)
     {

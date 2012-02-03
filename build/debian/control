@@ -1,19 +1,26 @@
-Package: dolibarr
-Version: __VERSION__
-Architecture: all
+Source: dolibarr
 Maintainer: Laurent Destailleur <eldy@users.sourceforge.net>
-Installed-Size: 61200
+Standards-Version: 3.9.2
+Section: web
+Priority: optional
+Homepage: http://www.dolibarr.org
+Build-Depends: debhelper (>= 7), po-debconf, dpatch
+
+Package: dolibarr
 Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5,
     php5-mysql | php5-mysqli, 
-    php5-cli, php5-curl, php5-gd, php5-ldap, php-pear, php-mail-mime, php5-geoip
+    php5-cli, php5-curl, php5-gd, php5-ldap, php-pear, php-mail-mime, php5-geoip,
+    libnusoap-php,
     libphp-pclzip,
     ckeditor,
     ttf-dejavu-core,
     xdg-utils,
-    mysql-server
-Section: web
-Priority: optional
-Homepage: http://www.dolibarr.org
+    mysql-server,
+    ${misc:Depends},
+    ${perl:Depends}
+Recommends: apache2 | lighttpd | httpd, mysql-client
+Suggests: www-browser
+Architecture: all
 Description: Web based software to manage a small company or foundation
  Dolibarr ERP & CRM is an easy to use open source/free software for small 
  and medium companies, foundations or freelances. It includes different 
@@ -24,6 +31,7 @@ Description: Web based software to manage a small company or foundation
  .
  Dolibarr was designed to be easy to use. Only features you need are 
  visible, depending on which module were activated.
+ Most common used modules are:
  .
  Customers, Suppliers or Prospects directory,
  Contacts directory,

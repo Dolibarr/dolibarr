@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,8 @@
 
 
 /**
- *	\class      FormOrder
- *	\brief      Classe permettant la generation de composants html
- *	\remarks	Only common components must be here.
+ *	Classe permettant la generation de composants html
+ *	Only common components are here.
  */
 class FormOrder
 {
@@ -35,24 +34,24 @@ class FormOrder
 
 
 	/**
-	 *	\brief     Constructeur
-	 *	\param     DB      handler d'acces base de donnee
+	 *	Constructor
+	 *
+	 *	@param	DoliDB	$db		Database handler
 	 */
-	function FormOrder($DB)
+	function FormOrder($db)
 	{
-		$this->db = $DB;
-
+		$this->db = $db;
 		return 1;
 	}
 
 
 	/**
-	 *  Renvoie la liste des sources de commandes
+	 *  Return list of way to order
 	 * 
-	 *	@param      selected		Id de la source pre-selectionnee
-	 *  @param     	htmlname 		Nom de la liste deroulante
-	 *  @param     	addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *  @return		array			Tableau des sources de commandes
+	 *	@param	string	$selected		Id of preselected order origin
+	 *  @param  string	$htmlname 		Name of HTML select list
+	 *  @param  int		$addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @return	array					Tableau des sources de commandes
 	 */
 	function selectSourcesCommande($selected='',$htmlname='source_id',$addempty=0)
 	{
@@ -74,8 +73,12 @@ class FormOrder
 
 
 	/**
+	 *	Return list of way to order
 	 *
-	 *
+	 *	@param	string	$selected		Id of preselected input method
+	 *  @param  string	$htmlname 		Name of HTML select list
+	 *  @param  int		$addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @return	array					Tableau des sources de commandes
 	 */
 	function select_methodes_commande($selected='',$htmlname='source_id',$addempty=0)
 	{
@@ -89,7 +92,7 @@ class FormOrder
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog("Form::select_methodes_commande sql=".$sql);
+		dol_syslog(get_class($this)."::select_methodes_commande sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
