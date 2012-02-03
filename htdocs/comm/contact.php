@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne			<erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +28,19 @@ require("../main.inc.php");
 
 $langs->load("companies");
 
-$sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=$_GET["page"];
+$sortfield=GETPOST('sortfield', 'alpha');
+$sortorder=GETPOST('sortorder', 'alpha');
+$page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
-if ($page < 0) { $page = 0 ; }
+if ($page < 0) { $page = 0; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 $type=$_GET["type"];
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
@@ -75,12 +75,12 @@ if ($type == "f")
 $sql = "SELECT s.rowid, s.nom,  st.libelle as stcomm";
 $sql.= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND p.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " AND p.entity IN (".getEntity('societe', 1).")";
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($type == "c") $sql.= " AND s.client IN (1, 3)";
 if ($type == "p") $sql.= " AND s.client IN (2, 3)";
 if ($type == "f") $sql.= " AND s.fournisseur = 1";
@@ -93,27 +93,27 @@ if (dol_strlen($stcomm))
 
 if (dol_strlen($begin)) // filtre sur la premiere lettre du nom
 {
-  $sql.= " AND upper(p.name) like '$begin%'";
+  $sql.= " AND upper(p.name) LIKE '".$begin."%'";
 }
 
 if (trim($_GET["search_nom"]))
 {
-  $sql.= " AND p.name like '%".trim($_GET["search_nom"])."%'";
+  $sql.= " AND p.name LIKE '%".trim($_GET["search_nom"])."%'";
 }
 
 if (trim($_GET["search_prenom"]))
 {
-  $sql.= " AND p.firstname like '%".trim($_GET["search_prenom"])."%'";
+  $sql.= " AND p.firstname LIKE '%".trim($_GET["search_prenom"])."%'";
 }
 
 if (trim($_GET["search_societe"]))
 {
-  $sql.= " AND s.nom like '%".trim($_GET["search_societe"])."%'";
+  $sql.= " AND s.nom LIKE '%".trim($_GET["search_societe"])."%'";
 }
 
 if ($_GET["contactname"]) // acces a partir du module de recherche
 {
-  $sql.= " AND ( p.name like '%".strtolower($_GET["contactname"])."%' OR lower(p.firstname) like '%".strtolower($_GET["contactname"])."%') ";
+  $sql.= " AND (p.name LIKE '%".strtolower($_GET["contactname"])."%' OR lower(p.firstname) LIKE '%".strtolower($_GET["contactname"])."%') ";
   $sortfield = "p.name";
   $sortorder = "ASC";
 }
@@ -178,7 +178,8 @@ else
     dol_print_error($db);
 }
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>

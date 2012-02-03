@@ -516,20 +516,19 @@ class FormCompany
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom FROM";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) $sql.= " WHERE rowid = ".$selected;
+		$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) $sql.= " AND rowid = ".$selected;
 		else
 		{
 			// For ajax search we limit here. For combo list, we limit later
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT
 			&& is_array($limitto) && count($limitto))
 			{
-				$sql.= " WHERE rowid IN (".join(',',$limitto).")";
+				$sql.= " AND rowid IN (".join(',',$limitto).")";
 			}
 		}
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 		$sql.= " ORDER BY nom ASC";
-
-		//print $sql;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
