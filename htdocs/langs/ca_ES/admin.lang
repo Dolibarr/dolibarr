@@ -862,6 +862,7 @@ MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contrasenya del servidor proxy
 DefineHereComplementaryAttributes=Definiu aquí la llista d'atributs addicionals, no disponibles a estàndard, i que vol gestionar per %s.
 ExtraFields=Atributs addicionals
+ExtraFieldHasWrongValue=L'atribut %s te un valor incorrecte.
 SendingMailSetup=Configuració de l'enviament per mail
 SendmailOptionNotComplete=Atenció, en alguns sistemes Linux, amb aquest mètode d'enviament, per poder enviar mails en nom seu, la configuració de sendmail ha de contenir l'opció <b>-ba</b> (paràmetre <b>mail.force_extra_parameters</b> a l'arxiu <b>php.ini</b>). Si alguns dels seus destinataris no reben els seus missatges, proveu de modificar aquest paràmetre PHP amb <b>mail.force_extra_parameters =-ba </b>.
 ##### Module password generation
