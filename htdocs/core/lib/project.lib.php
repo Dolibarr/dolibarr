@@ -687,7 +687,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
             $projectstatic->public = $objp->public;
 
             // Check is user has read permission on project
-            $userAccess = $projectstatic->restrictedProjectArea($user,1);
+            $userAccess = $projectstatic->restrictedProjectArea($user);
             if ($userAccess >= 0)
             {
                 $var=!$var;

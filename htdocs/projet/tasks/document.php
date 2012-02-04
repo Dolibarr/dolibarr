@@ -32,12 +32,11 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load('projects');
 $langs->load('other');
 
-$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
-
+$action=GETPOST('action');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id');
+$ref= GETPOST('ref');
 
 // Security check
 $socid=0;
@@ -57,8 +56,6 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
 
 $task = new Task($db);
 

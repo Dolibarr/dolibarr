@@ -107,8 +107,11 @@ if ($id > 0 || ! empty($ref))
 	{
 		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
 
-		// To verify role of users
-		$userAccess = $project->restrictedProjectArea($user);
+        // To verify role of users
+        //$userAccess = $project->restrictedProjectArea($user,'read');
+        $userWrite  = $project->restrictedProjectArea($user,'write');
+        //$userDelete = $project->restrictedProjectArea($user,'delete');
+        //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 		$head = project_prepare_head($project);
 		dol_fiche_head($head, 'note', $langs->trans('Project'), 0, ($project->public?'projectpub':'project'));
@@ -120,8 +123,11 @@ if ($id > 0 || ! empty($ref))
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 		// Define a complementary filter for search of next/prev ref.
-		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-		$project->next_prev_filter=" rowid in (".$projectsListId.")";
+	    if (! $user->rights->projet->all->lire)
+        {
+            $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
+            $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+        }
 		print $form->showrefnav($project,'ref','',1,'ref','ref');
 		print '</td></tr>';
 
@@ -193,7 +199,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="tabsAction">';
 		if ($user->rights->projet->creer && $_GET['action'] <> 'edit')
 		{
-			if ($userAccess)
+			if ($userWrite > 0)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}
@@ -205,7 +211,8 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 	}
 }
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

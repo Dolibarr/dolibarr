@@ -89,8 +89,11 @@ print '<table class="border" width="100%">';
 
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
-$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-$project->next_prev_filter=" rowid in (".$projectsListId.")";
+if (! $user->rights->projet->all->lire)
+{
+    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
+    $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+}
 print $form->showrefnav($project,'ref','',1,'ref','ref');
 print '</td></tr>';
 
@@ -223,7 +226,7 @@ foreach ($listofreferent as $key => $value)
 
                 // Amount
 				if (empty($value['disableamount'])) print '<td align="right">'.(isset($element->total_ttc)?price($element->total_ttc):'&nbsp;').'</td>';
-				
+
 				// Status
 				print '<td align="right">'.$element->getLibStatut(5).'</td>';
 
@@ -281,7 +284,7 @@ foreach ($listofreferent as $key => $value)
 	}
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

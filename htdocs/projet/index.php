@@ -130,7 +130,7 @@ print "</table>";
 
 print '</td></tr></table>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

@@ -435,7 +435,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                     $projectstatic->fetch($obj->rowid);
 
                     // To verify role of users
-                    $userAccess = $projectstatic->restrictedProjectArea($user,1);
+                    $userAccess = $projectstatic->restrictedProjectArea($user);
 
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {

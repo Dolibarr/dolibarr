@@ -150,11 +150,14 @@ if ($id > 0 || ! empty($ref))
 	$object->fetch($id, $ref);
 	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 
-	// To verify role of users
-	$userAccess = $object->restrictedProjectArea($user);
+    // To verify role of users
+    //$userAccess = $object->restrictedProjectArea($user,'read');
+    $userWrite  = $object->restrictedProjectArea($user,'write');
+    //$userDelete = $object->restrictedProjectArea($user,'delete');
+    //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 }
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userAccess))
+if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userAccess > 0))
 {
 	print_fiche_titre($langs->trans("NewTask"));
 
@@ -203,12 +206,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '</td></tr>';
 
 	print '</table>';
-	
-	print '<center><br>';
+
+	print '<div align="center"><br>';
 	print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
+	print '</div>';
 
 	print '</form>';
 
@@ -234,8 +237,11 @@ else
 	print $langs->trans("Ref");
 	print '</td><td>';
 	// Define a complementary filter for search of next/prev ref.
-	$projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,1);
-	$object->next_prev_filter=" rowid in (".$projectsListId.")";
+    if (! $user->rights->projet->all->lire)
+    {
+        $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    }
 	print $form->showrefnav($object,'ref','',1,'ref','ref','',$param);
 	print '</td></tr>';
 
@@ -267,7 +273,7 @@ else
 
 	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 	{
-		if ($object->public || $userAccess)
+		if ($object->public || $userWrite > 0)
 		{
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
 		}
@@ -313,7 +319,7 @@ else
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	if (! empty($object->id)) print '<td>'.$langs->trans("Project").'</td>';
+	// print '<td>'.$langs->trans("Project").'</td>';
 	print '<td width="80">'.$langs->trans("RefTask").'</td>';
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="right">'.$langs->trans("Progress").'</td>';
@@ -347,5 +353,4 @@ else
 llxFooter();
 
 $db->close();
-
 ?>
