@@ -103,7 +103,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '<td nowrap="nowrap">';
 				print $langs->trans("Project").' &nbsp; ';
 				print '</td><td nowrap="nowrap">';
-				select_projects($socid?$socid:-1,$pid,'projectid');
+				select_projects($socid?$socid:-1, $pid, 'projectid', 64);
 				print '</td></tr>';
 			}
 

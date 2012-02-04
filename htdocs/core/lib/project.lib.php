@@ -157,9 +157,10 @@ function task_prepare_head($object)
  *	@param	int		$socid      Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
  *	@param  int		$selected   Id project preselected
  *	@param  string	$htmlname   Nom de la zone html
+ *	@param	int		$maxlength	Maximum length of label
  *	@return int         		Nbre of project if OK, <0 if KO
  */
-function select_projects($socid=-1, $selected='', $htmlname='projectid')
+function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16)
 {
 	global $db,$user,$conf,$langs;
 
@@ -173,7 +174,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 	}
 
-	// On recherche les projets
+	// Search all projects
 	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
 	$sql.= " WHERE p.entity = ".$conf->entity;
@@ -201,7 +202,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 				}
 				else
 				{
-					$labeltoshow=dol_trunc($obj->ref,16);
+					$labeltoshow=dol_trunc($obj->ref,18);
 					//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 					//else $labeltoshow.=' ('.$langs->trans("Private").')';
 					if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
@@ -233,7 +234,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 							//else $labeltoshow.=' ('.$langs->trans("Private").')';
 							$resultat.='>'.$labeltoshow;
-							if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,12);
+							if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,$maxlength);
 							$resultat.='</option>';
 						}
 						print $resultat;
