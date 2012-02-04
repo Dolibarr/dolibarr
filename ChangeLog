@@ -45,6 +45,7 @@ For users:
 - New: Import wizard can import contacts.
 - New: Install process is now two times faster.
 - New: Extra fields support int type.
+- New: Add brazilian states.
 - Fix: Can use POS module with several concurrent users.
 
 For developers:

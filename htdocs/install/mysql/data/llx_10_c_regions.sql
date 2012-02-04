@@ -150,10 +150,13 @@ INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, act
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2305, 23, 2305, '', 0, 'Patagonia', 1);
 
 -- Regions Australia (id country=28)
-insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (2801, 28, 2801, '', 0, 'Australia', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2801, 28, 2801, '', 0, 'Australia', 1);
+
+-- Regions Brazil (id country=56)
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (5601, 56, 5601, '', 0, 'Brasil', 1);
 
 -- Regions Colombie (id country=70)
-insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (7001,  70, 7001, '', 0, 'Colombie', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (7001,  70, 7001, '', 0, 'Colombie', 1);
 
 -- Regions Chile (id country=67)
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 6701, 67, NULL, NULL, 'Tarapacá', 1);
