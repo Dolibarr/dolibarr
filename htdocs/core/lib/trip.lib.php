@@ -22,10 +22,10 @@
  */
 
 /**
- * Enter description here...
+ * Prepare array with list of tabs
  *
- * @param   $object
- * @return  array
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
  */
 function trip_prepare_head($object)
 {

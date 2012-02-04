@@ -25,11 +25,11 @@
 
 
 /**
-* Prepare array for tabs of warehouses cards
-*
-* @param   $object
-* @return  array
-*/
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function tax_prepare_head($object)
 {
     global $langs, $conf;

@@ -24,10 +24,10 @@
  */
 
 /**
- * Initialize the array of tabs for supplier invoice
+ * Prepare array with list of tabs
  *
- * @param	Facture		$object		Invoice object
- * @return	array					Array of head tabs
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
  */
 function facturefourn_prepare_head($object)
 {
@@ -74,6 +74,12 @@ function facturefourn_prepare_head($object)
 }
 
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function ordersupplier_prepare_head($object)
 {
 	global $langs, $conf;

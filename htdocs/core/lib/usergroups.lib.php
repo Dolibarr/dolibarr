@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,13 @@
 /**
  *	    \file       htdocs/core/lib/usergroups.lib.php
  *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
+ */
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
  */
 function user_prepare_head($object)
 {
@@ -141,11 +148,12 @@ function group_prepare_head($object)
 
 
 /**
- * 		Show list of themes. Show all thumbs of themes
+ * 	Show list of themes. Show all thumbs of themes
  * 
- * 		@param	User	$fuser				User concerned or '' for global theme
- * 		@param	int		$edit				1 to add edit form
- * 		@param	boolean	$foruserprofile		Show for user profile view
+ * 	@param	User	$fuser				User concerned or '' for global theme
+ * 	@param	int		$edit				1 to add edit form
+ * 	@param	boolean	$foruserprofile		Show for user profile view
+ * 	@return	void
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {

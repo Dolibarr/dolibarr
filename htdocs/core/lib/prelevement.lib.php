@@ -26,9 +26,10 @@
 
 
 /**
- *	Prepare head for prelevement screen and return it
- *	@param	    object		Object BonPrelevement
- *	@return    	array       head
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
  */
 function prelevement_prepare_head($object)
 {

@@ -22,51 +22,57 @@
  * \ingroup    banque
  */
 
-function bank_prepare_head($obj)
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
+function bank_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$obj->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("AccountCard");
 	$head[$h][2] = 'bankname';
 	$h++;
 
-	if ($obj->type == 0 || $obj->type == 1)
+	if ($object->type == 0 || $object->type == 1)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/compta/bank/bankid_fr.php?id='.$obj->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/bank/bankid_fr.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("RIB");
 		$head[$h][2] = 'bankid';
 		$h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT."/compta/bank/account.php?account=".$obj->id;
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/account.php?account=".$object->id;
     $head[$h][1] = $langs->trans("Transactions");
     $head[$h][2] = 'journal';
     $h++;
 
 //    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 //	{
-		$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$obj->id;
+		$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$object->id;
 		$head[$h][1] = $langs->trans("PlannedTransactions");
 		$head[$h][2] = 'cash';
 		$h++;
 //	}
 
-    $head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$obj->id;
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
     $head[$h][1] = $langs->trans("IOMonthlyReporting");
     $head[$h][2] = 'annual';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$obj->id;
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
     $head[$h][1] = $langs->trans("Graph");
     $head[$h][2] = 'graph';
     $h++;
 
-    if ($obj->courant != 2)
+    if ($object->courant != 2)
     {
-    	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$obj->id;
+    	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 	    $head[$h][1] = $langs->trans("AccountStatements");
 	    $head[$h][2] = 'statement';
 	    $h++;

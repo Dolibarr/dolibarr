@@ -24,6 +24,13 @@
  * 	\ingroup	product
  */
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @param	User	$user		Object user
+ * @return  array				Array of tabs to shoc
+ */
 function product_prepare_head($object, $user)
 {
 	global $langs, $conf;

@@ -22,6 +22,12 @@
  *	\ingroup    categorie
  */
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function categories_prepare_head($object,$type)
 {
 	global $langs, $conf, $user;

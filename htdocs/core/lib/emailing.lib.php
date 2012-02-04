@@ -22,29 +22,29 @@
  */
 
 /**
- * Enter description here...
+ * Prepare array with list of tabs
  *
- * @param   $mil
- * @return  array
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
  */
-function emailing_prepare_head($mil)
+function emailing_prepare_head($object)
 {
 	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
+	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("MailCard");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$mil->id;
+	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("MailRecipients");
 	$head[$h][2] = 'targets';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/info.php?id=".$mil->id;
+	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/info.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

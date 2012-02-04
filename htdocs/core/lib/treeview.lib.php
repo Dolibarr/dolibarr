@@ -26,16 +26,16 @@
 /**
  * Return if a child id is in descendance of parentid
  *
- * @param $fulltree		Full tree. Tree must be an array of records that looks like:
- *							id = id record
- *							id_mere = id record mother
- *							id_children = array of direct child id
- *							label = record label
- * 							fullpath = Full path of id
- * 							level =	Level of record
- * @param $parentid		Parent id
- * @param $childid		Child id
- * @return	int			1=Yes, 0=No
+ * @param	array	 $fulltree		Full tree. Tree must be an array of records that looks like:
+ *									id = id record
+ *									id_mere = id record mother
+ *									id_children = array of direct child id
+ *									label = record label
+ * 									fullpath = Full path of id
+ * 									level =	Level of record
+ * @param	int		$parentid		Parent id
+ * @param	int		$childid		Child id
+ * @return	int						1=Yes, 0=No
  */
 function is_in_subtree($fulltree,$parentid,$childid)
 {
@@ -73,10 +73,11 @@ function is_in_subtree($fulltree,$parentid,$childid)
 
 /**
  * Show picto of a tree view
- * @param 	fulltree	Array of entries in correct order
- * @param 	key			Key of value to show picto
- * @param 	selected	Selected value
- * @return	array		(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after)
+ * 
+ * @param	array	&$fulltree		Array of entries in correct order
+ * @param 	string	$key			Key of value to show picto
+ * @param 	int		$selected		Selected value
+ * @return	array					(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after)
  */
 function tree_showpad(&$fulltree,$key,$selected=0)
 {
@@ -141,8 +142,10 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 
 /**
  *  Show an element with correct offset
- *  @param      $tab    Array of all elements
- *  @param      $rang   Level of offset
+ *  
+ *  @param	array	$tab    	Array of all elements
+ *  @param  int	    $rang   	Level of offset
+ *  @return	void
  */
 function tree_showline($tab,$rang)
 {
@@ -212,9 +215,11 @@ function tree_showline($tab,$rang)
 
 /**
  *  Recursive function to output menu tree
- *  @param      $tab    Array of elements
- *  @param      $pere   Id of parent
- *  @param      $rang   Level of element
+ *  
+ *  @param	array	$tab    Array of elements
+ *  @param  int	    $pere   Id of parent
+ *  @param  int	    $rang   Level of element
+ *  @return	void
  */
 function tree_recur($tab,$pere,$rang)
 {
