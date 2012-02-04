@@ -31,8 +31,9 @@ $quality = 80;
 
 /**
  *      Return if a filename is file name of a supported image format
- *      @param      file        Filename
- *      @return     int         -1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
+ *
+ *      @param	string	$file       Filename
+ *      @return int         		-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
  */
 function image_format_supported($file)
 {
@@ -62,8 +63,9 @@ function image_format_supported($file)
 
 /**
  *    	Return size of image file on disk (Supported extensions are gif, jpg, png and bmp)
- * 		@param		$file		Full path name of file
- * 		@return		Array		array('width'=>width, 'height'=>height)
+ *
+ * 		@param	string	$file		Full path name of file
+ * 		@return	array				array('width'=>width, 'height'=>height)
  */
 function dol_getImageSize($file)
 {
@@ -84,13 +86,14 @@ function dol_getImageSize($file)
 
 /**
  *    	Resize or crop an image file (Supported extensions are gif, jpg, png and bmp)
- *    	@param     	file           	Path of file to resize/crop
- * 		@param		mode			0=Resize, 1=Crop
- *    	@param     	newWidth       	Largeur maximum que dois faire l'image destination (0=keep ratio)
- *    	@param     	newHeight      	Hauteur maximum que dois faire l'image destination (0=keep ratio)
- * 		@param		src_x			Position of croping image in source image (not use if mode=0)
- * 		@param		src_y			Position of croping image in source image (not use if mode=0)
- *		@return		int				File name if OK, error message if KO
+ *
+ *    	@param	string	$file          	Path of file to resize/crop
+ * 		@param	int		$mode			0=Resize, 1=Crop
+ *    	@param  int		$newWidth      	Largeur maximum que dois faire l'image destination (0=keep ratio)
+ *    	@param  int		$newHeight     	Hauteur maximum que dois faire l'image destination (0=keep ratio)
+ * 		@param	int		$src_x			Position of croping image in source image (not use if mode=0)
+ * 		@param	int		$src_y			Position of croping image in source image (not use if mode=0)
+ *		@return	int						File name if OK, error message if KO
  */
 function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $src_y=0)
 {
@@ -539,11 +542,12 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 
 /**
- *	\brief	This function returns the html for the moneymeter.
- *	\param	actualValue: amount of actual money
- *	\param	pendingValue: amount of money of pending memberships
- *	\param	intentValue: amount of intended money (that's without the amount of actual money)
- *	\return thermometer htmlLegenda
+ *	This function returns the html for the moneymeter.
+ *
+ *	@param	int		$actualValue	amount of actual money
+ *	@param	int		$pendingValue	amount of money of pending memberships
+ *	@param	int		$intentValue	amount of intended money (that's without the amount of actual money)
+ *	@return string					thermometer htmlLegenda
  */
 function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 {

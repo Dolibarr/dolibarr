@@ -26,22 +26,23 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
+ * @param	string	$type		Type of category
  * @return  array				Array of tabs to shoc
  */
 function categories_prepare_head($object,$type)
 {
 	global $langs, $conf, $user;
-	
+
 	$langs->load("categories");
 
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&amp;type='.$type;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/categories/photos.php?id='.$object->id.'&amp;type='.$type;
 	$head[$h][1] = $langs->trans("Photos");
 	$head[$h][2] = 'photos';

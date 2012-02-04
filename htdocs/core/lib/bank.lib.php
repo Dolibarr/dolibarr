@@ -84,8 +84,9 @@ function bank_prepare_head($object)
 
 /**
  *		Check account number informations for a bank account
- *		@param    account       A bank account
- *		@return   int           True if informations are valid, false otherwise
+ *
+ *		@param	Account		$account    A bank account
+ *		@return int           			True if informations are valid, false otherwise
  */
 function checkBanForAccount($account)
 {
@@ -131,7 +132,7 @@ function checkBanForAccount($account)
 	{
 		$CCC = strtolower(trim($account->number));
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet));
-    	$cle_rib=strtolower(CheckES($rib,$CCC));
+    	$cle_rib=strtolower(checkES($rib,$CCC));
 		if ($cle_rib == strtolower($account->cle))
     	{
     		return true;
@@ -159,13 +160,16 @@ function checkBanForAccount($account)
 
 /**
  * 	Returns the key for Spanish Banks Accounts
- *  @return		string		Key
+ *
+ *  @param	string	$IentOfi	IentOfi
+ *  @param	string	$InumCta	InumCta
+ *  @return	string				Key
  */
-function CheckES($IentOfi,$InumCta)
+function checkES($IentOfi,$InumCta)
 {
 	if (empty($IentOfi)||empty($InumCta)||strlen($IentOfi)!=8||strlen($InumCta)!=10)
-	{ 
-		$keycontrol =""; 
+	{
+		$keycontrol ="";
 		return $keycontrol;
 	}
 
@@ -178,29 +182,29 @@ function CheckES($IentOfi,$InumCta)
 	{
 		if (strpos($numbers,substr($ccc,$i,1)) === false)
 		{
-			$keycontrol =""; 
+			$keycontrol ="";
 			return $keycontrol;
 		}
 		$i++;
-	} 
+	}
 
 	$values = array(1,2,4,8,5,10,9,7,3,6);
-	$sum = 0;   
+	$sum = 0;
 
 	for($i=2; $i<10; $i++)
 
 	{
 		$sum += $values[$i] * substr($IentOfi, $i-2, 1);
-	}   
+	}
 
 	$key = 11-$sum%11;
 
 	if ($key==10) $key=1;
-	if ($key==11) $key=0; 
+	if ($key==11) $key=0;
 
   	$keycontrol = $key;
 
-	$sum = 0; 
+	$sum = 0;
 
  	for($i=0; $i<11; $i++)
 
@@ -211,9 +215,9 @@ function CheckES($IentOfi,$InumCta)
  	$key = 11-$sum%11;
 
 	if ($key==10) $key=1;
-	if ($key==11) $key=0; 
+	if ($key==11) $key=0;
 
- 	$keycontrol .= $key; 
+ 	$keycontrol .= $key;
 	return $keycontrol;
 }
 

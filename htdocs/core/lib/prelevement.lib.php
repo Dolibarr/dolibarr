@@ -83,6 +83,7 @@ function prelevement_prepare_head($object)
 
 /**
  *	Check need data to create standigns orders receipt file
+ *
  *	@return    	int		-1 if ko 0 if ok
  */
 function prelevement_check_config()

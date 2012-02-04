@@ -115,12 +115,13 @@ function dol_time_plus_duree($time,$duration_value,$duration_unit)
 }
 
 
-/**   Convert hours and minutes into seconds
+/**
+ * Convert hours and minutes into seconds
  *
- *    @param      int		$iHours      Heures
- *    @param      int		$iMinutes    Minutes
- *    @param      int		$iSeconds    Secondes
- *    @return     int		$iResult	 Temps en secondes
+ * @param      int		$iHours     	Hours
+ * @param      int		$iMinutes   	Minutes
+ * @param      int		$iSeconds   	Seconds
+ * @return     int						Time into seconds
  */
 function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 {
@@ -697,7 +698,7 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 /**
  *	Return array of translated months or selected month
  *
- *	@param	Translate	$outputlangs	Object langs	
+ *	@param	Translate	$outputlangs	Object langs
  *	@return array						Month string or array if selected < 0
  */
 function monthArray($outputlangs)

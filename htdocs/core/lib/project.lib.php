@@ -162,17 +162,17 @@ function task_prepare_head($object)
 function select_projects($socid=-1, $selected='', $htmlname='projectid')
 {
 	global $db,$user,$conf,$langs;
-	
+
 	$hideunselectables = false;
 	if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
-	
+
 	$projectsListId = false;
 	if (empty($user->rights->projet->all->lire))
 	{
 		$projectstatic=new Project($db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 	}
-	
+
 	// On recherche les projets
 	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
@@ -180,7 +180,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 	if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
-	
+
 	dol_syslog("project.lib::select_projects sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -221,7 +221,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 						}
-						
+
 						if ($hideunselectables && $disabled)
 						{
 							$resultat='';
@@ -257,13 +257,13 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 /**
  * Output a task line
  *
- * @param   $inc
- * @param   $parent
- * @param   $lines
- * @param   $level
- * @param   $projectsrole
- * @param   $tasksrole
- * @param   $mytask			0 or 1 to enable only if task is a task i am affected to
+ * @param	string	   	&$inc			?
+ * @param   string		$parent			?
+ * @param   Object		$lines			?
+ * @param   int			&$level			?
+ * @param   string		&$projectsrole	?
+ * @param   string		&$tasksrole		?
+ * @param   int			$mytask			0 or 1 to enable only if task is a task i am affected to
  * @return  $inc
  */
 function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
@@ -369,20 +369,20 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
 /**
  * Show task lines with a particular parent
  *
- * @param 	$inc				Counter that count number of lines legitimate to show (for return)
- * @param 	$parent				Id of parent task to start
- * @param 	$lines				Array of all tasks
- * @param 	$level				Level of task
- * @param 	$var				Color
- * @param 	$showproject		Show project columns
- * @param	$taskrole			Array of roles of user for each tasks
- * @param	$projectsListId		List of id of project allowed to user (separated with comma)
+ * @param	string	 	&$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	int			$parent				Id of parent task to start
+ * @param 	array		&$lines				Array of all tasks
+ * @param 	int			&$level				Level of task
+ * @param 	string		$var				Color
+ * @param 	int			$showproject		Show project columns
+ * @param	int			&$taskrole			Array of roles of user for each tasks
+ * @param	int			$projectsListId		List of id of project allowed to user (separated with comma)
  */
 function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
 {
     global $user, $bc, $langs;
 	global $projectstatic, $taskstatic;
-	
+
     $lastprojectid=0;
 
     $projectsArrayId=explode(',',$projectsListId);
@@ -525,11 +525,12 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 
 /**
  * Search in task lines with a particular parent if there is a task for a particular user (in taskrole)
- * @param 	$inc				Counter that count number of lines legitimate to show (for return)
- * @param 	$parent				Id of parent task to start
- * @param 	$lines				Array of all tasks
- * @param	$taskrole			Array of task filtered on a particular user
- * @return	int					1 if there is
+ *
+ * @param 	string	&$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	int		$parent				Id of parent task to start
+ * @param 	array	&$lines				Array of all tasks
+ * @param	string	&$taskrole			Array of task filtered on a particular user
+ * @return	int							1 if there is
  */
 function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 {
@@ -561,8 +562,9 @@ function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 
 /**
  * Clean task not linked to a parent
- * @param   $db     Database handler
- * @return	int		Nb of records deleted
+ *
+ * @param	DoliDB	$db     Database handler
+ * @return	int				Nb of records deleted
  */
 function clean_orphelins($db)
 {
@@ -618,10 +620,11 @@ function clean_orphelins($db)
 /**
  * Return HTML table with list of projects and number of opened tasks
  *
- * @param   $db
- * @param   $socid
- * @param   $projectsListId     Id of project i have permission on
- * @param   $mytasks            Limited to task i am contact to
+ * @param	DoliDB	$db					Database handler
+ * @param   int		$socid				Id thirdparty
+ * @param   int		$projectsListId     Id of project i have permission on
+ * @param   int		$mytasks            Limited to task i am contact to
+ * @return	void
  */
 function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 {

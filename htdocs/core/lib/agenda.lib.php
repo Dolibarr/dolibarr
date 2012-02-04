@@ -420,7 +420,8 @@ function actions_prepare_head($object)
 /**
  *  Define head array for tabs of agenda setup pages
  *
- *  @return     Array of head
+ *  @param	string	$param		Parameters to add to url
+ *  @return array			    Array of head
  */
 function calendars_prepare_head($param)
 {

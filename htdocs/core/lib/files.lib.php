@@ -350,7 +350,7 @@ function dol_dir_is_emtpy($folder)
 	if (is_dir($newfolder))
 	{
 		$handle = opendir($newfolder);
-		while ((gettype( $name = readdir($handle)) != "boolean"))
+		while ((gettype($name = readdir($handle)) != "boolean"))
 		{
 			$name_array[] = $name;
 		}
@@ -423,11 +423,12 @@ function dol_filemtime($pathoffile)
 
 /**
  * Copy a file to another file
- * @param	$srcfile			Source file (can't be a directory)
- * @param	$destfile			Destination file (can't be a directory)
- * @param	$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK)
- * @param 	$overwriteifexists	Overwrite file if exists (1 by default)
- * @return	boolean				True if OK, false if KO
+ *
+ * @param	string	$srcfile			Source file (can't be a directory)
+ * @param	string	$destfile			Destination file (can't be a directory)
+ * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
+ * @return	boolean						True if OK, false if KO
  */
 function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
@@ -682,10 +683,11 @@ function dol_delete_dir($dir,$nophperrors=0)
 
 /**
  *  Remove a directory $dir and its subdirectories
- *  @param      dir             Dir to delete
- *  @param      count           Counter to count nb of deleted elements
- *  @param      nophperrors     Disable all PHP output errors
- *  @return     int             Number of files and directory removed
+ *
+ *  @param	string	$dir            Dir to delete
+ *  @param  int		$count          Counter to count nb of deleted elements
+ *  @param  int		$nophperrors    Disable all PHP output errors
+ *  @return int             		Number of files and directory removed
  */
 function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 {
@@ -978,8 +980,9 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
  * 	Convert an image file into antoher format.
  *  This need Imagick php extension.
  *
- *  @param	string	$file        Input file name
- *  @param  string	$ext         Extension of target file
+ *  @param	string	$file       Input file name
+ *  @param  string	$ext        Extension of target file
+ *  @return	int					<0 if KO, >0 if OK
  */
 function dol_convert_file($file,$ext='png')
 {
@@ -1012,9 +1015,10 @@ function dol_convert_file($file,$ext='png')
 /**
  * Compress a file
  *
- * @param string	$inputfile		Source file name
- * @param string	$outputfile		Target file name
- * @param string	$mode			'gz' or 'bz'
+ * @param 	string	$inputfile		Source file name
+ * @param 	string	$outputfile		Target file name
+ * @param 	string	$mode			'gz' or 'bz'
+ * @return	int						<0 if KO, >0 if OK
  */
 function dol_compress_file($inputfile, $outputfile, $mode="gz")
 {

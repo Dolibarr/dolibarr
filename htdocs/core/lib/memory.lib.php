@@ -35,9 +35,9 @@ $shmoffset=100;
 /**
  * 	Save data into a memory area shared by all users, all sessions on server
  *
- *  @param      $memoryid		Memory id of shared area
- * 	@param		$data			Data to save
- * 	@return		int				<0 if KO, Nb of bytes written if OK
+ *  @param	string      $memoryid		Memory id of shared area
+ * 	@param	string		$data			Data to save
+ * 	@return	int							<0 if KO, Nb of bytes written if OK
  */
 function dol_setcache($memoryid,$data)
 {
@@ -93,8 +93,8 @@ function dol_setcache($memoryid,$data)
 /**
  * 	Read a memory area shared by all users, all sessions on server
  *
- *  @param      $memoryid		Memory id of shared area
- * 	@return		int				<0 if KO, data if OK
+ *  @param	string	$memoryid		Memory id of shared area
+ * 	@return	int						<0 if KO, data if OK
  */
 function dol_getcache($memoryid)
 {
@@ -154,9 +154,10 @@ function dol_getcache($memoryid)
 
 
 /**
- * 	\brief      Return shared memory address used to store dataset with key memoryid
- *  \param      $memoryid		Memory id of shared area
- * 	\return		int				<0 if KO, Memoy address of shared memory for key
+ * 	Return shared memory address used to store dataset with key memoryid
+ *
+ *  @param	string	$memoryid		Memory id of shared area
+ * 	@return	int						<0 if KO, Memoy address of shared memory for key
  */
 function dol_getshmopaddress($memoryid)
 {
@@ -166,8 +167,9 @@ function dol_getshmopaddress($memoryid)
 }
 
 /**
- * 	\brief      Return list of contents of all memory area shared
- * 	\return		int				0=Nothing is done, <0 if KO, >0 if OK
+ * 	Return list of contents of all memory area shared
+ *
+ * 	@return	int						0=Nothing is done, <0 if KO, >0 if OK
  */
 function dol_listshmop()
 {
@@ -183,10 +185,11 @@ function dol_listshmop()
 }
 
 /**
- * 	\brief      Save data into a memory area shared by all users, all sessions on server
- *  \param      $memoryid		Memory id of shared area
- * 	\param		$data			Data to save
- * 	\return		int				<0 if KO, Nb of bytes written if OK
+ * 	Save data into a memory area shared by all users, all sessions on server
+ *
+ *  @param	int		$memoryid		Memory id of shared area
+ * 	@param	string	$data			Data to save
+ * 	@return	int						<0 if KO, Nb of bytes written if OK
  */
 function dol_setshmop($memoryid,$data)
 {
@@ -218,9 +221,10 @@ function dol_setshmop($memoryid,$data)
 }
 
 /**
- * 	\brief      Read a memory area shared by all users, all sessions on server
- *  \param      $memoryid		Memory id of shared area
- * 	\return		int				<0 if KO, data if OK
+ * 	Read a memory area shared by all users, all sessions on server
+ *
+ *  @param	string	$memoryid		Memory id of shared area
+ * 	@return	int						<0 if KO, data if OK
  */
 function dol_getshmop($memoryid)
 {

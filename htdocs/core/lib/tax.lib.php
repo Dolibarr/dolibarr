@@ -64,14 +64,15 @@ function tax_prepare_head($object)
 
 /**
  *  Look for collectable VAT clients in the chosen year (and month)
- *  @param      db          Database handle
- *  @param      y           Year
- *  @param      date_start  Start date
- *  @param      date_end    End date
- *  @param      modetax     0 or 1 (option vat on debit)
- *  @param      direction   'sell' or 'buy'
- *  @param      m			Month
- *  @return     array       List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
+ *
+ *  @param	DoliDB	$db          	Database handle
+ *  @param  int		$y           	Year
+ *  @param  string	$date_start  	Start date
+ *  @param  string	$date_end    	End date
+ *  @param  int		$modetax     	0 or 1 (option vat on debit)
+ *  @param  string	$direction   	'sell' or 'buy'
+ *  @param  int		$m				Month
+ *  @return array       			List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
  */
 function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction, $m=0)
 {
@@ -207,19 +208,20 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
 
 
 /**
- *  \brief      Gets VAT to collect for the given year (and given quarter or month)
- *              The function gets the VAT in split results, as the VAT declaration asks
- *              to report the amounts for different VAT rates as different lines.
- *              This function also accounts recurrent invoices
- *  \param      db          Database handler object
- *  \param      y           Year
- *  \param      q           Quarter
- *  \param      date_start  Start date
- *  \param      date_end    End date
- *  \param      modetax     0 or 1 (option vat on debit)
- *  \param      direction   'sell' (customer invoice) or 'buy' (supplier invoices)
- *  \param      m           Month
- *  \return     array       List of quarters with vat
+ *  Gets VAT to collect for the given year (and given quarter or month)
+ *  The function gets the VAT in split results, as the VAT declaration asks
+ *  to report the amounts for different VAT rates as different lines.
+ *  This function also accounts recurrent invoices.
+ *
+ *  @param	DoliDB	$db          	Database handler object
+ *  @param  int		$y           	Year
+ *  @param  int		$q           	Quarter
+ *  @param  string	$date_start  	Start date
+ *  @param  string	$date_end    	End date
+ *  @param  int		$modetax     	0 or 1 (option vat on debit)
+ *  @param  int		$direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
+ *  @param  int		$m           	Month
+ *  @return array       			List of quarters with vat
  */
 function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
 {

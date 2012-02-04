@@ -379,11 +379,12 @@ function getFormeJuridiqueLabel($code)
 /**
  * 		Show html area for list of projects
  *
- *		@param		conf		Object conf
- * 		@param		langs		Object langs
- * 		@param		db			Database handler
- * 		@param		object		Third party object
- *      @param      backtopage  Url to go once contact is created
+ *		@param	Conf		$conf			Object conf
+ * 		@param	Translate	$langs			Object langs
+ * 		@param	DoliDB		$db				Database handler
+ * 		@param	Object		$object			Third party object
+ *      @param  string		$backtopage		Url to go once contact is created
+ *      @return	void
  */
 function show_projects($conf,$langs,$db,$object,$backtopage='')
 {
@@ -482,6 +483,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Object		$object		Third party object
  *      @param  string		$backtopage	Url to go once contact is created
+ *      @return	void
  */
 function show_contacts($conf,$langs,$db,$object,$backtopage='')
 {
@@ -594,12 +596,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
 /**
  *    	Show html area with actions to do
- * 		@param		conf		Object conf
- * 		@param		langs		Object langs
- * 		@param		db			Object db
- * 		@param		object		Object third party
- * 		@param		objcon		Object contact
- *      @param      noprint     Return string but does not output it
+ *
+ * 		@param	Conf		$conf		Object conf
+ * 		@param	Translate	$langs		Object langs
+ * 		@param	DoliDB		$db			Object db
+ * 		@param	Object		$object		Object third party
+ * 		@param	Contact		$objcon		Object contact
+ *      @param  int			$noprint     Return string but does not output it
+ *      @return	void
  */
 function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
@@ -741,12 +745,13 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 /**
  *    	Show html area with actions done
  *
- * 		@param		conf		Object conf
- * 		@param		langs		Object langs
- * 		@param		db			Object db
- * 		@param		object		Object third party
- * 		@param		objcon		Object contact
- *      @param      noprint     Return string but does not output it
+ * 		@param	Conf		$conf		Object conf
+ * 		@param	Translate	$langs		Object langs
+ * 		@param	DoliDB		$db			Object db
+ * 		@param	Object		$object		Object third party
+ * 		@param	Contact		$objcon		Object contact
+ *      @param  int			$noprint     Return string but does not output it
+ *      @return	void
  */
 function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
@@ -974,10 +979,12 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
 /**
  * 		Show html area for list of subsidiaries
- *		@param		conf		Object conf
- * 		@param		langs		Object langs
- * 		@param		db			Database handler
- * 		@param		object		Third party object
+ *
+ *		@param	Conf		$conf		Object conf
+ * 		@param	Translate	$langs		Object langs
+ * 		@param	DoliDB		$db			Database handler
+ * 		@param	Societe		$object		Third party object
+ * 		@return	void
  */
 function show_subsidiaries($conf,$langs,$db,$object)
 {

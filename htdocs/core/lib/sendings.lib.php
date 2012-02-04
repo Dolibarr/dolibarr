@@ -104,12 +104,12 @@ function delivery_prepare_head($object)
 /**
  * List sendings and receive receipts
  *
- * @param   string		$origin			Origin
+ * @param   string		$origin			Origin ('commande', ...)
  * @param	int			$origin_id		Origin id
  * @param	string		$filter			Filter
  * @return	int							<0 if KO, >0 if OK
  */
-function show_list_sending_receive($origin='commande',$origin_id,$filter='')
+function show_list_sending_receive($origin,$origin_id,$filter='')
 {
 	global $db, $conf, $langs, $bc;
 	global $form;

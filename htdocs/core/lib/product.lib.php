@@ -256,9 +256,10 @@ function show_stats_for_company($product,$socid)
 
 /**
  *	Return translation label of a unit key
- *	@param  	unit                Unit key (-3,0,3,98,99...)
- *	@param  	measuring_style     Style of unit: weight, volume,...
- *	@return		string	            Unit string
+ *
+ *	@param	int		$unit                Unit key (-3,0,3,98,99...)
+ *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *	@return	string	   			         Unit string
  * 	@see	load_measuring_units
  */
 function measuring_units_string($unit,$measuring_style='')

@@ -2498,10 +2498,12 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 /**
  *	Show a message to say access is forbidden and stop program
  *	Calling this function terminate execution of PHP.
- *	@param		message			    Force error message
- *	@param		printheader		    Show header before
- *  @param      printfooter         Show footer after
- *  @param      showonlymessage     Show only message parameter. Otherwise add more information.
+ *
+ *	@param	string	$message			    Force error message
+ *	@param	int		$printheader		    Show header before
+ *  @param  int		$printfooter         Show footer after
+ *  @param  int		$showonlymessage     Show only message parameter. Otherwise add more information.
+ *  @return	void
  */
 function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {
@@ -2552,9 +2554,11 @@ function dolibarr_print_error($db='',$error='')
  *	On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
  *	Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
  *	renvoyer leur erreur par l'intermediaire de leur propriete "error".
- *	@param      db      	Database handler
- *	@param      error		String or array of errors strings to show
- *  @see        dol_htmloutput_errors
+ *
+ *	@param	DoliDB	$db      	Database handler
+ *	@param  string	$error		String or array of errors strings to show
+ *	@return	void
+ *  @see    dol_htmloutput_errors
  */
 function dol_print_error($db='',$error='')
 {
@@ -2665,6 +2669,8 @@ function dol_print_error($db='',$error='')
 
 /**
  * Show email to contact if technical error
+ *
+ * @reutnr	void
  */
 function dol_print_error_email()
 {
@@ -2677,14 +2683,15 @@ function dol_print_error_email()
 /**
  *	Show title line of an array
  *
- *	@param	    name        Label of field
- *	@param	    file        Url used when we click on sort picto
- *	@param	    field       Field to use for new sorting
- *	@param	    begin       ("" by defaut)
- *	@param	    moreparam   Add more parameters on sort url links ("" by default)
- *	@param      td          Options of attribute td ("" by defaut)
- *	@param      sortfield   Current field used to sort
- *	@param      sortorder   Current sort order
+ *	@param	string	$name        Label of field
+ *	@param	string	$file        Url used when we click on sort picto
+ *	@param	string	$field       Field to use for new sorting
+ *	@param	string	$begin       ("" by defaut)
+ *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
+ *	@param  string	$td          Options of attribute td ("" by defaut)
+ *	@param  string	$sortfield   Current field used to sort
+ *	@param  string	$sortorder   Current sort order
+ *	@return	void
  */
 function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="")
 {
@@ -2694,15 +2701,16 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
 /**
  *	Get title line of an array
  *
- *	@param	    name        Label of field
- *	@param		thead		For thead format
- *	@param	    file        Url used when we click on sort picto
- *	@param	    field       Field to use for new sorting
- *	@param	    begin       ("" by defaut)
- *	@param	    moreparam   Add more parameters on sort url links ("" by default)
- *	@param      moreattrib  Add more attributes on th ("" by defaut)
- *	@param      sortfield   Current field used to sort
- *	@param      sortorder   Current sort order
+ *	@param	string	$name        Label of field
+ *	@param	int		$thead		For thead format
+ *	@param	string	$file        Url used when we click on sort picto
+ *	@param	string	$field       Field to use for new sorting
+ *	@param	string	$begin       ("" by defaut)
+ *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
+ *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
+ *	@param  string	$sortfield   Current field used to sort
+ *	@param  string	$sortorder   Current sort order
+ *	@return	void
  */
 function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="")
 {
@@ -2763,11 +2771,13 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 /**
  *	Show a title (deprecated. use print_fiche_titre instrad)
- *	@param	titre			Title to show
+ *
+ *	@param	string	$title			Title to show
+ *	@return	string					Title to show
  */
-function print_titre($titre)
+function print_titre($title)
 {
-    print '<div class="titre">'.$titre.'</div>';
+    print '<div class="titre">'.$title.'</div>';
 }
 
 /**
@@ -3429,10 +3439,11 @@ function yn($yesno, $case=1, $color=0)
  *  Examples:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
  *  Examples:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
  *
- *	@param      $num            Id to develop
- *	@param      $level		    Level of development (1, 2 or 3 level)
- * 	@param		$alpha		    Use alpha ref
- *  @param      withoutslash    0=With slash at end, 1=without slash at end
+ *	@param	string	$num            Id to develop
+ *	@param  int		$level		    Level of development (1, 2 or 3 level)
+ * 	@param	int		$alpha		    Use alpha ref
+ *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end
+ *  @return	string					Dir to use
  */
 function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
 {
@@ -4092,7 +4103,7 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *  or descending output and uses optionally natural case insensitive sorting (which
  *  can be optionally case sensitive as well).
  *
- *  @param      array		$array      		Array to sort
+ *  @param      array		&$array      		Array to sort
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard sort (asort)
@@ -4305,7 +4316,7 @@ function picto_from_langcode($codelang)
  *  @param  Translate	$langs          Object langs
  *  @param  Object		$object         Object object
  *  @param  array		$head           Object head
- *  @param  int			$h              New position to fill
+ *  @param  int			&$h             New position to fill
  *  @param  string		$type           Value for object where objectvalue can be
  *                              		'thirdparty'       to add a tab in third party view
  *		                              	'intervention'     to add a tab in intervention view
