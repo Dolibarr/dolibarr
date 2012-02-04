@@ -43,10 +43,10 @@ function dol_getDefaultFormat()
 /**
  *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
  *
- *  @param      langs           Object language to use for output
- *  @param      filename        Relative filename to output
- *  @param      searchalt       1=Search also in alternative languages
- *	@return		boolean
+ *  @param	Translate	$langs          Object language to use for output
+ *  @param  string		$filename       Relative filename to output
+ *  @param  int			$searchalt      1=Search also in alternative languages
+ *	@return	boolean						true if OK, false if KO
  */
 function dol_print_file($langs,$filename,$searchalt=0)
 {
@@ -93,7 +93,7 @@ function dol_print_file($langs,$filename,$searchalt=0)
 /**
  *	Show informations on an object
  *
- *	@param	object			Objet to show
+ *	@param	Object	$object			Objet to show
  *	@return	void
  */
 function dol_print_object_info($object)
@@ -627,11 +627,11 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $numFinal = $mask;
 
         // We replace special codes except refclient
-        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date),$numFinal);
-        $numFinal = preg_replace('/\{yy\}/i',date("y",$date),$numFinal);
-        $numFinal = preg_replace('/\{y\}/i' ,substr(date("y",$date),2,1),$numFinal);
-        $numFinal = preg_replace('/\{mm\}/i',date("m",$date),$numFinal);
-        $numFinal = preg_replace('/\{dd\}/i',date("d",$date),$numFinal);
+        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
+        $numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
+        $numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1), $numFinal);
+        $numFinal = preg_replace('/\{mm\}/i',  date("m",$date), $numFinal);
+        $numFinal = preg_replace('/\{dd\}/i',  date("d",$date), $numFinal);
 
         // Now we replace the counter
         $maskbefore='{'.$masktri.'}';
@@ -756,10 +756,10 @@ function check_value($mask,$value)
 /**
  *	Convert a binary data to string that represent hexadecimal value
  *
- *	@param   bin		Value to convert
- *	@param   pad      	Add 0
- *	@param   upper		Convert to tupper
- *	@return  string		x
+ *	@param   string		$bin		Value to convert
+ *	@param   boolean	$pad      	Add 0
+ *	@param   boolean	$upper		Convert to tupper
+ *	@return  string					x
  */
 function binhex($bin, $pad=false, $upper=false)
 {
@@ -912,7 +912,7 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
- *	@param	User	$user       Object user
+ *	@param	User	&$user      Object user
  *	@param	array	$tab        Tableau (cle=>valeur) des parametres a sauvegarder
  *	@return int         		<0 if KO, >0 if OK
  *
@@ -1135,6 +1135,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 /**
  * This function evaluates a string that should be a valid IPv4
  *
+ * @param	string		$ip			IP Address
  * @return	It returns 0 if $ip is not a valid IPv4
  * 			It returns 1 if $ip is a valid IPv4 and is a public IP
  * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP

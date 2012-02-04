@@ -412,7 +412,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
                 {
                     // So search if task has a subtask legitimate to show
                     $foundtaskforuserdeeper=0;
-                    SearchTaskInChild($foundtaskforuserdeeper,$lines[$i]->id,$lines,$taskrole);
+                    searchTaskInChild($foundtaskforuserdeeper,$lines[$i]->id,$lines,$taskrole);
                     //print '$foundtaskforuserpeeper='.$foundtaskforuserdeeper.'<br>';
                     if ($foundtaskforuserdeeper > 0)
                     {
@@ -532,7 +532,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
  * @param	string	&$taskrole			Array of task filtered on a particular user
  * @return	int							1 if there is
  */
-function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
+function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 {
     //print 'Search in line with parent id = '.$parent.'<br>';
     $numlines=count($lines);
@@ -549,7 +549,7 @@ function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
                 return $inc;
             }
 
-            SearchTaskInChild($inc, $lines[$i]->id, $lines, $taskrole);
+            searchTaskInChild($inc, $lines[$i]->id, $lines, $taskrole);
             //print 'Found inc='.$inc.'<br>';
 
             if ($inc > 0) return $inc;

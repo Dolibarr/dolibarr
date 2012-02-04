@@ -1796,14 +1796,15 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 /**
  *	Show logo action
  *
- *	@param	string	$alt         	Text for image alt and title
+ *	@param	string	$alt         	Text for image alt and title ('default', ...)
  *	@param  int		$numaction   	Action to show
  *	@return string      			Return an img tag
  */
-function img_action($alt = "default", $numaction)
+function img_action($alt, $numaction)
 {
     global $conf,$langs;
-    if ($alt=="default") {
+    if ($alt=="default")
+    {
         if ($numaction == -1) $alt=$langs->transnoentitiesnoconv("ChangeDoNotContact");
         if ($numaction == 0)  $alt=$langs->transnoentitiesnoconv("ChangeNeverContacted");
         if ($numaction == 1)  $alt=$langs->transnoentitiesnoconv("ChangeToContact");
@@ -1830,8 +1831,8 @@ function img_pdf($alt = "default",$size=3)
 /**
  *	Show logo +
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Texte sur le alt de l'image
+ *	@return string      		Return tag img
  */
 function img_edit_add($alt = "default")
 {
@@ -1842,8 +1843,8 @@ function img_edit_add($alt = "default")
 /**
  *	Show logo -
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt         Texte sur le alt de l'image
+ *	@return string      Retourne tag img
  */
 function img_edit_remove($alt = "default")
 {
@@ -1855,10 +1856,10 @@ function img_edit_remove($alt = "default")
 /**
  *	Show logo editer/modifier fiche
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      float       Si il faut y mettre le style "float: right"
- *	@param      other		Add more attributes on img
- *	@return     string      Retourne tag img
+ *	@param  string	$alt        Texte sur le alt de l'image
+ *	@param  float	$float      Si il faut y mettre le style "float: right"
+ *	@param  string	$other		Add more attributes on img
+ *	@return string      		Retourne tag img
  */
 function img_edit($alt = "default", $float=0, $other='')
 {
@@ -1874,10 +1875,10 @@ function img_edit($alt = "default", $float=0, $other='')
 /**
  *	Show logo view card
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      float       Si il faut y mettre le style "float: right"
- *	@param      other		Add more attributes on img
- *	@return     string      Retourne tag img
+ *	@param	string	$alt         Texte sur le alt de l'image
+ *	@param  float	$float       Si il faut y mettre le style "float: right"
+ *	@param  string	$other		Add more attributes on img
+ *	@return string      Retourne tag img
  */
 function img_view($alt = "default", $float=0, $other='')
 {
@@ -1893,9 +1894,9 @@ function img_view($alt = "default", $float=0, $other='')
 /**
  *  Show delete logo
  *
- *  @param      alt         Texte sur le alt de l'image
- *	@param     other      Add more attributes on img
- *  @return     string      Retourne tag img
+ *  @param	string	$alt        Text on alt image
+ *	@param  string	$other      Add more attributes on img
+ *  @return string      		Retourne tag img
  */
 function img_delete($alt = "default", $other='')
 {
@@ -1908,9 +1909,9 @@ function img_delete($alt = "default", $other='')
 /**
  *	Show help logo with cursor "?"
  *
- * 	@param		usehelpcursor
- * 	@param		usealttitle		Texte to use as alt title
- * 	@return     string      	Retourne tag img
+ * 	@param	string	$usehelpcursor		Use help cursor
+ * 	@param	string	$usealttitle		Text to use as alt title
+ * 	@return string      				Retourne tag img
  */
 function img_help($usehelpcursor=1,$usealttitle=1)
 {
@@ -1931,8 +1932,8 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 /**
  *	Affiche logo info
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_info($alt = "default")
 {
@@ -1942,11 +1943,11 @@ function img_info($alt = "default")
 }
 
 /**
- *	Affiche logo warning
+ *	Show logo warning
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      float       Si il faut afficher le style "float: right"
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$float      If we must add style "float: right"
+ *	@return string      		Return img tag
  */
 function img_warning($alt = "default",$float=0)
 {
@@ -1958,8 +1959,8 @@ function img_warning($alt = "default",$float=0)
 /**
  *  Affiche logo error
  *
- *  @param      alt         Texte sur le alt de l'image
- *  @return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_error($alt = "default")
 {
@@ -1971,9 +1972,9 @@ function img_error($alt = "default")
 /**
  *	Affiche logo telephone
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param		option		Choose of logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$option		Option
+ *	@return string      		Return img tag
  */
 function img_phone($alt = "default",$option=0)
 {
@@ -1989,8 +1990,8 @@ function img_phone($alt = "default",$option=0)
 /**
  *	Affiche logo suivant
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_next($alt = "default")
 {
@@ -2004,8 +2005,8 @@ function img_next($alt = "default")
 /**
  *	Affiche logo precedent
  *
- *	@param      alt     Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_previous($alt = "default")
 {
@@ -2017,9 +2018,9 @@ function img_previous($alt = "default")
 /**
  *	Show logo down arrow
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      selected    Affiche version "selected" du logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$selected   Selected
+ *	@return string      		Return img tag
  */
 function img_down($alt = "default", $selected=0)
 {
@@ -2032,9 +2033,9 @@ function img_down($alt = "default", $selected=0)
 /**
  *	Show logo top arrow
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      selected    Affiche version "selected" du logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$selected	Selected
+ *	@return string      		Return img tag
  */
 function img_up($alt = "default", $selected=0)
 {
@@ -2047,9 +2048,9 @@ function img_up($alt = "default", $selected=0)
 /**
  *	Affiche logo gauche
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      selected    Affiche version "selected" du logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$selected	Selected
+ *	@return string      		Return img tag
  */
 function img_left($alt = "default", $selected=0)
 {
@@ -2062,9 +2063,9 @@ function img_left($alt = "default", $selected=0)
 /**
  *	Affiche logo droite
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      selected    Affiche version "selected" du logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$selected	Selected
+ *	@return string      		Return img tag
  */
 function img_right($alt = "default", $selected=0)
 {
@@ -2077,9 +2078,9 @@ function img_right($alt = "default", $selected=0)
 /**
  *	Affiche le logo tick si allow
  *
- *	@param      allow       Authorise ou non
- *	@param      alt			Alt text for img
- *	@return     string      Retourne tag img
+ *	@param	string	$allow		Allow
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_allow($allow,$alt='default')
 {
@@ -2670,7 +2671,7 @@ function dol_print_error($db='',$error='')
 /**
  * Show email to contact if technical error
  *
- * @reutnr	void
+ * @return	void
  */
 function dol_print_error_email()
 {
@@ -2782,11 +2783,13 @@ function print_titre($title)
 
 /**
  *	Show a title with picto
- *	@param	titre				Title to show
- *	@param	mesg				Added message to show on right
- *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
- * 	@param	id					To force an id on html objects
+ *
+ *	@param	string	$titre				Title to show
+ *	@param	string	$mesg				Added message to show on right
+ *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
+ * 	@param	int		$id					To force an id on html objects
+ * 	@return	void
  */
 function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
@@ -2796,11 +2799,12 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 /**
  *	Load a title with picto
  *
- *	@param	titre				Title to show
- *	@param	mesg				Added message to show on right
- *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
- * 	@param	id					To force an id on html objects
+ *	@param	string	$titre				Title to show
+ *	@param	string	$mesg				Added message to show on right
+ *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		$pictoisfullpath		1=Icon name is a full absolute url of image
+ * 	@param	int		$id					To force an id on html objects
+ * 	@return	void
  */
 function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
@@ -2829,17 +2833,17 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 /**
  *	Print a title with navigation controls for pagination
  *
- *	@param	titre				Title to show (required)
- *	@param	page				Numero of page (required)
- *	@param	file				Url of page (required)
- *	@param	options         	parametres complementaires lien ('' par defaut)
- *	@param	sortfield       	champ de tri ('' par defaut)
- *	@param	sortorder       	ordre de tri ('' par defaut)
- *	@param	center          	chaine du centre ('' par defaut)
- *	@param	num					number of records found by select with limit+1
- *	@param	totalnboflines		Total number of records/lines for all pages (if known)
- *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
+ *	@param	string	$titre				Title to show (required)
+ *	@param	string	$page				Numero of page (required)
+ *	@param	string	$file				Url of page (required)
+ *	@param	string	$options         	parametres complementaires lien ('' par defaut)
+ *	@param	string	$sortfield       	champ de tri ('' par defaut)
+ *	@param	string	$sortorder       	ordre de tri ('' par defaut)
+ *	@param	string	$center          	chaine du centre ('' par defaut)
+ *	@param	int		$num				number of records found by select with limit+1
+ *	@param	int		$totalnboflines		Total number of records/lines for all pages (if known)
+ *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		$pictoisfullpath		1=Icon name is a full absolute url of image
  *	@return	void
  */
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0)
@@ -3256,10 +3260,10 @@ function get_product_vat_for_country($idprod, $countrycode)
 /**
  *	Return localtax rate of a product in a particular selling country
  *
- *  @param      idprod          Id of product
- *  @package    local           1 for localtax1, 2 for localtax 2
- *  @param      countrycode     Country code (FR, US, IT, ...)
- *  @return     int             <0 if KO, Vat rate if OK
+ *  @param	int		$idprod         Id of product
+ *  @param  int		$local          1 for localtax1, 2 for localtax 2
+ *  @param  string	$countrycode    Country code (FR, US, IT, ...)
+ *  @return int             		<0 if KO, Vat rate if OK
  *	TODO May be this should be better as a method of product class
  */
 function get_product_localtax_for_country($idprod, $local, $countrycode)
@@ -3410,9 +3414,10 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 /**
  *	Return yes or no in current language
  *
- *	@param	yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	case			1=Yes/No, 0=yes/no
- *	@param	color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@param	string	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
+ *	@param	string	$case			1=Yes/No, 0=yes/no
+ *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@return	string					HTML string
  */
 function yn($yesno, $case=1, $color=0)
 {
@@ -3741,10 +3746,10 @@ function dol_nboflines($s,$maxchar=0)
 /**
  *	Return nb of lines of a formated text with \n and <br>
  *
- *	@param	   	text      		Text
- *	@param	   	maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
- * 	@param		charset			Give the charset used to encode the $text variable in memory.
- *	@return    	int				Number of lines
+ *	@param	string	$text      		Text
+ *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
+ * 	@param	string	$charset		Give the charset used to encode the $text variable in memory.
+ *	@return int						Number of lines
  */
 function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 {
@@ -4315,7 +4320,7 @@ function picto_from_langcode($codelang)
  *  @param	Conf		$conf           Object conf
  *  @param  Translate	$langs          Object langs
  *  @param  Object		$object         Object object
- *  @param  array		$head           Object head
+ *  @param  array		&$head          Object head
  *  @param  int			&$h             New position to fill
  *  @param  string		$type           Value for object where objectvalue can be
  *                              		'thirdparty'       to add a tab in third party view
