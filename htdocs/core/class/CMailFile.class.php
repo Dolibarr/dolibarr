@@ -589,27 +589,28 @@ class CMailFile
 		$host = dol_getprefix();
 
 		// Sender
-		//$out .= "Sender: ".getValidAddress($this->addr_from,2m)).$this->eol;
-		$out .= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
-		//$out .= "From: ".$this->getValidAddress($this->addr_from,2,0).$this->eol;
-		//$out .= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
-		if (isset($this->reply_to)  && $this->reply_to)  $out .= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol;
-		if (isset($this->errors_to) && $this->errors_to) $out .= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol;
+		//$out.= "Sender: ".getValidAddress($this->addr_from,2m)).$this->eol;
+		//$out.= "From: ".$this->getValidAddress($this->addr_from,2,0).$this->eol;
+		//$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
+		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol;
+		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol;
 
 		// Receiver
-		if (isset($this->addr_cc)   && $this->addr_cc)   $out .= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol;
-		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out .= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol;
+		if (isset($this->addr_cc)   && $this->addr_cc)   $out.= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol;
+		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol;
 
-		// Accuse reception
-		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol;
+		// Delivery receipt
+		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out.= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol;
 
-		//$out .= "X-Priority: 3".$this->eol;
+		//$out.= "X-Priority: 3".$this->eol;
 
 		$out.= 'Date: ' . date("r") . $this->eol;
 		$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol;
 
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
 		$out.= "Mime-Version: 1.0".$this->eol;
+
+		$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
 
 		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
