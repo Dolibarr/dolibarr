@@ -96,7 +96,9 @@ class AllTests
         require_once dirname(__FILE__).'/ContratTest.php';
         $suite->addTestSuite('ContratTest');
         require_once dirname(__FILE__).'/FactureTest.php';
-        $suite->addTestSuite('FactureTest');    // This one covers also triggers
+        $suite->addTestSuite('FactureTest');
+        require_once dirname(__FILE__).'/FactureTestRounding.php';
+        $suite->addTestSuite('FactureTestRounding');
         require_once dirname(__FILE__).'/FactureFournisseurTest.php';
         $suite->addTestSuite('FactureFournisseurTest');
         require_once dirname(__FILE__).'/PropalTest.php';
