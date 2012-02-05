@@ -4,7 +4,7 @@
  * Copyright (C)           Eric Seigne
  * Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -590,7 +590,7 @@ class CMailFile
 
 		// Sender
 		//$out.= "Sender: ".getValidAddress($this->addr_from,2m)).$this->eol;
-		//$out.= "From: ".$this->getValidAddress($this->addr_from,2,0).$this->eol;
+		$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
 		//$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
 		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol;
 		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol;
@@ -610,7 +610,7 @@ class CMailFile
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
 		$out.= "Mime-Version: 1.0".$this->eol;
 
-		$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
+		//$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
 
 		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
