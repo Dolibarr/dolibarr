@@ -41,7 +41,7 @@ function customfields_admin_prepare_head($modulesarray, $currentmodule = null)
     // preparing the tabs
     foreach ($modulesarray as $module) {
         if ($currentmodule == $module) { $currentmoduleindex = $h;} // detecting the index of the current tab
-        $head[$h][0] = DOL_URL_ROOT.'/admin/customfields.php?module='.$module;
+        $head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$module;
         $head[$h][1] = $langs->trans($module);
         $head[$h][2] = 'general';
         $h++;

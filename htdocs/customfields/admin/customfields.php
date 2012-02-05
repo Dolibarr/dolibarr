@@ -23,7 +23,7 @@
  */
 
 // **** INIT ****
-require('../main.inc.php');
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/customfields/conf/conf_customfields.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/customfields/class/customfields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");

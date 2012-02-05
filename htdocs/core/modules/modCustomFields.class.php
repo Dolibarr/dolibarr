@@ -76,7 +76,7 @@ class modCustomFields extends DolibarrModules
 		//$this->style_sheet = '/mymodule/mymodule.css.php';
 
 		// Config pages. Put here list of php page names stored in admin directory used to setup module.
-		$this->config_page_url = array("customfields.php");
+		$this->config_page_url = array("customfields.php@customfields");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
