@@ -573,21 +573,21 @@ foreach($mainmenuusedarray as $key => $val)
 	{
 		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 		{
-			$url=dol_buildpath($path.'/'.$val.'/img/'.$val.'.png', 1);
+			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 			$found=1;
 			break;
 		}
 	}
 	// Img file not found
-	if (! $found && $generic <= 4)
+	if (! $found)
 	{
 		$url=dol_buildpath($path.'/theme/eldy/img/menus/generic'.$generic.".png",1);
 		$found=1;
-		$generic++;
+		if ($generic < 4) $generic++;
+		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
 	}
 	if ($found)
 	{
-		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
 		print "div.mainmenu.".$val." {\n";
 		print "	background-image: url(".$url.");\n";
 		print "	height:28px;\n";
