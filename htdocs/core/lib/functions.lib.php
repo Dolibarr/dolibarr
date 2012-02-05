@@ -4438,7 +4438,8 @@ function printCommonFooter($zone='private')
     if (! empty($_SERVER['DOL_TUNING']))
     {
         $micro_end_time=dol_microtime_float(true);
-        print "\n".'<script type="text/javascript">console.log("';
+        print "\n".'<script type="text/javascript">'."\n";
+        print 'console.log("';
         if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
         print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
         print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
@@ -4456,7 +4457,8 @@ function printCommonFooter($zone='private')
         {
             print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
         }
-        print '")</script>'."\n";
+        print '")'."\n";
+        print '</script>'."\n";
 
         // Add Xdebug coverage of code
         if (defined('XDEBUGCOVERAGE')) {
