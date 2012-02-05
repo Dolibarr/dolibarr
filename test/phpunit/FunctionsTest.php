@@ -91,8 +91,11 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
-    /**
-     */
+	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
+	 */
     protected function setUp()
     {
         global $conf,$user,$langs,$db;
@@ -103,8 +106,11 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
-    /**
-     */
+	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
+	 */
     protected function tearDown()
     {
         print __METHOD__."\n";
@@ -222,6 +228,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testDolMkTime
+     *
+     * @return	void
      */
     public function testDolMkTime()
     {

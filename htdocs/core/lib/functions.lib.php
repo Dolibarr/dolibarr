@@ -1047,6 +1047,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 {
+    global $conf;
     //print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
     // Clean parameters
@@ -1065,26 +1066,29 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
         if ($second< 0 || $second > 60) return '';
     }
 
-    $usealternatemethod=false;
-    if ($year <= 1970) $usealternatemethod=true;		// <= 1970
-    if ($year >= 2038) $usealternatemethod=true;		// >= 2038
-
-    if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
+    if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
     {
-        /*
-         // On peut utiliser strtotime pour obtenir la traduction.
-         // strtotime is ok for range: Friday 13 December 1901 20:45:54 GMT to Tuesday 19 January 2038 03:14:07 GMT.
-         $montharray=array(1=>'january',2=>'february',3=>'march',4=>'april',5=>'may',6=>'june',
-         7=>'july',8=>'august',9=>'september',10=>'october',11=>'november',12=>'december');
-         $string=$day." ".$montharray[0+$month]." ".$year." ".$hour.":".$minute.":".$second." GMT";
-         $date=strtotime($string);
-         print "- ".$string." ".$date." -";
-         */
-        $date=adodb_mktime($hour,$minute,$second,$month,$day,$year,$isdst,$gm);
+        if (empty($gm)) $localtz = new DateTimeZone(date_default_timezone_get());
+        else $localtz = new DateTimeZone('UTC');
+        $dt = new DateTime(null,$localtz);
+        $dt->setDate($year,$month,$day);
+        $dt->setTime($hour,$minute,$second);
+        $date=$dt->getTimestamp();
     }
     else
     {
-        $date=mktime($hour,$minute,$second,$month,$day,$year);
+        $usealternatemethod=false;
+        if ($year <= 1970) $usealternatemethod=true;		// <= 1970
+        if ($year >= 2038) $usealternatemethod=true;		// >= 2038
+
+        if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
+        {
+            $date=adodb_mktime($hour,$minute,$second,$month,$day,$year,$isdst,$gm);
+        }
+        else
+        {
+            $date=mktime($hour,$minute,$second,$month,$day,$year);
+        }
     }
     return $date;
 }

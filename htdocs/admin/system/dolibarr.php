@@ -159,7 +159,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
 $a=getCurrentTimeZoneString();
 $a.=' '.getCurrentTimeZoneInt();
-$a.=' ('.(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970)).')';
+$a.=' ('.(getCurrentTimeZoneInt()>0?'+':'').(getCurrentTimeZoneInt()*3600).')';
 print $form->textwithtooltip($a,$txt,2,1,img_info(''));
 print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 $var=!$var;
@@ -203,4 +203,6 @@ print '</table>';
 print '<br>';
 
 llxFooter();
+
+$db->close();
 ?>

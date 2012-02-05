@@ -76,14 +76,14 @@ function getCurrentTimeZoneString()
 
 /**
  * Return server timezone int.
- * If $conf->global->MAIN_OLD_DATE is set, we use old behaviour: All convertion does not include daylight.
+ * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
  *
  * @return string			An offset in seconds (3600 for Europe/Paris on winter and 7200 for Europe/Paris on summer)
  */
 function getCurrentTimeZoneInt()
 {
     global $conf;
-    if (class_exists('DateTime') && empty($conf->global->MAIN_OLD_DATE))
+    if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
     {
         // Method 1 (include daylight)
         $localtz = new DateTimeZone(date_default_timezone_get());

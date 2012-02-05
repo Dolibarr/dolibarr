@@ -86,7 +86,6 @@ class Conf
         $this->user=(object) array();
 	    //! Charset for HTML output and for storing data in memory
 	    $this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
-	    $this->global->MAIN_OLD_DATE=1;
 	}
 
 
