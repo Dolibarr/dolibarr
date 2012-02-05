@@ -27,6 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -218,6 +219,36 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("ée...àa",$after);
 
         return true;
+    }
+
+    /**
+     */
+    public function testDolMkTime()
+    {
+        $result=dol_mktime(25,0,0,1,1,1970,1,1);    // Error (25 hours)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+        $result=dol_mktime(2,61,0,1,1,1970,1,1);    // Error (61 minutes)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+        $result=dol_mktime(2,1,61,1,1,1970,1,1);    // Error (61 seconds)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+        $result=dol_mktime(2,1,1,1,32,1970,1,1);    // Error (day 32)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+        $result=dol_mktime(2,1,1,13,1,1970,1,1);    // Error (month 13)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+
+        $result=dol_mktime(2,1,1,1,1,1970,1);    // 1970-01-01 02:01:01 in GMT area -> 7261
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(7261,$result);
+
+        $tz=getCurrentTimeZoneInt();
+        $result=dol_mktime(2,0,0,1,1,1970,0);    // 1970-01-01 02:00:00 in local area
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(7200-($tz*3600),$result);
     }
 }
 ?>

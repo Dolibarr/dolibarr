@@ -709,7 +709,7 @@ if (count($listofextcals))
                         $loop=true; $j=0;
                         // daykey must be date that represent day box in calendar so must be a user time
                         $daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
-                        $daykeygmt=dol_mktime(0,0,0,$mois,$jour,$annee,true,0,false);
+                        $daykeygmt=dol_mktime(0,0,0,$mois,$jour,$annee,true,0);
                         do
                         //print 'x'.$datestart.'-'.$dateend;exit;
                         {

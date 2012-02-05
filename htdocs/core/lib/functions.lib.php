@@ -1042,11 +1042,10 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	@param	int			$year			Year
  *	@param	int			$gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *  @param	int			$isdst			Dayling saving time
  *	@return	timestamp					Date as a timestamp, '' if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
-function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$isdst=true)
+function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 {
     //print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 

@@ -63,18 +63,39 @@ function get_tz_array()
 
 
 /**
- * Return server timezone
+ * Return server timezone string
  *
- * @return string	TimeZone
+ * @return string			PHP server timezone string ('Europe/Paris')
  */
-function getCurrentTimeZone()
+function getCurrentTimeZoneString()
 {
-    // Method 1
-    //$tzstring=date_default_timezone_get(); // Then convert into tz
+    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
+    else return '';
+}
 
-    // Method 2
-    $tmp=dol_mktime(0,0,0,1,1,1970);
-    $tz=($tmp<0?'+':'-').sprintf("%02d",abs($tmp/3600));
+
+/**
+ * Return server timezone int.
+ * If $conf->global->MAIN_OLD_DATE is set, we use old behaviour: All convertion does not include daylight.
+ *
+ * @return string			An offset in seconds (3600 for Europe/Paris on winter and 7200 for Europe/Paris on summer)
+ */
+function getCurrentTimeZoneInt()
+{
+    global $conf;
+    if (class_exists('DateTime') && empty($conf->global->MAIN_OLD_DATE))
+    {
+        // Method 1 (include daylight)
+        $localtz = new DateTimeZone(date_default_timezone_get());
+        $localdt = new DateTime("now", $localtz);
+        $tmp=-1*$localtz->getOffset($localdt);
+    }
+    else
+    {
+        // Method 2 (does not include daylight)
+        $tmp=dol_mktime(0,0,0,1,1,1970);
+    }
+    $tz=($tmp<0?'+':'-').abs($tmp/3600);
     return $tz;
 }
 

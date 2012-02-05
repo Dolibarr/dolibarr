@@ -59,14 +59,14 @@ class Conf
 	public $entity=1;
 	//! Used to store list of entities to use for each element
 	public $entities		 	 = array();
-	
-	public $modules				 = array();	// List of modules	
+
+	public $modules				 = array();	// List of modules
 	public $css_modules			 = array();
 	public $tabs_modules		 = array();
 	public $triggers_modules	 = array('/core/triggers');
 	public $hooks_modules		 = array();
 	public $login_method_modules = array();
-	
+
 	var $logbuffer = array();
 
 
@@ -86,6 +86,7 @@ class Conf
         $this->user=(object) array();
 	    //! Charset for HTML output and for storing data in memory
 	    $this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
+	    $this->global->MAIN_OLD_DATE=1;
 	}
 
 
@@ -123,7 +124,7 @@ class Conf
 
 		$resql = $db->query($sql);
 		if ($resql)
-		{	
+		{
 			$i = 0;
 			$numr = $db->num_rows($resql);
 			while ($i < $numr)
@@ -192,12 +193,12 @@ class Conf
 				}
 				$i++;
 			}
-			
+
 			// Object $mc
 			if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
 			{
 				global $mc;
-				
+
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret)
 				{
