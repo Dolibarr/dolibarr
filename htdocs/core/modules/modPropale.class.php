@@ -190,7 +190,7 @@ class modPropale extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		global $conf;
+		global $conf,$langs;
 
 		// Remove permissions and default values
 		$this->remove();
@@ -199,7 +199,14 @@ class modPropale extends DolibarrModules
 		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/proposals';
 		create_exdir($dirodt);
-		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/proposals/template_proposal.odt',$dirodt.'/template_proposal.odt',0,0);
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/proposals/template_proposal.odt'; $dest=$dirodt.'/template_proposal.odt';
+		$result=dol_copy($src,$dest,0,0);
+		if ($result < 0)
+		{
+		    $langs->load("errors");
+		    $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+		    return 0;
+		}
 
 		$sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,

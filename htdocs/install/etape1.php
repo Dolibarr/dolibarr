@@ -392,7 +392,7 @@ if (! $error && $db->connected && $action == "set")
         {
             // We must ignore errors as an existing old file may already exists and not be replacable or
             // the installer (like for ubuntu) may not have permission to create another file than conf.php.
-            // Also no other process must be able to read file or we expose the new file so content with password.
+            // Also no other process must be able to read file or we expose the new file, so content with password.
             @dol_copy($conffile, $conffile.'.old', '0400');
         }
 

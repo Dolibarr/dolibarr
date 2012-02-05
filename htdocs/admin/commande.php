@@ -334,11 +334,11 @@ print '</table><br>';
 
 
 /*
- * Modeles de documents
+ * Document templates generators
  */
 print_titre($langs->trans("OrdersModelModule"));
 
-// Defini tableau def de modele
+// Load array def with activated templates
 $type='order';
 $def = array();
 $sql = "SELECT nom";
@@ -365,12 +365,11 @@ else
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
-print '  <td width="100">'.$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("Infos").'</td>';
-print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td align="center" width="38" colspan="2">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -387,11 +386,13 @@ foreach ($conf->file->dol_document_root as $dirroot)
             $handle=opendir($dir);
             if (is_resource($handle))
             {
+
                 while (($file = readdir($handle))!==false)
                 {
                     $filelist[]=$file;
                 }
                 closedir($handle);
+                arsort($filelist);
 
                 foreach($filelist as $file)
                 {

@@ -11,6 +11,7 @@ ErrorLoginAlreadyExists=Le login %s existe déjà.
 ErrorGroupAlreadyExists=Le groupe %s existe déjà.
 ErrorRecordNotFound=Enregistrement non trouvé.
 ErrorDuplicateTrigger=Un fichier trigger de classe '<b>%s</b>' est présent plusieurs fois. Supprimer le doublon du répertoire '<b>%s</b>'.
+ErrorFailToCopyFile=Echec de la copie du fichier '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToRenameFile=Echec du renommage du fichier '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToCreateFile=Echec de la création du fichier '<b>%s</b>'.
 ErrorFailToDeleteFile=Echec de l'effacement du fichier '<b>%s</b>'.

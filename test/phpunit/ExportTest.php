@@ -92,9 +92,9 @@ class ExportTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
-	 * Ran on start
+	 * Init phpunit tests
 	 *
-	 * @return void
+	 * @return	void
 	 */
     protected function setUp()
     {
@@ -107,9 +107,9 @@ class ExportTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
     }
 	/**
-	 * Ran on start
+	 * End phpunit tests
 	 *
-	 * @return void
+	 * @return	void
 	 */
     protected function tearDown()
     {

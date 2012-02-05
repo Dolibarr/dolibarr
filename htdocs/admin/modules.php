@@ -472,7 +472,7 @@ dol_fiche_end();
 print '<div class="tabsAction">';
 print '</div>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

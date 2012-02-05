@@ -98,41 +98,38 @@ abstract class DolibarrModules
         // Create module's directories
         if (! $err) $err+=$this->create_dirs();
 
-        // Execute les requetes sql complementaires
-        if (! $err)
+        // Execute addons requests
+        $num=count($array_sql);
+    	for ($i = 0; $i < $num; $i++)
         {
-            $num=count($array_sql);
-        	for ($i = 0; $i < $num; $i++)
+            if (! $err)
             {
-                if (! $err)
+                $val=$array_sql[$i];
+                $sql='';
+                $ignoreerror=0;
+                if (is_array($val))
                 {
-                    $val=$array_sql[$i];
-                    $sql='';
-                    $ignoreerror=0;
-                    if (is_array($val))
+                    $sql=$val['sql'];
+                    $ignoreerror=$val['ignoreerror'];
+                }
+                else
+                {
+                    $sql=$val;
+                }
+
+                dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror." sql=".$sql, LOG_DEBUG);
+                $result=$this->db->query($sql);
+                if (! $result)
+                {
+                    if (! $ignoreerror)
                     {
-                        $sql=$val['sql'];
-                        $ignoreerror=$val['ignoreerror'];
+                        $this->error=$this->db->lasterror();
+                        dol_syslog(get_class($this)."::_init Error ".$this->error, LOG_ERR);
+                        $err++;
                     }
                     else
                     {
-                        $sql=$val;
-                    }
-
-                    dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror." sql=".$sql, LOG_DEBUG);
-                    $result=$this->db->query($sql);
-                    if (! $result)
-                    {
-                        if (! $ignoreerror)
-                        {
-                            $this->error=$this->db->lasterror();
-                            dol_syslog(get_class($this)."::_init Error ".$this->error, LOG_ERR);
-                            $err++;
-                        }
-                        else
-                        {
-                            dol_syslog(get_class($this)."::_init Warning ".$this->db->lasterror(), LOG_WARNING);
-                        }
+                        dol_syslog(get_class($this)."::_init Warning ".$this->db->lasterror(), LOG_WARNING);
                     }
                 }
             }

@@ -212,7 +212,7 @@ class modFacture extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		global $conf;
+		global $conf,$langs;
 
 		// Remove permissions and default values
 		$this->remove($options);
@@ -220,11 +220,18 @@ class modFacture extends DolibarrModules
 		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/invoices';
 		create_exdir($dirodt);
-		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt',$dirodt.'/template_invoice.odt',0,0);
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt'; $dest=$dirodt.'/template_invoice.odt';
+		$result=dol_copy($src,$dest,0,0);
+		if ($result < 0)
+		{
+		    $langs->load("errors");
+		    $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+		    return 0;
+		}
 
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','invoice',".$conf->entity.")",
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','invoice',".$conf->entity.")"
 		);
 
 		return $this->_init($sql,$options);

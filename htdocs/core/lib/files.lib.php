@@ -422,33 +422,48 @@ function dol_filemtime($pathoffile)
 }
 
 /**
- * Copy a file to another file
+ * Copy a file to another file.
  *
  * @param	string	$srcfile			Source file (can't be a directory)
  * @param	string	$destfile			Destination file (can't be a directory)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
- * @return	boolean						True if OK, false if KO
+ * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
  */
 function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
 	global $conf;
-	$result=false;
 
 	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwritifexists=".$overwriteifexists);
-	if ($overwriteifexists || ! dol_is_file($destfile))
+	$destexists=dol_is_file($destfile);
+	if (! $overwriteifexists && $destexists) return 0;
+
+	$newpathofsrcfile=dol_osencode($srcfile);
+    $newpathofdestfile=dol_osencode($destfile);
+    $newdirdestfile=dirname($newpathofdestfile);
+
+    if ($destexists && ! is_writable($newpathofdestfile))
+    {
+        dol_syslog("files.lib.php::dol_copy failed Permission denied to overwrite target file", LOG_WARNING);
+        return -1;
+    }
+    if (! is_writable($newdirdestfile))
+    {
+        dol_syslog("files.lib.php::dol_copy failed Permission denied to write into target directory ".$newdirdestfile, LOG_WARNING);
+        return -2;
+    }
+    // Copy with overwriting if exists
+    $result=@copy($newpathofsrcfile, $newpathofdestfile);
+	//$result=copy($newpathofsrcfile, $newpathofdestfile);	// To see errors, remove @
+	if (! $result)
 	{
-        $newpathofsrcfile=dol_osencode($srcfile);
-        $newpathofdestfile=dol_osencode($destfile);
-
-        $result=@copy($newpathofsrcfile, $newpathofdestfile);
-		//$result=copy($srcfile, $destfile);	// To see errors, remove @
-		if (! $result) dol_syslog("files.lib.php::dol_copy failed", LOG_WARNING);
-		if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-		@chmod($newpathofdestfile, octdec($newmask));
+	    dol_syslog("files.lib.php::dol_copy failed to copy", LOG_WARNING);
+	    return -3;
 	}
+	if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+	@chmod($newpathofdestfile, octdec($newmask));
 
-	return $result;
+	return 1;
 }
 
 /**

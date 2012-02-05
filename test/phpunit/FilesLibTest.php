@@ -90,6 +90,9 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function setUp()
     {
@@ -102,6 +105,9 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
     }
 	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function tearDown()
     {
@@ -109,7 +115,10 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
     }
 
    /**
-     */
+    * testDolCountNbOfLine
+    *
+    * @return	int
+    */
     public function testDolCountNbOfLine()
     {
     	global $conf,$user,$langs,$db;
@@ -127,7 +136,10 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
     }
 
    /**
-     */
+    * testDolIsFileDir
+    *
+    * @return	int
+    */
     public function testDolIsFileDir()
     {
     	global $conf,$user,$langs,$db;
@@ -150,6 +162,9 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testDolOther
+     *
+     * @return boolean
     */
     public function testDolOther()
     {
@@ -175,6 +190,54 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($result);
 
         return $result;
+    }
+
+    /**
+     * testDolCopyMove
+     *
+     * @return	int
+     */
+    public function testDolCopyMove()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $file=dirname(__FILE__).'/Example_import_company_1.csv';
+
+        $result=dol_copy($file, '/adir/that/does/not/exists/file.csv');
+        print __METHOD__." result=".$result."\n";
+        $this->assertLessThan(0,$result);    // We should have error
+
+        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThanOrEqual(1,$result);    // Should be 1
+
+        // Again to test with overwriting=0
+        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(0,$result);    // Should be 0
+
+        // Again to test with overwriting=1
+        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThanOrEqual(1,$result);    // Should be 1
+
+        // Again to test with overwriting=1
+        $result=dol_move($conf->admin->dir_temp.'/file.csv',$conf->admin->dir_temp.'/file2.csv',0,1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result);
+
+        $result=dol_delete_file($conf->admin->dir_temp.'/file2.csv');
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result);
+
+        // Again to test no erreor when deleteing a non existing file
+        $result=dol_delete_file($conf->admin->dir_temp.'/file2.csv');
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result);
     }
 }
 ?>
