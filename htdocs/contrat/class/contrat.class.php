@@ -1587,7 +1587,7 @@ class ContratLigne
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut,$mode,(isset($this->date_fin_validite)?($this->date_fin_validite < dol_now('tzref')?1:0):-1));
+		return $this->LibStatut($this->statut,$mode,(isset($this->date_fin_validite)?($this->date_fin_validite < dol_now()?1:0):-1));
 	}
 
 	/**

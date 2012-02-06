@@ -157,12 +157,13 @@ $txt =$langs->trans("OSTZ").' (variable system TZ): '.($_ENV["TZ"]?$_ENV["TZ"]:$
 $txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
-$a=getCurrentTimeZoneString();
-$a.=' '.getCurrentTimeZoneInt();
-$a.=' ('.(getCurrentTimeZoneInt()>0?'+':'').(getCurrentTimeZoneInt()*3600).')';
+$a=getServerTimeZoneString();
+$a.=' '.getServerTimeZoneInt();
+$a.=' ('.(getServerTimeZoneInt()>0?'+':'').(getServerTimeZoneInt()*3600).')';
 print $form->textwithtooltip($a,$txt,2,1,img_info(''));
 print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 $var=!$var;
+print dol_now();
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzserver').'</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext").'</td>';

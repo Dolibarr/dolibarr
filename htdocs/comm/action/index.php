@@ -128,7 +128,7 @@ $form=new Form($db);
 $companystatic=new Societe($db);
 $contactstatic=new Contact($db);
 
-$now=dol_now('tzref');
+$now=dol_now();
 
 // Define list of all external calendars
 $listofextcals=array();

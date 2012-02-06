@@ -64,7 +64,7 @@ $companystatic=new Societe($db);
  * View
  */
 
-$now=dol_now('tzref');
+$now=dol_now();
 
 $form=new Form($db);
 

@@ -384,39 +384,6 @@ function dol_size($size,$type='')
 
 
 /**
- *	Return date for now. We should always use this function without parameters (that means GMT time)
- *
- * 	@param	string		$mode	'gmt' => we return GMT timestamp,
- * 								'tzserver' => we add the PHP server timezone
- *  							'tzref' => we add the company timezone
- * 								'tzuser' => we add the user timezone
- *	@return timestamp   $date	Timestamp
- */
-function dol_now($mode='gmt')
-{
-    // Note that gmmktime and mktime return same value (GMT) whithout parameters
-    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
-    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
-    {
-        $tzsecond=-dol_mktime(0,0,0,1,1,1970);
-        $ret=gmmktime()+$tzsecond;
-    }
-    else if ($mode == 'tzref')				// Time for now where parent company timezone is added
-    {
-        // TODO Should add the company timezone
-        $ret=gmmktime();
-    }
-    else if ($mode == 'tzuser')				// Time for now where user timezone is added
-    {
-        //print 'eeee'.time().'-'.mktime().'-'.gmmktime();
-        $tzhour=isset($_SESSION['dol_tz'])?$_SESSION['dol_tz']:0;
-        $ret=gmmktime()+($tzhour*60*60);
-    }
-    return $ret;
-}
-
-
-/**
  *	Clean a string to use it as a file name
  *
  *	@param	string	$str            String to clean
@@ -1091,6 +1058,42 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
         }
     }
     return $date;
+}
+
+
+/**
+ *	Return date for now. We should always use this function without parameters (that means GMT time)
+ *
+ * 	@param	string		$mode	'gmt' => we return GMT timestamp,
+ * 								'tzserver' => we add the PHP server timezone
+ *  							'tzref' => we add the company timezone
+ * 								'tzuser' => we add the user timezone
+ *	@return timestamp   $date	Timestamp
+ */
+function dol_now($mode='gmt')
+{
+    // Note that gmmktime and mktime return same value (GMT) whithout parameters
+    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
+    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
+    {
+        require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+        $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
+        $ret=dol_now('gmt')+($tzsecond*3600);
+    }
+    /*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
+    {
+        require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+        $tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
+        $ret=dol_now('gmt')+($tzsecond*3600);
+    }*/
+    else if ($mode == 'tzuser')				// Time for now with user timezone is added
+    {
+        //print 'eeee'.time().'-'.mktime().'-'.gmmktime();
+        $offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
+        $offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
+        $ret=dol_now('gmt')+($offsettz+$offsetdst);
+    }
+    return $ret;
 }
 
 

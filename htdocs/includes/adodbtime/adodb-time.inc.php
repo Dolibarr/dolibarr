@@ -682,30 +682,6 @@ function _adodb_getdate($origd=false,$fast=false,$is_gmt=false)
 	);
 }
 
-function adodb_gmdate($fmt,$d=false)
-{
-	return adodb_date($fmt,$d,true);
-}
-
-// accepts unix timestamp and iso date format in $d
-function adodb_date2($fmt, $d=false, $is_gmt=false)
-{
-	if ($d !== false) {
-		if (!preg_match(
-			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
-			($d), $rr)) return adodb_date($fmt,false,$is_gmt);
-
-		if ($rr[1] <= 100 && $rr[2]<= 1) return adodb_date($fmt,false,$is_gmt);
-
-		// h-m-s-MM-DD-YY
-		if (!isset($rr[5])) $d = adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
-		else $d = @adodb_mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
-	}
-
-	return adodb_date($fmt,$d,$is_gmt);
-}
-
-
 /**
 	Return formatted date based on timestamp $d
 */
@@ -849,15 +825,6 @@ static $daylight;
 }
 
 /**
-	Returns a timestamp given a GMT/UTC time.
-	Note that $is_dst is not implemented and is ignored.
-*/
-function adodb_gmmktime($hr,$min,$sec,$mon=false,$day=false,$year=false,$is_dst=false)
-{
-	return adodb_mktime($hr,$min,$sec,$mon,$day,$year,$is_dst,true);
-}
-
-/**
 	Return a timestamp given a local time. Originally by jackbbs.
 	Note that $is_dst is not implemented and is ignored.
 
@@ -964,11 +931,6 @@ function adodb_mktime($hr,$min,$sec,$mon=false,$day=false,$year=false,$is_dst=fa
 	}
 	//print " dmy=$day/$mon/$year $hr:$min:$sec => " .$ret;
 	return $ret;
-}
-
-function adodb_gmstrftime($fmt, $ts=false)
-{
-	return adodb_strftime($fmt,$ts,true);
 }
 
 // hack - convert to adodb_date
