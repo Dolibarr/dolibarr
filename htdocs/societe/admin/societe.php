@@ -273,7 +273,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
     			}
     			else
     			{
-    				$disabled = ((is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+    				$disabled = false;
+    				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
     				print '<td align="center">';
     				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
     				print img_picto($langs->trans("Disabled"),'switch_off');
