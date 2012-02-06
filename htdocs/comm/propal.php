@@ -73,7 +73,7 @@ if (isset($socid))
 {
 	$objectid=$socid;
 	$module='societe';
-	$dbtable='';
+	$dbtable='&societe';
 }
 else if (isset($id) &&  $id > 0)
 {
