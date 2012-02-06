@@ -87,6 +87,7 @@ class Form
 			if ($perm)
 			{
 				$tmp=explode(':',$typeofdata);
+				if (preg_match('/^(string|email|numeric)$/i',$tmp[0])) $tmp[0] = 'text';
 				$ret.= '<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
 				$ret.= $langs->trans($text);
 				$ret.= '</div>'."\n";
@@ -236,7 +237,8 @@ class Form
 			if (preg_match('/^(string|email|numeric)/',$inputType))
 			{
 				$tmp=explode(':',$inputType);
-				$inputType=$tmp[0]; $inputOption=$tmp[1];
+				$inputType='text';
+				$inputOption=$tmp[1];
 				if (! empty($tmp[2])) $savemethod=$tmp[2];
 			}
 			if (preg_match('/^datepicker/',$inputType))
