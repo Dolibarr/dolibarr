@@ -856,7 +856,7 @@ if ($action == 'add' && $user->rights->facture->creer)
 
                         // Hooks
                         $parameters=array('objFrom'=>$srcobject);
-                        $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                        $reshook=$hookmanager->executeHooks('createFrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
                         if ($reshook < 0) $error++;
                     }
                     else
@@ -1801,9 +1801,19 @@ if ($action == 'create')
         print '</td></tr>';
     }
 
-    // Insert hooks
-    $parameters=array();
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
+    {
+        foreach($extrafields->attribute_label as $key=>$label)
+        {
+            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+            print '<tr><td>'.$label.'</td><td colspan="3">';
+            print $extrafields->showInputField($key,$value);
+            print '</td></tr>'."\n";
+        }
+    }
 
     // Modele PDF
     print '<tr><td>'.$langs->trans('Model').'</td>';
@@ -2197,7 +2207,7 @@ else
             if (! $formconfirm)
             {
                 $parameters=array('lineid'=>$lineid);
-                $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                $formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             }
 
             // Print form confirm
@@ -2700,9 +2710,19 @@ else
                 print '</tr>';
             }
 
-            // Insert hooks
-            $parameters=array('colspan'=>' colspan="3"');
+            // Other attributes
+            $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            if (empty($reshook))
+            {
+                foreach($extrafields->attribute_label as $key=>$label)
+                {
+                    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+                    print '<tr><td>'.$label.'</td><td colspan="3">';
+                    print $extrafields->showInputField($key,$value);
+                    print '</td></tr>'."\n";
+                }
+            }
 
             print '</table><br>';
 

@@ -745,7 +745,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
 				}
 			}
-			
+
 			// Define output language
 			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 			{
@@ -758,7 +758,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 					$outputlangs = new Translate("",$conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				
+
 				$desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
 			}
 			else
@@ -1144,7 +1144,7 @@ if ($id > 0 || ! empty($ref))
 	if (! $formconfirm)
 	{
 	    $parameters=array('lineid'=>$lineid);
-	    $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	    $formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	}
 
 	// Print form confirm
@@ -1468,9 +1468,19 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 	}
 
-	// Insert hooks
-	$parameters=array('colspan'=>' colspan="3"');
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="3"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
+    {
+        foreach($extrafields->attribute_label as $key=>$label)
+        {
+            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+            print "<tr><td>".$label.'</td><td colspan="3">';
+            print $extrafields->showInputField($key,$value);
+            print '</td></tr>'."\n";
+        }
+    }
 
 	// Amount HT
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';

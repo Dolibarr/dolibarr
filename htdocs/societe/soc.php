@@ -940,13 +940,13 @@ else
 
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook))
         {
             foreach($extrafields->attribute_label as $key=>$label)
             {
-                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
-                print "<tr><td>".$label.'</td><td colspan="3">';
+                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+                print '<tr><td>'.$label.'</td><td colspan="3">';
                 print $extrafields->showInputField($key,$value);
                 print '</td></tr>'."\n";
             }
@@ -1368,13 +1368,13 @@ else
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
-            $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook))
             {
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
-                    $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$object->array_options["options_$key"]);
-                    print "<tr><td>".$label."</td><td colspan=\"3\">";
+                    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+                    print '<tr><td>'.$label.'</td><td colspan="3">';
                     print $extrafields->showInputField($key,$value);
                     print "</td></tr>\n";
                 }
@@ -1717,13 +1717,13 @@ else
 
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('showOutputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook))
         {
             foreach($extrafields->attribute_label as $key=>$label)
             {
-                $value=$object->array_options["options_$key"];
-                print "<tr><td>".$label.'</td><td colspan="3">';
+                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+                print '<tr><td>'.$label.'</td><td colspan="3">';
                 print $extrafields->showOutputField($key,$value);
                 print "</td></tr>\n";
             }

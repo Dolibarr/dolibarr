@@ -80,7 +80,7 @@ if ($action == 'create')
 		exit;
 	}
 
-	$propal = new Propal($db);
+	$object = new Propal($db);
 
 	$numpr='';
 	$obj = $conf->global->PROPALE_ADDON;
@@ -90,7 +90,7 @@ if ($action == 'create')
 		{
 			require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 			$modPropale = new $obj;
-			$numpr = $modPropale->getNextValue($soc,$propal);
+			$numpr = $modPropale->getNextValue($soc,$object);
 		}
 	}
 
@@ -175,12 +175,12 @@ if ($action == 'create')
 
 	// What trigger creation
     print '<tr><td>'.$langs->trans('Source').'</td><td>';
-    $form->select_demand_reason($propal->demand_reason,'demand_reason_id',"SRC_PROP",1);
+    $form->select_demand_reason($object->demand_reason,'demand_reason_id',"SRC_PROP",1);
     print '</td></tr>';
 
 	// Delivery delay
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $form->select_availability($propal->availability,'availability_id','',1);
+    $form->select_availability($object->availability,'availability_id','',1);
     print '</td></tr>';
 
 	// Delivery date (or manufacturing)
@@ -240,10 +240,19 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
-	// Insert hooks
-	$parameters=array('socid'=>$socid);
-	$object=new Propal($db);
+	// Other attributes
+	$parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook))
+	{
+	    foreach($extrafields->attribute_label as $key=>$label)
+	    {
+	        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+	        print "<tr><td>".$label.'</td><td colspan="3">';
+	        print $extrafields->showInputField($key,$value);
+	        print '</td></tr>'."\n";
+	    }
+	}
 
 	print "</table>";
 	print '<br>';

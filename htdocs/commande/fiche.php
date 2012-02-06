@@ -303,7 +303,7 @@ if ($action == 'add' && $user->rights->commande->creer)
 
                 // Hooks
                 $parameters=array('objFrom'=>$srcobject);
-                $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
                 if ($reshook < 0) $error++;
             }
             else
@@ -552,7 +552,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
                     $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
                 }
             }
-            
+
             // Define output language
 			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 			{
@@ -565,7 +565,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
 					$outputlangs = new Translate("",$conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				
+
 				$desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
 			}
 			else
@@ -1366,13 +1366,23 @@ if ($action == 'create' && $user->rights->commande->creer)
         print '</td></tr>';
     }
 
-    // Insert hooks
-    $parameters=array();
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
+    {
+        foreach($extrafields->attribute_label as $key=>$label)
+        {
+            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+            print "<tr><td>".$label.'</td><td colspan="3">';
+            print $extrafields->showInputField($key,$value);
+            print '</td></tr>'."\n";
+        }
+    }
 
+    // Template to use by default
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td colspan="2">';
-    // pdf
     include_once(DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php');
     $liste=ModelePDFCommandes::liste_modeles($db);
     print $form->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
@@ -1643,7 +1653,7 @@ else
             if (! $formconfirm)
             {
                 $parameters=array('lineid'=>$lineid);
-                $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                $formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             }
 
             // Print form confirm
@@ -1908,11 +1918,19 @@ else
                 print '</td></tr>';
             }
 
-            // Insert hooks
-            $parameters=array('colspan'=>' colspan="2"');
+            // Other attributes
+            $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
-            // Lignes de 3 colonnes
+            if (empty($reshook))
+            {
+                foreach($extrafields->attribute_label as $key=>$label)
+                {
+                    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+                    print '<tr><td>'.$label.'</td><td colspan="3">';
+                    print $extrafields->showInputField($key,$value);
+                    print '</td></tr>'."\n";
+                }
+            }
 
             // Total HT
             print '<tr><td>'.$langs->trans('AmountHT').'</td>';
