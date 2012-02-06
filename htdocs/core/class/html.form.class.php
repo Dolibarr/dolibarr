@@ -1,10 +1,10 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -87,7 +87,6 @@ class Form
 			if ($perm)
 			{
 				$tmp=explode(':',$typeofdata);
-				if (preg_match('/^(string|email|numeric)$/i',$tmp[0])) $tmp[0] = 'text';
 				$ret.= '<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
 				$ret.= $langs->trans($text);
 				$ret.= '</div>'."\n";
@@ -237,8 +236,7 @@ class Form
 			if (preg_match('/^(string|email|numeric)/',$inputType))
 			{
 				$tmp=explode(':',$inputType);
-				$inputType='text';
-				$inputOption=$tmp[1];
+				$inputType=$tmp[0]; $inputOption=$tmp[1];
 				if (! empty($tmp[2])) $savemethod=$tmp[2];
 			}
 			if (preg_match('/^datepicker/',$inputType))
