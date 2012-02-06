@@ -1,0 +1,57 @@
+# Dolibarr language file - fr_FR - customfields standard labels
+CHARSET= UTF-8
+
+#### ADMIN CONFIG INTERFACE ####
+
+# Main title
+CustomFieldsSetup= Interface de configuration des champs personnalisés
+
+# Modules tabs
+facture= Facture
+propal= Proposition commerciale
+product= Produits/Services
+commande= Commandes client
+
+# Table headers
+Fieldname= Nom du champ
+Datatype= Type du champ
+Variable= Variable
+
+# Buttons
+NewField= Nouveau champ
+
+# Attributes labels
+FieldEdition= Modification d'un champ
+Label= Libellé
+FieldName= Nom du champ
+AlphaNumOnlyCharsAndNoSpace= seulement caractères alphanumériques sans espaces
+Type= Type
+EnumValues= Valeurs pour le type Liste déroulante
+CanBeNull?= Accepter les valeurs vides ?
+Constraint= Contrainte
+CustomSQLDefinition= Definition SQL personnalisée
+CustomSQL= Requête SQL personnalisée
+
+# Fields values
+PleaseEditLangFile= Veuillez éditer le ficher de langue
+Textbox= Zone de texte simple
+Areabox= Zone de texte étendue HTML
+YesNoBox= Choix Oui/Non
+TrueFalseBox= Choix Vrai/Faux
+DropdownBox= Liste déroulante
+DateBox= Date
+DateTimeBox= Date et heure
+Integer= Nombre entier
+Float= Nombre à virgule
+Double= Nombre à virgule (double précision)
+
+True= Vrai
+False= Faux
+
+# Attributes descriptions and notes
+RequiredIfFieldCannotBeNull=requis si le champ n'accepte pas les valeurs vides
+SizeDesc=ex: 256 pour une zone de texte, <br />ou "premier","deuxio","tertio" AVEC les guillemets et virgules pour une liste déroulante
+SizeNote=Note: requis seulement pour Zone de text simple et Liste déroulante, pour les autres types on peut laisser ceci vide.
+CustomSQLDefinitionDesc=la définition personnalisée du champ sera ajoutée à la suite de toutes les définitions au-dessus - Type, Taille, etc.
+CustomSQLDesc=sera executée après la création/modification du champ selon les paramètres au-dessus
+##### COMMENT #####

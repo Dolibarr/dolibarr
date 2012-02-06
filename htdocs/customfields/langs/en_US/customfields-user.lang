@@ -1,0 +1,7 @@
+# Dolibarr language file - en_US - customfields user defined labels - do not delete this accentuated letter: â
+# Define here the labels of your own custom fields and their possible values (after having created them in the admin configuration interface)
+# IMPORTANT: to support accents, do not forget to set the encoding to UTF-8 without BOM (utf marker) !
+CHARSET= UTF-8
+
+# Format:
+# cf_fieldname=label

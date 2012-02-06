@@ -1,0 +1,57 @@
+# Dolibarr language file - en_US - customfields standard labels - do not delete this accentuated letter: â
+CHARSET= UTF-8
+
+#### ADMIN CONFIG INTERFACE ####
+
+# Main title
+CustomFieldsSetup= CustomFields Setup
+
+# Modules tabs
+facture= Invoices
+propal= Commercial proposals
+product= Products/Services
+commande= Customer orders
+
+# Table headers
+Fieldname= Field Name
+Datatype= Data Type
+Variable= Variable
+
+# Buttons
+NewField= New Field
+
+# Attributes labels
+FieldEdition= Field edition
+Label= Label
+FieldName= Field Name
+AlphaNumOnlyCharsAndNoSpace= only alphanumerical characters with no space allowed
+Type= Type
+EnumValues= Values for the DropdownBox
+CanBeNull?= Accept null values ?
+Constraint= Constraint
+CustomSQLDefinition= Custom SQL Definition
+CustomSQL= Custom SQL Statement
+
+# Fields values
+PleaseEditLangFile= Please edit the language file
+Textbox= Textbox
+Areabox= Areabox
+YesNoBox= YesNoBox
+TrueFalseBox= TrueFalseBox
+DropdownBox= DropdownBox
+DateBox= DateBox
+DateTimeBox= DateTimeBox
+Integer= Integer
+Float= Float
+Double= Double
+
+True= True
+False= False
+
+# Attributes descriptions and notes
+RequiredIfFieldCannotBeNull=required if field cannot be null
+SizeDesc=eg: 256 for a varchar, or "firstval","secondval","thirdval" WITH the quotes and commas for an enum/selectbox
+SizeNote=Note: can be left empty if using customSQL in Type, Areabox or TrueFalseBox.
+CustomSQLDefinitionDesc=custom definition of the field to be appended after the above
+CustomSQLDesc=to be triggered after the creation/edition of the field
+##### COMMENT #####

@@ -780,7 +780,11 @@ else
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
-        // Note (invisible sur facture, propales...)
+	// Insert hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
+	// Note (private, no output on invoices, propales...)
         print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
         $doleditor=new DolEditor('note',$_POST["note"],'',180,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
@@ -969,6 +973,10 @@ else
             print $form->select_country($object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
+
+	    // Insert hooks
+	    $parameters=array();
+	    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             // Note
             print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
@@ -1183,11 +1191,18 @@ else
             // Origin country code
             print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
 
+	    // Insert hooks
+	    $parameters=array();
+	    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             // Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
 
             print "</table>\n";
+
+	    // Other attributes
+	    $parameters=array();
+	    $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             dol_fiche_end();
         }
