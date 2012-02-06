@@ -557,7 +557,7 @@ class Facture extends CommonObject
 			{
 			    $parameters=array('objFrom'=>$objFrom);
 			    $action='';
-				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 
@@ -653,7 +653,7 @@ class Facture extends CommonObject
 
             $parameters=array('objFrom'=>$object);
             $action='';
-			$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) $error++;
 
             if (! $error)

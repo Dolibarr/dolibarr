@@ -124,8 +124,8 @@ class HookManager
      * 	    @param		array	$parameters		Array of parameters
      * 		@param		Object	&$object		Object to use hooks on
      * 	    @param		string	&$action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     * 		@return		mixed					For doActions,showInputField,showOutputField: Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
-     * 											For printSearchForm,printLeftBlock:           Return HTML string.
+     * 		@return		mixed					For doActions,formObjectOptions:    Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
+     * 											For printSearchForm,printLeftBlock: Return HTML string.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
 	function executeHooks($method, $parameters=false, &$object='', &$action='')
@@ -148,30 +148,17 @@ class HookManager
                 	$var=!$var;
 
                     // Hooks that return int
-                    if ($method == 'doActions' && method_exists($actioninstance,$method))
+                    if (($method == 'doActions' || $method='formObjectOptions') && method_exists($actioninstance,$method))
                     {
-                        $resaction+=$actioninstance->doActions($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
+                        $resaction+=$actioninstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
                         if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && count($actioninstance->errors) > 0))
                         {
                             $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
-                            if ($action=='add')    $action='create';    // TODO this change must be inside the doActions
-                            if ($action=='update') $action='edit';      // TODO this change must be inside the doActions
-                        }
-                    }
-                    else if ($method == 'showInputFields' && method_exists($actioninstance,$method))
-                    {
-                        $resaction+=$actioninstance->showInputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && count($actioninstance->errors) > 0))
-                        {
-                            $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
-                        }
-                    }
-                    else if ($method == 'showOutputFields' && method_exists($actioninstance,$method))
-                    {
-                        $resaction+=$actioninstance->showOutputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && count($actioninstance->errors) > 0))
-                        {
-                            $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
+                            if ($method == 'doActions')
+                            {
+                                if ($action=='add')    $action='create';    // TODO this change must be inside the doActions
+                                if ($action=='update') $action='edit';      // TODO this change must be inside the doActions
+                            }
                         }
                     }
                     // Generic hooks that return a string (printSearchForm, printLeftBlock, formBuilddocOptions, ...)
@@ -184,7 +171,7 @@ class HookManager
             }
         }
 
-        if ($method == 'doActions' || $method == 'showInputFields' || $method == 'showOutputFields') return $resaction;
+        if ($method == 'doActions' || $method == 'formObjectOptions') return $resaction;
         return $resprint;
 	}
 
