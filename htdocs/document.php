@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
@@ -135,7 +135,7 @@ if ($modulepart)
 	}
 
 	// Wrapping for invoices
-	else if ($modulepart == 'facture')
+	else if ($modulepart == 'facture' || $modulepart == 'invoice')
 	{
 		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
@@ -188,7 +188,7 @@ if ($modulepart)
 	}
 
 	// Wrapping pour les commandes
-	else if ($modulepart == 'commande')
+	else if ($modulepart == 'commande' || $modulepart == 'order')
 	{
 		if ($user->rights->commande->lire || preg_match('/^specimen/i',$original_file))
 		{
@@ -210,7 +210,7 @@ if ($modulepart)
 	}
 
 	// Wrapping pour les commandes fournisseurs
-	else if ($modulepart == 'commande_fournisseur')
+	else if ($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier')
 	{
 		if ($user->rights->fournisseur->commande->lire || preg_match('/^specimen/i',$original_file))
 		{

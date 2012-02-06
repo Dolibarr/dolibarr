@@ -26,9 +26,6 @@
 /**
  *	\file       htdocs/comm/propal/class/propal.class.php
  *	\brief      Fichier de la classe des propales
- *	\author     Rodolphe Qiedeville
- *	\author	    Eric Seigne
- *	\author	    Laurent Destailleur
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -2370,7 +2367,7 @@ class Propal extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      int		$withpicto		Add picto into link
-	 *	@param      string	$option			Where point the link
+	 *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
 	 *	@param      string	$get_params    	Parametres added to url
 	 *	@return     string          		String with URL
 	 */
@@ -2379,17 +2376,21 @@ class Propal extends CommonObject
 		global $langs;
 
 		$result='';
-		if($option == '')
+		if ($option == '')
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
 		}
-		if($option == 'compta')   // deprecated
+		if ($option == 'compta')   // deprecated
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
 		}
-		if($option == 'expedition')
+		if ($option == 'expedition')
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .'">';
+		}
+		if ($option == 'document')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .'">';
 		}
 		$lienfin='</a>';
 

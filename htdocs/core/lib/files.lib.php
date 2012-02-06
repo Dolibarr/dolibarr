@@ -44,7 +44,7 @@ function dol_getwebuser($mode)
  *  @param	int		$recursive		Determines whether subdirectories are searched
  *  @param	string	$filter        	Regex for include filter
  *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')
- *  @param	string	$sortcriteria	Sort criteria ("","name","date","size")
+ *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  *  @return	array					Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
