@@ -585,16 +585,8 @@ class Fichinter extends CommonObject
 		$this->db->begin();
 
 		// Delete linked object
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-		$sql.= " WHERE fk_target = ".$this->id;
-		$sql.= " AND targettype = '".$this->element."'";
-		dol_syslog("Fichinter::delete sql=".$sql);
-		if (! $this->db->query($sql) )
-		{
-			dol_syslog("Fichinter::delete error", LOG_ERR);
-			$this->error=$this->db->lasterror();
-			$error++;
-		}
+        $res = $this->deleteObjectLinked();
+        if ($res < 0) $error++;
 
 		// Delete linked contacts
 		$res = $this->delete_linked_contact();

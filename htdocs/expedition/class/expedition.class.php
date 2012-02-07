@@ -761,16 +761,16 @@ class Expedition extends CommonObject
 
 		if ( $this->db->query($sql) )
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-			$sql.= " WHERE fk_target = ".$this->id;
-			$sql.= " AND targettype = '".$this->element."'";
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
 
-			if ( $this->db->query($sql) )
+			if (! $error)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
 				$sql.= " WHERE rowid = ".$this->id;
 
-				if ( $this->db->query($sql) )
+				if ($this->db->query($sql))
 				{
 					$this->db->commit();
 
