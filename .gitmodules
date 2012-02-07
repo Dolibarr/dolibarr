@@ -1,0 +1,63 @@
+[submodule "htdocs/custom/productdiscount"]
+	path = htdocs/custom/productdiscount
+	url = git+ssh://hregis@doliforge.org/gitroot/productdiscount/productdiscount.git
+[submodule "htdocs/custom/multicompany"]
+	path = htdocs/custom/multicompany
+	url = git+ssh://hregis@doliforge.org/gitroot/multicompany/multicompany.git
+[submodule "htdocs/custom/paypalplus"]
+	path = htdocs/custom/paypalplus
+	url = git+ssh://hregis@doliforge.org/gitroot/paypalplus/paypalplus.git
+[submodule "htdocs/custom/milestone"]
+	path = htdocs/custom/milestone
+	url = git+ssh://hregis@doliforge.org/gitroot/milestone/milestone.git
+[submodule "htdocs/custom/docgen"]
+	path = htdocs/custom/docgen
+	url = git+ssh://hregis@doliforge.org/gitroot/docgen/docgen.git
+[submodule "htdocs/custom/extrafields"]
+	path = htdocs/custom/extrafields
+	url = git+ssh://hregis@doliforge.org/gitroot/extrafields/extrafields.git
+[submodule "htdocs/custom/business"]
+	path = htdocs/custom/business
+	url = git+ssh://hregis@doliforge.org/gitroot/business/business.git
+[submodule "htdocs/custom/agefodd"]
+	path = htdocs/custom/agefodd
+	url = git+ssh://hregis@doliforge.org/gitroot/agefodd/agefodd.git
+[submodule "htdocs/custom/genfac"]
+	path = htdocs/custom/genfac
+	url = git+ssh://hregis@doliforge.org/gitroot/massfacturation/massfacturation.git
+[submodule "htdocs/custom/lead"]
+	path = htdocs/custom/lead
+	url = git+ssh://hregis@doliforge.org/gitroot/lead/lead.git
+[submodule "htdocs/custom/team"]
+	path = htdocs/custom/team
+	url = git+ssh://hregis@doliforge.org/gitroot/team/team.git
+[submodule "htdocs/custom/highcharts"]
+	path = htdocs/custom/highcharts
+	url = git+ssh://hregis@doliforge.org/gitroot/highcharts/highcharts.git
+[submodule "htdocs/custom/joomla"]
+	path = htdocs/custom/joomla
+	url = git+ssh://hregis@doliforge.org/gitroot/joomla/joomla.git
+[submodule "htdocs/custom/donation"]
+	path = htdocs/custom/donation
+	url = git+ssh://hregis@doliforge.org/gitroot/capnetworks/donate.git
+[submodule "htdocs/custom/fidppi"]
+	path = htdocs/custom/fidppi
+	url = git+ssh://hregis@doliforge.org/gitroot/fidppi/fidppi.git
+[submodule "htdocs/custom/monitoring"]
+	path = htdocs/custom/monitoring
+	url = git+ssh://hregis@doliforge.org/gitroot/monitoring/monitoring.git
+[submodule "htdocs/custom/hosting"]
+	path = htdocs/custom/hosting
+	url = git+ssh://hregis@doliforge.org/gitroot/hosting/hosting.git
+[submodule "htdocs/custom/ventilation"]
+        path = htdocs/custom/ventilation
+        url = git+ssh://hregis@doliforge.org/gitroot/ventilation/ventilation.git
+[submodule "htdocs/custom/book"]
+        path = htdocs/custom/book
+        url = git+ssh://hregis@doliforge.org/gitroot/book/book.git
+[submodule "htdocs/custom/accounting"]
+	path = htdocs/custom/accounting
+	url = git+ssh://hregis@doliforge.org/gitroot/accounting/accounting.git
+[submodule "htdocs/custom/dcloud"]
+	path = htdocs/custom/dcloud
+	url = gitolite@doliforge.org:dcloud/dcloud.git
