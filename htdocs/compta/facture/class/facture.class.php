@@ -1130,12 +1130,12 @@ class Facture extends CommonObject
 
         $error=0;
         $this->db->begin();
+        
+        // Delete linked object
+        $res = $this->deleteObjectLinked();
+        if ($res < 0) $error++;
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-        $sql.= " WHERE fk_target = ".$rowid;
-        $sql.= " AND targettype = '".$this->element."'";
-
-        if ($this->db->query($sql))
+        if (! $error)
         {
         	// If invoice was converted into a discount not yet consumed, we remove discount
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';

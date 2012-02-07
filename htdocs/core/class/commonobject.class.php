@@ -294,7 +294,7 @@ abstract class CommonObject
         $sql.= " WHERE element_id =".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
-        dol_syslog(get_class($this)."::delete_linked_contact sql=".$sql);
+        dol_syslog(get_class($this)."::delete_linked_contact sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
