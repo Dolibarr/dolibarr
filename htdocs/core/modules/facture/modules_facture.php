@@ -135,7 +135,7 @@ abstract class ModeleNumRefFactures
  *	@param   	DoliDB		$db  			Database handler
  *	@param   	Object		$object			Object invoice
  *	@param	    string		$message		message
- *	@param	    string		$modele			Force le modele a utiliser ('' to not force)
+ *	@param	    string		$modele			Force template to use ('' to not force)
  *	@param		Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
