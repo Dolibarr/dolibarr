@@ -2320,38 +2320,26 @@ class Commande extends CommonObject
         dol_syslog("Commande::delete sql=".$sql);
         if (! $this->db->query($sql) )
         {
-            dol_syslog("CustomerOrder::delete error", LOG_ERR);
+            dol_syslog(get_class($this)."::delete error", LOG_ERR);
             $error++;
         }
 
         // Delete order
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
-        dol_syslog("Commande::delete sql=".$sql);
+        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
-            dol_syslog("CustomerOrder::delete error", LOG_ERR);
+            dol_syslog(get_class($this)."::delete error", LOG_ERR);
             $error++;
         }
 
         // Delete linked object
-        // TODO deplacer dans le common
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-        $sql.= " WHERE fk_target = ".$this->id;
-        $sql.= " AND targettype = '".$this->element."'";
-        dol_syslog("Commande::delete sql=".$sql);
-        if (! $this->db->query($sql) )
-        {
-            dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $error++;
-        }
+        $res = $this->deleteObjectLinked();
+        if ($res < 0) $error++;
 
         // Delete linked contacts
         $res = $this->delete_linked_contact();
-        if ($res < 0)
-        {
-            dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $error++;
-        }
+        if ($res < 0) $error++;
 
         // On efface le repertoire de pdf provisoire
         $comref = dol_sanitizeFileName($this->ref);
@@ -2381,7 +2369,7 @@ class Commande extends CommonObject
             }
         }
 
-        if ($error == 0)
+        if (! $error)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

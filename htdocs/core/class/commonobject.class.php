@@ -294,7 +294,7 @@ abstract class CommonObject
         $sql.= " WHERE element_id =".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
-        dol_syslog(get_class($this)."::delete_linked_contact sql=".$sql);
+        dol_syslog(get_class($this)."::delete_linked_contact sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
@@ -1514,10 +1514,10 @@ abstract class CommonObject
         if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $justsource=true;
         if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $justtarget=true;
 
-        $sourceid = (! empty($sourceid) ? $sourceid : $this->id );
-        $targetid = (! empty($targetid) ? $targetid : $this->id );
-        $sourcetype = (! empty($sourcetype) ? $sourcetype : (! empty($this->origin) ? $this->origin : $this->element ) );
-        $targettype = (! empty($targettype) ? $targettype : $this->element );
+        $sourceid = (! empty($sourceid) ? $sourceid : $this->id);
+        $targetid = (! empty($targetid) ? $targetid : $this->id);
+        $sourcetype = (! empty($sourcetype) ? $sourcetype : (! empty($this->origin) ? $this->origin : $this->element));
+        $targettype = (! empty($targettype) ? $targettype : $this->element);
 
         // Links beetween objects are stored in this table
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
@@ -1629,7 +1629,77 @@ abstract class CommonObject
             dol_print_error($this->db);
         }
     }
-
+    
+    /**
+     *	Update object linked of a current object
+     * 
+     *	@param	int		$sourceid		Object source id
+     *	@param  string	$sourcetype		Object source type
+     *	@param  int		$targetid		Object target id
+     *	@param  string	$targettype		Object target type
+     *	@return							int	>0 if OK, <0 if KO
+     */
+    function updateObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
+    {
+    	$updatesource=false;
+    	$updatetarget=false;
+    	
+    	if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $updatesource=true;
+    	else if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $updatetarget=true;
+    	
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."element_element SET ";
+    	if ($updatesource)
+    	{
+    		$sql.= "fk_source = ".$sourceid;
+    		$sql.= ", sourcetype = '".$sourcetype."'";
+    		$sql.= " WHERE fk_target = ".$this->id;
+    		$sql.= " AND targettype = '".$this->element."'";
+    	}
+    	else if ($updatetarget)
+    	{
+    		$sql.= "fk_target = ".$targetid;
+    		$sql.= ", targettype = '".$targettype."'";
+    		$sql.= " WHERE fk_source = ".$this->id;
+    		$sql.= " AND sourcetype = '".$this->element."'";
+    	}
+    
+    	dol_syslog(get_class($this)."::updateObjectLinked sql=".$sql, LOG_DEBUG);
+    	if ($this->db->query($sql))
+    	{
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->lasterror();
+    		dol_syslog(get_class($this)."::updateObjectLinked error=".$this->error, LOG_ERR);
+    		return -1;
+    	}
+    }
+    
+	/**
+	 *	Delete all links between an object $this
+	 *
+	 *	@return     int	>0 if OK, <0 if KO
+	 */
+	function deleteObjectLinked()
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE fk_target = ".$this->id;
+		$sql.= " AND targettype = '".$this->element."'";
+		
+		dol_syslog(get_class($this)."::deleteObjectLinked sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::deleteObjectLinked error=".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+    
     /**
      *      Set statut of an object
      *
@@ -1787,6 +1857,8 @@ abstract class CommonObject
     {
         global $langs;
 
+		$error=0;
+		
         if (count($this->array_options) > 0)
         {
             // Check parameters
@@ -2045,19 +2117,19 @@ abstract class CommonObject
             if ($objecttype == 'facture')          {
                 $tplpath = 'compta/'.$element;
             }
-            if ($objecttype == 'propal')           {
+            else if ($objecttype == 'propal')           {
                 $tplpath = 'comm/'.$element;
             }
-            if ($objecttype == 'shipping')         {
+            else if ($objecttype == 'shipping')         {
                 $tplpath = 'expedition';
             }
-            if ($objecttype == 'delivery')         {
+            else if ($objecttype == 'delivery')         {
                 $tplpath = 'livraison';
             }
-            if ($objecttype == 'invoice_supplier') {
+            else if ($objecttype == 'invoice_supplier') {
                 $tplpath = 'fourn/facture';
             }
-            if ($objecttype == 'order_supplier')   {
+            else if ($objecttype == 'order_supplier')   {
                 $tplpath = 'fourn/commande';
             }
 

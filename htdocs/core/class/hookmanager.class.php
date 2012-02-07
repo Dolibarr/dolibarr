@@ -148,7 +148,7 @@ class HookManager
                 	$var=!$var;
 
                     // Hooks that return int
-                    if (($method == 'doActions' || $method='formObjectOptions') && method_exists($actioninstance,$method))
+                    if (($method == 'doActions' || $method == 'formObjectOptions') && method_exists($actioninstance,$method))
                     {
                         $resaction+=$actioninstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
                         if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && count($actioninstance->errors) > 0))

@@ -130,12 +130,11 @@ abstract class ModeleNumRefFactures
 
 
 /**
- *  Create a document onto disk accordign to template module.
+ *  Create a document onto disk according to template module.
  *
  *	@param   	DoliDB		$db  			Database handler
  *	@param   	Object		$object			Object invoice
- *	@param	    string		$message		message
- *	@param	    string		$modele			Force le modele a utiliser ('' to not force)
+ *	@param	    string		$modele			Force template to use ('' to not force)
  *	@param		Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
@@ -143,7 +142,7 @@ abstract class ModeleNumRefFactures
  *  @param      HookManager	$hookmanager	Hook manager instance
  *	@return  	int        					<0 if KO, >0 if OK
  */
-function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
+function facture_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {
 	global $conf,$user,$langs;
 
@@ -204,7 +203,6 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 		require_once($file);
 
 		$obj = new $classname($db);
-		$obj->message = $message;
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.

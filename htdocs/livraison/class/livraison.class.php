@@ -549,15 +549,18 @@ class Livraison extends CommonObject
 	{
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 		$this->db->begin();
+		
+		$error=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet";
 		$sql.= " WHERE fk_livraison = ".$this->id;
-		if ( $this->db->query($sql) )
+		if ($this->db->query($sql))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-			$sql.= " WHERE fk_target = ".$this->id;
-			$sql.= " AND targettype = '".$this->element."'";
-			if ( $this->db->query($sql) )
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+			
+			if (! $error)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
 				$sql.= " WHERE rowid = ".$this->id;

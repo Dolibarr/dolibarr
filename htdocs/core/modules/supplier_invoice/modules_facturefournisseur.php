@@ -58,38 +58,69 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
  *
  *	@param	    DoliDB		$db  			objet base de donnee
  *	@param	    Object		$object			object supplier invoice
- *	@param	    string		$model			force le modele a utiliser ('' to not force)
+ *	@param	    string		$modele			Force template to use ('' to not force)
  *	@param		Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @return     int         				0 if KO, 1 if OK
  */
-function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
+function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 {
-	global $conf, $langs;
+	global $conf, $user, $langs;
 
 	$langs->load("suppliers");
 
-	$dir = DOL_DOCUMENT_ROOT."/core/modules/supplier_invoice/pdf/";
+	$error=0;
+	
+	// Increase limit for PDF build
+    $err=error_reporting();
+    error_reporting(0);
+    @set_time_limit(120);
+    error_reporting($err);
+	
+	$dir = "/core/modules/supplier_invoice/";
+    $srctemplatepath='';
 
 	// Positionne modele sur le nom du modele de invoice fournisseur a utiliser
-	if (! dol_strlen($model))
+	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF))
 		{
-			$model = $conf->global->INVOICE_SUPPLIER_ADDON_PDF;
+			$modele = $conf->global->INVOICE_SUPPLIER_ADDON_PDF;
 		}
 		else
 		{
-		    $model = 'canelle';
-			//print $langs->trans("Error")." ".$langs->trans("Error_INVOICE_SUPPLIER_ADDON_PDF_NotDefined");
-			//return 0;
+		    $modele = 'canelle';
 		}
 	}
-	// Charge le modele
-	$file = "pdf_".$model.".modules.php";
-	if (file_exists($dir.$file))
+	
+    // If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+    if (! empty($tmp[1]))
+    {
+        $modele=$tmp[0];
+        $srctemplatepath=$tmp[1];
+    }
+    	
+	// Search template file
+	$file=''; $classname=''; $filefound=0;
+	foreach(array('doc','pdf') as $prefix)
 	{
-		$classname = "pdf_".$model;
-		require_once($dir.$file);
+        $file = $prefix."_".$modele.".modules.php";
+
+        // On verifie l'emplacement du modele
+        $file = dol_buildpath($dir.'pdf/'.$file);	// TODO rename into doc/
+
+        if (file_exists($file))
+	    {
+	        $filefound=1;
+	        $classname=$prefix.'_'.$modele;
+	        break;
+	    }
+	}
+
+	// Charge le modele
+	if ($filefound)
+	{
+		require_once($file);
 
 		$obj = new $classname($db,$object);
 
@@ -103,6 +134,14 @@ function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 			// we delete preview files
         	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			dol_delete_preview($object);
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('BILL_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
 			return 1;
 		}
 		else
@@ -115,7 +154,7 @@ function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		return 0;
 	}
 }
