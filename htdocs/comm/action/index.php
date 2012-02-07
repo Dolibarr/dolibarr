@@ -976,7 +976,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($event->author->id == $user->id || $event->usertodo->id == $user->id || $event->userdone->id == $user->id) { $nummytasks++; $colorindex=1; $cssclass='family_mytasks'; }
                     else if ($event->type_code == 'ICALEVENT') { $numical++; $numicals[dol_string_nospecial($event->icalname)]++; $color=$event->icalcolor; $cssclass=($event->icalname?'family_'.dol_string_nospecial($event->icalname):'family_other'); }
                     else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday'; }
-                    else { $numother++; $cssclass='family_other'; }
+                    else { $numother++; $colorindex=2; $cssclass='family_other'; }
                     if ($color == -1) $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
