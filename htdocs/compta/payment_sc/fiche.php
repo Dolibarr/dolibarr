@@ -94,7 +94,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $fac, '', $fac->modelpdf, $outputlangs, $hookmanager);
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $fac, $fac->modelpdf, $outputlangs, $hookmanager);
 		}
 
 		Header('Location: fiche.php?id='.$paiement->id);

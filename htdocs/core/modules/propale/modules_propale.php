@@ -195,7 +195,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 		require_once($file);
 
 		$obj = new $classname($db);
-		$obj->message = $message;
+		//$obj->message = $message;
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.

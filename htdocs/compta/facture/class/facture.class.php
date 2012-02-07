@@ -1188,7 +1188,7 @@ class Facture extends CommonObject
                 }
                 else
                 {
-                    $this->error=$this->db->error()." sql=".$sql;
+                    $this->error=$this->db->lasterror()." sql=".$sql;
                     dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                     $this->db->rollback();
                     return -6;
@@ -1196,7 +1196,7 @@ class Facture extends CommonObject
             }
             else
             {
-                $this->error=$this->db->error()." sql=".$sql;
+                $this->error=$this->db->lasterror()." sql=".$sql;
                 dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -4;
@@ -1204,7 +1204,7 @@ class Facture extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error()." sql=".$sql;
+            $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
