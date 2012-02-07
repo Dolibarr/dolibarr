@@ -320,7 +320,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
 
             // Time spent
             print '<td align="right">';
-            if ($lines[$i]->duration) print ConvertSecondToTime($lines[$i]->duration,'all');
+            if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
             else print '--:--';
             print "</td>\n";
 
@@ -489,7 +489,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
                 print '<td align="right">';
                 if ($showlineingray) print '<i>';
                 else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-                if ($lines[$i]->duration) print ConvertSecondToTime($lines[$i]->duration,'all');
+                if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
                 else print '--:--';
                 if ($showlineingray) print '</i>';
                 else print '</a>';
@@ -517,7 +517,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
         if ($showproject) print '<td></td>';
         print '<td></td>';
         print '<td></td>';
-        print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td></tr>';
+        print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td></tr>';
     }
 
     return $inc;
