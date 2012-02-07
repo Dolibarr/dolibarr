@@ -1653,30 +1653,6 @@ abstract class CommonObject
 			return -1;
 		}
 	}
-
-	/**
-	 * Delete all links between an object $this
-	 * 
-	 * @return     int	>0 if OK, <0 if KO
-	 */
-	function deleteObjectLinked()
-	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-		$sql.= " WHERE fk_target = ".$this->id;
-		$sql.= " AND targettype = '".$this->element."'";
-		
-		dol_syslog(get_class($this)."::deleteObjectLinked sql=".$sql, LOG_DEBUG);
-		if ($this->db->query($sql))
-    	{
-    		return 1;
-    	}
-    	else
-    	{
-    		$this->error=$this->db->lasterror();
-    		dol_syslog(get_class($this)."::deleteObjectLinked error=".$this->error, LOG_ERR);
-    		return -1;
-    	}
-    }
     
     /**
      *      Set statut of an object
