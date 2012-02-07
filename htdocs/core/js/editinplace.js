@@ -236,7 +236,7 @@ $(document).ready(function() {
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);
-			
+
 			if (obj.error) {
 				$(this).html(this.revert);
 				$.jnotify(obj.error, "error", true);

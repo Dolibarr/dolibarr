@@ -1654,6 +1654,30 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 * Delete all links between an object $this
+	 * 
+	 * @return     int	>0 if OK, <0 if KO
+	 */
+	function deleteObjectLinked()
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE fk_target = ".$this->id;
+		$sql.= " AND targettype = '".$this->element."'";
+		
+		dol_syslog(get_class($this)."::deleteObjectLinked sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+    	{
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->lasterror();
+    		dol_syslog(get_class($this)."::deleteObjectLinked error=".$this->error, LOG_ERR);
+    		return -1;
+    	}
+    }
+    
     /**
      *      Set statut of an object
      *
@@ -2069,19 +2093,19 @@ abstract class CommonObject
             if ($objecttype == 'facture')          {
                 $tplpath = 'compta/'.$element;
             }
-            if ($objecttype == 'propal')           {
+            else if ($objecttype == 'propal')           {
                 $tplpath = 'comm/'.$element;
             }
-            if ($objecttype == 'shipping')         {
+            else if ($objecttype == 'shipping')         {
                 $tplpath = 'expedition';
             }
-            if ($objecttype == 'delivery')         {
+            else if ($objecttype == 'delivery')         {
                 $tplpath = 'livraison';
             }
-            if ($objecttype == 'invoice_supplier') {
+            else if ($objecttype == 'invoice_supplier') {
                 $tplpath = 'fourn/facture';
             }
-            if ($objecttype == 'order_supplier')   {
+            else if ($objecttype == 'order_supplier')   {
                 $tplpath = 'fourn/commande';
             }
 

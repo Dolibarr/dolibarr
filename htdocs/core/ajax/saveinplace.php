@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2011-2012 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,6 +134,14 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 		if (! $error)
 		{
 			if (! is_object($object)) $object = new GenericObject($db);
+
+			// Specific for add_object_linked()
+			// TODO add a function for variable treatment
+			$object->ext_fk_element = $newvalue;
+			$object->ext_element = $ext_element;
+			$object->fk_element = $fk_element;
+			$object->element = $element;
+			
 			$ret=$object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
 			if ($ret > 0)
 			{
