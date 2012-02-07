@@ -1,0 +1,3 @@
+[submodule "htdocs/custom/business"]
+	path = htdocs/custom/business
+	url = grandoc@doliforge.org:/gitroot/business/business.git
