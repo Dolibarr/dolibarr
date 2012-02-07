@@ -26,9 +26,10 @@
 
 
 /**
- *	Prepare head for prelevement screen and return it
- *	@param	    object		Object BonPrelevement
- *	@return    	array       head
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
  */
 function prelevement_prepare_head($object)
 {
@@ -82,6 +83,7 @@ function prelevement_prepare_head($object)
 
 /**
  *	Check need data to create standigns orders receipt file
+ *
  *	@return    	int		-1 if ko 0 if ok
  */
 function prelevement_check_config()

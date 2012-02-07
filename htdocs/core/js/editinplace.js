@@ -107,7 +107,7 @@ $(document).ready(function() {
 		$( '#val_' + $(this).attr('id') ).click();
 	});
 	
-	$('.editval_text').editable(urlSaveInPlace, {
+	$('.editval_string').editable(urlSaveInPlace, {
 		type		: 'text',
 		id			: 'field',
 		width		: 300,
@@ -118,7 +118,7 @@ $(document).ready(function() {
 		indicator	: indicatorInPlace,
 		submitdata	: function(result, settings) {
 			var htmlname = $(this).attr('id').substr(4);
-			return getParameters('text', htmlname);
+			return getParameters('string', htmlname);
 		},
 		callback : function(result, settings) {
 			var obj = $.parseJSON(result);
@@ -131,7 +131,7 @@ $(document).ready(function() {
 			}
 		}
 	});
-	$('.editkey_text').hover(
+	$('.editkey_string').hover(
 			function () {
 				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
 			},
@@ -139,7 +139,7 @@ $(document).ready(function() {
 				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
 			}
 	);
-	$('.editkey_text').click(function() {
+	$('.editkey_string').click(function() {
 		$( '#val_' + $(this).attr('id') ).click();
 	});
 	

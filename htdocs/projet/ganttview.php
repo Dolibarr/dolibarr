@@ -30,15 +30,15 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
-$projectid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["id"];
-
+$id=GETPOST('id');
+$ref=GETPOST('ref');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $projectid);
+$result = restrictedArea($user, 'projet', $id);
 
 $userAccess=0;
 
@@ -73,16 +73,14 @@ llxHeader("",$langs->trans("Tasks"),$help_url,'',0,0,$arrayofjs,$arrayofcss);
 
 $task = new Task($db);
 
-$id = $_REQUEST['id'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
 	$project = new Project($db);
-	$project->fetch($_REQUEST["id"],$_GET["ref"]);
+	$project->fetch($id,$ref);
 	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
 
 	// To verify role of users
-	$userAccess = $project->restrictedProjectArea($user);
+	$userAccess = $project->restrictedProjectArea($user,'read');
 }
 
 

@@ -384,39 +384,6 @@ function dol_size($size,$type='')
 
 
 /**
- *	Return date for now. We should always use this function without parameters (that means GMT time)
- *
- * 	@param	string		$mode	'gmt' => we return GMT timestamp,
- * 								'tzserver' => we add the PHP server timezone
- *  							'tzref' => we add the company timezone
- * 								'tzuser' => we add the user timezone
- *	@return timestamp   $date	Timestamp
- */
-function dol_now($mode='gmt')
-{
-    // Note that gmmktime and mktime return same value (GMT) whithout parameters
-    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
-    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
-    {
-        $tzsecond=-dol_mktime(0,0,0,1,1,1970);
-        $ret=gmmktime()+$tzsecond;
-    }
-    else if ($mode == 'tzref')				// Time for now where parent company timezone is added
-    {
-        // TODO Should add the company timezone
-        $ret=gmmktime();
-    }
-    else if ($mode == 'tzuser')				// Time for now where user timezone is added
-    {
-        //print 'eeee'.time().'-'.mktime().'-'.gmmktime();
-        $tzhour=isset($_SESSION['dol_tz'])?$_SESSION['dol_tz']:0;
-        $ret=gmmktime()+($tzhour*60*60);
-    }
-    return $ret;
-}
-
-
-/**
  *	Clean a string to use it as a file name
  *
  *	@param	string	$str            String to clean
@@ -1042,12 +1009,12 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	@param	int			$year			Year
  *	@param	int			$gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *  @param	int			$isdst			Dayling saving time
  *	@return	timestamp					Date as a timestamp, '' if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
-function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$isdst=true)
+function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 {
+    global $conf;
     //print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
     // Clean parameters
@@ -1066,28 +1033,67 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$
         if ($second< 0 || $second > 60) return '';
     }
 
-    $usealternatemethod=false;
-    if ($year <= 1970) $usealternatemethod=true;		// <= 1970
-    if ($year >= 2038) $usealternatemethod=true;		// >= 2038
-
-    if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
+    if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
     {
-        /*
-         // On peut utiliser strtotime pour obtenir la traduction.
-         // strtotime is ok for range: Friday 13 December 1901 20:45:54 GMT to Tuesday 19 January 2038 03:14:07 GMT.
-         $montharray=array(1=>'january',2=>'february',3=>'march',4=>'april',5=>'may',6=>'june',
-         7=>'july',8=>'august',9=>'september',10=>'october',11=>'november',12=>'december');
-         $string=$day." ".$montharray[0+$month]." ".$year." ".$hour.":".$minute.":".$second." GMT";
-         $date=strtotime($string);
-         print "- ".$string." ".$date." -";
-         */
-        $date=adodb_mktime($hour,$minute,$second,$month,$day,$year,$isdst,$gm);
+        if (empty($gm)) $localtz = new DateTimeZone(date_default_timezone_get());
+        else $localtz = new DateTimeZone('UTC');
+        $dt = new DateTime(null,$localtz);
+        $dt->setDate($year,$month,$day);
+        $dt->setTime($hour,$minute,$second);
+        $date=$dt->getTimestamp();
     }
     else
     {
-        $date=mktime($hour,$minute,$second,$month,$day,$year);
+        $usealternatemethod=false;
+        if ($year <= 1970) $usealternatemethod=true;		// <= 1970
+        if ($year >= 2038) $usealternatemethod=true;		// >= 2038
+
+        if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
+        {
+            $date=adodb_mktime($hour,$minute,$second,$month,$day,$year,$isdst,$gm);
+        }
+        else
+        {
+            $date=mktime($hour,$minute,$second,$month,$day,$year);
+        }
     }
     return $date;
+}
+
+
+/**
+ *	Return date for now. We should always use this function without parameters (that means GMT time)
+ *
+ * 	@param	string		$mode	'gmt' => we return GMT timestamp,
+ * 								'tzserver' => we add the PHP server timezone
+ *  							'tzref' => we add the company timezone
+ * 								'tzuser' => we add the user timezone
+ *	@return timestamp   $date	Timestamp
+ */
+function dol_now($mode='gmt')
+{
+    // Note that gmmktime and mktime return same value (GMT) whithout parameters
+    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
+    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
+    {
+        require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+        $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
+        $ret=dol_now('gmt')+($tzsecond*3600);
+    }
+    /*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
+    {
+        require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+        $tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
+        $ret=dol_now('gmt')+($tzsecond*3600);
+    }*/
+    else if ($mode == 'tzuser')				// Time for now with user timezone is added
+    {
+        //print 'eeee'.time().'-'.mktime().'-'.gmmktime();
+        $offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
+        $offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
+        $ret=dol_now('gmt')+($offsettz+$offsetdst);
+    }
+    return $ret;
 }
 
 
@@ -1796,14 +1802,15 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 /**
  *	Show logo action
  *
- *	@param	string	$alt         	Text for image alt and title
+ *	@param	string	$alt         	Text for image alt and title ('default', ...)
  *	@param  int		$numaction   	Action to show
  *	@return string      			Return an img tag
  */
-function img_action($alt = "default", $numaction)
+function img_action($alt, $numaction)
 {
     global $conf,$langs;
-    if ($alt=="default") {
+    if ($alt=="default")
+    {
         if ($numaction == -1) $alt=$langs->transnoentitiesnoconv("ChangeDoNotContact");
         if ($numaction == 0)  $alt=$langs->transnoentitiesnoconv("ChangeNeverContacted");
         if ($numaction == 1)  $alt=$langs->transnoentitiesnoconv("ChangeToContact");
@@ -1830,8 +1837,8 @@ function img_pdf($alt = "default",$size=3)
 /**
  *	Show logo +
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Texte sur le alt de l'image
+ *	@return string      		Return tag img
  */
 function img_edit_add($alt = "default")
 {
@@ -1842,8 +1849,8 @@ function img_edit_add($alt = "default")
 /**
  *	Show logo -
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt         Texte sur le alt de l'image
+ *	@return string      Retourne tag img
  */
 function img_edit_remove($alt = "default")
 {
@@ -1855,10 +1862,10 @@ function img_edit_remove($alt = "default")
 /**
  *	Show logo editer/modifier fiche
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      float       Si il faut y mettre le style "float: right"
- *	@param      other		Add more attributes on img
- *	@return     string      Retourne tag img
+ *	@param  string	$alt        Texte sur le alt de l'image
+ *	@param  float	$float      Si il faut y mettre le style "float: right"
+ *	@param  string	$other		Add more attributes on img
+ *	@return string      		Retourne tag img
  */
 function img_edit($alt = "default", $float=0, $other='')
 {
@@ -1874,10 +1881,10 @@ function img_edit($alt = "default", $float=0, $other='')
 /**
  *	Show logo view card
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      float       Si il faut y mettre le style "float: right"
- *	@param      other		Add more attributes on img
- *	@return     string      Retourne tag img
+ *	@param	string	$alt         Texte sur le alt de l'image
+ *	@param  float	$float       Si il faut y mettre le style "float: right"
+ *	@param  string	$other		Add more attributes on img
+ *	@return string      Retourne tag img
  */
 function img_view($alt = "default", $float=0, $other='')
 {
@@ -1893,9 +1900,9 @@ function img_view($alt = "default", $float=0, $other='')
 /**
  *  Show delete logo
  *
- *  @param      alt         Texte sur le alt de l'image
- *	@param     other      Add more attributes on img
- *  @return     string      Retourne tag img
+ *  @param	string	$alt        Text on alt image
+ *	@param  string	$other      Add more attributes on img
+ *  @return string      		Retourne tag img
  */
 function img_delete($alt = "default", $other='')
 {
@@ -1908,9 +1915,9 @@ function img_delete($alt = "default", $other='')
 /**
  *	Show help logo with cursor "?"
  *
- * 	@param		usehelpcursor
- * 	@param		usealttitle		Texte to use as alt title
- * 	@return     string      	Retourne tag img
+ * 	@param	string	$usehelpcursor		Use help cursor
+ * 	@param	string	$usealttitle		Text to use as alt title
+ * 	@return string      				Retourne tag img
  */
 function img_help($usehelpcursor=1,$usealttitle=1)
 {
@@ -1931,8 +1938,8 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 /**
  *	Affiche logo info
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_info($alt = "default")
 {
@@ -1942,11 +1949,11 @@ function img_info($alt = "default")
 }
 
 /**
- *	Affiche logo warning
+ *	Show logo warning
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      float       Si il faut afficher le style "float: right"
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$float      If we must add style "float: right"
+ *	@return string      		Return img tag
  */
 function img_warning($alt = "default",$float=0)
 {
@@ -1958,8 +1965,8 @@ function img_warning($alt = "default",$float=0)
 /**
  *  Affiche logo error
  *
- *  @param      alt         Texte sur le alt de l'image
- *  @return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_error($alt = "default")
 {
@@ -1971,9 +1978,9 @@ function img_error($alt = "default")
 /**
  *	Affiche logo telephone
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param		option		Choose of logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$option		Option
+ *	@return string      		Return img tag
  */
 function img_phone($alt = "default",$option=0)
 {
@@ -1989,8 +1996,8 @@ function img_phone($alt = "default",$option=0)
 /**
  *	Affiche logo suivant
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_next($alt = "default")
 {
@@ -2004,8 +2011,8 @@ function img_next($alt = "default")
 /**
  *	Affiche logo precedent
  *
- *	@param      alt     Texte sur le alt de l'image
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_previous($alt = "default")
 {
@@ -2017,9 +2024,9 @@ function img_previous($alt = "default")
 /**
  *	Show logo down arrow
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      selected    Affiche version "selected" du logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$selected   Selected
+ *	@return string      		Return img tag
  */
 function img_down($alt = "default", $selected=0)
 {
@@ -2032,9 +2039,9 @@ function img_down($alt = "default", $selected=0)
 /**
  *	Show logo top arrow
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      selected    Affiche version "selected" du logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$selected	Selected
+ *	@return string      		Return img tag
  */
 function img_up($alt = "default", $selected=0)
 {
@@ -2047,9 +2054,9 @@ function img_up($alt = "default", $selected=0)
 /**
  *	Affiche logo gauche
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      selected    Affiche version "selected" du logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$selected	Selected
+ *	@return string      		Return img tag
  */
 function img_left($alt = "default", $selected=0)
 {
@@ -2062,9 +2069,9 @@ function img_left($alt = "default", $selected=0)
 /**
  *	Affiche logo droite
  *
- *	@param      alt         Texte sur le alt de l'image
- *	@param      selected    Affiche version "selected" du logo
- *	@return     string      Retourne tag img
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$selected	Selected
+ *	@return string      		Return img tag
  */
 function img_right($alt = "default", $selected=0)
 {
@@ -2077,9 +2084,9 @@ function img_right($alt = "default", $selected=0)
 /**
  *	Affiche le logo tick si allow
  *
- *	@param      allow       Authorise ou non
- *	@param      alt			Alt text for img
- *	@return     string      Retourne tag img
+ *	@param	string	$allow		Allow
+ *	@param	string	$alt        Text to show on alt image
+ *	@return string      		Return img tag
  */
 function img_allow($allow,$alt='default')
 {
@@ -2498,10 +2505,12 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 /**
  *	Show a message to say access is forbidden and stop program
  *	Calling this function terminate execution of PHP.
- *	@param		message			    Force error message
- *	@param		printheader		    Show header before
- *  @param      printfooter         Show footer after
- *  @param      showonlymessage     Show only message parameter. Otherwise add more information.
+ *
+ *	@param	string	$message			    Force error message
+ *	@param	int		$printheader		    Show header before
+ *  @param  int		$printfooter         Show footer after
+ *  @param  int		$showonlymessage     Show only message parameter. Otherwise add more information.
+ *  @return	void
  */
 function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {
@@ -2552,9 +2561,11 @@ function dolibarr_print_error($db='',$error='')
  *	On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
  *	Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
  *	renvoyer leur erreur par l'intermediaire de leur propriete "error".
- *	@param      db      	Database handler
- *	@param      error		String or array of errors strings to show
- *  @see        dol_htmloutput_errors
+ *
+ *	@param	DoliDB	$db      	Database handler
+ *	@param  string	$error		String or array of errors strings to show
+ *	@return	void
+ *  @see    dol_htmloutput_errors
  */
 function dol_print_error($db='',$error='')
 {
@@ -2665,6 +2676,8 @@ function dol_print_error($db='',$error='')
 
 /**
  * Show email to contact if technical error
+ *
+ * @return	void
  */
 function dol_print_error_email()
 {
@@ -2677,14 +2690,15 @@ function dol_print_error_email()
 /**
  *	Show title line of an array
  *
- *	@param	    name        Label of field
- *	@param	    file        Url used when we click on sort picto
- *	@param	    field       Field to use for new sorting
- *	@param	    begin       ("" by defaut)
- *	@param	    moreparam   Add more parameters on sort url links ("" by default)
- *	@param      td          Options of attribute td ("" by defaut)
- *	@param      sortfield   Current field used to sort
- *	@param      sortorder   Current sort order
+ *	@param	string	$name        Label of field
+ *	@param	string	$file        Url used when we click on sort picto
+ *	@param	string	$field       Field to use for new sorting
+ *	@param	string	$begin       ("" by defaut)
+ *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
+ *	@param  string	$td          Options of attribute td ("" by defaut)
+ *	@param  string	$sortfield   Current field used to sort
+ *	@param  string	$sortorder   Current sort order
+ *	@return	void
  */
 function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="")
 {
@@ -2694,15 +2708,16 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
 /**
  *	Get title line of an array
  *
- *	@param	    name        Label of field
- *	@param		thead		For thead format
- *	@param	    file        Url used when we click on sort picto
- *	@param	    field       Field to use for new sorting
- *	@param	    begin       ("" by defaut)
- *	@param	    moreparam   Add more parameters on sort url links ("" by default)
- *	@param      moreattrib  Add more attributes on th ("" by defaut)
- *	@param      sortfield   Current field used to sort
- *	@param      sortorder   Current sort order
+ *	@param	string	$name        Label of field
+ *	@param	int		$thead		For thead format
+ *	@param	string	$file        Url used when we click on sort picto
+ *	@param	string	$field       Field to use for new sorting
+ *	@param	string	$begin       ("" by defaut)
+ *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
+ *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
+ *	@param  string	$sortfield   Current field used to sort
+ *	@param  string	$sortorder   Current sort order
+ *	@return	void
  */
 function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="")
 {
@@ -2763,20 +2778,24 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 /**
  *	Show a title (deprecated. use print_fiche_titre instrad)
- *	@param	titre			Title to show
+ *
+ *	@param	string	$title			Title to show
+ *	@return	string					Title to show
  */
-function print_titre($titre)
+function print_titre($title)
 {
-    print '<div class="titre">'.$titre.'</div>';
+    print '<div class="titre">'.$title.'</div>';
 }
 
 /**
  *	Show a title with picto
- *	@param	titre				Title to show
- *	@param	mesg				Added message to show on right
- *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
- * 	@param	id					To force an id on html objects
+ *
+ *	@param	string	$titre				Title to show
+ *	@param	string	$mesg				Added message to show on right
+ *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
+ * 	@param	int		$id					To force an id on html objects
+ * 	@return	void
  */
 function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
@@ -2786,11 +2805,12 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 /**
  *	Load a title with picto
  *
- *	@param	titre				Title to show
- *	@param	mesg				Added message to show on right
- *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
- * 	@param	id					To force an id on html objects
+ *	@param	string	$titre				Title to show
+ *	@param	string	$mesg				Added message to show on right
+ *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		$pictoisfullpath		1=Icon name is a full absolute url of image
+ * 	@param	int		$id					To force an id on html objects
+ * 	@return	void
  */
 function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
@@ -2819,17 +2839,17 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 /**
  *	Print a title with navigation controls for pagination
  *
- *	@param	titre				Title to show (required)
- *	@param	page				Numero of page (required)
- *	@param	file				Url of page (required)
- *	@param	options         	parametres complementaires lien ('' par defaut)
- *	@param	sortfield       	champ de tri ('' par defaut)
- *	@param	sortorder       	ordre de tri ('' par defaut)
- *	@param	center          	chaine du centre ('' par defaut)
- *	@param	num					number of records found by select with limit+1
- *	@param	totalnboflines		Total number of records/lines for all pages (if known)
- *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
+ *	@param	string	$titre				Title to show (required)
+ *	@param	string	$page				Numero of page (required)
+ *	@param	string	$file				Url of page (required)
+ *	@param	string	$options         	parametres complementaires lien ('' par defaut)
+ *	@param	string	$sortfield       	champ de tri ('' par defaut)
+ *	@param	string	$sortorder       	ordre de tri ('' par defaut)
+ *	@param	string	$center          	chaine du centre ('' par defaut)
+ *	@param	int		$num				number of records found by select with limit+1
+ *	@param	int		$totalnboflines		Total number of records/lines for all pages (if known)
+ *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		$pictoisfullpath		1=Icon name is a full absolute url of image
  *	@return	void
  */
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0)
@@ -3246,10 +3266,10 @@ function get_product_vat_for_country($idprod, $countrycode)
 /**
  *	Return localtax rate of a product in a particular selling country
  *
- *  @param      idprod          Id of product
- *  @package    local           1 for localtax1, 2 for localtax 2
- *  @param      countrycode     Country code (FR, US, IT, ...)
- *  @return     int             <0 if KO, Vat rate if OK
+ *  @param	int		$idprod         Id of product
+ *  @param  int		$local          1 for localtax1, 2 for localtax 2
+ *  @param  string	$countrycode    Country code (FR, US, IT, ...)
+ *  @return int             		<0 if KO, Vat rate if OK
  *	TODO May be this should be better as a method of product class
  */
 function get_product_localtax_for_country($idprod, $local, $countrycode)
@@ -3400,9 +3420,10 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 /**
  *	Return yes or no in current language
  *
- *	@param	yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	case			1=Yes/No, 0=yes/no
- *	@param	color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@param	string	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
+ *	@param	string	$case			1=Yes/No, 0=yes/no
+ *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@return	string					HTML string
  */
 function yn($yesno, $case=1, $color=0)
 {
@@ -3429,10 +3450,11 @@ function yn($yesno, $case=1, $color=0)
  *  Examples:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
  *  Examples:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
  *
- *	@param      $num            Id to develop
- *	@param      $level		    Level of development (1, 2 or 3 level)
- * 	@param		$alpha		    Use alpha ref
- *  @param      withoutslash    0=With slash at end, 1=without slash at end
+ *	@param	string	$num            Id to develop
+ *	@param  int		$level		    Level of development (1, 2 or 3 level)
+ * 	@param	int		$alpha		    Use alpha ref
+ *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end
+ *  @return	string					Dir to use
  */
 function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
 {
@@ -3730,10 +3752,10 @@ function dol_nboflines($s,$maxchar=0)
 /**
  *	Return nb of lines of a formated text with \n and <br>
  *
- *	@param	   	text      		Text
- *	@param	   	maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
- * 	@param		charset			Give the charset used to encode the $text variable in memory.
- *	@return    	int				Number of lines
+ *	@param	string	$text      		Text
+ *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
+ * 	@param	string	$charset		Give the charset used to encode the $text variable in memory.
+ *	@return int						Number of lines
  */
 function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 {
@@ -4092,7 +4114,7 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *  or descending output and uses optionally natural case insensitive sorting (which
  *  can be optionally case sensitive as well).
  *
- *  @param      array		$array      		Array to sort
+ *  @param      array		&$array      		Array to sort
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard sort (asort)
@@ -4304,8 +4326,8 @@ function picto_from_langcode($codelang)
  *  @param	Conf		$conf           Object conf
  *  @param  Translate	$langs          Object langs
  *  @param  Object		$object         Object object
- *  @param  array		$head           Object head
- *  @param  int			$h              New position to fill
+ *  @param  array		&$head          Object head
+ *  @param  int			&$h             New position to fill
  *  @param  string		$type           Value for object where objectvalue can be
  *                              		'thirdparty'       to add a tab in third party view
  *		                              	'intervention'     to add a tab in intervention view
@@ -4423,7 +4445,8 @@ function printCommonFooter($zone='private')
     if (! empty($_SERVER['DOL_TUNING']))
     {
         $micro_end_time=dol_microtime_float(true);
-        print "\n".'<script type="text/javascript">console.log("';
+        print "\n".'<script type="text/javascript">'."\n";
+        print 'console.log("';
         if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
         print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
         print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
@@ -4441,7 +4464,8 @@ function printCommonFooter($zone='private')
         {
             print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
         }
-        print '")</script>'."\n";
+        print '")'."\n";
+        print '</script>'."\n";
 
         // Add Xdebug coverage of code
         if (defined('XDEBUGCOVERAGE')) {

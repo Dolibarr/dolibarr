@@ -10,6 +10,7 @@ ErrorBadUrl=Url %s is wrong
 ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
 ErrorRecordNotFound=Record not found.
+ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToRenameFile=Failed to rename file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToDeleteFile=Failed to remove file '<b>%s</b>'.
 ErrorFailToCreateFile=Failed to create file '<b>%s</b>'.

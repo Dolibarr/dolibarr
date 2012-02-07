@@ -27,6 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -90,8 +91,11 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
-    /**
-     */
+	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
+	 */
     protected function setUp()
     {
         global $conf,$user,$langs,$db;
@@ -102,8 +106,11 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
-    /**
-     */
+	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
+	 */
     protected function tearDown()
     {
         print __METHOD__."\n";
@@ -218,6 +225,52 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("ée...àa",$after);
 
         return true;
+    }
+
+    /**
+     * testDolMkTime
+     *
+     * @return	void
+     */
+    public function testDolMkTime()
+    {
+        $result=dol_mktime(25,0,0,1,1,1970,1,1);    // Error (25 hours)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+        $result=dol_mktime(2,61,0,1,1,1970,1,1);    // Error (61 minutes)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+        $result=dol_mktime(2,1,61,1,1,1970,1,1);    // Error (61 seconds)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+        $result=dol_mktime(2,1,1,1,32,1970,1,1);    // Error (day 32)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+        $result=dol_mktime(2,1,1,13,1,1970,1,1);    // Error (month 13)
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('',$result);
+
+        $result=dol_mktime(2,1,1,1,1,1970,1);    // 1970-01-01 02:01:01 in GMT area -> 7261
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(7261,$result);
+
+        $result=dol_mktime(2,0,0,1,1,1970,0);                // 1970-01-01 02:00:00 in local area Europe/Paris -> 3600 GMT
+        print __METHOD__." result=".$result."\n";
+        $tz=getServerTimeZoneInt('1970-01-01 02:00:00');    // +1 in Europe/Paris at this time (we are winter)
+        $this->assertEquals(7200-($tz*3600),$result);        // Should be 7200 if we are at greenwich
+    }
+
+    /**
+     * testDolNow
+     *
+     * @return	void
+     */
+    public function testDolNow()
+    {
+        $now=dol_now('gmt');
+        $nowtzserver=dol_now('tzserver');
+        print __METHOD__."getServerTimeZoneInt=".(getServerTimeZoneInt()*3600)."\n";
+        $this->assertEquals(getServerTimeZoneInt()*3600,($nowtzserver-$now));
     }
 }
 ?>

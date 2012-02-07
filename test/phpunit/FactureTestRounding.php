@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/CMailFileTest.php
+ *      \file       test/phpunit/FactureTestRounding.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/class/CMailFile.class.php';
+require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 
 if (empty($user->id))
 {
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CMailFileTest extends PHPUnit_Framework_TestCase
+class FactureTestRounding extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -56,9 +56,9 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CMailFile
+	 * @return FactureTest
 	 */
-	function CMailFileTest()
+	function FactureTestRounding()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -89,9 +89,6 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
 	 */
     protected function setUp()
     {
@@ -104,38 +101,20 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
     }
 	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
 	 */
     protected function tearDown()
     {
     	print __METHOD__."\n";
     }
 
-    /**
-     */
-    public function testCMailFileText()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
 
-		$localobject=new CMailFile('Test','test@test.com','from@from.com',
-		'Message txt',array(),array(),array(),'','',1,0);
-
-    	$result=$localobject->sendfile();
-        print __METHOD__." result=".$result."\n";
-    	$this->assertFalse($result);   // False because mail send disabled
-
-    	return $result;
-    }
 
     /**
+     * Test according to page http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
+     *
+     * @return int
      */
-    public function testCMailFileStatic()
+    public function testFactureRoundingCreate1()
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -143,35 +122,67 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new CMailFile('','','','');
+        $localobject=new Facture($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->lines=array();
+        unset($localobject->total_ht);
+        unset($localobject->total_ttc);
+        unset($localobject->total_tva);
+        $result=$localobject->create($user);
 
-        $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,0);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'John Doe <john@doe.com>');
+        // Add two lines
+        for ($i=0; $i<2; $i++)
+        {
+            $localobject->addline($result, 'Description '.$i, 1.24, 1, 10);
+        }
 
-        $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,1);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'<john@doe.com>');
+        $newlocalobject=new Facture($this->savdb);
+        $newlocalobject->fetch($result);
+        //var_dump($newlocalobject);
 
-        $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,2);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'john@doe.com');
-
-        $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,3,0);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'"John Doe" <john@doe.com>');
-
-        $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,3,1);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>');
-
+        $this->assertEquals($newlocalobject->total_ht, 2.48);
+        $this->assertEquals($newlocalobject->total_tva, 0.24);
+        $this->assertEquals($newlocalobject->total_ttc, 2.72);
         return $result;
     }
 
+
+    /**
+     * @depends	testFactureRoundingCreate1
+     * Test according to page http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
+     *
+     * @return int
+     */
+    public function testFactureRoundingCreate2()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $localobject=new Facture($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->lines=array();
+        unset($localobject->total_ht);
+        unset($localobject->total_ttc);
+        unset($localobject->total_vat);
+        $result=$localobject->create($user);
+
+        // Add two lines
+        for ($i=0; $i<2; $i++)
+        {
+            $localobject->addline($result, 'Description '.$i, 1.24, 1, 10);
+        }
+
+        $newlocalobject=new Facture($this->savdb);
+        $newlocalobject->fetch($result);
+        //var_dump($newlocalobject);
+
+        $this->assertEquals($newlocalobject->total_ht, 2.48);
+        //$this->assertEquals($newlocalobject->total_tva, 0.25);
+        //$this->assertEquals($newlocalobject->total_ttc, 2.73);
+        return $result;
+    }
 }
 ?>

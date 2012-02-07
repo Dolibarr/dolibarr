@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,12 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function shipping_prepare_head($object)
 {
 	global $langs, $conf, $user;
@@ -47,16 +53,22 @@ function shipping_prepare_head($object)
 		$h++;
 	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery');
 
-    return $head;
+	return $head;
 }
 
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function delivery_prepare_head($object)
 {
 	global $langs, $conf, $user;
@@ -80,24 +92,24 @@ function delivery_prepare_head($object)
 	$head[$h][2] = 'delivery';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'delivery');
 
-    return $head;
+	return $head;
 }
 
 /**
  * List sendings and receive receipts
  *
- * @param   string		$origin			Origin
+ * @param   string		$origin			Origin ('commande', ...)
  * @param	int			$origin_id		Origin id
  * @param	string		$filter			Filter
  * @return	int							<0 if KO, >0 if OK
  */
-function show_list_sending_receive($origin='commande',$origin_id,$filter='')
+function show_list_sending_receive($origin,$origin_id,$filter='')
 {
 	global $db, $conf, $langs, $bc;
 	global $form;
@@ -114,9 +126,9 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 	$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 	$sql.= ", ".MAIN_DB_PREFIX."expedition as e";
 	$sql.= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-    //if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
+	//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
-    $sql.= " WHERE obj.fk_".$origin." = ".$origin_id;
+	$sql.= " WHERE obj.fk_".$origin." = ".$origin_id;
 	if ($filter) $sql.=$filter;
 	$sql.= " AND obj.rowid = ed.fk_origin_line";
 	$sql.= " AND ed.fk_expedition = e.rowid";
@@ -143,11 +155,11 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 			print '<td align="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
 			if ($conf->livraison_bon->enabled)
-            {
-                print '<td>'.$langs->trans("DeliveryOrder").'</td>';
-                //print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
+			{
+				print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+				//print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td align="right">'.$langs->trans("DeliveryDate").'</td>';
-            }
+			}
 			print "</tr>\n";
 
 			$var=True;
@@ -163,27 +175,29 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				// Description
 				if ($objp->fk_product > 0)
 				{
-          // Define output language
-          if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			    {   
-            $object = new $origin($db);
-            $object->fetch($origin_id);
-            $object->fetch_thirdparty();        
-      			$prod = new Product($db, $objp->fk_product);
-      			$outputlangs = $langs;
-            $newlang='';
-            if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-            if (empty($newlang)) $newlang=$object->client->default_lang;
-            if (! empty($newlang))
-            {
-                $outputlangs = new Translate("",$conf);
-                $outputlangs->setDefaultLang($newlang);
-            }
-    
-            $label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $objp->product;
-          }
-          else
-            $label = $objp->product;
+					// Define output language
+					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+					{
+						$object = new $origin($db);
+						$object->fetch($origin_id);
+						$object->fetch_thirdparty();
+						$prod = new Product($db, $objp->fk_product);
+						$outputlangs = $langs;
+						$newlang='';
+						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+						if (empty($newlang)) $newlang=$object->client->default_lang;
+						if (! empty($newlang))
+						{
+							$outputlangs = new Translate("",$conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
+
+						$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $objp->product;
+					}
+					else
+					{
+						$label = $objp->product;
+					}
 
 					print '<td>';
 

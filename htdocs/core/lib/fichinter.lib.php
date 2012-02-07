@@ -23,6 +23,12 @@
  *	\ingroup    fichinter
  */
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function fichinter_prepare_head($object)
 {
 	global $langs, $conf, $user;

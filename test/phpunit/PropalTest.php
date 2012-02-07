@@ -89,6 +89,9 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function setUp()
     {
@@ -102,6 +105,9 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		//print $db->getVersion()."\n";
     }
 	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function tearDown()
     {

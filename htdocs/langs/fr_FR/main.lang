@@ -607,6 +607,7 @@ URLPhoto=Url vers photo/logo
 SetLinkToThirdParty=Lier vers un autre tiers
 CreateDraft=Créer brouillon
 ClickToEdit=Cliquer ici pour éditer
+ObjectDeleted=Objet %s supprimé
 
 # Week day
 Monday=Lundi

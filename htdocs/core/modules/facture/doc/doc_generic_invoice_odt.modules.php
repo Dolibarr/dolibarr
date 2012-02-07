@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
+/* Copyright (C) 2010-2012 Laurent Destailleur <ely@users.sourceforge.net>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function doc_generic_invoice_odt($db)
 	{
@@ -115,7 +115,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         	'object_date_creation'=>dol_print_date($object->date_creation,'day'),
             'object_date_modification'=>dol_print_date($object->date_modification,'day'),
             'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
-            'object_payment_mode'=>$object->mode_reglement,
+            'object_payment_mode'=>($object->mode_reglement!='-'?$object->mode_reglement:''),
             'object_payment_term'=>$object->cond_reglement,
         	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
             'object_total_vat'=>price($object->total_tva,0,$outputlangs),

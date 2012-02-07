@@ -557,7 +557,7 @@ class Facture extends CommonObject
 			{
 			    $parameters=array('objFrom'=>$objFrom);
 			    $action='';
-				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 
@@ -653,7 +653,7 @@ class Facture extends CommonObject
 
             $parameters=array('objFrom'=>$object);
             $action='';
-			$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) $error++;
 
             if (! $error)
@@ -3123,7 +3123,6 @@ class Facture extends CommonObject
                 $line->desc=$langs->trans("Description")." ".$xnbp;
                 $line->qty=1;
                 $line->subprice=100;
-                //$line->price=100;
                 $line->tva_tx=19.6;
                 $line->localtax1_tx=0;
                 $line->localtax2_tx=0;
@@ -3177,7 +3176,6 @@ class Facture extends CommonObject
             $line->desc=$langs->trans("Description")." (offered line)";
             $line->qty=1;
             $line->subprice=100;
-            //$line->price=100;
             $line->tva_tx=19.6;
             $line->localtax1_tx=0;
             $line->localtax2_tx=0;

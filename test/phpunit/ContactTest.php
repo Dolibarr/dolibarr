@@ -91,6 +91,9 @@ class ContactTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function setUp()
     {
@@ -103,6 +106,9 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
     }
 	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function tearDown()
     {
@@ -143,7 +149,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Contact($this->savdb);
     	$result=$localobject->fetch($id);
-    	
+
         print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 

@@ -605,6 +605,7 @@ URLPhoto=Url of photo/logo
 SetLinkToThirdParty=Link to another third party
 CreateDraft=Create draft
 ClickToEdit=Click to edit
+ObjectDeleted=Object %s deleted
 
 # Week day
 Monday=Monday

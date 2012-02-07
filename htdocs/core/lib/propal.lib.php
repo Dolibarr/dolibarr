@@ -23,6 +23,12 @@
  *	\ingroup    propal
  */
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function propal_prepare_head($object)
 {
 	global $langs, $conf, $user;

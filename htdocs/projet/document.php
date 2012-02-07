@@ -30,10 +30,11 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load('projects');
 $langs->load('other');
 
+$action=GETPOST('action');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id');
+$ref= GETPOST('ref');
 
 // Security check
 $socid=0;
@@ -51,11 +52,8 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-
-$id = $_GET['id'];
-$ref= $_GET['ref'];
 $project = new Project($db);
-if (! $project->fetch($_GET['id'],$_GET['ref']) > 0)
+if (! $project->fetch($id,$ref) > 0)
 {
 	dol_print_error($db);
 	exit;
@@ -100,7 +98,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 }
 
 // Delete
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->projet->supprimer)
+if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->projet->supprimer)
 {
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
 	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -126,8 +124,11 @@ if ($id > 0 || ! empty($ref))
 
 	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
 
-	// To verify role of users
-	$userAccess = $project->restrictedProjectArea($user);
+    // To verify role of users
+    //$userAccess = $project->restrictedProjectArea($user,'read');
+    $userWrite  = $project->restrictedProjectArea($user,'write');
+    //$userDelete = $project->restrictedProjectArea($user,'delete');
+    //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($project);
 	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($project->public?'projectpub':'project'));
@@ -140,7 +141,7 @@ if ($id > 0 || ! empty($ref))
 		$totalsize+=$file['size'];
 	}
 
-	if ($_GET["action"] == 'delete')
+	if ($action == 'delete')
 	{
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"]."&urlfile=".$_GET['urlfile'],$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
@@ -151,8 +152,11 @@ if ($id > 0 || ! empty($ref))
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 	// Define a complementary filter for search of next/prev ref.
-	$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-	$project->next_prev_filter=" rowid in (".$projectsListId.")";
+    if (! $user->rights->projet->all->lire)
+    {
+        $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
+        $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    }
 	print $form->showrefnav($project,'ref','',1,'ref','ref');
 	print '</td></tr>';
 
@@ -181,25 +185,25 @@ if ($id > 0 || ! empty($ref))
 	print "</table>\n";
 	print "</div>\n";
 
-	if ($mesg) { print $mesg."<br>"; }
+	dol_htmloutput_mesg($mesg);
 
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$project->id,'',0,0,$user->rights->projet->creer);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$project->id,'',0,0,($userWrite>0));
 
 
 	// List of document
 	$param='&id='.$project->id;
-	$formfile->list_of_documents($filearray,$project,'projet',$param);
+	$formfile->list_of_documents($filearray,$project,'projet',$param,0,'',($userWrite>0));
 
 }
 else
 {
-	Header('Location: index.php');
+	dol_print_error('','NoRecordFound');
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

@@ -770,19 +770,19 @@ if ($action == 'create')
 
     // Other attributes
     $parameters=array();
-    $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-    if (empty($reshook))
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
         foreach($extrafields->attribute_label as $key=>$label)
         {
-            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
-            print "<tr><td>".$label.'</td><td>';
+            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+            print '<tr><td>'.$label.'</td><td>';
             print $extrafields->showInputField($key,$value);
             print '</td></tr>'."\n";
         }
     }
 
-/*
+	/*
     // Third party Dolibarr
     if ($conf->societe->enabled)
     {
@@ -795,7 +795,8 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
     print $form->select_users($object->user_id,'userid',1);
     print '</td></tr>';
-*/
+	*/
+
     print "</table>\n";
     print '<br>';
 
@@ -848,8 +849,7 @@ if ($action == 'edit')
 	dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 	dol_htmloutput_errors($errmsg,$errmsgs);
-
-	if ($mesg) print '<div class="ok">'.$mesg.'</div>';
+	dol_htmloutput_mesg($mesg);
 
 	if ($conf->use_javascript_ajax)
 	{
@@ -991,15 +991,15 @@ if ($action == 'edit')
 
 	// Other attributes
 	$parameters=array();
-    $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-    if (empty($reshook))
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
     	foreach($extrafields->attribute_label as $key=>$label)
     	{
-    	    $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$object->array_options["options_$key"]);
-    		print "<tr><td>".$label."</td><td>";
+    	    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+    		print '<tr><td>'.$label.'</td><td>';
             print $extrafields->showInputField($key,$value);
-    		print "</td></tr>\n";
+    		print '</td></tr>'."\n";
     	}
     }
 
@@ -1304,7 +1304,7 @@ if ($rowid && $action != 'edit')
     // Other attributes
     $parameters=array();
     $reshook=$hookmanager->executeHooks('showOutputField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-    if (empty($reshook))
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
         foreach($extrafields->attribute_label as $key=>$label)
         {

@@ -500,9 +500,9 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
 
 /**
- *  Define head array for tabs of security setup pages
+ * Prepare array with list of tabs
  *
- *  @return		array		Array of head
+ * @return  array				Array of tabs to shoc
  */
 function security_prepare_head()
 {

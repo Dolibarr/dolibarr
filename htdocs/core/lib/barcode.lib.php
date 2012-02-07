@@ -58,14 +58,15 @@ else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
 
 
 /**
- * barcode_print(code [, encoding [, scale [, mode ]]] );
+ * Print barcode
  *
- *  encodes and prints a barcode
+ * @param	string	$code		Code
+ * @param	string	$encoding	Encoding
+ * @param	string	$scale		Scale
+ * @param	string	$mode		'png' or 'jpg' ...
  *
- *   return:
- *    array[encoding] : the encoding which has been used
- *    array[bars]     : the bars
- *    array[text]     : text-positioning info
+ *
+ * @return	array	$bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
 {
@@ -90,9 +91,7 @@ function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
 }
 
 /**
- * barcode_encode(code, encoding)
- *   encodes $code with $encoding using genbarcode OR built-in encoder
- *   if you don't have genbarcode only EAN-13/ISBN is possible
+ * Encodes $code with $encoding using genbarcode OR built-in encoder if you don't have genbarcode only EAN-13/ISBN is possible
  *
  * You can use the following encodings (when you have genbarcode):
  *   ANY    choose best-fit (default)
@@ -109,10 +108,9 @@ function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
  *   MSI    MSI (by Leonid A. Broukhis)
  *   PLS    Plessey (by Leonid A. Broukhis)
  *
- *   return:
- *    array[encoding] : the encoding which has been used
- *    array[bars]     : the bars
- *    array[text]     : text-positioning info
+ * @param	string	$code		Code
+ * @param	string	$encoding	Encoding
+ * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode($code,$encoding)
 {
@@ -159,25 +157,10 @@ function barcode_encode($code,$encoding)
 
 
 /**
- * Built-In Encoders
- * Part of PHP-Barcode 0.3pl1
+ * Calculate EAN sum
  *
- * (C) 2001,2002,2003,2004 by Folke Ashberg <folke@ashberg.de>
- *
- * The newest version can be found at http://www.ashberg.de/bar
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * @param	string	$ean	EAN to encode
+ * @return	string			Sum
  */
 function barcode_gen_ean_sum($ean)
 {
@@ -192,13 +175,11 @@ function barcode_gen_ean_sum($ean)
 }
 
 /**
- * barcode_encode_ean(code [, encoding])
- *   encodes $ean with EAN-13 using builtin functions
+ * Encode EAN
  *
- *   return:
- *    array[encoding] : the encoding which has been used (EAN-13)
- *    array[bars]     : the bars
- *    array[text]     : text-positioning info
+ * @param	string	$ean		Code
+ * @param	string	$encoding	Encoding
+ * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode_ean($ean, $encoding = "EAN-13")
 {
@@ -254,13 +235,11 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 }
 
 /**
- * barcode_encode_genbarcode(code, encoding)
- *   encodes $code with $encoding using genbarcode
+ * Encode result of genbarcode command
  *
- *   return:
- *    array[encoding] : the encoding which has been used
- *    array[bars]     : the bars
- *    array[text]     : text-positioning info
+ * @param	string	$code		Code
+ * @param	string	$encoding	Encoding
+ * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode_genbarcode($code,$encoding)
 {

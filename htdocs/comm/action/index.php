@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -128,7 +128,7 @@ $form=new Form($db);
 $companystatic=new Societe($db);
 $contactstatic=new Contact($db);
 
-$now=dol_now('tzref');
+$now=dol_now();
 
 // Define list of all external calendars
 $listofextcals=array();
@@ -709,7 +709,7 @@ if (count($listofextcals))
                         $loop=true; $j=0;
                         // daykey must be date that represent day box in calendar so must be a user time
                         $daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
-                        $daykeygmt=dol_mktime(0,0,0,$mois,$jour,$annee,true,0,false);
+                        $daykeygmt=dol_mktime(0,0,0,$mois,$jour,$annee,true,0);
                         do
                         //print 'x'.$datestart.'-'.$dateend;exit;
                         {

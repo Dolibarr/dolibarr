@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +34,10 @@ $langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 
-$id=GETPOST('id');
-$ligne=GETPOST('ligne');
-$lineid=GETPOST('lineid');
-$action=GETPOST('action');
-
-$id = isset($id)?$id:'';
+$id=GETPOST('id', 'int');
+$ref= GETPOST('ref', 'alpha');
+$lineid=GETPOST('lineid', 'int');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -49,7 +48,7 @@ $result = restrictedArea($user, 'propale', $id, 'propal');
  * Ajout d'un nouveau contact
  */
 
-if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
+if ($action == 'addcontact' && $user->rights->propale->creer)
 {
 
 	$result = 0;
@@ -63,7 +62,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$propal->id);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$propal->id);
 		exit;
 	}
 	else
@@ -103,10 +102,11 @@ if ($action == 'deleteline' && $user->rights->propale->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$propal->id);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$propal->id);
 		exit;
 	}
-	else {
+	else
+	{
 		dol_print_error($db);
 	}
 }
@@ -131,27 +131,23 @@ $userstatic=new User($db);
 /* *************************************************************************** */
 dol_htmloutput_mesg($mesg);
 
-$id = $id;
-$ref= GETPOST('ref');
 if ($id > 0 || ! empty($ref))
 {
 	$propal = New Propal($db);
-	if ( $propal->fetch($id,$ref) > 0)
+	if ($propal->fetch($id,$ref) > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($propal->socid);
 
-
 		$head = propal_prepare_head($propal);
 		dol_fiche_head($head, 'contact', $langs->trans("Proposal"), 0, 'propal');
 
-
 		/*
-		*   Propal synthese pour rappel
-		*/
+		 * Propal synthese pour rappel
+		 */
 		print '<table class="border" width="100%">';
 
-		$linkback="<a href=\"".DOL_URL_ROOT.'/comm/propal.php'."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+		$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal.php?page='.$page.'&socid='.$socid.'&viewstatut='.$viewstatut.'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -179,17 +175,15 @@ if ($id > 0 || ! empty($ref))
 
 		print '</div>';
 
-
+		/*
+		 * Lignes de contacts
+		 */
+		print '<br><table class="noborder" width="100%">';
 
 		/*
-		* Lignes de contacts
-		*/
-		echo '<br><table class="noborder" width="100%">';
-
-		/*
-		* Ajouter une ligne de contact
-		* Non affiche en mode modification de ligne
-		*/
+		 * Ajouter une ligne de contact
+		 * Non affiche en mode modification de ligne
+		 */
 		if ($action != 'editline' && $user->rights->propale->creer)
 		{
 			print '<tr class="liste_titre">';
@@ -351,7 +345,7 @@ if ($id > 0 || ! empty($ref))
 				if ($user->rights->propale->creer)
 				{
 					print '&nbsp;';
-					print '<a href="contact.php?id='.$propal->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -370,7 +364,8 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+llxFooter();
+
 $db->close();
 
-llxFooter();
 ?>

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C)	  2011 Philippe Grand       <philippe.grand@atoo-net.com>
+/* Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +57,6 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->browser->phone)?'12':'14';
-$fontsizesmaller=empty($conf->browser->phone)?'11':'14';
 
 $path='';    // This value may be used in future for external module to overwrite theme
 
@@ -98,6 +96,8 @@ $colorbacklinepair1='255,255,255';    // line pair
 $colorbacklinepair2='255,255,255';    // line pair
 $colorbackbody='#ffffff url('.$img_head.') 0 0 no-repeat;';
 $colortext='40,40,40';
+$fontsize=empty($conf->browser->phone)?'12':'14';
+$fontsizesmaller=empty($conf->browser->phone)?'11':'14';
 
 // Eldy colors
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
@@ -135,6 +135,8 @@ $colorbacklinepair1  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colorbacklinepair2  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR2)    ?$colorbacklinepair2:$conf->global->THEME_ELDY_LINEPAIR2)    :(empty($user->conf->THEME_ELDY_LINEPAIR2)?$colorbacklinepair2:$user->conf->THEME_ELDY_LINEPAIR2);
 $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)     ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
 $colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXT)         ?$colortext:$conf->global->THEME_ELDY_TEXT)                  :(empty($user->conf->THEME_ELDY_TEXT)?$colortext:$user->conf->THEME_ELDY_TEXT);
+$fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
+$fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
 // Set text color to black or white
 $tmppart=explode(',',$colorback1);
@@ -573,21 +575,21 @@ foreach($mainmenuusedarray as $key => $val)
 	{
 		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 		{
-			$url=dol_buildpath($path.'/'.$val.'/img/'.$val.'.png', 1);
+			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 			$found=1;
 			break;
 		}
 	}
 	// Img file not found
-	if (! $found && $generic <= 4)
+	if (! $found)
 	{
 		$url=dol_buildpath($path.'/theme/eldy/img/menus/generic'.$generic.".png",1);
 		$found=1;
-		$generic++;
+		if ($generic < 4) $generic++;
+		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
 	}
 	if ($found)
 	{
-		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
 		print "div.mainmenu.".$val." {\n";
 		print "	background-image: url(".$url.");\n";
 		print "	height:28px;\n";
@@ -1957,7 +1959,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.editkey_textarea, .editkey_ckeditor, .editkey_text, .editkey_numeric, .editkey_select {
+.editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select {
 	background: url(<?php echo dol_buildpath($path.'/theme/eldy/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 }
@@ -1967,7 +1969,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 	cursor: pointer;
 }
 
-.editval_textarea:hover, .editval_ckeditor:hover, .editval_text:hover, .editval_numeric:hover, .editval_select:hover, .editval_datepicker:hover {
+.editval_textarea:hover, .editval_ckeditor:hover, .editval_string:hover, .editval_email:hover, .editval_numeric:hover, .editval_select:hover, .editval_datepicker:hover {
 	background: white;
 	cursor: pointer;
 }

@@ -89,6 +89,9 @@ class ContratTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function setUp()
     {
@@ -101,6 +104,9 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
     }
 	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function tearDown()
     {
@@ -120,10 +126,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		$localobject=new Contrat($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
-    	
+
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	
+
     	return $result;
     }
 
@@ -141,10 +147,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Contrat($this->savdb);
     	$result=$localobject->fetch($id);
-    	
+
     	print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	
+
     	return $localobject;
     }
 

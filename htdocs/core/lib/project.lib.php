@@ -1,22 +1,22 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
-* Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	    \file       htdocs/core/lib/project.lib.php
@@ -26,6 +26,12 @@
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function project_prepare_head($object)
 {
     global $langs, $conf, $user;
@@ -94,9 +100,10 @@ function project_prepare_head($object)
 
 
 /**
- *	    \file       htdocs/core/lib/project.lib.php
- *		\brief      Ensemble de fonctions de base pour le module projet
- *      \ingroup    societe
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
  */
 function task_prepare_head($object)
 {
@@ -150,30 +157,31 @@ function task_prepare_head($object)
  *	@param	int		$socid      Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
  *	@param  int		$selected   Id project preselected
  *	@param  string	$htmlname   Nom de la zone html
+ *	@param	int		$maxlength	Maximum length of label
  *	@return int         		Nbre of project if OK, <0 if KO
  */
-function select_projects($socid=-1, $selected='', $htmlname='projectid')
+function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16)
 {
 	global $db,$user,$conf,$langs;
-	
+
 	$hideunselectables = false;
 	if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
-	
+
 	$projectsListId = false;
 	if (empty($user->rights->projet->all->lire))
 	{
 		$projectstatic=new Project($db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 	}
-	
-	// On recherche les projets
+
+	// Search all projects
 	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
 	$sql.= " WHERE p.entity = ".$conf->entity;
 	if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
-	
+
 	dol_syslog("project.lib::select_projects sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -194,7 +202,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 				}
 				else
 				{
-					$labeltoshow=dol_trunc($obj->ref,16);
+					$labeltoshow=dol_trunc($obj->ref,18);
 					//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 					//else $labeltoshow.=' ('.$langs->trans("Private").')';
 					if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
@@ -214,7 +222,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 						}
-						
+
 						if ($hideunselectables && $disabled)
 						{
 							$resultat='';
@@ -226,7 +234,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 							//else $labeltoshow.=' ('.$langs->trans("Private").')';
 							$resultat.='>'.$labeltoshow;
-							if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,12);
+							if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,$maxlength);
 							$resultat.='</option>';
 						}
 						print $resultat;
@@ -250,13 +258,13 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 /**
  * Output a task line
  *
- * @param   $inc
- * @param   $parent
- * @param   $lines
- * @param   $level
- * @param   $projectsrole
- * @param   $tasksrole
- * @param   $mytask			0 or 1 to enable only if task is a task i am affected to
+ * @param	string	   	&$inc			?
+ * @param   string		$parent			?
+ * @param   Object		$lines			?
+ * @param   int			&$level			?
+ * @param   string		&$projectsrole	?
+ * @param   string		&$tasksrole		?
+ * @param   int			$mytask			0 or 1 to enable only if task is a task i am affected to
  * @return  $inc
  */
 function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
@@ -362,20 +370,20 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
 /**
  * Show task lines with a particular parent
  *
- * @param 	$inc				Counter that count number of lines legitimate to show (for return)
- * @param 	$parent				Id of parent task to start
- * @param 	$lines				Array of all tasks
- * @param 	$level				Level of task
- * @param 	$var				Color
- * @param 	$showproject		Show project columns
- * @param	$taskrole			Array of roles of user for each tasks
- * @param	$projectsListId		List of id of project allowed to user (separated with comma)
+ * @param	string	 	&$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	int			$parent				Id of parent task to start
+ * @param 	array		&$lines				Array of all tasks
+ * @param 	int			&$level				Level of task
+ * @param 	string		$var				Color
+ * @param 	int			$showproject		Show project columns
+ * @param	int			&$taskrole			Array of roles of user for each tasks
+ * @param	int			$projectsListId		List of id of project allowed to user (separated with comma)
  */
 function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
 {
     global $user, $bc, $langs;
 	global $projectstatic, $taskstatic;
-	
+
     $lastprojectid=0;
 
     $projectsArrayId=explode(',',$projectsListId);
@@ -405,7 +413,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
                 {
                     // So search if task has a subtask legitimate to show
                     $foundtaskforuserdeeper=0;
-                    SearchTaskInChild($foundtaskforuserdeeper,$lines[$i]->id,$lines,$taskrole);
+                    searchTaskInChild($foundtaskforuserdeeper,$lines[$i]->id,$lines,$taskrole);
                     //print '$foundtaskforuserpeeper='.$foundtaskforuserdeeper.'<br>';
                     if ($foundtaskforuserdeeper > 0)
                     {
@@ -518,13 +526,14 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 
 /**
  * Search in task lines with a particular parent if there is a task for a particular user (in taskrole)
- * @param 	$inc				Counter that count number of lines legitimate to show (for return)
- * @param 	$parent				Id of parent task to start
- * @param 	$lines				Array of all tasks
- * @param	$taskrole			Array of task filtered on a particular user
- * @return	int					1 if there is
+ *
+ * @param 	string	&$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	int		$parent				Id of parent task to start
+ * @param 	array	&$lines				Array of all tasks
+ * @param	string	&$taskrole			Array of task filtered on a particular user
+ * @return	int							1 if there is
  */
-function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
+function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 {
     //print 'Search in line with parent id = '.$parent.'<br>';
     $numlines=count($lines);
@@ -541,7 +550,7 @@ function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
                 return $inc;
             }
 
-            SearchTaskInChild($inc, $lines[$i]->id, $lines, $taskrole);
+            searchTaskInChild($inc, $lines[$i]->id, $lines, $taskrole);
             //print 'Found inc='.$inc.'<br>';
 
             if ($inc > 0) return $inc;
@@ -554,8 +563,9 @@ function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 
 /**
  * Clean task not linked to a parent
- * @param   $db     Database handler
- * @return	int		Nb of records deleted
+ *
+ * @param	DoliDB	$db     Database handler
+ * @return	int				Nb of records deleted
  */
 function clean_orphelins($db)
 {
@@ -611,10 +621,11 @@ function clean_orphelins($db)
 /**
  * Return HTML table with list of projects and number of opened tasks
  *
- * @param   $db
- * @param   $socid
- * @param   $projectsListId     Id of project i have permission on
- * @param   $mytasks            Limited to task i am contact to
+ * @param	DoliDB	$db					Database handler
+ * @param   int		$socid				Id thirdparty
+ * @param   int		$projectsListId     Id of project i have permission on
+ * @param   int		$mytasks            Limited to task i am contact to
+ * @return	void
  */
 function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 {
@@ -676,7 +687,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
             $projectstatic->public = $objp->public;
 
             // Check is user has read permission on project
-            $userAccess = $projectstatic->restrictedProjectArea($user,1);
+            $userAccess = $projectstatic->restrictedProjectArea($user);
             if ($userAccess >= 0)
             {
                 $var=!$var;

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2011 	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -39,13 +39,13 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	var $emetteur;	// Objet societe qui emet
 
 	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'development';
+	var $version = 'dolibarr';
 
 
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function doc_generic_order_odt($db)
 	{
@@ -107,7 +107,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
             'object_date_modification'=>dol_print_date($object->date_modification,'day'),
             'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
         	'object_date_close'=>dol_print_date($object->date_cloture,'dayhour'),
-            'object_payment_mode'=>$object->mode_reglement,
+            'object_payment_mode'=>($object->mode_reglement!='-'?$object->mode_reglement:''),
             'object_payment_term'=>$object->cond_reglement,
         	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
             'object_total_vat'=>price($object->total_tva,0,$outputlangs),
@@ -144,7 +144,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
         );
     }
 
-	/**		
+	/**
 	 *	Return description of a module
      *	@param      langs        Lang object to use for output
 	 *	@return     string       Description

@@ -87,7 +87,7 @@ insert into llx_c_pays (rowid,code,libelle) values (52, 'BO', 'Bolivie'        )
 insert into llx_c_pays (rowid,code,libelle) values (53, 'BA', 'Bosnie-Herzégovine');
 insert into llx_c_pays (rowid,code,libelle) values (54, 'BW', 'Botswana'       );
 insert into llx_c_pays (rowid,code,libelle) values (55, 'BV', 'Ile Bouvet'     );
-insert into llx_c_pays (rowid,code,libelle) values (56, 'BR', 'Brésil'         );
+insert into llx_c_pays (rowid,code,libelle) values (56, 'BR', 'Brazil'         );
 insert into llx_c_pays (rowid,code,libelle) values (57, 'IO', 'Territoire britannique de l''Océan Indien');
 insert into llx_c_pays (rowid,code,libelle) values (58, 'BN', 'Brunei'         );
 insert into llx_c_pays (rowid,code,libelle) values (59, 'BG', 'Bulgarie'       );

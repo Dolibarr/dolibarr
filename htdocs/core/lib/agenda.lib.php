@@ -103,7 +103,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '<td nowrap="nowrap">';
 				print $langs->trans("Project").' &nbsp; ';
 				print '</td><td nowrap="nowrap">';
-				select_projects($socid?$socid:-1,$pid,'projectid');
+				select_projects($socid?$socid:-1, $pid, 'projectid', 64);
 				print '</td></tr>';
 			}
 
@@ -356,9 +356,9 @@ function show_array_last_actions_done($max=5)
 
 
 /**
- *  Define head array for tabs of agenda setup pages
+ * Prepare array with list of tabs
  *
- *  @return		Array of head
+ * @return  array				Array of tabs to shoc
  */
 function agenda_prepare_head()
 {
@@ -386,28 +386,29 @@ function agenda_prepare_head()
 }
 
 /**
- *  Define head array for tabs of agenda setup pages
- *  @param      action              Object action
- *  @return		Array of head
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
  */
-function actions_prepare_head($action)
+function actions_prepare_head($object)
 {
 	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$action->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("CardAction");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$action->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$action->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
@@ -419,7 +420,8 @@ function actions_prepare_head($action)
 /**
  *  Define head array for tabs of agenda setup pages
  *
- *  @return     Array of head
+ *  @param	string	$param		Parameters to add to url
+ *  @return array			    Array of head
  */
 function calendars_prepare_head($param)
 {

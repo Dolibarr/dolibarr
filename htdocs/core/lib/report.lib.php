@@ -35,7 +35,7 @@
 *    @param		array	$moreparam		Array with list of params to add into form
 *    @return	void
 */
-function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array())
+function report_header($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array())
 {
 	global $langs, $hselected;
 

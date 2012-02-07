@@ -204,7 +204,7 @@ if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset(
  * Include functions
  */
 
-if (! defined('ADODB_DATE_VERSION'))    include_once(ADODB_PATH.'adodb-time.inc.php');
+if (! defined('ADODB_DATE_VERSION')) include_once(ADODB_PATH.'adodb-time.inc.php');
 
 if (! file_exists(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php"))
 {

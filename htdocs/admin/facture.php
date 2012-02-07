@@ -439,10 +439,11 @@ print '<br>';
 print_titre($langs->trans("BillsPDFModules"));
 
 // Load array def with activated templates
+$type='invoice';
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = 'invoice'";
+$sql.= " WHERE type = '".$type."'";
 $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
@@ -472,7 +473,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
@@ -490,6 +490,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
                     $filelist[]=$file;
                 }
                 closedir($handle);
+                arsort($filelist);
 
                 foreach($filelist as $file)
                 {

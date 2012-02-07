@@ -22,6 +22,12 @@
  * \brief      Ensemble de fonctions de base pour le module contrat
  */
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
 function contract_prepare_head($object)
 {
 	global $langs, $conf;

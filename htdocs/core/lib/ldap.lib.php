@@ -22,6 +22,11 @@
  * \ingroup    ldap
  */
 
+/**
+ * Initialize the array of tabs for customer invoice
+ *
+ * @return	array					Array of head tabs
+ */
 function ldap_prepare_head()
 {
 	global $langs, $conf, $user;
@@ -73,7 +78,14 @@ function ldap_prepare_head()
 
 
 /**
- *  \brief      	Show button test LDAP synchro
+ *  Show button test LDAP synchro
+ *
+ *  @param	string	$butlabel		Label
+ *  @param	string	$testlabel		Label
+ *  @param	string	$key			Key
+ *  @param	string	$dn				Dn
+ *  @param	string	$objectclass	Class
+ *  @return	void
  */
 function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 {
@@ -105,13 +117,13 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 /**
  * Show a LDAP array into an HTML output array.
  *
- * @param   $result	    Array to show. This array is already encoded into charset_output
- * @param   $level
- * @param   $count
- * @param   $var
- * @param   $hide
- * @param   $subcount
- * @return  intr
+ * @param	string	$result	    Array to show. This array is already encoded into charset_output
+ * @param   int		$level		Level
+ * @param   int		$count		Count
+ * @param   string	$var		Var
+ * @param   int		$hide		Hide
+ * @param   int		$subcount	Subcount
+ * @return  int
  */
 function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 {

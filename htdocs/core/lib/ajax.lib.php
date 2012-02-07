@@ -26,15 +26,15 @@
 /**
  *	Get value of an HTML field, do Ajax process and show result
  *
- *  @param      selected            Preselecte value
- *	@param	    htmlname            HTML name of input field
- *	@param	    url                 Url for request: /chemin/fichier.php
- *  @param		option				More parameters on URL request
- *  @param		minLength			Minimum number of chars to trigger that Ajax search
- *  @param		autoselect			Automatic selection if just one value
- *	@return    	string              script complet
+ *  @param	string	$selected           Preselecte value
+ *	@param	string	$htmlname           HTML name of input field
+ *	@param	string	$url                Url for request: /chemin/fichier.php
+ *  @param	string	$option				More parameters on URL request
+ *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
+ *  @param	int		$autoselect			Automatic selection if just one value
+ *	@return string              		Script
  */
-function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2,$autoselect=0)
+function ajax_autocompleter($selected,$htmlname,$url,$option='',$minLength=2,$autoselect=0)
 {
     if (empty($minLength)) $minLength=1;
 
@@ -84,13 +84,13 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2,
 /**
  *	Get value of field, do Ajax process and return result
  *
- *	@param	    htmlname            nom et id du champ
- *	@param		fields				other fields to autocomplete
- *	@param	    url                 chemin du fichier de reponse : /chemin/fichier.php
- *	@param		option				More parameters on URL request
- *	@param		minLength			Minimum number of chars to trigger that Ajax search
- *	@param		autoselect			Automatic selection if just one value
- *	@return    	string              script complet
+ *	@param	string	$htmlname           Name of field
+ *	@param	string	$fields				other fields to autocomplete
+ *	@param	string	$url                Chemin du fichier de reponse : /chemin/fichier.php
+ *	@param	string	$option				More parameters on URL request
+ *	@param	int		$minLength			Minimum number of chars to trigger that Ajax search
+ *	@param	int		$autoselect			Automatic selection if just one value
+ *	@return string              		Script
  */
 function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,$autoselect=0)
 {
@@ -163,10 +163,12 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 
 /**
  *	Show an ajax dialog
- *	@param		title		Title of dialog box
- *	@param		message		Message of dialog box
- *	@param		w			Width of dialog box
- *	@param		h			height of dialog box
+ *
+ *	@param	string	$title		Title of dialog box
+ *	@param	string	$message	Message of dialog box
+ *	@param	int		$w			Width of dialog box
+ *	@param	int		$h			height of dialog box
+ *	@return	void
  */
 function ajax_dialog($title,$message,$w=350,$h=150)
 {
@@ -199,8 +201,8 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 /**
  * 	Convert a select html field into an ajax combobox
  *
- * 	@param		htmlname		Name of html field
- *  @return		string			Return html string to convert a select field into a combo
+ * 	@param	string	$htmlname		Name of html field
+ *  @return	string					Return html string to convert a select field into a combo
  */
 function ajax_combobox($htmlname)
 {

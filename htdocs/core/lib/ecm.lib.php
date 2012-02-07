@@ -23,13 +23,19 @@
  */
 
 
-function ecm_prepare_head($obj)
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
+function ecm_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/docmine.php?section='.$obj->id;
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/docmine.php?section='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -37,13 +43,19 @@ function ecm_prepare_head($obj)
 	return $head;
 }
 
-function ecm_file_prepare_head($obj)
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
+function ecm_file_prepare_head($object)
 {
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/ecm/docfile.php?section='.$obj->section_id.'&urlfile='.urlencode($obj->label);
+    $head[$h][0] = DOL_URL_ROOT.'/ecm/docfile.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
@@ -51,7 +63,13 @@ function ecm_file_prepare_head($obj)
     return $head;
 }
 
-function ecm_prepare_head_fm($fac)
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
+function ecm_prepare_head_fm($object)
 {
 	global $langs, $conf;
 	$h = 0;

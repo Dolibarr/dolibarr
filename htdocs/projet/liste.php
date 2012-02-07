@@ -143,12 +143,12 @@ if ($resql)
 		$projectstatic->user_author_id = $objp->fk_user_creat;
 		$projectstatic->public = $objp->public;
 
-		$userAccess = $projectstatic->restrictedProjectArea($user,1);
+		$userAccess = $projectstatic->restrictedProjectArea($user);
 
 		if ($userAccess >= 0)
 		{
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
 			// Project url
 			print "<td>";
@@ -201,8 +201,8 @@ else
 
 print "</table>";
 
-$db->close();
-
 
 llxFooter();
+
+$db->close();
 ?>

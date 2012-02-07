@@ -30,7 +30,8 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 $langs->load("projects");
 $langs->load("companies");
 
-$projectid = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id');
+$ref= GETPOST('ref');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -38,7 +39,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $projectid);
+$result = restrictedArea($user, 'projet', $id);
 
 
 /*
@@ -51,9 +52,9 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 
 	$result = 0;
 	$project = new Project($db);
-	$result = $project->fetch($projectid);
+	$result = $project->fetch($id);
 
-    if ($result > 0 && $projectid > 0)
+    if ($result > 0 && $id > 0)
     {
   		$result = $project->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
@@ -81,7 +82,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 {
 	$project = new Project($db);
-	if ($project->fetch($projectid))
+	if ($project->fetch($id))
 	{
 	    $result=$project->swapContactStatus(GETPOST('ligne'));
 	}
@@ -95,7 +96,7 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
 {
 	$project = new Project($db);
-	$project->fetch($projectid);
+	$project->fetch($id);
 	$result = $project->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
@@ -130,8 +131,6 @@ $userstatic=new User($db);
 /* *************************************************************************** */
 dol_htmloutput_mesg($mesg);
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
 	$project = new Project($db);
@@ -141,7 +140,10 @@ if ($id > 0 || ! empty($ref))
 		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
 
 		// To verify role of users
-		$userAccess = $project->restrictedProjectArea($user);
+		//$userAccess = $project->restrictedProjectArea($user,'read');
+		$userWrite  = $project->restrictedProjectArea($user,'write');
+		//$userDelete = $project->restrictedProjectArea($user,'delete');
+		//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 		$head = project_prepare_head($project);
 		dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, ($project->public?'projectpub':'project'));
@@ -157,8 +159,11 @@ if ($id > 0 || ! empty($ref))
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
 		// Define a complementary filter for search of next/prev ref.
-		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-		$project->next_prev_filter=" rowid in (".$projectsListId.")";
+        if (! $user->rights->projet->all->lire)
+        {
+            $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
+            $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+        }
 		print $form->showrefnav($project,'ref',$linkback,1,'ref','ref','');
 		print '</td></tr>';
 
@@ -194,7 +199,7 @@ if ($id > 0 || ! empty($ref))
 		 * Ajouter une ligne de contact
 		 * Non affiche en mode modification de ligne
 		 */
-		if ($_GET["action"] != 'editline' && $user->rights->projet->creer && $userAccess)
+		if ($_GET["action"] != 'editline')
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
@@ -230,7 +235,14 @@ if ($id > 0 || ! empty($ref))
 			print '<td>';
 			$formcompany->selectTypeContact($project, '', 'type','internal','rowid');
 			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+			print '<td align="right" colspan="3" >';
+			if ($userWrite > 0 || $user->admin)
+			{
+			    print '<input type="submit" class="button" value="'.$langs->trans("Add").'"';
+				if (! ($userWrite > 0 || $user->admin)) print ' disabled="disabled"';
+			    print '>';
+			}
+			print '</td>';
 			print '</tr>';
 
 			print '</form>';
@@ -263,9 +275,15 @@ if ($id > 0 || ! empty($ref))
 				print '<td>';
 				$formcompany->selectTypeContact($project, '', 'type','external','rowid');
 				print '</td>';
-				print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
-				if (! $nbofcontacts) print ' disabled="disabled"';
-				print '></td>';
+
+				print '<td align="right" colspan="3" >';
+				if ($userWrite > 0 || $user->admin)
+				{
+				    print '<input type="submit" class="button" value="'.$langs->trans("Add").'"';
+				    if (! $nbofcontacts || ! ($userWrite > 0 || $user->admin)) print ' disabled="disabled"';
+				    print '>';
+				}
+				print '</td>';
 				print '</tr>';
 
 				print "</form>";
@@ -346,14 +364,14 @@ if ($id > 0 || ! empty($ref))
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($project->statut >= 0 && $userAccess) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($project->statut >= 0 && $userWrite > 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($project->statut >= 0 && $userAccess) print '</a>';
+				if ($project->statut >= 0 && $userWrite > 0) print '</a>';
 				print '</td>';
 
 				// Icon update et delete
 				print '<td align="center" nowrap>';
-				if ($user->rights->projet->creer && $userAccess)
+				if ($user->rights->projet->creer && $userWrite > 0)
 				{
 					print '&nbsp;';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
@@ -375,7 +393,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

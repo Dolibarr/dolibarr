@@ -63,20 +63,79 @@ function get_tz_array()
 
 
 /**
- * Return server timezone
+ * Return server timezone string
  *
- * @return string	TimeZone
+ * @return string			PHP server timezone string ('Europe/Paris')
  */
-function getCurrentTimeZone()
+function getServerTimeZoneString()
 {
-    // Method 1
-    //$tzstring=date_default_timezone_get(); // Then convert into tz
+    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
+    else return '';
+}
 
-    // Method 2
-    $tmp=dol_mktime(0,0,0,1,1,1970);
-    $tz=($tmp<0?'+':'-').sprintf("%02d",abs($tmp/3600));
+/**
+ * Return server timezone int.
+ * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
+ *
+ * @param	string	$refdate	Reference date for timezone (timezone differs on winter and summer)
+ * @return 	int					An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
+ */
+function getServerTimeZoneInt($refgmtdate='now')
+{
+    global $conf;
+    if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
+    {
+        // Method 1 (include daylight)
+        $localtz = new DateTimeZone(getServerTimeZoneString());
+        $localdt = new DateTime($refgmtdate, $localtz);
+        $tmp=-1*$localtz->getOffset($localdt);
+    }
+    else
+    {
+        // Method 2 (does not include daylight)
+        $tmp=dol_mktime(0,0,0,1,1,1970);
+    }
+    $tz=($tmp<0?1:-1)*abs($tmp/3600);
     return $tz;
 }
+
+/**
+ * Return server timezone string
+ *
+ * @return string			Parent company timezone string ('Europe/Paris')
+ */
+/*function getParentCompanyTimeZoneString()
+{
+    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
+    else return '';
+}
+*/
+
+/**
+ * Return parent company timezone int.
+ * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
+ *
+ * @param	string	$refdate	Reference date for timezone (timezone differs on winter and summer)
+ * @return 	int					An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
+ */
+/*function getParentCompanyTimeZoneInt($refgmtdate='now')
+{
+    global $conf;
+    if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
+    {
+        // Method 1 (include daylight)
+        $localtz = new DateTimeZone(getParentCompanyTimeZoneString());
+        $localdt = new DateTime($refgmtdate, $localtz);
+        $tmp=-1*$localtz->getOffset($localdt);
+    }
+    else
+    {
+        // Method 2 (does not include daylight)
+        $tmp=dol_mktime(0,0,0,1,1,1970);
+    }
+    $tz=($tmp<0?1:-1)*abs($tmp/3600);
+    return $tz;
+}*/
 
 
 /**
@@ -115,12 +174,13 @@ function dol_time_plus_duree($time,$duration_value,$duration_unit)
 }
 
 
-/**   Convert hours and minutes into seconds
+/**
+ * Convert hours and minutes into seconds
  *
- *    @param      int		$iHours      Heures
- *    @param      int		$iMinutes    Minutes
- *    @param      int		$iSeconds    Secondes
- *    @return     int		$iResult	 Temps en secondes
+ * @param      int		$iHours     	Hours
+ * @param      int		$iMinutes   	Minutes
+ * @param      int		$iSeconds   	Seconds
+ * @return     int						Time into seconds
  */
 function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 {
@@ -697,7 +757,7 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 /**
  *	Return array of translated months or selected month
  *
- *	@param	Translate	$outputlangs	Object langs	
+ *	@param	Translate	$outputlangs	Object langs
  *	@return array						Month string or array if selected < 0
  */
 function monthArray($outputlangs)

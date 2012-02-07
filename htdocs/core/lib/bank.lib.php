@@ -22,51 +22,57 @@
  * \ingroup    banque
  */
 
-function bank_prepare_head($obj)
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
+function bank_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$obj->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("AccountCard");
 	$head[$h][2] = 'bankname';
 	$h++;
 
-	if ($obj->type == 0 || $obj->type == 1)
+	if ($object->type == 0 || $object->type == 1)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/compta/bank/bankid_fr.php?id='.$obj->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/bank/bankid_fr.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("RIB");
 		$head[$h][2] = 'bankid';
 		$h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT."/compta/bank/account.php?account=".$obj->id;
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/account.php?account=".$object->id;
     $head[$h][1] = $langs->trans("Transactions");
     $head[$h][2] = 'journal';
     $h++;
 
 //    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 //	{
-		$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$obj->id;
+		$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$object->id;
 		$head[$h][1] = $langs->trans("PlannedTransactions");
 		$head[$h][2] = 'cash';
 		$h++;
 //	}
 
-    $head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$obj->id;
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
     $head[$h][1] = $langs->trans("IOMonthlyReporting");
     $head[$h][2] = 'annual';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$obj->id;
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
     $head[$h][1] = $langs->trans("Graph");
     $head[$h][2] = 'graph';
     $h++;
 
-    if ($obj->courant != 2)
+    if ($object->courant != 2)
     {
-    	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$obj->id;
+    	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 	    $head[$h][1] = $langs->trans("AccountStatements");
 	    $head[$h][2] = 'statement';
 	    $h++;
@@ -78,8 +84,9 @@ function bank_prepare_head($obj)
 
 /**
  *		Check account number informations for a bank account
- *		@param    account       A bank account
- *		@return   int           True if informations are valid, false otherwise
+ *
+ *		@param	Account		$account    A bank account
+ *		@return int           			True if informations are valid, false otherwise
  */
 function checkBanForAccount($account)
 {
@@ -125,7 +132,7 @@ function checkBanForAccount($account)
 	{
 		$CCC = strtolower(trim($account->number));
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet));
-    	$cle_rib=strtolower(CheckES($rib,$CCC));
+    	$cle_rib=strtolower(checkES($rib,$CCC));
 		if ($cle_rib == strtolower($account->cle))
     	{
     		return true;
@@ -153,13 +160,16 @@ function checkBanForAccount($account)
 
 /**
  * 	Returns the key for Spanish Banks Accounts
- *  @return		string		Key
+ *
+ *  @param	string	$IentOfi	IentOfi
+ *  @param	string	$InumCta	InumCta
+ *  @return	string				Key
  */
-function CheckES($IentOfi,$InumCta)
+function checkES($IentOfi,$InumCta)
 {
 	if (empty($IentOfi)||empty($InumCta)||strlen($IentOfi)!=8||strlen($InumCta)!=10)
-	{ 
-		$keycontrol =""; 
+	{
+		$keycontrol ="";
 		return $keycontrol;
 	}
 
@@ -172,29 +182,29 @@ function CheckES($IentOfi,$InumCta)
 	{
 		if (strpos($numbers,substr($ccc,$i,1)) === false)
 		{
-			$keycontrol =""; 
+			$keycontrol ="";
 			return $keycontrol;
 		}
 		$i++;
-	} 
+	}
 
 	$values = array(1,2,4,8,5,10,9,7,3,6);
-	$sum = 0;   
+	$sum = 0;
 
 	for($i=2; $i<10; $i++)
 
 	{
 		$sum += $values[$i] * substr($IentOfi, $i-2, 1);
-	}   
+	}
 
 	$key = 11-$sum%11;
 
 	if ($key==10) $key=1;
-	if ($key==11) $key=0; 
+	if ($key==11) $key=0;
 
   	$keycontrol = $key;
 
-	$sum = 0; 
+	$sum = 0;
 
  	for($i=0; $i<11; $i++)
 
@@ -205,9 +215,9 @@ function CheckES($IentOfi,$InumCta)
  	$key = 11-$sum%11;
 
 	if ($key==10) $key=1;
-	if ($key==11) $key=0; 
+	if ($key==11) $key=0;
 
- 	$keycontrol .= $key; 
+ 	$keycontrol .= $key;
 	return $keycontrol;
 }
 

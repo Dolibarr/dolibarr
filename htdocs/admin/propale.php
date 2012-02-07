@@ -422,6 +422,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
                     $filelist[]=$file;
                 }
                 closedir($handle);
+                arsort($filelist);
 
                 foreach($filelist as $file)
                 {

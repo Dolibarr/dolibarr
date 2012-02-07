@@ -43,10 +43,10 @@ function dol_getDefaultFormat()
 /**
  *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
  *
- *  @param      langs           Object language to use for output
- *  @param      filename        Relative filename to output
- *  @param      searchalt       1=Search also in alternative languages
- *	@return		boolean
+ *  @param	Translate	$langs          Object language to use for output
+ *  @param  string		$filename       Relative filename to output
+ *  @param  int			$searchalt      1=Search also in alternative languages
+ *	@return	boolean						true if OK, false if KO
  */
 function dol_print_file($langs,$filename,$searchalt=0)
 {
@@ -93,7 +93,8 @@ function dol_print_file($langs,$filename,$searchalt=0)
 /**
  *	Show informations on an object
  *
- *	@param	object			Objet to show
+ *	@param	Object	$object			Objet to show
+ *	@return	void
  */
 function dol_print_object_info($object)
 {
@@ -218,8 +219,8 @@ function dol_print_object_info($object)
 /**
  *	Return true if email has a domain name that can't be resolved
  *
- *	@param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	@return     boolean     true if domain email is OK, false if KO
+ *	@param	string	$mail       Email address (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@return boolean     		True if domain email is OK, False if KO
  */
 function isValidMailDomain($mail)
 {
@@ -239,14 +240,14 @@ function isValidMailDomain($mail)
  *	Url string validation
  *  <http[s]> :// [user[:pass]@] hostname [port] [/path] [?getquery] [anchor]
  *
- *	@param   	url			Url
- *  @param   	http		1: verify http, 0: not verify http
- *  @param   	pass		1: verify user and pass, 0: not verify user and pass
- *  @param   	port		1: verify port, 0: not verify port
- *  @param   	path		1: verify path, 0: not verify path
- *  @param   	query		1: verify query, 0: not verify query
- *  @param   	anchor		1: verify anchor, 0: not verify anchor
- *	@return  	int			1=Check is OK, 0=Check is KO
+ *	@param	string	$url		Url
+ *  @param  int		$http		1: verify http, 0: not verify http
+ *  @param  int		$pass		1: verify user and pass, 0: not verify user and pass
+ *  @param  int		$port		1: verify port, 0: not verify port
+ *  @param  int		$path		1: verify path, 0: not verify path
+ *  @param  int		$query		1: verify query, 0: not verify query
+ *  @param  int		$anchor		1: verify anchor, 0: not verify anchor
+ *	@return int					1=Check is OK, 0=Check is KO
  */
 function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 {
@@ -288,9 +289,9 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 /**
  *	Clean an url string
  *
- *	@param   	url			Url
- *	@param   	http		1: keep http://, 0: remove also http://
- *	@return  	string	    Cleaned url
+ *	@param	string	$url		Url
+ *	@param  string	$http		1: keep http://, 0: remove also http://
+ *	@return string				Cleaned url
  */
 function clean_url($url,$http=1)
 {
@@ -328,8 +329,14 @@ function clean_url($url,$http=1)
 /**
  * 	Return lines of an html table from an array
  * 	Used by array2table function only
+ *
+ * 	@param	array	$data		Array of data
+ * 	@param	string	$troptions	Options for tr
+ * 	@param	string	$tdoptions	Options for td
+ * 	@return	string
  */
-function array2tr($data,$troptions='',$tdoptions=''){
+function array2tr($data,$troptions='',$tdoptions='')
+{
     $text = '<tr '.$troptions.'>' ;
     foreach($data as $key => $item){
         $text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
@@ -340,8 +347,15 @@ function array2tr($data,$troptions='',$tdoptions=''){
 
 /**
  * 	Return an html table from an array
+ *
+ * 	@param	array	$data			Array of data
+ * 	@param	int		$tableMarkup	Table markup
+ * 	@param	string	$troptions		Options for tr
+ * 	@param	string	$tdoptions		Options for td
+ * 	@return	string
  */
-function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdoptions=''){
+function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdoptions='')
+{
     $text='' ;
     if($tableMarkup) $text = '<table '.$tableoptions.'>' ;
     foreach($data as $key => $item){
@@ -362,15 +376,15 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 /**
  * Return next value for a mask
  *
- * @param   $db				Database handler
- * @param   $mask			Mask to use
- * @param   $table			Table containing field with counter
- * @param   $field			Field containing already used values of counter
- * @param   $where			To add a filter on selection (for exemple to filter on invoice types)
- * @param   $objsoc			The company that own the object we need a counter for
- * @param   $date			Date to use for the {y},{m},{d} tags.
- * @param   $mode           'next' for next value or 'last' for last value
- * @return 	string		    New value
+ * @param	DoliSB		$db				Database handler
+ * @param   string		$mask			Mask to use
+ * @param   string		$table			Table containing field with counter
+ * @param   string		$field			Field containing already used values of counter
+ * @param   string		$where			To add a filter on selection (for exemple to filter on invoice types)
+ * @param   Societe		$objsoc			The company that own the object we need a counter for
+ * @param   string		$date			Date to use for the {y},{m},{d} tags.
+ * @param   string		$mode           'next' for next value or 'last' for last value
+ * @return 	string					    New value
  */
 function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next')
 {
@@ -613,11 +627,11 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $numFinal = $mask;
 
         // We replace special codes except refclient
-        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date),$numFinal);
-        $numFinal = preg_replace('/\{yy\}/i',date("y",$date),$numFinal);
-        $numFinal = preg_replace('/\{y\}/i' ,substr(date("y",$date),2,1),$numFinal);
-        $numFinal = preg_replace('/\{mm\}/i',date("m",$date),$numFinal);
-        $numFinal = preg_replace('/\{dd\}/i',date("d",$date),$numFinal);
+        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
+        $numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
+        $numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1), $numFinal);
+        $numFinal = preg_replace('/\{mm\}/i',  date("m",$date), $numFinal);
+        $numFinal = preg_replace('/\{dd\}/i',  date("d",$date), $numFinal);
 
         // Now we replace the counter
         $maskbefore='{'.$masktri.'}';
@@ -742,10 +756,10 @@ function check_value($mask,$value)
 /**
  *	Convert a binary data to string that represent hexadecimal value
  *
- *	@param   bin		Value to convert
- *	@param   pad      	Add 0
- *	@param   upper		Convert to tupper
- *	@return  string		x
+ *	@param   string		$bin		Value to convert
+ *	@param   boolean	$pad      	Add 0
+ *	@param   boolean	$upper		Convert to tupper
+ *	@return  string					x
  */
 function binhex($bin, $pad=false, $upper=false)
 {
@@ -761,8 +775,8 @@ function binhex($bin, $pad=false, $upper=false)
 /**
  *	Convert an hexadecimal string into a binary string
  *
- *	@param   hexa		Hexadecimal string to convert (example: 'FF')
- *	@return  string	    bin
+ *	@param	string	$hexa		Hexadecimal string to convert (example: 'FF')
+ *	@return string	    		bin
  */
 function hexbin($hexa)
 {
@@ -779,8 +793,8 @@ function hexbin($hexa)
 /**
  *	Retourne le numero de la semaine par rapport a une date
  *
- *	@param   time   	Date au format 'timestamp'
- *	@return  int		Numero de semaine
+ *	@param	string	$time   	Date au format 'timestamp'
+ *	@return int					Number of week
  */
 function numero_semaine($time)
 {
@@ -861,10 +875,10 @@ function numero_semaine($time)
 /**
  *	Convertit une masse d'une unite vers une autre unite
  *
- *	@param   weight    float	Masse a convertir
- *	@param   from_unit int     Unite originale en puissance de 10
- *	@param   to_unit   int     Nouvelle unite  en puissance de 10
- *	@return  float	        Masse convertie
+ *	@param	float	$weight    		Masse a convertir
+ *	@param  int		&$from_unit 		Unite originale en puissance de 10
+ *	@param  int		$to_unit   		Nouvelle unite  en puissance de 10
+ *	@return float	        		Masse convertie
  */
 function weight_convert($weight,&$from_unit,$to_unit)
 {
@@ -896,11 +910,11 @@ function weight_convert($weight,&$from_unit,$to_unit)
 /**
  *	Save personnal parameter
  *
- *	@param	    db          Handler database
- *	@param	    conf		Object conf
- *	@param	    user        Object user
- *	@param	    tab         Tableau (cle=>valeur) des parametres a sauvegarder
- *	@return     int         <0 if KO, >0 if OK
+ *	@param	DoliDB	$db         Handler database
+ *	@param	Conf	$conf		Object conf
+ *	@param	User	&$user      Object user
+ *	@param	array	$tab        Tableau (cle=>valeur) des parametres a sauvegarder
+ *	@return int         		<0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const, dolibarr_set_const, dolibarr_del_const
  */
@@ -968,11 +982,11 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 /**
  *	Returns formated reduction
  *
- *	@param		reduction		Reduction percentage
- *	@param		langs			Output language
- *	@return		string			Formated reduction
+ *	@param	int			$reduction		Reduction percentage
+ *	@param	Translate	$langs			Output language
+ *	@return	string						Formated reduction
  */
-function dol_print_reduction($reduction=0,$langs)
+function dol_print_reduction($reduction,$langs)
 {
     $string = '';
     if ($reduction == 100)
@@ -1035,10 +1049,10 @@ function version_webserver()
 /**
  * 	Return list of activated modules usable for document generation
  *
- * 	@param		$db				    Database handler
- * 	@param		$type			    Type of models (company, invoice, ...)
- *  @param      $maxfilenamelength  Max length of value to show
- * 	@return		int or array	    0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	@param	DoliDB		$db				    Database handler
+ * 	@param	string		$type			    Type of models (company, invoice, ...)
+ *  @param  int		    $maxfilenamelength  Max length of value to show
+ * 	@return	mixed			    			0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
  */
 function getListOfModels($db,$type,$maxfilenamelength=0)
 {
@@ -1121,6 +1135,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 /**
  * This function evaluates a string that should be a valid IPv4
  *
+ * @param	string		$ip			IP Address
  * @return	It returns 0 if $ip is not a valid IPv4
  * 			It returns 1 if $ip is a valid IPv4 and is a public IP
  * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP
@@ -1140,9 +1155,9 @@ function is_ip($ip)
 /**
  *  Build a login from lastname, firstname
  *
- *  @param      lastname		Lastname
- *  @param      firstname		Firstname
- *	@return		string
+ *  @param	string		$lastname		Lastname
+ *  @param  string		$firstname		Firstname
+ *	@return	string						Login
  */
 function dol_buildlogin($lastname,$firstname)
 {
