@@ -1,21 +1,21 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
-* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *		\file       htdocs/install/repair.php
@@ -93,6 +93,10 @@ $conf->db->port = $dolibarr_main_db_port;
 $conf->db->name = $dolibarr_main_db_name;
 $conf->db->user = $dolibarr_main_db_user;
 $conf->db->pass = $dolibarr_main_db_pass;
+
+// For encryption
+$conf->db->dolibarr_main_db_encryption	= $dolibarr_main_db_encryption;
+$conf->db->dolibarr_main_db_cryptkey	= $dolibarr_main_db_cryptkey;
 
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
