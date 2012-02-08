@@ -594,7 +594,7 @@ else
 
 	print '</table>';
 
-
+    // Warning 1
 	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 	{
 		$sendmailoption=ini_get('mail.force_extra_parameters');
@@ -605,6 +605,11 @@ else
 		}
 	}
 
+	// Warning 2
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	{
+	    print '<br>'.info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
+	}
 
 	// Boutons actions
 	print '<div class="tabsAction">';
