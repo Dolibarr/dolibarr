@@ -563,7 +563,7 @@ foreach($conf->modules as $key => $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','bookmark','cashdesk','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
 foreach($mainmenuusedarray as $key => $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
