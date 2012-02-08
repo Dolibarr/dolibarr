@@ -209,7 +209,7 @@ if (GETPOST('purge'))
         if ($modulepart == 'contract') $upload_dir = $conf->contrat->dir_output;
         if ($modulepart == 'tax') $upload_dir = $conf->tax->dir_output;
 
-        if (empty($upload_dir)) break;
+        if (empty($upload_dir)) continue;
 
         print '<tr><td colspan="2">Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
