@@ -715,12 +715,18 @@ class FormFile
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1]; }
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1]; }
 
+                $result=0;
                 if (is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) $object_instance=$this->cache_objects[$modulepart.'_'.$id.'_'.$ref];
                 else
                 {
                     //print 'Fetch '.$idorref.'<br>';
                     $result=$object_instance->fetch($id,$ref);
                     if ($result > 0) $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance);    // Save object into a cache
+                    if ($result == 0)    // Not found but no error
+                    {
+                         // Clean of orphelins directories are done into repair.php
+                         //dol_delete_file($file['fullname'],1,1,1);
+                    }
                 }
 
                 $var=!$var;

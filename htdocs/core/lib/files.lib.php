@@ -136,13 +136,16 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		closedir($dir);
 
 		// Obtain a list of columns
-		$myarray=array();
-		foreach ($file_list as $key => $row)
+		if ($sortcriteria)
 		{
-			$myarray[$key]  = $row[$sortcriteria];
+    		$myarray=array();
+    		foreach ($file_list as $key => $row)
+    		{
+    			$myarray[$key]  = $row[$sortcriteria];
+    		}
+    		// Sort the data
+    		if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
 		}
-		// Sort the data
-		if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
 
 		return $file_list;
 	}

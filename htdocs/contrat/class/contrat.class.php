@@ -50,8 +50,6 @@ class Contrat extends CommonObject
 	var $product;
 
 	var $user_author;
-	var $user_service;
-	var $user_cloture;
 	var $date_creation;
 	var $date_validation;
 
@@ -79,8 +77,6 @@ class Contrat extends CommonObject
 		$this->db = $db;
 		$this->product = new Product($db);
 		$this->societe = new Societe($db);
-		$this->user_service = new User($db);
-		$this->user_cloture = new User($db);
 	}
 
 	/**
@@ -343,19 +339,13 @@ class Contrat extends CommonObject
 				$this->id                = $result["rowid"];
 				$this->ref               = (!isset($result["ref"]) || !$result["ref"]) ? $result["rowid"] : $result["ref"];
 				$this->statut            = $result["statut"];
-				$this->factureid         = $result["fk_facture"];
-				$this->facturedetid      = $result["fk_facturedet"];
 				$this->mise_en_service   = $this->db->jdate($result["datemise"]);
-				$this->date_fin_validite = $result["datefin"];
 				$this->date_contrat      = $this->db->jdate($result["datecontrat"]);
 
 				$this->user_author_id    = $result["fk_user_author"];
 
 				$this->commercial_signature_id = $result["fk_commercial_signature"];
 				$this->commercial_suivi_id = $result["fk_commercial_suivi"];
-
-				$this->user_service->id  = $result["fk_user_mise_en_service"];
-				$this->user_cloture->id  = $result["fk_user_cloture"];
 
 				$this->note              = $result["note"];
 				$this->note_public       = $result["note_public"];

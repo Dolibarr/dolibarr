@@ -1,21 +1,21 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *		\file       htdocs/install/repair.php
@@ -59,7 +59,7 @@ if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initializ
 
 /*
  * View
- */
+*/
 
 pHeader('',"upgrade2",GETPOST('action'));
 
@@ -145,7 +145,7 @@ flush();
 
 /*
  *	Load sql files
- */
+*/
 if ($ok)
 {
     if ($choix==1) $dir = "mysql/migration/";
@@ -191,7 +191,133 @@ if ($ok)
     }
 }
 
+
+if (GETPOST('purge'))
+{
+    $conf->setValues($db);
+
+    $listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
+    foreach ($listmodulepart as $modulepart)
+    {
+        $filearray=array();
+        if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output;
+        if ($modulepart == 'invoice') $upload_dir = $conf->facture->dir_output;
+        if ($modulepart == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
+        if ($modulepart == 'propal') $upload_dir = $conf->propale->dir_output;
+        if ($modulepart == 'order') $upload_dir = $conf->commande->dir_output;
+        if ($modulepart == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
+        if ($modulepart == 'contract') $upload_dir = $conf->contrat->dir_output;
+        if ($modulepart == 'tax') $upload_dir = $conf->tax->dir_output;
+
+        if (empty($upload_dir)) break;
+
+        print '<tr><td colspan="2">Clean orphelins files into files '.$upload_dir.'</td></tr>';
+
+        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1);
+
+        // To show ref or specific information according to view to show (defined by $module)
+        if ($modulepart == 'invoice')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+            $object_instance=new Facture($db);
+        }
+        else if ($modulepart == 'invoice_supplier')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
+            $object_instance=new FactureFournisseur($db);
+        }
+        else if ($modulepart == 'propal')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
+            $object_instance=new Propal($db);
+        }
+        else if ($modulepart == 'order')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
+            $object_instance=new Commande($db);
+        }
+        else if ($modulepart == 'order_supplier')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php');
+            $object_instance=new CommandeFournisseur($db);
+        }
+        else if ($modulepart == 'contract')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php');
+            $object_instance=new Contrat($db);
+        }
+        else if ($modulepart == 'tax')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php');
+            $object_instance=new ChargeSociales($db);
+        }
+
+        $var=true;
+        foreach($filearray as $key => $file)
+        {
+            if (!is_dir($file['name'])
+            && $file['name'] != '.'
+            && $file['name'] != '..'
+            && $file['name'] != 'CVS'
+            )
+            {
+                // Define relative path used to store the file
+                $relativefile=preg_replace('/'.preg_quote($upload_dir.'/','/').'/','',$file['fullname']);
+
+                //var_dump($file);
+                $id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
+
+                // To show ref or specific information according to view to show (defined by $module)
+                if ($modulepart == 'invoice')          {
+                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'invoice_supplier') {
+                    preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
+                }
+                if ($modulepart == 'propal')           {
+                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'order')            {
+                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'order_supplier')   {
+                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'contract')         {
+                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'tax')              {
+                    preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
+                }
+
+                if ($id || $ref)
+                {
+                    //print 'Fetch '.$id.' or '.$ref.'<br>';
+                    $result=$object_instance->fetch($id,$ref);
+                    //print $result.'<br>';
+                    if ($result == 0)    // Not found but no error
+                    {
+                        // Clean of orphelins directories are done into repair.php
+                        print '<tr><td colspan="2">';
+                        print 'Delete orphelins file '.$file['fullname'].'<br>';
+                        if (GETPOST('purge') == 2)
+                        {
+                            dol_delete_file($file['fullname'],1,1,1);
+                            dol_delete_dir(dirname($file['fullname']),1);
+                        }
+                        print "</td></tr>";
+                    }
+                    else if ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
+                }
+            }
+        }
+    }
+}
+
 print '</table>';
+
+
+
 
 if ($db->connected) $db->close();
 
