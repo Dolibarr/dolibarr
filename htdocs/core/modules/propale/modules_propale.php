@@ -31,8 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Req
 
 
 /**
- *	\class      ModelePDFPropales
- *	\brief      Classe mere des modeles de propale
+ *	Classe mere des modeles de propale
  */
 abstract class ModelePDFPropales extends CommonDocGenerator
 {
@@ -40,8 +39,9 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 
 
 	/**
-	 *      Return list of active generation modules
-	 * 		@param		$db		Database handler
+	 *  Return list of active generation modules
+	 *
+	 * 	@param	DoliDB	$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -59,23 +59,26 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 
 
 /**
- *	\class      ModeleNumRefPropales
- *	\brief      Classe mere des modeles de numerotation des references de propales
+ *	Classe mere des modeles de numerotation des references de propales
  */
 abstract class ModeleNumRefPropales
 {
 	var $error='';
 
-	/**     \brief     	Return if a module can be used or not
-	 *      	\return		boolean     true if module can be used
+	/**
+	 * Return if a module can be used or not
+	 *
+	 * @return	boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de numerotation
-	 *      \return     string      Texte descripif
+	/**
+	 *  Renvoi la description par defaut du modele de numerotation
+	 *
+	 * 	@return     string      Texte descripif
 	 */
 	function info()
 	{
@@ -84,8 +87,10 @@ abstract class ModeleNumRefPropales
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de numerotation
-	 *      \return     string      Example
+	/**
+	 * 	Renvoi un exemple de numerotation
+	 *
+	 *  @return     string      Example
 	 */
 	function getExample()
 	{
@@ -94,17 +99,21 @@ abstract class ModeleNumRefPropales
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *
+	 *  @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuee
-	 *      \return     string      Valeur
+	/**
+	 * 	Renvoi prochaine valeur attribuee
+	 *
+	 *  @return     string      Valeur
 	 */
 	function getNextValue()
 	{
@@ -112,8 +121,10 @@ abstract class ModeleNumRefPropales
 		return $langs->trans("NotAvailable");
 	}
 
-	/**     \brief      Renvoi version du module numerotation
-	 *      	\return     string      Valeur
+	/**
+	 *  Renvoi version du module numerotation
+	 *
+	 *  @return     string      Valeur
 	 */
 	function getVersion()
 	{
