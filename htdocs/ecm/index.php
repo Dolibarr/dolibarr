@@ -145,7 +145,7 @@ if (GETPOST("action") == 'add' && $user->rights->ecm->setup)
 	else
 	{
 		$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
-		$_GET["action"] = "create";
+		$action = "create";
 	}
 }
 
@@ -171,14 +171,14 @@ if (GETPOST('action') == 'confirm_deletefile' && GETPOST('confirm') == 'yes')
 }
 
 // Remove directory
-if (GETPOST('action') == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 {
 	$result=$ecmdir->delete($user);
 	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
 }
 
 // Refresh directory view
-if (GETPOST("action") == 'refreshmanual')
+if ($action == 'refreshmanual')
 {
     $diroutputslash=str_replace('\\','/',$conf->ecm->dir_output);
     $diroutputslash.='/';
@@ -368,7 +368,7 @@ print $langs->trans("ECMAreaDesc2")."<br>";
 print "<br>\n";
 
 // Confirm remove file
-if (GETPOST('action') == 'delete')
+if ($action == 'delete')
 {
 	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 	if ($ret == 'html') print '<br>';
@@ -449,7 +449,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	$ecmdirstatic = new EcmDirectory($db);
 
 	// Confirmation de la suppression d'une ligne categorie
-	if ($_GET['action'] == 'delete_section')
+	if ($action == 'delete_section')
 	{
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
 		if ($ret == 'html') print '<br>';
@@ -493,7 +493,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		$oldvallevel=0;
 		foreach ($sectionauto as $key => $val)
 		{
-			if ($val['test'])
+			if ($val['test'])    // If condition to show is ok
 			{
 				$var=false;
 
@@ -506,7 +506,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 				print '</td>';
 
 				print '<td valign="top">';
-				if ($val['module'] == $_REQUEST["module"])
+				if ($val['module'] == GETPOST("module"))
 				{
 					$n=3;
 					$ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop'.$n.'.gif','',1);
@@ -551,19 +551,13 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 				print "</tr>\n";
 
-				// Show sublevel
-				if ($val['module'] == $_REQUEST["module"])
+				if ($val['module'] == GETPOST('module'))    // We are on selected module
 				{
-					if ($val['module'] == 'xxx')
-					{
-					}
-					else
+					if (in_array($val['module'],array('product')))
 					{
 						$showonrightsize='featurenotyetavailable';
 					}
 				}
-
-
 
 				$oldvallevel=$val['level'];
 				$nbofentries++;
@@ -812,7 +806,7 @@ if ($module == 'company')  // Auto area for suppliers invoices
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
-    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
+    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
 }
@@ -822,7 +816,7 @@ else if ($module == 'invoice')  // Auto area for suppliers invoices
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
-    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
+    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
 }
@@ -833,7 +827,7 @@ else if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
-    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
+    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
 }
@@ -843,7 +837,7 @@ else if ($module == 'propal')  // Auto area for customers orders
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
-    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
+    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
 }
@@ -853,7 +847,7 @@ else if ($module == 'order')  // Auto area for customers orders
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
-    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
+    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
 }
@@ -864,7 +858,7 @@ else if ($module == 'order_supplier')  // Auto area for suppliers orders
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
-    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
+    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
 }
@@ -874,7 +868,7 @@ else if ($module == 'contract')  // Auto area for suppliers invoices
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
-    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
+    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
 }
@@ -884,7 +878,7 @@ else if ($module == 'tax')  // Auto area for suppliers invoices
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
-    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
+    $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
 }
