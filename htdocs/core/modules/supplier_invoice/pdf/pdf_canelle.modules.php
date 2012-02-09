@@ -303,6 +303,24 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					$nexY+=2;    // Passe espace entre les lignes
 
+					// Cherche nombre de lignes a venir pour savoir si place suffisante
+					if ($i < ($nblignes - 1) && empty($hidedesc))	// If it's not last line
+					{
+						//on recupere la description du produit suivant
+						$follow_descproduitservice = $object->lines[$i+1]->desc;
+						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4;
+						// Et si on affiche dates de validite, on ajoute encore une ligne
+						if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
+						{
+							$nblineFollowDesc += 4;
+						}
+					}
+					else	// If it's last line
+					{
+						$nblineFollowDesc = 0;
+					}
+
 					// Test if a new page is required
 					if ($pagenb == 1)
 					{
@@ -370,6 +388,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
+
+				// Actions on extra fields (by external module or standard code)
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+				$hookmanager=new HookManager($this->db);
+				$hookmanager->callHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 

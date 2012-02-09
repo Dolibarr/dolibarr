@@ -1188,7 +1188,7 @@ class Commande extends CommonObject
      * 	@param		string		$ref			Ref of object
      * 	@param		string		$ref_ext		External reference of object
      * 	@param		string		$ref_int		Internal reference of other object
-     *	@return     int         				>0 if OK, <0 if KO
+     *	@return     int         				>0 if OK, <0 if KO, 0 if not found
      */
     function fetch($id, $ref='', $ref_ext='', $ref_int='')
     {
@@ -1220,7 +1220,7 @@ class Commande extends CommonObject
         if ($ref_ext) $sql.= " AND c.ref_ext='".$this->db->escape($ref_ext)."'";
         if ($ref_int) $sql.= " AND c.ref_int='".$this->db->escape($ref_int)."'";
 
-        dol_syslog("Commande::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1289,7 +1289,7 @@ class Commande extends CommonObject
                 }
 
                 /*
-                 * Lignes
+                 * Lines
                  */
                 $result=$this->fetch_lines();
                 if ($result < 0)
@@ -1300,14 +1300,14 @@ class Commande extends CommonObject
             }
             else
             {
-                dol_syslog('Commande::Fetch Error rowid='.$id.' numrows=0 sql='.$sql);
                 $this->error='Order with id '.$id.' not found sql='.$sql;
-                return -2;
+                dol_syslog(get_class($this).'::fetch '.$this->error);
+                return 0;
             }
         }
         else
         {
-            dol_syslog('Commande::Fetch Error rowid='.$id.' Erreur dans fetch de la commande');
+            dol_syslog(get_class($this).'::fetch Error rowid='.$id, LOG_ERR);
             $this->error=$this->db->error();
             return -1;
         }

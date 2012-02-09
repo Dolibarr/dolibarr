@@ -704,7 +704,7 @@ class FormFile
                 $relativefile=preg_replace('/'.preg_quote($upload_dir.'/','/').'/','',$file['fullname']);
 
                 //var_dump($file);
-                $id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
+                $id=0; $ref=''; $label='';
 
                 // To show ref or specific information according to view to show (defined by $module)
                 if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1]; }
@@ -715,18 +715,27 @@ class FormFile
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1]; }
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1]; }
 
-                if (is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) $object_instance=$this->cache_objects[$modulepart.'_'.$id.'_'.$ref];
+                if (! $id && ! $ref) continue;
+
+                $found=0;
+                if (! empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))
+                {
+                    $found=1;
+                }
                 else
                 {
                     //print 'Fetch '.$idorref.'<br>';
                     $result=$object_instance->fetch($id,$ref);
-                    if ($result > 0) $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance);    // Save object into a cache
+                    if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
+                    if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; }
                 }
+
+                if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
 
                 $var=!$var;
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
-                if ($object_instance->id) print $object_instance->getNomUrl(1,'document');
+                if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));
                 print '</td>';
                 print '<td>';

@@ -162,14 +162,14 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
     	// Crabe
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, '', $localobject->modelpdf, $langs);
+    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
     	// Oursin
     	$localobject->modelpdf='oursin';
-    	$result=facture_pdf_create($db, $localobject, '', $localobject->modelpdf, $langs);
+    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";

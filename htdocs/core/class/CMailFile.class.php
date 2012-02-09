@@ -105,6 +105,9 @@ class CMailFile
 
 		// We define end of line (RFC 822bis section 2.3)
 		$this->eol="\r\n";
+		// eol2 is for header fields to manage bugged MTA with option MAIN_FIX_FOR_BUGGED_MTA
+		$this->eol2=$this->eol;
+		if (! empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) $this->eol2="\n";
 
 		// On defini mixed_boundary
 		$this->mixed_boundary = "multipart_x." . time() . ".x_boundary";
@@ -589,31 +592,31 @@ class CMailFile
 		$host = dol_getprefix();
 
 		// Sender
-		//$out.= "Sender: ".getValidAddress($this->addr_from,2m)).$this->eol;
-		$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
-		//$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
-		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol;
-		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol;
+		//$out.= "Sender: ".getValidAddress($this->addr_from,2m)).$this->eol2;
+		$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol2;
+		//$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
+		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol2;
+		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol2;
 
 		// Receiver
-		if (isset($this->addr_cc)   && $this->addr_cc)   $out.= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol;
-		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol;
+		if (isset($this->addr_cc)   && $this->addr_cc)   $out.= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol2;
+		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol2;
 
 		// Delivery receipt
-		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out.= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol;
+		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out.= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol2;
 
-		//$out.= "X-Priority: 3".$this->eol;
+		//$out.= "X-Priority: 3".$this->eol2;
 
-		$out.= 'Date: ' . date("r") . $this->eol;
-		$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol;
+		$out.= 'Date: ' . date("r") . $this->eol2;
+		$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol2;
 
-		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
-		$out.= "Mime-Version: 1.0".$this->eol;
+		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol2;
+		$out.= "Mime-Version: 1.0".$this->eol2;
 
 		//$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
 
-		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
-		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
+		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol2;
+		$out.= "Content-Transfer-Encoding: 8bit".$this->eol2;
 
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
@@ -640,7 +643,7 @@ class CMailFile
 				if ($filename_list[$i])
 				{
 					if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-					$out.= "X-attachments: $filename_list[$i]".$this->eol;
+					$out.= "X-attachments: $filename_list[$i]".$this->eol2;
 				}
 			}
 		}

@@ -112,7 +112,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"facture_pdf_create Error: ".$obj->error);
+			dol_print_error($db,"chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 

@@ -148,7 +148,7 @@ if ($result)
         print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
 		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
-		print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
+		print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
 		print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
 
 		print "</tr>\n";
@@ -157,7 +157,7 @@ if ($result)
 		$i++;
 	}
 	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td><td>&nbsp;</td>';
+	print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
 	print '</tr>';
 
 	print '</table>';

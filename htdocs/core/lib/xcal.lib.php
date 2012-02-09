@@ -59,9 +59,9 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 		fwrite($calfileh,"CALSCALE:GREGORIAN\n");
 		fwrite($calfileh,"X-WR-CALNAME:".$encoding.format_cal($format,$title)."\n");
         fwrite($calfileh,"X-WR-CALDESC:".$encoding.format_cal($format,$desc)."\n");
-        $hh=ConvertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'hour');
-        $mm=ConvertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'min');
-        $ss=ConvertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'sec');
+        $hh=convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'hour');
+        $mm=convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'min');
+        $ss=convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'sec');
         //fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
         if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)
         && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60) fwrite($calfileh,"X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");

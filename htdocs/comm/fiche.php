@@ -678,7 +678,7 @@ if ($id > 0)
 				print "<tr ".$bc[$var].">";
 				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
                 //print '<td align="right">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
-				print '<td align="right">'.ConvertSecondToTime($objp->duration).'</td>'."\n";
+				print '<td align="right">'.convertSecondToTime($objp->duration).'</td>'."\n";
 				print '<td align="right">'.$fichinter_static->getLibStatut(3).'</td>'."\n";
 				print '</tr>';
 				$var=!$var;

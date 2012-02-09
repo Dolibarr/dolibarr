@@ -1050,7 +1050,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 
         if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
         {
-            $date=adodb_mktime($hour,$minute,$second,$month,$day,$year,$isdst,$gm);
+            $date=adodb_mktime($hour,$minute,$second,$month,$day,$year,0,$gm);
         }
         else
         {

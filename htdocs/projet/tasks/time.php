@@ -306,7 +306,7 @@ if ($_GET["id"] > 0)
 		print '<td align="right">'.$langs->trans("Duration").'</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
-		
+
 		$total = 0;
 		foreach ($tasks as $task_time)
 		{
@@ -361,7 +361,7 @@ if ($_GET["id"] > 0)
   		    }
   		    else
   		    {
-				print ConvertSecondToTime($task_time->task_duration,'all');
+				print convertSecondToTime($task_time->task_duration,'all');
   		    }
   		    print '</td>';
 
@@ -392,9 +392,9 @@ if ($_GET["id"] > 0)
 			$total += $task_time->task_duration;
 		}
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td><td>&nbsp;</td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
 		print '</tr>';
-		
+
 		print "</table>";
 		print "</form>";
 	}

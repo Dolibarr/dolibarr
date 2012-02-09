@@ -3435,8 +3435,8 @@ class Form
         {
             require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
-            $hourSelected = ConvertSecondToTime($iSecond,'hour');
-            $minSelected = ConvertSecondToTime($iSecond,'min');
+            $hourSelected = convertSecondToTime($iSecond,'hour');
+            $minSelected = convertSecondToTime($iSecond,'min');
         }
 
         print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';

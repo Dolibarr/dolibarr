@@ -1857,6 +1857,8 @@ abstract class CommonObject
     {
         global $langs;
 
+		$error=0;
+		
         if (count($this->array_options) > 0)
         {
             // Check parameters

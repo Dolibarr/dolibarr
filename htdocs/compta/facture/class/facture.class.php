@@ -712,7 +712,7 @@ class Facture extends CommonObject
      * 	@param		string	$ref			Reference of invoice
      * 	@param		string	$ref_ext		External reference of invoice
      * 	@param		int		$ref_int		Internal reference of other object
-     *	@return     int         			>0 if OK, <0 if KO
+     *	@return     int         			>0 if OK, <0 if KO, 0 if not found
      */
     function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
     {
@@ -808,7 +808,7 @@ class Facture extends CommonObject
             {
                 $this->error='Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
                 dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
-                return -2;
+                return 0;
             }
         }
         else
@@ -1130,7 +1130,7 @@ class Facture extends CommonObject
 
         $error=0;
         $this->db->begin();
-        
+
         // Delete linked object
         $res = $this->deleteObjectLinked();
         if ($res < 0) $error++;
@@ -1188,7 +1188,7 @@ class Facture extends CommonObject
                 }
                 else
                 {
-                    $this->error=$this->db->error()." sql=".$sql;
+                    $this->error=$this->db->lasterror()." sql=".$sql;
                     dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                     $this->db->rollback();
                     return -6;
@@ -1196,7 +1196,7 @@ class Facture extends CommonObject
             }
             else
             {
-                $this->error=$this->db->error()." sql=".$sql;
+                $this->error=$this->db->lasterror()." sql=".$sql;
                 dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -4;
@@ -1204,7 +1204,7 @@ class Facture extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error()." sql=".$sql;
+            $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
