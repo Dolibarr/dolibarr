@@ -163,7 +163,6 @@ $a.=' ('.(getServerTimeZoneInt()>=0?'+':'').(getServerTimeZoneInt()*3600).')';
 print $form->textwithtooltip($a,$txt,2,1,img_info(''));
 print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 $var=!$var;
-print dol_now();
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzserver').'</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext").'</td>';
