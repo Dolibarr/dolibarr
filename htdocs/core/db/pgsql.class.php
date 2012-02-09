@@ -556,9 +556,12 @@ class DoliDBPgsql
 		{
 			if (! $ret)
 			{
-				$this->lastqueryerror = $query;
-				$this->lasterror = $this->error();
-				$this->lasterrno = $this->errno();
+			    if ($this->errno() != 'DB_ERROR_25P02')
+			    {
+    				$this->lastqueryerror = $query;
+    				$this->lasterror = $this->error();
+    				$this->lasterrno = $this->errno();
+			    }
 				dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
