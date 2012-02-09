@@ -690,7 +690,7 @@ pFooter($error,$setuplang,'jsinfo');
  */
 function write_main_file($mainfile,$main_dir)
 {
-    $fp = fopen("$mainfile", "w");
+    $fp = @fopen("$mainfile", "w");
     if($fp)
     {
         clearstatcache();
@@ -712,7 +712,7 @@ function write_main_file($mainfile,$main_dir)
  */
 function write_master_file($masterfile,$main_dir)
 {
-    $fp = fopen("$masterfile", "w");
+    $fp = @fopen("$masterfile", "w");
     if($fp)
     {
         clearstatcache();
