@@ -120,6 +120,7 @@ if ($what == 'mysql')
     {
         $param.=" -t";
     }
+    if ($_POST["disable-add-locks"]) $param.=" --add-locks=FALSE";
     if ($_POST["sql_data"])
     {
         $param.=" --tables";

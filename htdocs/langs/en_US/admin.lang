@@ -166,6 +166,7 @@ AddDropTable=Add DROP TABLE command
 Datas=Data
 NameColumn=Name columns
 ExtendedInsert=Extended INSERT
+NoLockBeforeInsert=No lock commands around INSERT 
 DelayedInsert=Delayed insert
 EncodeBinariesInHexa=Encode binary data in hexadecimal
 IgnoreDuplicateRecords=Ignore errors of duplicate records (INSERT IGNORE)

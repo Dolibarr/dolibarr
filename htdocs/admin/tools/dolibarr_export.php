@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,6 +112,7 @@ $label=getStaticMember($db, 'label');
 			if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 			{
 			?>
+			<br>
 			<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />
 			<label for="radio_dump_mysql">MySQL	Dump (php) <?php print img_warning('Backup can\'t be guaranted with this method. Prefer previous one'); ?></label>
 			</div>
@@ -207,6 +208,10 @@ $label=getStaticMember($db, 'label');
 			<input type="checkbox" name="extended_ins" value="yes"
 				id="checkbox_dump_extended_ins" /> <label
 				for="checkbox_dump_extended_ins"> <?php echo $langs->trans("ExtendedInsert"); ?></label><br>
+
+			<input type="checkbox" name="disable-add-locks" value="no"
+				id="checkbox_dump_disable-add-locks" /> <label
+				for="checkbox_dump_disable-add-locks"> <?php echo $langs->trans("NoLockBeforeInsert"); ?></label><br>
 
 			<input type="checkbox" name="delayed" value="yes"
 				id="checkbox_dump_delayed" /> <label for="checkbox_dump_delayed"> <?php echo $langs->trans("DelayedInsert"); ?></label><br>

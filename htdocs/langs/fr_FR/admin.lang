@@ -167,6 +167,7 @@ AddDropTable= Ajouter ordres DROP TABLE
 Datas= Données
 NameColumn= Nomme les colonnes
 ExtendedInsert= Instructions INSERT étendues
+NoLockBeforeInsert=Pas d'instruction LOCK autour des INSERT 
 DelayedInsert= Insertion avec délai
 EncodeBinariesInHexa= Encoder les champs binaires en hexadécimal
 IgnoreDuplicateRecords=Ignorer les erreurs de doublons (INSERT IGNORE)
