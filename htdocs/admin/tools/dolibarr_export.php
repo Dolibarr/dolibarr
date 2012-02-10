@@ -64,6 +64,12 @@ jQuery(document).ready(function() {
 		hideoptions();
 		jQuery("#postgresql_options").show();
 	});
+	jQuery("#select_sql_compat").click(function() {
+		if (jQuery("#select_sql_compat").val() == 'POSTGRESQL')
+		{
+			jQuery("#checkbox_dump_disable-add-locks").attr('checked',true);
+		};
+	});
 });
 </script>
 <?php
