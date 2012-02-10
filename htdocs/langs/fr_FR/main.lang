@@ -608,6 +608,14 @@ SetLinkToThirdParty=Lier vers un autre tiers
 CreateDraft=Créer brouillon
 ClickToEdit=Cliquer ici pour éditer
 ObjectDeleted=Objet %s supprimé
+ByCountry=Par pays
+ByTown=Par ville
+ByDate=Par date
+ByMonthYear=Par mois/année
+ByYear=Par année
+ByMonth=Par mois
+ByDay=Par jour
+BySalesRepresentative=Par commerciaux
 
 # Week day
 Monday=Lundi
