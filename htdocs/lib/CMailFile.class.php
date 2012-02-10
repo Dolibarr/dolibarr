@@ -24,7 +24,6 @@
 /**
  *      \file       htdocs/lib/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
- *		\version    $Id: CMailFile.class.php,v 1.148 2011/07/31 23:25:43 eldy Exp $
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
  *      \author	    Laurent Destailleur.
@@ -104,8 +103,9 @@ class CMailFile
 
 		// We define end of line (RFC 822bis section 2.3)
 		$this->eol="\r\n";
-		//if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
-		//if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
+		// eol2 is for header fields to manage bugged MTA with option MAIN_FIX_FOR_BUGGED_MTA
+		$this->eol2=$this->eol;
+		if (! empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) $this->eol2="\n";
 
 		// On defini mixed_boundary
 		$this->mixed_boundary = md5(uniqid("dolibarr1"));
@@ -219,7 +219,7 @@ class CMailFile
 				$files_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
 			}
 
-			// We now define $this->headers et $this->message
+			// We now define $this->headers and $this->message
 			$this->headers = $smtp_headers . $mime_headers;
 
 			$this->message = $text_body . $images_encoded . $files_encoded;
@@ -476,7 +476,7 @@ class CMailFile
 		if (is_readable($newsourcefile))
 		{
 			$contents = file_get_contents($newsourcefile);	// Need PHP 4.3
-			$encoded = chunk_split(base64_encode($contents), 68, $this->eol);
+			$encoded = chunk_split(base64_encode($contents), 76, $this->eol);
 			return $encoded;
 		}
 		else
@@ -584,25 +584,25 @@ class CMailFile
 		$out = "";
 
 		// Sender
-		//$out .= "X-Sender: ".getValidAddress($this->addr_from,2).$this->eol;
-		$out .= "From: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
-		$out .= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol;
-		if (isset($this->reply_to)  && $this->reply_to)  $out .= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol;
-		if (isset($this->errors_to) && $this->errors_to) $out .= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol;
+		//$out .= "Sender: ".getValidAddress($this->addr_from,2).$this->eol2;
+		$out .= "From: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
+		$out .= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
+		if (isset($this->reply_to)  && $this->reply_to)  $out .= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol2;
+		if (isset($this->errors_to) && $this->errors_to) $out .= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol2;
 
 		// Receiver
-		if (isset($this->addr_cc)   && $this->addr_cc)   $out .= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol;
-		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out .= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol;
+		if (isset($this->addr_cc)   && $this->addr_cc)   $out .= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol2;
+		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out .= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol2;
 
-		// Accuse reception
-		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol;
+		// Delivery receipt
+		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol2;
 
-		//$out .= "X-Priority: 3".$this->eol;
-		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
-		$out.= "MIME-Version: 1.0".$this->eol;
+		//$out .= "X-Priority: 3".$this->eol2;
+		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol2;
+		$out.= "MIME-Version: 1.0".$this->eol2;
 
-		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
-		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
+		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol2;
+		$out.= "Content-Transfer-Encoding: 8bit".$this->eol2;
 
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
@@ -629,7 +629,7 @@ class CMailFile
 				if ($filename_list[$i])
 				{
 					if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-					$out.= "X-attachments: $filename_list[$i]".$this->eol;
+					$out.= "X-attachments: $filename_list[$i]".$this->eol2;
 				}
 			}
 		}
