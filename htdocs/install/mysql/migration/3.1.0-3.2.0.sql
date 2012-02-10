@@ -18,7 +18,6 @@
 
 ALTER TABLE llx_actioncomm DROP COLUMN propalrowid;
 ALTER TABLE llx_product_stock DROP COLUMN location;
-ALTER TABLE llx_societe DROP COLUMN fk_barcode_type;
 
 ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
 
