@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -229,9 +229,10 @@ function getEntity($element=false, $shared=false)
 function dol_shutdown()
 {
     global $conf,$user,$langs,$db;
-    $disconnectdone=false;
-    if (is_object($db) && ! empty($db->connected)) $disconnectdone=$db->close();
-    dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced)':''), ($disconnectdone?LOG_WARNING:LOG_DEBUG));
+    $disconnectdone=false; $depth=0;
+    print 'xx'.$db->connected;
+    if (is_object($db) && ! empty($db->connected)) { $depth=$db->transaction_opened; $disconnectdone=$db->close(); }
+    dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), ($disconnectdone?LOG_WARNING:LOG_DEBUG));
 }
 
 
