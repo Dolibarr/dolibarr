@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -26,59 +26,71 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
-$what=$_REQUEST["what"];
-$export_type=$_REQUEST["export_type"];
-$file=isset($_POST['filename_template']) ? $_POST['filename_template'] : '';
-
 $langs->load("admin");
 
-if (! $user->admin) accessforbidden();
+$what=GETPOST("what");
+$export_type=GETPOST("export_type");
+$file=GETPOST('filename_template');
 
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="date";
+if ($page < 0) { $page = 0; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page;
+
+if (! $user->admin) accessforbidden();
 
 if ($file && ! $what)
 {
     //print DOL_URL_ROOT.'/dolibarr_export.php';
     header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportMethod"))));
-    /*
-     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ExportMethod")).'</div>';
-    print '<br>';
-    */
     exit;
 }
 
 
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
-*/
+ */
 
-$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
-llxHeader('','',$help_url);
-
-$form=new Form($db);
-$formfile = new FormFile($db);
-
-print_fiche_titre($langs->trans("Backup"),'','setup');
-
+// Increase limit of time. Works only if we are not in safe mode
 $ExecTimeLimit=600;
-if (!empty($ExecTimeLimit)) {
-    // Cette page peut etre longue. On augmente le delai autorise.
-    // Ne fonctionne que si on est pas en safe_mode.
+if (!empty($ExecTimeLimit))
+{
     $err=error_reporting();
     error_reporting(0);     // Disable all errors
     //error_reporting(E_ALL);
     @set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
     error_reporting($err);
 }
-if (!empty($MemoryLimit)) {
+if (!empty($MemoryLimit))
+{
     @ini_set('memory_limit', $MemoryLimit);
 }
+
+$form=new Form($db);
+$formfile = new FormFile($db);
+
+$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
+llxHeader('','',$help_url);
+
+print_fiche_titre($langs->trans("Backup"),'','setup');
+
 
 // Start with empty buffer
 $dump_buffer = '';
 $dump_buffer_len = 0;
 
-// We send fake headers to avoid browser timeout when buffering
+// We will send fake headers to avoid browser timeout when buffering
 $time_start = time();
 
 
@@ -132,8 +144,9 @@ if ($what == 'mysql')
     }
     else
     {
-        $param.=" -d";
+        $param.=" -d";    // No row information (no data)
     }
+    $param.=" --default-character-set=utf8";    // We always save output into utf8 charset
     $paramcrypted=$param;
     $paramclear=$param;
     if (! empty($dolibarr_main_db_pass))
@@ -333,7 +346,8 @@ if ($what)
     }
 }
 
-$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'',1,0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
+$filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'',1,0,'',0,$langs->trans("PreviousDumpFiles"));
 
 if ($result == 0)
 {

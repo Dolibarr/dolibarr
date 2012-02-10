@@ -22,20 +22,42 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("admin");
 
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="p.name";
+if ($page < 0) {
+    $page = 0;
+}
+$limit = $conf->liste_limit;
+$offset = $limit * $page;
+
 if (! $user->admin) accessforbidden();
 
 
-$form=new Form($db);
-$formfile = new FormFile($db);
+
+/*
+ * Actions
+ */
+
+// None
+
 
 
 /*
  * View
  */
+
+$form=new Form($db);
+$formfile = new FormFile($db);
 
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('','',$help_url);
@@ -229,6 +251,10 @@ $label=getStaticMember($db, 'label');
 				id="checkbox_hexforbinary" checked="checked" /> <label
 				for="checkbox_hexforbinary"> <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br>
 
+			<input type="checkbox" name="charset_utf8" value="yes"
+				id="checkbox_charset_utf8" checked="checked" disabled="disabled" /> <label
+				for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
+
 			</fieldset>
 			</fieldset>
 		<?php
@@ -356,8 +382,10 @@ print "\n";
 </form>
 
 <?php
-$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'',1,0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
-//if ($result) print '<br><br>';
+
+$filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'',1,0,'',0,$langs->trans("PreviousDumpFiles"));
+
 
 llxFooter();
 
