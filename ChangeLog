@@ -44,6 +44,8 @@ For users:
 - New: Value of data into charts are visible on mouse hover.
 - New: Import wizard can import contacts.
 - New: Install process is now two times faster.
+- New: Can sort files into backup tool.
+- New: Default output charset are utf8 into backup tool.
 - New: Extra fields support int type.
 - New: Add brazilian states.
 - New: Automtic list of documents in ECM module is ok for customers,

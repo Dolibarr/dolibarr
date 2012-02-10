@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,20 +22,44 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("admin");
 
+$action=GETPOST('action');
+
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="date";
+if ($page < 0) { $page = 0; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page;
+
 if (! $user->admin) accessforbidden();
 
 
-$form=new Form($db);
-$formfile = new FormFile($db);
+
+/*
+ * Actions
+ */
+
+if ($action == 'delete')
+{
+    dol_delete_file($conf->admin->dir_output.'/backup/'.GETPOST('urlfile'),1);
+    $action='';
+}
 
 
 /*
  * View
  */
+
+$form=new Form($db);
+$formfile = new FormFile($db);
 
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('','',$help_url);
@@ -63,6 +87,12 @@ jQuery(document).ready(function() {
 	jQuery("#radio_dump_postgresql").click(function() {
 		hideoptions();
 		jQuery("#postgresql_options").show();
+	});
+	jQuery("#select_sql_compat").click(function() {
+		if (jQuery("#select_sql_compat").val() == 'POSTGRESQL')
+		{
+			jQuery("#checkbox_dump_disable-add-locks").attr('checked',true);
+		};
 	});
 });
 </script>
@@ -112,6 +142,7 @@ $label=getStaticMember($db, 'label');
 			if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 			{
 			?>
+			<br>
 			<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />
 			<label for="radio_dump_mysql">MySQL	Dump (php) <?php print img_warning('Backup can\'t be guaranted with this method. Prefer previous one'); ?></label>
 			</div>
@@ -201,12 +232,16 @@ $label=getStaticMember($db, 'label');
 				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" /> <label
+				id="checkbox_dump_showcolumns" checked="checked" /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			<input type="checkbox" name="extended_ins" value="yes"
-				id="checkbox_dump_extended_ins" /> <label
+				id="checkbox_dump_extended_ins" checked="checked" /> <label
 				for="checkbox_dump_extended_ins"> <?php echo $langs->trans("ExtendedInsert"); ?></label><br>
+
+			<input type="checkbox" name="disable-add-locks" value="no"
+				id="checkbox_dump_disable-add-locks" /> <label
+				for="checkbox_dump_disable-add-locks"> <?php echo $langs->trans("NoLockBeforeInsert"); ?></label><br>
 
 			<input type="checkbox" name="delayed" value="yes"
 				id="checkbox_dump_delayed" /> <label for="checkbox_dump_delayed"> <?php echo $langs->trans("DelayedInsert"); ?></label><br>
@@ -217,6 +252,10 @@ $label=getStaticMember($db, 'label');
 			<input type="checkbox" name="hexforbinary" value="yes"
 				id="checkbox_hexforbinary" checked="checked" /> <label
 				for="checkbox_hexforbinary"> <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br>
+
+			<input type="checkbox" name="charset_utf8" value="yes"
+				id="checkbox_charset_utf8" checked="checked" disabled="disabled" /> <label
+				for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
 
 			</fieldset>
 			</fieldset>
@@ -264,7 +303,7 @@ $label=getStaticMember($db, 'label');
 				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" /> <label
+				id="checkbox_dump_showcolumns" checked="checked" /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			</fieldset>
@@ -345,8 +384,11 @@ print "\n";
 </form>
 
 <?php
-$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'',1,0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
-//if ($result) print '<br><br>';
+
+$filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
+print '<br>';
+
 
 llxFooter();
 

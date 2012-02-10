@@ -595,21 +595,21 @@ else
 	print '</table>';
 
     // Warning 1
-	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
-	{
-		$sendmailoption=ini_get('mail.force_extra_parameters');
-		//print 'x'.$sendmailoption;
-		if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
-		{
-			print '<br>'.info_admin($langs->trans("SendmailOptionNotComplete"));
-		}
-	}
-
-	// Warning 2
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
-	{
-	    print '<br>'.info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
-	}
+    if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+    {
+        print '<br>';
+    	if ($linuxlike)
+    	{
+    		$sendmailoption=ini_get('mail.force_extra_parameters');
+    		//print 'x'.$sendmailoption;
+    		if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
+    		{
+    			print info_admin($langs->trans("SendmailOptionNotComplete"));
+    		}
+    	}
+    	// Warning 2
+   	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
+    }
 
 	// Boutons actions
 	print '<div class="tabsAction">';

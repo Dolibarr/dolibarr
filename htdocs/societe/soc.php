@@ -518,7 +518,7 @@ else
         if (GETPOST("private")==1) { $object->particulier=1; }
 
         $object->name				= $_POST["nom"];
-        $object->prenom				= $_POST["prenom"];
+        $object->firstname			= $_POST["prenom"];
         $object->particulier		= GETPOST('private', 'int');
         $object->prefix_comm		= $_POST["prefix_comm"];
         $object->client				= $_POST["client"]?$_POST["client"]:$object->client;
@@ -541,6 +541,7 @@ else
         $object->idprof4			= $_POST["idprof4"];
         $object->typent_id			= $_POST["typent_id"];
         $object->effectif_id		= $_POST["effectif_id"];
+        $object->civility_id		= $_POST["civilite_id"];
 
         $object->tva_assuj			= $_POST["assujtva_value"];
         $object->status				= $_POST["status"];
@@ -664,7 +665,7 @@ else
         // Name, firstname
         if ($object->particulier || GETPOST("private"))
         {
-            print '<tr><td><span id="TypeName" class="fieldrequired">'.$langs->trans('LastName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->nom.'"></td>';
+            print '<tr><td><span id="TypeName" class="fieldrequired">'.$langs->trans('LastName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->name.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
                 print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
@@ -673,7 +674,7 @@ else
         }
         else
         {
-            print '<tr><td><span span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->nom.'"></td>';
+            print '<tr><td><span span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->name.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
                 print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
@@ -686,7 +687,7 @@ else
             print '<tr class="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$object->firstname.'"></td>';
             print '<td colspan=2>&nbsp;</td></tr>';
             print '<tr class="individualline"><td>'.$langs->trans("UserTitle").'</td><td>';
-            print $formcompany->select_civility($contact->civilite_id).'</td>';
+            print $formcompany->select_civility($object->civility_id).'</td>';
             print '<td colspan=2>&nbsp;</td></tr>';
         }
 
