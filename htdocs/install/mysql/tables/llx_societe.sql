@@ -81,6 +81,7 @@ create table llx_societe
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
   barcode                  varchar(255),                        		-- barcode
+  fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices
   default_lang             varchar(6),									-- default language
   logo                     varchar(255),

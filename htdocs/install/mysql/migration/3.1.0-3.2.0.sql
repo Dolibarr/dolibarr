@@ -6,16 +6,21 @@
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
+-- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 -- To restrict request to Mysql version x.y use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y use -- VPGSQLx.y
 
 
--- V4.1      DELETE FROM llx_product_fournisseur WHERE fk_product   NOT IN (SELECT rowid from llx_product);
--- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
--- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
+-- --V4.1      DELETE FROM llx_product_fournisseur WHERE fk_product   NOT IN (SELECT rowid from llx_product);
+-- --VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
+-- --VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
-alter table llx_extrafields add column type varchar(8);
+ALTER TABLE llx_actioncomm DROP COLUMN propalrowid;
+ALTER TABLE llx_product_stock DROP COLUMN location;
+ALTER TABLE llx_societe DROP COLUMN fk_barcode_type;
+
+ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
 
