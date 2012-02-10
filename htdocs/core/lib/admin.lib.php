@@ -108,13 +108,14 @@ function versiondolibarrarray()
  * 	@param		int		$entity			Entity targeted for multicompany module
  *	@param		int		$usesavepoint	1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
  *	@param		string	$handler		Handler targeted for menu
+ *	@param 		string	$okerror		Family of errors we accept ('default', 'none')
  * 	@return		int						<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
+function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$okerror='default')
 {
     global $db, $conf, $langs, $user;
 
-    dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler, LOG_DEBUG);
+    dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler." okerror=".$okerror, LOG_DEBUG);
 
     $ok=0;
     $error=0;
@@ -317,24 +318,25 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
                 $errno=$db->errno();
                 if (! $silent) print '<!-- Result = '.$errno.' -->'."\n";
 
-                $okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
-				'DB_ERROR_COLUMN_ALREADY_EXISTS',
-				'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
-				'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',		// PgSql use same code for table and key already exist
-				'DB_ERROR_RECORD_ALREADY_EXISTS',
-				'DB_ERROR_NOSUCHTABLE',
-				'DB_ERROR_NOSUCHFIELD',
-				'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
-				'DB_ERROR_NO_INDEX_TO_DROP',
-				'DB_ERROR_CANNOT_CREATE',    		// Qd contrainte deja existante
-				'DB_ERROR_CANT_DROP_PRIMARY_KEY',
-				'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS'
+				// Define list of errors we accept (array $okerrors)
+            	$okerrors=array(	// By default
+					'DB_ERROR_TABLE_ALREADY_EXISTS',
+					'DB_ERROR_COLUMN_ALREADY_EXISTS',
+					'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+					'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',		// PgSql use same code for table and key already exist
+					'DB_ERROR_RECORD_ALREADY_EXISTS',
+					'DB_ERROR_NOSUCHTABLE',
+					'DB_ERROR_NOSUCHFIELD',
+					'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
+					'DB_ERROR_NO_INDEX_TO_DROP',
+					'DB_ERROR_CANNOT_CREATE',    		// Qd contrainte deja existante
+					'DB_ERROR_CANT_DROP_PRIMARY_KEY',
+					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS'
 				);
-				if (in_array($errno,$okerror))
-				{
-				    //if (! $silent) print $langs->trans("OK");
-				}
-				else
+                if ($okerror == 'none') $okerrors=array();
+
+                // Is it an error we accept
+				if (! in_array($errno,$okerrors))
 				{
 				    if (! $silent) print '<tr><td valign="top" colspan="2">';
 				    if (! $silent) print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";

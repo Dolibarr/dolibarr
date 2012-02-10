@@ -53,7 +53,7 @@ class DoliDBMysqli
     var $database_name;
     //! Nom user base
     var $database_user;
-    //! 1 si une transaction est en cours, 0 sinon
+	//! >=1 if a transaction is opened, 0 otherwise
     var $transaction_opened;
     //! Last executed request
     var $lastquery;
@@ -273,7 +273,7 @@ class DoliDBMysqli
     {
         if ($this->db)
         {
-            //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
+	        if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
             $this->connected=0;
             return mysqli_close($this->db);
         }
