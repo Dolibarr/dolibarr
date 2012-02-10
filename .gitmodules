@@ -73,3 +73,6 @@
 [submodule "htdocs/custom/ondeo"]
 	path = htdocs/custom/ondeo
 	url = gitolite@doliforge.org:ondeo/ondeo.git
+[submodule "htdocs/custom/reports"]
+	path = htdocs/custom/reports
+	url = gitolite@doliforge.org:reports/reports.git
