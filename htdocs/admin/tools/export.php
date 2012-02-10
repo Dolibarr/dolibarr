@@ -28,6 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("admin");
 
+$action=GETPOST('action');
 $what=GETPOST("what");
 $export_type=GETPOST("export_type");
 $file=GETPOST('filename_template');
@@ -55,7 +56,11 @@ if ($file && ! $what)
  * Actions
  */
 
-// None
+if ($action == 'delete')
+{
+    dol_delete_file($conf->admin->dir_output.'/backup/'.GETPOST('urlfile'),1);
+    $action='';
+}
 
 
 /*
@@ -347,13 +352,7 @@ if ($what)
 }
 
 $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
-$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'',1,0,'',0,$langs->trans("PreviousDumpFiles"));
-
-if ($result == 0)
-{
-    print $langs->trans("NoBackupFileAvailable").'<br>';
-    print $langs->trans("ToBuildBackupFileClickHere",DOL_URL_ROOT.'/admin/tools/dolibarr_export.php').'<br>';
-}
+$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,($langs->trans("NoBackupFileAvailable").'<br>'.$langs->trans("ToBuildBackupFileClickHere",DOL_URL_ROOT.'/admin/tools/dolibarr_export.php')),0,$langs->trans("PreviousDumpFiles"));
 
 print '<br>';
 

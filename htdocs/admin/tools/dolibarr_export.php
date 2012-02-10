@@ -28,15 +28,14 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("admin");
 
+$action=GETPOST('action');
+
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
-
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="p.name";
-if ($page < 0) {
-    $page = 0;
-}
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="date";
+if ($page < 0) { $page = 0; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
@@ -48,8 +47,11 @@ if (! $user->admin) accessforbidden();
  * Actions
  */
 
-// None
-
+if ($action == 'delete')
+{
+    dol_delete_file($conf->admin->dir_output.'/backup/'.GETPOST('urlfile'),1);
+    $action='';
+}
 
 
 /*
@@ -384,7 +386,8 @@ print "\n";
 <?php
 
 $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
-$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'',1,0,'',0,$langs->trans("PreviousDumpFiles"));
+$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
+print '<br>';
 
 
 llxFooter();
