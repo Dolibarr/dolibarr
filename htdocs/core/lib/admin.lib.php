@@ -140,12 +140,13 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
             	// restrict on database type
             	if (! empty($reg[1]))
             	{
-            		if (strtolower($reg[1]) != $db->type) $qualified=0;
+            		if (! preg_match('/'.preg_quote($reg[1]).'/i',$db->type)) $qualified=0;
             	}
 
             	// restrict on version
             	if ($qualified)
             	{
+
 	                $versionrequest=explode('.',$reg[2]);
 	                //print var_dump($versionrequest);
 	                //print var_dump($versionarray);
