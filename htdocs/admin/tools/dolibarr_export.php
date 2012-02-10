@@ -232,11 +232,11 @@ $label=getStaticMember($db, 'label');
 				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" /> <label
+				id="checkbox_dump_showcolumns" checked="checked" /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			<input type="checkbox" name="extended_ins" value="yes"
-				id="checkbox_dump_extended_ins" /> <label
+				id="checkbox_dump_extended_ins" checked="checked" /> <label
 				for="checkbox_dump_extended_ins"> <?php echo $langs->trans("ExtendedInsert"); ?></label><br>
 
 			<input type="checkbox" name="disable-add-locks" value="no"
@@ -303,7 +303,7 @@ $label=getStaticMember($db, 'label');
 				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" /> <label
+				id="checkbox_dump_showcolumns" checked="checked" /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			</fieldset>

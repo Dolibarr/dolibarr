@@ -143,6 +143,7 @@ if ($what == 'mysql')
         $param.=" --tables";
         if ($_POST["showcolumns"])	$param.=" -c";
         if ($_POST["extended_ins"])	$param.=" -e";
+        else $param.=" --skip-extended-insert";
         if ($_POST["delayed"])	 	$param.=" --delayed-insert";
         if ($_POST["sql_ignore"])	$param.=" --insert-ignore";
         if ($_POST["hexforbinary"])	$param.=" --hex-blob";
