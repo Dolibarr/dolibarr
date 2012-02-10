@@ -230,7 +230,6 @@ function dol_shutdown()
 {
     global $conf,$user,$langs,$db;
     $disconnectdone=false; $depth=0;
-    print 'xx'.$db->connected;
     if (is_object($db) && ! empty($db->connected)) { $depth=$db->transaction_opened; $disconnectdone=$db->close(); }
     dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), ($disconnectdone?LOG_WARNING:LOG_DEBUG));
 }

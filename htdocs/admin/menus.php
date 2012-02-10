@@ -74,7 +74,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	if (isset($_POST["MAIN_MENUFRONT_SMARTPHONE"])) $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["MAIN_MENUFRONT_SMARTPHONE"])]=1;
 
 	// Initialize menu handlers
-	$errmsgs=array();
+	$error=0; $errmsgs=array();
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		// Load sql init_menu_handler.sql file
@@ -85,24 +85,29 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 		if (file_exists($fullpath))
 		{
 			$db->begin();
-			$result=run_sql($fullpath,1,'',1,$key);
+			
+			$result=run_sql($fullpath,1,'',1,$key,'none');
 			if ($result > 0)
 			{
 				$db->commit();
 			}
 			else
 			{
+				$error++;
 				$errmsgs[]='Failed to initialize menu '.$key.'.';
 				$db->rollback();
 			}
 		}
 	}
 
-	$db->close();
-	
-	// We make a header redirect because we need to change menu NOW.
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
+	if (! $error)
+	{
+		$db->close();
+		
+		// We make a header redirect because we need to change menu NOW.
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
 }
 
 
@@ -251,7 +256,7 @@ else
 print '</div>';
 
 
-dol_htmloutput_errors($errmsgs);
+dol_htmloutput_errors('',$errmsgs);
 
 
 if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
