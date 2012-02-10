@@ -16,9 +16,6 @@
 -- --VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- --VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
-ALTER TABLE llx_actioncomm DROP COLUMN propalrowid;
-ALTER TABLE llx_product_stock DROP COLUMN location;
-
 ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
@@ -187,3 +184,7 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (13, 'Cotisation sur la valeur ajoutée des entreprises', 0, 1, 'TAXCVAE', '1');
 
 ALTER TABLE llx_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+
+ALTER TABLE llx_actioncomm DROP COLUMN propalrowid;
+ALTER TABLE llx_actioncomm DROP COLUMN fk_commande;
+ALTER TABLE llx_product_stock DROP COLUMN location;
