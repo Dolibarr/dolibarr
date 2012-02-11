@@ -60,6 +60,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql.= " , ".MAIN_DB_PREFIX."facturedet as l";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 $sql.= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND fk_code_ventilation = 0";
+$sql.= " AND f.entity = ".$conf->entity;
 $sql.= " ORDER BY l.rowid DESC ".$db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);

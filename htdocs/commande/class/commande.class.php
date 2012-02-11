@@ -1595,13 +1595,13 @@ class Commande extends CommonObject
         // Tableau des id de produit de la commande
 		$array_of_product=array();
 
-
         // Recherche total en stock pour chaque produit
+        // TODO $array_of_product est défini vide juste au dessus !!
         if (count($array_of_product))
         {
             $sql = "SELECT fk_product, sum(ps.reel) as total";
             $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-            $sql.= " WHERE ps.fk_product in (".join(',',$array_of_product).")";
+            $sql.= " WHERE ps.fk_product IN (".join(',',$array_of_product).")";
             $sql.= ' GROUP BY fk_product ';
             $result = $this->db->query($sql);
             if ($result)
@@ -2635,7 +2635,7 @@ class Commande extends CommonObject
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
         $resql = $this->db->query($sql);
         if ($resql)
         {

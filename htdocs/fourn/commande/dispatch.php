@@ -217,8 +217,7 @@ if ($id > 0 || ! empty($ref))
 				$db->free($resql);
 			}
 
-			$sql = "SELECT l.ref,l.fk_product,l.description, l.subprice, sum(l.qty) as qty";
-			$sql.= ", l.rowid";
+			$sql = "SELECT l.rowid, l.ref, l.fk_product, l.description, l.subprice, sum(l.qty) as qty";
 			$sql.= ", p.label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
