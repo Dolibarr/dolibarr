@@ -885,11 +885,11 @@ class Form
         global $conf,$langs;
 
         // On recherche les societes
-        $sql = "SELECT s.rowid, s.name as name, s.firstname, s.poste FROM";
-        $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
-        $sql.= " WHERE entity = ".$conf->entity;
-        if ($socid > 0) $sql.= " AND fk_soc=".$socid;
-        $sql.= " ORDER BY s.name ASC";
+        $sql = "SELECT sp.rowid, sp.name as name, sp.firstname, sp.poste";
+        $sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
+        $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
+        if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
+        $sql.= " ORDER BY sp.name ASC";
 
         dol_syslog(get_class($this)."::select_contacts sql=".$sql);
         $resql=$this->db->query($sql);

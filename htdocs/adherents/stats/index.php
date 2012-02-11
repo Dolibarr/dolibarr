@@ -164,6 +164,7 @@ print '<br><br>';
 // Show array
 $data = $stats->getAllByYear();
 
+
 print '<table class="border" width="100%">';
 print '<tr height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -224,7 +225,8 @@ print '</td></tr></table>';
 
 dol_fiche_end();
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

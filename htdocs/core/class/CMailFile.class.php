@@ -190,7 +190,7 @@ class CMailFile
 			$smtp_headers = $this->write_smtpheaders();
 
 			// Define mime_headers
-			//$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
+			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
 
 			if (! empty($this->html))
 			{
@@ -592,9 +592,9 @@ class CMailFile
 		$host = dol_getprefix();
 
 		// Sender
-		//$out.= "Sender: ".getValidAddress($this->addr_from,2m)).$this->eol2;
+		//$out.= "Sender: ".getValidAddress($this->addr_from,2)).$this->eol2;
 		$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol2;
-		//$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
+		$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
 		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol2;
 		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol2;
 

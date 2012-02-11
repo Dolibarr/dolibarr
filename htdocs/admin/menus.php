@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	if (isset($_POST["MAIN_MENUFRONT_SMARTPHONE"])) $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["MAIN_MENUFRONT_SMARTPHONE"])]=1;
 
 	// Initialize menu handlers
+	$error=0; $errmsgs=array();
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		// Load sql init_menu_handler.sql file
@@ -83,13 +84,30 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 
 		if (file_exists($fullpath))
 		{
-			$result=run_sql($fullpath,1,'',1,$key);
+			$db->begin();
+			
+			$result=run_sql($fullpath,1,'',1,$key,'none');
+			if ($result > 0)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$error++;
+				$errmsgs[]='Failed to initialize menu '.$key.'.';
+				$db->rollback();
+			}
 		}
 	}
 
-	// We make a header redirect because we need to change menu NOW.
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
+	if (! $error)
+	{
+		$db->close();
+		
+		// We make a header redirect because we need to change menu NOW.
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
 }
 
 
@@ -238,6 +256,9 @@ else
 print '</div>';
 
 
+dol_htmloutput_errors('',$errmsgs);
+
+
 if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
 {
 	print '<div class="tabsAction">';
@@ -245,7 +266,8 @@ if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
 	print '</div>';
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

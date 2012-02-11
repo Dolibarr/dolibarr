@@ -483,7 +483,8 @@ abstract class CommonObject
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE ec.element_id = ".$this->id;
         $sql.= " AND ec.fk_socpeople = c.rowid";
-        $sql.= " AND c.entity IN (0,".$conf->entity.")";
+        if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
+        if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND ec.fk_c_type_contact = tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
         $sql.= " AND tc.source = '".$source."'";

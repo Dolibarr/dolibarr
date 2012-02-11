@@ -606,6 +606,14 @@ SetLinkToThirdParty=Link to another third party
 CreateDraft=Create draft
 ClickToEdit=Click to edit
 ObjectDeleted=Object %s deleted
+ByCountry=By country
+ByTown=By town
+ByDate=By date
+ByMonthYear=By month/year
+ByYear=By year
+ByMonth=by month
+ByDay=By day
+BySalesRepresentative=By sales representative
 
 # Week day
 Monday=Monday

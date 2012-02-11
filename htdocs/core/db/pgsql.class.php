@@ -51,7 +51,8 @@ class DoliDBPgsql
 	var $database_selected;       // 1 si base selectionne, 0 sinon
 	var $database_name;			//! Nom base selectionnee
 	var $database_user;	   		//! Nom user base
-	var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
+	//! >=1 if a transaction is opened, 0 otherwise
+	var $transaction_opened;
 	var $lastquery;
 	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
 
@@ -439,7 +440,7 @@ class DoliDBPgsql
     {
         if ($this->db)
         {
-          //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
+          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
           $this->connected=0;
           return pg_close($this->db);
         }

@@ -76,15 +76,44 @@ $demoprofiles[]=array('default'=>'0', 'key'=>'profdemomed', 'lang'=>'cabinetmed@
 */
 
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-$alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner','workflow');  // Module we never want
-$alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mailmanspip','mantis','memcached','notification',
-                            'syslog','user','webservices',
-                            // Extended modules
-                            'awstats','bittorrent','cabinetmed','concatpdf','filemanager','monitoring','nltechno','numberwords','ovh','phenix','phpsysinfo','postnuke','submiteverywhere',
-                            'survey','thomsonphonebook','voyage','webcalendar','webmail','zipautofillfr');
+$alwaysuncheckedmodules=array('paybox','paypal','google','scanner','workflow');  // Module we never want
+$alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap','mailmanspip','notification',
+                                'syslog','user','webservices',
+                                // Extended modules
+                                'memcached','numberwords','zipautofillfr');
+$alwayshiddenuncheckedmodules=array('boutique','ftp',
+                                // Extended modules
+                                'awstats','bittorrent','cabinetmed','concatpdf','filemanager','mantis','monitoring','nltechno','ovh','phenix','phpsysinfo','postnuke','skincoloreditor','submiteverywhere',
+                                'survey','thomsonphonebook','voyage','webcalendar','webmail');
 
 // Search modules
 $dirlist=$conf->file->dol_document_root;
+
+
+// Search modules dirs
+$modulesdir = array();
+foreach ($conf->file->dol_document_root as $type => $dirroot)
+{
+    $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
+
+    $handle=@opendir($dirroot);
+    if (is_resource($handle))
+    {
+        while (($file = readdir($handle))!==false)
+        {
+            if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+            {
+                if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+                {
+                    $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
+                }
+            }
+        }
+        closedir($handle);
+    }
+}
+//var_dump($modulesdir);
+
 
 $filename = array();
 $modules = array();
@@ -93,12 +122,11 @@ $categ = array();
 $dirmod = array();
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
-foreach ($dirlist as $dirroot)
-{
-    $dir = $dirroot . "/core/modules/";
 
+foreach ($modulesdir as $dir)
+{
     // Charge tableaux modules, nom, numero, orders depuis repertoire dir
-    $handle=opendir($dir);
+    $handle=@opendir($dir);
     if (is_resource($handle))
     {
         while (($file = readdir($handle))!==false)
@@ -110,38 +138,43 @@ foreach ($dirlist as $dirroot)
 
                 if ($modName)
                 {
-                    //$modnameshort=strtolower(preg_replace('/^mod/','',$modName));
-                    //if (! in_array($modnameshort,$conf->modules)) continue;
+		            try
+		            {
+                        include_once($dir.$file);
+                        $objMod = new $modName($db);
 
-                    include_once($dir.$file);
-                    $objMod = new $modName($db);
+                        if ($objMod->numero > 0)
+                        {
+                            $j = $objMod->numero;
+                        }
+                        else
+                        {
+                            $j = 1000 + $i;
+                        }
 
-                    if ($objMod->numero > 0)
+                        $modulequalified=1;
+
+                        // We discard modules according to features level (PS: if module is activated we always show it)
+                        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+                        if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+                        if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+
+                        if ($modulequalified)
+                        {
+                            $modules[$i] = $objMod;
+                            $filename[$i]= $modName;
+                            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+                            //print "x".$modName." ".$orders[$i]."\n<br>";
+       						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
+       			            else $categ[$objMod->special]=1;
+                            $dirmod[$i] = $dirroot;
+                            $j++;
+                            $i++;
+                        }
+		            }
+                    catch(Exception $e)
                     {
-                        $j = $objMod->numero;
-                    }
-                    else
-                    {
-                        $j = 1000 + $i;
-                    }
-
-                    $modulequalified=1;
-
-                    // We discard modules according to features level (PS: if module is activated we always show it)
-                    $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-                    if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
-                    if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
-
-                    if ($modulequalified)
-                    {
-                        $modules[$i] = $objMod;
-                        $filename[$i]= $modName;
-                        $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
-                        //print "x".$modName." ".$orders[$i]."\n<br>";
-                        $categ[$objMod->special]++;                 // Array of all different modules categories
-                        $dirmod[$i] = $dirroot;
-                        $j++;
-                        $i++;
+                        dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
                     }
                 }
             }
@@ -286,21 +319,29 @@ foreach ($demoprofiles as $profilearray)
     		    $modulekeyname=strtolower($val->name);
 
     		    $modulequalified=1;
-                if (! empty($val->always_enabled) || in_array($modulekeyname,$alwayshiddenmodules)) $modulequalified=0;
+                if (! empty($val->always_enabled) || in_array($modulekeyname,$alwayshiddenuncheckedmodules)) $modulequalified=0;
                 if ($val->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
                 if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
                 if (! $modulequalified) continue;
 
-                $modulo=($j % $nbcolsmod);
-    		    if ($modulo == 0) print '<tr>';
-                print '<td><input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
-                if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled="disabled"';
-                if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked="checked"';
-                print '> '.$val->getName().' &nbsp;';
-                print '<!-- id='.$val->numero.' -->';
-                print '</td>';
-                if ($modulo == ($nbcolsmod - 1)) print '</tr>';
-                $j++;
+                if (in_array($modulekeyname,$alwayshiddencheckedmodules))
+                {
+                    print "\n".'<!-- Module '.$modulekeyname.' hidden and always checked -->';
+                    print '<input type="hidden" name="'.$modulekeyname.'" value="1">';
+                }
+                else
+                {
+                    $modulo=($j % $nbcolsmod);
+        		    if ($modulo == 0) print '<tr>';
+                    print '<td><input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
+                    if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled="disabled"';
+                    if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked="checked"';
+                    print '> '.$val->getName().' &nbsp;';
+                    print '<!-- id='.$val->numero.' -->';
+                    print '</td>';
+                    if ($modulo == ($nbcolsmod - 1)) print '</tr>';
+                    $j++;
+                }
     		}
     		print '</table>';
     		print '</td>';

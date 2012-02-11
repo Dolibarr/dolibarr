@@ -85,7 +85,7 @@ class mailing_contacts3 extends MailingTargets
     	if ($filtersarray[0] <> 'all') $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
         $sql.= " WHERE s.rowid = sp.fk_soc";
     	$sql.= " AND sp.email != ''";     // Note that null != '' is false
-    	$sql.= " AND sp.entity = ".$conf->entity;
+    	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
@@ -141,7 +141,7 @@ class mailing_contacts3 extends MailingTargets
             $statssql[$i].= " ".MAIN_DB_PREFIX."categorie_societe as cs";
             $statssql[$i].= " WHERE s.rowid = sp.fk_soc";
             $statssql[$i].= " AND sp.email != ''";    // Note that null != '' is false
-            $statssql[$i].= " AND sp.entity = ".$conf->entity;
+            $statssql[$i].= " AND sp.entity IN (".getEntity('societe', 1).")";
             $statssql[$i].= " AND cs.fk_categorie = c.rowid";
             $statssql[$i].= " AND cs.fk_societe = sp.fk_soc";
             $statssql[$i].= " GROUP BY c.label";
@@ -207,7 +207,7 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
         $sql.= " WHERE s.rowid = sp.fk_soc";
         $sql.= " AND sp.email != ''";     // Note that null != '' is false
-        $sql.= " AND sp.entity = ".$conf->entity;
+        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND cs.fk_categorie = c.rowid";
         $sql.= " AND cs.fk_societe = sp.fk_soc";
         $sql.= " GROUP BY c.label";
