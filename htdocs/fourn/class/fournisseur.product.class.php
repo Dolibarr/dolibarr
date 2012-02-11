@@ -152,16 +152,17 @@ class ProductFournisseur extends Product
 
         $error=0;
         $this->db->begin();
-
-        // Supprime prix courant du fournisseur pour cette quantite
-        $sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
+        
         if ($this->product_fourn_price_id)
         {
-            $sql.= " WHERE rowid = ".$this->product_fourn_price_id;
+        	// Supprime prix courant du fournisseur pour cette quantite
+        	$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
+        	$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
+        	$resql=$this->db->query($sql);
+        	if ($resql < 0) $error++;
         }
 
-        $resql=$this->db->query($sql);
-        if ($resql)
+        if (! $error)
         {
             if ($price_base_type == 'TTC')
             {

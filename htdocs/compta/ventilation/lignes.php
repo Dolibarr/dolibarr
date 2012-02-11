@@ -55,10 +55,11 @@ $sql.= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c";
 $sql.= " , ".MAIN_DB_PREFIX."facturedet as l";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 $sql.= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND l.fk_code_ventilation <> 0 ";
+$sql.= " AND f.entity = ".$conf->entity;
 $sql.= " AND c.rowid = l.fk_code_ventilation";
 if (dol_strlen(trim($_GET["search_facture"])))
 {
-	$sql .= " AND f.facnumber like '%".$_GET["search_facture"]."%'";
+	$sql .= " AND f.facnumber LIKE '%".$_GET["search_facture"]."%'";
 }
 
 $sql .= " ORDER BY l.rowid DESC";

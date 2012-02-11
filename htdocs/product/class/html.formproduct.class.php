@@ -60,7 +60,7 @@ class FormProduct
 	 */
 	function loadWarehouses($fk_product=0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 
@@ -72,7 +72,8 @@ class FormProduct
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
 			$sql.= " AND ps.fk_product = '".$fk_product."'";
 		}
-		$sql.= " WHERE statut = 1";
+		$sql.= " WHERE e.entity = ".$conf->entity;
+		$sql.= " AND e.statut = 1";
 		$sql.= " ORDER BY e.label";
 
 		dol_syslog(get_class($this).'::loadWarehouses sql='.$sql,LOG_DEBUG);

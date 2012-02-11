@@ -313,15 +313,15 @@ class ActionsCardService extends Product
 			$fourn_id = $_GET["fourn_id"];
 			$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		}
-		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
 		if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 		if ($sall)
 		{
-			$sql.= " AND (p.ref like '%".$this->db->escape($sall)."%' OR p.label like '%".$this->db->escape($sall)."%' OR p.description like '%".$this->db->escape($sall)."%' OR p.note like '%".$this->db->escape($sall)."%')";
+			$sql.= " AND (p.ref LIKE '%".$this->db->escape($sall)."%' OR p.label LIKE '%".$this->db->escape($sall)."%' OR p.description LIKE '%".$this->db->escape($sall)."%' OR p.note LIKE '%".$this->db->escape($sall)."%')";
 		}
-		if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
-		if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
-		if ($snom)     $sql.= " AND p.label like '%".$this->db->escape($snom)."%'";
+		if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
+		if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
+		if ($snom)     $sql.= " AND p.label LIKE '%".$this->db->escape($snom)."%'";
 		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 		{
 			$sql.= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);

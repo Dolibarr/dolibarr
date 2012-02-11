@@ -88,9 +88,12 @@ class Fournisseur extends Societe
 	 */
 	function nbOfProductRefs()
 	{
+		global $conf;
+		
 		$sql = "SELECT count(pfp.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-		$sql .= " WHERE pfp.fk_soc = ".$this->id;
+		$sql.= " WHERE pfp.entity = ".$conf->entity;
+		$sql.= " AND pfp.fk_soc = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ( $resql )

@@ -1450,8 +1450,8 @@ class Contrat extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE tosell = 1";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " AND tosell = 1";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
