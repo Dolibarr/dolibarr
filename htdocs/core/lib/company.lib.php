@@ -650,6 +650,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         $sql.= " WHERE u.rowid = a.fk_user_author";
+        $sql.= " AND u.entity = ".$conf->entity;
         if ($object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         $sql.= " AND c.id=a.fk_action";
@@ -777,6 +778,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         $sql.= " WHERE u.rowid = a.fk_user_author";
+        $sql.= " AND u.entity = ".$conf->entity;
         if ($object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         $sql.= " AND c.id=a.fk_action";

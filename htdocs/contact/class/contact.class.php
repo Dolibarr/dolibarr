@@ -397,11 +397,11 @@ class Contact extends CommonObject
 	    $result=false;
 
 		// Mis a jour contact
-		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET rowid=".$id;
-		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
+		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
+		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
-		$sql .= " WHERE rowid=".$id;
-		//print "update_perso: ".$this->birthday.'-'.$this->db->idate($this->birthday);
+		$sql.= " WHERE rowid=".$id;
+
 		dol_syslog(get_class($this)."::update_perso this->birthday=".$this->birthday." - sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)

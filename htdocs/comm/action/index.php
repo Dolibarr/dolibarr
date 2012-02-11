@@ -452,7 +452,7 @@ if ($showbirthday)
     $sql = 'SELECT sp.rowid, sp.name, sp.firstname, sp.birthday';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
     $sql.= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
-    $sql.= ' AND sp.entity = '.$conf->entity;
+    $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     if ($action == 'show_day')
     {
         $sql.= ' AND MONTH(birthday) = '.$month;

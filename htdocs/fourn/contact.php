@@ -58,22 +58,25 @@ $limit = $conf->liste_limit;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom, st.libelle as stcomm, p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1 AND s.rowid = p.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE s.fk_stcomm = st.id";
+$sql.= " AND s.fournisseur = 1";
+$sql.= " AND s.rowid = p.fk_soc";
+$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (dol_strlen($stcomm)) {
     $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
 if (dol_strlen($begin)) {
-    $sql .= " AND p.name like '$begin%'";
+    $sql .= " AND p.name LIKE '$begin%'";
 }
 
 if ($contactname) {
-    $sql .= " AND p.name like '%".strtolower($contactname)."%'";
+    $sql .= " AND p.name LIKE '%".strtolower($contactname)."%'";
     $sortfield = "p.name";
     $sortorder = "ASC";
 }
