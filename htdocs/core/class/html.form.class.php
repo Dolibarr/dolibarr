@@ -885,11 +885,11 @@ class Form
         global $conf,$langs;
 
         // On recherche les societes
-        $sql = "SELECT s.rowid, s.name as name, s.firstname, s.poste FROM";
-        $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
-        $sql.= " WHERE entity = ".$conf->entity;
-        if ($socid > 0) $sql.= " AND fk_soc=".$socid;
-        $sql.= " ORDER BY s.name ASC";
+        $sql = "SELECT sp.rowid, sp.name as name, sp.firstname, sp.poste";
+        $sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
+        $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
+        if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
+        $sql.= " ORDER BY sp.name ASC";
 
         dol_syslog(get_class($this)."::select_contacts sql=".$sql);
         $resql=$this->db->query($sql);
@@ -1263,7 +1263,7 @@ class Form
                     $sql.= "WHERE fk_product='".$objp->rowid."'";
                     $sql.= " AND price_level=".$price_level;
                     $sql.= " ORDER BY date_price";
-                    $sql.= " DESC limit 1";
+                    $sql.= " DESC LIMIT 1";
 
                     dol_syslog("Form::select_produits_do search price for level '.$price_level.' sql=".$sql);
                     $result2 = $this->db->query($sql);
@@ -1405,7 +1405,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
-        $sql.= " WHERE p.entity = ".$conf->entity;
+        $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
         $sql.= " AND p.tobuy = 1";
         if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
@@ -1547,7 +1547,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
-        $sql.= " WHERE p.entity = ".$conf->entity;
+        $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
         $sql.= " AND p.tobuy = 1";
         $sql.= " AND s.fournisseur = 1";
         $sql.= " AND p.rowid = ".$productid;

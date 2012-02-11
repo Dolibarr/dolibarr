@@ -128,7 +128,7 @@ class modService extends DolibarrModules
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 1 AND p.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 1 AND p.entity IN ('.getEntity("product", 1).')';
 
 	}
 

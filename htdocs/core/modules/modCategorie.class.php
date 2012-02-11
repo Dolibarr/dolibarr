@@ -112,6 +112,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_fournisseur as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
+		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
 		$this->export_sql_end[$r] .=' AND u.type = 1';	// Supplier categories
 
 		$r++;
@@ -125,6 +126,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_societe as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
+		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
 		$this->export_sql_end[$r] .=' AND u.type = 2';	// Customer/Prospect categories
 
 		$r++;
@@ -138,6 +140,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_product as cp, '.MAIN_DB_PREFIX.'product as p';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_product = p.rowid';
+		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
 		$this->export_sql_end[$r] .=' AND u.type = 0';	// Supplier categories
 
 		$r++;
@@ -151,6 +154,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_member as cp, '.MAIN_DB_PREFIX.'adherent as p';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
+		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
 		$this->export_sql_end[$r] .=' AND u.type = 3';	// Supplier categories
 	}
 

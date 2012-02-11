@@ -3084,7 +3084,7 @@ class Facture extends CommonObject
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
         $resql = $this->db->query($sql);
         if ($resql)
         {

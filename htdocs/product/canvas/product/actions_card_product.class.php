@@ -353,7 +353,7 @@ class ActionsCardProduct extends Product
 		}
 
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
 
 		if ($sall)
 		{

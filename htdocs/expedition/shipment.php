@@ -394,12 +394,10 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$commande->id;
-		// $sql.= " AND p.fk_product_type <> 1";		Why this line ?
-		//$sql.= " GROUP by cd.rowid, cd.fk_product";
 		$sql.= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;
-		dol_syslog("commande.php sql=".$sql, LOG_DEBUG);
+		dol_syslog("shipment.php sql=".$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{

@@ -65,7 +65,7 @@ llxHeader('',$title,$helpurl,'');
 //On n'affiche le lien page suivante que s'il y a une page suivante ...
 $sql = "SELECT count(*) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."product";
-$sql.= " WHERE entity = ".$conf->entity;
+$sql.= ' WHERE entity IN ('.getEntity('product', 1).')';
 if (isset($_GET['type'])) $sql.= " AND fk_product_type = ".$_GET['type'];
 
 $result=$db->query($sql);
@@ -99,8 +99,8 @@ print "</tr>\n";
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.rowid = pd.fk_product";
-$sql.= " AND p.entity = ".$conf->entity;
+$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+$sql.= " AND p.rowid = pd.fk_product";
 if (isset($_GET['type'])) $sql.= " AND fk_product_type = ".$_GET['type'];
 $sql.= " GROUP BY (p.rowid)";
 $sql.= $db->order($sortfield,$sortorder);

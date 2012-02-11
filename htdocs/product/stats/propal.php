@@ -32,14 +32,14 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 $langs->load("products");
 $langs->load("companies");
 
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
+$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 $mesg = '';
 
