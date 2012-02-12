@@ -68,7 +68,7 @@ class DeplacementStats extends Stats
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
-        if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
+        if ($this->userid > 0) $this->where.=' AND fk_user = '.$this->userid;
 	}
 
 
