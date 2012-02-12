@@ -731,7 +731,7 @@ else
         while ($cursorline <= $nbofservices)
         {
             print '<tr height="16" '.$bc[false].'>';
-            print '<td class="tab" width="90" style="border-left: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';">';
+            print '<td class="liste_titre" width="90" style="border-left: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';">';
             print $langs->trans("ServiceNb",$cursorline).'</td>';
 
             print '<td class="tab" style="border-right: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';" rowspan="2">';
