@@ -149,7 +149,7 @@ class FormAdmin
     	            {
     	                while (($file = readdir($handle))!==false)
     	                {
-    	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index')
     	                    {
     	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
     	                    	$filelib=preg_replace('/\.php$/i','',$file);
