@@ -4239,7 +4239,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
  * Verify if condition in string is ok or not
  *
  * @param 	string		$strRights		String with condition to check
- * @return 	boolean						true or false
+ * @return 	boolean						True or False. Return true if strRights is ''
  */
 function verifCond($strRights)
 {

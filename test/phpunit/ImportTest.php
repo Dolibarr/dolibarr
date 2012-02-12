@@ -120,7 +120,7 @@ class ImportTest extends PHPUnit_Framework_TestCase
      */
     public function testImportSample1()
     {
-
+        $file=dirname(__FILE__).'/Example_import_company_1.csv';
 
 
 		return true;
