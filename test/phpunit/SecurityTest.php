@@ -27,8 +27,8 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/functions.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -113,6 +113,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testGETPOST
+     *
+     * @return string
      */
     public function testGETPOST()
     {
@@ -152,6 +155,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCheckLoginPassEntity
+     *
+     * @return	void
      */
     public function testCheckLoginPassEntity()
     {
@@ -177,6 +183,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testEncodeDecode
+     *
+     * @return number
      */
     public function testEncodeDecode()
     {
@@ -191,6 +200,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testGetRandomPassword
+     *
+     * @return number
      */
     public function testGetRandomPassword()
     {
@@ -212,5 +224,18 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
         return 0;
     }
+
+    /**
+     * testGetRandomPassword
+     *
+     * @return number
+     */
+    public function testRestrictedArea()
+    {
+
+
+
+    }
+
 }
 ?>

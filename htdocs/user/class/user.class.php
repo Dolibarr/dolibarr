@@ -1236,7 +1236,7 @@ class User extends CommonObject
 	function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
 	{
 		global $conf, $langs;
-		require_once(DOL_DOCUMENT_ROOT ."/core/lib/security.lib.php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/lib/security2.lib.php");
 
 		$error=0;
 

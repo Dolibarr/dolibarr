@@ -332,7 +332,8 @@ if (! defined('NOLOGIN'))
 	$test=true;
 	if (! isset($_SESSION["dol_login"]))
 	{
-		// It is not already authenticated, it requests the login / password
+		// It is not already authenticated and it requests the login / password
+	    include_once(DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php');
 
 	    // If in demo mode, we check we go to home page through the public/demo/index.php page
 	    if ($dolibarr_main_demo && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
@@ -384,7 +385,7 @@ if (! defined('NOLOGIN'))
 
 		if ($test && $goontestloop)
 		{
-			$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+		    $login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
 			if ($login)
 			{
 				$dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used

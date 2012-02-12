@@ -223,7 +223,6 @@ if ($user->societe_id == 0)
                     "bills",
 					"Contracts");
 
-    //print memory_get_usage()."<br>";
 
     // Loop and displays each line of table
     foreach ($keys as $key=>$val)
@@ -249,8 +248,6 @@ if ($user->societe_id == 0)
             print '<td>'.$title.'</td>';
             print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
             print '</tr>';
-
-            //print $includes[$key].' '.memory_get_usage()."<br>";
         }
     }
 

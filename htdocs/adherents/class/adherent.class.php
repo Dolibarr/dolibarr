@@ -767,7 +767,8 @@ class Adherent extends CommonObject
         // If new password not provided, we generate one
         if (! $password)
         {
-	        $password=getRandomPassword('');
+            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+            $password=getRandomPassword('');
         }
 
         // Cryptage mot de passe

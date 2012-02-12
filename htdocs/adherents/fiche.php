@@ -706,7 +706,8 @@ if ($action == 'create')
     // Password
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-	    $generated_password=getRandomPassword('');
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+        $generated_password=getRandomPassword('');
         print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
         print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
         print '</td></tr>';
