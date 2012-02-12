@@ -41,6 +41,14 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
+if (empty($user->id))
+{
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
+}
+$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+
 
 /**
  * Class for PHPUnit tests
@@ -226,15 +234,23 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testGetRandomPassword
+     * testRestrictedArea
      *
-     * @return number
+     * @return void
      */
     public function testRestrictedArea()
     {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
+		//$dummyuser=new User($db);
+		//$result=restrictedArea($dummyuser,'societe');
 
-
+		$result=restrictedArea($user,'societe');
+		$this->assertEquals(1,$result);
     }
 
 }

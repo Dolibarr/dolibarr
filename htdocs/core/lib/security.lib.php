@@ -85,7 +85,7 @@ function dol_hash($chain,$type=0)
  * 	If GETPOST('action') defined, we also check write and delete permission.
  *
  *	@param	User	$user      	  	User to check
- *	@param  string	$features	    Features to check (in most cases, it's module name)
+ *	@param  string	$features	    Features to check (in most cases, it's module name. Examples: 'societe', 'contact', 'produit|service', ...)
  *	@param  int		$objectid      	Object ID if we want to check permission on a particular record (optionnal)
  *	@param  string	$dbtablename    Table name where object is stored. Not used if objectid is null (optionnal)
  *	@param  string	$feature2		Feature to check, second level of permission (optionnal)
@@ -94,7 +94,7 @@ function dol_hash($chain,$type=0)
  *  @param	Canvas	$objcanvas		Object canvas
  * 	@return	int						Always 1, die process if not allowed
  */
-function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
+function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
     global $db, $conf;
 
@@ -163,11 +163,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
         }
     }
 
-    if (! $readok)
-    {
-        //print "Read access is down";
-        accessforbidden();
-    }
+    if (! $readok) accessforbidden();
     //print "Read access is ok";
 
     // Check write permission from module
