@@ -2106,9 +2106,10 @@ function img_allow($allow,$alt='default')
 
 /**
  *	Show MIME img of a file
- *	@param      file		Filename
- * 	@param		alt			Alternate text to show on img mous hover
- *	@return     string     	Return img tag
+ *
+ *	@param	string	$file		Filename
+ * 	@param	string	$alt		Alternate text to show on img mous hover
+ *	@return string     			Return img tag
  */
 function img_mime($file,$alt='')
 {
@@ -2125,9 +2126,10 @@ function img_mime($file,$alt='')
 
 /**
  *	Show information for admin users
- *	@param      text			Text info
- *	@param      infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
- *	@return		string			String with info text
+ *
+ *	@param	string	$text			Text info
+ *	@param  string	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@return	string					String with info text
  */
 function info_admin($text,$infoonimgalt=0)
 {
@@ -2153,15 +2155,15 @@ function info_admin($text,$infoonimgalt=0)
  *	Check permissions of a user to show a page and an object. Check read permission.
  * 	If GETPOST('action') defined, we also check write and delete permission.
  *
- *	@param      user      	  	User to check
- *	@param      features	    Features to check (in most cases, it's module name)
- *	@param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
- *	@param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
- *	@param      feature2		Feature to check, second level of permission (optionnal)
- *  @param      dbt_keyfield    Field name for socid foreign key if not fk_soc (optionnal)
- *  @param      dbt_select      Field name for select if not rowid (optionnal)
- *  @param		objcanvas		Object canvas
- * 	@return		int				Always 1, die process if not allowed
+ *	@param	User	$user      	  	User to check
+ *	@param  string	$features	    Features to check (in most cases, it's module name)
+ *	@param  int		$objectid      	Object ID if we want to check permission on a particular record (optionnal)
+ *	@param  string	$dbtablename    Table name where object is stored. Not used if objectid is null (optionnal)
+ *	@param  string	$feature2		Feature to check, second level of permission (optionnal)
+ *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc (optionnal)
+ *  @param  string	$dbt_select     Field name for select if not rowid (optionnal)
+ *  @param	Canvas	$objcanvas		Object canvas
+ * 	@return	int						Always 1, die process if not allowed
  */
 function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
@@ -2957,7 +2959,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	string	$betweenarrows		HTML Content to show between arrows
  *	@return	void
  */
-function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrows='')
+function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='')
 {
     global $conf, $langs;
     if ($page > 0)
@@ -3735,9 +3737,9 @@ function dol_string_is_good_iso($s)
 /**
  *	Return nb of lines of a clear text
  *
- *	@param		s			String to check
- * 	@param		maxchar		Not yet used
- *	@return		int			Number of lines
+ *	@param	string	$s			String to check
+ * 	@param	string	$maxchar	Not yet used
+ *	@return	int					Number of lines
  */
 function dol_nboflines($s,$maxchar=0)
 {
@@ -3855,12 +3857,12 @@ function make_substitutions($chaine,$substitutionarray)
 }
 
 /**
- *      Complete the $substitutionarray with more entries
+ *  Complete the $substitutionarray with more entries
  *
- *      @param  array		$substitutionarray       Array substitution old value => new value value
- *      @param  Translate	$outputlangs             If we want substitution from special constants, we provide a language
- *      @param  Object		$object                  If we want substitution from special constants, we provide data in a source object
- *      @return	void
+ *  @param  array		&$substitutionarray       Array substitution old value => new value value
+ *  @param  Translate	$outputlangs             If we want substitution from special constants, we provide a language
+ *  @param  Object		$object                  If we want substitution from special constants, we provide data in a source object
+ *  @return	void
  */
 function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='')
 {
