@@ -27,6 +27,20 @@
 
 
 /**
+ *  Return user/group account of web server
+ *
+ *  @param	string	$mode       'user' or 'group'
+ *  @return string				Return user or group of web server
+ */
+function dol_getwebuser($mode)
+{
+    $t='?';
+    if ($mode=='user')  $t=getenv('APACHE_RUN_USER');   // $_ENV['APACHE_RUN_USER'] is empty
+    if ($mode=='group') $t=getenv('APACHE_RUN_GROUP');
+    return $t;
+}
+
+/**
  *  Return a login if login/pass was successfull
  *
  *	@param		string	$usertotest			Login value to test
