@@ -63,7 +63,8 @@ class Conf
 	public $modules				 = array();	// List of modules
 	public $css_modules			 = array();
 	public $tabs_modules		 = array();
-	public $triggers_modules	 = array('/core/triggers');
+	public $triggers_modules	 = array('/core/triggers');    // TODO default triggers should not be into the module list
+	public $menus_modules	     = array();
 	public $hooks_modules		 = array();
 	public $login_method_modules = array();
 
@@ -149,6 +150,12 @@ class Conf
 							$params=explode(':',$value,2);
 							$this->tabs_modules[$params[0]][]=$value;
 						}
+						// If this is constant for a new tab page activated by a module
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_MENUS/i',$key,$reg))
+						{
+							$modulename = strtolower($reg[1]);
+							$this->menus_modules[] = '/'.$modulename.'/core/menus';
+						}
 						// If this is constant for triggers activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
 						{
@@ -175,18 +182,15 @@ class Conf
                         elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
                         {
                             $module=strtolower($reg[1]);
-                            // Add this module in list of modules that provide SMS
-                            $this->sms_engine[$module]=$module;
+                            $this->sms_engine[$module]=$module;    // Add this module in list of modules that provide SMS
                         }
 						// If this is a module constant
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
 						{
 							$module=strtolower($reg[1]);
-							//print "Module ".$module." is enabled<br>\n";
 							$this->$module=(object) array();
 							$this->$module->enabled=true;
-							// Add this module in list of enabled modules
-							$this->modules[]=$module;
+							$this->modules[]=$module;              // Add this module in list of enabled modules
 						}
 					}
 				}
