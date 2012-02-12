@@ -37,15 +37,17 @@ llxHeader();
 
 print_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
 
+// TODO USe code similar to commande/stats/index.php instead of this one.
+
 print '<table class="border" width="100%">';
 print '<tr><td align="center">'.$langs->trans("Year").'</td>';
 print '<td width="40%" align="center">'.$langs->trans("NbOfSendings").'</td></tr>';
 
-$sql = "SELECT count(*), date_format(date_expedition,'%Y') as dm";
+$sql = "SELECT count(*) as nb, date_format(date_expedition,'%Y') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition";
 $sql.= " WHERE fk_statut > 0";
 $sql.= " AND entity = ".$conf->entity;
-$sql.= " GROUP BY dm DESC ";
+$sql.= " GROUP BY dm DESC";
 
 $resql=$db->query($sql);
 if ($resql)
@@ -62,7 +64,7 @@ if ($resql)
         $i++;
     }
 }
-$db->free();
+$db->free($resql);
 
 print '</table>';
 print '<br>';

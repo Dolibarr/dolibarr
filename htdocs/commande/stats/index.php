@@ -225,12 +225,18 @@ foreach($data as $val) {
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
+
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
+
+if ($mode == 'customer') $type='order_stats';
+if ($mode == 'supplier') $type='supplier_order_stats';
+
+complete_head_from_modules($conf,$langs,$object,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
