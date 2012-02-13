@@ -329,6 +329,7 @@ ActionDoneShort=Finished
 CompanyFoundation=Company/Foundation
 ContactsForCompany=Contacts/adresses for this third party
 ActionsOnCompany=Events about this third party
+ActionsOnMember=Events about this member
 NActions=%s events
 NActionsLate=%s late
 Filter=Filter

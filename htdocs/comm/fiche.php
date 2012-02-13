@@ -856,7 +856,9 @@ if ($id > 0)
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
     {
-		// List of todo actions
+        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+
+        // List of todo actions
 		show_actions_todo($conf,$langs,$db,$object);
 
         // List of done actions
@@ -868,8 +870,8 @@ else
 	dol_print_error($db,'Bad value for socid parameter');
 }
 
+
 llxFooter();
 
 $db->close();
-
 ?>

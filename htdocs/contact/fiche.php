@@ -884,13 +884,16 @@ else
             print "</div><br>";
         }
 
+        print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
+
         print show_actions_todo($conf,$langs,$db,$objsoc,$object);
 
         print show_actions_done($conf,$langs,$db,$objsoc,$object);
     }
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

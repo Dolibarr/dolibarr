@@ -51,7 +51,7 @@ $id = GETPOST('id');
 if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'agenda', $id, 'actioncomm', 'actions', '', 'id');
 
-if (isset($_GET["error"])) $error=$_GET["error"];
+$error=GETPOST("error");
 
 $cactioncomm = new CActionComm($db);
 $actioncomm = new ActionComm($db);
