@@ -47,10 +47,10 @@ print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY
 // Registering the location of boxes
 if ((isset($_GET['action']) && ! empty($_GET['action'])) && (isset($_GET['name']) && ! empty($_GET['name'])) )
 {
-	$entity = (GETPOST('entity','int') >= 0 ? GETPOST('entity','int') : $conf->entity);
+	$entity = GETPOST('entity','int');
 	$action = GETPOST('action', 'alpha');
 	$name = GETPOST('name', 'alpha');
-	
+
 	if ($user->admin)
 	{
 		if ($action == 'set')
