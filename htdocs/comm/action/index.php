@@ -302,16 +302,17 @@ $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-$sql.= ', '.MAIN_DB_PREFIX.'c_actioncomm as ca';
-$sql.= ', '.MAIN_DB_PREFIX.'user as u';
+$sql.= ' FROM ('.MAIN_DB_PREFIX.'c_actioncomm as ca,';
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql.= " ".MAIN_DB_PREFIX.'user as u,';
+$sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND u.entity in (0,'.$conf->entity.')';    // To limit to entity
-$sql.= ' AND a.entity = '.$conf->entity;
-if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
+$sql.= ' AND a.entity IN ('.getEntity().')';
 if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
 if ($action == 'show_day')
 {
     $sql.= " AND (";
@@ -339,6 +340,9 @@ else
     $sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
     $sql.= ')';
 }
+if ($_GET["type"]) $sql.= " AND ca.id = ".$_GET["type"];
+if ($status == 'done') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
+if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
     $sql.= " AND (";
@@ -347,8 +351,6 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
     if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
     $sql.= ")";
 }
-if ($status == 'done') { $sql.= " AND a.percent = 100"; }
-if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 // Sort on date
 $sql.= ' ORDER BY datep';
 //print $sql;
