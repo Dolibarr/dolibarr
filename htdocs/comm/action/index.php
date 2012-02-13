@@ -318,8 +318,8 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
     if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
     $sql.= ")";
 }
-if ($status == 'done') { $sql.= " AND a.percent = 100"; }
-if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
+if ($status == 'done') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
+if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
 // Sort on date
 $sql.= ' ORDER BY datep';
 //print $sql;
@@ -556,11 +556,11 @@ if (sizeof($listofextcals))
                     $event->datep=$datestart+$usertime;
                     $event->datef=$dateend+$usertime;
                     $event->type_code="ICALEVENT";
-                    
+
                     if($icalevent['SUMMARY']) $event->libelle=$icalevent['SUMMARY'];
                     elseif($icalevent['DESCRIPTION']) $event->libelle=dol_nl2br($icalevent['DESCRIPTION'],1);
 					else $event->libelle = $langs->trans("ExtSiteNoLabel");
-                    
+
 					$event->date_start_in_calendar=$event->datep;
 
                     if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
