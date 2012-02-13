@@ -493,23 +493,23 @@ if ($action == 'create')
 
 	print '</table>';
 
-	print '<br>';
+	print '<br><br>';
 
 	print '<table class="border" width="100%">';
 
 	// Affected by
 	$var=false;
-	print '<tr '.$bc[$var].'><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
 	print '</td></tr>';
 
 	// Realised by
-	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
 	$form->select_users(GETPOST("doneby")?GETPOST("doneby"):($percent==100?$actioncomm->userdone:0),'doneby',1);
 	print '</td></tr>';
 
 	print '</table>';
-	print '<br>';
+	print '<br><br>';
 	print '<table class="border" width="100%">';
 
 	// Societe, contact
@@ -717,25 +717,25 @@ if ($id)
         // Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
 
-		print '</table><br><table class="border" width="100%">';
+		print '</table><br><br><table class="border" width="100%">';
 
 		// Input by
 		$var=false;
-		print '<tr '.$bc[$var].'><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
 		print $act->author->getNomUrl(1);
 		print '</td></tr>';
 
 		// Affected to
-		print '<tr '.$bc[$var].'><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		print $form->select_dolusers($act->usertodo->id>0?$act->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
 		// Realised by
-		print '<tr '.$bc[$var].'><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 		print $form->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
 		print '</td></tr>';
 
-		print '</table><br>';
+		print '</table><br><br>';
 
 		print '<table class="border" width="100%">';
 
@@ -864,26 +864,26 @@ if ($id)
         // Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
 
-		print '</table><br><table class="border" width="100%">';
+		print '</table><br><br><table class="border" width="100%">';
 
 		// Input by
 		$var=false;
-		print '<tr '.$bc[$var].'><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
 		if ($act->author->id > 0) print $act->author->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 
 		// Affecte a
-		print '<tr '.$bc[$var].'><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
 		// Done by
-		print '<tr '.$bc[$var].'><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
 		print '</td></tr>';
 
-		print '</table><br><table class="border" width="100%">';
+		print '</table><br><br><table class="border" width="100%">';
 
 		// Third party - Contact
 		print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
