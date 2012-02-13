@@ -36,7 +36,7 @@ $(document).ready(function(){
 			var table_element_line = "<?php echo $object->table_element_line; ?>";
 			var fk_element = "<?php echo $object->fk_element; ?>";
 			var element_id = "<?php echo $object->id; ?>";
-			$.get("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
+			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
 					{
 						roworder: roworder,
 						table_element_line: table_element_line,
