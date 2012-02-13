@@ -1630,10 +1630,10 @@ abstract class CommonObject
             dol_print_error($this->db);
         }
     }
-    
+
     /**
      *	Update object linked of a current object
-     * 
+     *
      *	@param	int		$sourceid		Object source id
      *	@param  string	$sourcetype		Object source type
      *	@param  int		$targetid		Object target id
@@ -1644,10 +1644,10 @@ abstract class CommonObject
     {
     	$updatesource=false;
     	$updatetarget=false;
-    	
+
     	if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $updatesource=true;
     	else if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $updatetarget=true;
-    	
+
     	$sql = "UPDATE ".MAIN_DB_PREFIX."element_element SET ";
     	if ($updatesource)
     	{
@@ -1663,7 +1663,7 @@ abstract class CommonObject
     		$sql.= " WHERE fk_source = ".$this->id;
     		$sql.= " AND sourcetype = '".$this->element."'";
     	}
-    
+
     	dol_syslog(get_class($this)."::updateObjectLinked sql=".$sql, LOG_DEBUG);
     	if ($this->db->query($sql))
     	{
@@ -1676,7 +1676,7 @@ abstract class CommonObject
     		return -1;
     	}
     }
-    
+
 	/**
 	 *	Delete all links between an object $this
 	 *
@@ -1687,7 +1687,7 @@ abstract class CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE fk_target = ".$this->id;
 		$sql.= " AND targettype = '".$this->element."'";
-		
+
 		dol_syslog(get_class($this)."::deleteObjectLinked sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
@@ -1700,7 +1700,7 @@ abstract class CommonObject
 			return -1;
 		}
 	}
-    
+
     /**
      *      Set statut of an object
      *
@@ -1859,7 +1859,7 @@ abstract class CommonObject
         global $langs;
 
 		$error=0;
-		
+
         if (count($this->array_options) > 0)
         {
             // Check parameters
@@ -2015,7 +2015,7 @@ abstract class CommonObject
 
 
     /**
-     * List urls of elemùent
+     * List urls of element
      *
      * @param 	int		$objectid		Id of record
      * @param 	string	$objecttype		Type of object

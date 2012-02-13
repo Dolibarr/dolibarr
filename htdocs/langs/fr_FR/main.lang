@@ -330,6 +330,7 @@ ActionDoneShort=Terminé
 CompanyFoundation=Société ou institution
 ContactsForCompany=Contacts/adresses de ce tiers
 ActionsOnCompany=Événements vis à vis de ce tiers
+ActionsOnMember=Événements vis à vis de cet adhérent
 NActions=%s événements
 NActionsLate=%s en retard
 Filter=Filtre

@@ -196,10 +196,12 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
+
+complete_head_from_modules($conf,$langs,$object,$head,$h,'trip_stats');
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 

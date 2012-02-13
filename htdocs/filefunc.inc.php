@@ -145,7 +145,7 @@ foreach($paths as $tmppath)
         break;
     }
 }
-if (! $found)	// If autodetect fails (Ie: when uing apache alias that point outside default DOCUMENT_ROOT.
+if (! $found)	// If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT.
 {
 	$tmp=$dolibarr_main_url_root;
 }
@@ -213,8 +213,10 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php"))
 	exit;
 }
 
-include_once(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
-include_once(DOL_DOCUMENT_ROOT ."/core/lib/security.lib.php");	// Include by default
+// Included by default
+include_once(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php");
+include_once(DOL_DOCUMENT_ROOT ."/core/lib/security.lib.php");
+//print memory_get_usage();
 
 // If password is encoded, we decode it
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
@@ -227,6 +229,5 @@ if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_d
 	}
 	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
-//print memory_get_usage();
 
 ?>

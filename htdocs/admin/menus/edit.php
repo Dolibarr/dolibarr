@@ -30,14 +30,12 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
 $langs->load("admin");
 
-if (! $user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
-$dirtop = "/core/menus/standard";
-$dirleft = "/core/menus/standard";
+$dirstandard = "/core/menus/standard";
 $dirsmartphone = "/core/menus/smartphone";
 
-$dirmenu = array($dirleft,$dirsmartphone);
+$dirmenu = array($dirstandard,$dirsmartphone);
 
 $action=GETPOST('action');
 $mesg=GETPOST('mesg');

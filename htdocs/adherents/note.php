@@ -27,37 +27,36 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
-$action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["action"]:"");
-$id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
+$action=GETPOST('action');
+$id=GETPOST("id");
 
 $langs->load("companies");
 $langs->load("members");
 $langs->load("bills");
 
-if (!$user->rights->adherent->lire)
-  accessforbidden();
+if (!$user->rights->adherent->lire) accessforbidden();
 
-$adh = new Adherent($db);
-$result=$adh->fetch($id);
+$object = new Adherent($db);
+$result=$object->fetch($id);
 if ($result > 0)
 {
     $adht = new AdherentType($db);
-    $result=$adht->fetch($adh->typeid);
+    $result=$adht->fetch($object->typeid);
 }
 
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+/*
+ * Actions
+ */
 
 if ($_POST["action"] == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
 {
 	$db->begin();
 
-	$res=$adh->update_note($_POST["note"],$user);
+	$res=$object->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
-		$mesg='<div class="error">'.$adh->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 		$db->rollback();
 	}
 	else
@@ -78,11 +77,11 @@ $form = new Form($db);
 
 if ($id)
 {
-	$head = member_prepare_head($adh);
+	$head = member_prepare_head($object);
 
 	dol_fiche_head($head, 'note', $langs->trans("Member"), 0, 'user');
 
-	if ($msg) print '<div class="error">'.$msg.'</div>';
+	dol_htmloutput_errors($msg);
 
 	print "<form method=\"post\" action=\"note.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -92,18 +91,18 @@ if ($id)
     // Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
-	print $form->showrefnav($adh,'id');
+	print $form->showrefnav($object,'id');
 	print '</td>';
 	print '</tr>';
 
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
     }
 
     // Morphy
-    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$adh->getmorphylib().'</td>';
+    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
     /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
     print $form->showphoto('memberphoto',$member);
     print '</td>';*/
@@ -113,21 +112,21 @@ if ($id)
     print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
     // Company
-    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
 
     // Civility
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$adh->getCivilityLabel().'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
     print '</tr>';
 
     // Lastname
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$adh->lastname.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$object->lastname.'&nbsp;</td>';
 	print '</tr>';
 
     // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$adh->firstname.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$object->firstname.'&nbsp;</td></tr>';
 
     // Status
-    print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
     // Note
     print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
@@ -135,14 +134,14 @@ if ($id)
 	if ($action == 'edit' && $user->rights->adherent->creer)
 	{
 	    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$adh->id."\">";
+		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note',$adh->note,'',280,'dolibarr_notes','',true,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
+        $doleditor=new DolEditor('note',$object->note,'',280,'dolibarr_notes','',true,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
         $doleditor->Create();
 	}
 	else
 	{
-		print nl2br($adh->note);
+		print nl2br($object->note);
 	}
 	print "</td></tr>";
 
@@ -167,7 +166,7 @@ if ($id)
 
     if ($user->rights->adherent->creer && $action != 'edit')
     {
-        print "<a class=\"butAction\" href=\"note.php?id=$adh->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
+        print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
     }
 
     print "</div>";

@@ -43,16 +43,16 @@ class DeplacementStats extends Stats
 	/**
 	 * Constructor
 	 *
-	 * @param 	$DB		   Database handler
-	 * @param 	$socid	   Id third party
-     * @param   $userid    Id user for filter
-	 * @return  DeplacementStats
+	 * @param 	DoliDB		$db		   Database handler
+	 * @param 	int			$socid	   Id third party
+     * @param   int			$userid    Id user for filter
+	 * @return 	void
 	 */
-	function DeplacementStats($DB, $socid=0, $userid=0)
+	function DeplacementStats($db, $socid=0, $userid=0)
 	{
 		global $conf;
 
-		$this->db = $DB;
+		$this->db = $db;
         $this->socid = $socid;
         $this->userid = $userid;
 
@@ -66,13 +66,14 @@ class DeplacementStats extends Stats
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
-        if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
+        if ($this->userid > 0) $this->where.=' AND fk_user = '.$this->userid;
 	}
 
 
 	/**
-	 * 	\brief		Renvoie le nombre de facture par annee
-	 *	\return		array	Array of values
+	 * 	Renvoie le nombre de facture par annee
+	 *
+	 *	@return		array	Array of values
 	 */
 	function getNbByYear()
 	{
@@ -86,9 +87,10 @@ class DeplacementStats extends Stats
 
 
 	/**
-	 * 	\brief	Renvoie le nombre de facture par mois pour une annee donnee
-	 *	\param	year	Year to scan
-	 *	\return	array	Array of values
+	 * 	Renvoie le nombre de facture par mois pour une annee donnee
+	 *
+	 *	@param	string	$year	Year to scan
+	 *	@return	array			Array of values
 	 */
 	function getNbByMonth($year)
 	{

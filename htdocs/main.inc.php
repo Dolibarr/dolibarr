@@ -332,7 +332,8 @@ if (! defined('NOLOGIN'))
 	$test=true;
 	if (! isset($_SESSION["dol_login"]))
 	{
-		// It is not already authenticated, it requests the login / password
+		// It is not already authenticated and it requests the login / password
+	    include_once(DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php');
 
 	    // If in demo mode, we check we go to home page through the public/demo/index.php page
 	    if ($dolibarr_main_demo && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
@@ -384,7 +385,7 @@ if (! defined('NOLOGIN'))
 
 		if ($test && $goontestloop)
 		{
-			$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+		    $login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
 			if ($login)
 			{
 				$dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
@@ -1130,17 +1131,26 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	/*
 	 * Top menu
 	 */
-    $top_menu=isset($conf->browser->phone)?$conf->smart_menu:$conf->top_menu;
+    $top_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
     if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
 
 	// Load the top menu manager
-	$result=dol_include_once("/core/menus/standard/".$top_menu);
-	if (! $result)	// If failed to include, we try with standard
-	{
-		$top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
-	}
-
+    // Load the top menu manager (only if not already done)
+    if (! class_exists('MenuTop'))
+    {
+        $menufound=0;
+    	$dirmenus=array_merge(array("/core/menus"),$conf->menus_modules);
+    	foreach($dirmenus as $dirmenu)
+    	{
+        	$menufound=dol_include_once($dirmenu."/standard/".$top_menu);
+        	if ($menufound) break;
+    	}
+    	if (! $menufound)	// If failed to include, we try with standard
+    	{
+    	    $top_menu='eldy_backoffice.php';
+    	    include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
+    	}
+    }
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
 
@@ -1321,16 +1331,25 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		$bookmarks=printBookmarksList($db, $langs);
 	}
 
-    $left_menu=isset($conf->browser->phone)?$conf->smart_menu:$conf->top_menu;
+    $left_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
     if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
 
-    // Load the left menu manager
-	$result=dol_include_once("/core/menus/standard/".$left_menu);
-	if (! $result)	// If menu manager removed or not found
-	{
-		$left_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/core/menus/standard/".$left_menu);
-	}
+    // Load the top menu manager (only if not already done)
+    if (! class_exists('MenuLeft'))
+    {
+        $menufound=0;
+        $dirmenus=array_merge(array("/core/menus"),$conf->menus_modules);
+        foreach($dirmenus as $dirmenu)
+        {
+            $menufound=dol_include_once($dirmenu."/standard/".$left_menu);
+            if ($menufound) break;
+        }
+        if (! $menufound)	// If failed to include, we try with standard
+        {
+            $top_menu='eldy_backoffice.php';
+            include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
+        }
+    }
 
     // Left column
     print '<!-- Begin left area - menu '.$left_menu.' -->'."\n";

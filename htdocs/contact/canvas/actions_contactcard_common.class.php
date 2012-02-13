@@ -42,10 +42,10 @@ abstract class ActionsContactCardCommon
 	//! Error array
 	var $errors=array();
 
-	
+
 	/**
 	 * 	Instantiation of DAO class
-	 * 
+	 *
 	 * 	@return	void
 	 */
 	private function getInstanceDao()
@@ -66,7 +66,7 @@ abstract class ActionsContactCardCommon
 	        }
 		}
 	}
-	
+
 	/**
      *  Get object
 	 *
@@ -76,7 +76,7 @@ abstract class ActionsContactCardCommon
     function getObject($id)
     {
     	$ret = $this->getInstanceDao();
-    	
+
     	if (is_object($this->object) && method_exists($this->object,'fetch'))
     	{
     		if (! empty($id)) $this->object->fetch($id);
@@ -192,7 +192,7 @@ abstract class ActionsContactCardCommon
         		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$this->object->id);
         		exit;
         	}
-        	
+
             if (empty($_POST["name"]))
             {
                 $this->error=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
@@ -391,21 +391,22 @@ abstract class ActionsContactCardCommon
 
             $this->tpl['note'] = nl2br($this->object->note);
         }
-        
+
         if ($action == 'create_user')
         {
         	// Full firstname and name separated with a dot : firstname.name
         	include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
         	$login=dol_buildlogin($this->object->nom, $this->object->prenom);
-        	
+
        		$generated_password=getRandomPassword('');
         	$password=$generated_password;
-        	
+
         	// Create a form array
         	$formquestion=array(
         	array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
         	array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
-        	
+
         	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
         }
     }

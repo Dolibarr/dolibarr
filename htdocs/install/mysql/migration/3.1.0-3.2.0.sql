@@ -191,6 +191,9 @@ ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode 	F
 -- VMYSQL4.1 UPDATE llx_chargesociales set tms = date_creation WHERE tms = '0000-00-00 00:00:00';
 
 ALTER TABLE llx_actioncomm DROP COLUMN propalrowid;
+ALTER TABLE llx_actioncomm DROP COLUMN fk_facture;
+ALTER TABLE llx_actioncomm DROP COLUMN fk_supplier_order;
+ALTER TABLE llx_actioncomm DROP COLUMN fk_supplier_invoice;
 ALTER TABLE llx_actioncomm DROP COLUMN fk_commande;
 ALTER TABLE llx_product_stock DROP COLUMN location;
 -- DROP TABLE llx_c_methode_commande_fournisseur;

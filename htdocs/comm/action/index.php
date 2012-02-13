@@ -302,16 +302,17 @@ $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-$sql.= ', '.MAIN_DB_PREFIX.'c_actioncomm as ca';
-$sql.= ', '.MAIN_DB_PREFIX.'user as u';
+$sql.= ' FROM ('.MAIN_DB_PREFIX.'c_actioncomm as ca,';
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql.= " ".MAIN_DB_PREFIX.'user as u,';
+$sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND u.entity in (0,'.$conf->entity.')';    // To limit to entity
-$sql.= ' AND a.entity = '.$conf->entity;
-if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
+$sql.= ' AND a.entity IN ('.getEntity().')';
 if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
 if ($action == 'show_day')
 {
     $sql.= " AND (";
@@ -339,6 +340,9 @@ else
     $sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
     $sql.= ')';
 }
+if ($_GET["type"]) $sql.= " AND ca.id = ".$_GET["type"];
+if ($status == 'done') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
+if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
     $sql.= " AND (";
@@ -347,8 +351,6 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
     if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
     $sql.= ")";
 }
-if ($status == 'done') { $sql.= " AND a.percent = 100"; }
-if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 // Sort on date
 $sql.= ' ORDER BY datep';
 //print $sql;
@@ -757,32 +759,35 @@ if (empty($action) || $action == 'show_month')      // View by month
     }
     echo " </tr>\n";
 
+    $todayarray=dol_getdate($now,'fast');
+    $todaytms=dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
+
     // In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
     //var_dump($eventarray);
     //print $tmpday;
-    for($iter_week = 0; $iter_week < 6 ; $iter_week++)
+    for ($iter_week = 0; $iter_week < 6 ; $iter_week++)
     {
         echo " <tr>\n";
-        for($iter_day = 0; $iter_day < 7; $iter_day++)
+        for ($iter_day = 0; $iter_day < 7; $iter_day++)
         {
             /* Show days before the beginning of the current month (previous month)  */
-            if($tmpday <= 0)
+            if ($tmpday <= 0)
             {
-                $style='cal_other_month';
+                $style='cal_other_month cal_past';
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
             /* Show days of the current month */
-            elseif(($tmpday <= $max_day_in_month))
+            elseif ($tmpday <= $max_day_in_month)
             {
                 $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
 
                 $style='cal_current_month';
                 $today=0;
-                $todayarray=dol_getdate($now,'fast');
                 if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
                 if ($today) $style='cal_today';
+                if ($curtime < $todaytms) $style.=' cal_past';
 
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);

@@ -75,7 +75,8 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
         	// Set authmode
         	$authmode=explode(',',$dolibarr_main_authentication);
 
-			$login = checkLoginPassEntity($authentication['login'],$authentication['password'],$authentication['entity'],$authmode);
+            include_once(DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php');
+        	$login = checkLoginPassEntity($authentication['login'],$authentication['password'],$authentication['entity'],$authmode);
 			if (empty($login))
 			{
 			    $error++;

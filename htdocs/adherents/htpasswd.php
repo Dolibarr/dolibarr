@@ -25,6 +25,15 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+
+// Security check
+if (! $user->rights->adherent->export) accessforbidden();
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -42,13 +51,12 @@ if (! isset($cotis))
 }
 
 
-
 $sql = "SELECT d.login, d.pass, d.datefin";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
 $sql .= " WHERE d.statut = $statut ";
 if ($cotis==1)
 {
-	$sql .= " AND datefin > ".$db->idate(mktime());
+	$sql .= " AND datefin > '".$db->idate(mktime())."'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 //$sql.=$db->plimit($conf->liste_limit, $offset);
@@ -77,7 +85,7 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

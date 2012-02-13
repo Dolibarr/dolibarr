@@ -584,7 +584,8 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip'
 {
 	if (! count($object->errors))
 	{
-	    if(!$object->del_to_spip()){
+	    if(!$object->del_to_spip())
+	    {
 	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$object->error."<BR>\n";
 	    }
 	}
@@ -706,7 +707,8 @@ if ($action == 'create')
     // Password
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-	    $generated_password=getRandomPassword('');
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+        $generated_password=getRandomPassword('');
         print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
         print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
         print '</td></tr>';
@@ -1515,8 +1517,9 @@ if ($rowid && $action != 'edit')
 	        {
 	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=add_spip\">".$langs->trans("AddIntoSpip")."</a>\n";
 	        }
-	        if ($isinspip == -1) {
-	            print '<br><font class="error">Failed to connect to SPIP: '.$object->error.'</font>';
+	        if ($isinspip == -1)
+	        {
+	            print '<br><br><font class="error">Failed to connect to SPIP: '.$object->error.'</font>';
 	        }
 	    }
 
@@ -1528,7 +1531,7 @@ if ($rowid && $action != 'edit')
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

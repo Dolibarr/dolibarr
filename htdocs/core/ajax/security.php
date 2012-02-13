@@ -43,11 +43,12 @@ top_httphead();
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Registering the location of boxes
-if(isset($_GET['action']) && ! empty($_GET['action']))
+if (isset($_GET['action']) && ! empty($_GET['action']))
 {
 	if ($_GET['action'] == 'getrandompassword' && $user->admin)
 	{
-		$generic = $_GET['generic'];
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+	    $generic = $_GET['generic'];
 		echo getRandomPassword($generic);
 	}
 }
