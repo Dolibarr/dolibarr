@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2007	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ function bank_prepare_head($object)
 		$h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT."/compta/bank/account.php?account=".$object->id;
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/account.php?id=".$object->id;
     $head[$h][1] = $langs->trans("Transactions");
     $head[$h][2] = 'journal';
     $h++;

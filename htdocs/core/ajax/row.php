@@ -40,22 +40,22 @@ top_httphead();
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Registering the location of boxes
-if((isset($_GET['roworder']) && !empty($_GET['roworder'])) && (isset($_GET['table_element_line']) && !empty($_GET['table_element_line']))
-	&& (isset($_GET['fk_element']) && !empty($_GET['fk_element'])) && (isset($_GET['element_id']) && !empty($_GET['element_id'])) )
+if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST['table_element_line']) && ! empty($_POST['table_element_line']))
+	&& (isset($_POST['fk_element']) && ! empty($_POST['fk_element'])) && (isset($_POST['element_id']) && ! empty($_POST['element_id'])) )
 {
-	$roworder = explode(',',$_GET['roworder']);
+	$roworder = explode(',',GETPOST('roworder','alpha',2));
 
 	foreach($roworder as $value)
 	{
 		if (! empty($value)) $newroworder[] = $value;
 	}
 
-	dol_syslog("AjaxRow roworder=".$_GET['roworder']." fk_element=".$_GET['fk_element'], LOG_DEBUG);
+	dol_syslog("AjaxRow roworder=".GETPOST('roworder','alpha',2)." fk_element=".GETPOST('fk_element','int',2), LOG_DEBUG);
 
 	$row=new GenericObject($db);
-	$row->table_element_line = $_GET['table_element_line'];
-	$row->fk_element = $_GET['fk_element'];
-	$row->id = $_GET['element_id'];
+	$row->table_element_line = GETPOST('table_element_line','alpha',2);
+	$row->fk_element = GETPOST('fk_element','int',2);
+	$row->id = GETPOST('element_id','int',2);
 	$result=$row->line_ajaxorder($newroworder);
 	$result=$row->line_order(true);
 }
