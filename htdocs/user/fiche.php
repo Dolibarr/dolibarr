@@ -669,7 +669,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     $generated_password='';
-    if (! $ldap_sid)    // ldap_sid ?
+    if (! $ldap_sid)    // ldap_sid is for activedirectory
     {
         require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
         $generated_password=getRandomPassword('');
