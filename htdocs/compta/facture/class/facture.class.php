@@ -3584,7 +3584,6 @@ class FactureLigne
         if ($this->date_end) { $sql.= ",date_end='".$this->db->idate($this->date_end)."'"; }
         else { $sql.=',date_end=null'; }
         $sql.= ",product_type=".$this->product_type;
-        $sql.= ",rang='".$this->rang."'";
         $sql.= ",info_bits='".$this->info_bits."'";
         if (empty($this->skip_update_total))
         {
@@ -3595,6 +3594,7 @@ class FactureLigne
         $sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
         $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
+        if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
         $sql.= " WHERE rowid = ".$this->rowid;
 
         dol_syslog("FactureLigne::update sql=".$sql);
