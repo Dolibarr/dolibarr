@@ -26,6 +26,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/ajax.lib.php");
 
 $langs->load("admin");
 $langs->load("workflow");
@@ -39,13 +40,7 @@ $action = GETPOST('action', 'alpha');
  */
 if (preg_match('/set(.*)/',$action,$reg))
 {
-    $code=$reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        Header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    else
+    if (! dolibarr_set_const($db, $reg[1], 1, 'chaine', 0, '', $conf->entity) > 0)
     {
         dol_print_error($db);
     }
@@ -53,13 +48,7 @@ if (preg_match('/set(.*)/',$action,$reg))
 
 if (preg_match('/del(.*)/',$action,$reg))
 {
-    $code=$reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
-        Header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    else
+    if (! dolibarr_del_const($db, $reg[1], $conf->entity) > 0)
     {
         dol_print_error($db);
     }
@@ -70,9 +59,6 @@ if (preg_match('/del(.*)/',$action,$reg))
  * 	View
  */
 
-$form=new Form($db);
-
-
 llxHeader('',$langs->trans("WorkflowSetup"),'');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -81,13 +67,12 @@ print_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'setup');
 print $langs->trans("WorkflowDesc").'<br>';
 print "<br>";
 
-// Choix du module de gestion des codes clients / fournisseurs
+// List of workflow we can enable
 
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td align="center">'.$langs->trans("Status").'</td>';
-//print '  <td align="center" width="80">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -126,12 +111,6 @@ if (count($workflowcodes) > 0)
     		}
     	}
     	print '</td>';
-
-    	//print '<td align="center">';
-    	//$s=$modCodeTiers->getToolTip($langs,$soc,-1);
-    	//print $form->textwithpicto('',$s,1);
-    	//print '</td>';
-
     	print '</tr>';
     }
 }
@@ -141,8 +120,8 @@ else
 }
 print '</table>';
 
+
 llxFooter();
 
 $db->close();
-
 ?>
