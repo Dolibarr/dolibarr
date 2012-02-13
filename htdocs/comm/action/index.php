@@ -759,32 +759,35 @@ if (empty($action) || $action == 'show_month')      // View by month
     }
     echo " </tr>\n";
 
+    $todayarray=dol_getdate($now,'fast');
+    $todaytms=dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
+
     // In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
     //var_dump($eventarray);
     //print $tmpday;
-    for($iter_week = 0; $iter_week < 6 ; $iter_week++)
+    for ($iter_week = 0; $iter_week < 6 ; $iter_week++)
     {
         echo " <tr>\n";
-        for($iter_day = 0; $iter_day < 7; $iter_day++)
+        for ($iter_day = 0; $iter_day < 7; $iter_day++)
         {
             /* Show days before the beginning of the current month (previous month)  */
-            if($tmpday <= 0)
+            if ($tmpday <= 0)
             {
-                $style='cal_other_month';
+                $style='cal_other_month cal_past';
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
             /* Show days of the current month */
-            elseif(($tmpday <= $max_day_in_month))
+            elseif ($tmpday <= $max_day_in_month)
             {
                 $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
 
                 $style='cal_current_month';
                 $today=0;
-                $todayarray=dol_getdate($now,'fast');
                 if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
                 if ($today) $style='cal_today';
+                if ($curtime < $todaytms) $style.=' cal_past';
 
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
