@@ -900,9 +900,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Output standard javascript links
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
-			// Other external js
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-
 			$ext='.js';
 			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
