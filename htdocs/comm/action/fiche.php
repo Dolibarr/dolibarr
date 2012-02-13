@@ -498,12 +498,13 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Affected by
-	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	$var=false;
+	print '<tr '.$bc[$var].'><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
 	print '</td></tr>';
 
 	// Realised by
-	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
 	$form->select_users(GETPOST("doneby")?GETPOST("doneby"):($percent==100?$actioncomm->userdone:0),'doneby',1);
 	print '</td></tr>';
 
@@ -719,17 +720,18 @@ if ($id)
 		print '</table><br><table class="border" width="100%">';
 
 		// Input by
-		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		$var=false;
+		print '<tr '.$bc[$var].'><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
 		print $act->author->getNomUrl(1);
 		print '</td></tr>';
 
 		// Affected to
-		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr '.$bc[$var].'><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		print $form->select_dolusers($act->usertodo->id>0?$act->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
 		// Realised by
-		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		print '<tr '.$bc[$var].'><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 		print $form->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
 		print '</td></tr>';
 
@@ -865,18 +867,19 @@ if ($id)
 		print '</table><br><table class="border" width="100%">';
 
 		// Input by
-		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		$var=false;
+		print '<tr '.$bc[$var].'><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
 		if ($act->author->id > 0) print $act->author->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 
 		// Affecte a
-		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr '.$bc[$var].'><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
 		// Done by
-		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		print '<tr '.$bc[$var].'><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
 		print '</td></tr>';
 
