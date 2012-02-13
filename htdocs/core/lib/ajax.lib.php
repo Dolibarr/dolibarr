@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ function ajax_constantonoff($code,$input=array(),$entity=false)
 {
 	global $conf, $langs;
 
-	$entity = ((! empty($entity) && is_numeric($entity) && $entity > 0) || $entity == 0 ? $entity : $conf->entity);
+	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
 
 	$out= '<script type="text/javascript">
 		$(function() {

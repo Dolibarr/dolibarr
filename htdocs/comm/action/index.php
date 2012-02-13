@@ -35,10 +35,10 @@ if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/core/lib/project.li
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
-$filter=GETPOST("filter");
-$filtera = GETPOST("userasked","int")?GETPOST("userasked","int"):GETPOST("filtera","int");
-$filtert = GETPOST("usertodo","int")?GETPOST("usertodo","int"):GETPOST("filtert","int");
-$filterd = GETPOST("userdone","int")?GETPOST("userdone","int"):GETPOST("filterd","int");
+$filter=GETPOST("filter",'',3);
+$filtera = GETPOST("userasked","int",3)?GETPOST("userasked","int",3):GETPOST("filtera","int",3);
+$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+$filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filterd","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
 
@@ -72,8 +72,8 @@ $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):0;
-$actioncode=GETPOST("actioncode");
-$pid=GETPOST("projectid","int")?GETPOST("projectid","int"):0;
+$actioncode=GETPOST("actioncode","alpha",3);
+$pid=GETPOST("projectid","int",3);
 $status=GETPOST("status");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 
