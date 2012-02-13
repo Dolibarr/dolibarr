@@ -1789,50 +1789,52 @@ class Propal extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
-		if ( $this->db->query($sql) )
+		if ($this->db->query($sql))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
-			if ( $this->db->query($sql) )
+			if ($this->db->query($sql))
 			{
+				// Delete linked object
+				$res = $this->deleteObjectLinked();
+				if ($res < 0) $error++;
+				
 				// Delete linked contacts
 				$res = $this->delete_linked_contact();
-				if ($res < 0)
+				if ($res < 0) $error++;
+				
+				if (! $error)
 				{
-					$this->error='ErrorFailToDeleteLinkedContact';
-					$this->db->rollback();
-					return 0;
-				}
-
-				// We remove directory
-				$propalref = dol_sanitizeFileName($this->ref);
-				if ($conf->propale->dir_output)
-				{
-					$dir = $conf->propale->dir_output . "/" . $propalref ;
-					$file = $conf->propale->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
-					if (file_exists($file))
+					// We remove directory
+					$propalref = dol_sanitizeFileName($this->ref);
+					if ($conf->propale->dir_output)
 					{
-						dol_delete_preview($this);
-
-						if (!dol_delete_file($file))
+						$dir = $conf->propale->dir_output . "/" . $propalref ;
+						$file = $conf->propale->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
+						if (file_exists($file))
 						{
-							$this->error='ErrorFailToDeleteFile';
-							$this->db->rollback();
-							return 0;
+							dol_delete_preview($this);
+					
+							if (!dol_delete_file($file))
+							{
+								$this->error='ErrorFailToDeleteFile';
+								$this->db->rollback();
+								return 0;
+							}
+						}
+						if (file_exists($dir))
+						{
+							$res=@dol_delete_dir($dir);
+							if (! $res)
+							{
+								$this->error='ErrorFailToDeleteDir';
+								$this->db->rollback();
+								return 0;
+							}
 						}
 					}
-					if (file_exists($dir))
-					{
-						$res=@dol_delete_dir($dir);
-						if (! $res)
-						{
-							$this->error='ErrorFailToDeleteDir';
-							$this->db->rollback();
-							return 0;
-						}
-					}
 				}
 
-				if (! $notrigger)
+				if (! $error && ! $notrigger)
 				{
 					// Call triggers
 					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1842,27 +1844,33 @@ class Propal extends CommonObject
 					// End call triggers
 				}
 
-				if (!$error)
+				if (! $error)
 				{
-					dol_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);
+					dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
 					$this->db->commit();
 					return 1;
 				}
 				else
 				{
+					$this->error=$this->db->lasterror();
+					dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return 0;
 				}
 			}
 			else
 			{
+				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
-			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+            $this->db->rollback();
 			return -1;
 		}
 	}
