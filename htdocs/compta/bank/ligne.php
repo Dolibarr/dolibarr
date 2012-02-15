@@ -25,9 +25,9 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
-if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate)
-accessforbidden();
+if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) accessforbidden();
 
 $langs->load("banks");
 $langs->load("compta");
@@ -48,16 +48,16 @@ $form = new Form($db);
  * Actions
  */
 
-if ($user->rights->banque->consolidate && $_GET["action"] == 'dvnext')
+if ($user->rights->banque->consolidate && $action == 'dvnext')
 {
-    $ac = new Account($db);
-    $ac->datev_next($_GET["rowid"]);
+    $al = new AccountLine($db);
+    $al->datev_next($_GET["rowid"]);
 }
 
-if ($user->rights->banque->consolidate && $_GET["action"] == 'dvprev')
+if ($user->rights->banque->consolidate && $action == 'dvprev')
 {
-    $ac = new Account($db);
-    $ac->datev_previous($_GET["rowid"]);
+    $al = new AccountLine($db);
+    $al->datev_previous($_GET["rowid"]);
 }
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier)

@@ -20,6 +20,7 @@ For users:
 - New: Add hidden option FOURN_PRODUCT_AVAILABILITY.
 - New: task #11123: Add best supplier price.
 - New: Enhancement in styles.
+- New: Can conciliate several lines in one operation.
 - New: task #11289 : Modify third party accountancy code generator aquarium.
 - New: task #10606 : more comprehensive message error.
 - New: task #11278 : Option into point of sale module to add services in list.

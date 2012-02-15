@@ -1,23 +1,23 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+* Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
+* Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *	\file       htdocs/compta/bank/class/account.class.php
@@ -189,8 +189,11 @@ class Account extends CommonObject
 
         $sql = "SELECT fk_bank, url_id, url, label, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_url";
-        if ($fk_bank > 0) { $sql.= " WHERE fk_bank = ".$fk_bank; }
-        else { $sql.= " WHERE url_id = ".$url_id." AND type = '".$type."'"; }
+        if ($fk_bank > 0) {
+            $sql.= " WHERE fk_bank = ".$fk_bank;
+        }
+        else { $sql.= " WHERE url_id = ".$url_id." AND type = '".$type."'";
+        }
         $sql.= " ORDER BY type, label";
 
         dol_syslog(get_class($this)."::get_url sql=".$sql);
@@ -581,8 +584,8 @@ class Account extends CommonObject
 
         if (empty($id) && empty($ref) && empty($ref_ext))
         {
-        	$this->error="ErrorBadParameters";
-        	return -1;
+            $this->error="ErrorBadParameters";
+            return -1;
         }
 
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
@@ -780,8 +783,9 @@ class Account extends CommonObject
 
     /**
      * 	Return current sold
-     * 	@param		option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-     *	@return		int			Current sold (value date <= today)
+     *
+     * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
+     *	@return	int					Current sold (value date <= today)
      */
     function solde($option=0)
     {
@@ -804,61 +808,11 @@ class Account extends CommonObject
     }
 
     /**
-     *	@param	rowid
-     *	@param	sign	1 or -1
-     */
-    function datev_change($rowid,$sign=1)
-    {
-        $sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-        	$obj=$this->db->fetch_object($resql);
-        	$newdate=$this->db->jdate($obj->datev)+(3600*24*$sign);
-
-	    	$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
-	        $sql.= " datev = '".$this->db->idate($newdate)."'";
-	        $sql.= " WHERE rowid = ".$rowid;
-
-	        $result = $this->db->query($sql);
-	        if ($result)
-	        {
-	            if ($this->db->affected_rows($result))
-	            {
-	                return 1;
-	            }
-	        }
-	        else
-	        {
-	            dol_print_error($this->db);
-	            return 0;
-	        }
-        }
-        else dol_print_error($this->db);
-		return 0;
-    }
-
-    /**
-     *	@param	rowid
-     */
-    function datev_next($rowid)
-    {
-    	return $this->datev_change($rowid,1);
-    }
-
-    /**
-     *	@param	rowid
-     */
-    function datev_previous($rowid)
-    {
-    	return $this->datev_change($rowid,-1);
-    }
-
-    /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *      @param      user        		Objet user
-     *		@param		filteraccountid		To get info for a particular account id
-     *      @return     int         		<0 if KO, 0=Nothing to show, >0 if OK
+     *
+     *      @param	User	$user        		Objet user
+     *		@param	int		$filteraccountid	To get info for a particular account id
+     *      @return int         				<0 if KO, 0=Nothing to show, >0 if OK
      */
     function load_board($user,$filteraccountid=0)
     {
@@ -1067,16 +1021,13 @@ class AccountLine extends CommonObject
 
 
     /**
-     *  Constructeur
+     *  Constructor
+     *
+     *  @param	DoliDB	$db		Database handler
      */
-    function AccountLine($DB, $rowid=0)
+    function AccountLine($db)
     {
-        global $langs;
-
-        $this->db = $DB;
-        $this->rowid = $rowid;
-
-        return 1;
+        $this->db = $db;
     }
 
     /**
@@ -1152,6 +1103,7 @@ class AccountLine extends CommonObject
 
     /**
      *      Delete transaction bank line record
+     *
      *		@param		user	User object that delete
      *      @return		int 	<0 if KO, >0 if OK
      */
@@ -1172,7 +1124,7 @@ class AccountLine extends CommonObject
         $result=$this->delete_urls();
         if ($result < 0)
         {
-             $nbko++;
+            $nbko++;
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".$this->rowid;
@@ -1200,6 +1152,7 @@ class AccountLine extends CommonObject
 
     /**
      *      Delete bank line records
+     *
      *		@param		user	User object that delete
      *      @return		int 	<0 if KO, >0 if OK
      */
@@ -1236,6 +1189,7 @@ class AccountLine extends CommonObject
 
     /**
      *		Update bank account record in database
+     *
      *		@param 		user			Object user making update
      *		@param 		notrigger		0=Disable all triggers
      *		@return		int				<0 if KO, >0 if OK
@@ -1269,6 +1223,7 @@ class AccountLine extends CommonObject
 
     /**
      *		Update conciliation field
+     *
      *		@param 		user			Objet user making update
      *		@param 		cat				Category id
      *		@return		int				<0 if KO, >0 if OK
@@ -1315,8 +1270,71 @@ class AccountLine extends CommonObject
         }
     }
 
+
+    /**
+     * 	Increase/decrease value date of a rowid
+     *
+     *	@param	int		$rowid
+     *	@param	int		sign		1 or -1
+     *	@return	int					>0 if OK, 0 if KO
+     */
+    function datev_change($rowid,$sign=1)
+    {
+        $sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $obj=$this->db->fetch_object($resql);
+            $newdate=$this->db->jdate($obj->datev)+(3600*24*$sign);
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
+            $sql.= " datev = '".$this->db->idate($newdate)."'";
+            $sql.= " WHERE rowid = ".$rowid;
+
+            $result = $this->db->query($sql);
+            if ($result)
+            {
+                if ($this->db->affected_rows($result))
+                {
+                    return 1;
+                }
+            }
+            else
+            {
+                dol_print_error($this->db);
+                return 0;
+            }
+        }
+        else dol_print_error($this->db);
+        return 0;
+    }
+
+    /**
+     * 	Increase value date of a rowid
+     *
+     *	@param	int		$rowid		Id of line to change
+     *	@return	int					>0 if OK, 0 if KO
+     */
+    function datev_next($rowid)
+    {
+        return $this->datev_change($rowid,1);
+    }
+
+    /**
+     * 	Decrease value date of a rowid
+     *
+     *	@param	int		$rowid		Id of line to change
+     *	@return	int					>0 if OK, 0 if KO
+     */
+    function datev_previous($rowid)
+    {
+        return $this->datev_change($rowid,-1);
+    }
+
+
     /**
      *      Charge les informations d'ordre info dans l'objet
+     *
      *      @param     rowid       Id of object
      */
     function info($rowid)
@@ -1361,6 +1379,7 @@ class AccountLine extends CommonObject
 
     /**
      *    	Renvoie nom clicable (avec eventuellement le picto)
+     *
      *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      *		@param		maxlen			Longueur max libelle
      *		@param		option			Option ('showall')
