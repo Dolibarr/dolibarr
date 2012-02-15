@@ -235,7 +235,13 @@ class Conf
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;
 		// If multicompany module is enabled, we redefine the root of data
-		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity) && $this->entity > 1) $rootfordata.='/'.$this->entity;
+		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity) && $this->entity > 1)
+		{
+			$rootfordata.='/'.$this->entity;
+			var_dump($mc->sharings);
+			//var_dump($mc->referent);
+			var_dump($mc->entities);
+		}
 
 		// For backward compatibility
 		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code

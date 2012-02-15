@@ -34,6 +34,8 @@ $langs->load("bills");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -52,22 +54,22 @@ $dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->ser
 
 if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if ($_GET["id"])
+	if ($id)
 	{
 		$product = new Product($db);
-		$result = $product->fetch($_GET["id"]);
+		$result = $product->fetch($id);
 
 		$result = $product->add_photo($dir, $_FILES['userfile']);
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_delete' && $_GET["file"] && $_REQUEST['confirm'] == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
+if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$product = new Product($db);
 	$product->delete_photo($dir."/".$_GET["file"]);
 }
 
-if ($_GET["action"] == 'addthumb' && $_GET["file"])
+if ($action == 'addthumb' && $_GET["file"])
 {
 	$product = new Product($db);
 	$product->add_thumb($dir."/".$_GET["file"]);
@@ -80,12 +82,11 @@ if ($_GET["action"] == 'addthumb' && $_GET["file"])
 
 $form = new Form($db);
 
-if ($_GET["id"] || $_GET["ref"])
+if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 
-	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+	$result = $product->fetch($id, $ref);
 
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -151,7 +152,7 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 			if (! empty($conf->global->MAIN_UPLOAD_DOC))
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/photos.php?action=ajout_photo&amp;id='.$product->id.'">';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=ajout_photo&amp;id='.$product->id.'">';
 				print $langs->trans("AddPhoto").'</a>';
 			}
 			else
@@ -166,15 +167,15 @@ if ($_GET["id"] || $_GET["ref"])
 		/*
 		 * Add a photo
 		 */
-		if ($_GET["action"] == 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer) && ! empty($conf->global->MAIN_UPLOAD_DOC))
+		if ($action == 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer) && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			// Affiche formulaire upload
 			$formfile=new FormFile($db);
-			$formfile->form_attach_new_file(DOL_URL_ROOT.'/product/photos.php?id='.$product->id,$langs->trans("AddPhoto"),1);
+			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$product->id,$langs->trans("AddPhoto"),1);
 		}
 
 		// Affiche photos
-		if ($_GET["action"] != 'ajout_photo')
+		if ($action != 'ajout_photo')
 		{
 			$nbphoto=0;
 			$nbbyrow=5;
@@ -201,8 +202,7 @@ else
 }
 
 
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>
