@@ -37,6 +37,7 @@ $taskid = isset($_GET["id"])?$_GET["id"]:'';
 $id = GETPOST('id');
 $ref= GETPOST('ref');
 $action=GETPOST('action');
+$withproject=GETPOST('withproject');
 
 // Security check
 $socid=0;
@@ -143,7 +144,7 @@ if ($id > 0 || ! empty($ref))
 
 		$userWrite  = $project->restrictedProjectArea($user,'write');
 
-		if (GETPOST('withproject'))
+		if ($withproject)
 		{
     		// Tabs for project
     		$tab='tasks';
@@ -224,17 +225,19 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$task->label.'</td></tr>';
 
 		// Project
-		/*print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		print $project->getNomUrl(1);
-		print '</td></tr>';
+		if (empty($withproject))
+		{
+    		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+    		print $project->getNomUrl(1);
+    		print '</td></tr>';
 
-		// Customer
-		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">';
-		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
-		*/
+    		// Customer
+    		print "<tr><td>".$langs->trans("Company")."</td>";
+    		print '<td colspan="3">';
+    		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+    		else print '&nbsp;';
+    		print '</td></tr>';
+		}
 
 		print "</table>";
 

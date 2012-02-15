@@ -33,6 +33,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOST('id');
 $ref= GETPOST('ref');
+$withproject=GETPOST('withproject');
 
 // Security check
 $socid=0;
@@ -107,7 +108,7 @@ if ($id > 0 || ! empty($ref))
 
 		$userWrite  = $project->restrictedProjectArea($user,'write');
 
-		if (GETPOST('withproject'))
+		if ($withproject)
 		{
     		// Tabs for project
     		$tab='tasks';
@@ -180,18 +181,20 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$task->label.'</td></tr>';
 
 		// Project
-		/*print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-		print $project->getNomUrl(1);
-		print '</td></tr>';
+		if (empty($withproject))
+		{
+    		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+    		print $project->getNomUrl(1);
+    		print '</td></tr>';
 
-		// Third party
-		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
-		else print'&nbsp;';
-		print '</td></tr>';
-		*/
+    		// Third party
+    		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+    		else print'&nbsp;';
+    		print '</td></tr>';
+		}
 
-		// Note publique
+		// Note public
 		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 		print '<td valign="top" colspan="3">';
 		if ($action == 'edit')
@@ -209,7 +212,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		print "</td></tr>";
 
-		// Note privee
+		// Note private
 		if (! $user->societe_id)
 		{
 			print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';

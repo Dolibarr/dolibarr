@@ -129,7 +129,7 @@ if ($taskid)
 
 		$userWrite  = $project->restrictedProjectArea($user,'write');
 
-		if (GETPOST('withproject'))
+		if ($withproject)
 		{
     		// Tabs for project
     		$tab='tasks';
@@ -229,16 +229,18 @@ if ($taskid)
 			print '<td><input size="30" name="label" value="'.$task->label.'"></td></tr>';
 
 			// Project
-			/*print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-			print $project->getNomUrl(1);
-			print '</td></tr>';
+			if (empty($withproject))
+			{
+    			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+    			print $project->getNomUrl(1);
+    			print '</td></tr>';
 
-			// Third party
-			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
-			if ($project->societe->id) print $project->societe->getNomUrl(1);
-			else print '&nbsp;';
-			print '</td></tr>';
-			*/
+    			// Third party
+    			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+    			if ($project->societe->id) print $project->societe->getNomUrl(1);
+    			else print '&nbsp;';
+    			print '</td></tr>';
+			}
 
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
@@ -280,8 +282,8 @@ if ($taskid)
 			/*
 			 * Fiche tache en mode visu
 			 */
-		    $param=(GETPOST('withproject')?'&withproject=1':'');
-		    $linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id.'">'.$langs->trans("BackToList").'</a>':'';
+		    $param=($withproject?'&withproject=1':'');
+		    $linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 			if ($action == 'delete')
 			{
@@ -309,16 +311,18 @@ if ($taskid)
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 
 			// Project
-			/*print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-			print $project->getNomUrl(1);
-			print '</td></tr>';
+			if (empty($withproject))
+			{
+    			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+    			print $project->getNomUrl(1);
+    			print '</td></tr>';
 
-			// Third party
-			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
-			if ($project->societe->id) print $project->societe->getNomUrl(1);
-			else print '&nbsp;';
-			print '</td></tr>';
-			*/
+    			// Third party
+    			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+    			if ($project->societe->id) print $project->societe->getNomUrl(1);
+    			else print '&nbsp;';
+    			print '</td></tr>';
+			}
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
