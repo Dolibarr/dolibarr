@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
@@ -1131,10 +1131,25 @@ class Facture extends CommonObject
 
         $error=0;
         $this->db->begin();
-
-        // Delete linked object
-        $res = $this->deleteObjectLinked();
-        if ($res < 0) $error++;
+        
+        if (! $error && ! $notrigger)
+        {
+        	// Appel des triggers
+        	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+        	$interface=new Interfaces($this->db);
+        	$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
+        	if ($result < 0) {
+        		$error++; $this->errors=$interface->errors;
+        	}
+        	// Fin appel triggers
+        }
+        
+        if (! $error)
+        {
+        	// Delete linked object
+        	$res = $this->deleteObjectLinked();
+        	if ($res < 0) $error++;
+        }
 
         if (! $error)
         {
@@ -1177,16 +1192,6 @@ class Facture extends CommonObject
                 $resql=$this->db->query($sql);
                 if ($resql)
                 {
-                	if (! $notrigger)
-                	{
-                		// Appel des triggers
-                		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-                		$interface=new Interfaces($this->db);
-                		$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
-                		if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                		// Fin appel triggers
-                	}
-
                     $this->db->commit();
                     return 1;
                 }
