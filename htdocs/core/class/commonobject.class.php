@@ -1563,7 +1563,7 @@ var_dump($this->linkedObjectsIds);
                 {
                     // Parse element/subelement (ex: project_task)
                     $module = $element = $subelement = $objecttype;
-                    if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+                    if ($objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
                     {
                         $module = $element = $regs[1];
                         $subelement = $regs[2];
@@ -1584,8 +1584,8 @@ var_dump($this->linkedObjectsIds);
                     else if ($objecttype == 'delivery')			{
                         $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
                     }
-                    else if ($objecttype == 'invoice_supplier')	{
-                        $classpath = 'fourn/class';
+                    else if ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier')	{
+                        $classpath = 'fourn/class'; $module = 'fournisseur';
                     }
                     else if ($objecttype == 'order_supplier')	{
                         $classpath = 'fourn/class';
