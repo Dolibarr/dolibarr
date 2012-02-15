@@ -1641,7 +1641,7 @@ class CommonObject
         {
         	$tplpath = $element = $subelement = $objecttype;
 
-        	if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+        	if ($objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
             {
                 $element = $regs[1];
                 $subelement = $regs[2];
