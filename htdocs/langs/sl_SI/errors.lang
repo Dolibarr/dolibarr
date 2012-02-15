@@ -83,3 +83,4 @@ ErrorBadMaskBadRazMonth = Napaka, napačna resetirana vrednost
 ErrorSelectAtLeastOne = Napaka. Izberite vsaj en vnos.
 ErrorProductWithRefNotExist = Proizvod z referenco '<i>%s</i>' ne obstaja
 ErrorDeleteNotPossibleLineIsConsolidated = Brisanje ni možno, ker je zapis vezan na posredovano bančno transakcijo
+ErrorNoActivatedBarcode = Noben tip črtne kode ni aktiviran

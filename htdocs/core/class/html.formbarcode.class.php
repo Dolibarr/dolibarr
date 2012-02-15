@@ -127,8 +127,9 @@ class FormBarCode
             }
             else
             {
+                $langs->load("errors");
                 print '<select disabled="disabled" class="flat" name="'.$htmlname.'">';
-                print '<option value="0" selected="selected">'.$langs->trans('NoActivatedBarcode').'</option>';
+                print '<option value="0" selected="selected">'.$langs->trans('ErrorNoActivatedBarcode').'</option>';
             }
 
             while ($i < $num)

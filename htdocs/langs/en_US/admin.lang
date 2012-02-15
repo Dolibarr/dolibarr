@@ -1149,7 +1149,6 @@ BarcodeDescUPC=Barcode of type UPC
 BarcodeDescISBN=Barcode of type ISBN
 BarcodeDescC39=Barcode of type C39
 BarcodeDescC128=Barcode of type C128
-NoActivatedBarcode=No barcode type activated
 ##### Prelevements #####
 WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
