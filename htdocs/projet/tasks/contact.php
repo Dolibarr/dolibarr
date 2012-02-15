@@ -34,6 +34,9 @@ $langs->load("projects");
 $langs->load("companies");
 
 $taskid = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id');
+$ref= GETPOST('ref');
+$action=GETPOST('action');
 
 // Security check
 $socid=0;
@@ -47,7 +50,7 @@ if (!$user->rights->projet->lire) accessforbidden();
  */
 
 // Add new contact
-if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
+if ($action == 'addcontact' && $user->rights->projet->creer)
 {
 
 	$result = 0;
@@ -79,7 +82,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 }
 
 // bascule du statut d'un contact
-if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
+if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
 	$task = new Task($db);
 	if ($task->fetch($taskid))
@@ -93,7 +96,7 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 }
 
 // Efface un contact
-if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
+if ($action == 'deleteline' && $user->rights->projet->creer)
 {
 	$task = new Task($db);
 	$task->fetch($taskid);
@@ -122,6 +125,7 @@ $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
 $project = new Project($db);
+$task = new Task($db);
 
 
 /* *************************************************************************** */
@@ -129,22 +133,69 @@ $project = new Project($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-dol_htmloutput_mesg($mesg);
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$task = new Task($db);
-
-	if ( $task->fetch($id,$ref) > 0)
+	if ($task->fetch($id,$ref) > 0)
 	{
 		$result=$project->fetch($task->fk_project);
 		if (! empty($project->socid)) $project->societe->fetch($project->socid);
 
+		$userWrite  = $project->restrictedProjectArea($user,'write');
+
+		if (GETPOST('withproject'))
+		{
+    		// Tabs for project
+    		$tab='tasks';
+    		$head=project_prepare_head($project);
+    		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
+
+    		$param=($mode=='mine'?'&mode=mine':'');
+
+    		print '<table class="border" width="100%">';
+
+    		// Ref
+    		print '<tr><td width="30%">';
+    		print $langs->trans("Ref");
+    		print '</td><td>';
+    		// Define a complementary filter for search of next/prev ref.
+    		if (! $user->rights->projet->all->lire)
+    		{
+    		    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
+    		    $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    		}
+    		print $form->showrefnav($project,'ref','',1,'ref','ref','',$param);
+    		print '</td></tr>';
+
+    		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+
+    		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    		if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
+    		else print '&nbsp;';
+    		print '</td>';
+    		print '</tr>';
+
+    		// Visibility
+    		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+    		if ($project->public) print $langs->trans('SharedProject');
+    		else print $langs->trans('PrivateProject');
+    		print '</td></tr>';
+
+    		// Statut
+    		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+
+    		print '</table>';
+
+    		dol_fiche_end();
+
+    		print '<br>';
+		}
+
 		// To verify role of users
-		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
+		//$userAccess = $project->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 		//$arrayofuseridoftask=$task->getListContactId('internal');
+
+		dol_htmloutput_mesg($mesg);
 
 		$head = task_prepare_head($task);
 		dol_fiche_head($head, 'contact', $langs->trans("Task"), 0, 'projecttask');
@@ -155,20 +206,25 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="border" width="100%">';
 
-		//$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+		$param=(GETPOST('withproject')?'&withproject=1':'');
+		$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-		$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
-		print $form->showrefnav($task,'id','',1,'rowid','ref','','');
+		if (! GETPOST('withproject') || empty($project->id))
+		{
+		    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+		    $task->next_prev_filter=" fk_projet in (".$projectsListId.")";
+		}
+		else $task->next_prev_filter=" fk_projet = ".$project->id;
+	    print $form->showrefnav($task,'id',$linkback,1,'rowid','ref','',$param);
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$task->label.'</td></tr>';
 
 		// Project
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		/*print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print $project->getNomUrl(1);
 		print '</td></tr>';
 
@@ -178,10 +234,11 @@ if ($id > 0 || ! empty($ref))
 		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
+		*/
 
 		print "</table>";
 
-		print '</div>';
+		dol_fiche_end();
 
 		/*
 		 * Lignes de contacts
@@ -192,7 +249,7 @@ if ($id > 0 || ! empty($ref))
 		 * Ajouter une ligne de contact
 		 * Non affiche en mode modification de ligne
 		 */
-		if ($_GET["action"] != 'editline' && $user->rights->projet->creer)
+		if ($action != 'editline' && $user->rights->projet->creer)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
@@ -271,8 +328,6 @@ if ($id > 0 || ! empty($ref))
 
 				print "</form>";
 			}
-
-			print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
 
 		// Liste des contacts lies
@@ -376,7 +431,8 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

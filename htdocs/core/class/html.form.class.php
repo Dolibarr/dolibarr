@@ -3246,6 +3246,7 @@ class Form
                         $base=DOL_URL_ROOT.'/core/';
                         $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');">'.img_object($langs->trans("SelectDate"),'calendarday','class="datecallink"').'</button>';
                     }
+                    else $retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"),'calendarday','class="datecallink"').'</button>';
 
                     $retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
                     $retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
@@ -3628,21 +3629,21 @@ class Form
      *    Return a HTML area with the reference of object and a navigation bar for a business object
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
-     *    @param      object		Object to show
-     *    @param      paramid   	Name of parameter to use to name the id into the URL link
-     *    @param      morehtml  	More html content to output just before the nav bar
-     *    @param	  shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param      fieldid   	Nom du champ en base a utiliser pour select next et previous
-     *    @param      fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
-     *    @param      morehtmlref  	Code html supplementaire a afficher apres ref
-     *    @param      moreparam  	More param to add in nav link url.
-     * 	  @return     string    	Portion HTML avec ref + boutons nav
+     *    @param	Object	$object			Object to show
+     *    @param    int		$paramid   		Name of parameter to use to name the id into the URL link
+     *    @param    string	$morehtml  		More html content to output just before the nav bar
+     *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
+     *    @param    int		$fieldid   		Nom du champ en base a utiliser pour select next et previous
+     *    @param    string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+     *    @param    string	$morehtmlref  	Code html supplementaire a afficher apres ref
+     *    @param    string	$moreparam  	More param to add in nav link url.
+     * 	  @return   tring    				Portion HTML avec ref + boutons nav
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='')
     {
         $ret='';
 
-        //print "$paramid,$morehtml,$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
+        //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid);
         $previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.img_previous().'</a>':'';
         $next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.img_next().'</a>':'';
@@ -3653,14 +3654,17 @@ class Form
         }
 
         $ret.=$object->$fieldref;
-        if ($morehtmlref) {
+        if ($morehtmlref)
+        {
             $ret.=' '.$morehtmlref;
         }
 
-        if ($morehtml) {
+        if ($morehtml)
+        {
             $ret.='</td><td class="nobordernopadding" align="right">'.$morehtml;
         }
-        if ($shownav && ($previous_ref || $next_ref)) {
+        if ($shownav && ($previous_ref || $next_ref))
+        {
             $ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
             $ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref;
         }

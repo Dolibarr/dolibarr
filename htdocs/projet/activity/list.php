@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
  *
@@ -32,7 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 $langs->load('projects');
 
+$action=GETPOST('action');
 $mode=GETPOST("mode");
+$id=GETPOST('id');
 
 $mine=0;
 if ($mode == 'mine') $mine=1;
@@ -50,7 +52,7 @@ $result = restrictedArea($user, 'projet', $projectid);
  * Actions
  */
 
-if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
+if ($action == 'addtime' && $user->rights->projet->creer)
 {
     $task = new Task($db);
 
@@ -83,7 +85,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
         $task->addTimeSpent($user);
 
         // header to avoid submit twice on back
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$projectid);
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$projectid.($mode?'&mode='.$mode:''));
         exit;
     }
     else
@@ -110,9 +112,9 @@ llxHeader("",$title,"");
 //$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
 
-if ($_GET["id"])
+if ($id)
 {
-    $project->fetch($_GET["id"]);
+    $project->fetch($id);
     $project->societe->fetch($project->societe->id);
 }
 
@@ -133,21 +135,24 @@ dol_htmloutput_mesg($mesg);
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addtime">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
+print '<td align="center">'.$langs->trans("DateStart").'</td>';
+print '<td align="center">'.$langs->trans("DateEnd").'</td>';
+print '<td align="right">'.$langs->trans("Progress").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
 projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine);
-print '</form>';
-
 
 print "</table>";
-print '</div>';
+print '</form>';
+
 
 llxFooter();
 

@@ -111,17 +111,17 @@ function task_prepare_head($object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'task';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     $head[$h][1] = $langs->trans("TaskRessourceLinks");
     $head[$h][2] = 'contact';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     $head[$h][1] = $langs->trans("TimeSpent");
     $head[$h][2] = 'time';
     $h++;
@@ -132,7 +132,7 @@ function task_prepare_head($object)
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
 
-    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     /*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
      include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
     $listoffiles=dol_dir_list($filesdir,'files',1);
@@ -141,7 +141,7 @@ function task_prepare_head($object)
     $head[$h][2] = 'document';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     $head[$h][1] = $langs->trans('Notes');
     $head[$h][2] = 'note';
     $h++;
@@ -256,118 +256,6 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlen
 
 
 /**
- * Output a task line
- *
- * @param	string	   	&$inc			?
- * @param   string		$parent			?
- * @param   Object		$lines			?
- * @param   int			&$level			?
- * @param   string		&$projectsrole	?
- * @param   string		&$tasksrole		?
- * @param   int			$mytask			0 or 1 to enable only if task is a task i am affected to
- * @return  $inc
- */
-function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
-{
-    global $user, $bc, $langs;
-    global $form, $projectstatic, $taskstatic;
-
-    $lastprojectid=0;
-
-    $var=true;
-
-    $numlines=count($lines);
-    for ($i = 0 ; $i < $numlines ; $i++)
-    {
-        if ($parent == 0) $level = 0;
-
-        if ($lines[$i]->fk_parent == $parent)
-        {
-            // Break on a new project
-            if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
-            {
-                $var = !$var;
-                $lastprojectid=$lines[$i]->fk_project;
-            }
-
-            print "<tr ".$bc[$var].">\n";
-
-            // Project
-            print "<td>";
-            $projectstatic->id=$lines[$i]->fk_project;
-            $projectstatic->ref=$lines[$i]->projectref;
-            $projectstatic->public=$lines[$i]->public;
-            $projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project];
-            print $projectstatic->getNomUrl(1);
-            print "</td>";
-
-            // Ref
-            print '<td>';
-            $taskstatic->id=$lines[$i]->id;
-            $taskstatic->ref=$lines[$i]->id;
-            print $taskstatic->getNomUrl(1);
-            print '</td>';
-
-            // Label task
-            print "<td>";
-
-            for ($k = 0 ; $k < $level ; $k++)
-            {
-                print "&nbsp;&nbsp;&nbsp;";
-            }
-            print $lines[$i]->label;
-            print "</td>\n";
-
-            // Time spent
-            print '<td align="right">';
-            if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
-            else print '--:--';
-            print "</td>\n";
-
-            $disabledproject=1;$disabledtask=1;
-            //print "x".$lines[$i]->fk_project;
-            //var_dump($lines[$i]);
-            //var_dump($projectsrole[$lines[$i]->fk_project]);
-            // If at least one role for project
-            if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer)
-            {
-                $disabledproject=0;
-                $disabledtask=0;
-            }
-            // If mytask and no role on task
-            if ($mytask && empty($tasksrole[$lines[$i]->id]))
-            {
-                $disabledtask=1;
-            }
-
-            print '<td nowrap="nowrap">';
-            print $form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
-            print '&nbsp;&nbsp;&nbsp;';
-            print $form->select_duration($lines[$i]->id,'',$disabledtask);
-            print '&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
-            if ($disabledtask) print '('.$langs->trans("TaskIsNotAffectedToYou").')';
-            if ((! $lines[$i]->public) && $disabledproject) print '('.$langs->trans("YouAreNotContactOfProject").')';
-            print '</td>';
-            print "<td>&nbsp;";
-            print '</td>';
-
-            print "</tr>\n";
-            $inc++;
-            $level++;
-            if ($lines[$i]->id) projectLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mytask);
-            $level--;
-        }
-        else
-        {
-            //$level--;
-        }
-    }
-
-    return $inc;
-}
-
-
-/**
  * Show task lines with a particular parent
  *
  * @param	string	 	&$inc				Counter that count number of lines legitimate to show (for return)
@@ -379,7 +267,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
  * @param	int			&$taskrole			Array of roles of user for each tasks
  * @param	int			$projectsListId		List of id of project allowed to user (separated with comma)
  */
-function projectLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
 {
     global $user, $bc, $langs;
 	global $projectstatic, $taskstatic;
@@ -463,14 +351,14 @@ function projectLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$ta
                     $taskstatic->id=$lines[$i]->id;
                     $taskstatic->ref=$lines[$i]->id;
                     $taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
-                    print $taskstatic->getNomUrl(1);
+                    print $taskstatic->getNomUrl(1,($showproject?'':'withproject'));
                 }
                 print '</td>';
 
                 // Title of task
                 print "<td>";
                 if ($showlineingray) print '<i>';
-                else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'">';
+                else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
                 for ($k = 0 ; $k < $level ; $k++)
                 {
                     print "&nbsp; &nbsp; &nbsp;";
@@ -480,6 +368,16 @@ function projectLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$ta
                 else print '</a>';
                 print "</td>\n";
 
+                // Date start
+                print '<td align="center">';
+                print dol_print_date($lines[$i]->date_start,'day');
+                print '</td>';
+
+                // Date end
+                print '<td align="center">';
+                print dol_print_date($lines[$i]->date_end,'day');
+                print '</td>';
+
                 // Progress
                 print '<td align="right">';
                 print $lines[$i]->progress.' %';
@@ -488,7 +386,7 @@ function projectLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$ta
                 // Time spent
                 print '<td align="right">';
                 if ($showlineingray) print '<i>';
-                else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+                else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
                 if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
                 else print '--:--';
                 if ($showlineingray) print '</i>';
@@ -500,7 +398,7 @@ function projectLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$ta
                 if (! $showlineingray) $inc++;
 
                 $level++;
-                if ($lines[$i]->id) projectLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
+                if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
                 $level--;
                 $total += $lines[$i]->duration;
             }
@@ -517,7 +415,136 @@ function projectLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$ta
         if ($showproject) print '<td></td>';
         print '<td></td>';
         print '<td></td>';
+        print '<td></td>';
+        print '<td></td>';
         print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td></tr>';
+    }
+
+    return $inc;
+}
+
+
+/**
+ * Output a task line
+ *
+ * @param	string	   	&$inc			?
+ * @param   string		$parent			?
+ * @param   Object		$lines			?
+ * @param   int			&$level			?
+ * @param   string		&$projectsrole	?
+ * @param   string		&$tasksrole		?
+ * @param   int			$mytask			0 or 1 to enable only if task is a task i am affected to
+ * @return  $inc
+ */
+function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
+{
+    global $user, $bc, $langs;
+    global $form, $projectstatic, $taskstatic;
+
+    $lastprojectid=0;
+
+    $var=true;
+
+    $numlines=count($lines);
+    for ($i = 0 ; $i < $numlines ; $i++)
+    {
+        if ($parent == 0) $level = 0;
+
+        if ($lines[$i]->fk_parent == $parent)
+        {
+            // Break on a new project
+            if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
+            {
+                $var = !$var;
+                $lastprojectid=$lines[$i]->fk_project;
+            }
+
+            print "<tr ".$bc[$var].">\n";
+
+            // Project
+            print "<td>";
+            $projectstatic->id=$lines[$i]->fk_project;
+            $projectstatic->ref=$lines[$i]->projectref;
+            $projectstatic->public=$lines[$i]->public;
+            $projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project];
+            print $projectstatic->getNomUrl(1);
+            print "</td>";
+
+            // Ref
+            print '<td>';
+            $taskstatic->id=$lines[$i]->id;
+            $taskstatic->ref=$lines[$i]->id;
+            print $taskstatic->getNomUrl(1);
+            print '</td>';
+
+            // Label task
+            print "<td>";
+            for ($k = 0 ; $k < $level ; $k++)
+            {
+                print "&nbsp;&nbsp;&nbsp;";
+            }
+            print $lines[$i]->label;
+            print "</td>\n";
+
+            // Date start
+            print '<td align="center">';
+            print dol_print_date($lines[$i]->date_start,'day');
+            print '</td>';
+
+            // Date end
+            print '<td align="center">';
+            print dol_print_date($lines[$i]->date_end,'day');
+            print '</td>';
+
+            // Progress
+            print '<td align="right">';
+            print $lines[$i]->progress.' %';
+            print '</td>';
+
+            // Time spent
+            print '<td align="right">';
+            if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
+            else print '--:--';
+            print "</td>\n";
+
+            $disabledproject=1;$disabledtask=1;
+            //print "x".$lines[$i]->fk_project;
+            //var_dump($lines[$i]);
+            //var_dump($projectsrole[$lines[$i]->fk_project]);
+            // If at least one role for project
+            if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer)
+            {
+                $disabledproject=0;
+                $disabledtask=0;
+            }
+            // If mytask and no role on task
+            if ($mytask && empty($tasksrole[$lines[$i]->id]))
+            {
+                $disabledtask=1;
+            }
+
+            print '<td nowrap="nowrap">';
+            $s =$form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
+            $s.='&nbsp;&nbsp;&nbsp;';
+            $s.=$form->select_duration($lines[$i]->id,'',$disabledtask);
+            $s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
+            print $s;
+            print '</td>';
+            print '<td align="right">';
+            if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
+            else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
+            print '</td>';
+
+            print "</tr>\n";
+            $inc++;
+            $level++;
+            if ($lines[$i]->id) projectLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mytask);
+            $level--;
+        }
+        else
+        {
+            //$level--;
+        }
     }
 
     return $inc;

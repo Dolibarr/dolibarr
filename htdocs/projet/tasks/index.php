@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 $langs->load('projects');
 $langs->load('users');
 
+$id=GETPOST('id');
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -50,18 +52,18 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
  * View
  */
 
+$form=new Form($db);
+$projectstatic = new Project($db);
+$taskstatic = new Task($db);
+
 $title=$langs->trans("Activities");
 if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title,"Projet");
 
-$form=new Form($db);
-$projectstatic = new Project($db);
-$taskstatic = new Task($db);
-
-if ($_GET["id"])
+if ($id)
 {
-	$projectstatic->fetch($_GET["id"]);
+	$projectstatic->fetch($id);
 	$projectstatic->societe->fetch($projectstatic->societe->id);
 }
 
@@ -89,12 +91,14 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td width="80">'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
+print '<td align="center">'.$langs->trans("DateStart").'</td>';
+print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 print '<td align="right">'.$langs->trans("Progress").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
 // Show all lines in taskarray (recursive function to go down on tree)
 $j=0; $level=0;
-$nboftaskshown=projectLines($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId);
+$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId);
 print "</table>";
 
 print '</div>';
@@ -109,7 +113,8 @@ if ($user->rights->projet->creer)
 	print '</div>';
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

@@ -27,7 +27,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 
 $langs->load('projects');
 
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$action=GETPOST('action');
+$id = GETPOST('id');
+$ref= GETPOST('ref');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -43,7 +45,7 @@ $result = restrictedArea($user, 'projet', $id);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->projet->creer)
+if ($action == 'update_public' && $user->rights->projet->creer)
 {
 	$project = new Project($db);
 	$project->fetch($_GET['id']);
@@ -62,7 +64,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->projet->creer)
 	}
 }
 
-if ($_POST['action'] == 'update_private' && $user->rights->projet->creer)
+if ($action == 'update_private' && $user->rights->projet->creer)
 {
 	$project = new Project($db);
 	$project->fetch($_GET['id']);
@@ -86,22 +88,19 @@ if ($_POST['action'] == 'update_private' && $user->rights->projet->creer)
  * View
  */
 
-llxHeader();
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+llxHeader("",$langs->trans("Tasks"),$help_url);
 
 $form = new Form($db);
-
 $userstatic=new User($db);
+$project = new Project($db);
 
+$now=dol_now();
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print $mesg;
 
-	$now=gmmktime();
-
-	$project = new Project($db);
 
 	if ($project->fetch($id, $ref))
 	{
