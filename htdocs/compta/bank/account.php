@@ -349,7 +349,7 @@ if ($id > 0 || ! empty($ref))
 		$form->select_date($dateop,'op',0,0,0,'transaction');
 		print '</td>';
 		print '<td nowrap="nowrap">';
-		$form->select_types_paiements(($object->courant == 2 ? 'LIQ' : GETPOST('operation')),'operation','1,2',2,1);
+		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == 2 ? 'LIQ' : '')),'operation','1,2',2,1);
 		print '</td><td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq").'"></td>';
 		print '<td colspan="2">';
