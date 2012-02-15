@@ -2850,7 +2850,7 @@ class Form
     }
 
     /**
-     *  Show form to select addresse
+     *  Show form to select address
      *
      *  @param  page        	Page
      *  @param  selected    	Id condition pre-selectionne
@@ -2858,7 +2858,6 @@ class Form
      *	@param	origin        	Origine de l'appel pour pouvoir creer un retour
      *  @param  originid      	Id de l'origine
      *  @return	void
-     *  @deprecated
      */
     function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
     {

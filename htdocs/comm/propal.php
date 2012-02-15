@@ -125,26 +125,20 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 }
 
 // Suppression de la propale
-else if ($action == 'confirm_delete' && $confirm == 'yes')
+else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->propale->supprimer)
 {
-	if ($user->rights->propale->supprimer)
+	$object->fetch($id);
+	$result=$object->delete($user);
+	if ($result > 0)
 	{
-		$object->fetch($id);
-		$result=$object->delete($user);
-		$id = 0;
-		$brouillon = 1;
-
-		if ($result > 0)
-		{
-			Header('Location: '.$_SERVER["PHP_SELF"]);
-			exit;
-		}
-		else
-		{
-			$langs->load("errors");
-			if ($object->error == 'ErrorFailToDeleteDir') $mesg='<div class="error">'.$langs->trans('ErrorFailedToDeleteJoinedFiles').'</div>';
-			else $mesg='<div class="error">'.$object->error.'</div>';
-		}
+		Header('Location: '.$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		$langs->load("errors");
+		if ($object->error == 'ErrorFailToDeleteDir') $mesg='<div class="error">'.$langs->trans('ErrorFailedToDeleteJoinedFiles').'</div>';
+		else $mesg='<div class="error">'.$object->error.'</div>';
 	}
 }
 

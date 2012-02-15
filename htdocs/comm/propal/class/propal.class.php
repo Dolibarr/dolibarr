@@ -1818,7 +1818,7 @@ class Propal extends CommonObject
 							{
 								$this->error='ErrorFailToDeleteFile';
 								$this->db->rollback();
-								return 0;
+								return -5;
 							}
 						}
 						if (file_exists($dir))
@@ -1828,7 +1828,7 @@ class Propal extends CommonObject
 							{
 								$this->error='ErrorFailToDeleteDir';
 								$this->db->rollback();
-								return 0;
+								return -4;
 							}
 						}
 					}
@@ -1855,7 +1855,7 @@ class Propal extends CommonObject
 					$this->error=$this->db->lasterror();
 					dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return 0;
+					return -3;
 				}
 			}
 			else
