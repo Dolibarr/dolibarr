@@ -2304,9 +2304,10 @@ class Commande extends CommonObject
      *	Delete the customer order
      *
      *	@param	User	$user		User object
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      * 	@return	int					<=0 if KO, >0 if OK
      */
-    function delete($user)
+    function delete($user, $notrigger=0)
     {
         global $conf, $langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -2369,7 +2370,7 @@ class Commande extends CommonObject
             }
         }
 
-        if (! $error)
+        if (! $error && ! $notrigger)
         {
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -2377,12 +2378,18 @@ class Commande extends CommonObject
             $result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
-
-            $this->db->commit();
-            return 1;
+        }
+        
+        if (! $error)
+        {
+        	dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
+        	$this->db->commit();
+        	return 1;
         }
         else
         {
+            $this->error=$this->db->lasterror();
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }

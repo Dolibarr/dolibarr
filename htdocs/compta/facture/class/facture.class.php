@@ -1116,9 +1116,10 @@ class Facture extends CommonObject
      *	Delete invoice
      *
      *	@param     	int		$rowid      	Id of invoice to delete. If empty, we delete current instance of invoice
+     *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-    function delete($rowid=0)
+    function delete($rowid, $notrigger=0)
     {
         global $user,$langs,$conf;
 
@@ -1176,12 +1177,15 @@ class Facture extends CommonObject
                 $resql=$this->db->query($sql);
                 if ($resql)
                 {
-                    // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
+                	if (! $notrigger)
+                	{
+                		// Appel des triggers
+                		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                		$interface=new Interfaces($this->db);
+                		$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
+                		if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                		// Fin appel triggers
+                	}
 
                     $this->db->commit();
                     return 1;

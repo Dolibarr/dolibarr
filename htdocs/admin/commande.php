@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
- * Copyright (C) 2005-2011 Regis Houssin                <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2012 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011 	   Philippe Grand			    <philippe.grand@atoo-net.com>
@@ -36,8 +36,7 @@ require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 $langs->load("admin");
 $langs->load("errors");
 
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
 $action = GETPOST("action");
 $value = GETPOST("value");
@@ -284,7 +283,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
                         print '</td>'."\n";
 
 						print '<td align="center">';
-						if ($conf->global->COMMANDE_ADDON == "$file")
+						if ($conf->global->COMMANDE_ADDON == $file)
 						{
 							print img_picto($langs->trans("Activated"),'switch_on');
 						}
@@ -431,14 +430,14 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                            }
 	                            else
 	                            {
-	                                print "<td align=\"center\">\n";
+	                                print '<td align="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
 	                            // Defaut
-	                            print "<td align=\"center\">";
-	                            if ($conf->global->PROPALE_ADDON_PDF == "$name")
+	                            print '<td align="center">';
+	                            if ($conf->global->COMMANDE_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"),'on');
 	                            }
@@ -579,7 +578,7 @@ print '<br>';
 
 dol_htmloutput_mesg($mesg);
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
