@@ -299,9 +299,8 @@ $ecmdirstatic = new EcmDirectory($db);
 
 //print "xx".$_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500)?($_SESSION["dol_screenheight"]-166):660;
-$morejs=array(
-"/filemanager/includes/jqueryFileTree/jqueryFileTree.js",
-);
+$morejs=array();
+if (! empty($conf->global->MAIN_ECM_TRY_JS)) $morejs=array("/filemanager/includes/jqueryFileTree/jqueryFileTree.js");
 $moreheadcss="
 <!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
 <style type=\"text/css\">
