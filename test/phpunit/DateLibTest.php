@@ -113,7 +113,10 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
-   /**
+    /**
+     * testConvertTime2Seconds
+     *
+     * @return	void
      */
     public function testConvertTime2Seconds()
     {
@@ -131,6 +134,9 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testConvertSecondToTime
+     *
+     * @return void
      */
     public function testConvertSecondToTime()
     {
@@ -153,7 +159,10 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    */
+     * testDolPrintDate
+     *
+     * @return void
+     */
     public function testDolPrintDate()
     {
         global $conf,$user,$langs,$db;
@@ -194,7 +203,10 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    */
+     * testDolTimePlusDuree
+     *
+     * @return int
+     */
     public function testDolTimePlusDuree()
     {
         global $conf,$user,$langs,$db;
@@ -216,7 +228,10 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    */
+     * testDolStringToTime
+     *
+     * @return int
+     */
     public function testDolStringToTime()
     {
         global $conf,$user,$langs,$db;
@@ -249,7 +264,10 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    */
+	 *	testDolGetFirstDay
+	 *
+	 *	@return	void
+     */
     public function testDolGetFirstDay()
     {
         global $conf,$user,$langs,$db;

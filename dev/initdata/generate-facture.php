@@ -41,7 +41,7 @@ require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
  * Parameters
  */
 
-define (GEN_NUMBER_FACTURE, 5);
+define(GEN_NUMBER_FACTURE, 5);
 
 
 $ret=$user->fetch('','admin');

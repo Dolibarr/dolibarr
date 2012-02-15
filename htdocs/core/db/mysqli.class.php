@@ -44,7 +44,7 @@ class DoliDBMysqli
     //! Version min database
     static $versionmin=array(4,1,0);
 	//! Resultset of last request
-	private $results;
+	private $_results;
     //! 1 if connected, 0 else
     var $connected;
     //! 1 if database selected, 0 else
@@ -385,7 +385,7 @@ class DoliDBMysqli
                 dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
             }
             $this->lastquery=$query;
-            $this->results = $ret;
+            $this->_results = $ret;
         }
 
         return $ret;
@@ -400,7 +400,7 @@ class DoliDBMysqli
     function fetch_object($resultset)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         return mysqli_fetch_object($resultset);
     }
 
@@ -414,7 +414,7 @@ class DoliDBMysqli
     function fetch_array($resultset)
     {
         // If resultset not provided, we take the last used by connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         return mysqli_fetch_array($resultset);
     }
 
@@ -429,7 +429,7 @@ class DoliDBMysqli
         // If resultset not provided, we take the last used by connexion
         if (! is_bool($resultset))
         {
-            if (! is_object($resultset)) { $resultset=$this->results; }
+            if (! is_object($resultset)) { $resultset=$this->_results; }
             return mysqli_fetch_row($resultset);
         }
         else
@@ -449,7 +449,7 @@ class DoliDBMysqli
     function num_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         return mysqli_num_rows($resultset);
     }
 
@@ -464,7 +464,7 @@ class DoliDBMysqli
     function affected_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         // mysql necessite un link de base pour cette fonction contrairement
         // a pqsql qui prend un resultset
         return mysqli_affected_rows($this->db);
@@ -480,7 +480,7 @@ class DoliDBMysqli
     function free($resultset=0)
     {
         // If resultset not provided, we take the last used by connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         // Si resultset en est un, on libere la memoire
         if (is_object($resultset)) mysqli_free_result($resultset);
     }
@@ -951,8 +951,8 @@ class DoliDBMysqli
         $sql="DESC ".$table." ".$field;
 
         dol_syslog(get_class($this)."::DDLDescTable ".$sql,LOG_DEBUG);
-        $this->results = $this->query($sql);
-        return $this->results;
+        $this->_results = $this->query($sql);
+        return $this->_results;
     }
 
     /**

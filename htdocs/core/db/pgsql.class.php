@@ -45,7 +45,7 @@ class DoliDBPgsql
 	static $versionmin=array(8,4,0);	// Version min database
 
 	//! Resultset of last request
-	private $results;
+	private $_results;
 
 	var $connected;               // 1 si connecte, 0 sinon
 	var $database_selected;       // 1 si base selectionne, 0 sinon
@@ -573,7 +573,7 @@ class DoliDBPgsql
 				}
 			}
 			$this->lastquery=$query;
-			$this->results = $ret;
+			$this->_results = $ret;
 		}
 
 		return $ret;
@@ -588,7 +588,7 @@ class DoliDBPgsql
 	function fetch_object($resultset)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return pg_fetch_object($resultset);
 	}
 
@@ -601,7 +601,7 @@ class DoliDBPgsql
 	function fetch_array($resultset)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return pg_fetch_array($resultset);
 	}
 
@@ -614,7 +614,7 @@ class DoliDBPgsql
 	function fetch_row($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return pg_fetch_row($resultset);
 	}
 
@@ -628,7 +628,7 @@ class DoliDBPgsql
 	function num_rows($resultset)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return pg_num_rows($resultset);
 	}
 
@@ -642,7 +642,7 @@ class DoliDBPgsql
 	function affected_rows($resultset)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		// pgsql necessite un resultset pour cette fonction contrairement
 		// a mysql qui prend un link de base
 		return pg_affected_rows($resultset);
@@ -658,7 +658,7 @@ class DoliDBPgsql
 	function free($resultset=0)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		// Si resultset en est un, on libere la memoire
 		if (is_resource($resultset)) pg_free_result($resultset);
 	}
@@ -1136,8 +1136,8 @@ class DoliDBPgsql
 		if ($field) $sql.= " AND attname = '".$field."'";
 
 		dol_syslog($sql,LOG_DEBUG);
-		$this->results = $this->query($sql);
-		return $this->results;
+		$this->_results = $this->query($sql);
+		return $this->_results;
 	}
 
 	/**

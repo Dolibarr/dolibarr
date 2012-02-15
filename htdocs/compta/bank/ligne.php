@@ -26,6 +26,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("banks");
 $langs->load("compta");
@@ -46,8 +47,8 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$fieldvalue,'bank_account','','',$fieldtype);
+if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) accessforbidden();
 
-$form = new Form($db);
 
 /*
  * Actions
@@ -55,14 +56,14 @@ $form = new Form($db);
 
 if ($user->rights->banque->consolidate && $action == 'dvnext')
 {
-    $ac = new Account($db);
-    $ac->datev_next($rowid);
+    $al = new AccountLine($db);
+    $al->datev_next($_GET["rowid"]);
 }
 
 if ($user->rights->banque->consolidate && $action == 'dvprev')
 {
-    $ac = new Account($db);
-    $ac->datev_previous($rowid);
+    $al = new AccountLine($db);
+    $al->datev_previous($_GET["rowid"]);
 }
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier)
@@ -92,16 +93,16 @@ if ($action == 'class')
 if ($action == "update")
 {
 	$error=0;
-	
+
 	$ac = new Account($db);
 	$ac->fetch($id);
-	
+
 	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
 	{
 		$mesg = '<div class="error">'.$langs->trans("ErrorCashAccountAcceptsOnlyCashMoney").'</div>';
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		// Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
@@ -113,9 +114,9 @@ if ($action == "update")
 			$objp = $db->fetch_object($result);
 			$conciliated=$objp->rappro;
 		}
-		
+
 		$db->begin();
-		
+
 		$amount = price2num($_POST['amount']);
 		$dateop = dol_mktime(12,0,0,$_POST["dateomonth"],$_POST["dateoday"],$_POST["dateoyear"]);
 		$dateval= dol_mktime(12,0,0,$_POST["datevmonth"],$_POST["datevday"],$_POST["datevyear"]);
@@ -136,7 +137,7 @@ if ($action == "update")
 		}
 		$sql.= " fk_account = ".$id;
 		$sql.= " WHERE rowid = ".$rowid;
-		
+
 		$result = $db->query($sql);
 		if ($result)
 		{
@@ -195,6 +196,8 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
  * View
  */
 
+$form = new Form($db);
+
 llxHeader();
 
 // On initialise la liste des categories
@@ -217,7 +220,7 @@ if ($result)
     $db->free($result);
 }
 
-$var=False;
+$var=false;
 $h=0;
 
 

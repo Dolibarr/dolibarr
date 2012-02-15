@@ -645,7 +645,7 @@ function purgeSessions($mysessionid)
  *  @param      int			$withdeps   Activate/Disable also all dependencies
  *  @return     string      			Error message or '';
  */
-function Activate($value,$withdeps=1)
+function activateModule($value,$withdeps=1)
 {
     global $db, $modules, $langs, $conf;
 
@@ -728,7 +728,7 @@ function Activate($value,$withdeps=1)
             {
                 if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/".$objMod->depends[$i].".class.php"))
                 {
-                    Activate($objMod->depends[$i]);
+                    activateModule($objMod->depends[$i]);
                 }
             }
         }
@@ -741,7 +741,7 @@ function Activate($value,$withdeps=1)
             {
                 if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/".$objMod->conflictwith[$i].".class.php"))
                 {
-                    UnActivate($objMod->conflictwith[$i],0);
+                    unActivateModule($objMod->conflictwith[$i],0);
                 }
             }
         }
@@ -758,7 +758,7 @@ function Activate($value,$withdeps=1)
  *  @param      int			$requiredby          1=Desactive aussi modules dependants
  *  @return     string     				         Error message or '';
  */
-function UnActivate($value, $requiredby=1)
+function unActivateModule($value, $requiredby=1)
 {
     global $db, $modules, $conf;
 
@@ -816,7 +816,7 @@ function UnActivate($value, $requiredby=1)
         //$genericMod->style_sheet=1;
         //$genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
         //$genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
-        dol_syslog("modules::UnActivate Failed to find module file, we use generic function with name " . $modName);
+        dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name " . $modName);
         //$genericMod->_remove();
     }
 
@@ -826,7 +826,7 @@ function UnActivate($value, $requiredby=1)
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)
         {
-            UnActivate($objMod->requiredby[$i]);
+            unActivateModule($objMod->requiredby[$i]);
         }
     }
 

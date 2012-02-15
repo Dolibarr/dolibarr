@@ -113,6 +113,9 @@ class ModulesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testModulesInit
+     *
+     * @return int
      */
     public function testModulesInit()
     {

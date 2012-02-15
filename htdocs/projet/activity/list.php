@@ -142,7 +142,7 @@ print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
-PLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine);
+projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine);
 print '</form>';
 
 

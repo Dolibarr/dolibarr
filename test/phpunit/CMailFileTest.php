@@ -114,6 +114,9 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCMailFileText
+     *
+     * @return void
      */
     public function testCMailFileText()
     {
@@ -134,6 +137,9 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCMailFileStatic
+     *
+     * @return string
      */
     public function testCMailFileStatic()
     {

@@ -64,8 +64,12 @@ $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8',
  - To convert pfx certificate to pem: openssl pkcs12 -in tcpdf.pfx -out tcpdf.crt -nodes
 
 */
-
-$pdf->SetProtection($permissions=array('copy'), $user_pass='aaa', $owner_pass=null, $mode=0, $pubkeys=null);
+$permissions=array('copy');
+$user_pass='aaa';
+$owner_pass=null;
+$mode=0;
+$pubkeys=null;
+$pdf->SetProtection($permissions, $user_pass, $owner_pass, $mode, $pubkeys);
 
 // Example with public-key
 // To open the document you need to install the private key (tcpdf.p12) on the Acrobat Reader. The password is: 1234

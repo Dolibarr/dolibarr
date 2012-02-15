@@ -1116,7 +1116,7 @@ class Facture extends CommonObject
      *	Delete invoice
      *
      *	@param     	int		$rowid      	Id of invoice to delete. If empty, we delete current instance of invoice
-     *	@param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
     function delete($rowid, $notrigger=0)

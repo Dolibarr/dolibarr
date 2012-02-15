@@ -267,7 +267,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlen
  * @param   int			$mytask			0 or 1 to enable only if task is a task i am affected to
  * @return  $inc
  */
-function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
+function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
 {
     global $user, $bc, $langs;
     global $form, $projectstatic, $taskstatic;
@@ -354,7 +354,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
             print "</tr>\n";
             $inc++;
             $level++;
-            if ($lines[$i]->id) PLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mytask);
+            if ($lines[$i]->id) projectLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mytask);
             $level--;
         }
         else
@@ -379,7 +379,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
  * @param	int			&$taskrole			Array of roles of user for each tasks
  * @param	int			$projectsListId		List of id of project allowed to user (separated with comma)
  */
-function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
+function projectLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
 {
     global $user, $bc, $langs;
 	global $projectstatic, $taskstatic;
@@ -500,7 +500,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
                 if (! $showlineingray) $inc++;
 
                 $level++;
-                if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
+                if ($lines[$i]->id) projectLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
                 $level--;
                 $total += $lines[$i]->duration;
             }

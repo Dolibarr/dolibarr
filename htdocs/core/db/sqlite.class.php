@@ -44,7 +44,7 @@ class DoliDBSqlite
     //! Version min database
     static $versionmin=array(3,0,0);
 	//! Resultset of last request
-	private $results;
+	private $_results;
     //! 1 if connected, 0 else
     var $connected;
     //! 1 if database selected, 0 else
@@ -516,7 +516,7 @@ class DoliDBSqlite
                 else dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
             }
             $this->lastquery=$query;
-            $this->results = $ret;
+            $this->_results = $ret;
         }
 
         return $ret;
@@ -531,7 +531,7 @@ class DoliDBSqlite
     function fetch_object($resultset)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         return $resultset->fetch(PDO::FETCH_OBJ);
     }
 
@@ -545,7 +545,7 @@ class DoliDBSqlite
     function fetch_array($resultset)
     {
         // If resultset not provided, we take the last used by connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         return $resultset->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -560,7 +560,7 @@ class DoliDBSqlite
         // If resultset not provided, we take the last used by connexion
         if (! is_bool($resultset))
         {
-            if (! is_object($resultset)) { $resultset=$this->results; }
+            if (! is_object($resultset)) { $resultset=$this->_results; }
             return $resultset->fetch(PDO::FETCH_NUM);
         }
         else
@@ -580,7 +580,7 @@ class DoliDBSqlite
     function num_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         return $resultset->rowCount();
     }
 
@@ -594,7 +594,7 @@ class DoliDBSqlite
     function affected_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         // mysql necessite un link de base pour cette fonction contrairement
         // a pqsql qui prend un resultset
         return $resultset->rowCount();
@@ -610,7 +610,7 @@ class DoliDBSqlite
     function free($resultset=0)
     {
         // If resultset not provided, we take the last used by connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
+        if (! is_object($resultset)) { $resultset=$this->_results; }
         // Si resultset en est un, on libere la memoire
         if (is_object($resultset)) $resultset->closeCursor();
     }
@@ -1091,8 +1091,8 @@ class DoliDBSqlite
         $sql="DESC ".$table." ".$field;
 
         dol_syslog(get_class($this)."::DDLDescTable ".$sql,LOG_DEBUG);
-        $this->results = $this->query($sql);
-        return $this->results;
+        $this->_results = $this->query($sql);
+        return $this->_results;
     }
 
     /**
