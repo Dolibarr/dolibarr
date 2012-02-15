@@ -49,7 +49,7 @@ $prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Sa
  * Parametre
  */
 
-define (GEN_NUMBER_SOCIETE, 10);
+define(GEN_NUMBER_SOCIETE, 10);
 
 
 $ret=$user->fetch('','admin');
