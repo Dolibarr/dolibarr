@@ -90,6 +90,9 @@ class PricesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+	 * Init phpunit tests
+	 *
+	 * @return	void
      */
     protected function setUp()
     {
@@ -101,7 +104,11 @@ class PricesTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
+
     /**
+	 * End phpunit tests
+	 *
+	 * @return	void
      */
     protected function tearDown()
     {
@@ -121,21 +128,21 @@ class PricesTest extends PHPUnit_Framework_TestCase
         // qty=1, unit_price=1.24, discount_line=0, vat_rate=10, price_base_type='HT'
         $result1=calcul_price_total(1, 1.24, 0, 10, 0, 0, 0, 'HT', 0);
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
-        
+
         print __METHOD__." value0=1.24 result0=".$result1[0]."\n";
         $this->assertEquals(1.24,$result1[0]);
         print __METHOD__." value1=0.12 result1=".$result1[1]."\n";
         $this->assertEquals(0.12,$result1[1]);
         print __METHOD__." value2=1.36 result2=".$result1[2]."\n";
         $this->assertEquals(1.36,$result1[2]);
-        
+
         print __METHOD__." value3=1.24 result3=".$result1[3]."\n";
         $this->assertEquals(1.24, $result1[3]);
         print __METHOD__." value4=0.124 result4=".$result1[4]."\n";
         $this->assertEquals(0.124,$result1[4]);
         print __METHOD__." value5=1.364 result5=".$result1[5]."\n";
         $this->assertEquals(1.364,$result1[5]);
-        
+
         print __METHOD__." value6=1.24 result6=".$result1[6]."\n";
         $this->assertEquals(1.24,$result1[6]);
         print __METHOD__." value7=0.12 result7=".$result1[7]."\n";

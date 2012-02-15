@@ -116,7 +116,9 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 
 
     /**
+     *	testVerifyNumRef
      *
+     *	@return	void
      */
     public function testVerifyNumRef()
     {
@@ -136,7 +138,9 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     *	testFetchUser
      *
+     *	@return	void
      */
     public function testFetchUser()
     {
@@ -157,7 +161,9 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     *	testFetchProjet
      *
+     *	@return	void
      */
     public function testFetchProjet()
     {
@@ -177,7 +183,9 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     *	testFetchThirdParty
      *
+     *	@return	void
      */
     public function testFetchThirdParty()
     {

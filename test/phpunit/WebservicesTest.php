@@ -91,6 +91,9 @@ class WebservicesTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function setUp()
     {
@@ -102,16 +105,23 @@ class WebservicesTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__."\n";
     }
+
 	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function tearDown()
     {
     	print __METHOD__."\n";
     }
 
-   /**
+    /**
+     * testWSVersion
+     *
+     * @return int
      */
-    public function testWSVersion()
+    public function testWSGetVersions()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;

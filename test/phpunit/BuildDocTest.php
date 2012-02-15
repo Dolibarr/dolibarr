@@ -29,12 +29,15 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fichinter/class/fichinter.class.php';
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_oursin.modules.php';
@@ -48,7 +51,9 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_ex
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_expedition_rouget.modules.php';
 // Mother classes of pdf generators
 require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/modules_facture.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/supplier_invoice/modules_facturefournisseur.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/modules_commande.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/modules_propale.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_project.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
@@ -146,6 +151,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testFactureBuild
+     *
+     * @return int
      */
     public function testFactureBuild()
     {
@@ -178,6 +186,37 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+    * testFactureBuild
+    *
+    * @return int
+    */
+    public function testFactureFournisseurBuild()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $conf->fournisseur->facture->dir_output.='/temp';
+        $localobject=new FactureFournisseur($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->socid=1;
+
+        // Canelle
+        $localobject->modelpdf='canelle';
+        $result=supplier_invoice_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        return 0;
+    }
+
+    /**
+     * testCommandeBuild
+     *
+     * @return int
      */
     public function testCommandeBuild()
     {
@@ -209,7 +248,39 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         return 0;
     }
 
+
     /**
+     * testCommandeFournisseurBuild
+      *
+    * @return int
+    */
+    public function testCommandeFournisseurBuild()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $conf->fournisseur->commande->dir_output.='/temp';
+        $localobject=new CommandeFournisseur($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->socid=1;
+
+        // Muscadet
+        $localobject->modelpdf='muscadet';
+        $result=supplier_order_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        return 0;
+        }
+
+    /**
+     * testPropalBuild
+     *
+     * @return int
      */
     public function testPropalBuild()
     {
@@ -242,6 +313,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testProjectBuild
+     *
+     * @return int
      */
     public function testProjectBuild()
     {
@@ -267,6 +341,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testFichinterBuild
+     *
+     * @return int
      */
     public function testFichinterBuild()
     {
@@ -292,6 +369,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testExpeditionBuild
+     *
+     * @return int
      */
     public function testExpeditionBuild()
     {
