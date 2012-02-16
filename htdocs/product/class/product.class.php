@@ -1022,7 +1022,7 @@ class Product extends CommonObject
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		else
 		{
-			$sql.= " WHERE p.entity IN (".getEntity($this->element, 1).")";
+			$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
 			if ($ref) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 			else if ($ref_ext) $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
 		}
