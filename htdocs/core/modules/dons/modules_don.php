@@ -30,8 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 
 
 /**
- *	    \class      ModeleDon
- *		\brief      Classe mere des modeles de dons
+ *	Parent class of subscription templates
  */
 abstract class ModeleDon extends CommonDocGenerator
 {
@@ -59,23 +58,26 @@ abstract class ModeleDon extends CommonDocGenerator
 
 
 /**
- *	\class 		ModeleNumRefDons
- *	\brief  	Classe mere des modeles de numerotation des references des dons
+ *	Parent class of donation numbering templates
  */
 abstract class ModeleNumRefDons
 {
     var $error='';
 
-    /**     \brief     	Return if a module can be used or not
-     *      	\return		boolean     true if module can be used
+    /**
+     * 	Return if a module can be used or not
+     * 
+     *  @return		boolean     true if module can be used
      */
     function isEnabled()
     {
         return true;
     }
 
-    /**     \brief      Renvoi la description par defaut du modele de num�rotation
-     *      \return     string      Texte descripif
+    /** 
+     * 	Renvoi la description par defaut du modele de numerotation
+     * 
+     *  @return     string      Texte descripif
      */
     function info()
     {
@@ -84,8 +86,10 @@ abstract class ModeleNumRefDons
         return $langs->trans("NoDescription");
     }
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
+    /** 
+     *  Renvoi un exemple de numerotation
+     * 
+     *  @return     string      Example
      */
     function getExample()
     {
@@ -94,17 +98,21 @@ abstract class ModeleNumRefDons
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas d
-     *                  de conflits qui empechera cette numerotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
+    /**  
+     * 	Test si les numeros deja en vigueur dans la base ne provoquent pas d
+     *  de conflits qui empechera cette numerotation de fonctionner.
+     *  
+     *  @return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
     {
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribuee
-     *      \return     string      Valeur
+    /** 
+     *  Renvoi prochaine valeur attribuee
+     * 
+     *  @return     string      Valeur
      */
     function getNextValue()
     {
@@ -112,8 +120,10 @@ abstract class ModeleNumRefDons
         return $langs->trans("NotAvailable");
     }
 
-    /**     \brief      Renvoi version du module numerotation
-     *      	\return     string      Valeur
+    /**  
+     *  Renvoi version du module numerotation
+     * 
+     *  @return     string      Valeur
      */
     function getVersion()
     {
@@ -129,13 +139,14 @@ abstract class ModeleNumRefDons
 
 
 /**
- *	\brief      Cree un don sur disque en fonction du modele de DON_ADDON_PDF
- *	\param	    db  			objet base de donnee
- *	\param	    id				id du don e creer
- *	\param	    message			message
- *	\param	    modele			force le modele a utiliser ('' par defaut)
- *	\param		outputlangs		objet lang a utiliser pour traduction
- *	\return     int         	0 si KO, 1 si OK
+ *	Cree un don sur disque en fonction du modele de DON_ADDON_PDF
+ *
+ *	@param	DoliDB		$db  			Databse handler
+ *	@param	int			$id				Id donation
+ *	@param	string		$message		Message
+ *	@param	string		$modele			Force le modele a utiliser ('' par defaut)
+ *	@param	Translate	$outputlangs	Object langs
+ *	@return int         				0 if KO, 1 if OK
  */
 function don_create($db, $id, $message, $modele, $outputlangs)
 {

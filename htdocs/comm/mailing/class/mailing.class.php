@@ -61,12 +61,13 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acces base de donnees
+     *  Constructor
+     *
+     *  @param      DoliDb		$db      Database handler
 	 */
-	function Mailing($DB)
+	function Mailing($db)
 	{
-		$this->db = $DB ;
+		$this->db = $db;
 
 		// List of language codes for status
 		$this->statuts[0] = 'MailingStatusDraft';

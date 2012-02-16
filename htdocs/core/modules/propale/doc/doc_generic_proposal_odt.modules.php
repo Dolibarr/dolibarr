@@ -31,8 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 
 /**
- *	\class      doc_generic_iproposal_odt
- *	\brief      Class to build documents using ODF templates generator
+ *	Class to build documents using ODF templates generator
  */
 class doc_generic_proposal_odt extends ModelePDFPropales
 {

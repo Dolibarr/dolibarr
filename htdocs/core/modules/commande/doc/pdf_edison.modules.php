@@ -30,18 +30,16 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 /**
- *	\class      pdf_edison
- *	\brief      Classe permettant de generer les commandes au modele Edison
+ *	Classe permettant de generer les commandes au modele Edison
  */
-
 class pdf_edison extends ModelePDFCommandes
 {
 	var $emetteur;	// Objet societe qui emet
 
 	/**
-	 * 		Constructeur
+	 * 	Constructor
      *
-	 *		@param		DoliDb	$db		Database access handler
+	 *	@param		DoliDb	$db		Database access handler
 	 */
 	function pdf_edison($db=0)
 	{
