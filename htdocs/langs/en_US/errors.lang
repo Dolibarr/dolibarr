@@ -103,6 +103,7 @@ ErrorLoginHasNoEmail=This user has no email address. Process aborted.
 ErrorBadValueForCode=Bad value for security code. Try again with new value...
 ErrorBothFieldCantBeNegative=Fields %s and %s can't be both negative
 ErrorWebServerUserHasNotPermission=User account <b>%s</b> used to execute web server has no permission for that
+ErrorNoActivatedBarcode=No barcode type activated
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Warning, PHP option <b>safe_mode</b> is on so command must be stored inside a directory declared by php parameter <b>safe_mode_exec_dir</b>.

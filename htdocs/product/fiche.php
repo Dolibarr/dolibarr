@@ -1071,7 +1071,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
                 print $langs->trans("BarcodeType");
                 print '<td>';
-                if (($_GET['action'] != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBarcodeType'),1).'</a></td>';
+                if (($_GET['action'] != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($_GET['action'] == 'editbarcodetype')
@@ -1092,7 +1092,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
                 print $langs->trans("BarcodeValue");
                 print '<td>';
-                if (($_GET['action'] != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBarcode'),1).'</a></td>';
+                if (($_GET['action'] != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($_GET['action'] == 'editbarcode')

@@ -1275,7 +1275,6 @@ ExtraFields=Tamamlayıcı öznitelikleri
 SendingMailSetup=E-posta ile gönderilenlerin Kurulumu
 SendmailOptionNotComplete=Uyarı, bazı Linux sistemleri, e-posta, e-posta göndermek için, sendmail yürütme kurulum conatins-ba seçeneği (parametre mail.force_extra_parameters php.ini dosyasının içine). Bazı alıcılar e-postalar almak hiç mail.force_extra_parameters =-BA) ile PHP parametre düzenlemek için deneyin.
 UsersSetup=Modülü kurulum Kullanıcılar
-NoActivatedBarcode=Aktive yok barkod tipi
 MailingEMailError=Hataları ile e-postalar için e-posta (Hatalar-)
 ListOfAvailableNotifications=Mevcut bildirimlerin Listesi (Bu liste aktive modülleri bağlıdır)
 SendingsNumberingModules=Modülleri numaralandırma gönderilenlerin

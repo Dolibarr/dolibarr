@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,8 +40,6 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
-$userAccess=0;
-
 $langs->load("users");
 $langs->load("projects");
 
@@ -50,10 +48,19 @@ $langs->load("projects");
  * Actions
  */
 
+// None
+
 
 /*
  * View
  */
+
+$form=new Form($db);
+$formother=new FormOther($db);
+$userstatic=new User($db);
+$companystatic=new Societe($db);
+$task = new Task($db);
+$object = new Project($db);
 
 $arrayofcss=array('/includes/jsgantt/jsgantt.css');
 
@@ -65,104 +72,95 @@ if (! empty($conf->use_javascript_ajax))
 	);
 }
 
-$form=new Form($db);
-$formother=new FormOther($db);
-
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Tasks"),$help_url,'',0,0,$arrayofjs,$arrayofcss);
 
-$task = new Task($db);
-
 if ($id > 0 || ! empty($ref))
 {
-	$project = new Project($db);
-	$project->fetch($id,$ref);
-	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+	$object->fetch($id,$ref);
+	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 
 	// To verify role of users
-	$userAccess = $project->restrictedProjectArea($user,'read');
+	//$userAccess = $object->restrictedProjectArea($user,'read');
+	$userWrite  = $object->restrictedProjectArea($user,'write');
+	//$userDelete = $object->restrictedProjectArea($user,'delete');
+	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+
+
+    $tab='gantt';
+
+    $head=project_prepare_head($object);
+    dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+
+    $param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
+
+    print '<table class="border" width="100%">';
+
+    // Ref
+    print '<tr><td width="30%">';
+    print $langs->trans("Ref");
+    print '</td><td>';
+    // Define a complementary filter for search of next/prev ref.
+    $objectsListId = $object->getProjectsAuthorizedForUser($user,$mine,1);
+    $object->next_prev_filter=" rowid in (".$objectsListId.")";
+    print $form->showrefnav($object,'ref','',1,'ref','ref','',$param);
+    print '</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+    else print '&nbsp;';
+    print '</td>';
+    print '</tr>';
+
+    // Visibility
+    print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+    if ($object->public) print $langs->trans('SharedProject');
+    else print $langs->trans('PrivateProject');
+    print '</td></tr>';
+
+    // Statut
+    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+
+    print '</table>';
+
+    print '</div>';
 }
-
-
-
-$userstatic=new User($db);
-$companystatic=new Societe($db);
-
-$tab='gantt';
-
-$head=project_prepare_head($project);
-dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
-
-$param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
-
-print '<table class="border" width="100%">';
-
-// Ref
-print '<tr><td width="30%">';
-print $langs->trans("Ref");
-print '</td><td>';
-// Define a complementary filter for search of next/prev ref.
-$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-$project->next_prev_filter=" rowid in (".$projectsListId.")";
-print $form->showrefnav($project,'ref','',1,'ref','ref','',$param);
-print '</td></tr>';
-
-print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
-
-print '<tr><td>'.$langs->trans("Company").'</td><td>';
-if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
-else print '&nbsp;';
-print '</td>';
-print '</tr>';
-
-// Visibility
-print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-if ($project->public) print $langs->trans('SharedProject');
-else print $langs->trans('PrivateProject');
-print '</td></tr>';
-
-// Statut
-print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
-
-print '</table>';
-
-print '</div>';
 
 
 /*
  * Actions
  */
-/*
 print '<div class="tabsAction">';
 
 if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 {
-	if ($project->public || $userAccess)
-	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$project->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
-	}
-	else
-	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
-	}
+    if ($object->public || $userWrite > 0)
+    {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&tab=gantt&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
+    }
+    else
+    {
+        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
+    }
 }
 else
 {
-	print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
 }
 
 print '</div>';
 
 print '<br>';
-*/
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray=$task->getTasksArray(0, 0, $project->id, $socid, 0);
+$tasksarray=$task->getTasksArray(0, 0, $object->id, $socid, 0);
 // We load also tasks limited to a particular user
-//$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$project->id,0) : '');
+//$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$object->id,0) : '');
 //var_dump($tasksarray);
 //var_dump($tasksrole);
 
@@ -177,7 +175,6 @@ if (count($tasksarray)>0)
 	$array_contacts=array();
 	$tasks=array();
 	$project_dependencies=array();
-	$project_id=$project->id;
 	$taskcursor=0;
 	foreach($tasksarray as $key => $val)
 	{
@@ -221,7 +218,7 @@ if (count($tasksarray)>0)
 				$i++;
 			}
 		}
-		if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
+		if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
 		$taskcursor++;
 	}
@@ -246,7 +243,8 @@ else
 	print $langs->trans("NoTasks");
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

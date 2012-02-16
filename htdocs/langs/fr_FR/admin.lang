@@ -1157,7 +1157,6 @@ BarcodeDescUPC= code-barres de type UPC
 BarcodeDescISBN= code-barres de type ISBN
 BarcodeDescC39= code-barres de type C39
 BarcodeDescC128= code-barres de type C128
-NoActivatedBarcode=Aucun type de code bar activé
 ##### Prelevements #####
 WithdrawalsSetup= Configuration du module prélèvement
 ##### ExternalRSS #####

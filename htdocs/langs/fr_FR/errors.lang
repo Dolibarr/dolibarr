@@ -104,6 +104,7 @@ ErrorLoginHasNoEmail=Cet utilisateur n'a pas d'email. Impossible de continuer.
 ErrorBadValueForCode=Mauvaise valeur saisie pour le code. Réessayez avec une nouvelle valeur...
 ErrorBothFieldCantBeNegative=Les champs %s et %s ne peuvent être tous deux négatifs
 ErrorWebServerUserHasNotPermission=Le compte d'execution du serveur web <b>%s</b> n'a pas les permissions pour cela
+ErrorNoActivatedBarcode=Aucun type de code bar activé
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Attention, l'option PHP <b>safe_mode</b> est active, la commande doit dont être dans un répertoire déclaré dans le paramètre php <b>safe_mode_exec_dir</b>.

@@ -65,12 +65,6 @@ ErrorContactEMail=Teknik bir hata oluştu. Lütfen, en hata <b>kodu% email%</b> 
 ErrorWrongValueForField=Alan <b>numarası%</b> için yanlış değer <b>ler)</b> regex <b>kural %s</b> uymuyor <b>s (değeri&#39;% s</b>
 ErrorsOnXLines=<b>%</b> Doğum Hatalar kaynak hatları <b>var</b>
 WarningsOnXLines=<b>%</b> Uyarıları kaynak hatları <b>var</b>
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 15:02:39).
-// Reference language: en_US -> tr_TR
 ErrorBadEMail=EMail %s yanlış.
 ErrorBadUrl=URL %s yanlış.
 ErrorFailToRenameFile=<b>'%s'</b> dosya <b>'%s'</b> yeniden adlandırmak için başarısız oldu.
@@ -102,4 +96,5 @@ ErrorDeleteNotPossibleLineIsConsolidated=Kayıt conciliated bir banka transation
 ErrorProdIdAlreadyExist=%s başka bir üçüncü atanır
 ErrorFailedToSendPassword=Şifre göndereceğiz başarısız
 ErrorFailedToLoadRSSFile=RSS beslemesi almak için başarısız olur. Hata mesajları yeterli bilgi sağlamaz eğer sabit MAIN_SIMPLEXMLLOAD_DEBUG eklemeyi deneyin.
+ErrorNoActivatedBarcode=Aktive yok barkod tipi
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 15:05:52).
