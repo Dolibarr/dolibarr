@@ -1559,9 +1559,9 @@ class ContratLigne
 
 
 	/**
-	 * Constructeur d'objets ligne de contrat
-	 *
-	 * @param	DoliDB		$db      Database access handler
+     *  Constructor
+     *
+     *  @param      DoliDb		$db      Database handler
 	 */
 	function ContratLigne($db)
 	{

@@ -25,8 +25,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/modules_fichinter.php");
 
 /**
- *  \class      mod_pacific
- *	\brief      Class to manage numbering of intervention cards with rule Pacific.
+ *	Class to manage numbering of intervention cards with rule Pacific.
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
@@ -36,8 +35,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 	var $nom = 'pacific';
 
 
-	/**     \brief      Return description of numbering module
-     *      \return     string      Text with description
+	/**
+	 *  Return description of numbering module
+	 * 
+     *  @return     string      Text with description
      */
     function info()
     {
@@ -45,17 +46,21 @@ class mod_pacific extends ModeleNumRefFicheinter
       	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
     }
 
-	/**     \brief      Renvoi un exemple de numerotation
-	 *      \return     string      Example
+	/**
+	 *  Renvoi un exemple de numerotation
+	 * 
+	 *  @return     string      Example
 	 */
 	function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/** 
+	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 * 
+	 *  @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -89,10 +94,12 @@ class mod_pacific extends ModeleNumRefFicheinter
 		}
 	}
 
-	/**		\brief      Renvoi prochaine valeur attribuee
-	 *      	\param      objsoc      Objet societe
-	 *      	\param      ficheinter	Object ficheinter
-	 *      	\return     string      Valeur
+	/**	
+	 * 	Renvoi prochaine valeur attribuee
+	 * 
+	 *  @param      objsoc      Objet societe
+	 *  @param      ficheinter	Object ficheinter
+	 *  @return     string      Valeur
 	 */
 	function getNextValue($objsoc=0,$object='')
 	{
@@ -121,10 +128,12 @@ class mod_pacific extends ModeleNumRefFicheinter
 		return $this->prefix.$yymm."-".$num;
 	}
 
-	/**		\brief      Return next free value
-	 *      \param      objsoc      Object third party
-	 * 		\param		objforref	Object for number to search
-	 *   	\return     string      Next free value
+	/**		
+	 * 	Return next free value
+	 * 
+	 *  @param	Societe	$objsoc     Object third party
+	 * 	@param	Object	$objforref	Object for number to search
+	 *  @return string      		Next free value
 	 */
 	function getNumRef($objsoc,$objforref)
 	{

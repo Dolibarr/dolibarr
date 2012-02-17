@@ -40,8 +40,9 @@ class MenuTop {
 
 
 	/**
-	 *    Constructeur
-	 *    @param      db      Handler d'acces base de donnee
+     *  Constructor
+     *
+     *  @param      DoliDb		$db      Database handler
 	 */
 	function MenuTop($db)
 	{
@@ -50,7 +51,9 @@ class MenuTop {
 
 
 	/**
-	 *    Show menu
+	 *  Show menu
+	 * 
+	 * 	@return		void
 	 */
 	function showmenu()
 	{
