@@ -621,7 +621,7 @@ function dol_syslog($message, $level=LOG_INFO)
                 // database or config file because we must be able to log data before database or config file read.
 			    $oldinclude=get_include_path();
                 set_include_path('/usr/share/php/');
-                require_once('FirePHPCore/FirePHP.class.php');
+                include_once('FirePHPCore/FirePHP.class.php');
                 set_include_path($oldinclude);
                 ob_start();
                 $firephp = FirePHP::getInstance(true);

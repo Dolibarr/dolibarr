@@ -141,6 +141,10 @@ class ProductTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testProductFetch
+     * 
+     * @param	int		$id		Id product		
+     * 
      * @depends	testProductCreate
      * The depends says test is run only if previous is ok
      */
@@ -161,6 +165,11 @@ class ProductTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testProductUpdate
+     * 
+     * @param	Product	$localobject	Product
+     * @return	void
+     * 
      * @depends	testProductFetch
      * The depends says test is run only if previous is ok
      */
@@ -181,6 +190,11 @@ class ProductTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testProductOther
+     * 
+     * @param	Product	$localobject	Product
+     * @return	void
+     * 
      * @depends	testProductUpdate
      * The depends says test is run only if previous is ok
      */
@@ -197,6 +211,11 @@ class ProductTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testProductDelete
+     * 
+     * @param		int		$id		Id of product
+     * @return		void
+     * 
      * @depends	testProductOther
      * The depends says test is run only if previous is ok
      */
@@ -219,27 +238,9 @@ class ProductTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     *
-     */
-    /*public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Adherent($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }*/
-
-
-    /**
+     * testProductStatic
+     * 
+     * @return	void
      */
     public function testProductStatic()
     {

@@ -119,7 +119,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
     /**
      * Test function calcul_price_total
      *
-     * @return boolean
+     * @return 	boolean
      * @see		http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
      */
     public function testCalculPriceTotal()
@@ -157,7 +157,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
     /**
     * Test function addline and update_price
     *
-    * @return boolean
+    * @return 	boolean
     * @see		http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
     */
     public function testUpdatePrice()
@@ -199,7 +199,6 @@ class PricesTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(2.48,$newlocalobject->total_ht);
         //$this->assertEquals(0.25,$newlocalobject->total_tva);
         //$this->assertEquals(2.73,$newlocalobject->total_ttc);
-
     }
 
 }

@@ -115,6 +115,9 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserCreate
+     * 
+     * @return	void
      */
     public function testUserCreate()
     {
@@ -134,6 +137,10 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserFetch
+     * 
+     * @param	int		$id				Id of user
+     * @return 	void
      * @depends	testUserCreate
      * The depends says test is run only if previous is ok
      */
@@ -154,6 +161,10 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserUpdate
+     * 
+     * @param	Object	$localobject	 User
+     * @return	void
      * @depends	testUserFetch
      * The depends says test is run only if previous is ok
      */
@@ -174,6 +185,10 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserDisable
+     * 
+     * @param	Object	$localobject	 User
+     * @return	void
      * @depends	testUserUpdate
      * The depends says test is run only if previous is ok
      */
@@ -193,6 +208,10 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserOther
+     * 
+     * @param	Object	$localobject	 User
+     * @return	void
      * @depends testUserDisable
      * The depends says test is run only if previous is ok
      */
@@ -217,6 +236,10 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserDelete
+     * 
+     * @param	Object	$localobject	 User
+     * @return	void
      * @depends	testUserOther
      * The depends says test is run only if previous is ok
      */
@@ -236,26 +259,6 @@ class UserTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	return $result;
     }
-
-    /**
-     *
-     */
-    /*public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new User($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }*/
 
 }
 ?>

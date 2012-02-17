@@ -115,6 +115,9 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCompanyBankAccountCreate
+     * 
+     * @return	int
      */
     public function testCompanyBankAccountCreate()
     {
@@ -134,6 +137,11 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCompanyBankAccountFetch
+     * 
+     * @param	int		$id		Id of bank account
+     * @return	void
+     * 
      * @depends	testCompanyBankAccountCreate
      * The depends says test is run only if previous is ok
      */
@@ -154,6 +162,10 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCompanyBankAccountUpdate
+     * 
+     * @param	Object	$localobject	Bank account object
+     * 
      * @depends	testCompanyBankAccountFetch
      * The depends says test is run only if previous is ok
      */
@@ -174,6 +186,11 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCompanyBankAccountOther
+     * 
+     * @param	Object	$localobject	Bank account
+     * @return	int		
+     * 
      * @depends testCompanyBankAccountFetch
      * The depends says test is run only if previous is ok
      */
@@ -193,26 +210,5 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
         return $localobject->id;
     }
 
-    /**
-     * @depends	testCompanyBankAccountOther
-     * The depends says test is run only if previous is ok
-     */
-/*    public function testCompanyBankAccountDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new CompanyBankAccount($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
-
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
-    }
-*/
 }
 ?>

@@ -116,6 +116,9 @@ class ContactTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testContactCreate
+     * 
+     * @return	int
      */
     public function testContactCreate()
     {
@@ -136,6 +139,9 @@ class ContactTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testContactFetch
+     * 
+     * @param	int		Id of contact
      * @depends	testContactCreate
      * The depends says test is run only if previous is ok
      */
