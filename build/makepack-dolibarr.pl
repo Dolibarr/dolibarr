@@ -259,6 +259,7 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
+	    $ret=`rm -f  $BUILDROOT/$PROJECT/quickbuild.xml`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/README.md`;
         
