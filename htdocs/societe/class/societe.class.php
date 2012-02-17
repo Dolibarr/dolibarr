@@ -2019,7 +2019,7 @@ class Societe extends CommonObject
         // Verifie SIRET si pays FR
         if ($idprof == 2 && $soc->country_code == 'FR')
         {
-            $chaine=trim($this->idprof1);
+            $chaine=trim($this->idprof2);
             $chaine=preg_replace('/(\s)/','',$chaine);
 
             if (dol_strlen($chaine) != 14) return -1;
