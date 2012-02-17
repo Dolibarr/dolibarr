@@ -502,10 +502,10 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *	Write log message into outputs. Possible outputs can be:
  *	A file if SYSLOG_FILE_ON defined:   	file name is then defined by SYSLOG_FILE
  *	Syslog if SYSLOG_SYSLOG_ON defined:    	facility is then defined by SYSLOG_FACILITY
- * 	Warning, les fonctions syslog sont buggues sous Windows et generent des
- *	fautes de protection memoire. Pour resoudre, utiliser le loggage fichier,
- *	au lieu du loggage syslog (configuration du module).
- *	Note: If SYSLOG_FILE_NO_ERROR defined, we never output error message when writing to log fails.
+ * 	Warning, syslog functions are bugged on Windows, generating memory protection faults. To solve
+ *	this, use logging to files instead of syslog (see setup of module).
+ *	Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
+ *  Note: You can get log message into html sources by adding parameter &logtohtml=1 (constant MAIN_LOGTOHTML must be set)
  *
  *	This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
