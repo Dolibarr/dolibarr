@@ -266,6 +266,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
         $this->assertNotEquals($localobject->date_creation, '');
 
+        $localobject->country_code='FR';
         $localobject->idprof1=493861496;
         $localobject->idprof2=49386149600021;
         $result=$localobject->id_prof_check(1,$localobject);
@@ -275,6 +276,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." true idprof2 result=".$result."\n";
         $this->assertLessThan($result, 0);
         
+        $localobject->country_code='FR';
         $localobject->idprof1='id1ko';
         $localobject->idprof2='id2ko';
         $result=$localobject->id_prof_check(1,$localobject);
