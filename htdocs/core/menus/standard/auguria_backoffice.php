@@ -42,8 +42,9 @@ class MenuTop {
 
 
 	/**
-	 *    Constructeur
-	 *    @param      db      Database access handler
+     *  Constructor
+     *
+     *  @param      DoliDb		$db      Database handler
 	 */
 	function MenuTop($db)
 	{
@@ -52,7 +53,9 @@ class MenuTop {
 
 
 	/**
-	 *    Show menu
+	 *  Show menu
+	 * 
+	 * 	@return	void
 	 */
 	function showmenu()
 	{
@@ -65,8 +68,7 @@ class MenuTop {
 
 
 /**
- *      \class      MenuLeft
- *      \brief      Classe permettant la gestion du menu du gauche Auguria
+ *  Classe permettant la gestion du menu du gauche Auguria
  */
 class MenuLeft {
 

@@ -3285,6 +3285,7 @@ function migrate_mode_reglement($db,$langs,$conf)
 		'code' => array('VAD','TRA','LCR','FAC','PRO'),
 		'tables' => array('commande_fournisseur','commande','facture_rec','facture','propal')
 	);
+	$count=0;
 	
 	foreach($elements['old_id'] as $key => $old_id)
 	{
@@ -3303,6 +3304,8 @@ function migrate_mode_reglement($db,$langs,$conf)
 			$num = $db->num_rows($resql);
 			if ($num)
 			{
+				$count++;
+				
 				$db->begin();
 				
 				$sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET ";
@@ -3344,12 +3347,11 @@ function migrate_mode_reglement($db,$langs,$conf)
 					$db->rollback();
 				}
 			}
-			else
-			{
-				print $langs->trans('AlreadyDone')."<br>\n";
-			}
 		}
 	}
+	
+	if ($count == 0) print $langs->trans('AlreadyDone')."<br>\n";
+	
 	
 	print '</td></tr>';
 }

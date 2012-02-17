@@ -26,8 +26,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
- *	\class      ModelePDFProjects
- *	\brief      Parent class for projects models
+ *	Parent class for projects models
  */
 abstract class ModelePDFProjects extends CommonDocGenerator
 {
@@ -35,8 +34,9 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *  Return list of active generation modules
+	 * 
+	 * 	@param	DoliDB		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -55,16 +55,16 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 
 
 /**
- *  \class      ModeleNumRefProjects
- *  \brief      Classe mere des modeles de numerotation des references de projets
+ *  Classe mere des modeles de numerotation des references de projets
  */
 abstract class ModeleNumRefProjects
 {
 	var $error='';
 
 	/**
-	 *  \brief     	Return if a module can be used or not
-	 *  \return		boolean     true if module can be used
+	 *  Return if a module can be used or not
+	 * 
+	 *  @return		boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
@@ -72,8 +72,9 @@ abstract class ModeleNumRefProjects
 	}
 
 	/**
-	 *  \brief      Renvoi la description par defaut du modele de numerotation
-	 *  \return     string      Texte descripif
+	 *  Renvoi la description par defaut du modele de numerotation
+	 * 
+	 *  @return     string      Texte descripif
 	 */
 	function info()
 	{
@@ -83,8 +84,9 @@ abstract class ModeleNumRefProjects
 	}
 
 	/**
-	 *  \brief      Renvoi un exemple de numerotation
-	 *  \return     string      Example
+	 *  Renvoi un exemple de numerotation
+	 * 
+	 *  @return     string      Example
 	 */
 	function getExample()
 	{
@@ -94,9 +96,10 @@ abstract class ModeleNumRefProjects
 	}
 
 	/**
-	 *  \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *  \return     boolean     false si conflit, true si ok
+	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 * 
+	 *  @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -104,8 +107,9 @@ abstract class ModeleNumRefProjects
 	}
 
 	/**
-	 *  \brief      Renvoi prochaine valeur attribuee
-	 *  \return     string      Valeur
+	 *  Renvoi prochaine valeur attribuee
+	 * 
+	 *  @return     string      Valeur
 	 */
 	function getNextValue()
 	{
@@ -114,8 +118,9 @@ abstract class ModeleNumRefProjects
 	}
 
 	/**
-	 *  \brief      Renvoi version du module numerotation
-	 *  \return     string      Valeur
+	 *  Renvoi version du module numerotation
+	 * 
+	 *  @return     string      Valeur
 	 */
 	function getVersion()
 	{
@@ -131,12 +136,13 @@ abstract class ModeleNumRefProjects
 
 
 /**
- *		Create object on disk
- *		@param	    db  			objet base de donnee
- *		@param	    object			object project
- *		@param	    model			force le modele a utiliser ('' to not force)
- *		@param		outputlangs		objet lang a utiliser pour traduction
- *      @return     int         	0 si KO, 1 si OK
+ *	Create object on disk
+ *
+ *	@param	DoliDB		$db  			objet base de donnee
+ *	@param	Object		$object			object project
+ *	@param	string		$model			force le modele a utiliser ('' to not force)
+ *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @return int         				0 if KO, 1 if OK
  */
 function project_pdf_create($db, $object, $model,$outputlangs)
 {
