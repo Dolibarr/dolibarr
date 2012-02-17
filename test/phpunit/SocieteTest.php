@@ -269,19 +269,19 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         $localobject->idprof1=493861496;
         $localobject->idprof2=49386149600021;
         $result=$localobject->id_prof_check(1,$localobject);
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." true idprof1 result=".$result."\n";
         $this->assertLessThan($result, 0);
         $result=$localobject->id_prof_check(2,$localobject);
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." true idprof2 result=".$result."\n";
         $this->assertLessThan($result, 0);
         
         $localobject->idprof1='id1ko';
         $localobject->idprof2='id2ko';
         $result=$localobject->id_prof_check(1,$localobject);
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." wrong idprof1 result=".$result."\n";
         $this->assertGreaterThan($result, 0);
         $result=$localobject->id_prof_check(2,$localobject);
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." wrong idprof2 result=".$result."\n";
         $this->assertGreaterThan($result, 0);
         
         return $localobject->id;
