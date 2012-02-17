@@ -611,7 +611,7 @@ RECURSIVE = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE = ../../mssql ../../mysql ../../pgsql ../../CVS ../../build ../../dev ../../doc ../../documents ../../htdocs/conf/conf.php ../../htdocs/includes ../../htdocs/document ../../htdocs/documents
+EXCLUDE = ../../build ../../dev ../../doc ../../documents ../../htdocs/conf/conf.php ../../htdocs/includes ../../htdocs/document ../../htdocs/documents
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
