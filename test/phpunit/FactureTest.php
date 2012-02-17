@@ -89,6 +89,9 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
 	 */
     protected function setUp()
     {
@@ -100,14 +103,21 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__."\n";
     }
+
 	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
 	 */
-    protected function tearDown()
+	protected function tearDown()
     {
     	print __METHOD__."\n";
     }
 
     /**
+     * testFactureCreate
+     *
+     * @return int
      */
     public function testFactureCreate()
     {
@@ -127,6 +137,10 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testFactureFetch
+     *
+     * @param	int		$id		Id invoice
+     *
      * @depends	testFactureCreate
      * The depends says test is run only if previous is ok
      */
@@ -147,6 +161,10 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testFactureFetch
+     *
+     * @param	Object	$localobject	Invoice
+     *
      * @depends	testFactureFetch
      * The depends says test is run only if previous is ok
      */
@@ -252,11 +270,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     /**
      * Compare all public properties values of 2 objects
      *
-     * @param 	Object		$oA				Object operand 1
-     * @param 	Object		$oB				Object operand 2
-     * @param	boolean		$ignoretype		False will not report diff if type of value differs
-     * @param	array		$fieldstoignore	Array of fields to ignore in diff
-	 * @return	array						Array with differences
+     * @param 	Object		$oA						Object operand 1
+     * @param 	Object		$oB						Object operand 2
+     * @param	boolean		$ignoretype				False will not report diff if type of value differs
+     * @param	array		$fieldstoignorearray	Array of fields to ignore in diff
+	 * @return	array								Array with differences
      */
     public function objCompare($oA,$oB,$ignoretype=true,$fieldstoignorearray=array('id'))
     {
