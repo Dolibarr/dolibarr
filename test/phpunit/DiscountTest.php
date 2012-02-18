@@ -116,7 +116,7 @@ class DiscountTest extends PHPUnit_Framework_TestCase
 
     /**
      * testDiscountCreate
-     * 
+     *
      * @return	int
      */
     public function testDiscountCreate()
@@ -138,10 +138,10 @@ class DiscountTest extends PHPUnit_Framework_TestCase
 
     /**
      * testDiscountFetch
-     * 
+     *
      * @param	int	$id		Id of discount
      * @return	int
-     * 
+     *
      * @depends	testDiscountCreate
      * The depends says test is run only if previous is ok
      */
@@ -163,9 +163,10 @@ class DiscountTest extends PHPUnit_Framework_TestCase
 
     /**
      * testDiscountDelete
-     * 
+     *
      * @param	int		$id		Id of discount
-     * 
+     * @return	int
+     *
      * @depends	testDiscountFetch
      * The depends says test is run only if previous is ok
      */

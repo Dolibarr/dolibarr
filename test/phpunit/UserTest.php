@@ -116,7 +116,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserCreate
-     * 
+     *
      * @return	void
      */
     public function testUserCreate()
@@ -138,7 +138,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserFetch
-     * 
+     *
      * @param	int		$id				Id of user
      * @return 	void
      * @depends	testUserCreate
@@ -162,7 +162,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserUpdate
-     * 
+     *
      * @param	Object	$localobject	 User
      * @return	void
      * @depends	testUserFetch
@@ -186,7 +186,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserDisable
-     * 
+     *
      * @param	Object	$localobject	 User
      * @return	void
      * @depends	testUserUpdate
@@ -209,7 +209,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserOther
-     * 
+     *
      * @param	Object	$localobject	 User
      * @return	void
      * @depends testUserDisable
@@ -237,8 +237,8 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserDelete
-     * 
-     * @param	Object	$localobject	 User
+     *
+     * @param	Object	$id		 User
      * @return	void
      * @depends	testUserOther
      * The depends says test is run only if previous is ok

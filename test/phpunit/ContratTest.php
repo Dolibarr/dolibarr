@@ -115,7 +115,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
     /**
      * testContratCreate
-     * 
+     *
      * @return	int
      */
     public function testContratCreate()
@@ -138,10 +138,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
     /**
      * testContratFetch
-     * 
+     *
      * @param	int		$id		Id of contract
      * @return	int
-     * 
+     *
      * @depends	testContratCreate
      * The depends says test is run only if previous is ok
      */
@@ -164,10 +164,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
     /**
      * testContratValid
-     * 
-     * @param	int		$id		Id of contract
+     *
+     * @param	Contrat		$localobject		Contract
      * @return	int
-     * 
+     *
      * @depends	testContratFetch
      * The depends says test is run only if previous is ok
      */
@@ -188,10 +188,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
    /**
      * testContratValid
-     * 
+     *
      * @param	Object	$localobject	Object contract
      * @return	int
-     * 
+     *
      * @depends testContratValid
      * The depends says test is run only if previous is ok
      */
@@ -217,10 +217,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
     /**
      * testContratDelete
-     * 
+     *
      * @param	int		$id		Id of contract
      * @return	int
-     * 
+     *
      * @depends	testContratOther
      * The depends says test is run only if previous is ok
      */

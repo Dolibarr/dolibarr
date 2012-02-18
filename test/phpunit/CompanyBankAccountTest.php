@@ -116,7 +116,7 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 
     /**
      * testCompanyBankAccountCreate
-     * 
+     *
      * @return	int
      */
     public function testCompanyBankAccountCreate()
@@ -138,10 +138,10 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 
     /**
      * testCompanyBankAccountFetch
-     * 
+     *
      * @param	int		$id		Id of bank account
      * @return	void
-     * 
+     *
      * @depends	testCompanyBankAccountCreate
      * The depends says test is run only if previous is ok
      */
@@ -163,9 +163,10 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 
     /**
      * testCompanyBankAccountUpdate
-     * 
+     *
      * @param	Object	$localobject	Bank account object
-     * 
+     * @return	int
+     *
      * @depends	testCompanyBankAccountFetch
      * The depends says test is run only if previous is ok
      */
@@ -187,10 +188,10 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 
     /**
      * testCompanyBankAccountOther
-     * 
+     *
      * @param	Object	$localobject	Bank account
-     * @return	int		
-     * 
+     * @return	int
+     *
      * @depends testCompanyBankAccountFetch
      * The depends says test is run only if previous is ok
      */

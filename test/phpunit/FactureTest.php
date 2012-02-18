@@ -140,6 +140,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
      * testFactureFetch
      *
      * @param	int		$id		Id invoice
+     * @return	int
      *
      * @depends	testFactureCreate
      * The depends says test is run only if previous is ok
@@ -164,6 +165,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
      * testFactureFetch
      *
      * @param	Object	$localobject	Invoice
+     * @return	int
      *
      * @depends	testFactureFetch
      * The depends says test is run only if previous is ok
@@ -185,6 +187,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testFactureValid
+     *
+     * @param	Object	$localobject	Invoice
+     * @return	void
+     *
      * @depends	testFactureUpdate
      * The depends says test is run only if previous is ok
      */
@@ -211,6 +218,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
    /**
+     * testFactureOther
+     *
+     * @param	Object	$localobject	Invoice
+     * @return	int
+     *
      * @depends testFactureValid
      * The depends says test is run only if previous is ok
      */
@@ -235,6 +247,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testFactureDelete
+     *
+     * @param	int		$id		Id of invoice
+     * @return	int
+     *
      * @depends	testFactureOther
      * The depends says test is run only if previous is ok
      */
