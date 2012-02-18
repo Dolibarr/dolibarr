@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/report.lib.php");
 
 
-$year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
+$year_start=GETPOST('year_start');
 $year_current = strftime("%Y",time());
 $nbofyear=4;
 if (! $year_start) {
@@ -38,7 +38,7 @@ else {
 }
 
 // Security check
-$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+$socid = GETPOST('socid');
 if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
 accessforbidden();
@@ -93,7 +93,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.fk_statut in (1,2)";
+	$sql.= " AND f.fk_statut IN (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
 	else $sql.= " AND f.type IN (0,1,2,3)";
 }
@@ -393,10 +393,10 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$sql = "SELECT c.libelle as nom, date_format(s.date_ech,'%Y-%m') as dm, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc";
+	$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount_ht, sum(cs.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
-	$sql.= " WHERE s.fk_type = c.id";
+	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
+	$sql.= " WHERE cs.fk_type = c.id";
 	$sql.= " AND c.deductible = 1";
 }
 else
