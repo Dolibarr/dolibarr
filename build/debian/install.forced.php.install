@@ -25,6 +25,7 @@ $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
 
+$force_dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
 $force_dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
 $force_dolibarr_lib_GEOIP_PATH='';
 $force_dolibarr_lib_PHPEXCEL_PATH='';
