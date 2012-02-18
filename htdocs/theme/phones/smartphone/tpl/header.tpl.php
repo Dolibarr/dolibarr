@@ -21,8 +21,8 @@
 <meta name="robots" content="noindex,nofollow" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <link rel="apple-touch-icon" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$conf->theme.'/img/homescreen.png'; ?>" />
-<link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-latest.min.css'; ?>" />
+<link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css'; ?>" />
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/default.css.php'; ?>" />
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min.js'; ?>"></script>
-<script type="text/javascript" src="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-latest.min.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js'; ?>"></script>
 </head>

@@ -81,7 +81,10 @@ $configfileparameters=array(
 							'?dolibarr_lib_ODTPHP_PATH',
                             '?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
 						    '?dolibarr_js_CKEDITOR',
-                            '?dolibarr_font_DOL_DEFAULT_TTF',
+						    '?dolibarr_js_JQUERY',
+						    '?dolibarr_js_JQUERY_UI',
+						    '?dolibarr_js_JQUERY_FLOT',
+							'?dolibarr_font_DOL_DEFAULT_TTF',
                             '?dolibarr_font_DOL_DEFAULT_TTF_BOLD'
 						);
 $configfilelib=array(
@@ -121,7 +124,10 @@ $configfilelib=array(
 					'dolibarr_lib_ODTPHP_PATH',
                     'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
                     'dolibarr_js_CKEDITOR',
-                    'dolibarr_font_DOL_DEFAULT_TTF',
+                    'dolibarr_js_JQUERY',
+                    'dolibarr_js_JQUERY_UI',
+                    'dolibarr_js_JQUERY_FLOT',
+					'dolibarr_font_DOL_DEFAULT_TTF',
                     'dolibarr_font_DOL_DEFAULT_TTF_BOLD'
 					);
 $var=true;

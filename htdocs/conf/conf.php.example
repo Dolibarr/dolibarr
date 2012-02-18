@@ -263,22 +263,18 @@ $dolibarr_main_prod='0';
 
 // Value to overwrite path to use shared libraries instead of embedded one
 //$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
-// Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_TCPDF_PATH='';
-// Value to overwrite path to use shared libraries instead of embedded one
 //$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
-// Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
-// Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_PHPEXCEL_PATH='';
-// Value to overwrite path to use shared libraries instead of embedded one
 //$dolibarr_lib_GEOIP_PATH='';
-// Value to overwrite path to use shared libraries instead of embedded one
+//$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
+//$dolibarr_lib_PHPEXCEL_PATH='';
 //$dolibarr_lib_ODTPHP_PATH='';
-// Value to overwrite some path to use shared libraries instead of embedded one
 //$dolibarr_lib_ODTPHP_PATHTOPCLZIP="/usr/share/php/libphp-pclzip";
+//$dolibarr_lib_TCPDF_PATH='';
 // Value to overwrite path to use shared javascript instead of embedded one
 //$dolibarr_js_CKEDITOR='/javascript/ckeditor';
+//$dolibarr_js_JQUERY='/javascript/jquery';
+//$dolibarr_js_JQUERY_UI='/javascript/jquery-ui';
+//$dolibarr_js_JQUERY_FLOT='/javascript/flot';
 
 
 //##############################
