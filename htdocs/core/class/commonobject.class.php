@@ -1278,7 +1278,7 @@ class CommonObject
 				{
 					// Parse element/subelement (ex: project_task)
 					$module = $element = $subelement = $objecttype;
-					if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+					if ($objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
 					{
 						$module = $element = $regs[1];
 						$subelement = $regs[2];
@@ -1291,8 +1291,8 @@ class CommonObject
 		            if ($objecttype == 'propal')			{ $classpath = 'comm/propal/class'; }
 		            if ($objecttype == 'shipping')			{ $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
 		            if ($objecttype == 'delivery')			{ $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
-		            if ($objecttype == 'invoice_supplier')	{ $classpath = 'fourn/class'; }
-		            if ($objecttype == 'order_supplier')	{ $classpath = 'fourn/class'; }
+		            if ($objecttype == 'invoice_supplier')	{ $classpath = 'fourn/class'; $module = 'fournisseur'; }
+		            if ($objecttype == 'order_supplier')	{ $classpath = 'fourn/class'; $module = 'fournisseur'; }
 		            if ($objecttype == 'fichinter')			{ $classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter'; }
 		            
 		            // TODO ajout temporaire - MAXIME MANGIN
@@ -1641,7 +1641,7 @@ class CommonObject
         {
         	$tplpath = $element = $subelement = $objecttype;
 
-        	if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+        	if ($objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
             {
                 $element = $regs[1];
                 $subelement = $regs[2];
