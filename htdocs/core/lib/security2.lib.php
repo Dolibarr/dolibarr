@@ -149,12 +149,13 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 
 
 /**
- *	Show Dolibarr default login page
+ * Show Dolibarr default login page.
+ * Part of this code is also duplicated into main.inc.php::top_htmlhead
  *
- *	@param		Translate	$langs		Lang object (must be initialized by a new).
- *	@param		Conf		$conf		Conf object
- *	@param		Societe		$mysoc		Company object
- *	@return		void
+ * @param		Translate	$langs		Lang object (must be initialized by a new).
+ * @param		Conf		$conf		Conf object
+ * @param		Societe		$mysoc		Company object
+ * @return		void
  */
 function dol_loginfunction($langs,$conf,$mysoc)
 {
@@ -327,8 +328,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$main_google_ad_client = ((! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))?1:0);
 
 	$dol_loginmesg = $_SESSION["dol_loginmesg"];
+	$favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
+	$jquerytheme = 'smoothness';
+	if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+
 
 	include($template_dir.'login.tpl.php');	// To use native PHP
+
 
 	$_SESSION["dol_loginmesg"] = '';
 }
