@@ -101,6 +101,7 @@ clean:
 	rm -fr build/rpm
 	rm -fr build/zip
 	rm -fr htdocs/includes/ckeditor
+	rm -fr htdocs/includes/fpdfi
 	rm -fr htdocs/includes/fonts
 	rm -fr htdocs/includes/geoip
 	rm -fr htdocs/includes/nusoap

@@ -183,7 +183,7 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Path to root libraries
 if (! defined('ADODB_PATH'))           { define('ADODB_PATH',           (!isset($dolibarr_lib_ADODB_PATH))?DOL_DOCUMENT_ROOT.'/includes/adodbtime/':(empty($dolibarr_lib_ADODB_PATH)?'':$dolibarr_lib_ADODB_PATH.'/')); }
 if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           (!isset($dolibarr_lib_TCPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdf/':(empty($dolibarr_lib_TCPDF_PATH)?'':$dolibarr_lib_TCPDF_PATH.'/')); }
-if (! defined('FPDFI_PATH'))           { define('FPDFI_PATH',           (!isset($dolibarr_lib_FPDFI_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdfi/':(empty($dolibarr_lib_FPDFI_PATH)?'':$dolibarr_lib_FPDFI_PATH.'/')); }
+if (! defined('FPDI_PATH'))            { define('FPDI_PATH',            (!isset($dolibarr_lib_FPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdfi/':(empty($dolibarr_lib_FPDI_PATH)?'':$dolibarr_lib_FPDI_PATH.'/')); }
 if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',          (!isset($dolibarr_lib_NUSOAP_PATH))?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/':(empty($dolibarr_lib_NUSOAP_PATH)?'':$dolibarr_lib_NUSOAP_PATH.'/')); }
 if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        (!isset($dolibarr_lib_PHPEXCEL_PATH))?DOL_DOCUMENT_ROOT.'/includes/phpexcel/':(empty($dolibarr_lib_PHPEXCEL_PATH)?'':$dolibarr_lib_PHPEXCEL_PATH.'/')); }
 if (! defined('GEOIP_PATH'))           { define('GEOIP_PATH',           (!isset($dolibarr_lib_GEOIP_PATH))?DOL_DOCUMENT_ROOT.'/includes/geoip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_GEOIP_PATH.'/')); }

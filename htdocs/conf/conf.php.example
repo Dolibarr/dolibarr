@@ -266,7 +266,7 @@ $dolibarr_main_prod='0';
 // Value to overwrite path to use shared libraries instead of embedded one
 //$dolibarr_lib_TCPDF_PATH='';
 // Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_FPDFI_PATH='';
+//$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
 // Value to overwrite path to use shared libraries instead of embedded one
 //$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
 // Value to overwrite path to use shared libraries instead of embedded one
