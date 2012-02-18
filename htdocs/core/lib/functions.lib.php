@@ -745,14 +745,6 @@ function dol_get_fiche_end($notab=0)
     else return '';
 }
 
-
-/* For backward compatibility */
-function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodetooutput=false)
-{
-    return dol_print_date($time,$format,$to_gmt,$outputlangs,$encodetooutput);
-}
-
-
 /**
  *      Return a formated address (part address/zip/town/state) according to country rules
  *
@@ -990,12 +982,6 @@ function dol_getdate($timestamp,$fast=false)
     return $arrayinfo;
 }
 
-/* For backward compatibility */
-function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
-{
-    return dol_mktime($hour,$minute,$second,$month,$day,$year,$gm,$check);
-}
-
 /**
  *	Return a timestamp date built from detailed informations (by default a local PHP server timestamp)
  * 	Replace function mktime not available under Windows if year < 1970
@@ -1201,12 +1187,6 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
         }
     }
     return $newemail;
-}
-
-/* For backward compatibility */
-function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
-{
-    return dol_print_phone($phone,$country,$cid,$socid,$addlink,$separ);
 }
 
 /**
@@ -1476,15 +1456,9 @@ function dol_substr($string,$start,$length,$stringencoding='')
 }
 
 
-/* For backward compatibility */
-function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
-{
-    return dol_trunc($string,$size,$trunc,$stringencoding);
-}
-
-
 /**
- *  Show a javascript graph
+ *  Show a javascript graph.
+ *  Do not use this function anymore. Use DolGraph class instead.
  *
  *  @param		string	$htmlid			Html id name
  *  @param		int		$width			Width in pixel
@@ -1495,6 +1469,7 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *  @param		int		$showpercent	Show percent (with type='pie' only)
  *  @param		string	$url			Param to add an url to click values
  *  @return		void
+ *  @deprecated
  */
 function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='')
 {
@@ -2150,12 +2125,6 @@ function info_admin($text,$infoonimgalt=0)
     return $s;
 }
 
-
-/* For backward compatibility */
-function dolibarr_print_error($db='',$error='')
-{
-    return dol_print_error($db, $error);
-}
 
 /**
  *	Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontee des bugs.

@@ -1,8 +1,12 @@
 <?php
 /**
-ADOdb Date Library, part of the ADOdb abstraction library
-Download: http://php.weblogs.com/adodb_date_time_library
+ * Copyright (C) 2003-2005 	John Lim
+ * Copyright (C)            Jackbbs
+ *
+ * This file is released under BSD-style license
+ */
 
+/* =============================================================================
 PHP native date functions use integer timestamps for computations.
 Because of this, dates are restricted to the years 1901-2038 on Unix
 and 1970-2038 on Windows due to integer overflow for dates beyond
@@ -52,14 +56,6 @@ Since 0.06, we handle this correctly, so:
 
 adodb_mktime(0,0,0,10,15,1582) - adodb_mktime(0,0,0,10,4,1582)
 	== 24 * 3600 (1 day)
-
-=============================================================================
-
-COPYRIGHT
-
-(c) 2003-2005 John Lim and released under BSD-style license except for code by
-jackbbs, which includes adodb_mktime, adodb_get_gmt_diff, adodb_is_leap_year
-and originally found at http://www.php.net/manual/en/function.mktime.php
 
 =============================================================================
 
@@ -133,33 +129,11 @@ Unsupported:
 </pre>
 
 
-** FUNCTION adodb_date2($fmt, $isoDateString = false)
-Same as adodb_date, but 2nd parameter accepts iso date, eg.
-
-  adodb_date2('d-M-Y H:i','2003-12-25 13:01:34');
-
-
-** FUNCTION adodb_gmdate($fmt, $timestamp = false)
-
-Convert a timestamp to a formatted GMT date. If $timestamp is not defined, the
-current timestamp is used. Unlike the function date(), it supports dates
-outside the 1901 to 2038 range.
-
-
 ** FUNCTION adodb_mktime($hr, $min, $sec[, $month, $day, $year])
 
 Converts a local date to a unix timestamp.  Unlike the function mktime(), it supports
 dates outside the 1901 to 2038 range. All parameters are optional.
 
-
-** FUNCTION adodb_gmmktime($hr, $min, $sec [, $month, $day, $year])
-
-Converts a gmt date to a unix timestamp.  Unlike the function gmmktime(), it supports
-dates outside the 1901 to 2038 range. Differs from gmmktime() in that all parameters
-are currently compulsory.
-
-** FUNCTION adodb_gmstrftime($fmt, $timestamp = false)
-Convert a timestamp to a formatted GMT date.
 
 ** FUNCTION adodb_strftime($fmt, $timestamp = false)
 
@@ -381,7 +355,7 @@ if (!defined('ADODB_ALLOW_NEGATIVE_TS')) define('ADODB_NO_NEGATIVE_TS',1);
 	Returns day of week, 0 = Sunday,... 6=Saturday.
 	Algorithm from PEAR::Date_Calc
 */
-function adodb_dow($year, $month, $day)
+function _adodb_dow($year, $month, $day)
 {
 /*
 Pope Gregory removed 10 days - October 5 to October 14 - from the year 1582 and
@@ -433,14 +407,6 @@ function _adodb_is_leap_year($year)
 	return true;
 }
 
-
-/**
- checks for leap year, returns true if it is. Has 2-digit year check
-*/
-function adodb_is_leap_year($year)
-{
-	return  _adodb_is_leap_year(adodb_year_digit_check($year));
-}
 
 /**
 	Fix 2-digit years. Works for any century.
@@ -665,7 +631,7 @@ function _adodb_getdate($origd=false,$fast=false,$is_gmt=false)
 	}
 
 
-	$dow = adodb_dow($year,$month,$day);
+	$dow = _adodb_dow($year,$month,$day);
 
 	return array(
 		'seconds' => $secs,
@@ -727,7 +693,7 @@ static $daylight;
 
 			// 4.3.11 uses '04 Jun 2004'
 			// 4.3.8 uses  ' 4 Jun 2004'
-			$dates .= gmdate('D',$_day_power*(3+adodb_dow($year,$month,$day))).', '
+			$dates .= gmdate('D',$_day_power*(3+_adodb_dow($year,$month,$day))).', '
 				. ($day<10?'0'.$day:$day) . ' '.date('M',mktime(0,0,0,$month,2,1971)).' '.$year.' ';
 
 			if ($hour < 10) $dates .= '0'.$hour; else $dates .= $hour;
@@ -750,9 +716,9 @@ static $daylight;
 		// DAY
 		case 't': $dates .= $arr['ndays']; break;
 		case 'z': $dates .= $arr['yday']; break;
-		case 'w': $dates .= adodb_dow($year,$month,$day); break;
-		case 'l': $dates .= gmdate('l',$_day_power*(3+adodb_dow($year,$month,$day))); break;
-		case 'D': $dates .= gmdate('D',$_day_power*(3+adodb_dow($year,$month,$day))); break;
+		case 'w': $dates .= _adodb_dow($year,$month,$day); break;
+		case 'l': $dates .= gmdate('l',$_day_power*(3+_adodb_dow($year,$month,$day))); break;
+		case 'D': $dates .= gmdate('D',$_day_power*(3+_adodb_dow($year,$month,$day))); break;
 		case 'j': $dates .= $day; break;
 		case 'd': if ($day<10) $dates .= '0'.$day; else $dates .= $day; break;
 		case 'S':

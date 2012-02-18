@@ -77,6 +77,7 @@ For developers:
 - Qual: Fix a lot of checkstyle warnings.
 - Qual: task #216 : Move /lib into /core/lib directory
 - Qual: task #217 : Move core files into core directory (login, menus, triggers, boxes, modules)
+WARNING: To reduce technic debt, all functions dolibarr_xxx were renamed int dol_xxx.
 
 
 ***** ChangeLog for 3.1.1 compared to 3.1.0 *****
