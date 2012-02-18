@@ -32,7 +32,7 @@ print '<head>
 <link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>
 <title>'.$langs->trans('Login').' '.$title.'</title>'."\n";
 print '<!-- Includes for JQuery (Ajax library) -->'."\n";
-if (constant('JS_JQUERY')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY.'css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";  // JQuery
+if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
 else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
 // JQuery. Must be before other includes
 print '<!-- Includes JS for JQuery -->'."\n";
@@ -51,7 +51,7 @@ print '<link rel="stylesheet" type="text/css" href="'.$conf_css.'" />
 	background: #F0F0F0 url('.$login_background.') repeat-x;
 }
 -->
-</style>';
+</style>'."\n";
 if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER;
 print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
 </head>';
