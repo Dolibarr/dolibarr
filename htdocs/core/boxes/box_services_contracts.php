@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/core/boxes/box_services_vendus.php
+ *      \file       htdocs/core/boxes/box_services_contracts.php
  *		\ingroup    produits,services
  *      \brief      Module de generation de l'affichage de la box services_vendus
  */
@@ -29,7 +29,7 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last services lines
  */
- class box_services_vendus extends ModeleBoxes
+ class box_services_contracts extends ModeleBoxes
  {
 
 	var $boxcode="lastproductsincontract";
@@ -46,7 +46,7 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 	/**
      *  Constructor
 	 */
-	function box_services_vendus()
+	function box_services_contracts()
 	{
 		global $langs;
 		$langs->load("boxes");

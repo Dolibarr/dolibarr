@@ -54,7 +54,7 @@ function printBoxesArea($user,$areacode)
 		// Define $box_max_lines
 		$box_max_lines=5;
 		if (! empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines=$conf->global->MAIN_BOXES_MAXLINES;
-		
+
 		$ii=0;
 		foreach ($boxarray as $key => $box)
 		{
@@ -214,24 +214,27 @@ class InfoBox
 						$sourcefile = DOL_DOCUMENT_ROOT."/core/boxes/".$boxname.".php";
 					}
 
-					include_once($sourcefile);
-					$box=new $boxname($this->db,$obj->note);
-
-					$box->rowid=$obj->rowid;
-					$box->box_id=$obj->box_id;
-					$box->position=$obj->position;
-					$box->box_order=$obj->box_order;
-					$box->fk_user=$obj->fk_user;
-					$enabled=true;
-					if ($box->depends && count($box->depends) > 0)
+					dol_include_once($sourcefile);
+					if (class_exists($boxname))
 					{
-						foreach($box->depends as $module)
-						{
-							//print $module.'<br>';
-							if (empty($conf->$module->enabled)) $enabled=false;
-						}
+    					$box=new $boxname($this->db,$obj->note);
+
+    					$box->rowid=$obj->rowid;
+    					$box->box_id=$obj->box_id;
+    					$box->position=$obj->position;
+    					$box->box_order=$obj->box_order;
+    					$box->fk_user=$obj->fk_user;
+    					$enabled=true;
+    					if ($box->depends && count($box->depends) > 0)
+    					{
+    						foreach($box->depends as $module)
+    						{
+    							//print $module.'<br>';
+    							if (empty($conf->$module->enabled)) $enabled=false;
+    						}
+    					}
+    					if ($enabled) $boxes[]=$box;
 					}
-					if ($enabled) $boxes[]=$box;
 					$j++;
 				}
 			}
@@ -277,28 +280,31 @@ class InfoBox
 					}
 
 					dol_include_once($sourcefile);
-					$box=new $boxname($this->db,$obj->note);
+					if (class_exists($boxname))
+					{
+    					$box=new $boxname($this->db,$obj->note);
 
-					$box->rowid=$obj->rowid;
-					$box->box_id=$obj->box_id;
-					$box->position=$obj->position;
-					$box->box_order=$obj->box_order;
-					if (is_numeric($box->box_order))
-					{
-						if ($box->box_order % 2 == 1) $box->box_order='A'.$box->box_order;
-						elseif ($box->box_order % 2 == 0) $box->box_order='B'.$box->box_order;
+    					$box->rowid=$obj->rowid;
+    					$box->box_id=$obj->box_id;
+    					$box->position=$obj->position;
+    					$box->box_order=$obj->box_order;
+    					if (is_numeric($box->box_order))
+    					{
+    						if ($box->box_order % 2 == 1) $box->box_order='A'.$box->box_order;
+    						elseif ($box->box_order % 2 == 0) $box->box_order='B'.$box->box_order;
+    					}
+    					$box->fk_user=$obj->fk_user;
+    					$enabled=true;
+    					if ($box->depends && count($box->depends) > 0)
+    					{
+    						foreach($box->depends as $module)
+    						{
+    							//print $boxname.'-'.$module.'<br>';
+    							if (empty($conf->$module->enabled)) $enabled=false;
+    						}
+    					}
+    					if ($enabled) $boxes[]=$box;
 					}
-					$box->fk_user=$obj->fk_user;
-					$enabled=true;
-					if ($box->depends && count($box->depends) > 0)
-					{
-						foreach($box->depends as $module)
-						{
-							//print $boxname.'-'.$module.'<br>';
-							if (empty($conf->$module->enabled)) $enabled=false;
-						}
-					}
-					if ($enabled) $boxes[]=$box;
 					$j++;
 				}
 			}
@@ -328,7 +334,7 @@ class InfoBox
 		global $conf;
 
 		$error=0;
-		
+
 		require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 		dol_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
