@@ -929,9 +929,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			    if (constant('JS_JQUERY_FLOT'))
 			    {
 			        print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="/javascript/excanvas/excanvas.min.js"></script><![endif]-->'."\n";
-			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.min.js"></script>'."\n";
-			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.pie.min.js"></script>'."\n";
-			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.stack.min.js"></script>'."\n";
+			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.js"></script>'."\n";
+			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js"></script>'."\n";
+			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js"></script>'."\n";
 			    }
 			    else
 			    {
