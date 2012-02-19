@@ -563,7 +563,7 @@ class DoliDBPgsql
     				$this->lasterror = $this->error();
     				$this->lasterrno = $this->errno();
 			    }
-				dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint." - ".$query." ".$this->errno(), LOG_WARNING);
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
 
