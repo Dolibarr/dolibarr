@@ -43,7 +43,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-    $result=create_exdir($upload_dir);	// Create dir if not exists
+    $result=dol_mkdir($upload_dir);	// Create dir if not exists
     if ($result >= 0)
     {
         $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1,0,$_FILES['userfile']['error']);

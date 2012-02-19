@@ -62,7 +62,7 @@ $dir=$conf->deplacement->dir_temp;
 
 print_fiche_titre($title, $mesg);
 
-create_exdir($dir);
+dol_mkdir($dir);
 
 $stats = new DeplacementStats($db, $socid, $userid);
 

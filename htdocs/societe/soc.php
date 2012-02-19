@@ -258,7 +258,7 @@ if (empty($reshook))
                     {
                         if (image_format_supported($_FILES['photo']['name']))
                         {
-                            create_exdir($dir);
+                            dol_mkdir($dir);
 
                             if (@is_dir($dir))
                             {
@@ -564,7 +564,7 @@ else
         {
             if (image_format_supported($_FILES['photo']['name']))
             {
-                create_exdir($dir);
+                dol_mkdir($dir);
 
                 if (@is_dir($dir))
                 {

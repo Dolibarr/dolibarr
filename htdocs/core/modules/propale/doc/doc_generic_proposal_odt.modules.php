@@ -269,7 +269,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return -1;
@@ -291,7 +291,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				create_exdir($conf->propale->dir_temp);
+				dol_mkdir($conf->propale->dir_temp);
 
 
                 // If BILLING contact defined on invoice, we use it

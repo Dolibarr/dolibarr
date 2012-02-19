@@ -144,7 +144,7 @@ class EcmDirectory // extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ecm_directories");
 
 				$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
-				$result=create_exdir($dir);
+				$result=dol_mkdir($dir);
 
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

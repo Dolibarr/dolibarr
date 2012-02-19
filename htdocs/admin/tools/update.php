@@ -69,7 +69,7 @@ if ($_POST["action"]=='install')
 	if (! $error)
 	{
 		@dol_delete_dir_recursive($conf->admin->dir_temp.'/'.$original_file);
-		create_exdir($conf->admin->dir_temp.'/'.$original_file);
+		dol_mkdir($conf->admin->dir_temp.'/'.$original_file);
 
 		$result=dol_move_uploaded_file($_FILES["fileinstall"]["tmp_name"],$newfile,1,0,$_FILES['fileinstall']['error']);
 		if ($result > 0)

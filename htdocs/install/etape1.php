@@ -345,7 +345,7 @@ if (! $error && $db->connected && $action == "set")
                 }
                 else
                 {
-                    if (create_exdir($dir[$i]) < 0)
+                    if (dol_mkdir($dir[$i]) < 0)
                     {
                         print "<tr><td>";
                         print "Failed to create directory: ".$dir[$i];

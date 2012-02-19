@@ -2412,7 +2412,7 @@ class Product extends CommonObject
 
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/photos";
 
-		create_exdir($dir);
+		dol_mkdir($dir);
 
 		$dir_osencoded=$dir;
 		if (is_dir($dir_osencoded))
@@ -2465,7 +2465,7 @@ class Product extends CommonObject
 		if (! file_exists($dir_osencoded))
 		{
 			dol_syslog("Product Create ".$dir);
-			create_exdir($dir);
+			dol_mkdir($dir);
 		}
 
 		if (file_exists($dir_osencoded))

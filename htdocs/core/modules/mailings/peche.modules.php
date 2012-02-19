@@ -129,7 +129,7 @@ class mailing_peche extends MailingTargets
 
 		$upload_dir=$conf->mailing->dir_temp;
 
-		if (create_exdir($upload_dir) >= 0)
+		if (dol_mkdir($upload_dir) >= 0)
 		{
 			$resupload = dol_move_uploaded_file($_FILES['username']['tmp_name'], $upload_dir . "/" . $_FILES['username']['name'], 1, 0, $_FILES['username']['error']);
 			if (is_numeric($resupload) && $resupload > 0)

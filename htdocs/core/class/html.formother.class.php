@@ -470,7 +470,7 @@ class FormOther
 		// On cree le repertoire contenant les icones
 		if (! file_exists($conf->$module->dir_temp))
 		{
-			create_exdir($conf->$module->dir_temp);
+			dol_mkdir($conf->$module->dir_temp);
 		}
 
 		// On cree l'image en vraies couleurs

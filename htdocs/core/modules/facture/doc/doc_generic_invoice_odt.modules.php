@@ -281,7 +281,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return -1;
@@ -303,7 +303,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				create_exdir($conf->facture->dir_temp);
+				dol_mkdir($conf->facture->dir_temp);
 
 
                 // If BILLING contact defined on invoice, we use it

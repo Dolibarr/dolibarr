@@ -96,7 +96,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	$relativepath=$ecmdir->getRelativePath();
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (create_exdir($upload_dir) >= 0)
+	if (dol_mkdir($upload_dir) >= 0)
 	{
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0, 0, $_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)

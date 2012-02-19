@@ -198,7 +198,7 @@ class modPropale extends DolibarrModules
 		//ODT template
 		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/proposals';
-		create_exdir($dirodt);
+		dol_mkdir($dirodt);
 		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/proposals/template_proposal.odt'; $dest=$dirodt.'/template_proposal.odt';
 		$result=dol_copy($src,$dest,0,0);
 		if ($result < 0)

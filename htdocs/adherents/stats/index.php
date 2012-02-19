@@ -59,7 +59,7 @@ print_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
 
 $dir=$conf->adherent->dir_temp;
 
-create_exdir($dir);
+dol_mkdir($dir);
 
 $stats = new AdherentStats($db, $socid, $userid);
 

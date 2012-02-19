@@ -368,7 +368,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                 {
                     $dir= $conf->user->dir_output . '/' . get_exdir($edituser->id,2,0,1);
 
-                    create_exdir($dir);
+                    dol_mkdir($dir);
 
                     if (@is_dir($dir))
                     {

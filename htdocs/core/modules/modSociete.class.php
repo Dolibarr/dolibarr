@@ -315,7 +315,7 @@ class modSociete extends DolibarrModules
 
 		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/thirdparties';
-		create_exdir($dirodt);
+		dol_mkdir($dirodt);
 		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt'; $dest=$dirodt.'/template_thirdparty.odt';
 		$result=dol_copy($src,$dest,0,0);
 		if ($result < 0)

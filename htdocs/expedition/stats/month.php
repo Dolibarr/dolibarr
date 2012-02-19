@@ -44,7 +44,7 @@ print_fiche_titre($langs->trans("StatisticsOfSendings").' '.$_GET["year"], $mesg
 $stats = new ExpeditionStats($db);
 $data = $stats->getNbExpeditionByMonth($_GET["year"]);
 
-create_exdir($conf->expedition->dir_temp);
+dol_mkdir($conf->expedition->dir_temp);
 
 $filename = $conf->expedition->dir_temp."/expedition".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expedition'.$year.'.png';

@@ -808,7 +808,7 @@ function dol_meta_create($object)
 
 		if (! is_dir($dir))
 		{
-			create_exdir($dir);
+			dol_mkdir($dir);
 		}
 
 		if (is_dir($dir))

@@ -201,7 +201,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return -1;
@@ -221,7 +221,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				create_exdir($conf->societe->dir_temp);
+				dol_mkdir($conf->societe->dir_temp);
 
 				// Open and load template
 				require_once(ODTPHP_PATH.'odf.php');

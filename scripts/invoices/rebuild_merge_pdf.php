@@ -324,7 +324,7 @@ if ( $resql=$db->query($sql) )
 		}
 
 		// Create output dir if not exists
-		create_exdir($diroutputpdf);
+		dol_mkdir($diroutputpdf);
 
 		// Save merged file
 		$filename='mergedpdf';

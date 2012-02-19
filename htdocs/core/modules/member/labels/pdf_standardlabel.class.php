@@ -370,7 +370,7 @@ class pdf_standardlabel {
 
         if (! file_exists($dir))
         {
-            if (create_exdir($dir) < 0)
+            if (dol_mkdir($dir) < 0)
             {
                 $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                 return 0;
