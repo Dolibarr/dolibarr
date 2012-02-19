@@ -429,22 +429,21 @@ abstract class DolibarrModules
         $entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : $conf->entity);
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
+        $sql.= " WHERE name = '".$this->db->encrypt($this->const_name)."'";
         $sql.= " AND entity in (0, ".$entity.")";
 
         dol_syslog(get_class($this)."::_active sql=".$sql, LOG_DEBUG);
-        $this->db->query($sql);
+        $resql=$this->db->query($sql);
+        if (! $resql) $err++;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES";
-        $sql.= " (".$this->db->encrypt($this->const_name,1);
+        $sql.= " ('".$this->db->encrypt($this->const_name)."'";
         $sql.= ",".$this->db->encrypt('1',1);
         $sql.= ",0,".$entity.")";
 
         dol_syslog(get_class($this)."::_active sql=".$sql, LOG_DEBUG);
-        if (!$this->db->query($sql))
-        {
-            $err++;
-        }
+        $resql=$this->db->query($sql);
+        if (! $resql) $err++;
 
         return $err;
     }
