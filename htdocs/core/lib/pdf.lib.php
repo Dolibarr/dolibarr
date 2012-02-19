@@ -703,10 +703,10 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 }
 
 /**
- *  Return line description translated in outputlangs and encoded in UTF8
+ *  Return line description translated in outputlangs and encoded into htmlentities
  *
  *  @param  Object		$object              Object
- *  @param  int			$i                   Current line number
+ *  @param  int			$i                   Current line number (0 = first line, 1 = second line, ...)
  *  @param  Translate	$outputlangs         Object langs for output
  *  @param  int			$hideref             Hide reference
  *  @param  int			$hidedesc            Hide description
@@ -720,7 +720,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$idprod=$object->lines[$i]->fk_product;
 	$label=$object->lines[$i]->label; if (empty($label))  $label=$object->lines[$i]->libelle;
 	$desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
-	$ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;    // TODO Not yeld saved for supplier invoices, only supplier orders
+	$ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;    // TODO Not yet saved for supplier invoices, only supplier orders
 	$note=$object->lines[$i]->note;
 
 	if ($issupplierline) $prodser = new ProductFournisseur($db);
@@ -744,7 +744,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	// Description long of product line
 	if ($desc && ($desc != $label))
 	{
-		if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="<br>";
+		if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="\n";
 
 		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
 		{
