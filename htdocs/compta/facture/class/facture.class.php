@@ -1119,7 +1119,7 @@ class Facture extends CommonObject
      *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-    function delete($rowid, $notrigger=0)
+    function delete($rowid=0, $notrigger=0)
     {
         global $user,$langs,$conf;
 
@@ -1131,7 +1131,7 @@ class Facture extends CommonObject
 
         $error=0;
         $this->db->begin();
-        
+
         if (! $error && ! $notrigger)
         {
         	// Appel des triggers
@@ -1143,7 +1143,7 @@ class Facture extends CommonObject
         	}
         	// Fin appel triggers
         }
-        
+
         if (! $error)
         {
         	// Delete linked object
