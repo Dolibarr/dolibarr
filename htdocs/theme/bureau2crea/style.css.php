@@ -1186,7 +1186,7 @@ span.tabspan {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
 	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;
-	color: #FFF;
+	color: #FFF !important;
 	padding: 0px 10px 0px 10px;
 	margin: 0px 10px 0px 10px;
 	text-decoration: none;
@@ -1214,15 +1214,19 @@ span.tabspan {
 }
 
 .butActionRefused {
-	font-family: <?php print $fontlist ?> !important;
-	font-weight: bold !important;
-	background: white !important;
-	border: 1px solid #AAAAAA !important;
-	color: #AAAAAA !important;
-	padding: 0em 0.7em !important;
-	margin: 0em 0.5em !important;
-	text-decoration: none !important;
-	white-space: nowrap !important;
+	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-weight: bold;
+	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;
+	color: #AAA !important;
+	padding: 0px 10px 0px 10px;
+	margin: 0px 10px 0px 10px;
+	text-decoration: none;
+	white-space: nowrap;
+    float: right;
+    font-size: 10px;
+    height: 18px;
+    line-height: 18px;
+    margin-bottom: 10px;
 	cursor: not-allowed;
 }
 
