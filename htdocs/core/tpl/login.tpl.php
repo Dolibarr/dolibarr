@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Regis Houssin <regis@dolibarr.fr>
- * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ print '<link rel="stylesheet" type="text/css" href="'.$conf_css.'" />
 	margin-top: 70px;
 	margin-bottom: 30px;
 }
-#login table {
+.login_table {
 	width: 512px;
 	border: 1px solid #C0C0C0;
 	background: #F0F0F0 url('.$login_background.') repeat-x;
@@ -210,127 +210,136 @@ jQuery(document).ready(function () {
 <input type="hidden" name="screenwidth" id="screenwidth" value="" />
 <input type="hidden" name="screenheight" id="screenheight" value="" />
 
-<table class="login" summary="<?php echo $title; ?>" cellpadding="0" cellspacing="0" border="0" align="center">
+<table class="login_table" summary="<?php echo $title; ?>" cellpadding="0" cellspacing="0" border="0" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
 <br>
 
-<table class="login" summary="Login area" cellpadding="2" align="center">
+<table class="login_table" summary="Login area" cellpadding="2" align="center">
 
-<tr><td colspan="3">&nbsp;</td></tr>
+<tr><td colspan="2" valign="middle">
+<table class="none" summary="Login pass" cellpadding="2" align="center">
 
+<!-- Login -->
 <tr>
-
 <td valign="bottom"> &nbsp; <strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong> &nbsp; </td>
 <td valign="bottom" nowrap="nowrap">
-<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo GETPOST('username')?GETPOST('username'):$login; ?>" tabindex="1" /></td>
-
-<td rowspan="<?php echo $rowspan; ?>" align="center" valign="top">
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" />
-
+<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo GETPOST('username')?GETPOST('username'):$login; ?>" tabindex="1" />
 </td>
 </tr>
 
+<!-- Password -->
 <tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong> &nbsp; </td>
 <td valign="top" nowrap="nowrap">
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo $password; ?>" tabindex="2" />
 </td></tr>
 
-	<?php if ($select_entity) { ?>
-		<tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><?php echo $langs->trans('Entity'); ?></strong> &nbsp; </td>
-		<td valign="top" nowrap="nowrap">
-		<?php echo $select_entity; ?>
-		</td></tr>
-	<?php } ?>
+<?php if ($select_entity) { ?>
+	<tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><?php echo $langs->trans('Entity'); ?></strong> &nbsp; </td>
+	<td valign="top" nowrap="nowrap">
+	<?php echo $select_entity; ?>
+	</td></tr>
+<?php } ?>
 
-	<?php if ($captcha) { ?>
-		<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
-		<td valign="top" nowrap="nowrap" align="left" class="none">
+<?php if ($captcha) { ?>
+	<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
+	<td valign="top" nowrap="nowrap" align="left" class="none">
 
-		<table style="width: 100px;"><tr>
-		<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
-		<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" /></td>
-		<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
-		</tr></table>
+	<table class="login_table" style="width: 100px;"><tr>
+	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
+	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" /></td>
+	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
+	</tr></table>
 
-		</td></tr>
-	<?php } ?>
+	</td></tr>
+<?php } ?>
 
-<tr><td colspan="3">&nbsp;</td></tr>
+</table>
+</td>
 
+<td align="center" valign="top">
+<img alt="Logo" title="" src="<?php echo $urllogo; ?>" />
+</td>
+
+</tr>
+
+<!-- Button Connection -->
 <tr><td colspan="3" style="text-align:center;"><br>
 <input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 </td></tr>
 
 <?php
-	if ($forgetpasslink || $helpcenterlink) {
-		echo '<tr><td colspan="3" align="center">';
-		if ($forgetpasslink) {
-			echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">(';
-			echo $langs->trans('PasswordForgotten');
-			if (! $helpcenterlink) {
-				echo ')';
-			}
-			echo '</a>';
+if ($forgetpasslink || $helpcenterlink) {
+	echo '<tr><td colspan="3" align="center">';
+	if ($forgetpasslink) {
+		echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">(';
+		echo $langs->trans('PasswordForgotten');
+		if (! $helpcenterlink) {
+			echo ')';
 		}
-
-		if ($helpcenterlink) {
-			echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/support/index.php" target="_blank">';
-			if ($forgetpasslink) {
-				echo '&nbsp;-&nbsp;';
-			} else {
-				echo '(';
-			}
-			echo $langs->trans('NeedHelpCenter').')</a>';
-		}
-		echo '</td></tr>';
+		echo '</a>';
 	}
+
+	if ($helpcenterlink) {
+		echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/support/index.php" target="_blank">';
+		if ($forgetpasslink) {
+			echo '&nbsp;-&nbsp;';
+		} else {
+			echo '(';
+		}
+		echo $langs->trans('NeedHelpCenter').')</a>';
+	}
+	echo '</td></tr>';
+}
 ?>
 
 </table>
 
 </form>
 
-	<?php if (! empty($_SESSION['dol_loginmesg']))
-	{
-	?>
-		<center><table width="60%"><tr><td align="center"><div class="error">
-		<?php echo $_SESSION['dol_loginmesg']; ?>
-		</div></td></tr></table></center>
-	<?php
-    }
-    ?>
 
-	<?php if ($main_home)
-	{
-	?>
-		<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750">
-		<tr><td align="center">
-		<?php echo $main_home; ?>
-		</td></tr></table></center><br>
-	<?php
-    }
-    ?>
 
-	<?php
-	if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
-	{
-	?>
-		<div align="center">
-			<script type="text/javascript"><!--
-				google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-				google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-				google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-				google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
-				//-->
-			</script>
-			<script type="text/javascript"
-				src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-			</script>
-		</div>
-	<?php
-    }
-    ?>
+
+<?php if (! empty($_SESSION['dol_loginmesg']))
+{
+?>
+	<center><table width="60%"><tr><td align="center"><div class="error">
+	<?php echo $_SESSION['dol_loginmesg']; ?>
+	</div></td></tr></table></center>
+<?php
+}
+?>
+
+<?php if ($main_home)
+{
+?>
+	<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750">
+	<tr><td align="center">
+	<?php echo $main_home; ?>
+	</td></tr></table></center><br>
+<?php
+}
+?>
+
+<?php
+if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+{
+?>
+	<div align="center">
+		<script type="text/javascript"><!--
+			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
+			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
+			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
+			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
+			//-->
+		</script>
+		<script type="text/javascript"
+			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+		</script>
+	</div>
+<?php
+}
+?>
 
 <!-- authentication mode = <?php echo $main_authentication ?> -->
 <!-- cookie name used for this session = <?php echo $session_name ?> -->
