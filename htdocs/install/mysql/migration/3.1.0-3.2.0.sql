@@ -200,4 +200,4 @@ ALTER TABLE llx_product_stock DROP COLUMN location;
 -- DROP TABLE llx_c_methode_commande_fournisseur;
 -- DROP TABLE llx_c_source;
 -- DROP TABLE llx_expedition_methode;
-
+-- DROP TABLE llx_product_fournisseur;
