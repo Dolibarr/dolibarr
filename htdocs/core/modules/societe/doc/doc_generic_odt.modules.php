@@ -20,18 +20,17 @@
  *	\file       htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
- *	\author	    Laurent Destailleur
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/modules/societe/modules_societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/doc.lib.php");
 
 
 /**
- *	\class      doc_generic_odt
- *	\brief      Class to build documents using ODF templates generator
+ *	Class to build documents using ODF templates generator
  */
 class doc_generic_odt extends ModeleThirdPartyDoc
 {

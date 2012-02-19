@@ -28,6 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/doc.lib.php");
 
 
 /**
@@ -127,8 +128,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
         global $conf;
 
         return array(
-            'line_fulldesc'=>$line->product_ref.(($line->product_ref && $line->desc)?' - ':'').$line->desc,
+            'line_fulldesc'=>doc_getlinedesc($line),
             'line_product_ref'=>$line->product_ref,
+            'line_product_label'=>$line->product_label,
             'line_desc'=>$line->desc,
             'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
             'line_up'=>price($line->subprice, 0, $outputlangs),

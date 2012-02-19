@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/CategorieTest.php
+ *      \file       test/phpunit/PdfDocTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -30,6 +30,7 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/doc.lib.php';
 
 if (empty($user->id))
 {
@@ -47,7 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PdfTest extends PHPUnit_Framework_TestCase
+class PdfDocTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -58,9 +59,9 @@ class PdfTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return PdfTest
+	 * @return PdfDocTest
 	 */
-	function PdfTest()
+	function PdfDocTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -116,11 +117,11 @@ class PdfTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testPdfGetLineDesc
+     * testPdfDocGetLineDesc
      *
      * @return void
      */
-    public function testPdfGetLineDesc()
+    public function testPdfDocGetLineDesc()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -135,12 +136,13 @@ class PdfTest extends PHPUnit_Framework_TestCase
 		$localobject->lines[0]->label='Label 1';
 		$localobject->lines[0]->desc="This is a description with a é accent\n(Country of origin: France)";
 
-    	print __METHOD__." fk_product=".$localobject->lines[0]->fk_product."\n";
-    	print __METHOD__." label=".($localobject->lines[0]->label?$localobject->lines[0]->label:$localobject->lines[0]->libelle)."\n";
-    	print __METHOD__." desc=".$localobject->lines[0]->desc."\n";
     	$result=pdf_getlinedesc($localobject,0,$langs);
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,'PIDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)');
+    	$this->assertEquals($result,"PIDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
+
+    	$result=doc_getlinedesc($localobject->lines[0],$langs);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result,"PIDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
     }
 
 }
