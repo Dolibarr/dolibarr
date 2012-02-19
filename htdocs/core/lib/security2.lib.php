@@ -293,7 +293,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (function_exists("imagecreatefrompng") && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
 		$captcha=1;
-		$captcha_refresh=img_picto($langs->trans("Refresh"),'refresh');
+		$captcha_refresh=img_picto($langs->trans("Refresh"),'refresh','id="captcha_refresh_img"');
 	}
 
 	// Extra link

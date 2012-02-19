@@ -293,7 +293,7 @@ div.tmenu {
     white-space: nowrap;
     border-left: 0px;
     padding: 0px;
-    margin: 10px 0px 10px 0px;
+    margin: 5px 0px 10px 0px;
     font-size: 13px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_mainNav.jpg' ?>);
     height: 22px;
@@ -527,7 +527,7 @@ li.tmenu a.tmenudisabled {
 div.login_block {
 	position: absolute;
 	<?php print $right; ?>: 5px;
-	top: 6px;
+	top: 2px;
 	font-weight: bold;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
 	display: none;
@@ -1372,13 +1372,12 @@ tr.liste_titre {
     white-space: nowrap;
 }
 
-tr.liste_titre:first-child {
+tr.liste_titre {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
     background-position: top right;
 }
 
-th.liste_titre_sel, td.liste_titre_sel,
-tr.liste_titre:first-child td {
+th.liste_titre_sel, td.liste_titre_sel, th.liste_titre {
     color: #FFFFFF !important;
 }
 
@@ -2199,6 +2198,7 @@ div#logoBox {
     width: 100%;
     height: auto;
     margin-top: 30px;
+    text-align: center;
     }
 
 div#parameterBox {
@@ -2257,6 +2257,10 @@ div.captchaImg {
 img#captcha {
 	margin-left: 200px;
     }
+
+#captcha_refresh_img {
+	margin-bottom: 6px;
+}
 
 div#infoLogin {
     width: 100%;
