@@ -609,7 +609,7 @@ if (! defined('NOLOGIN'))
 	}
 
 	/*
-	 * Overwrite configs global by peronal configs
+	 * Overwrite configs global by personal configs
 	 */
 	// Set liste_limit
 	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0
@@ -627,7 +627,7 @@ if (! defined('NOLOGIN'))
 		$conf->css  = "/theme/".$conf->theme."/style.css.php";
 	}
 
-	// If theme support optim like flip-hide left menu and we use a smartphone, we force it
+	// If theme support option like flip-hide left menu and we use a smartphone, we force it
 	if (! empty($conf->global->MAIN_SMARTPHONE_OPTIM) && $conf->browser->phone && $conf->theme == 'eldy') $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
 
 	// Set javascript option

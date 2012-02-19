@@ -141,8 +141,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 {
     if ($user->rights->facture->supprimer)
     {
-        $result = $object->fetch($id);
-        $result = $object->delete();
+        $result = $object->delete($id);
         if ($result > 0)
         {
             Header('Location: '.$_SERVER["PHP_SELF"]);
