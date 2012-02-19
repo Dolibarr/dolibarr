@@ -3,8 +3,8 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -429,15 +429,15 @@ abstract class DolibarrModules
         $entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : $conf->entity);
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE name = '".$this->db->encrypt($this->const_name)."'";
-        $sql.= " AND entity in (0, ".$entity.")";
+        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
+        $sql.= " AND entity IN (0, ".$entity.")";
 
         dol_syslog(get_class($this)."::_active sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) $err++;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES";
-        $sql.= " ('".$this->db->encrypt($this->const_name)."'";
+        $sql.= " (".$this->db->encrypt($this->const_name,1);
         $sql.= ",".$this->db->encrypt('1',1);
         $sql.= ",0,".$entity.")";
 
@@ -465,7 +465,7 @@ abstract class DolibarrModules
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
         $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
-        $sql.= " AND entity in (0, ".$entity.")";
+        $sql.= " AND entity IN (0, ".$entity.")";
 
         dol_syslog(get_class($this)."::_unactive sql=".$sql);
         $this->db->query($sql);
