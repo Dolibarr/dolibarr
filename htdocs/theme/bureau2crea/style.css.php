@@ -1363,7 +1363,8 @@ table.noborder {
 
 tr.liste_titre {
     height: 25px;
-    background-repeat: repeat-x;
+    background-repeat: no-repeat;
+    background-color: #C8C8C8;
     color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1462,7 +1463,6 @@ padding: 5px;
 }
 
 .impair {
-/* background: #d0d4d7; */
 background: #eaeaea;
 font-family: <?php print $fontlist ?>;
 border: 0px;
@@ -1473,16 +1473,14 @@ background: #c0c4c7;
 border: 0px;
 }
 
+tr.impair td.nohover {
+background: #eaeaea;
+}
 
 .pair	{
-/* background: #e6ebed; */
 background: #FFFFFF;
 font-family: <?php print $fontlist ?>;
 border: 0px;
-}
-
-.pair td, .impair td {
-	padding: 2px 3px !important;
 }
 
 .pair:hover {
@@ -1490,6 +1488,14 @@ background: #c0c4c7;
 border: 0px;
 }
 
+tr.pair td.nohover {
+background: #FFFFFF;
+}
+
+.pair td, .impair td
+{
+	padding: 2px 3px !important;
+}
 
 
 /*
