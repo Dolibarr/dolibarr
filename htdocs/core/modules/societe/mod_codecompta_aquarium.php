@@ -27,16 +27,15 @@ require_once(DOL_DOCUMENT_ROOT."/core/modules/societe/modules_societe.class.php"
 
 
 /**
- *	\class 		mod_codecompta_aquarium
- *	\brief 		Class to manage accountancy code of thirdparties with Aquarium rules
+ *	Class to manage accountancy code of thirdparties with Aquarium rules
  */
 class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
 	var $nom='Aquarium';
     var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-	var	$prefixcustomeraccountancycode='411';
-	var	$prefixsupplieraccountancycode='401';
+	var	$prefixcustomeraccountancycode;
+	var	$prefixsupplieraccountancycode;
 
 
 	/**
@@ -45,15 +44,17 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	function mod_codecompta_aquarium()
 	{
 	    global $conf;
-	    $this->prefixcustomeraccountancycode=$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
+		if (empty($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER)) $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER='411';
+        if (empty($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER)) $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER='401';
+		$this->prefixcustomeraccountancycode=$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
 	    $this->prefixsupplieraccountancycode=$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
 	}
 
 
 	/**		Return description of module
 	 *
-	 * 		@param	string	$langs		Object langs
-	 * 		@return string      		Description of module
+	 * 		@param	Translate	$langs		Object langs
+	 * 		@return string   		   		Description of module
 	 */
 	function info($langs)
 	{
