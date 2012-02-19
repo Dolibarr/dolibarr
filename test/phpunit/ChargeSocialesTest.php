@@ -114,6 +114,9 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testChargeSocialesCreate
+     * 
+     * @return	void
      */
     public function testChargeSocialesCreate()
     {
@@ -133,6 +136,11 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testChargeSocialesFetch
+     * 
+     * @param	int		$id		Id of social contribution
+     * @return	void
+     * 
      * @depends	testChargeSocialesCreate
      * The depends says test is run only if previous is ok
      */
@@ -153,27 +161,11 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testChargeSocialesFetch
-     * The depends says test is run only if previous is ok
-     */
-/*    public function testChargeSocialesUpdate($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject->note='New note after update';
-    	$result=$localobject->update($user);
-
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
-    }
-*/
-
-    /**
+     * testChargeSocialesValid
+     * 
+     * @param	Object		$localobject	Social contribution
+     * @return	void
+     * 
      * @depends	testChargeSocialesFetch
      * The depends says test is run only if previous is ok
      */
@@ -193,6 +185,11 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testChargeSocialesOther
+     * 
+     * @param	Object	$localobject		Social contribution
+     * @return	void
+     * 
      * @depends testChargeSocialesValid
      * The depends says test is run only if previous is ok
      */
@@ -212,10 +209,15 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThanOrEqual($result, 0);
 
-        return $localobject->id;
+    	return $localobject->id;
     }
 
     /**
+     * testChargeSocialesDelete
+     * 
+     * @param	int		$id			Social contribution
+     * @return 	void
+     * 
      * @depends	testChargeSocialesOther
      * The depends says test is run only if previous is ok
      */
@@ -235,27 +237,6 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	return $result;
     }
-
-
-    /**
-     *
-     */
-    /*public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new ChargeSociales($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }*/
 
 }
 ?>

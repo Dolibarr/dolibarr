@@ -294,56 +294,59 @@ if ($resql)
 		}
 
 		dol_include_once($sourcefile);
-		$box=new $boxname($db,$obj->note);
-
-		$enabled=true;
-		if ($box->depends && count($box->depends) > 0)
+		if (class_exists($boxname))
 		{
-			foreach($box->depends as $module)
-			{
-				if (empty($conf->$module->enabled)) $enabled=false;
-			}
-		}
+    		$box=new $boxname($db,$obj->note);
 
-		if ($enabled)
-		{
-			//if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
-			if (in_array($obj->rowid, $actives))
-			{
-				// La boite est deja activee
-			}
-			else
-			{
-				$var=!$var;
+    		$enabled=true;
+    		if ($box->depends && count($box->depends) > 0)
+    		{
+    			foreach($box->depends as $module)
+    			{
+    				if (empty($conf->$module->enabled)) $enabled=false;
+    			}
+    		}
 
-				if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
-				{
-					$logo = $box->boximg;
-				}
-				else
-				{
-					$logo=preg_replace("/^object_/i","",$box->boximg);
-				}
+    		if ($enabled)
+    		{
+    			//if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
+    			if (in_array($obj->rowid, $actives))
+    			{
+    				// La boite est deja activee
+    			}
+    			else
+    			{
+    				$var=!$var;
 
-				print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<tr '.$bc[$var].'>';
-				print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
-				print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
-				print '<td>' . $sourcefile . '</td>';
+    				if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+    				{
+    					$logo = $box->boximg;
+    				}
+    				else
+    				{
+    					$logo=preg_replace("/^object_/i","",$box->boximg);
+    				}
 
-				// Pour chaque position possible, on affiche un lien
-				// d'activation si boite non deja active pour cette position
-				print '<td>';
-				print $form->selectarray("pos",$pos_name);
-				print '<input type="hidden" name="action" value="add">';
-				print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
-				print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
-				print '</td>';
+    				print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
+    				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    				print '<tr '.$bc[$var].'>';
+    				print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
+    				print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
+    				print '<td>' . $sourcefile . '</td>';
 
-				print '</tr></form>';
-			}
+    				// Pour chaque position possible, on affiche un lien
+    				// d'activation si boite non deja active pour cette position
+    				print '<td>';
+    				print $form->selectarray("pos",$pos_name);
+    				print '<input type="hidden" name="action" value="add">';
+    				print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
+    				print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
+    				print '</td>';
+
+    				print '</tr></form>';
+    			}
+    		}
 		}
 
 		$i++;
@@ -409,36 +412,39 @@ if ($resql)
 		}
 
 		dol_include_once($sourcefile);
-		$box=new $boxname($db,$obj->note);
-
-		if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+		if (class_exists($boxname))
 		{
-			$logo = $box->boximg;
-		}
-		else
-		{
-			$logo=preg_replace("/^object_/i","",$box->boximg);
-		}
+    		$box=new $boxname($db,$obj->note);
 
-        print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-		print '<tr '.$bc[$var].'>';
-		print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
-		print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
-		print '<td align="center">' . $pos_name[$obj->position] . '</td>';
-		$hasnext=true;
-		$hasprevious=true;
-		if ($foundrupture) { $hasprevious=false; $foundrupture=0; }
-		if (! $objnext || $obj->position != $objnext->position) { $hasnext=false; $foundrupture=1; }
-		print '<td align="center">'.$box_order.'</td>';
-		print '<td align="center">';
-		print ($hasnext?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objnext->rowid.'">'.img_down().'</a>&nbsp;':'');
-		print ($hasprevious?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objprevious->rowid.'">'.img_up().'</a>':'');
-		print '</td>';
-		print '<td align="center">';
-		print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
-		print '</td>';
+    		if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+    		{
+    			$logo = $box->boximg;
+    		}
+    		else
+    		{
+    			$logo=preg_replace("/^object_/i","",$box->boximg);
+    		}
 
-		print '</tr>'."\n";
+            print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
+    		print '<tr '.$bc[$var].'>';
+    		print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
+    		print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
+    		print '<td align="center">' . $pos_name[$obj->position] . '</td>';
+    		$hasnext=true;
+    		$hasprevious=true;
+    		if ($foundrupture) { $hasprevious=false; $foundrupture=0; }
+    		if (! $objnext || $obj->position != $objnext->position) { $hasnext=false; $foundrupture=1; }
+    		print '<td align="center">'.$box_order.'</td>';
+    		print '<td align="center">';
+    		print ($hasnext?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objnext->rowid.'">'.img_down().'</a>&nbsp;':'');
+    		print ($hasprevious?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objprevious->rowid.'">'.img_up().'</a>':'');
+    		print '</td>';
+    		print '<td align="center">';
+    		print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
+    		print '</td>';
+
+    		print '</tr>'."\n";
+		}
 		$i++;
 
 		$box_order++;

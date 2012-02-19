@@ -235,7 +235,7 @@ if (! empty($conf->multicompany->enabled)  && empty($conf->global->MULTICOMPANY_
 if (function_exists("imagecreatefrompng") && ! $disabled)
 {
     $captcha = 1;
-    $captcha_refresh = img_picto($langs->trans("Refresh"),'refresh');
+    $captcha_refresh = img_picto($langs->trans("Refresh"),'refresh','id="captcha_refresh_img"');
 }
 
 include($template_dir.'passwordforgotten.tpl.php');	// To use native PHP

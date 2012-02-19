@@ -37,6 +37,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOST('id');
 $ref= GETPOST('ref');
+$withproject=GETPOST('withproject');
 
 // Security check
 $socid=0;
@@ -137,7 +138,7 @@ if ($id > 0 || ! empty($ref))
 
 		$userWrite  = $project->restrictedProjectArea($user,'write');
 
-		if (GETPOST('withproject'))
+		if ($withproject)
 		{
     		// Tabs for project
     		$tab='tasks';
@@ -219,16 +220,18 @@ if ($id > 0 || ! empty($ref))
     	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 
     	// Project
-    	/*print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-    	print $projectstatic->getNomUrl(1);
-    	print '</td></tr>';
+    	if (empty($withproject))
+    	{
+    	    print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+        	print $projectstatic->getNomUrl(1);
+        	print '</td></tr>';
 
-    	// Third party
-    	print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
-    	if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
-    	else print '&nbsp;';
-    	print '</td></tr>';
-		*/
+        	// Third party
+        	print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+        	if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
+        	else print '&nbsp;';
+        	print '</td></tr>';
+    	}
 
     	// Files infos
     	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';

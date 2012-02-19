@@ -502,10 +502,10 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *	Write log message into outputs. Possible outputs can be:
  *	A file if SYSLOG_FILE_ON defined:   	file name is then defined by SYSLOG_FILE
  *	Syslog if SYSLOG_SYSLOG_ON defined:    	facility is then defined by SYSLOG_FACILITY
- * 	Warning, les fonctions syslog sont buggues sous Windows et generent des
- *	fautes de protection memoire. Pour resoudre, utiliser le loggage fichier,
- *	au lieu du loggage syslog (configuration du module).
- *	Note: If SYSLOG_FILE_NO_ERROR defined, we never output error message when writing to log fails.
+ * 	Warning, syslog functions are bugged on Windows, generating memory protection faults. To solve
+ *	this, use logging to files instead of syslog (see setup of module).
+ *	Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
+ *  Note: You can get log message into html sources by adding parameter &logtohtml=1 (constant MAIN_LOGTOHTML must be set)
  *
  *	This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
@@ -621,7 +621,7 @@ function dol_syslog($message, $level=LOG_INFO)
                 // database or config file because we must be able to log data before database or config file read.
 			    $oldinclude=get_include_path();
                 set_include_path('/usr/share/php/');
-                require_once('FirePHPCore/FirePHP.class.php');
+                include_once('FirePHPCore/FirePHP.class.php');
                 set_include_path($oldinclude);
                 ob_start();
                 $firephp = FirePHP::getInstance(true);
@@ -744,14 +744,6 @@ function dol_get_fiche_end($notab=0)
     if (! $notab) return "\n</div>\n";
     else return '';
 }
-
-
-/* For backward compatibility */
-function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodetooutput=false)
-{
-    return dol_print_date($time,$format,$to_gmt,$outputlangs,$encodetooutput);
-}
-
 
 /**
  *      Return a formated address (part address/zip/town/state) according to country rules
@@ -990,12 +982,6 @@ function dol_getdate($timestamp,$fast=false)
     return $arrayinfo;
 }
 
-/* For backward compatibility */
-function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
-{
-    return dol_mktime($hour,$minute,$second,$month,$day,$year,$gm,$check);
-}
-
 /**
  *	Return a timestamp date built from detailed informations (by default a local PHP server timestamp)
  * 	Replace function mktime not available under Windows if year < 1970
@@ -1201,12 +1187,6 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
         }
     }
     return $newemail;
-}
-
-/* For backward compatibility */
-function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
-{
-    return dol_print_phone($phone,$country,$cid,$socid,$addlink,$separ);
 }
 
 /**
@@ -1476,15 +1456,9 @@ function dol_substr($string,$start,$length,$stringencoding='')
 }
 
 
-/* For backward compatibility */
-function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
-{
-    return dol_trunc($string,$size,$trunc,$stringencoding);
-}
-
-
 /**
- *  Show a javascript graph
+ *  Show a javascript graph.
+ *  Do not use this function anymore. Use DolGraph class instead.
  *
  *  @param		string	$htmlid			Html id name
  *  @param		int		$width			Width in pixel
@@ -1495,6 +1469,7 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *  @param		int		$showpercent	Show percent (with type='pie' only)
  *  @param		string	$url			Param to add an url to click values
  *  @return		void
+ *  @deprecated
  */
 function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='')
 {
@@ -2150,12 +2125,6 @@ function info_admin($text,$infoonimgalt=0)
     return $s;
 }
 
-
-/* For backward compatibility */
-function dolibarr_print_error($db='',$error='')
-{
-    return dol_print_error($db, $error);
-}
 
 /**
  *	Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontee des bugs.

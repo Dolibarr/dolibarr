@@ -18,27 +18,44 @@
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
-<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> -->
-<!-- <!DOCTYPE html> -->
-<!-- Ce DTD est KO car inhibe document.body.scrollTop -->
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- BEGIN PHP TEMPLATE -->
-
 <html>
-<!-- <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr"> -->
-<head>
+
+<?php
+print '<head>
 <meta name="robots" content="noindex,nofollow" />
-<title><?php echo $langs->trans('Login'); ?></title>
-<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
-<link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>" />
-<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico'; ?>" />
-<?php if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER; ?>
-<!-- HTTP_USER_AGENT = <?php echo $_SERVER['HTTP_USER_AGENT']; ?> -->
-</head>
+<meta name="author" content="Dolibarr Development Team">
+<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>
+<title>'.$langs->trans('Login').' '.$title.'</title>'."\n";
+print '<!-- Includes for JQuery (Ajax library) -->'."\n";
+if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
+else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+// JQuery. Must be before other includes
+print '<!-- Includes JS for JQuery -->'."\n";
+if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
+else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
+print '<link rel="stylesheet" type="text/css" href="'.$conf_css.'" />
+<style type="text/css">
+<!--
+#login {
+	margin-top: 70px;
+	margin-bottom: 30px;
+}
+.login_table {
+	width: 512px;
+	border: 1px solid #C0C0C0;
+	background: #F0F0F0 url('.$login_background.') repeat-x;
+}
+-->
+</style>'."\n";
+if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER;
+print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
+</head>';
+
+?>
 
 <body class="body">
 
@@ -287,7 +304,7 @@ jQuery(document).ready(function () {
 <!-- cookie name used for this session = <?php echo $session_name ?> -->
 <!-- urlfrom in this session = <?php echo $_SESSION["urlfrom"] ?> -->
 
-<?php echo $conf->global->MAIN_HTML_FOOTER; ?>
+<?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
 
 </body>
 </html>

@@ -27,9 +27,10 @@
 /**
  * Core function to output top menu auguria
  *
- * @param $db
- * @param $atarget
- * @param $type_user     0=Internal,1=External,2=All
+ * @param 	DoliDB	$db				Database handler
+ * @param 	string	$atarget		Target
+ * @param 	int		$type_user     	0=Internal,1=External,2=All
+ * @return	void
  */
 function print_auguria_menu($db,$atarget,$type_user)
 {
@@ -151,9 +152,10 @@ function print_end_menu_array_auguria()
 /**
  * Core function to output left menu auguria
  *
- * @param      db                  Database handler
- * @param      menu_array_before   Table of menu entries to show before entries of menu handler
- * @param      menu_array_after    Table of menu entries to show after entries of menu handler
+ * @param	DoliDB		$db                  Database handler
+ * @param 	array		$menu_array_before   Table of menu entries to show before entries of menu handler
+ * @param   array		$menu_array_after    Table of menu entries to show after entries of menu handler
+ * @return	void
  */
 function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
 {

@@ -115,6 +115,9 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserGroupCreate
+     * 
+     * @return	void
      */
     public function testUserGroupCreate()
     {
@@ -134,6 +137,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserGroupFetch
+     * 
+     * @param	int		$id				Id of group
+     * @return	void
      * @depends	testUserGroupCreate
      * The depends says test is run only if previous is ok
      */
@@ -154,6 +161,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserGroupUpdate
+     * 
+     * @param	Object	$localobject	Group
+     * @return	void
      * @depends	testUserGroupFetch
      * The depends says test is run only if previous is ok
      */
@@ -174,6 +185,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserGroupAddRight
+     * 
+     * @param	Object	$localobject	Object to show
+     * @return	void
      * @depends	testUserGroupUpdate
      * The depends says test is run only if previous is ok
      */
@@ -193,6 +208,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserGroupDelRight
+     * 
+     * @param	Object	$localobject	Object
+     * @return	void
      * @depends	testUserGroupAddRight
      * The depends says test is run only if previous is ok
      */
@@ -212,6 +231,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserGroupOther
+     * 
+     * @param	Object	$localobject	Object
+     * @return 	void
      * @depends testUserGroupDelRight
      * The depends says test is run only if previous is ok
      */
@@ -236,6 +259,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testUserGroupDelete
+     * 
+     * @param	int		$id				Id of object
+     * @return	void
      * @depends	testUserGroupOther
      * The depends says test is run only if previous is ok
      */
@@ -256,24 +283,5 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 
-    /**
-     *
-     */
-    /*public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new UserGroup($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }*/
 }
 ?>

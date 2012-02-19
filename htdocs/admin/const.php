@@ -58,7 +58,7 @@ if ($action == 'add')
 	{
 		if (dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]) < 0)
 		{
-			dolibarr_print_error($db);
+			dol_print_error($db);
 		}
 	}
 }
@@ -71,7 +71,7 @@ if (($_POST["const"] && isset($_POST["update"]) && $_POST["update"] == $langs->t
 		{
 			if (dolibarr_set_const($db, $const["name"],$const["value"],$const["type"],1,$const["note"],$const["entity"]) < 0)
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 		}
 	}
@@ -86,7 +86,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 		{
 			if (dolibarr_del_const($db, $const["rowid"], -1) < 0)
 			{
-				dolibarr_print_error($db);
+				dol_print_error($db);
 			}
 		}
 	}
@@ -97,7 +97,7 @@ if ($action == 'delete')
 {
 	if (dolibarr_del_const($db, $_GET["rowid"], $_GET["entity"]) < 0)
 	{
-		dolibarr_print_error($db);
+		dol_print_error($db);
 	}
 }
 

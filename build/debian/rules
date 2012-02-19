@@ -39,6 +39,7 @@ clean:
 	rm -fr .project
 	rm -fr .settings
 	rm -f  build.xml
+	rm -f  quickbuild.xml
 	rm -f  pom.xml
 	rm -f  README.md
 
@@ -63,6 +64,7 @@ clean:
 	rm -fr dev/xdebug
 	rm -f  dev/dolibarr_changes.txt
 	rm -f  dev/README
+	
 	rm -f  doc/images/dolibarr_screenshot2.png
 	rm -f  doc/images/dolibarr_screenshot3.png
 	rm -f  doc/images/dolibarr_screenshot4.png
@@ -77,19 +79,6 @@ clean:
 
 	rm -fr test
 
-	# Licence files are included into copyright file.
-	rm -f  htdocs/includes/jquery/plugins/flot/LICENSE.txt
-	rm -fr htdocs/includes/phpexcel/license.txt
-	rm -f  htdocs/includes/tcpdf/LICENSE.TXT
-
-	rm -fr htdocs/includes/jquery/plugins/lightbox
-	rm -fr htdocs/includes/jquery/plugins/jstree
-	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PDF
-	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip
-	rm -fr htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33
-	rm -fr htdocs/includes/tcpdf/fonts/freefont-20100919
-	rm -fr htdocs/includes/tcpdf/fonts/utils
-
 	rm -fr build/aps
 	rm -fr build/dmg
 	rm -fr build/doap
@@ -100,11 +89,30 @@ clean:
 	rm -fr build/perl
 	rm -fr build/rpm
 	rm -fr build/zip
+	
+	# clean from all embedded libraries (we use package dependencies instead)
+	rm -fr htdocs/includes/adodbtime
 	rm -fr htdocs/includes/ckeditor
+	rm -fr htdocs/includes/fpdfi
 	rm -fr htdocs/includes/fonts
 	rm -fr htdocs/includes/geoip
 	rm -fr htdocs/includes/nusoap
 	rm -fr htdocs/includes/odtphp/zip/pclzip
+	rm -fr htdocs/includes/jquery/css
+	rm -fr htdocs/includes/jquery/js
+	rm -fr htdocs/includes/jquery/plugins/flot
+	rm -fr htdocs/includes/jquery/plugins/jstree
+	rm -fr htdocs/includes/jquery/plugins/lightbox
+	rm -fr htdocs/includes/jquery/plugins/mobile
+	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PDF
+	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip
+	rm -fr htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33
+	rm -fr htdocs/includes/tcpdf/fonts/freefont-20100919
+	rm -fr htdocs/includes/tcpdf/fonts/utils
+
+	# Licence files are included into copyright file.
+	rm -fr htdocs/includes/phpexcel/license.txt
+	rm -f  htdocs/includes/tcpdf/LICENSE.TXT
 
 	dh $@
 
