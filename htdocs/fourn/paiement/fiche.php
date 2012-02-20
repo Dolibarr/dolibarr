@@ -183,7 +183,7 @@ if ($result > 0)
 
 	// Date payment
     print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Date",'date',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Date",'date',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
+    print $form->editfieldval("Date",'date',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker');
     print '</td></tr>';
 
 	// Payment mode
