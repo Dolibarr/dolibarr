@@ -609,28 +609,13 @@ class Form
     /**
      *  Output html form to select a third party
      *
-     *	@param  string	$selected        Preselected type
-     *	@param  string	$htmlname        Name of field in form
-     *  @param  string	$filter          Optionnal filters criteras
+     *	@param	string	$selected       Preselected type
+     *	@param  string	$htmlname       Name of field in form
+     *  @param  string	$filter         Optionnal filters criteras
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     * 	@return	void
-     */
-    function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
-    {
-        print $this->select_company($selected,$htmlname,$filter,$showempty,$showtype,$forcecombo);
-    }
-
-    /**
-     *    	Output html form to select a third party
-     *
-     *		@param      selected        Preselected type
-     *		@param      htmlname        Name of field in form
-     *    	@param      filter          Optionnal filters criteras
-     *		@param		showempty		Add an empty field
-     * 		@param		showtype		Show third party type in combolist (customer, prospect or supplier)
-     * 		@param		forcecombo		Force to use combo box
+     * 	@return	string					HTML string with
      */
     function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
     {
@@ -647,7 +632,7 @@ class Form
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         $sql.= " ORDER BY nom ASC";
 
-        dol_syslog("Form::select_societes sql=".$sql);
+        dol_syslog(get_class($this)."::select_company sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2649,11 +2634,11 @@ class Form
     }
 
     /**
-     *    Affiche formulaire de selection des tiers
+     *    Output html select to select thirdparty
      *
-     *    @param      page        Page
-     *    @param      selected    Id contact pre-selectionne
-     *    @param      htmlname    Nom du formulaire select
+     *    @param	string	$page       Page
+     *    @param    string	$selected   Id preselected
+     *    @param    string	$htmlname	Name of HTML select
      *    @return	void
      */
     function form_thirdparty($page, $selected='', $htmlname='socid')
@@ -2667,7 +2652,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $num=$this->select_societes($selected , $htmlname);
+            print $this->select_company($selected , $htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -2680,7 +2665,9 @@ class Form
                 $soc = new Societe($this->db);
                 $soc->fetch($selected);
                 print $soc->getNomUrl($langs);
-            } else {
+            }
+            else
+            {
                 print "&nbsp;";
             }
         }

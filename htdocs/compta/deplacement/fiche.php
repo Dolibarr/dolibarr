@@ -287,7 +287,7 @@ if ($action == 'create')
     // Company
     print "<tr>";
     print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-    print $form->select_societes(GETPOST("socid"),'socid','',1);
+    print $form->select_company(GETPOST("socid"),'socid','',1);
     print '</td></tr>';
 
     // Public note
@@ -375,7 +375,7 @@ else if ($id)
             // Where
             print "<tr>";
             print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-            print $form->select_societes($soc->id,'socid','',1);
+            print $form->select_company($soc->id,'socid','',1);
             print '</td></tr>';
 
             // Public note

@@ -523,7 +523,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		print $form->select_societes('','socid','',1,1);
+		print $form->select_company('','socid','',1,1);
 	}
 	print '</td></tr>';
 
@@ -742,7 +742,7 @@ if ($id)
 		// Company
 		print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td>';
 		print '<td>';
-		print $form->select_societes($act->societe->id,'socid','',1,1);
+		print $form->select_company($act->societe->id,'socid','',1,1);
 		print '</td>';
 
 		// Contact

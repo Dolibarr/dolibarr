@@ -414,7 +414,7 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("Company").'</td><td>';
-        print $form->select_societes($project->societe->id,'socid','',1,1);
+        print $form->select_company($project->societe->id,'socid','',1,1);
         print '</td></tr>';
 
         // Visibility

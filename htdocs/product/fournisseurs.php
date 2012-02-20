@@ -273,8 +273,7 @@ if ($id || $ref)
 				}
 				else
 				{
-					$form=new Form($db);
-					$form->select_societes($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
+					print $form->select_company($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
 				}
 				print '</td></tr>';
 

@@ -389,9 +389,7 @@ else
                 }
                 else {
                     print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-                    print $form->select_societes(isset($_POST["socid"])?$_POST["socid"]:'','socid','',1);
-                    //print $form->select_societes('','socid','');
-                    //print $langs->trans("ContactNotLinkedToCompany");
+                    print $form->select_company(GETPOST("socid"),'socid','',1);
                     print '</td></tr>';
                 }
             }
@@ -563,7 +561,7 @@ else
             {
                 print '<tr><td>'.$langs->trans("Company").'</td>';
                 print '<td colspan="3">';
-                print $form->select_societes(isset($_POST["socid"])?$_POST["socid"]:($object->socid?$object->socid:-1),'socid','',1);
+                print $form->select_company(GETPOST("socid")?GETPOST("socid"):($object->socid?$object->socid:-1),'socid','',1);
                 print '</td>';
                 print '</tr>';
             }
