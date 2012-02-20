@@ -30,7 +30,6 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
  */
 class box_actions extends ModeleBoxes
 {
-
 	var $boxcode="lastactions";
 	var $boximg="object_action";
 	var $boxlabel;
