@@ -1,5 +1,5 @@
-// Copyright (C) 2011 Regis Houssin  <regis@dolibarr.fr>
-// Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2011-2012	Regis Houssin		<regis@dolibarr.fr>
+// Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,14 +45,7 @@ $(document).ready(function() {
 			return getParameters('textarea', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
 		}
 	});
 	$('.editkey_textarea').hover(
@@ -85,14 +78,7 @@ $(document).ready(function() {
 			return getParameters('ckeditor', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
 		}
 	});
 	$('.editkey_ckeditor').hover(
@@ -121,14 +107,7 @@ $(document).ready(function() {
 			return getParameters('string', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
 		}
 	});
 	$('.editkey_string').hover(
@@ -193,14 +172,7 @@ $(document).ready(function() {
 			return getParameters('datepicker', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
 		}
 	});
 	$('.editkey_datepicker').hover(
@@ -235,14 +207,7 @@ $(document).ready(function() {
 			return getParameters('select', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
 		}
 	});
 	$('.editkey_select').hover(
@@ -280,6 +245,21 @@ $(document).ready(function() {
 			//ext_table_element: ext_table_element,
 			//ext_fk_element: ext_fk_element
 		};
+	}
+	
+	function getResult(obj, result) {
+		var res = $.parseJSON(result);
+		if (res.error) {
+			$(obj).html(obj.revert);
+			$.jnotify(res.error, "error", true);
+		} else {
+			var htmlname = $(obj).attr('id').substr(4);
+			var success = $( '#success_' + htmlname ).val();
+			if (success != undefined) {
+				$.jnotify(success, "ok");
+			}
+			$(obj).html(res.value);
+		}
 	}
 	
 	$('.edit_autocomplete').editable(urlSaveInPlace, {

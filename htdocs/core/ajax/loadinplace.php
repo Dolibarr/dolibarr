@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2011-2012 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,8 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	if ($element == 'propal') $element = 'propale';
 	else if ($element == 'fichinter') $element = 'ficheinter';
 	
-	if ($user->rights->$element->lire || $user->rights->$element->read
+	if (($element == 'payment' && $user->rights->facture->paiement)
+	|| $user->rights->$element->lire || $user->rights->$element->read
 	|| $user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read)
 	{
 		if ($type == 'select')

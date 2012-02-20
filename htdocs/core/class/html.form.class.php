@@ -118,9 +118,10 @@ class Form
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @param	object	$extObject		External object
+     * @param	string	$success		Success message
      * @return  string					HTML edit field
      */
-    function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=false)
+    function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=null,$success=null)
     {
         global $conf,$langs,$db;
 
@@ -129,7 +130,7 @@ class Form
         // When option to edit inline is activated
         if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
         {
-            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $extObject);
+            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $extObject, $success);
         }
         else
         {
@@ -194,11 +195,12 @@ class Form
      * @param	int		$condition		Condition to edit
      * @param	string	$inputType		Type of input ('numeric', 'datepicker', 'textarea', 'ckeditor:dolibarr_zzz', 'select:xxx')
      * @param	object	$extObject		External object
+     * @param	string	$success		Success message		
      * @return	string   		      	HTML edit in place
      */
-    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=false)
+    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=null, $success=null)
     {
-        global $conf;
+        global $conf, $langs;
 
         $out='';
 
@@ -238,7 +240,7 @@ class Form
                 $inputType=$tmp[0]; $inputOption=$tmp[1];
                 if (! empty($tmp[2])) $savemethod=$tmp[2];
             }
-            if (preg_match('/^datepicker/',$inputType))
+            else if (preg_match('/^datepicker/',$inputType))
             {
                 $tmp=explode(':',$inputType);
                 $inputType=$tmp[0]; $inputOption=$tmp[1];
@@ -276,6 +278,7 @@ class Form
             $out.= '<input id="loadmethod_'.$htmlname.'" value="'.$loadmethod.'" type="hidden"/>'."\n";
             $out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
             $out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
+            if (! empty($success)) $out.= '<input id="success_'.$htmlname.'" value="'.$success.'" type="hidden"/>'."\n";
             //$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
             //$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
 
