@@ -40,154 +40,154 @@
  */
 class Form
 {
-	var $db;
-	var $error;
+    var $db;
+    var $error;
 
-	// Cache arrays
-	var $cache_types_paiements=array();
-	var $cache_conditions_paiements=array();
-	var $cache_availability=array();
-	var $cache_demand_reason=array();
-	var $cache_type_fees=array();
+    // Cache arrays
+    var $cache_types_paiements=array();
+    var $cache_conditions_paiements=array();
+    var $cache_availability=array();
+    var $cache_demand_reason=array();
+    var $cache_type_fees=array();
 
-	var $tva_taux_value;
-	var $tva_taux_libelle;
+    var $tva_taux_value;
+    var $tva_taux_libelle;
 
 
-	/**
-	 * Constructor
-	 *
-	 * @param		DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     * Constructor
+     *
+     * @param		DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
-	/**
-	 * Output key field for an editable field
-	 *
-	 * @param   string	$text			Text of label or key to translate
-	 * @param   string	$htmlname		Name of select field
-	 * @param   string	$preselected	Name of Value to show/edit (not used in this function)
-	 * @param	object	$object			Object
-	 * @param	boolean	$perm			Permission to allow button to edit parameter
-	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
-	 * @return	string					HTML edit field
-	 */
-	function editfieldkey($text,$htmlname,$preselected,$object,$perm,$typeofdata='string')
-	{
-		global $conf,$langs;
+    /**
+     * Output key field for an editable field
+     *
+     * @param   string	$text			Text of label or key to translate
+     * @param   string	$htmlname		Name of select field
+     * @param   string	$preselected	Name of Value to show/edit (not used in this function)
+     * @param	object	$object			Object
+     * @param	boolean	$perm			Permission to allow button to edit parameter
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
+     * @return	string					HTML edit field
+     */
+    function editfieldkey($text,$htmlname,$preselected,$object,$perm,$typeofdata='string')
+    {
+        global $conf,$langs;
 
-		$ret='';
+        $ret='';
 
-		if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
-		{
-			if ($perm)
-			{
-				$tmp=explode(':',$typeofdata);
-				$ret.= '<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
-				$ret.= $langs->trans($text);
-				$ret.= '</div>'."\n";
-			}
-			else
-			{
-				$ret.= $langs->trans($text);
-			}
-		}
-		else
-		{
-			$ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-			$ret.=$langs->trans($text);
-			$ret.='</td>';
-			if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-			$ret.='</tr></table>';
-		}
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+        {
+            if ($perm)
+            {
+                $tmp=explode(':',$typeofdata);
+                $ret.= '<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
+                $ret.= $langs->trans($text);
+                $ret.= '</div>'."\n";
+            }
+            else
+            {
+                $ret.= $langs->trans($text);
+            }
+        }
+        else
+        {
+            $ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+            $ret.=$langs->trans($text);
+            $ret.='</td>';
+            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+            $ret.='</tr></table>';
+        }
 
-		return $ret;
-	}
+        return $ret;
+    }
 
-	/**
-	 * Output val field for an editable field
-	 *
-	 * @param	string	$text			Text of label (not used in this function)
-	 * @param	string	$htmlname		Name of select field
-	 * @param	string	$value			Value to show/edit
-	 * @param	object	$object			Object
-	 * @param	boolean	$perm			Permission to allow button to edit parameter
-	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
-	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
-	 * @param	object	$extObject		External object
-	 * @return  string					HTML edit field
-	 */
-	function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=false)
-	{
-		global $conf,$langs,$db;
+    /**
+     * Output val field for an editable field
+     *
+     * @param	string	$text			Text of label (not used in this function)
+     * @param	string	$htmlname		Name of select field
+     * @param	string	$value			Value to show/edit
+     * @param	object	$object			Object
+     * @param	boolean	$perm			Permission to allow button to edit parameter
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
+     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
+     * @param	object	$extObject		External object
+     * @return  string					HTML edit field
+     */
+    function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=false)
+    {
+        global $conf,$langs,$db;
 
-		$ret='';
+        $ret='';
 
-		// When option to edit inline is activated
-		if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
-		{
-			$ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $extObject);
-		}
-		else
-		{
-			if (GETPOST('action') == 'edit'.$htmlname)
-			{
-				$ret.="\n";
-				$ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-				$ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
-				$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				$ret.='<input type="hidden" name="id" value="'.$object->id.'">';
-				$ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-				$ret.='<tr><td>';
-				if (preg_match('/^(string|email|numeric)/',$typeofdata))
-				{
-					$tmp=explode(':',$typeofdata);
-					$ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
-				}
-				else if ($typeofdata == 'text' || $typeofdata == 'textarea' || $typeofdata == 'note')
-				{
-					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
-				}
-				else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
-				{
-					$ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
-				}
-				else if (preg_match('/^ckeditor/',$typeofdata))
-				{
-					$tmp=explode(':',$typeofdata);
-					require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-					$doleditor=new DolEditor($htmlname,($editvalue?$editvalue:$value),($tmp[2]?$tmp[2]:''),($tmp[3]?$tmp[3]:'100'),($tmp[1]?$tmp[1]:'dolibarr_notes'),'In',false,true,true);
-					$ret.=$doleditor->Create(1);
-				}
-				$ret.='</td>';
-				if ($typeofdata != 'day' && $typeofdata != 'datepicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-				$ret.='</tr></table>'."\n";
-				$ret.='</form>'."\n";
-			}
-			else
-			{
-				if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
-				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
-				elseif ($typeofdata == 'text' || $typeofdata == 'textarea')  $ret.=dol_htmlentitiesbr($value);
-				else if (preg_match('/^ckeditor/',$typeofdata))
-				{
-					$tmpcontent=dol_htmlentitiesbr($value);
-					$firstline=preg_replace('/<br>.*/','',$tmpcontent);
-					$firstline=preg_replace('/[\n\r].*/','',$firstline);
-					$ret.=$firstline.((strlen($firstline) != strlen($tmpcontent))?'...':'');
-				}
-				else $ret.=$value;
-			}
-		}
-		return $ret;
-	}
+        // When option to edit inline is activated
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+        {
+            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $extObject);
+        }
+        else
+        {
+            if (GETPOST('action') == 'edit'.$htmlname)
+            {
+                $ret.="\n";
+                $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+                $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
+                $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $ret.='<input type="hidden" name="id" value="'.$object->id.'">';
+                $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+                $ret.='<tr><td>';
+                if (preg_match('/^(string|email|numeric)/',$typeofdata))
+                {
+                    $tmp=explode(':',$typeofdata);
+                    $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
+                }
+                else if ($typeofdata == 'text' || $typeofdata == 'textarea' || $typeofdata == 'note')
+                {
+                    $ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" cols="70">'.($editvalue?$editvalue:$value).'</textarea>';
+                }
+                else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
+                {
+                    $ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
+                }
+                else if (preg_match('/^ckeditor/',$typeofdata))
+                {
+                    $tmp=explode(':',$typeofdata);
+                    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                    $doleditor=new DolEditor($htmlname,($editvalue?$editvalue:$value),($tmp[2]?$tmp[2]:''),($tmp[3]?$tmp[3]:'100'),($tmp[1]?$tmp[1]:'dolibarr_notes'),'In',false,true,true);
+                    $ret.=$doleditor->Create(1);
+                }
+                $ret.='</td>';
+                if ($typeofdata != 'day' && $typeofdata != 'datepicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+                $ret.='</tr></table>'."\n";
+                $ret.='</form>'."\n";
+            }
+            else
+            {
+                if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+                elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
+                elseif ($typeofdata == 'text' || $typeofdata == 'textarea')  $ret.=dol_htmlentitiesbr($value);
+                else if (preg_match('/^ckeditor/',$typeofdata))
+                {
+                    $tmpcontent=dol_htmlentitiesbr($value);
+                    $firstline=preg_replace('/<br>.*/','',$tmpcontent);
+                    $firstline=preg_replace('/[\n\r].*/','',$firstline);
+                    $ret.=$firstline.((strlen($firstline) != strlen($tmpcontent))?'...':'');
+                }
+                else $ret.=$value;
+            }
+        }
+        return $ret;
+    }
 
-	/**
-	 * Output edit in place form
-	 *
+    /**
+     * Output edit in place form
+     *
      * @param	object	$object			Object
      * @param	string	$value			Value to show/edit
      * @param	string	$htmlname		DIV ID (field name)
@@ -196,158 +196,158 @@ class Form
      * @param	object	$extObject		External object
      * @return	string   		      	HTML edit in place
      */
-	private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=false)
-	{
-		global $conf;
+    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=false)
+    {
+        global $conf;
 
-		$out='';
+        $out='';
 
-		// Check parameters
-		if ($inputType == 'textarea') $value = dol_nl2br($value);
-		else if (preg_match('/^numeric/',$inputType)) $value = price($value);
-		else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
+        // Check parameters
+        if ($inputType == 'textarea') $value = dol_nl2br($value);
+        else if (preg_match('/^numeric/',$inputType)) $value = price($value);
+        else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
 
-		if ($condition)
-		{
-			$element = false;
-			$table_element = false;
-			$fk_element = false;
-			$loadmethod = false;
-			$savemethod = false;
-			$ext_element = false;
-			//$ext_table_element = false;
-			//$ext_fk_element = false;
+        if ($condition)
+        {
+            $element = false;
+            $table_element = false;
+            $fk_element = false;
+            $loadmethod = false;
+            $savemethod = false;
+            $ext_element = false;
+            //$ext_table_element = false;
+            //$ext_fk_element = false;
 
-			if (is_object($object))
-			{
-				$element = $object->element;
-				$table_element = $object->table_element;
-				$fk_element = $object->id;
-			}
+            if (is_object($object))
+            {
+                $element = $object->element;
+                $table_element = $object->table_element;
+                $fk_element = $object->id;
+            }
 
-			if (is_object($extObject))
-			{
-				$ext_element = $extObject->element;
-				//$ext_table_element = $extObject->table_element;
-				//$ext_fk_element = $extObject->id;
-			}
+            if (is_object($extObject))
+            {
+                $ext_element = $extObject->element;
+                //$ext_table_element = $extObject->table_element;
+                //$ext_fk_element = $extObject->id;
+            }
 
-			if (preg_match('/^(string|email|numeric)/',$inputType))
-			{
-				$tmp=explode(':',$inputType);
-				$inputType=$tmp[0]; $inputOption=$tmp[1];
-				if (! empty($tmp[2])) $savemethod=$tmp[2];
-			}
-			if (preg_match('/^datepicker/',$inputType))
-			{
-				$tmp=explode(':',$inputType);
-				$inputType=$tmp[0]; $inputOption=$tmp[1];
-				if (! empty($tmp[2])) $savemethod=$tmp[2];
+            if (preg_match('/^(string|email|numeric)/',$inputType))
+            {
+                $tmp=explode(':',$inputType);
+                $inputType=$tmp[0]; $inputOption=$tmp[1];
+                if (! empty($tmp[2])) $savemethod=$tmp[2];
+            }
+            if (preg_match('/^datepicker/',$inputType))
+            {
+                $tmp=explode(':',$inputType);
+                $inputType=$tmp[0]; $inputOption=$tmp[1];
+                if (! empty($tmp[2])) $savemethod=$tmp[2];
 
-				$out.= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format
-			}
-			else if (preg_match('/^select/',$inputType))
-			{
-				$tmp=explode(':',$inputType);
-				$inputType=$tmp[0]; $loadmethod=$tmp[1];
-				if (! empty($tmp[2])) $savemethod=$tmp[2];
-			}
-			else if (preg_match('/^ckeditor/',$inputType))
-			{
-				$tmp=explode(':',$inputType);
-				$inputType=$tmp[0]; $toolbar=$tmp[1];
-				if (! empty($tmp[2])) $width=$tmp[2];
-				if (! empty($tmp[3])) $heigth=$tmp[3];
-				if (! empty($tmp[4])) $savemethod=$tmp[4];
+                $out.= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format
+            }
+            else if (preg_match('/^select/',$inputType))
+            {
+                $tmp=explode(':',$inputType);
+                $inputType=$tmp[0]; $loadmethod=$tmp[1];
+                if (! empty($tmp[2])) $savemethod=$tmp[2];
+            }
+            else if (preg_match('/^ckeditor/',$inputType))
+            {
+                $tmp=explode(':',$inputType);
+                $inputType=$tmp[0]; $toolbar=$tmp[1];
+                if (! empty($tmp[2])) $width=$tmp[2];
+                if (! empty($tmp[3])) $heigth=$tmp[3];
+                if (! empty($tmp[4])) $savemethod=$tmp[4];
 
-				if (! empty($conf->fckeditor->enabled))
-				{
-					$out.= '<input id="ckeditor_toolbar" value="'.$toolbar.'" type="hidden"/>'."\n";
-				}
-				else
-				{
-					$inputType = 'textarea';
-				}
-			}
+                if (! empty($conf->fckeditor->enabled))
+                {
+                    $out.= '<input id="ckeditor_toolbar" value="'.$toolbar.'" type="hidden"/>'."\n";
+                }
+                else
+                {
+                    $inputType = 'textarea';
+                }
+            }
 
-			$out.= '<input id="element_'.$htmlname.'" value="'.$element.'" type="hidden"/>'."\n";
-			$out.= '<input id="table_element_'.$htmlname.'" value="'.$table_element.'" type="hidden"/>'."\n";
-			$out.= '<input id="fk_element_'.$htmlname.'" value="'.$fk_element.'" type="hidden"/>'."\n";
-			$out.= '<input id="loadmethod_'.$htmlname.'" value="'.$loadmethod.'" type="hidden"/>'."\n";
-			$out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
-			$out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
-			//$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
-			//$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
+            $out.= '<input id="element_'.$htmlname.'" value="'.$element.'" type="hidden"/>'."\n";
+            $out.= '<input id="table_element_'.$htmlname.'" value="'.$table_element.'" type="hidden"/>'."\n";
+            $out.= '<input id="fk_element_'.$htmlname.'" value="'.$fk_element.'" type="hidden"/>'."\n";
+            $out.= '<input id="loadmethod_'.$htmlname.'" value="'.$loadmethod.'" type="hidden"/>'."\n";
+            $out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
+            $out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
+            //$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
+            //$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
 
-			$out.= '<div id="val_'.$htmlname.'" class="editval_'.$inputType.'">'.$value.'</div>'."\n";
-		}
-		else
-		{
-			$out = $value;
-		}
+            $out.= '<div id="val_'.$htmlname.'" class="editval_'.$inputType.'">'.$value.'</div>'."\n";
+        }
+        else
+        {
+            $out = $value;
+        }
 
-		return $out;
-	}
+        return $out;
+    }
 
-	/**
-	 *	Show a text and picto with tooltip on text or picto
-	 *
-	 *	@param	string		$text				Text to show
-	 *	@param	string		$htmltext			Content html of tooltip. Must be HTML/UTF8 encoded.
-	 *	@param	int			$tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
-	 *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
-	 *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
-	 *	@param	string		$extracss			Add a CSS style to td tags
-	 *	@param	int			$notabs				Do not include table and tr tags
-	 *	@param	string		$incbefore			Include code before the text
-	 *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
-	 *	@return	string							Code html du tooltip (texte+picto)
-	 *	@see	Use function textwithpicto if you can.
-	 */
-	function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='',$noencodehtmltext=0)
-	{
-		global $conf;
+    /**
+     *	Show a text and picto with tooltip on text or picto
+     *
+     *	@param	string		$text				Text to show
+     *	@param	string		$htmltext			Content html of tooltip. Must be HTML/UTF8 encoded.
+     *	@param	int			$tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
+     *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
+     *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
+     *	@param	string		$extracss			Add a CSS style to td tags
+     *	@param	int			$notabs				Do not include table and tr tags
+     *	@param	string		$incbefore			Include code before the text
+     *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
+     *	@return	string							Code html du tooltip (texte+picto)
+     *	@see	Use function textwithpicto if you can.
+     */
+    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='',$noencodehtmltext=0)
+    {
+        global $conf;
 
-		if ($incbefore) $text = $incbefore.$text;
-		if (! $htmltext) return $text;
+        if ($incbefore) $text = $incbefore.$text;
+        if (! $htmltext) return $text;
 
-		// Sanitize tooltip
-		$htmltext=str_replace("\\","\\\\",$htmltext);
-		$htmltext=str_replace("\r","",$htmltext);
-		$htmltext=str_replace("\n","",$htmltext);
+        // Sanitize tooltip
+        $htmltext=str_replace("\\","\\\\",$htmltext);
+        $htmltext=str_replace("\r","",$htmltext);
+        $htmltext=str_replace("\n","",$htmltext);
 
-		$htmltext=str_replace('"',"&quot;",$htmltext);
-		if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
-		else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-		if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
-		else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
+        $htmltext=str_replace('"',"&quot;",$htmltext);
+        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
+        else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
+        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
+        else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 
-		$s="";
-		if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
-		if ($direction > 0)
-		{
-			if ($text != '')
-			{
-				$s.='<td'.$paramfortooltiptd.'>'.$text;
-				if ($direction) $s.='&nbsp;';
-				$s.='</td>';
-			}
-			if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
-		}
-		else
-		{
-			if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
-			if ($text != '')
-			{
-				$s.='<td'.$paramfortooltiptd.'>';
-				if ($direction) $s.='&nbsp;';
-				$s.=$text.'</td>';
-			}
-		}
-		if (empty($notabs)) $s.='</tr></table>';
+        $s="";
+        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
+        if ($direction > 0)
+        {
+            if ($text != '')
+            {
+                $s.='<td'.$paramfortooltiptd.'>'.$text;
+                if ($direction) $s.='&nbsp;';
+                $s.='</td>';
+            }
+            if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
+        }
+        else
+        {
+            if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
+            if ($text != '')
+            {
+                $s.='<td'.$paramfortooltiptd.'>';
+                if ($direction) $s.='&nbsp;';
+                $s.=$text.'</td>';
+            }
+        }
+        if (empty($notabs)) $s.='</tr></table>';
 
-		return $s;
-	}
+        return $s;
+    }
 
     /**
      *	Show a text with a picto and a tooltip on picto
@@ -371,7 +371,8 @@ class Form
         if (empty($conf->use_javascript_ajax))
         {
             if ($type == 'info' || $type == 'help')	return $text;
-            else { $alt=$htmltext; $htmltext=''; }
+            else { $alt=$htmltext; $htmltext='';
+            }
         }
         // If info or help with smartphone, show only text
         if (! empty($conf->browser->phone))
@@ -390,25 +391,25 @@ class Form
     }
 
     /**
-     *    Return combo list of activated countries, into language of user
+     *  Return combo list of activated countries, into language of user
      *
-     *    @param	string	$selected       Id or Code or Label of preselected country
-     *    @param    string	$htmlname       Name of html select object
-     *    @param    string	$htmloption     Options html on select object
-     *    @return	void
+     *  @param	string	$selected       Id or Code or Label of preselected country
+     *  @param  string	$htmlname       Name of html select object
+     *  @param  string	$htmloption     Options html on select object
+     *  @return	void
      */
     function select_pays($selected='',$htmlname='pays_id',$htmloption='')
     {
-    	print $this->select_country($selected,$htmlname,$htmloption);
+        print $this->select_country($selected,$htmlname,$htmloption);
     }
 
     /**
-     *    Return combo list of activated countries, into language of user
+     *  Return combo list of activated countries, into language of user
      *
-     *    @param	string	$selected       Id or Code or Label of preselected country
-     *    @param    string	$htmlname       Name of html select object
-     *    @param    string	$htmloption     Options html on select object
-     *    @return   string           		HTML string with select
+     *  @param	string	$selected       Id or Code or Label of preselected country
+     *  @param  string	$htmlname       Name of html select object
+     *  @param  string	$htmloption     Options html on select object
+     *  @return string           		HTML string with select
      */
     function select_country($selected='',$htmlname='pays_id',$htmloption='')
     {
@@ -436,13 +437,13 @@ class Form
             {
                 $foundselected=false;
 
-            	while ($i < $num)
-            	{
+                while ($i < $num)
+                {
                     $obj = $this->db->fetch_object($resql);
                     $countryArray[$i]['rowid'] 		= $obj->rowid;
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                	$label[$i] 	= $countryArray[$i]['label'];
+                    $label[$i] 	= $countryArray[$i]['label'];
                     $i++;
                 }
 
@@ -450,10 +451,10 @@ class Form
 
                 foreach ($countryArray as $row)
                 {
-					//print 'rr'.$selected.'-'.$row['label'].'-'.$row['code_iso'].'<br>';
-                	if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['label']) )
-                	{
-                		$foundselected=true;
+                    //print 'rr'.$selected.'-'.$row['label'].'-'.$row['code_iso'].'<br>';
+                    if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['label']) )
+                    {
+                        $foundselected=true;
                         $out.= '<option value="'.$row['rowid'].'" selected="selected">';
                     }
                     else
@@ -473,42 +474,6 @@ class Form
         }
 
         return $out;
-    }
-
-
-    /**
-     *    Retourne la liste des types de comptes financiers
-     *
-     *    @param	string	$selected        Type pre-selectionne
-     *    @param    string	$htmlname        Nom champ formulaire
-     *    @return	void
-     */
-    function select_type_comptes_financiers($selected=1,$htmlname='type')
-    {
-        global $langs;
-        $langs->load("banks");
-
-        $type_available=array(0,1,2);
-
-        print '<select class="flat" name="'.$htmlname.'">';
-        $num = count($type_available);
-        $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
-                if ($selected == $type_available[$i])
-                {
-                    print '<option value="'.$type_available[$i].'" selected="selected">'.$langs->trans("BankType".$type_available[$i]).'</option>';
-                }
-                else
-                {
-                    print '<option value="'.$type_available[$i].'">'.$langs->trans("BankType".$type_available[$i]).'</option>';
-                }
-                $i++;
-            }
-        }
-        print '</select>';
     }
 
     /**
@@ -569,39 +534,39 @@ class Form
      */
     function load_cache_types_fees()
     {
-    	global $langs;
+        global $langs;
 
-    	$langs->load("trips");
+        $langs->load("trips");
 
-    	if (count($this->cache_types_fees)) return 0;    // Cache already load
+        if (count($this->cache_types_fees)) return 0;    // Cache already load
 
-    	$sql = "SELECT c.code, c.libelle as label";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-    	$sql.= " ORDER BY lower(c.libelle) ASC";
+        $sql = "SELECT c.code, c.libelle as label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
+        $sql.= " ORDER BY lower(c.libelle) ASC";
 
-    	dol_syslog(get_class($this).'::load_cache_types_fees sql='.$sql, LOG_DEBUG);
-    	$resql=$this->db->query($sql);
-    	if ($resql)
-    	{
-    		$num = $this->db->num_rows($resql);
-    		$i = 0;
+        dol_syslog(get_class($this).'::load_cache_types_fees sql='.$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
 
-    		while ($i < $num)
-    		{
-    			$obj = $this->db->fetch_object($resql);
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
 
-    			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-    			$label=($obj->code != $langs->trans($obj->code) ? $langs->trans($obj->code) : $langs->trans($obj->label));
-    			$this->cache_types_fees[$obj->code] = $label;
-    			$i++;
-    		}
-    		return $num;
-    	}
-    	else
-    	{
-    		dol_print_error($this->db);
-    		return -1;
-    	}
+                // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+                $label=($obj->code != $langs->trans($obj->code) ? $langs->trans($obj->code) : $langs->trans($obj->label));
+                $this->cache_types_fees[$obj->code] = $label;
+                $i++;
+            }
+            return $num;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
     }
 
     /**
@@ -630,11 +595,11 @@ class Form
 
         foreach($this->cache_types_fees as $key => $value)
         {
-        	print '<option value="'.$key.'"';
-        	if ($key == $selected) print ' selected="selected"';
-        	print '>';
-        	print $value;
-        	print '</option>';
+            print '<option value="'.$key.'"';
+            if ($key == $selected) print ' selected="selected"';
+            print '>';
+            print $value;
+            print '</option>';
         }
 
         print '</select>';
@@ -654,7 +619,7 @@ class Form
      */
     function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
     {
-    	print $this->select_company($selected,$htmlname,$filter,$showempty,$showtype,$forcecombo);
+        print $this->select_company($selected,$htmlname,$filter,$showempty,$showtype,$forcecombo);
     }
 
     /**
@@ -690,7 +655,7 @@ class Form
             {
                 //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
 
-            	$out.= ajax_combobox($htmlname);
+                $out.= ajax_combobox($htmlname);
             }
 
             $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
@@ -836,7 +801,7 @@ class Form
             $i = 0;
             if ($num)
             {
-            	include_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
+                include_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
                 $contactstatic=new Contact($this->db);
 
                 while ($i < $num)
@@ -910,7 +875,7 @@ class Form
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
-    	print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
+        print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
     }
 
     /**
@@ -943,7 +908,7 @@ class Form
         $sql = "SELECT u.rowid, u.name as lastname, u.firstname, u.login, u.admin, u.entity";
         if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
-        	$sql.= ", e.label";
+            $sql.= ", e.label";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX ."user as u";
         if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
@@ -954,7 +919,7 @@ class Form
         }
         else
         {
-        	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+            $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
         }
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
@@ -968,10 +933,10 @@ class Form
             $i = 0;
             if ($num)
             {
-            	$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
-            	if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
+                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
 
-            	$userstatic=new User($this->db);
+                $userstatic=new User($this->db);
 
                 while ($i < $num)
                 {
@@ -1000,8 +965,8 @@ class Form
 
                     if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
-                    	if ($obj->admin && ! $obj->entity) $out.=" (".$langs->trans("AllEntities").")";
-						else $out.=" (".$obj->label.")";
+                        if ($obj->admin && ! $obj->entity) $out.=" (".$langs->trans("AllEntities").")";
+                        else $out.=" (".$obj->label.")";
                     }
 
                     //if ($obj->admin) $out.= ' *';
@@ -1010,10 +975,10 @@ class Form
                     $i++;
                 }
             }
-        	else
+            else
             {
-            	$out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
-            	$out.= '<option value="">'.$langs->trans("None").'</option>';
+                $out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
+                $out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
         }
@@ -1047,13 +1012,13 @@ class Form
 
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
-        	if ($selected && empty($selected_input_value))
-        	{
-        		require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-        		$product = new Product($this->db);
-        		$product->fetch($selected);
-        		$selected_input_value=$product->ref;
-        	}
+            if ($selected && empty($selected_input_value))
+            {
+                require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+                $product = new Product($this->db);
+                $product->fetch($selected);
+                $selected_input_value=$product->ref;
+            }
             // mode=1 means customers products
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
             if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
@@ -1116,18 +1081,18 @@ class Form
         // Add criteria on ref/label
         if ($filterkey && $filterkey != '')
         {
-	        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
-	        {
-	            $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
-	            if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '".$filterkey."%'";
-	            $sql.=")";
-	        }
-	        else
-	        {
-	            $sql.=" AND (p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%'";
-	            if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
-	            $sql.=")";
-	        }
+            if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
+            {
+                $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
+                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '".$filterkey."%'";
+                $sql.=")";
+            }
+            else
+            {
+                $sql.=" AND (p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%'";
+                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
+                $sql.=")";
+            }
         }
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
@@ -1143,7 +1108,7 @@ class Form
             $num = $this->db->num_rows($result);
 
             $outselect.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-			$outselect.='<option value="0" selected="selected">&nbsp;</option>';
+            $outselect.='<option value="0" selected="selected">&nbsp;</option>';
 
             $i = 0;
             while ($num && $i < $num)
@@ -1345,14 +1310,14 @@ class Form
         // Add criteria on ref/label
         if ($filterkey && $filterkey != '')
         {
-	        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
-	        {
-	            $sql.=" AND (pfp.ref_fourn LIKE '".$filterkey."%' OR p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%')";
-	        }
-	        else
-	        {
-	            $sql.=" AND (pfp.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
-	        }
+            if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
+            {
+                $sql.=" AND (pfp.ref_fourn LIKE '".$filterkey."%' OR p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%')";
+            }
+            else
+            {
+                $sql.=" AND (pfp.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
+            }
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC";
 
@@ -1679,7 +1644,7 @@ class Form
         }
     }
 
-	/**
+    /**
      *      Retourne la liste des types de delais de livraison possibles
      *
      *      @param      selected        Id du type de delais pre-selectionne
@@ -1712,7 +1677,7 @@ class Form
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
-	/**
+    /**
      *      Load into cache cache_demand_reason, array of input reasons
      *
      *      @return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
@@ -1756,7 +1721,7 @@ class Form
         }
     }
 
-	/**
+    /**
      *      Return list of events that triggered an object creation
      *
      *      @param      selected        Id du type d'origine pre-selectionne
@@ -2076,7 +2041,7 @@ class Form
         return $output;
     }
 
-	/**
+    /**
      *     Show a confirmation HTML form or AJAX popup
      *
      *     @param  page        	   Url of page to call if confirmation is OK
@@ -2091,7 +2056,7 @@ class Form
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
-    	print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
+        print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
     }
 
     /**
@@ -2117,65 +2082,65 @@ class Form
 
         if (is_array($formquestion) && count($formquestion) > 0)
         {
-        	$more.='<table class="paddingrightonly" width="100%">'."\n";
+            $more.='<table class="paddingrightonly" width="100%">'."\n";
             $more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
             {
-            	if (is_array($input))
-            	{
-            		if ($input['type'] == 'text')
-	                {
-	                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
-	                }
-	                else if ($input['type'] == 'password')
-	                {
-	                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
-	                }
-	                else if ($input['type'] == 'select')
-	                {
-	                	$more.='<tr><td valign="top" style="padding: 4px !important;">';
-	                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left" style="padding: 4px !important;">';
-	                    $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
-	                    $more.='</td></tr>'."\n";
-	                }
-	                else if ($input['type'] == 'checkbox')
-	                {
-	                    $more.='<tr>';
-	                    $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
-	                    $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
-	                    if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="checked"';
-	                    if (is_bool($input['value']) && $input['value']) $more.=' checked="checked"';
-	                    if ($input['disabled']) $more.=' disabled="disabled"';
-	                    $more.=' /></td>';
-	                    $more.='<td valign="top" align="left">&nbsp;</td>';
-	                    $more.='</tr>'."\n";
-	                }
-	                else if ($input['type'] == 'radio')
-	                {
-	                    $i=0;
-	                    foreach($input['values'] as $selkey => $selval)
-	                    {
-	                        $more.='<tr>';
-	                        if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
-	                        else $more.='<td>&nbsp;</td>';
-	                        $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
-	                        if ($input['disabled']) $more.=' disabled="disabled"';
-	                        $more.=' /></td>';
-	                        $more.='<td valign="top" align="left">';
-	                        $more.=$selval;
-	                        $more.='</td></tr>'."\n";
-	                        $i++;
-	                    }
-	                }
-	            	else if ($input['type'] == 'other')
-	                {
-	                	$more.='<tr><td valign="top">';
-	                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
-	                    $more.=$input['value'];
-	                    $more.='</td></tr>'."\n";
-	                }
-	                array_push($inputarray,$input['name']);
-            	}
+                if (is_array($input))
+                {
+                    if ($input['type'] == 'text')
+                    {
+                        $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
+                    }
+                    else if ($input['type'] == 'password')
+                    {
+                        $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
+                    }
+                    else if ($input['type'] == 'select')
+                    {
+                        $more.='<tr><td valign="top" style="padding: 4px !important;">';
+                        if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left" style="padding: 4px !important;">';
+                        $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
+                        $more.='</td></tr>'."\n";
+                    }
+                    else if ($input['type'] == 'checkbox')
+                    {
+                        $more.='<tr>';
+                        $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
+                        $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
+                        if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="checked"';
+                        if (is_bool($input['value']) && $input['value']) $more.=' checked="checked"';
+                        if ($input['disabled']) $more.=' disabled="disabled"';
+                        $more.=' /></td>';
+                        $more.='<td valign="top" align="left">&nbsp;</td>';
+                        $more.='</tr>'."\n";
+                    }
+                    else if ($input['type'] == 'radio')
+                    {
+                        $i=0;
+                        foreach($input['values'] as $selkey => $selval)
+                        {
+                            $more.='<tr>';
+                            if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
+                            else $more.='<td>&nbsp;</td>';
+                            $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
+                            if ($input['disabled']) $more.=' disabled="disabled"';
+                            $more.=' /></td>';
+                            $more.='<td valign="top" align="left">';
+                            $more.=$selval;
+                            $more.='</td></tr>'."\n";
+                            $i++;
+                        }
+                    }
+                    else if ($input['type'] == 'other')
+                    {
+                        $more.='<tr><td valign="top">';
+                        if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+                        $more.=$input['value'];
+                        $more.='</td></tr>'."\n";
+                    }
+                    array_push($inputarray,$input['name']);
+                }
             }
             $more.='</table>'."\n";
         }
@@ -2184,15 +2149,15 @@ class Form
 
         if ($useajax && $conf->use_javascript_ajax)
         {
-        	$autoOpen=true;
-        	$dialogconfirm='dialog-confirm';
-        	if (! is_int($useajax))
-        	{
-        		$button=$useajax;
-        		$useajax=1;
-        		$autoOpen=false;
-        		$dialogconfirm.='-'.$button;
-        	}
+            $autoOpen=true;
+            $dialogconfirm='dialog-confirm';
+            if (! is_int($useajax))
+            {
+                $button=$useajax;
+                $useajax=1;
+                $autoOpen=false;
+                $dialogconfirm.='-'.$button;
+            }
             $pageyes=$page.'&action='.$action.'&confirm=yes';
             $pageno=($useajax == 2?$page.'&confirm=no':'');
 
@@ -2381,14 +2346,14 @@ class Form
         }
     }
 
-	 /**
-     *    	Show a form to select a delivery delay
+    /**
+     *  Show a form to select a delivery delay
      *
-     *    	@param      page        	Page
-     *    	@param      selected    	Id condition pre-selectionne
-     *    	@param      htmlname    	Name of select html field
-     *		@param		addempty		Ajoute entree vide
-     *    @return	void
+     *  @param  int		$page        	Page
+     *  @param  string	$selected    	Id condition pre-selectionne
+     *  @param  string	$htmlname    	Name of select html field
+     *	@param	int		$addempty		Ajoute entree vide
+     *  @return	void
      */
     function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
     {
@@ -2417,7 +2382,7 @@ class Form
         }
     }
 
-	/**
+    /**
      *    	Show a select form to select origin
      *
      *    	@param      page        	Page
@@ -2683,7 +2648,7 @@ class Form
         }
     }
 
-/**
+    /**
      *    Affiche formulaire de selection des tiers
      *
      *    @param      page        Page
@@ -2730,7 +2695,7 @@ class Form
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
-    	print $this->selectcurrency($selected,$htmlname);
+        print $this->selectcurrency($selected,$htmlname);
     }
 
     /**
@@ -2770,14 +2735,14 @@ class Form
                     $obj = $this->db->fetch_object($resql);
                     $currencyArray[$i]['code_iso'] 	= $obj->code_iso;
                     $currencyArray[$i]['label']		= ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                	$label[$i] 	= $currencyArray[$i]['label'];
+                    $label[$i] 	= $currencyArray[$i]['label'];
                     $i++;
                 }
 
                 array_multisort($label, SORT_ASC, $currencyArray);
 
                 foreach ($currencyArray as $row) {
-                	if ($selected && $selected == $row['code_iso']) {
+                    if ($selected && $selected == $row['code_iso']) {
                         $foundselected=true;
                         $out.= '<option value="'.$row['code_iso'].'" selected="selected">';
                     } else {
@@ -2818,7 +2783,7 @@ class Form
      */
     function select_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
     {
-    	print $this->load_tva($htmlname, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
+        print $this->load_tva($htmlname, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
     }
 
 
@@ -3158,7 +3123,7 @@ class Form
         if ($h)
         {
             // Show hour
-        	$retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
+            $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
@@ -3341,7 +3306,9 @@ class Form
                 {
                     $newval=($translate?$langs->trans($value):$value);
                     $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($newval,$maxlen):$newval);
-                    if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
+                    if ($value == '' || $value == '-') {
+                        $selectOptionValue='&nbsp;';
+                    }
                     $out.=$selectOptionValue;
                 }
                 $out.="</option>\n";
@@ -3505,12 +3472,12 @@ class Form
 
 
     /**
-    *    	Return HTML code to output a barcode
-    *
-    *     	@param	Object	&$object		Object containing data to retrieve file name
-    * 		@param	int		$width			Width of photo
-    * 	  	@return string    				HTML code to output barcode
-    */
+     *    	Return HTML code to output a barcode
+     *
+     *     	@param	Object	&$object		Object containing data to retrieve file name
+     * 		@param	int		$width			Width of photo
+     * 	  	@return string    				HTML code to output barcode
+     */
     function showbarcode(&$object,$width=100)
     {
         global $conf;
@@ -3599,27 +3566,27 @@ class Form
         else dol_print_error('','Call of showphoto with wrong parameters');
 
         /* Disabled. lightbox seems to not work. I don't know why.
-        $ret.="\n<script type=\"text/javascript\">
-              jQuery(function() {
-                     jQuery('.photologo').lightBox();
-              });
-              </script>\n";
+         $ret.="\n<script type=\"text/javascript\">
+        jQuery(function() {
+        jQuery('.photologo').lightBox();
+        });
+        </script>\n";
 
         $ret.="\n<script type=\"text/javascript\">
-              jQuery(function() {
-                     jQuery('.photologo').lightBox({
-                        overlayBgColor: '#FFF',
-                        overlayOpacity: 0.6,
-                        imageLoading: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-ico-loading.gif',
-                        imageBtnClose: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-close.gif',
-                        imageBtnPrev: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-prev.gif',
-                        imageBtnNext: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-next.gif',
-                        containerResizeSpeed: 350,
-                        txtImage: 'Imagem',
-                        txtOf: 'de'
-                     });
-              });
-              </script>\n";
+        jQuery(function() {
+        jQuery('.photologo').lightBox({
+        overlayBgColor: '#FFF',
+        overlayOpacity: 0.6,
+        imageLoading: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-ico-loading.gif',
+        imageBtnClose: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-close.gif',
+        imageBtnPrev: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-prev.gif',
+        imageBtnNext: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-next.gif',
+        containerResizeSpeed: 350,
+        txtImage: 'Imagem',
+        txtOf: 'de'
+        });
+        });
+        </script>\n";
         */
 
         return $ret;
@@ -3653,7 +3620,7 @@ class Form
         $sql = "SELECT ug.rowid, ug.nom ";
         if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
-        	$sql.= ", e.label";
+            $sql.= ", e.label";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
         if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
@@ -3664,11 +3631,11 @@ class Form
         }
         else
         {
-        	$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+            $sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
         }
         if (is_array($exclude) && $excludeGroups) $sql.= " AND ug.rowid NOT IN ('".$excludeGroups."')";
         if (is_array($include) && $includeGroups) $sql.= " AND ug.rowid IN ('".$includeGroups."')";
-		$sql.= " ORDER BY ug.nom ASC";
+        $sql.= " ORDER BY ug.nom ASC";
 
         dol_syslog("Form::select_dolgroups sql=".$sql);
         $resql=$this->db->query($sql);
@@ -3678,8 +3645,8 @@ class Form
             $i = 0;
             if ($num)
             {
-            	$out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
-            	if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+                $out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
+                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
 
                 while ($i < $num)
                 {
@@ -3698,7 +3665,7 @@ class Form
                     $out.= $obj->nom;
                     if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
                     {
-                    	$out.= " (".$obj->label.")";
+                        $out.= " (".$obj->label.")";
                     }
 
                     $out.= '</option>';
@@ -3707,8 +3674,8 @@ class Form
             }
             else
             {
-            	$out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
-            	$out.= '<option value="">'.$langs->trans("None").'</option>';
+                $out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
+                $out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
         }
