@@ -27,8 +27,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show expired services
  */
- class box_services_expired extends ModeleBoxes
- {
+class box_services_expired extends ModeleBoxes
+{
 
     var $boxcode="expiredservices";     // id of box
     var $boximg="object_contract";

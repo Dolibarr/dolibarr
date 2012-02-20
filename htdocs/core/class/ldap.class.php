@@ -647,7 +647,7 @@ class Ldap
 		$content=$this->dump_content($dn, $info);
 
 		//Create file
-		$result=create_exdir($conf->ldap->dir_temp);
+		$result=dol_mkdir($conf->ldap->dir_temp);
 
 		$outputfile=$conf->ldap->dir_temp.'/ldapinput.in';
 		$fp=fopen($outputfile,"w");

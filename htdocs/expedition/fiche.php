@@ -28,8 +28,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/sendings.lib.php");
@@ -482,6 +483,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 llxHeader('',$langs->trans('Sending'),'Expedition');
 
 $form = new Form($db);
+$formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 
@@ -580,7 +582,7 @@ if ($action == 'create')
 				print '<td colspan="3">';
 				if (!empty($object->fk_delivery_address))
 				{
-					$form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
+					$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
 				}
 				print '</td></tr>'."\n";
 			}
@@ -1006,7 +1008,7 @@ else
 				print '<td colspan="3">';
 				if (!empty($object->fk_delivery_address))
 				{
-					$form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->deliveryaddress->socid,'none','shipment',$object->id);
+					$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->deliveryaddress->socid,'none','shipment',$object->id);
 				}
 				print '</td></tr>'."\n";
 			}

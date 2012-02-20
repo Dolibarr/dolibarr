@@ -73,7 +73,7 @@ if ($_GET["ref"])
 	$account=$acct->id;
 }
 
-$result=create_exdir($conf->banque->dir_temp);
+$result=dol_mkdir($conf->banque->dir_temp);
 if ($result < 0)
 {
 	$langs->load("errors");

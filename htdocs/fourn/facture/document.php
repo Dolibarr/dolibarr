@@ -73,7 +73,7 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         $ref=dol_sanitizeFileName($facture->ref);
         $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$ref;
 
-        if (create_exdir($upload_dir) >= 0)
+        if (dol_mkdir($upload_dir) >= 0)
         {
             $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
             if (is_numeric($resupload) && $resupload > 0)

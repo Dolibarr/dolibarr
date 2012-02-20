@@ -1246,7 +1246,7 @@ abstract class DolibarrModules
                 // Create dir if it does not exists
                 if ($fulldir && ! file_exists($fulldir))
                 {
-                    if (create_exdir($fulldir) < 0)
+                    if (dol_mkdir($fulldir) < 0)
                     {
                         $this->error = $langs->trans("ErrorCanNotCreateDir",$fulldir);
                         dol_syslog(get_class($this)."::_init ".$this->error, LOG_ERR);

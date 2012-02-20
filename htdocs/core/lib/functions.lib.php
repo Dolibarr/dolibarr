@@ -1409,7 +1409,7 @@ function isValidEmail($address)
  *  @param      string		$address    phone (Ex: "0601010101")
  *  @return     boolean     			true if phone syntax is OK, false if KO or empty string
  */
-function isValidPhone($address)
+function isValidPhone($phone)
 {
     return true;
 }
@@ -2279,7 +2279,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	Get title line of an array
  *
  *	@param	string	$name        Label of field
- *	@param	int		$thead		For thead format
+ *	@param	int		$thead		 For thead format
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by defaut)
@@ -3039,12 +3039,6 @@ function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
     return $path;
 }
 
-// For backward compatibility
-function create_exdir($dir)
-{
-    dol_mkdir($dir);
-}
-
 /**
  *	Creation of a directory (this can create recursive subdir)
  *
@@ -3055,7 +3049,7 @@ function dol_mkdir($dir)
 {
     global $conf;
 
-    dol_syslog("functions.lib::create_exdir: dir=".$dir,LOG_INFO);
+    dol_syslog("functions.lib::dol_mkdir: dir=".$dir,LOG_INFO);
 
     $dir_osencoded=dol_osencode($dir);
     if (@is_dir($dir_osencoded)) return 0;
@@ -3079,7 +3073,7 @@ function dol_mkdir($dir)
             $ccdir_osencoded=dol_osencode($ccdir);
             if (! @is_dir($ccdir_osencoded))
             {
-                dol_syslog("functions.lib::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
+                dol_syslog("functions.lib::dol_mkdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
 
                 umask(0);
                 $dirmaskdec=octdec('0755');
@@ -3088,12 +3082,12 @@ function dol_mkdir($dir)
                 if (! @mkdir($ccdir_osencoded, $dirmaskdec))
                 {
                     // Si le is_dir a renvoye une fausse info, alors on passe ici.
-                    dol_syslog("functions.lib::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
+                    dol_syslog("functions.lib::dol_mkdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
                     $nberr++;
                 }
                 else
                 {
-                    dol_syslog("functions.lib::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
+                    dol_syslog("functions.lib::dol_mkdir: Directory '".$ccdir."' created",LOG_DEBUG);
                     $nberr=0;	// On remet a zero car si on arrive ici, cela veut dire que les echecs precedents peuvent etre ignore
                     $nbcreated++;
                 }

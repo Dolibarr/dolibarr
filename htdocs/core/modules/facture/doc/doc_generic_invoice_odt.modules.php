@@ -20,7 +20,6 @@
  *	\file       htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
- *	\author	    Laurent Destailleur
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php");
@@ -28,11 +27,11 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/doc.lib.php");
 
 
 /**
- *	\class      doc_generic_invoice_odt
- *	\brief      Class to build documents using ODF templates generator
+ *	Class to build documents using ODF templates generator
  */
 class doc_generic_invoice_odt extends ModelePDFFactures
 {
@@ -140,9 +139,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         global $conf;
 
         return array(
-            'line_fulldesc'=>$line->product_ref.(($line->product_ref && $line->desc)?' - ':'').$line->desc,
+            'line_fulldesc'=>doc_getlinedesc($line),
             'line_product_ref'=>$line->product_ref,
-            'line_desc'=>$line->desc,
+            'line_product_label'=>$line->product_label,
+        	'line_desc'=>$line->desc,
             'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
             'line_up'=>price($line->subprice, 0, $outputlangs),
             'line_qty'=>$line->qty,
@@ -155,9 +155,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         );
     }
 
-	/**		Return description of a module
-     *      @param      langs        Lang object to use for output
-	 *      @return     string       Description
+	/**
+	 * Return description of a module
+	 *
+     * @param      langs        Lang object to use for output
+	 * @return     string       Description
 	 */
 	function info($langs)
 	{
@@ -281,7 +283,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return -1;
@@ -303,7 +305,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				create_exdir($conf->facture->dir_temp);
+				dol_mkdir($conf->facture->dir_temp);
 
 
                 // If BILLING contact defined on invoice, we use it

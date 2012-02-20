@@ -5,17 +5,17 @@
  * Copyright (C) 2005		Marc Barilley		<marc@ocebo.fr>
  * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -918,7 +918,7 @@ if ($action == 'create')
     }
     else
     {
-        $form->select_societes((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
+        print $form->select_company((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
     }
     print '</td>';
 
@@ -1254,7 +1254,7 @@ else
         // Label
         print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td>';
         print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td>';
-        
+
         /*
          * List of payments
         */

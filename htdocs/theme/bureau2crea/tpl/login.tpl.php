@@ -217,7 +217,7 @@ jQuery(document).ready(function () {
 
 <div id="parameterBox">
 
-<div id="logBox"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong><input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo $login; ?>" tabindex="1" /></div>
+<div id="logBox"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong><input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo GETPOST('username')?GETPOST('username'):$login; ?>" tabindex="1" /></div>
 <div id="passBox"><strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo $password; ?>" tabindex="2" /></div>
 
 	<?php if ($select_entity) { ?>

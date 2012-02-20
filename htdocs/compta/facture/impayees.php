@@ -105,7 +105,7 @@ if ($action == "builddoc" && $user->rights->facture->lire)
 		}
 
 		// Create output dir if not exists
-		create_exdir($diroutputpdf);
+		dol_mkdir($diroutputpdf);
 
 		// Save merged file
 		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));

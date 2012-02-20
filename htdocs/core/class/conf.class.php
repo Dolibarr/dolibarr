@@ -28,8 +28,7 @@
 
 
 /**
- *  \class      Conf
- *  \brief      Class to stock current configuration
+ *  Class to stock current configuration
  */
 class Conf
 {
@@ -43,7 +42,6 @@ class Conf
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
-
 	//! Used to store current currency
 	public $currency;
 	//! Used to store current css (from theme)
@@ -53,6 +51,17 @@ class Conf
 	public $top_menu;
 	public $smart_menu;
 
+	public $modules				 = array();	// List of activated modules
+	public $css_modules			 = array();
+	public $tabs_modules		 = array();
+	public $triggers_modules	 = array();
+	public $menus_modules	     = array();
+	public $hooks_modules		 = array();
+	public $login_method_modules = array();
+	public $sms_engine_modules   = array();
+
+	var $logbuffer = array();
+
 	//! To store properties of multi-company
 	public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
@@ -60,15 +69,6 @@ class Conf
 	//! Used to store list of entities to use for each element
 	public $entities		 	 = array();
 
-	public $modules				 = array();	// List of modules
-	public $css_modules			 = array();
-	public $tabs_modules		 = array();
-	public $triggers_modules	 = array('/core/triggers');    // TODO default triggers should not be into the module list
-	public $menus_modules	     = array();
-	public $hooks_modules		 = array();
-	public $login_method_modules = array();
-
-	var $logbuffer = array();
 
 
 	/**
@@ -182,7 +182,7 @@ class Conf
                         elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
                         {
                             $module=strtolower($reg[1]);
-                            $this->sms_engine[$module]=$module;    // Add this module in list of modules that provide SMS
+                            $this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
                         }
 						// If this is a module constant
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
@@ -209,8 +209,8 @@ class Conf
 					$mc->setValues($this);
 				}
 			}
+		    $db->free($resql);
 		}
-		$db->free($resql);
 		//var_dump($this->modules);
 
 		// Clean some variables
@@ -295,8 +295,6 @@ class Conf
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON))  $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
-        if (empty($this->global->COMPANY_AQUARIUM_MASK_SUPPLIER)) $this->global->COMPANY_AQUARIUM_MASK_SUPPLIER='401';
-		if (empty($this->global->COMPANY_AQUARIUM_MASK_CUSTOMER)) $this->global->COMPANY_AQUARIUM_MASK_CUSTOMER='411';
 
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator

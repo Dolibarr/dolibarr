@@ -73,7 +73,7 @@ if ($mode == 'supplier')
 
 print_fiche_titre($title, $mesg);
 
-create_exdir($dir);
+dol_mkdir($dir);
 
 $stats = new CommandeStats($db, $socid, $mode, $userid);
 

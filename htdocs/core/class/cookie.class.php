@@ -109,7 +109,7 @@ class DolCookie
 	 * @param  	string		$value   	Cookie value
 	 * @param	string		$expire		Expiration
 	 * @param	string		$path		Path of cookie
-	 * @param	string		$domaine	Domain name
+	 * @param	string		$domain		Domain name
 	 * @param	int			$secure		0 or 1
 	 * @return	void
 	 */

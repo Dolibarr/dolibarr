@@ -78,7 +78,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["c
                 dol_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->mycompany->dir_output.'/logos/'.$original_file);
                 if (! is_dir($conf->mycompany->dir_output.'/logos/'))
                 {
-                    create_exdir($conf->mycompany->dir_output.'/logos/');
+                    dol_mkdir($conf->mycompany->dir_output.'/logos/');
                 }
                 $result=dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->mycompany->dir_output.'/logos/'.$original_file,1,0,$_FILES['logo']['error']);
                 if ($result > 0)

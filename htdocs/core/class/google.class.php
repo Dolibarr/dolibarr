@@ -20,6 +20,10 @@
  *	\file			htdocs/core/class/google.class.php
  *	\brief			A set of functions for using Google APIs
  */
+
+/**
+ * Class to manage Google API
+ */
 class GoogleAPI
 {
 	var $db;
@@ -32,26 +36,26 @@ class GoogleAPI
 	 *
 	 * @param 	DoliDB		$db			Database handler
 	 * @param	string		$key		Google key
-	 * @return GoogleAPI
+	 * @return 	GoogleAPI
 	 */
-	function GoogleAPI($DB,$key)
+	function GoogleAPI($db,$key)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 		$this->key=$key;
 	}
 
 
 	/**
-	 *  \brief      Return geo coordinates of an address
-	 *  \param      address		Address
-	 * 							Example: 68 Grande rue Charles de Gaulle,+94130,+Nogent sur Marne,+France
-	 *							Example: 188, rue de Fontenay,+94300,+Vincennes,+France
-	 *	\return		string		Coordinates
+	 *  Return geo coordinates of an address
+	 *
+	 *  @param	string	$address	Address
+	 * 								Example: 68 Grande rue Charles de Gaulle,+94130,+Nogent sur Marne,+France
+	 *								Example: 188, rue de Fontenay,+94300,+Vincennes,+France
+	 *	@return	string				Coordinates
 	 */
 	function getGeoCoordinatesOfAddress($address)
 	{
 		global $conf;
-
 
 		$i=0;
 

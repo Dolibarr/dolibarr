@@ -29,6 +29,7 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php");
@@ -1185,6 +1186,7 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formother = new FormOther($db);
 $formorder = new FormOrder($db);
 
 
@@ -1324,9 +1326,8 @@ if ($action == 'create' && $user->rights->commande->creer)
     // Delivery address
     if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
     {
-        // Link to edit: $form->form_address($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
         print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td colspan="2">';
-        $numaddress = $form->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
+        $numaddress = $formother->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
         print ' &nbsp; <a href="../comm/address.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
         print '</td></tr>';
     }

@@ -90,7 +90,7 @@ class pdf_paiement
 
 		if (! is_dir($dir))
 		{
-			$result=create_exdir($dir);
+			$result=dol_mkdir($dir);
 			if ($result < 0)
 			{
 				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);

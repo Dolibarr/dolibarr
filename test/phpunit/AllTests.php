@@ -31,6 +31,12 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
+if ($langs->defaultlang != 'en_US')
+{
+    print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
+    exit;
+}
+
 if (empty($user->id))
 {
 	print "Load permissions for admin user nb 1\n";
@@ -61,7 +67,9 @@ class AllTests
 		require_once dirname(__FILE__).'/FilesLibTest.php';
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/FunctionsTest.php';
-        $suite->addTestSuite('FunctionsTest');
+		$suite->addTestSuite('FunctionsTest');
+		require_once dirname(__FILE__).'/PdfDocTest.php';
+		$suite->addTestSuite('PdfDocTest');
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');

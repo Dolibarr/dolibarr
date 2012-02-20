@@ -28,6 +28,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbank.class.php");
 
 $langs->load("banks");
 $langs->load("companies");
@@ -187,18 +188,16 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
  * View
  */
 
+$form = new Form($db);
+$formbank = new FormBank($db);
+$formcompany = new FormCompany($db);
+
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 llxHeader();
 
-$form = new Form($db);
-$formcompany = new FormCompany($db);
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Affichage page en mode creation                                            */
-/*                                                                            */
-/* ************************************************************************** */
+// Creation
 
 if ($action == 'create')
 {
@@ -238,7 +237,7 @@ if ($action == 'create')
 	// Type
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">';
-	print $form->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
+	print $formbank->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
 	print '</td></tr>';
 
 	// Currency

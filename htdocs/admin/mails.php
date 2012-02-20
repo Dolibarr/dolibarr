@@ -81,7 +81,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp';
 
-	if (create_exdir($upload_dir) >= 0)
+	if (dol_mkdir($upload_dir) >= 0)
 	{
 		$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'], 1, 0, $_FILES['addedfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)

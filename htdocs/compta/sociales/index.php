@@ -24,7 +24,8 @@
  */
 
 require('../../main.inc.php');
-require(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formsocialcontrib.class.php");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -66,10 +67,11 @@ else
  *	View
  */
 
-llxHeader();
-
 $form = new Form($db);
+$formsocialcontrib = new FormSocialContrib($db);
+$chargesociale_static=new ChargeSociales($db);
 
+llxHeader();
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
 $sql.= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
@@ -98,8 +100,6 @@ if ($typeid) {
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
-
-$chargesociale_static=new ChargeSociales($db);
 
 $resql=$db->query($sql);
 if ($resql)
@@ -155,7 +155,7 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.GETPOST("search_label").'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $form->select_type_socialcontrib($typeid,'typeid',1,16,0);
+	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,16,0);
 	    print '</td>';
 		// Period end date
 		print '<td class="liste_titre">&nbsp;</td>';

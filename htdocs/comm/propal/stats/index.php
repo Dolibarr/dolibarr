@@ -60,7 +60,7 @@ print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
 
 $dir=$conf->propale->dir_temp;
 
-create_exdir($dir);
+dol_mkdir($dir);
 
 $stats = new PropaleStats($db, $socid, $userid);
 

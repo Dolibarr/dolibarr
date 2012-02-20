@@ -741,7 +741,7 @@ if ($action == 'create')
         print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
         print '<table class="border" width="100%">';
         print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-        $form->select_societes('','socid','',1,1);
+        print $form->select_company('','socid','',1,1);
         print '</td></tr>';
         print '</table>';
 

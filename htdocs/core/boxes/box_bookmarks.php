@@ -27,7 +27,6 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
  */
 class box_bookmarks extends ModeleBoxes
 {
-
 	var $boxcode="bookmarks";
 	var $boximg="object_bookmark";
 	var $boxlabel;

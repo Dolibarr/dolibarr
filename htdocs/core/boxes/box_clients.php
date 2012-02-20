@@ -29,9 +29,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last thirdparties
  */
- class box_clients extends ModeleBoxes
- {
-
+class box_clients extends ModeleBoxes
+{
 	var $boxcode="lastcustomers";
 	var $boximg="object_company";
 	var $boxlabel;

@@ -60,7 +60,7 @@ if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
 
 print_fiche_titre($title, $mesg);
 
-create_exdir($dir);
+dol_mkdir($dir);
 
 if ($mode)
 {

@@ -48,13 +48,15 @@ class CSMSFile
 
 	/**
 	 *	CSMSFile
-	 *	@param 	to                  Recipients SMS
-	 *	@param 	from                Sender SMS
-	 *	@param 	msg                 Message
-	 *	@param 	deliveryreceipt		Ask a delivery receipt
-	 *	@param 	deferred			Deferred or not
-	 *	@param 	priority			Priority
-	 *	@param 	class				Class
+	 *
+	 *	@param	string	$to                 Recipients SMS
+	 *	@param 	string	$from               Sender SMS
+	 *	@param 	string	$msg                Message
+	 *	@param 	int		$deliveryreceipt	Ask a delivery receipt
+	 *	@param 	int		$deferred			Deferred or not
+	 *	@param 	int		$priority			Priority
+	 *	@param 	int		$class				Class
+	 *	@return	int
 	 */
 	function CSMSFile($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
 	{
@@ -191,6 +193,8 @@ class CSMSFile
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
 	 *  Used for debugging.
+	 *
+	 *  @return	void
 	 */
 	function dump_sms()
 	{
@@ -212,6 +216,9 @@ class CSMSFile
     /**
      *  Write content of a SMTP request into a dump file (mode = all)
      *  Used for debugging.
+     *
+     *  @param	int		$result		Result of sms sending
+     *  @return	void
      */
     function dump_sms_result($result)
     {

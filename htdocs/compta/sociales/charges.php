@@ -24,6 +24,7 @@
 
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formsocialcontrib.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
 
 $langs->load("compta");
@@ -169,10 +170,12 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
  * View
  */
 
+$form = new Form($db);
+$formsocialcontrib = new FormSocialContrib($db);
+
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("",$langs->trans("SocialContribution"),$help_url);
 
-$form = new Form($db);
 
 // Mode creation
 if ($action == 'create')
@@ -216,7 +219,7 @@ if ($action == 'create')
 
 	// Type
     print '<td align="left">';
-    $form->select_type_socialcontrib(isset($_POST["actioncode"])?$_POST["actioncode"]:'','actioncode',1);
+    $formsocialcontrib->select_type_socialcontrib(isset($_POST["actioncode"])?$_POST["actioncode"]:'','actioncode',1);
     print '</td>';
 
 	// Date end period

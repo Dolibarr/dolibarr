@@ -26,6 +26,8 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
 
+$action=GETPOST('action');
+
 $langs->load("users");
 $langs->load("admin");
 $langs->load("other");
@@ -41,7 +43,7 @@ $mesg = '';
 /*
  * Actions
  */
-if ($_GET["action"] == 'setgeneraterule')
+if ($action == 'setgeneraterule')
 {
 	if (! dolibarr_set_const($db, 'USER_PASSWORD_GENERATED',$_GET["value"],'chaine',0,'',$conf->entity))
 	{
@@ -54,7 +56,7 @@ if ($_GET["action"] == 'setgeneraterule')
 	}
 }
 
-if ($_GET["action"] == 'activate_encrypt')
+if ($action == 'activate_encrypt')
 {
     $error=0;
 
@@ -109,7 +111,7 @@ if ($_GET["action"] == 'activate_encrypt')
 		dol_print_error($db,'');
 	}
 }
-else if ($_GET["action"] == 'disable_encrypt')
+else if ($action == 'disable_encrypt')
 {
 	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 	//Do not allow "disable encryption" as passwords cannot be decrypted
@@ -121,7 +123,7 @@ else if ($_GET["action"] == 'disable_encrypt')
     exit;
 }
 
-if ($_GET["action"] == 'activate_encryptdbpassconf')
+if ($action == 'activate_encryptdbpassconf')
 {
 	$result = encodedecode_dbpassconf(1);
 	if ($result > 0)
@@ -136,7 +138,7 @@ if ($_GET["action"] == 'activate_encryptdbpassconf')
 		$mesg='<div class="warning">'.$langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)).'</div>';
 	}
 }
-else if ($_GET["action"] == 'disable_encryptdbpassconf')
+else if ($action == 'disable_encryptdbpassconf')
 {
 	$result = encodedecode_dbpassconf(0);
 	if ($result > 0)
@@ -152,26 +154,26 @@ else if ($_GET["action"] == 'disable_encryptdbpassconf')
 	}
 }
 
-if ($_GET["action"] == 'activate_pdfsecurity')
+if ($action == 'activate_pdfsecurity')
 {
 	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1",'chaine',0,'',$conf->entity);
 	Header("Location: security.php");
 	exit;
 }
-else if ($_GET["action"] == 'disable_pdfsecurity')
+else if ($action == 'disable_pdfsecurity')
 {
 	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION",$conf->entity);
 	Header("Location: security.php");
 	exit;
 }
 
-if ($_GET["action"] == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
+if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
 	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1','chaine',0,'',$conf->entity);
 	Header("Location: security.php");
 	exit;
 }
-else if ($_GET["action"] == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
+else if ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
 	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK",$conf->entity);
 	Header("Location: security.php");
@@ -190,7 +192,7 @@ llxHeader('',$langs->trans("Passwords"));
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
-if ($mesg) print $mesg."<br>\n";
+dol_htmloutput_mesg($mesg);
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";

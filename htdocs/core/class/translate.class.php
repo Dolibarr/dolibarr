@@ -63,7 +63,7 @@ class Translate
 	 *  @param	string	$srclang     	Language to use
 	 *  @return	void
 	 */
-	function setDefaultLang($srclang='fr_FR')
+	function setDefaultLang($srclang='en_US')
 	{
 		global $conf;
 
@@ -100,7 +100,7 @@ class Translate
 		// We redefine $srclang
 		$langpart=explode("_",$codetouse);
 		//print "Short before _ : ".$langpart[0].'/ Short after _ : '.$langpart[1].'<br>';
-		if (isset($langpart[1]))	// If it's for a codetouse that is a long code xx_YY
+		if (! empty($langpart[1]))	// If it's for a codetouse that is a long code xx_YY
 		{
 			// Array force long code from first part, even if long code is defined
 			$longforshort=array('ar'=>'ar_SA');
@@ -115,11 +115,12 @@ class Translate
     	    // Array to convert short lang code into long code.
 	        $longforshort=array('ar'=>'ar_SA', 'el'=>'el_GR', 'ca'=>'ca_ES', 'en'=>'en_US', 'nb'=>'nb_NO', 'no'=>'nb_NO');
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
-			else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
+			else if (! empty($langpart[0])) $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
+			else $srclang='en_US';
 		}
 
 		$this->defaultlang=$srclang;
-		//print $this->defaultlang;
+		//print 'this->defaultlang='.$this->defaultlang;
 	}
 
 

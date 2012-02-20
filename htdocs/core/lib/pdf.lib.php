@@ -703,10 +703,10 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 }
 
 /**
- *  Return line description translated in outputlangs and encoded in UTF8
+ *  Return line description translated in outputlangs and encoded into htmlentities and with <br>
  *
  *  @param  Object		$object              Object
- *  @param  int			$i                   Current line number
+ *  @param  int			$i                   Current line number (0 = first line, 1 = second line, ...)
  *  @param  Translate	$outputlangs         Object langs for output
  *  @param  int			$hideref             Hide reference
  *  @param  int			$hidedesc            Hide description
@@ -720,7 +720,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$idprod=$object->lines[$i]->fk_product;
 	$label=$object->lines[$i]->label; if (empty($label))  $label=$object->lines[$i]->libelle;
 	$desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
-	$ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;    // TODO Not yeld saved for supplier invoices, only supplier orders
+	$ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;    // TODO Not yet saved for supplier invoices, only supplier orders
 	$note=$object->lines[$i]->note;
 
 	if ($issupplierline) $prodser = new ProductFournisseur($db);
@@ -744,7 +744,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	// Description long of product line
 	if ($desc && ($desc != $label))
 	{
-		if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="<br>";
+		if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="\n";
 
 		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
 		{
@@ -756,7 +756,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 		    $discount=new DiscountAbsolute($db);
 		    $discount->fetch($object->lines[$i]->fk_remise_except);
-		    $libelleproduitservice=$outputlangs->transnoentities("DiscountFromDeposit",$discount->ref_facture_source);
+		    $libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
 		    // Add date of deposit
 		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
@@ -825,19 +825,6 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		$libelleproduitservice.="\n".$period;
 		//print $libelleproduitservice;
 	}
-
-	// Note that we used here current custom and origin country code.
-	/* Fix, this must be done when saving line
-	if (! empty($prodser->customcode) || ! empty($prodser->country_code))
-	{
-	//var_dump($prodser);exit;
-	$tmptxt='(';
-	if (! empty($prodser->customcode)) $tmptxt.=$langs->transnoentitiesnoconv("CustomCode").': '.$prodser->customcode;
-	if (! empty($prodser->customcode) && ! empty($prodser->country_code)) $tmptxt.=' - ';
-	if (! empty($prodser->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prodser->country_code,0,$db,$outputlangs,0);
-	$tmptxt.=')';
-	$libelleproduitservice.="<br>".$tmptxt;
-	}*/
 
 	// Now we convert \n into br
 	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);

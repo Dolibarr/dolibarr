@@ -27,10 +27,11 @@
 
 
 /**
- *	Encode a string
+ *	Encode a string with base 64 algorithm + specific change
+ *	Code of this function is useless and we should use base64_encode only instead
  *
- *	@param   string		$chain		chaine de caracteres a encoder
- *	@return  string					chaine de caracteres encodees
+ *	@param   string		$chain		string to encode
+ *	@return  string					encoded string
  */
 function dol_encode($chain)
 {
@@ -45,10 +46,12 @@ function dol_encode($chain)
 }
 
 /**
- *	Decode a string
+ *	Decode a base 64 encoded + specific string.
+ *  This function is called by filefunc.inc.php at each page call.
+ *	Code of this function is useless and we should use base64_decode only instead
  *
- *	@param   string		$chain		chaine de caracteres a decoder
- *	@return  string					chaine de caracteres decodee
+ *	@param   string		$chain		string to decode
+ *	@return  string					decoded string
  */
 function dol_decode($chain)
 {
