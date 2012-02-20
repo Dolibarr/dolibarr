@@ -2722,50 +2722,6 @@ class Form
     }
 
     /**
-     *  Show form to select addresse
-     *
-     *  @param  page        	Page
-     *  @param  selected    	Id condition pre-selectionne
-     *  @param  htmlname    	Nom du formulaire select
-     *	@param	origin        	Origine de l'appel pour pouvoir creer un retour
-     *  @param  originid      	Id de l'origine
-     *  @return	void
-     *  @deprecated
-     */
-    function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
-    {
-        global $langs,$conf;
-        if ($htmlname != "none")
-        {
-            print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="setaddress">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            $this->select_address($selected, $socid, $htmlname, 1);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-            $langs->load("companies");
-            print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
-            print '</td></tr></table></form>';
-        }
-        else
-        {
-            if ($selected)
-            {
-                require_once(DOL_DOCUMENT_ROOT ."/societe/class/address.class.php");
-                $address=new Address($this->db);
-                $result=$address->fetch_address($selected);
-                print '<a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$address->socid.'&id='.$address->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$address->label.'</a>';
-            }
-            else
-            {
-                print "&nbsp;";
-            }
-        }
-    }
-
-    /**
      *    Retourne la liste des devises, dans la langue de l'utilisateur
      *
      *    @param     selected    code devise pre-selectionne

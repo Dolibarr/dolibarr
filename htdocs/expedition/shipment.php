@@ -25,8 +25,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/sendings.lib.php");
@@ -117,21 +118,20 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 }
 
 
+
+/*
+ * View
+ */
+
 $form = new Form($db);
-$formproduct = new FormProduct($db);
 $formfile = new FormFile($db);
-
-
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+$formother = new FormOther($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('',$langs->trans('OrderCard'),'');
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
+$id = GETPSOT('id');
+$ref= GETPOST('ref');
 if ($id > 0 || ! empty($ref))
 {
 	$commande = new Commande($db);
@@ -287,11 +287,11 @@ if ($id > 0 || ! empty($ref))
 
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
-				$form->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'delivery_address_id','commande',$commande->id);
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'delivery_address_id','commande',$commande->id);
 			}
 			else
 			{
-				$form->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
 			}
 			print '</td></tr>';
 		}
@@ -440,7 +440,7 @@ if ($id > 0 || ! empty($ref))
 				{
           // Define output language
           if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			    { 
+			    {
             $commande->fetch_thirdparty();
       			$prod = new Product($db, $objp->fk_product);
       			$outputlangs = $langs;
@@ -452,7 +452,7 @@ if ($id > 0 || ! empty($ref))
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-    
+
             $label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $objp->product_label;
           }
           else
