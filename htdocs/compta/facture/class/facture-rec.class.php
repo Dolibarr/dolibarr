@@ -337,6 +337,7 @@ class FactureRec extends Facture
 				$line->product_type     = $objp->product_type;	// Type of line
 				$line->product_ref      = $objp->product_ref;     // Ref product
 				$line->libelle          = $objp->label;           // Label product
+				$line->product_label	= $objp->product_label;
 				$line->product_desc     = $objp->product_desc;    // Description product
 				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$line->qty              = $objp->qty;
