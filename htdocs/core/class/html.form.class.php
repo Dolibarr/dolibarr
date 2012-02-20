@@ -200,7 +200,7 @@ class Form
      */
     private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=null, $success=null)
     {
-        global $conf, $langs;
+        global $conf;
 
         $out='';
 
