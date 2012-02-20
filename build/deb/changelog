@@ -1,9 +1,9 @@
-dolibarr (3.1.0-1.1) unstable; urgency=low
+dolibarr (3.1.1-1.1) unstable; urgency=low
 
   * Non-maintainer upload
   * New upstream release.
     closes: bug#634783
     
- -- Dolibarr team <contact@dolibarr.org>  Mon, 30 Jul 2011 12:00:00 +0100     
+ -- Dolibarr team <contact@dolibarr.org>  Mon, 20 Feb 2012 12:00:00 +0100     
 
 # For a changelog file dedicated to users, see /usr/share/doc/dolibarr/UserChangeLog.gz file. 
