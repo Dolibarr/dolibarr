@@ -17,10 +17,10 @@
  */
 
 /**
- *      \file       dev/skeletons/skeleton_class.class.php
- *      \ingroup    mymodule othermodule1 othermodule2
- *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *					Put here some comments
+ *  \file       dev/skeletons/skeleton_class.class.php
+ *  \ingroup    mymodule othermodule1 othermodule2
+ *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
+ *				Put here some comments
  */
 
 // Put here all includes required by your class file

@@ -35,9 +35,8 @@
 
 
 /**
- *	\class      Form
- *	\brief      Class to manage generation of HTML components
- *	\remarks	Only common components must be here.
+ *	Class to manage generation of HTML components
+ *	Only common components must be here.
  */
 class Form
 {
@@ -393,9 +392,10 @@ class Form
     /**
      *    Return combo list of activated countries, into language of user
      *
-     *    @param     selected         Id or Code or Label of preselected country
-     *    @param     htmlname         Name of html select object
-     *    @param     htmloption       Options html on select object
+     *    @param	string	$selected       Id or Code or Label of preselected country
+     *    @param    string	$htmlname       Name of html select object
+     *    @param    string	$htmloption     Options html on select object
+     *    @return	void
      */
     function select_pays($selected='',$htmlname='pays_id',$htmloption='')
     {
@@ -405,10 +405,10 @@ class Form
     /**
      *    Return combo list of activated countries, into language of user
      *
-     *    @param     selected         Id or Code or Label of preselected country
-     *    @param     htmlname         Name of html select object
-     *    @param     htmloption       Options html on select object
-     *    @return    string           HTML string with select
+     *    @param	string	$selected       Id or Code or Label of preselected country
+     *    @param    string	$htmlname       Name of html select object
+     *    @param    string	$htmloption     Options html on select object
+     *    @return   string           		HTML string with select
      */
     function select_country($selected='',$htmlname='pays_id',$htmloption='')
     {
@@ -479,8 +479,9 @@ class Form
     /**
      *    Retourne la liste des types de comptes financiers
      *
-     *    @param      selected        Type pre-selectionne
-     *    @param      htmlname        Nom champ formulaire
+     *    @param	string	$selected        Type pre-selectionne
+     *    @param    string	$htmlname        Nom champ formulaire
+     *    @return	void
      */
     function select_type_comptes_financiers($selected=1,$htmlname='type')
     {
@@ -510,86 +511,16 @@ class Form
         print '</select>';
     }
 
-
     /**
-     *		Return list of social contributions.
-     * 		Use mysoc->country_id or mysoc->country_code so they must be defined.
+     *	Return list of types of lines (product or service)
+     * 	Example: 0=product, 1=service, 9=other (for external module)
      *
-     *		@param      selected        Preselected type
-     *		@param      htmlname        Name of field in form
-     * 		@param		useempty		Set to 1 if we want an empty value
-     * 		@param		maxlen			Max length of text in combo box
-     * 		@param		help			Add or not the admin help picto
-     */
-    function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1)
-    {
-        global $db,$langs,$user,$mysoc;
-
-        if (empty($mysoc->country_id) && empty($mysoc->country_code))
-        {
-            dol_print_error('','Call to select_type_socialcontrib with mysoc country not yet defined');
-            exit;
-        }
-
-        if (! empty($mysoc->country_id))
-        {
-            $sql = "SELECT c.id, c.libelle as type";
-            $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-            $sql.= " WHERE c.active = 1";
-            $sql.= " AND c.fk_pays = ".$mysoc->country_id;
-            $sql.= " ORDER BY c.libelle ASC";
-        }
-        else
-        {
-            $sql = "SELECT c.id, c.libelle as type";
-            $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_pays as p";
-            $sql.= " WHERE c.active = 1 AND c.fk_pays = p.rowid";
-            $sql.= " AND p.code = '".$mysoc->country_code."'";
-            $sql.= " ORDER BY c.libelle ASC";
-        }
-
-        dol_syslog("Form::select_type_socialcontrib sql=".$sql, LOG_DEBUG);
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            if ($num)
-            {
-                print '<select class="flat" name="'.$htmlname.'">';
-                $i = 0;
-
-                if ($useempty) print '<option value="0">&nbsp;</option>';
-                while ($i < $num)
-                {
-                    $obj = $db->fetch_object($resql);
-                    print '<option value="'.$obj->id.'"';
-                    if ($obj->id == $selected) print ' selected="selected"';
-                    print '>'.dol_trunc($obj->type,$maxlen);
-                    $i++;
-                }
-                print '</select>';
-                if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-            }
-            else
-            {
-                print $langs->trans("ErrorNoSocialContributionForSellerCountry",$mysoc->country_code);
-            }
-        }
-        else
-        {
-            dol_print_error($db,$db->lasterror());
-        }
-    }
-
-    /**
-     *		Return list of types of lines (product or service)
-     * 		Example: 0=product, 1=service, 9=other (for external module)
-     *
-     *		@param      selected        Preselected type
-     *		@param      htmlname        Name of field in html form
-     * 		@param		showempty		Add an empty field
-     * 		@param		hidetext		Do not show label before combo box
-     * 		@param		forceall		Force to show products and services in combo list, whatever are activated modules
+     *	@param  string	$selected       Preselected type
+     *	@param  string	$htmlname       Name of field in html form
+     * 	@param	int		$showempty		Add an empty field
+     * 	@param	int		$hidetext		Do not show label before combo box
+     * 	@param	string	$forceall		Force to show products and services in combo list, whatever are activated modules
+     *  @return	void
      */
     function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
     {
@@ -676,10 +607,10 @@ class Form
     /**
      *	Return list of types of notes
      *
-     *	@param      string		$selected		Preselected type
-     *	@param      string		$htmlname		Name of field in form
-     * 	@param		int			$showempty		Add an empty field
-     * 	@return		void
+     *	@param	string		$selected		Preselected type
+     *	@param  string		$htmlname		Name of field in form
+     * 	@param	int			$showempty		Add an empty field
+     * 	@return	void
      */
     function select_type_fees($selected='',$htmlname='type',$showempty=0)
     {
@@ -711,14 +642,15 @@ class Form
     }
 
     /**
-     *    	Output html form to select a third party
+     *  Output html form to select a third party
      *
-     *		@param      selected        Preselected type
-     *		@param      htmlname        Name of field in form
-     *    	@param      filter          Optionnal filters criteras
-     *		@param		showempty		Add an empty field
-     * 		@param		showtype		Show third party type in combolist (customer, prospect or supplier)
-     * 		@param		forcecombo		Force to use combo box
+     *	@param  string	$selected        Preselected type
+     *	@param  string	$htmlname        Name of field in form
+     *  @param  string	$filter          Optionnal filters criteras
+     *	@param	int		$showempty		Add an empty field
+     * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
+     * 	@param	int		$forcecombo		Force to use combo box
+     * 	@return	void
      */
     function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
     {

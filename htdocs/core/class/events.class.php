@@ -30,9 +30,8 @@
 
 
 /**
- \class      Events
- \brief      Events class
- \remarks	Initialy built by build_class_from_table on 2008-02-28 17:25
+ *	Events class
+ *	Initialy built by build_class_from_table on 2008-02-28 17:25
  */
 class Events // extends CommonObject
 {
@@ -40,6 +39,7 @@ class Events // extends CommonObject
 	public $table_element='events';		//!< Name of table without prefix where object is stored
 
 	var $id;
+	var $db;
 
 	var $tms;
 	var $type;
@@ -88,17 +88,18 @@ class Events // extends CommonObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Events($DB)
+	function Events($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		return 1;
 	}
 
 
 	/**
 	 *   Create in database
+	 *
 	 *   @param      User	$user       User that create
 	 *   @return     int     		    <0 if KO, >0 if OK
 	 */
@@ -131,7 +132,7 @@ class Events // extends CommonObject
 		$sql.= " '".$this->db->escape($this->description)."'";
 		$sql.= ")";
 
-		dol_syslog("Events::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -141,17 +142,18 @@ class Events // extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Events::create ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
 
 
 	/**
-	 *      \brief      Update database
-	 *      \param      user        	User that modify
-	 *      \param      notrigger	    0=no, 1=yes (no update trigger)
-	 *      \return     int         	<0 if KO, >0 if OK
+	 * Update database
+	 *
+	 * @param	User    $user        	User that modify
+	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
+	 * @return  int         			<0 if KO, >0 if OK
 	 */
 	function update($user=0, $notrigger=0)
 	{
@@ -172,12 +174,12 @@ class Events // extends CommonObject
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog("Events::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Events::update ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 		return 1;
@@ -185,10 +187,11 @@ class Events // extends CommonObject
 
 
 	/**
-	 *    \brief      Load object in memory from database
-	 *    \param      id          id object
-	 *    \param      user        User that load
-	 *    \return     int         <0 if KO, >0 if OK
+	 *  Load object in memory from database
+	 *
+	 *  @param	int		$id         Id object
+	 *  @param  User	$user       User that load
+	 *  @return int         		<0 if KO, >0 if OK
 	 */
 	function fetch($id, $user=0)
 	{
@@ -206,7 +209,7 @@ class Events // extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."events as t";
 		$sql.= " WHERE t.rowid = ".$id;
 
-		dol_syslog("Events::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -230,16 +233,17 @@ class Events // extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Events::fetch ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
 
 
 	/**
-	 *   \brief      Delete object in database
-	 *	\param      user        User that delete
-	 *	\return		int			<0 if KO, >0 if OK
+	 *  Delete object in database
+	 *
+	 *	@param	User	$user       User that delete
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function delete($user)
 	{
@@ -248,12 +252,12 @@ class Events // extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog("Events::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Events::delete ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 
