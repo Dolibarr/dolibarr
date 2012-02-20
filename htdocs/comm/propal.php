@@ -30,11 +30,12 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/modules/propale/modules_propale.php");
-require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formpropal.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
+require_once(DOL_DOCUMENT_ROOT."/core/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/propal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
@@ -1052,8 +1053,9 @@ else if ($action == 'down' && $user->rights->propale->creer)
 llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
-$htmlother = new FormOther($db);
+$formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formpropal = new FormPropal($db);
 $companystatic=new Societe($db);
 
 $now=dol_now();
@@ -1883,7 +1885,7 @@ else
 		print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre('');
@@ -1903,7 +1905,7 @@ else
 		print '&nbsp;'.$langs->trans('Year').': ';
 		$syear = $year;
 		//if($syear == '') $syear = date("Y");
-		$htmlother->select_year($syear,'year',1, 20, 5);
+		$formother->select_year($syear,'year',1, 20, 5);
 		print '</td>';
 		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
@@ -1911,7 +1913,7 @@ else
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
-		$form->select_propal_statut($viewstatut,1);
+		$formpropal->select_propal_statut($viewstatut,1);
 		print '</td>';
 		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '</td>';
@@ -2015,8 +2017,9 @@ else
 		dol_print_error($db);
 	}
 }
-$db->close();
+
 
 llxFooter();
 
+$db->close();
 ?>

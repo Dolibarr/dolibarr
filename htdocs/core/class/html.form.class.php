@@ -1967,66 +1967,6 @@ class Form
         return $return;
     }
 
-
-    /**
-     *    Return combo list of differents status of a proposal
-     *    Values are id of table c_propalst
-     *
-     *    @param    selected    etat pre-selectionne
-     *    @param	short		Use short labels
-     */
-    function select_propal_statut($selected='',$short=0)
-    {
-        global $langs;
-
-        $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
-        $sql .= " WHERE active = 1";
-
-        dol_syslog("Form::select_propal_statut sql=".$sql);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            print '<select class="flat" name="propal_statut">';
-            print '<option value="">&nbsp;</option>';
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            if ($num)
-            {
-                while ($i < $num)
-                {
-                    $obj = $this->db->fetch_object($resql);
-                    if ($selected == $obj->id)
-                    {
-                        print '<option value="'.$obj->id.'" selected="selected">';
-                    }
-                    else
-                    {
-                        print '<option value="'.$obj->id.'">';
-                    }
-                    $key=$obj->code;
-                    if ($langs->trans("PropalStatus".$key.($short?'Short':'')) != "PropalStatus".$key.($short?'Short':''))
-                    {
-                        print $langs->trans("PropalStatus".$key.($short?'Short':''));
-                    }
-                    else
-                    {
-                        $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Opened','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
-                        if (! empty($conv_to_new_code[$obj->code])) $key=$conv_to_new_code[$obj->code];
-                        print ($langs->trans("PropalStatus".$key.($short?'Short':''))!="PropalStatus".$key.($short?'Short':''))?$langs->trans("PropalStatus".$key.($short?'Short':'')):$obj->label;
-                    }
-                    print '</option>';
-                    $i++;
-                }
-            }
-            print '</select>';
-        }
-        else
-        {
-            dol_print_error($this->db);
-        }
-    }
-
-
     /**
      *    Return a HTML select list of bank accounts
      *

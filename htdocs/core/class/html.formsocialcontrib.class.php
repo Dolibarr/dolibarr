@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/core/class/html.form.class.php
+ *	\file       htdocs/core/class/html.formsocialcontrib.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
  */
@@ -29,6 +29,17 @@ class FormSocialContrib
 {
 	var $db;
 	var $error;
+
+
+	/**
+	* Constructor
+	*
+	* @param		DoliDB		$db      Database handler
+	*/
+	public function __construct($db)
+	{
+	    $this->db = $db;
+	}
 
     /**
      *	Return list of social contributions.
