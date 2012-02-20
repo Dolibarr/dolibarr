@@ -36,9 +36,9 @@ $langs->load("suppliers");
 
 $mesg='';
 
-$id			= GETPOST('id');
-$action		= GETPOST('action');
-$confirm	= GETPOST('confirm');
+$id			= GETPOST('id','int');
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
 
 $object = new PaiementFourn($db);
 
@@ -141,7 +141,7 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$id;
+$head[$h][0] = $_SERVER['PHP_SELF'].'?id='.$id;
 $head[$h][1] = $langs->trans('Card');
 $hselected = $h;
 $h++;
@@ -338,7 +338,7 @@ else
 
 dol_fiche_end();
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
