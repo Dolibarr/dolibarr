@@ -36,9 +36,9 @@ $langs->load("suppliers");
 
 $mesg='';
 
-$id			= GETPOST('id');
-$action		= GETPOST('action');
-$confirm	= GETPOST('confirm');
+$id			= GETPOST('id','int');
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
 
 $object = new PaiementFourn($db);
 
@@ -101,10 +101,10 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisse
 	}
 }
 
-if ($action == 'setnum' && ! empty($_POST['num']))
+if ($action == 'setnum' && ! empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
-    $res = $object->update_num($_POST['num']);
+    $res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
 		$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
@@ -115,10 +115,10 @@ if ($action == 'setnum' && ! empty($_POST['num']))
 	}
 }
 
-if ($action == 'setdate' && ! empty($_POST['dateday']))
+if ($action == 'setdate' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
-    $datepaye = dol_mktime(12, 0, 0, $_POST['datemonth'], $_POST['dateday'], $_POST['dateyear']);
+    $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -141,7 +141,7 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$id;
+$head[$h][0] = $_SERVER['PHP_SELF'].'?id='.$id;
 $head[$h][1] = $langs->trans('Card');
 $hselected = $h;
 $h++;
@@ -182,16 +182,16 @@ if ($result > 0)
 	print '</td></tr>';
 
 	// Date payment
-    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Date",'date',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Date",'date',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'day');
+    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
     print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td valign="top" colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$object->type_libelle.'</td></tr>';
 
 	// Payment numero
-    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Numero",'num',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Numero",'num',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string');
+    print '<tr><td valign="top" colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
     print '</td></tr>';
 
 	// Amount
@@ -204,7 +204,7 @@ if ($result > 0)
 
 	// Note
     print '<tr><td valign="top"" colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'text');
+    print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
     print '</td></tr>';
 
     // Bank account
@@ -338,7 +338,7 @@ else
 
 dol_fiche_end();
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
