@@ -116,15 +116,16 @@ class Notify
 	}
 
     /**
-     *    	\brief      Check if notification are active for couple action/company.
-     * 					If yes, send mail and save trace into llx_notify.
-     * 		\param		action		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-     * 		\param		socid		Id of third party
-     * 		\param		texte		Message to send
-     * 		\param		objet_type	Type of object the notification deals on (facture, order, propal, order_supplier...). Just for log in llx_notify.
-     * 		\param		objet_id	Id of object the notification deals on
-     * 		\param		file		Attach a file
-     *		\return		int			<0 if KO, or number of changes if OK
+     *  Check if notification are active for couple action/company.
+     * 	If yes, send mail and save trace into llx_notify.
+     *
+     * 	@param	string	$action		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
+     * 	@param	int		$socid		Id of third party
+     * 	@param	string	$texte		Message to send
+     * 	@param	string	$objet_type	Type of object the notification deals on (facture, order, propal, order_supplier...). Just for log in llx_notify.
+     * 	@param	int		$objet_id	Id of object the notification deals on
+     * 	@param	string	$file		Attach a file
+     *	@return	int					<0 if KO, or number of changes if OK
      */
     function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
@@ -200,17 +201,21 @@ class Notify
 
                     $replyto = $conf->notification->email_from;
 
-                    $mailfile = new CMailFile($subject,
+                    $mailfile = new CMailFile(
+                        $subject,
 	                    $sendto,
 	                    $replyto,
 	                    $message,
 	                    array($file),
 	                    array($mimefile),
 	                    array($filename[count($filename)-1]),
-	                    '', '', 0, $msgishtml
-	                    );
+	                    '',
+	                    '',
+	                    0,
+	                    $msgishtml
+                    );
 
-                    if ( $mailfile->sendfile() )
+                    if ($mailfile->sendfile())
                     {
                         $sendto = htmlentities($sendto);
 
