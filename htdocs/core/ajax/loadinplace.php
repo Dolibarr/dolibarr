@@ -63,9 +63,10 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	if ($element == 'propal') $element = 'propale';
 	else if ($element == 'fichinter') $element = 'ficheinter';
 	
-	if (($element == 'payment' && $user->rights->facture->paiement)
-	|| $user->rights->$element->lire || $user->rights->$element->read
-	|| $user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read)
+	if ($user->rights->$element->lire || $user->rights->$element->read
+	|| $user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read
+	|| ($element == 'payment' && $user->rights->facture->lire)
+	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire))
 	{
 		if ($type == 'select')
 		{
