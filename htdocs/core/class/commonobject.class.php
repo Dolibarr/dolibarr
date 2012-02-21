@@ -1458,12 +1458,17 @@ abstract class CommonObject
     }
 
     /**
-     * Add objects linked in llx_element_element.
+     *	Add objects linked in llx_element_element.
      *
-     * @return         int         <=0 if KO, >0 if OK
+     *	@param		string	$origin		Linked element type
+     *	@param		int		$origin_id	Linked element id
+     *	@return		int					<=0 if KO, >0 if OK
      */
-    function add_object_linked()
+    function add_object_linked($origin=null, $origin_id=null)
     {
+    	$origin = (! empty($origin) ? $origin : $this->origin);
+    	$origin_id = (! empty($origin_id) ? $origin_id : $this->origin_id);
+    	
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -1472,8 +1477,8 @@ abstract class CommonObject
         $sql.= ", fk_target";
         $sql.= ", targettype";
         $sql.= ") VALUES (";
-        $sql.= $this->origin_id;
-        $sql.= ", '".$this->origin."'";
+        $sql.= $origin_id;
+        $sql.= ", '".$origin."'";
         $sql.= ", ".$this->id;
         $sql.= ", '".$this->element."'";
         $sql.= ")";
