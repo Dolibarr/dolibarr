@@ -108,7 +108,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_VERMENU_BACK2='220,224,227';
     $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays
     $conf->global->THEME_ELDY_BACKTITLE2='210,220,235';
-    $conf->global->THEME_ELDY_BACKTABCARD1='238,242,244';     // card
+    $conf->global->THEME_ELDY_BACKTABCARD1='231,232,235';     // card
     $conf->global->THEME_ELDY_BACKTABCARD2='220,224,227';
     $conf->global->THEME_ELDY_BACKTABACTIVE='220,224,227';
     $conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
