@@ -8,12 +8,19 @@ English Dolibarr ChangeLog
 - New: Add option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS. With this option added, 
        credit notes are not removed from total amount of invoice but are just 
        payments used to reducs remain to pay.
+- New: Added hidden option MAIN_FIX_FOR_BUGGED_MTA to fix bugged MTA.       
 - Fix: Removed warnings during install.
-- Fix: State into address of paypal payments were lost
+- Fix: State into address of paypal payments were lost.
+- Fix: Currency into paypal payments were always euros.
 - Fix: Removed Bare LF from emails sent with smtps method.
 - Fix: Can show report on selected period.
 - Fix: product removed from list after deleted into order.
-- Fix: pgsql can connect using socket.
+- Fix: [bug #270] PostgreSQL backend try to connect throught TCP socket for 
+- Fix: price was not without tax when using multiprice into POS module.
+- Fix: Can delete bank account.
+- Fix: [ bug #277 ] Year dropdown in table header of supplier invoices.
+- Fix: Some other very minor fixes.
+
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
