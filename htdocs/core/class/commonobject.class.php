@@ -1534,13 +1534,13 @@ abstract class CommonObject
             $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
             $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
         }
-        print $sql;
+        //print $sql;
 
         dol_syslog(get_class($this)."::fetchObjectLink sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num = $this->db->num_rows($resql); echo 'num='.$num.'<br>';
+            $num = $this->db->num_rows($resql);
             $i = 0;
             while ($i < $num)
             {
@@ -1549,14 +1549,13 @@ abstract class CommonObject
                 {
                     $this->linkedObjectsIds[$obj->targettype][]=$obj->fk_target;
                 }
-                echo 'fk_target='.$obj->fk_target.' targetid='.$targetid.'<br>';
                 if ($obj->fk_target == $targetid)
                 {
                     $this->linkedObjectsIds[$obj->sourcetype][]=$obj->fk_source;
                 }
                 $i++;
             }
-var_dump($this->linkedObjectsIds);
+
             if (! empty($this->linkedObjectsIds))
             {
                 foreach($this->linkedObjectsIds as $objecttype => $objectids)
