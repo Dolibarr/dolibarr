@@ -1551,7 +1551,14 @@ tr.liste_total td {
 }
 */
 
+/* Disable shadows */ 
 .noshadow {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
+}
+
+div.tabBar .noborder {
 	-moz-box-shadow: 0px 0px 0px #CCC !important;
 	-webkit-box-shadow: 0px 0px 0px #CCC !important;
 	box-shadow: 0px 0px 0px #CCC !important;
@@ -1673,7 +1680,7 @@ div.info {
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius:6px;
-  background: #EFEFDA;
+  background: #EFEFBA;
 }
 
 

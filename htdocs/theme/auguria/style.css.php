@@ -1291,7 +1291,14 @@ border: 0px;
 }
 */
 
+/* Disable shadows */ 
 .noshadow {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
+}
+
+div.tabBar .noborder {
 	-moz-box-shadow: 0px 0px 0px #CCC !important;
 	-webkit-box-shadow: 0px 0px 0px #CCC !important;
 	box-shadow: 0px 0px 0px #CCC !important;
