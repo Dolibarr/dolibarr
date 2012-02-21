@@ -9,4 +9,4 @@ This file explains how to modify official sources (from http://www.dolibarr.org)
 to have ready to use source files to build a debian package.
 
 All changes are included into patch file
-build/debian/install.patch
+build/debian/patches
