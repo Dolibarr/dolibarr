@@ -176,7 +176,7 @@ class CommandeFournisseur extends Commande
             $sql.= " l.tva_tx, l.remise_percent, l.subprice,";
             $sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
             $sql.= " l.total_ht, l.total_tva, l.total_ttc,";
-            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc";
+            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc";
             $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
             $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
             $sql.= " WHERE l.fk_commande = ".$this->id;
@@ -212,9 +212,11 @@ class CommandeFournisseur extends Commande
                     $line->total_ttc           = $objp->total_ttc;
                     $line->product_type        = $objp->product_type;
 
-                    $line->fk_product          = $objp->fk_product;   // Id du produit
-                    $line->libelle             = $objp->label;        // Label produit
-                    $line->product_desc        = $objp->product_desc; // Description produit
+                    $line->fk_product          = $objp->fk_product;    // Id du produit
+
+                    $line->libelle             = $objp->product_label; // TODO deprecated
+                    $line->product_label       = $objp->product_label; // Label produit
+                    $line->product_desc        = $objp->product_desc;  // Description produit
 
                     $line->ref                 = $objp->product_ref;     // TODO deprecated
                     $line->product_ref         = $objp->product_ref;     // Internal reference

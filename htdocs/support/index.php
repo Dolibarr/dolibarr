@@ -148,7 +148,7 @@ print '<table summary="mail"><tr><td>'.img_picto('','mail.png','',1).'</td><td>'
 print '<font style="'.$style1.'">'.$langs->trans("EMailSupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
 print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
-print $langs->trans("TypeHelpOnly").'/'.img_picto_common('','redstar','',1).img_picto_common('','redstar').img_picto_common('','redstar','',1).'/'.img_picto_common('','star','',1).img_picto_common('','star','',1);
+print $langs->trans("TypeHelpOnly").'/'.img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).'/'.img_picto_common('','star','',1).img_picto_common('','star','',1);
 
 print '</td></tr></table>';
 

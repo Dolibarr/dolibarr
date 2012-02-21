@@ -70,7 +70,9 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	else if ($element == 'fichinter') $element = 'ficheinter';
 
 	if ($user->rights->$element->creer || $user->rights->$element->write
-	|| $user->rights->$element->$subelement->creer || $user->rights->$element->$subelement->write)
+	|| $user->rights->$element->$subelement->creer || $user->rights->$element->$subelement->write
+	|| ($element == 'payment' && $user->rights->facture->paiement)
+	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	{
 		// Clean parameters
 		$newvalue = trim($value);

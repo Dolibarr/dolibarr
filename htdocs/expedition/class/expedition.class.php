@@ -841,7 +841,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
-		$sql.= ", p.ref as product_ref, p.fk_product_type, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
+		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.weight, p.weight_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
 		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
@@ -860,14 +860,15 @@ class Expedition extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$line->fk_origin_line 	= $obj->fk_origin_line;
-				$line->origin_line_id 	= $obj->fk_origin_line;	// TODO deprecated
+				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
 				$line->entrepot_id    	= $obj->fk_entrepot;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
 				$line->ref				= $obj->product_ref;		// TODO deprecated
                 $line->product_ref		= $obj->product_ref;
-				$line->label          	= $obj->label;
-				$line->libelle        	= $obj->label;			// TODO deprecated
+                $line->product_label	= $obj->product_label;
+                $line->label          	= $obj->product_label;
+				$line->libelle        	= $obj->product_label;		// TODO deprecated
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
 				$line->qty_shipped    	= $obj->qty_shipped;
