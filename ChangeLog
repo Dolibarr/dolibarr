@@ -53,6 +53,7 @@ For users:
 - New: Automtic list of documents in ECM module is ok for customers,
        suppliers invoice, orders, customers orders, proposals and social contributions.
 - Fix: Can use POS module with several concurrent users.
+- Fix: Installer don't fails with Mysql version that added a ssl_cypher field.
 
 For developers:
 - New: Can add a left menu into an existing top menu or left menu.
