@@ -50,8 +50,9 @@ For users:
 - New: Extra fields support int type.
 - New: Add brazilian states.
 - New: Increase usability of module project.
-- New: Automtic list of documents in ECM module is ok for customers,
+- New: Automatic list of documents in ECM module is ok for customers,
        suppliers invoice, orders, customers orders, proposals and social contributions.
+- New: [ task #176 ] Allow to use ODT templates for prososal and commandes like it's done for invoices
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
