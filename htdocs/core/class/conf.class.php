@@ -238,9 +238,9 @@ class Conf
 		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity) && $this->entity > 1)
 		{
 			$rootfordata.='/'.$this->entity;
-			var_dump($mc->sharings);
+			//var_dump($mc->sharings);
 			//var_dump($mc->referent);
-			var_dump($mc->entities);
+			//var_dump($mc->entities);
 		}
 
 		// For backward compatibility
