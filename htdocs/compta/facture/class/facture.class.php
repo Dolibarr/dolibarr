@@ -90,6 +90,7 @@ class Facture extends CommonObject
     var $fk_facture_source;
     var $origin;
     var $origin_id;
+    var $linked_objects=array();
     var $fk_project;
     var $date_lim_reglement;
     var $cond_reglement_id;			// Id in llx_c_paiement
@@ -242,14 +243,17 @@ class Facture extends CommonObject
             if (! $resql) $error++;
 
             // Add object linked
-            if (! $error && $this->id && $this->origin && $this->origin_id)
+            if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
             {
-                $ret = $this->add_object_linked();
-                if (! $ret)
-                {
-                    dol_print_error($this->db);
-                    $error++;
-                }
+            	foreach($this->linked_objects as $origin => $origin_id)
+            	{
+            		$ret = $this->add_object_linked($origin, $origin_id);
+            		if (! $ret)
+            		{
+            			dol_print_error($this->db);
+            			$error++;
+            		}
+            	}
             }
 
             /*
