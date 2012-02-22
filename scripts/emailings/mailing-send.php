@@ -135,6 +135,7 @@ if ($resql)
 			$substitutionarray=array(
 				'__ID__' => $obj->source_id,
 				'__EMAIL__' => $obj->email,
+				'__CHECK_READ__' => '<IMG SRC="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?mail_cbl_id='.$obj->rowid.'&mail='.$obj->email.'" style="width:0px;height:0px" border="0"/>',
 				'__LASTNAME__' => $obj->lastname,
 				'__FIRSTNAME__' => $obj->firstname,
 				'__OTHER1__' => $other1,

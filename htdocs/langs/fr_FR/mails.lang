@@ -39,6 +39,7 @@ MailingStatusDraft=Brouillon
 MailingStatusValidated=Validé
 MailingStatusApproved=Approuvé
 MailingStatusSent=Envoyé
+MailingStatusRead=Lu
 MailingStatusSentPartialy=Envoyé partiellement
 MailingStatusSentCompletely=Envoyé complètement
 MailingStatusError=Erreur
