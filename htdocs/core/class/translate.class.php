@@ -593,21 +593,21 @@ class Translate
 	{
 		global $conf;
 
-		/*
-		$outlang=$this->defaultlang;	// Output language we want
-		$outlangarray=explode('_',$outlang,2);
-		// If lang is xx_XX, then we use xx
-		if (strtolower($outlangarray[0]) == strtolower($outlangarray[1])) $outlang=$outlangarray[0];
-		*/
-
 		$newnumber=$number;
-		foreach ($conf->file->dol_document_root as $dirroot)
+
+		$dirsubstitutions=array_merge(array(),$conf->substitutions_modules);
+		foreach($dirsubstitutions as $reldir)
 		{
-			$dir=$dirroot."/core/modules/substitutions";
+		    $dir=dol_buildpath($reldir,0);
+		    $newdir=dol_osencode($dir);
+
+		    // Check if directory exists
+		    if (! dol_is_dir($dir)) continue;
+
 			$fonc='numberwords';
-			if (file_exists($dir.'/functions_'.$fonc.'.lib.php'))
+			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php'))
 			{
-				include_once($dir.'/functions_'.$fonc.'.lib.php');
+				include_once($newdir.'/functions_'.$fonc.'.lib.php');
 				$newnumber=numberwords_getLabelFromNumber($this,$number,$isamount);
 				break;
 			}

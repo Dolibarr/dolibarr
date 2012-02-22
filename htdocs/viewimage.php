@@ -335,15 +335,23 @@ if ($modulepart == 'barcode')
     $encoding=$_GET["encoding"];
     $readable=$_GET["readable"]?$_GET["readable"]:"Y";
 
-    // Output files with barcode generators
-    foreach ($conf->file->dol_document_root as $dirroot)
+    $dirbarcode=array_merge(array("/core/modules/barcode/"),$conf->barcode_modules);
+
+    $result=0;
+
+    foreach($dirbarcode as $reldir)
     {
-        $dir=$dirroot . "/core/modules/barcode/";
-        $result=@include_once($dir.$generator.".modules.php");
+        $dir=dol_buildpath($reldir,0);
+        $newdir=dol_osencode($dir);
+
+        // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
+        if (! is_dir($newdir)) continue;
+
+        $result=@include_once($newdir.$generator.".modules.php");
         if ($result) break;
     }
 
-    // Chargement de la classe de codage
+    // Load barcode class
     $classname = "mod".ucfirst($generator);
     $module = new $classname($db);
     if ($module->encodingIsSupported($encoding))

@@ -1173,10 +1173,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (! class_exists('MenuTop'))
     {
         $menufound=0;
-        $dirmenus=array_merge(array("/core/menus"),$conf->menus_modules);
+        $dirmenus=array_merge(array("/core/menus/"),$conf->menus_modules);
         foreach($dirmenus as $dirmenu)
         {
-            $menufound=dol_include_once($dirmenu."/standard/".$top_menu);
+            $menufound=dol_include_once($dirmenu."standard/".$top_menu);
             if ($menufound) break;
         }
         if (! $menufound)	// If failed to include, we try with standard
@@ -1382,10 +1382,10 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     if (! class_exists('MenuLeft'))
     {
         $menufound=0;
-        $dirmenus=array_merge(array("/core/menus"),$conf->menus_modules);
+        $dirmenus=array_merge(array("/core/menus/"),$conf->menus_modules);
         foreach($dirmenus as $dirmenu)
         {
-            $menufound=dol_include_once($dirmenu."/standard/".$left_menu);
+            $menufound=dol_include_once($dirmenu."standard/".$left_menu);
             if ($menufound) break;
         }
         if (! $menufound)	// If failed to include, we try with standard
