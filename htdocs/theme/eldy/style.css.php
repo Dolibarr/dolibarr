@@ -105,15 +105,15 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 	$conf->global->THEME_ELDY_TOPMENU_BACK1='180,196,216';    // topmenu
     $conf->global->THEME_ELDY_TOPMENU_BACK2='190,206,226';
     $conf->global->THEME_ELDY_VERMENU_BACK1='246,248,250';    // vmenu
-    $conf->global->THEME_ELDY_VERMENU_BACK2='220,225,230';
+    $conf->global->THEME_ELDY_VERMENU_BACK2='220,224,227';
     $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays
     $conf->global->THEME_ELDY_BACKTITLE2='210,220,235';
-    $conf->global->THEME_ELDY_BACKTABCARD1='242,244,248';     // card
-    $conf->global->THEME_ELDY_BACKTABCARD2='220,225,230';
-    $conf->global->THEME_ELDY_BACKTABACTIVE='220,225,230';
+    $conf->global->THEME_ELDY_BACKTABCARD1='231,232,235';     // card
+    $conf->global->THEME_ELDY_BACKTABCARD2='220,224,227';
+    $conf->global->THEME_ELDY_BACKTABACTIVE='220,224,227';
     $conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
-    $conf->global->THEME_ELDY_LINEIMPAIR1='244,244,244';
-    $conf->global->THEME_ELDY_LINEIMPAIR2='250,250,250';
+    $conf->global->THEME_ELDY_LINEIMPAIR1='242,242,242';
+    $conf->global->THEME_ELDY_LINEIMPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIR1='255,255,255';
     $conf->global->THEME_ELDY_LINEPAIR2='255,255,255';
     $conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
@@ -563,7 +563,7 @@ foreach($conf->modules as $key => $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','bookmark','cashdesk','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
 foreach($mainmenuusedarray as $key => $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -674,12 +674,14 @@ td.vmenu {
 <?php } ?>
 }
 
+.menu_contenu { padding-top: 1px; }
+
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextmain; ?>; }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print ($fontsize-1) ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-font.vsmenudisabled { font-size:<?php print ($fontsize-1) ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print ($fontsize-1) ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; padding: 1px 1px 1px 8px; }
+font.vsmenudisabled { font-size:<?php print ($fontsize-1) ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 8px; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextmain; ?>; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; }
@@ -1321,109 +1323,109 @@ span.butAction, span.butActionDelete {
 	padding-right: 4px;
 }
 .nocellnopadd {
-list-style-type:none;
-margin: 0px !important;
-padding: 0px !important;
+	list-style-type:none;
+	margin: 0px !important;
+	padding: 0px !important;
 }
 
 .notopnoleft {
-border-collapse: collapse;
-border: 0px;
-padding-top: 0px;
-padding-<?php print $left; ?>: 0px;
-padding-<?php print $right; ?>: 16px;
-padding-bottom: 4px;
-margin-right: 0px 0px;
+	border-collapse: collapse;
+	border: 0px;
+	padding-top: 0px;
+	padding-<?php print $left; ?>: 0px;
+	padding-<?php print $right; ?>: 16px;
+	padding-bottom: 4px;
+	margin-right: 0px 0px;
 }
 .notopnoleftnoright {
-border-collapse: collapse;
-border: 0px;
-padding-top: 0px;
-padding-left: 0px;
-padding-right: 0px;
-padding-bottom: 4px;
-margin: 0px 0px 0px 0px;
+	border-collapse: collapse;
+	border: 0px;
+	padding-top: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 4px;
+	margin: 0px 0px 0px 0px;
 }
 
 
 table.border {
-border: 1px solid #9CACBB;
-border-collapse: collapse;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
 }
 
 table.border td {
-padding: 1px 2px 1px 1px;
-border: 1px solid #9CACBB;
-border-collapse: collapse;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
 }
 
 td.border {
-border-top: 1px solid #000000;
-border-right: 1px solid #000000;
-border-bottom: 1px solid #000000;
-border-left: 1px solid #000000;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
 }
 
 /* Main boxes */
 
 table.noborder, table.formdoc {
-width: 100%;
-
-border-collapse: separate !important;
-border-spacing: 0px;
-
-border-right-width: 0px;
-border-right-color: #DDDDDD;
-border-right-style: solid;
-
-border-left-width: 1px;
-border-left-color: #DDDDDD;
-border-left-style: solid;
-
-border-bottom-width: 1px;
-border-bottom-color: #DDDDDD;
-border-bottom-style: solid;
-
-margin: 0px 0px 2px 0px;
-/*padding: 1px 2px 1px 2px;*/
-
--moz-box-shadow: 4px 4px 4px #CCC;
--webkit-box-shadow: 4px 4px 4px #CCC;
-box-shadow: 4px 4px 4px #CCC;
-
--moz-border-radius: 0.2em;
--webkit-border-radius: 0.2em;
-border-radius: 0.2em;
+	width: 100%;
+	
+	border-collapse: separate !important;
+	border-spacing: 0px;
+	
+	border-right-width: 0px;
+	border-right-color: #DDDDDD;
+	border-right-style: solid;
+	
+	border-left-width: 1px;
+	border-left-color: #DDDDDD;
+	border-left-style: solid;
+	
+	border-bottom-width: 1px;
+	border-bottom-color: #DDDDDD;
+	border-bottom-style: solid;
+	
+	margin: 0px 0px 2px 0px;
+	/*padding: 1px 2px 1px 2px;*/
+	
+	-moz-box-shadow: 4px 4px 4px #CCC;
+	-webkit-box-shadow: 4px 4px 4px #CCC;
+	box-shadow: 4px 4px 4px #CCC;
+	
+	-moz-border-radius: 0.2em;
+	-webkit-border-radius: 0.2em;
+	border-radius: 0.2em;
 }
 
 table.noborder tr {
-border-top-color: #FEFEFE;
-
-border-right-width: 1px;
-border-right-color: #BBBBBB;
-border-right-style: solid;
-
-border-left-width: 1px;
-border-left-color: #BBBBBB;
-border-left-style: solid;
-height: 18px;
+	border-top-color: #FEFEFE;
+	
+	border-right-width: 1px;
+	border-right-color: #BBBBBB;
+	border-right-style: solid;
+	
+	border-left-width: 1px;
+	border-left-color: #BBBBBB;
+	border-left-style: solid;
+	height: 18px;
 }
 
 table.noborder th, table.noborder td {
-padding: 1px 2px 1px 3px;			/* t r b l */
+	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 
 table.nobordernopadding {
-border-collapse: collapse !important;
-border: 0px;
+	border-collapse: collapse !important;
+	border: 0px;
 }
 table.nobordernopadding tr {
-border: 0px !important;
-padding: 0px 0px;
+	border: 0px !important;
+	padding: 0px 0px;
 }
 table.nobordernopadding td {
-border: 0px !important;
-padding: 0px 0px;
+	border: 0px !important;
+	padding: 0px 0px;
 }
 
 /* For lists */
@@ -1461,12 +1463,12 @@ tr.liste_titre, tr.liste_titre_sel
     height: 20px !important;
     background-repeat: repeat-x;
 
-/* DYN */
-background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
-background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
+	/* DYN */
+	background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
+	background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
+	background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
+	background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
 
     color: #<?php echo $colortextmain; ?>;
     font-family: <?php print $fontlist ?>;
@@ -1510,50 +1512,57 @@ tr.liste_total td {
 }
 
 .impair {
-/* background: #d0d4d7; */
-/* background: #f6f6f6; */
-
-/* DYN */
-background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-
-font-family: <?php print $fontlist ?>;
-border: 0px;
-margin-bottom: 1px;
-color: #202020;
+	/* DYN */
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
 }
 /*
 .impair:hover {
-background: #c0c4c7;
-border: 0px;
+	background: #c0c4c7;
+	border: 0px;
 }
 */
 
 .pair	{
-/* background: #e6ebed; */
-/* background: #ffffff; */
-
-/* DYN */
-background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-
-font-family: <?php print $fontlist ?>;
-border: 0px;
-margin-bottom: 1px;
-color: #202020;
+	/* DYN */
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
 }
 /*
 .pair:hover {
-background: #c0c4c7;
-border: 0px;
+	background: #c0c4c7;
+	border: 0px;
 }
 */
+
+/* Disable shadows */ 
+.noshadow {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
+}
+
+div.tabBar .noborder {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
+}
 
 
 /*
@@ -1671,7 +1680,7 @@ div.info {
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius:6px;
-  background: #EFEFDA;
+  background: #EFEFBA;
 }
 
 
@@ -1874,17 +1883,17 @@ td.hidden {
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
-.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { opacity: 0.6; background: #DDDDDD; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_past_month    { opacity: 0.6; background: #EEEEEE; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_past          { }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px; }
 table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 .cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; }
-
 
 
 /* ============================================================================== */
@@ -1969,12 +1978,17 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 	cursor: pointer;
 }
 
-.editval_textarea:hover, .editval_ckeditor:hover, .editval_string:hover, .editval_email:hover, .editval_numeric:hover, .editval_select:hover, .editval_datepicker:hover {
+.editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_datepicker.active:hover {
 	background: white;
 	cursor: pointer;
 }
 
-.editval_hover {
+.viewval_textarea.active:hover, .viewval_ckeditor.active:hover, .viewval_string.active:hover, .viewval_email.active:hover, .viewval_numeric.active:hover, .viewval_select.active:hover, .viewval_datepicker.active:hover {
+	background: white;
+	cursor: pointer;
+}
+
+.viewval_hover {
 	background: white;
 }
 
@@ -2282,6 +2296,16 @@ a.cke_dialog_ui_button
 .template-upload {
     height: 72px !important;
 }
+
+
+/* ============================================================================== */
+/*  JSGantt                                                                       */
+/* ============================================================================== */
+
+div.scroll2 {
+	width: 582px !important;
+}
+
 
 <?php
 if (is_object($db)) $db->close();

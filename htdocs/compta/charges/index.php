@@ -48,7 +48,7 @@ if ($page < 0) $page = 0;
 //$limit = $conf->liste_limit;
 //$offset = $limit * $page ;
 
-if (! $sortfield) $sortfield="s.date_ech";
+if (! $sortfield) $sortfield="cs.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
 

@@ -27,8 +27,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/modules/import/modules_import.php");
 
 
 /**
- *	    \class      ImportCsv
- *		\brief      Class to import CSV files
+ *	Class to import CSV files
  */
 class ImportCsv extends ModeleImports
 {
@@ -529,6 +528,9 @@ class ImportCsv extends ModeleImports
 
 /**
  *	Clean a string from separator
+ *
+ *	@param	string	$value	Remove separator
+ *	@return	string			String without separator
  */
 function cleansep($value)
 {

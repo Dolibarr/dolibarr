@@ -77,8 +77,8 @@ function getServerTimeZoneString()
  * Return server timezone int.
  * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
  *
- * @param	string	$refdate	Reference date for timezone (timezone differs on winter and summer)
- * @return 	int					An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
+ * @param	string	$refgmtdate		Reference date for timezone (timezone differs on winter and summer)
+ * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
  */
 function getServerTimeZoneInt($refgmtdate='now')
 {
@@ -182,7 +182,7 @@ function dol_time_plus_duree($time,$duration_value,$duration_unit)
  * @param      int		$iSeconds   	Seconds
  * @return     int						Time into seconds
  */
-function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
+function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 {
 	$iResult=($iHours*3600)+($iMinutes*60)+$iSeconds;
 	return $iResult;
@@ -198,7 +198,7 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *    	@return     sTime		 		 	Formated text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  */
-function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOfWeek=7)
+function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOfWeek=7)
 {
 	global $langs;
 

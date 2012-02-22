@@ -27,15 +27,15 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
 
 /**
-	    \class      html_cerfafr
-		\brief      Classe permettant de generer les propales au modele Azur
-*/
+ *	Class to generate document for subscriptions
+ */
 class html_cerfafr extends ModeleDon
 {
     /**
-			\brief      Constructeur
-    		\param	    db		Handler acces base de donnees
-    */
+     *  Constructor
+     *
+     *  @param      DoliDb		$db      Database handler
+     */
     function html_cerfafr($db)
     {
         global $conf,$langs;
@@ -49,9 +49,11 @@ class html_cerfafr extends ModeleDon
     }
 
 
-	/**     \brief     	Return if a module can be used or not
-	*      	\return		boolean     true if module can be used
-	*/
+	/**
+	 * 	Return if a module can be used or not
+	 *   
+	 *  @return	boolean     true if module can be used
+	 */
 	function isEnabled()
 	{
 		return true;
@@ -60,9 +62,10 @@ class html_cerfafr extends ModeleDon
 
     /**
      *  Write the object to document file to disk
-     *	@param	    don	            Donation object
-     *  @param      outputlangs     Lang object for output language
-     *	@return	    int             >0 if OK, <0 if KO
+     * 
+     *	@param	Don			$don	        Donation object
+     *  @param  Translate	$outputlangs    Lang object for output language
+     *	@return	int             			>0 if OK, <0 if KO
      */
     function write_file($don,$outputlangs)
     {
@@ -103,7 +106,7 @@ class html_cerfafr extends ModeleDon
 
 	        if (! file_exists($dir))
 	        {
-	            if (create_exdir($dir) < 0)
+	            if (dol_mkdir($dir) < 0)
 	            {
 	                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
 	                return -1;
@@ -155,10 +158,7 @@ class html_cerfafr extends ModeleDon
 		}
         $this->error=$langs->trans("ErrorUnknown");
         return 0;   // Erreur par defaut
-
     }
-
 }
-
 
 ?>

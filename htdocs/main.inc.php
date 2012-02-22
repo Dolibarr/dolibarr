@@ -332,7 +332,8 @@ if (! defined('NOLOGIN'))
 	$test=true;
 	if (! isset($_SESSION["dol_login"]))
 	{
-		// It is not already authenticated, it requests the login / password
+		// It is not already authenticated and it requests the login / password
+	    include_once(DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php');
 
 	    // If in demo mode, we check we go to home page through the public/demo/index.php page
 	    if ($dolibarr_main_demo && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
@@ -384,7 +385,7 @@ if (! defined('NOLOGIN'))
 
 		if ($test && $goontestloop)
 		{
-			$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+		    $login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
 			if ($login)
 			{
 				$dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
@@ -792,7 +793,8 @@ function top_httphead()
 }
 
 /**
- * Replace the default llxHeader function
+ * Ouput html header of a page.
+ * This code is also duplicated into security2.lib.php::dol_loginfunction
  *
  * @param 	string 	$head			Optionnal head lines
  * @param 	string 	$title			HTML title
@@ -812,9 +814,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">';
-	//print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
-	//print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-	//print '<!DOCTYPE html>';
+	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+	//print '<!DOCTYPE HTML>';
 	print "\n";
 	if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html manifest="cache.manifest">'."\n";
 	else print '<html>'."\n";
@@ -822,8 +824,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	if (empty($disablehead))
 	{
 		print "<head>\n";
-
-		print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
 
 		// Displays meta
 		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
@@ -843,7 +843,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+            if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
+            else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
             print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css" />'."\n";                           // Tooltip
             print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" />'."\n";          // JNotify
             //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";       // Lightbox
@@ -899,16 +900,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Output standard javascript links
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
-			// Other external js
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-
 			$ext='.js';
 			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
 			// JQuery. Must be before other includes
 			print '<!-- Includes JS for JQuery -->'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
+            if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
+            else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
+			if (constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js"></script>'."\n";
+			else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/jquery.tipTip.min'.$ext.'"></script>'."\n";
             //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/js/jquery.lightbox-0.5.min'.$ext.'"></script>'."\n";
@@ -926,26 +926,21 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			// Flot
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT))
 			{
-				print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/excanvas.min.js"></script><![endif]-->'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js"></script>'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js"></script>'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js"></script>'."\n";
+			    if (constant('JS_JQUERY_FLOT'))
+			    {
+			        print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="/javascript/excanvas/excanvas.min.js"></script><![endif]-->'."\n";
+			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.js"></script>'."\n";
+			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js"></script>'."\n";
+			        print '<script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js"></script>'."\n";
+			    }
+			    else
+			    {
+    				print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/excanvas.min.js"></script><![endif]-->'."\n";
+    				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js"></script>'."\n";
+    				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js"></script>'."\n";
+    				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js"></script>'."\n";
+			    }
 			}
-            // CKEditor
-            if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
-            {
-                print '<!-- Includes JS for CKEditor -->'."\n";
-                if (constant('JS_CKEDITOR'))
-                {
-                    print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.JS_CKEDITOR.'\';</script>'."\n";
-                    print '<script type="text/javascript" src="'.JS_CKEDITOR.'ckeditor_basic.js"></script>'."\n";
-                }
-                else
-                {
-                    print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
-                    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
-                }
-            }
             // jQuery jeditable
             if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
             {
@@ -965,7 +960,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/editinplace.js"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js"></script>'."\n";
             }
-            // File Upload
+            // jQuery File Upload
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.tmpl.min.js"></script>'."\n";
@@ -973,13 +968,28 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload.js"></script>'."\n";
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.js"></script>'."\n";
             }
-			// DataTables
+			// jQuery DataTables
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/js/jquery.dataTables.min'.$ext.'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColReorder/js/ColReorder.min'.$ext.'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/js/ColVis.min'.$ext.'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/js/TableTools.min'.$ext.'"></script>'."\n";
+            }
+            // CKEditor
+            if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
+            {
+                print '<!-- Includes JS for CKEditor -->'."\n";
+                if (constant('JS_CKEDITOR'))
+                {
+                    print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.JS_CKEDITOR.'\';</script>'."\n";
+                    print '<script type="text/javascript" src="'.JS_CKEDITOR.'ckeditor_basic.js"></script>'."\n";
+                }
+                else
+                {
+                    print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
+                    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
+                }
             }
 
             // Global js function
@@ -1130,17 +1140,26 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	/*
 	 * Top menu
 	 */
-    $top_menu=isset($conf->browser->phone)?$conf->smart_menu:$conf->top_menu;
+    $top_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
     if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
 
 	// Load the top menu manager
-	$result=dol_include_once("/core/menus/standard/".$top_menu);
-	if (! $result)	// If failed to include, we try with standard
-	{
-		$top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
-	}
-
+    // Load the top menu manager (only if not already done)
+    if (! class_exists('MenuTop'))
+    {
+        $menufound=0;
+    	$dirmenus=array_merge(array("/core/menus"),$conf->menus_modules);
+    	foreach($dirmenus as $dirmenu)
+    	{
+        	$menufound=dol_include_once($dirmenu."/standard/".$top_menu);
+        	if ($menufound) break;
+    	}
+    	if (! $menufound)	// If failed to include, we try with standard
+    	{
+    	    $top_menu='eldy_backoffice.php';
+    	    include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
+    	}
+    }
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
 
@@ -1321,16 +1340,25 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		$bookmarks=printBookmarksList($db, $langs);
 	}
 
-    $left_menu=isset($conf->browser->phone)?$conf->smart_menu:$conf->top_menu;
+    $left_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
     if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
 
-    // Load the left menu manager
-	$result=dol_include_once("/core/menus/standard/".$left_menu);
-	if (! $result)	// If menu manager removed or not found
-	{
-		$left_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/core/menus/standard/".$left_menu);
-	}
+    // Load the top menu manager (only if not already done)
+    if (! class_exists('MenuLeft'))
+    {
+        $menufound=0;
+        $dirmenus=array_merge(array("/core/menus"),$conf->menus_modules);
+        foreach($dirmenus as $dirmenu)
+        {
+            $menufound=dol_include_once($dirmenu."/standard/".$left_menu);
+            if ($menufound) break;
+        }
+        if (! $menufound)	// If failed to include, we try with standard
+        {
+            $top_menu='eldy_backoffice.php';
+            include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
+        }
+    }
 
     // Left column
     print '<!-- Begin left area - menu '.$left_menu.' -->'."\n";

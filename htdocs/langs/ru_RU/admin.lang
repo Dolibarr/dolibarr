@@ -1265,7 +1265,6 @@ Miscellanous=Разнообразный
 ContractsSetup=Контракты модуль установки
 ContractsNumberingModules=Контракты нумерации модулей
 AdherentLoginRequired=Управление Логин для каждого члена
-NoActivatedBarcode=Нет штрих-кодов типа активированного
 ListOfAvailableNotifications=Список доступных уведомлений (Этот список зависит от активированных модулей)
 SendingsNumberingModules=Отправки нумерации модулей
 FreeLegalTextOnShippings=Свободный текст на морские перевозки

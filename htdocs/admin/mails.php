@@ -81,7 +81,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp';
 
-	if (create_exdir($upload_dir) >= 0)
+	if (dol_mkdir($upload_dir) >= 0)
 	{
 		$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'], 1, 0, $_FILES['addedfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
@@ -594,17 +594,22 @@ else
 
 	print '</table>';
 
-
-	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
-	{
-		$sendmailoption=ini_get('mail.force_extra_parameters');
-		//print 'x'.$sendmailoption;
-		if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
-		{
-			print '<br>'.info_admin($langs->trans("SendmailOptionNotComplete"));
-		}
-	}
-
+    // Warning 1
+    if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+    {
+        print '<br>';
+    	if ($linuxlike)
+    	{
+    		$sendmailoption=ini_get('mail.force_extra_parameters');
+    		//print 'x'.$sendmailoption;
+    		if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
+    		{
+    			print info_admin($langs->trans("SendmailOptionNotComplete"));
+    		}
+    	}
+    	// Warning 2
+   	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
+    }
 
 	// Boutons actions
 	print '<div class="tabsAction">';

@@ -270,7 +270,7 @@ if ( $resql=$db->query($sql) )
 					}
 				}
             	print "Build PDF for invoice ".$obj->facnumber." - Lang = ".$outputlangs->defaultlang."\n";
-				$result=facture_pdf_create($db, $fac, '', $newmodel?$newmodel:$fac->modelpdf, $outputlangs);
+				$result=facture_pdf_create($db, $fac, $newmodel?$newmodel:$fac->modelpdf, $outputlangs);
 
 				// Add file into files array
 				$files[] = $conf->facture->dir_output.'/'.$fac->ref.'/'.$fac->ref.'.pdf';
@@ -324,7 +324,7 @@ if ( $resql=$db->query($sql) )
 		}
 
 		// Create output dir if not exists
-		create_exdir($diroutputpdf);
+		dol_mkdir($diroutputpdf);
 
 		// Save merged file
 		$filename='mergedpdf';

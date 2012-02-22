@@ -1214,7 +1214,7 @@ class Categorie
 
 		if (! file_exists($dir))
 		{
-			create_exdir($dir);
+			dol_mkdir($dir);
 		}
 
 		if (file_exists($dir))

@@ -30,9 +30,8 @@ include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 /**
  * Class to manage the box to show last contacts
  */
- class box_contacts extends ModeleBoxes
- {
-
+class box_contacts extends ModeleBoxes
+{
 	var $boxcode="lastcontacts";
 	var $boximg="object_contact";
 	var $boxlabel;
@@ -72,13 +71,13 @@ include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.rowid, s.name, s.firstname, s.civilite, s.datec, s.tms";
-			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as s";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
-			$sql.= " ORDER BY s.tms DESC";
+			$sql = "SELECT sp.rowid, sp.name, sp.firstname, sp.civilite, sp.datec, sp.tms";
+			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
+			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND sp.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if ($user->societe_id) $sql.= " AND sp.rowid = $user->societe_id";
+			$sql.= " ORDER BY sp.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);

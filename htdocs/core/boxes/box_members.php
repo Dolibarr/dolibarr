@@ -29,9 +29,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last members
  */
- class box_members extends ModeleBoxes
- {
-
+class box_members extends ModeleBoxes
+{
 	var $boxcode="lastmembers";
 	var $boximg="object_user";
 	var $boxlabel;

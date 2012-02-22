@@ -255,7 +255,7 @@ if ($action == "addline" && $user->rights->ficheinter->creer)
 
         $desc=$_POST['np_desc'];
         $date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
-        $duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
+        $duration = convertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
         $result=$object->addline(
         	$id,
@@ -328,7 +328,7 @@ if ($action == 'updateline' && $user->rights->ficheinter->creer && $_POST["save"
 
     $desc		= $_POST['np_desc'];
     $date_inter	= dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
-    $duration	= ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
+    $duration	= convertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
     $objectline->datei		= $date_inter;
     $objectline->desc		= $desc;
@@ -741,7 +741,7 @@ if ($action == 'create')
         print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
         print '<table class="border" width="100%">';
         print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-        $form->select_societes('','socid','',1,1);
+        print $form->select_company('','socid','',1,1);
         print '</td></tr>';
         print '</table>';
 
@@ -812,7 +812,7 @@ else if ($id > 0 || ! empty($ref))
 
     // Duration
     print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-    print '<td>'.ConvertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+    print '<td>'.convertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
     print '</tr>';
 
     // Description (must be a textarea and not html must be allowed (used in list view)
@@ -919,7 +919,7 @@ else if ($id > 0 || ! empty($ref))
                 print '<td align="center" width="150">'.dol_print_date($db->jdate($objp->date_intervention),'dayhour').'</td>';
 
                 // Duration
-                print '<td align="right" width="150">'.ConvertSecondToTime($objp->duree).'</td>';
+                print '<td align="right" width="150">'.convertSecondToTime($objp->duree).'</td>';
 
                 print "</td>\n";
 

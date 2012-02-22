@@ -77,7 +77,7 @@ class modService extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array();
-		$this->boxes[0][1] = "box_services_vendus.php";
+		$this->boxes[0][1] = "box_services_contracts.php";
 
 		// Permissions
 		$this->rights = array();
@@ -128,7 +128,7 @@ class modService extends DolibarrModules
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 1 AND p.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 1 AND p.entity IN ('.getEntity("product", 1).')';
 
 	}
 

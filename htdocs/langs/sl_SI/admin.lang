@@ -1125,7 +1125,6 @@ BarcodeDescUPC = Črtna koda tipa UPC
 BarcodeDescISBN = Črtna koda tipa ISBN
 BarcodeDescC39 = Črtna koda tipa C39
 BarcodeDescC128 = Črtna koda tipa C128
-NoActivatedBarcode = Noben tip črtne kode ni aktiviran
 ##### Prelevements ##### = 
 WithdrawalsSetup = Nastavitev modula za dvige
 ##### ExternalRSS ##### = 

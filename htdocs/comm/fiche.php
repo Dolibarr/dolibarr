@@ -678,7 +678,7 @@ if ($id > 0)
 				print "<tr ".$bc[$var].">";
 				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
                 //print '<td align="right">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
-				print '<td align="right">'.ConvertSecondToTime($objp->duration).'</td>'."\n";
+				print '<td align="right">'.convertSecondToTime($objp->duration).'</td>'."\n";
 				print '<td align="right">'.$fichinter_static->getLibStatut(3).'</td>'."\n";
 				print '</tr>';
 				$var=!$var;
@@ -856,7 +856,9 @@ if ($id > 0)
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
     {
-		// List of todo actions
+        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+
+        // List of todo actions
 		show_actions_todo($conf,$langs,$db,$object);
 
         // List of done actions
@@ -868,8 +870,8 @@ else
 	dol_print_error($db,'Bad value for socid parameter');
 }
 
+
 llxFooter();
 
 $db->close();
-
 ?>

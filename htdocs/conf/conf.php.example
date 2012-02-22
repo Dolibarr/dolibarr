@@ -141,18 +141,18 @@ $dolibarr_main_db_type='';
 // Database character set used to store data (forced during database creation).
 // Default value: depends on database driver
 // Examples:
-// dolibarr_main_db_character_set='latin1';
+// dolibarr_main_db_character_set='utf8';
 //
-$dolibarr_main_db_character_set='latin1';
+$dolibarr_main_db_character_set='utf8';
 
 
 // dolibarr_main_db_collation
 // Database character set used to sort data (forced during database creation).
 // Default value: depends on database driver
 // Examples:
-// dolibarr_main_db_collation='latin1_swedish_ci';
+// dolibarr_main_db_collation='utf8_general_ci';
 //
-$dolibarr_main_db_collation='latin1_swedish_ci';
+$dolibarr_main_db_collation='utf8_general_ci';
 
 
 
@@ -183,13 +183,12 @@ $dolibarr_main_authentication='dolibarr';
 // $dolibarr_main_auth_ldap_host='127.0.0.1';
 // $dolibarr_main_auth_ldap_port='389';
 // $dolibarr_main_auth_ldap_version='3';
-// $dolibarr_main_auth_ldap_servertype='openldap';			// openldap, activedirectory or egroupware
+// $dolibarr_main_auth_ldap_servertype='openldap';			   // openldap, activedirectory or egroupware
 // $dolibarr_main_auth_ldap_login_attribute='loginfield';	   // Ex: uid or samaccountname for active directory
-// $dolibarr_main_auth_ldap_dn='ou=users,dc=my-domain,dc=com';  // Ex: ou=users,dc=my-domain,dc=com
-// $dolibarr_main_auth_ldap_filter = '';                        // If defined, two previous parameters are not used to find a user into LDAP. Ex: (uid=%1%) or &(uid=%1%)(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com).
-// $dolibarr_main_auth_ldap_admin_login='';					// Required only if anonymous bind disabled. Ex: cn=admin,dc=example,dc=com
-// $dolibarr_main_auth_ldap_admin_pass='';					// Required only if anonymous bind disabled. Ex: secret
-
+// $dolibarr_main_auth_ldap_dn='ou=users,dc=my-domain,dc=com'; // Ex: ou=users,dc=my-domain,dc=com
+// $dolibarr_main_auth_ldap_filter = '';                       // If defined, two previous parameters are not used to find a user into LDAP. Ex: (uid=%1%) or &(uid=%1%)(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com).
+// $dolibarr_main_auth_ldap_admin_login='';					   // Required only if anonymous bind disabled. Ex: cn=admin,dc=example,dc=com
+// $dolibarr_main_auth_ldap_admin_pass='';					   // Required only if anonymous bind disabled. Ex: secret
 // $dolibarr_main_auth_ldap_debug='false';
 
 
@@ -245,53 +244,43 @@ $dolibarr_main_prod='0';
 
 // dolibarr_main_limit_users
 // Can set a limit on the number of users it will be possible to create
-// (the superadmin not included), can be used for a restricted mode.
+// (the superadmin not included). Can be used for a restricted mode.
 // Default value: 0 (unlimited)
 // Examples:
 // $dolibarr_main_limit_users='0';
 
 // dolibarr_mailing_limit_sendbyweb
-// Can set a limit for mailing send by web, can be used for a restricted mode.
+// Can set a limit for mailing send by web. Can be used for a restricted mode.
 // Default value: 0 (use database value if exist)
 // Examples:
 // $dolibarr_mailing_limit_sendbyweb='0';
 
 
-//##############################
-// Path to external libraries
-//##############################
+//#################################
+// Path to external libraries/fonts
+//#################################
 
 // Value to overwrite path to use shared libraries instead of embedded one
 //$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
-// Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_TCPDF_PATH='';
-// Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_FPDFI_PATH='';
-// Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
-// Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_PHPEXCEL_PATH='';
-// Value to overwrite path to use shared libraries instead of embedded one
+//$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
 //$dolibarr_lib_GEOIP_PATH='';
-// Value to overwrite path to use shared libraries instead of embedded one
+//$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
+//$dolibarr_lib_PHPEXCEL_PATH='';
 //$dolibarr_lib_ODTPHP_PATH='';
-// Value to overwrite some path to use shared libraries instead of embedded one
 //$dolibarr_lib_ODTPHP_PATHTOPCLZIP="/usr/share/php/libphp-pclzip";
+//$dolibarr_lib_TCPDF_PATH='';
 // Value to overwrite path to use shared javascript instead of embedded one
 //$dolibarr_js_CKEDITOR='/javascript/ckeditor';
-
-
-//##############################
-// Path to external font
-//##############################
-
+//$dolibarr_js_JQUERY='/javascript/jquery';
+//$dolibarr_js_JQUERY_UI='/javascript/jquery-ui';
+//$dolibarr_js_JQUERY_FLOT='/javascript/flot';
 // Value to overwrite some path to use font instead of embedded one
 //$dolibarr_font_DOL_DEFAULT_TTF="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
 //$dolibarr_font_DOL_DEFAULT_TTF_BOLD="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf";
 
 
 //##############################
-// Extrernal module
+// External module
 //##############################
 
 // multicompany_transverse_mode

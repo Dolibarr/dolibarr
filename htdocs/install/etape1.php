@@ -345,7 +345,7 @@ if (! $error && $db->connected && $action == "set")
                 }
                 else
                 {
-                    if (create_exdir($dir[$i]) < 0)
+                    if (dol_mkdir($dir[$i]) < 0)
                     {
                         print "<tr><td>";
                         print "Failed to create directory: ".$dir[$i];
@@ -690,7 +690,7 @@ pFooter($error,$setuplang,'jsinfo');
  */
 function write_main_file($mainfile,$main_dir)
 {
-    $fp = fopen("$mainfile", "w");
+    $fp = @fopen("$mainfile", "w");
     if($fp)
     {
         clearstatcache();
@@ -712,7 +712,7 @@ function write_main_file($mainfile,$main_dir)
  */
 function write_master_file($masterfile,$main_dir)
 {
-    $fp = fopen("$masterfile", "w");
+    $fp = @fopen("$masterfile", "w");
     if($fp)
     {
         clearstatcache();
@@ -743,7 +743,7 @@ function write_conf_file($conffile)
     global $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
     global $force_dolibarr_lib_PHPEXCEL_PATH, $force_dolibarr_lib_GEOIP_PATH;
     global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
-    global $force_dolibarr_js_CKEDITOR;
+    global $force_dolibarr_js_CKEDITOR, $force_dolibarr_js_JQUERY, $force_dolibarr_js_JQUERY_UI, $force_dolibarr_js_JQUERY_FLOT;
     global $force_dolibarr_font_DOL_DEFAULT_TTF, $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD;
 
     $error=0;
@@ -828,32 +828,41 @@ function write_conf_file($conffile)
 
         // Write params to overwrites default lib path
         fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_ADODB_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_ADODB_PATH=''; }
+        if (empty($force_dolibarr_lib_ADODB_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_ADODB_PATH=''; }
         fputs($fp, '$dolibarr_lib_ADODB_PATH=\''.$force_dolibarr_lib_ADODB_PATH.'\';');
         fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_NUSOAP_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_NUSOAP_PATH=''; }
-        fputs($fp, '$dolibarr_lib_NUSOAP_PATH=\''.$force_dolibarr_lib_NUSOAP_PATH.'\';');
-        fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_TCPDF_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_TCPDF_PATH=''; }
-        fputs($fp, '$dolibarr_lib_TCPDF_PATH=\''.$force_dolibarr_lib_TCPDF_PATH.'\';');
-        fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_FPDI_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_FPDI_PATH=''; }
-        fputs($fp, '$dolibarr_lib_FPDI_PATH=\''.$force_dolibarr_lib_FPDI_PATH.'\';');
-        fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_PHPEXCEL_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_PHPEXCEL_PATH=''; }
-        fputs($fp, '$dolibarr_lib_PHPEXCEL_PATH=\''.$force_dolibarr_lib_PHPEXCEL_PATH.'\';');
-        fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_GEOIP_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_GEOIP_PATH=''; }
+        if (empty($force_dolibarr_lib_GEOIP_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_GEOIP_PATH=''; }
         fputs($fp, '$dolibarr_lib_GEOIP_PATH=\''.$force_dolibarr_lib_GEOIP_PATH.'\';');
         fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_ODTPHP_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATH=''; }
+        if (empty($force_dolibarr_lib_NUSOAP_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_NUSOAP_PATH=''; }
+        fputs($fp, '$dolibarr_lib_NUSOAP_PATH=\''.$force_dolibarr_lib_NUSOAP_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_FPDI_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_FPDI_PATH=''; }
+        fputs($fp, '$dolibarr_lib_FPDI_PATH=\''.$force_dolibarr_lib_FPDI_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_PHPEXCEL_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_PHPEXCEL_PATH=''; }
+        fputs($fp, '$dolibarr_lib_PHPEXCEL_PATH=\''.$force_dolibarr_lib_PHPEXCEL_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_ODTPHP_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_ODTPHP_PATH=''; }
         fputs($fp, '$dolibarr_lib_ODTPHP_PATH=\''.$force_dolibarr_lib_ODTPHP_PATH.'\';');
         fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP=''; }
+        if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) { fputs($fp, '//'); $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP=''; }
         fputs($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP=\''.$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP.'\';');
         fputs($fp,"\n");
-        if (empty($force_dolibarr_js_CKEDITOR)) { fputs($fp, '#'); $force_dolibarr_js_CKEDITOR=''; }
-        fputs($fp, '$dolibarr_ks_CKEDITOR=\''.$force_dolibarr_js_CKEDITOR.'\';');
+        if (empty($force_dolibarr_lib_TCPDF_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_TCPDF_PATH=''; }
+        fputs($fp, '$dolibarr_lib_TCPDF_PATH=\''.$force_dolibarr_lib_TCPDF_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_js_CKEDITOR)) { fputs($fp, '//'); $force_dolibarr_js_CKEDITOR=''; }
+        fputs($fp, '$dolibarr_js_CKEDITOR=\''.$force_dolibarr_js_CKEDITOR.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_js_JQUERY)) { fputs($fp, '//'); $force_dolibarr_js_JQUERY=''; }
+        fputs($fp, '$dolibarr_js_JQUERY=\''.$force_dolibarr_js_JQUERY.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_js_JQUERY_UI)) { fputs($fp, '//'); $force_dolibarr_js_JQUERY_UI=''; }
+        fputs($fp, '$dolibarr_js_JQUERY_UI=\''.$force_dolibarr_js_JQUERY_UI.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_js_JQUERY_FLOT)) { fputs($fp, '//'); $force_dolibarr_js_JQUERY_FLOT=''; }
+        fputs($fp, '$dolibarr_js_JQUERY_FLOT=\''.$force_dolibarr_js_JQUERY_FLOT.'\';');
         fputs($fp,"\n");
 
         // Write params to overwrites default font path

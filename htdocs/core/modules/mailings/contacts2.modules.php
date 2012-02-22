@@ -85,7 +85,7 @@ class mailing_contacts2 extends MailingTargets
         $sql.= " WHERE s.rowid = sp.fk_soc";
     	$sql.= " AND sp.email != ''";  // Note that null != '' is false
     	//$sql.= " AND sp.poste != ''";
-    	$sql.= " AND sp.entity = ".$conf->entity;
+    	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$filtersarray[0]."'";
     	$sql.= " ORDER BY sp.name, sp.firstname";
     	$resql = $this->db->query($sql);
@@ -137,7 +137,7 @@ class mailing_contacts2 extends MailingTargets
             $statssql[$i].= " WHERE s.rowid = sp.fk_soc";
             $statssql[$i].= " AND sp.email != ''";  // Note that null != '' is false
             $statssql[$i].= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
-            $statssql[$i].= " AND sp.entity = ".$conf->entity;
+            $statssql[$i].= " AND sp.entity IN (".getEntity('societe', 1).")";
             $statssql[$i].= " GROUP BY label";
             $statssql[$i].= " ORDER BY nb DESC";
             $statssql[$i].= " LIMIT $i,1";
@@ -187,7 +187,7 @@ class mailing_contacts2 extends MailingTargets
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE s.rowid = sp.fk_soc";
-        $sql.= " AND sp.entity = ".$conf->entity;
+        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND sp.email != ''";    // Note that null != '' is false
         $sql.= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
         $sql.= " GROUP BY sp.poste";

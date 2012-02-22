@@ -155,7 +155,7 @@ class modWorkflow extends DolibarrModules
 
 		$sql = array();
 
-        return $this->_init($sql,$option);
+        return $this->_init($sql,$options);
     }
 
     /**

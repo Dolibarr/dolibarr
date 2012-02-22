@@ -27,8 +27,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/modules_fichinter.php");
 
 /**
- *	\class      mod_arctic
- *	\brief      Class to manage numbering of intervention cards with rule Artic.
+ *	Class to manage numbering of intervention cards with rule Artic.
  */
 class mod_arctic extends ModeleNumRefFicheinter
 {
@@ -36,15 +35,20 @@ class mod_arctic extends ModeleNumRefFicheinter
 	var $error = '';
 	var $nom = 'Artic';
 
-	/**   \brief      Constructeur
-	*/
+	/**
+     *  Constructor
+     *
+     *  @param      DoliDb		$db      Database handler
+ 	 */
 	function mod_arctic()
 	{
 		$this->nom = "arctic";
 	}
 
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
+    /**
+     *  Renvoi la description du modele de numerotation
+     * 
+     *  @return     string      Texte descripif
      */
 	function info()
     {
@@ -81,8 +85,10 @@ class mod_arctic extends ModeleNumRefFicheinter
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
+    /**
+     * Renvoi un exemple de numerotation
+     * 
+     * @return     string      Example
      */
     function getExample()
     {
@@ -100,11 +106,13 @@ class mod_arctic extends ModeleNumRefFicheinter
 		return $numExample;
     }
 
-	/**		\brief      Renvoi prochaine valeur attribuee
-	*      	\param      objsoc      Objet societe
-	*      	\param      ficheinter	Object ficheinter
-	*      	\return     string      Valeur
-	*/
+	/**
+	 *  Renvoi prochaine valeur attribuee
+	 * 
+	 *  @param  Societe		$objsoc     Objet societe
+	 *  @param	Ficheinter	$object		Object ficheinter
+	 *  @return string      			Valeur
+	 */
     function getNextValue($objsoc=0,$object='')
     {
 		global $db,$conf;
@@ -126,11 +134,13 @@ class mod_arctic extends ModeleNumRefFicheinter
   }
 
 
-	/**		\brief      Return next free value
-    *      	\param      objsoc      Object third party
-	* 		\param		objforref	Object for number to search
-    *   	\return     string      Next free value
-    */
+	/**
+	 * 	Return next free value
+	 * 
+     *  @param	Societe		$objsoc     Object third party
+	 * 	@param	Object		$objforref	Object for number to search
+     *  @return string      			Next free value
+     */
     function getNumRef($objsoc,$objforref)
     {
         return $this->getNextValue($objsoc,$objforref);

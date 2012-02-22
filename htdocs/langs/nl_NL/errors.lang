@@ -76,7 +76,7 @@ ErrorDatabaseParameterWrong = Database instelling <b>%s</b> heeft een waarde die
 ErrorNumRefModel = Er bestaat een verwijzing in de database (%s) en deze is niet compatibel met deze nummeringsregel. Verwijder de tabelregel of hernoem de verwijzing om deze module te activeren.
 ErrorQtyTooLowForThisSupplier = Hoeveelheid te laag voor deze leverancier of geen prijs ingesteld voor dit product voor deze leverancier
 ErrorModuleSetupNotComplete = De installatie van de module lijkt incompleet te zijn. Ga naar Home->instellingen->moduleinstellingen om de intallatie te voltooien.
-
+ErrorNoActivatedBarcode=Geen geactiveerde barcode soort
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:37:25).
 // Reference language: en_US -> nl_NL

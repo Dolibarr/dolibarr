@@ -1150,7 +1150,6 @@ BarcodeDescUPC=Códigos de barra tipo UPC
 BarcodeDescISBN=Códigos de barra tipo ISBN
 BarcodeDescC39=Códigos de barra tipo C39
 BarcodeDescC128=Códigos de barra tipo C128
-NoActivatedBarcode=Ningún tipo de código de barra activado
 ##### Prelevements #####
 WithdrawalsSetup=Configuración del módulo domiciliaciones
 ##### ExternalRSS #####

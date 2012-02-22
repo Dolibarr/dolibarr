@@ -85,14 +85,14 @@ $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_PAYS);
 $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.libelle,";
-$sql .= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type,";
-$sql .= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_code";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd ";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '".$idpays."'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product ";
-$sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn f ON f.rowid = fd.fk_facture_fourn ";
-$sql .= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc" ;
-$sql .= " WHERE f.fk_statut > 0 AND f.entity IN (0,".$conf->entity.")";
+$sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type,";
+$sql.= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_code";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '".$idpays."'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
+$sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn f ON f.rowid = fd.fk_facture_fourn";
+$sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc" ;
+$sql.= " WHERE f.fk_statut > 0 AND f.entity = ".$conf->entity;
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 
 $result = $db->query($sql);
@@ -205,6 +205,6 @@ print "</table>";
 
 
 // End of page
-$db->close();
 llxFooter();
+$db->close();
 ?>

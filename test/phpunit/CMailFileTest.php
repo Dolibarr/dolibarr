@@ -114,6 +114,9 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCMailFileText
+     *
+     * @return void
      */
     public function testCMailFileText()
     {
@@ -123,8 +126,7 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new CMailFile('Test','test@test.com','from@from.com',
-		'Message txt',array(),array(),array(),'','',1,0);
+		$localobject=new CMailFile('Test','test@test.com','from@from.com','Message txt',array(),array(),array(),'','',1,0);
 
     	$result=$localobject->sendfile();
         print __METHOD__." result=".$result."\n";
@@ -134,6 +136,9 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCMailFileStatic
+     *
+     * @return string
      */
     public function testCMailFileStatic()
     {

@@ -99,7 +99,7 @@ class CommandeFournisseur extends Commande
      *
      * 	@param	int		$id			Id of order to load
      * 	@param	string	$ref		Ref of object
-     *	@return int 		        >0 if OK, <0 if KO
+     *	@return int 		        >0 if OK, <0 if KO, 0 if not found
      */
     function fetch($id,$ref='')
     {
@@ -123,12 +123,17 @@ class CommandeFournisseur extends Commande
         if ($ref) $sql.= " AND c.ref='".$ref."'";
         else $sql.= " AND c.rowid=".$id;
 
-        dol_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch sql=".$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-            if (! $obj) return -1;
+            if (! $obj)
+            {
+                $this->error='Bill with id '.$id.' not found sql='.$sql;
+                dol_syslog(get_class($this).'::fetch '.$this->error);
+                return 0;
+            }
 
             $this->id                  = $obj->rowid;
             $this->ref                 = $obj->ref;
@@ -148,12 +153,12 @@ class CommandeFournisseur extends Commande
             $this->methode_commande    = $obj->methode_commande;
 
             $this->source              = $obj->source;
-            $this->facturee            = $obj->facture;
+            //$this->facturee            = $obj->facture;
             $this->fk_project          = $obj->fk_project;
             $this->cond_reglement_id   = $obj->fk_cond_reglement;
             $this->cond_reglement_code = $obj->cond_reglement_code;
             $this->cond_reglement      = $obj->cond_reglement_libelle;
-            $this->cond_reglement_doc  = $obj->cond_reglement_libelle_doc;
+            $this->cond_reglement_doc  = $obj->cond_reglement_libelle;
             $this->mode_reglement_id   = $obj->fk_mode_reglement;
             $this->mode_reglement_code = $obj->mode_reglement_code;
             $this->mode_reglement      = $obj->mode_reglement_libelle;
@@ -171,14 +176,14 @@ class CommandeFournisseur extends Commande
             $sql.= " l.tva_tx, l.remise_percent, l.subprice,";
             $sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
             $sql.= " l.total_ht, l.total_tva, l.total_ttc,";
-            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc";
+            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc";
             $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
             $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
             $sql.= " WHERE l.fk_commande = ".$this->id;
             $sql.= " ORDER BY l.rowid";
             //print $sql;
 
-            dol_syslog("CommandeFournisseur::fetch get lines sql=".$sql,LOG_DEBUG);
+            dol_syslog(get_class($this)."::fetch get lines sql=".$sql,LOG_DEBUG);
             $result = $this->db->query($sql);
             if ($result)
             {
@@ -207,9 +212,11 @@ class CommandeFournisseur extends Commande
                     $line->total_ttc           = $objp->total_ttc;
                     $line->product_type        = $objp->product_type;
 
-                    $line->fk_product          = $objp->fk_product;   // Id du produit
-                    $line->libelle             = $objp->label;        // Label produit
-                    $line->product_desc        = $objp->product_desc; // Description produit
+                    $line->fk_product          = $objp->fk_product;    // Id du produit
+
+                    $line->libelle             = $objp->product_label; // TODO deprecated
+                    $line->product_label       = $objp->product_label; // Label produit
+                    $line->product_desc        = $objp->product_desc;  // Description produit
 
                     $line->ref                 = $objp->product_ref;     // TODO deprecated
                     $line->product_ref         = $objp->product_ref;     // Internal reference
@@ -227,14 +234,14 @@ class CommandeFournisseur extends Commande
             else
             {
                 $this->error=$this->db->error()." sql=".$sql;
-                dol_syslog("CommandeFournisseur::Fetch ".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
                 return -1;
             }
         }
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog("CommandeFournisseur::Fetch ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1683,7 +1690,7 @@ class CommandeFournisseur extends Commande
 
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
 
         $resql = $this->db->query($sql);
         if ($resql)

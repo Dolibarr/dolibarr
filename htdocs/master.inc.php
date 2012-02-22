@@ -31,7 +31,6 @@
  * 				This script reads the conf file, init $lang, $db and and empty $user
  */
 
-
 require_once("filefunc.inc.php");	// May have been already require by main.inc.php. But may not by scripts.
 
 

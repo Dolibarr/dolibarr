@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -111,26 +111,26 @@ print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
 print '<br>';
 
-echo '<table width="100%" class="nobordernopadding">';
-echo '<tr><td>';
+echo '<table width="100%" class="notopnoleftnoright">';
+echo '<tr><td class="notopnoleft" width="50%">';
 print_titre($langs->trans("VATSummary"));
 // The report mode is the one defined by defaut in tax module setup
 //print $modetax;
 //print '('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
-echo '</td><td width="5">&nbsp;</td><td>';
+echo '</td><td>';
 print_titre($langs->trans("VATPaid"));
 echo '</td></tr>';
 
-echo '<tr><td width="50%" valign="top">';
+echo '<tr><td class="notopnoleft" width="50%" valign="top">';
 
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print "<td width=\"30%\">".$langs->trans("Year")." $y</td>";
-print "<td align=\"right\">".$langs->trans("VATToPay")."</td>";
-print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
-print "<td align=\"right\">".$langs->trans("TotalToPay")."</td>";
-print "<td>&nbsp;</td>\n";
-print "</tr>\n";
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="30%">'.$langs->trans("Year")." ".$y.'</td>';
+print '<td align="right">'.$langs->trans("VATToPay").'</td>';
+print '<td align="right">'.$langs->trans("VATToCollect").'</td>';
+print '<td align="right">'.$langs->trans("TotalToPay").'</td>';
+print '<td>&nbsp;</td>'."\n";
+print '</tr>'."\n";
 
 
 $y = $year_current ;
@@ -210,7 +210,8 @@ print '</tr>';
 print '</table>';
 
 
-echo '</td><td>&nbsp;</td><td valign="top" width="50%">';
+echo '</td>';
+print '<td class="notopnoleftnoright" valign="top" width="50%">';
 
 /*
  * Payed

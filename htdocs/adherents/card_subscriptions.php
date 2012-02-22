@@ -563,7 +563,7 @@ if ($rowid)
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $form->select_societes($adh->fk_soc,'socid','',1);
+            print $form->select_company($adh->fk_soc,'socid','',1);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';

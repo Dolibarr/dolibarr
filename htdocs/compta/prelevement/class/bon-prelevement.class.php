@@ -913,7 +913,7 @@ class BonPrelevement extends CommonObject
 
                     $dir=$conf->prelevement->dir_output.'/receipts';
                     $file=$filebonprev;
-                    if (! is_dir($dir)) create_exdir($dir);
+                    if (! is_dir($dir)) dol_mkdir($dir);
 
                     $bonprev = new BonPrelevement($this->db, $dir."/".$file);
                     $bonprev->id = $prev_id;

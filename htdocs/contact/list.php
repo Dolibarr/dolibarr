@@ -57,9 +57,9 @@ $page = GETPOST("page");
 
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
-if ($page < 0) { $page = 0 ; }
+if ($page < 0) { $page = 0; }
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
+$offset = $limit * $page;
 
 $langs->load("companies");
 $titre=$langs->trans("ListOfContacts");

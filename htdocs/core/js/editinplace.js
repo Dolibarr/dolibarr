@@ -1,5 +1,5 @@
-// Copyright (C) 2011 Regis Houssin  <regis@dolibarr.fr>
-// Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2011-2012	Regis Houssin		<regis@dolibarr.fr>
+// Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,34 +37,39 @@ $(document).ready(function() {
 		indicator	: indicatorInPlace,
 		loadurl		: urlLoadInPlace,
 		loaddata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(4);
+			var htmlname = $(this).attr('id').substr(8);
 			return getParameters('textarea', htmlname);
 		},
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(4);
+			var htmlname = $(this).attr('id').substr(8);
 			return getParameters('textarea', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
+		},
+		onreset		: function(result, settings) {
+			$('#editval_' + $('.editval_textarea').attr('id').substr(8)).hide();
+			$('#viewval_' + $('.editval_textarea').attr('id').substr(8)).show();
 		}
 	});
 	$('.editkey_textarea').hover(
 			function () {
-				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 			},
 			function () {
-				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 			}
 	);
 	$('.editkey_textarea').click(function() {
-		$( '#val_' + $(this).attr('id') ).click();
+		$('#viewval_' + $(this).attr('id')).click();
+	});
+	$('.viewval_textarea.active').click(function() {
+		$('#viewval_' + $(this).attr('id').substr(8)).hide();
+		$('#editval_' + $(this).attr('id').substr(8)).show().click();
+	});
+	$('.editkey_textarea').click(function() {
+		$('#viewval_' + $(this).attr('id')).hide();
+		$('#editval_' + $(this).attr('id')).show().click();
 	});
 
 	$('.editval_ckeditor').editable(urlSaveInPlace, {
@@ -81,30 +86,35 @@ $(document).ready(function() {
 			toolbar: $('#ckeditor_toolbar').val()
 		},
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(4);
+			var htmlname = $(this).attr('id').substr(8);
 			return getParameters('ckeditor', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
+		},
+		onreset		: function(result, settings) {
+			$('#editval_' + $('.editval_ckeditor').attr('id').substr(8)).hide();
+			$('#viewval_' + $('.editval_ckeditor').attr('id').substr(8)).show();
 		}
 	});
 	$('.editkey_ckeditor').hover(
 			function () {
-				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 			},
 			function () {
-				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 			}
 	);
 	$('.editkey_ckeditor').click(function() {
-		$( '#val_' + $(this).attr('id') ).click();
+		$( '#viewval_' + $(this).attr('id') ).click();
+	});
+	$('.viewval_ckeditor.active').click(function() {
+		$('#viewval_' + $(this).attr('id').substr(8)).hide();
+		$('#editval_' + $(this).attr('id').substr(8)).show().click();
+	});
+	$('.editkey_ckeditor').click(function() {
+		$('#viewval_' + $(this).attr('id')).hide();
+		$('#editval_' + $(this).attr('id')).show().click();
 	});
 	
 	$('.editval_string').editable(urlSaveInPlace, {
@@ -117,30 +127,35 @@ $(document).ready(function() {
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(4);
+			var htmlname = $(this).attr('id').substr(8);
 			return getParameters('string', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
+		},
+		onreset		: function(result, settings) {
+			$('#editval_' + $('.editval_string').attr('id').substr(8)).hide();
+			$('#viewval_' + $('.editval_string').attr('id').substr(8)).show();
 		}
 	});
 	$('.editkey_string').hover(
 			function () {
-				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 			},
 			function () {
-				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 			}
 	);
 	$('.editkey_string').click(function() {
-		$( '#val_' + $(this).attr('id') ).click();
+		$( '#viewval_' + $(this).attr('id') ).click();
+	});
+	$('.viewval_string.active').click(function() {
+		$('#viewval_' + $(this).attr('id').substr(8)).hide();
+		$('#editval_' + $(this).attr('id').substr(8)).show().click();
+	});
+	$('.editkey_string').click(function() {
+		$('#viewval_' + $(this).attr('id')).hide();
+		$('#editval_' + $(this).attr('id')).show().click();
 	});
 	
 	$('.editval_numeric').editable(urlSaveInPlace, {
@@ -153,30 +168,35 @@ $(document).ready(function() {
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(4);
+			var htmlname = $(this).attr('id').substr(8);
 			return getParameters('numeric', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
+		},
+		onreset		: function(result, settings) {
+			$('#editval_' + $('.editval_numeric').attr('id').substr(8)).hide();
+			$('#viewval_' + $('.editval_numeric').attr('id').substr(8)).show();
 		}
 	});
 	$('.editkey_numeric').hover(
 			function () {
-				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+				$( '#viewval_' + $(this).attr('id') ).addClass("viewval_hover");
 			},
 			function () {
-				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+				$( '#viewval_' + $(this).attr('id') ).removeClass("viewval_hover");
 			}
 	);
 	$('.editkey_numeric').click(function() {
-		$( '#val_' + $(this).attr('id') ).click();
+		$( '#viewval_' + $(this).attr('id') ).click();
+	});
+	$('.viewval_numeric.active').click(function() {
+		$('#viewval_' + $(this).attr('id').substr(8)).hide();
+		$('#editval_' + $(this).attr('id').substr(8)).show().click();
+	});
+	$('.editkey_numeric').click(function() {
+		$('#viewval_' + $(this).attr('id')).hide();
+		$('#editval_' + $(this).attr('id')).show().click();
 	});
 	
 	$('.editval_datepicker').editable(urlSaveInPlace, {
@@ -189,30 +209,32 @@ $(document).ready(function() {
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(4);
+			var htmlname = $(this).attr('id').substr(8);
 			return getParameters('datepicker', htmlname);
 		},
 		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+			getResult(this, result);
+		},
+		onreset		: function(result, settings) {
+			$('#editval_' + $('.editval_datepicker').attr('id').substr(8)).hide();
+			$('#viewval_' + $('.editval_datepicker').attr('id').substr(8)).show();
 		}
 	});
 	$('.editkey_datepicker').hover(
 			function () {
-				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 			},
 			function () {
-				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 			}
 	);
+	$('.viewval_datepicker.active').click(function() {
+		$('#viewval_' + $(this).attr('id').substr(8)).hide();
+		$('#editval_' + $(this).attr('id').substr(8)).show().click();
+	});
 	$('.editkey_datepicker').click(function() {
-		$( '#val_' + $(this).attr('id') ).click();
+		$('#viewval_' + $(this).attr('id')).hide();
+		$('#editval_' + $(this).attr('id')).show().click();
 	});
 	
 	$('.editval_select').editable(urlSaveInPlace, {
@@ -227,46 +249,48 @@ $(document).ready(function() {
 		indicator	: indicatorInPlace,
 		loadurl		: urlLoadInPlace,
 		loaddata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(4);
+			var htmlname = $(this).attr('id').substr(8);
 			return getParameters('select', htmlname);
 		},
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(4);
+			var htmlname = $(this).attr('id').substr(8);
 			return getParameters('select', htmlname);
 		},
-		callback : function(result, settings) {
-			var obj = $.parseJSON(result);
-			
-			if (obj.error) {
-				$(this).html(this.revert);
-				$.jnotify(obj.error, "error", true);
-			} else {
-				$(this).html(obj.value);
-			}
+		callback	: function(result, settings) {
+			getResult(this, result);
+		},
+		onreset		: function(result, settings) {
+			$('#editval_' + $('.editval_select').attr('id').substr(8)).hide();
+			$('#viewval_' + $('.editval_select').attr('id').substr(8)).show();
 		}
 	});
 	$('.editkey_select').hover(
 			function () {
-				$( '#val_' + $(this).attr('id') ).addClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
 			},
 			function () {
-				$( '#val_' + $(this).attr('id') ).removeClass("editval_hover");
+				$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
 			}
 	);
+	$('.viewval_select.active').click(function() {
+		$('#viewval_' + $(this).attr('id').substr(8)).hide();
+		$('#editval_' + $(this).attr('id').substr(8)).show().click();
+	});
 	$('.editkey_select').click(function() {
-		$( '#val_' + $(this).attr('id') ).click();
+		$('#viewval_' + $(this).attr('id')).hide();
+		$('#editval_' + $(this).attr('id')).show().click();
 	});
 	
 	function getParameters(type, htmlname) {
-		var element = $( '#element_' + htmlname ).val();
-		var table_element = $( '#table_element_' + htmlname ).val();
-		var fk_element = $( '#fk_element_' + htmlname ).val();
-		var loadmethod = $( '#loadmethod_' + htmlname ).val();
-		var savemethod = $( '#savemethod_' + htmlname ).val();
-		var ext_element = $( '#ext_element_' + htmlname ).val();
+		var element			= $('#element_' + htmlname).val();
+		var table_element	= $('#table_element_' + htmlname).val();
+		var fk_element		= $('#fk_element_' + htmlname).val();
+		var loadmethod		= $('#loadmethod_' + htmlname).val();
+		var savemethod		= $('#savemethod_' + htmlname).val();
+		var ext_element		= $('#ext_element_' + htmlname).val();
+		var timestamp		= $('#timestamp').val();
 		//var ext_table_element = $( '#ext_table_element_' + htmlname ).val();
 		//var ext_fk_element = $( '#ext_fk_element_' + htmlname ).val();
-		var timestamp = $('#timestamp').val();
 		
 		return {
 			type: type,
@@ -280,6 +304,24 @@ $(document).ready(function() {
 			//ext_table_element: ext_table_element,
 			//ext_fk_element: ext_fk_element
 		};
+	}
+	
+	function getResult(obj, result) {
+		var res = $.parseJSON(result);
+		if (res.error) {
+			$(obj).html(obj.revert);
+			$.jnotify(res.error, "error", true);
+		} else {
+			var htmlname = $(obj).attr('id').substr(8);
+			var success = $( '#success_' + htmlname ).val();
+			if (success != undefined) {
+				$.jnotify(success, "ok");
+			}
+			$(obj).html(res.value);
+			$(obj).hide();
+			$('#viewval_' + htmlname).html(res.view);
+			$('#viewval_' + htmlname).show();
+		}
 	}
 	
 	$('.edit_autocomplete').editable(urlSaveInPlace, {

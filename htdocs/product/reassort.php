@@ -97,11 +97,11 @@ $sql.= ' FROM ('.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= ') LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
-$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if ($sall)
 {
-	$sql.= " AND (p.ref like '%".$db->escape($sall)."%' OR p.label like '%".$db->escape($sall)."%' OR p.description like '%".$db->escape($sall)."%' OR p.note like '%".$db->escape($sall)."%')";
+	$sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
 }
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
@@ -115,9 +115,9 @@ if (dol_strlen($type))
         $sql.= " AND p.fk_product_type <> '1'";
     }
 }
-if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
-if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
-if ($snom)     $sql.= " AND p.label like '%".$db->escape($snom)."%'";
+if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
+if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
+if ($snom)     $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
 if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 {
 	$sql.= " AND p.tosell = ".$_GET["tosell"];

@@ -29,12 +29,10 @@
 
 
 /**
- *	\class      MenuTop
- *	\brief      Classe permettant la gestion du menu du haut Auguria
+ *	Classe permettant la gestion du menu du haut Auguria
  */
-
-class MenuTop {
-
+class MenuTop
+{
 	var $db;
 	var $require_left=array("auguria_backoffice");	// Si doit etre en phase avec un gestionnaire de menu gauche particulier
 	var $hideifnotallowed=1;						// Put 0 for back office menu, 1 for front office menu
@@ -42,8 +40,9 @@ class MenuTop {
 
 
 	/**
-	 *    \brief      Constructeur
-	 *    \param      db      Database access handler
+     *  Constructor
+     *
+     *  @param      DoliDb		$db      Database handler
 	 */
 	function MenuTop($db)
 	{
@@ -53,7 +52,9 @@ class MenuTop {
 
 
 	/**
-	 *    Show menu
+	 *  Show menu
+	 *
+	 *  @return void
 	 */
 	function showmenu()
 	{
@@ -66,11 +67,10 @@ class MenuTop {
 
 
 /**
- *      \class      MenuLeft
- *      \brief      Classe permettant la gestion du menu du gauche Auguria
+ * 	Classe permettant la gestion du menu du gauche Auguria
  */
-class MenuLeft {
-
+class MenuLeft
+{
     var $db;
     var $menu_array;
     var $menu_array_after;
@@ -79,9 +79,9 @@ class MenuLeft {
     /**
      *  Constructor
      *
-     *  @param      db                  Database handler
-     *  @param      menu_array          Table of menu entries to show before entries of menu handler
-     *  @param      menu_array_after    Table of menu entries to show after entries of menu handler
+	 *  @param	DoliDB		$db     			Database handler
+     *  @param  array		&$menu_array    	Table of menu entries to show before entries of menu handler
+     *  @param  array		&$menu_array_after  Table of menu entries to show after entries of menu handler
      */
     function MenuLeft($db,&$menu_array,&$menu_array_after)
     {

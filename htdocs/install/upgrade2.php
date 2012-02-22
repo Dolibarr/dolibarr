@@ -706,21 +706,14 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
     print '</td></tr>';
 }
 
-function migrate_paiements_orphelins_3($db,$langs,$conf)
-{
 
-    /*
-     select p.rowid from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
-     Poru chaque rep, test si
-     select count(*) from llx_bank where rowid = obj->fk_bank
-     select count(*) from llx_bank_url where url_id = 128 and type='payment'
-     Si partout 0, on efface ligne de llx_paiement
-     */
-
-}
-
-/*
+/**
  * Mise a jour des contrats (gestion du contrat + detail de contrat)
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_contracts_det($db,$langs,$conf)
 {
@@ -812,6 +805,13 @@ function migrate_contracts_det($db,$langs,$conf)
     print '</td></tr>';
 }
 
+/**
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
+ */
 function migrate_links_transfert($db,$langs,$conf)
 {
     print '<tr><td colspan="4">';
@@ -888,8 +888,13 @@ function migrate_links_transfert($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Mise a jour des date de contrats non renseignees
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_contracts_date1($db,$langs,$conf)
 {
@@ -983,8 +988,13 @@ function migrate_contracts_date2($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Mise a jour des dates de creation de contrat
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_contracts_date3($db,$langs,$conf)
 {
@@ -1005,8 +1015,13 @@ function migrate_contracts_date3($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Reouverture des contrats qui ont au moins une ligne non fermee
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_contracts_open($db,$langs,$conf)
 {
@@ -1176,8 +1191,13 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
     }
 }
 
-/*
+/**
  * Mise a jour des totaux lignes de facture
+ * 
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_price_facture($db,$langs,$conf)
 {
@@ -1287,8 +1307,13 @@ function migrate_price_facture($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Mise a jour des totaux lignes de propal
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_price_propal($db,$langs,$conf)
 {
@@ -1387,8 +1412,13 @@ function migrate_price_propal($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Mise a jour des totaux lignes de propal
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_price_contrat($db,$langs,$conf)
 {
@@ -1488,8 +1518,13 @@ function migrate_price_contrat($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Mise a jour des totaux lignes de commande
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_price_commande($db,$langs,$conf)
 {
@@ -1597,8 +1632,13 @@ function migrate_price_commande($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Mise a jour des totaux lignes de commande fournisseur
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_price_commande_fournisseur($db,$langs,$conf)
 {
@@ -1706,8 +1746,13 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Mise a jour des modeles selectionnes
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_modeles($db,$langs,$conf)
 {
@@ -1759,8 +1804,13 @@ function migrate_modeles($db,$langs,$conf)
 }
 
 
-/*
+/**
  * Correspondance des expeditions et des commandes clients dans la table llx_co_exp
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_commande_expedition($db,$langs,$conf)
 {
@@ -1831,8 +1881,13 @@ function migrate_commande_expedition($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Correspondance des livraisons et des commandes clients dans la table llx_co_liv
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_commande_livraison($db,$langs,$conf)
 {
@@ -1919,8 +1974,13 @@ function migrate_commande_livraison($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migration des details commandes dans les details livraisons
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_detail_livraison($db,$langs,$conf)
 {
@@ -2036,8 +2096,13 @@ function migrate_detail_livraison($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migration du champ stock dans produits
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_stocks($db,$langs,$conf)
 {
@@ -2105,8 +2170,14 @@ function migrate_stocks($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migration of menus (use only 1 table instead of 3)
+ * 2.6 -> 2.7
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_menus($db,$langs,$conf)
 {
@@ -2181,9 +2252,14 @@ function migrate_menus($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migration du champ fk_adresse_livraison dans expedition
  * 2.6 -> 2.7
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_commande_deliveryaddress($db,$langs,$conf)
 {
@@ -2260,9 +2336,14 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migration du champ fk_remise_except dans llx_facturedet doit correspondre a
  * lien dans llx_societe_remise_except vers llx_facturedet
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_restore_missing_links($db,$langs,$conf)
 {
@@ -2414,8 +2495,13 @@ function migrate_restore_missing_links($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migration du champ fk_user_resp de llx_projet vers llx_element_contact
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_project_user_resp($db,$langs,$conf)
 {
@@ -2506,8 +2592,13 @@ function migrate_project_user_resp($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migration de la table llx_projet_task_actors vers llx_element_contact
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_project_task_actors($db,$langs,$conf)
 {
@@ -2593,8 +2684,13 @@ function migrate_project_task_actors($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migration des tables de relation
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcetype,$fk_target,$targettype)
 {
@@ -2684,8 +2780,13 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
     print '</td></tr>';
 }
 
-/*
+/**
  * Migrate duration in seconds
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_project_task_time($db,$langs,$conf)
 {
@@ -2800,8 +2901,13 @@ function migrate_project_task_time($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migrate order ref_customer and date_delivery fields to llx_expedition
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_customerorder_shipping($db,$langs,$conf)
 {
@@ -2896,8 +3002,13 @@ function migrate_customerorder_shipping($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migrate link stored into fk_expedition into llx_element_element
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_shipping_delivery($db,$langs,$conf)
 {
@@ -3002,9 +3113,14 @@ function migrate_shipping_delivery($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * We try to complete field ref_customer and date_delivery that are empty into llx_livraison.
  * We set them with value from llx_expedition.
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_shipping_delivery2($db,$langs,$conf)
 {
@@ -3082,8 +3198,13 @@ function migrate_shipping_delivery2($db,$langs,$conf)
     print '</td></tr>';
 }
 
-/*
+/**
  * Migrate link stored into fk_xxxx into fk_element and elementtype
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_actioncomm_element($db,$langs,$conf)
 {
@@ -3143,8 +3264,13 @@ function migrate_actioncomm_element($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-/*
+/**
  * Migrate link stored into fk_mode_reglement
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	void
  */
 function migrate_mode_reglement($db,$langs,$conf)
 {
@@ -3159,6 +3285,7 @@ function migrate_mode_reglement($db,$langs,$conf)
 		'code' => array('VAD','TRA','LCR','FAC','PRO'),
 		'tables' => array('commande_fournisseur','commande','facture_rec','facture','propal')
 	);
+	$count=0;
 	
 	foreach($elements['old_id'] as $key => $old_id)
 	{
@@ -3177,6 +3304,8 @@ function migrate_mode_reglement($db,$langs,$conf)
 			$num = $db->num_rows($resql);
 			if ($num)
 			{
+				$count++;
+				
 				$db->begin();
 				
 				$sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET ";
@@ -3218,12 +3347,11 @@ function migrate_mode_reglement($db,$langs,$conf)
 					$db->rollback();
 				}
 			}
-			else
-			{
-				print $langs->trans('AlreadyDone')."<br>\n";
-			}
 		}
 	}
+	
+	if ($count == 0) print $langs->trans('AlreadyDone')."<br>\n";
+	
 	
 	print '</td></tr>';
 }

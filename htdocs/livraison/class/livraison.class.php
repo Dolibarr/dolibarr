@@ -549,15 +549,18 @@ class Livraison extends CommonObject
 	{
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 		$this->db->begin();
+		
+		$error=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet";
 		$sql.= " WHERE fk_livraison = ".$this->id;
-		if ( $this->db->query($sql) )
+		if ($this->db->query($sql))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-			$sql.= " WHERE fk_target = ".$this->id;
-			$sql.= " AND targettype = '".$this->element."'";
-			if ( $this->db->query($sql) )
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+			
+			if (! $error)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
 				$sql.= " WHERE rowid = ".$this->id;
@@ -753,8 +756,8 @@ class Livraison extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE tosell = 1";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " AND tosell = 1";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -863,7 +866,7 @@ class Livraison extends CommonObject
 		else
 		{
 			$this->error=$this->db->error()." - sql=$sqlSourceLine";
-			dol_syslog("livraison.class.php::getRemainingDelivered ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::getRemainingDelivered ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

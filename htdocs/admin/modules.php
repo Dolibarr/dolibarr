@@ -43,7 +43,7 @@ if (!$user->admin) accessforbidden();
 
 if (isset($_GET["action"]) && $_GET["action"] == 'set' && $user->admin)
 {
-    $result=Activate($_GET["value"]);
+    $result=activateModule($_GET["value"]);
     $mesg='';
     if ($result) $mesg=$result;
     Header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
@@ -52,7 +52,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'set' && $user->admin)
 
 if (isset($_GET["action"]) && $_GET["action"] == 'reset' && $user->admin)
 {
-    $result=UnActivate($_GET["value"]);
+    $result=unActivateModule($_GET["value"]);
     $mesg='';
     if ($result) $mesg=$result;
     Header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));

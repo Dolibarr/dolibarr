@@ -43,18 +43,6 @@ if (! $user->rights->banque->consolidate) accessforbidden();
  * Actions
  */
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $_GET["action"] == 'dvnext')
-{
-	$ac = new Account($db);
-	$ac->datev_next($_GET["rowid"]);
-}
-
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $_GET["action"] == 'dvprev')
-{
-	$ac = new Account($db);
-	$ac->datev_previous($_GET["rowid"]);
-}
-
 // Conciliation
 if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
 {
@@ -64,11 +52,20 @@ if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
     if ($num_releve)
     {
         $bankline=new AccountLine($db);
-        $result=$bankline->fetch($_POST["rowid"]);
-        $bankline->num_releve=$_POST["num_releve"];
 
-        $result=$bankline->update_conciliation($user,$_POST["cat"]);
-        if ($result < 0) $mesg=$bankline->error;
+		if (isset($_POST["rowid"]) && is_array($_POST["rowid"]))
+		{
+			foreach($_POST["rowid"] as $row)
+			{
+				if($row > 0)
+				{
+					$result=$bankline->fetch($row);
+					$bankline->num_releve=$num_releve; //$_POST["num_releve"];
+					$result=$bankline->update_conciliation($user,$_POST["cat"]);
+					if ($result < 0) $mesg.=$bankline->error;
+				}
+			}
+        }
     }
     else
     {
@@ -92,21 +89,26 @@ if ($_GET["action"] == 'del')
 }
 
 
-// Charge categories
+// Load bank groups
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
 $resql = $db->query($sql);
 $options="";
-if ($resql) {
+if ($resql)
+{
     $var=True;
     $num = $db->num_rows($resql);
+    if ($num > 0) $options .= '<option value="0"'.(GETPOST('cat')?'':' selected="true"').'>&nbsp;</option>';
     $i = 0;
-    while ($i < $num) {
-        if ($options == "") { $options = "<option value=\"0\" selected=\"true\">&nbsp;</option>"; }
+    while ($i < $num)
+    {
         $obj = $db->fetch_object($resql);
-        $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
+        $options .= '<option value="'.$obj->rowid.'"'.(GETPOST('cat')==$obj->rowid?' selected="true"':'').'>'.$obj->label.'</option>'."\n";
+        $i++;
     }
     $db->free($resql);
+    //print $options;
 }
+else dol_print_error($db);
 
 
 /*
@@ -134,6 +136,26 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rappro=0 AND fk_account=".$_GET["account"];
 $sql.= " ORDER BY dateo ASC";
 $sql.= " LIMIT 1000";	// Limit to avoid page overload
+
+/// ajax adjust value date
+print '
+<script type="text/javascript">
+$(function() {
+	$("a.ajax").each(function(){
+		var current = $(this);
+		current.click(function()
+		{
+			$.get("'.DOL_URL_ROOT.'/core/ajax/bankconciliate.php?"+current.attr("href").split("?")[1], function(data)
+			{
+				current.parent().prev().replaceWith(data);
+			});
+			return false;
+		});
+	});
+});
+</script>
+
+';
 
 $resql = $db->query($sql);
 if ($resql)
@@ -168,7 +190,6 @@ if ($resql)
         }
         if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
         print $liste;
-
         if ($numr > 0) print '<br><br>';
         else print '<b>'.$langs->trans("None").'</b><br><br>';
     }
@@ -177,17 +198,36 @@ if ($resql)
         dol_print_error($db);
     }
 
+
+	print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
+	print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
+
+    print $langs->trans("InputReceiptNumber").': ';
+    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$objp->num_releve).'" size="10">';
+    print '<br>';
+    if ($options)
+    {
+        print $langs->trans("EventualyAddCategory").': <select class="flat" name="cat">'.$options.'</select><br>';
+    }
+    print $langs->trans("ThenCheckLinesAndConciliate").' ';
+    print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\"><br>";
+
+    print '<br>';
+
     print '<table class="liste" width="100%">';
-    print "<tr class=\"liste_titre\">\n";
+    print '<tr class="liste_titre">'."\n";
     print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
     print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
-    print '<td align="right" width="60" nowrap>'.$langs->trans("Debit").'</td>';
-    print '<td align="right" width="60" nowrap>'.$langs->trans("Credit").'</td>';
-    print '<td align="center" width="40">'.$langs->trans("Action").'</td>';
-    print '<td align="center">'.$langs->trans("AccountStatement").'<br>(Ex: YYYYMM)</td>';
+    print '<td align="right" width="60" nowrap="nowrap">'.$langs->trans("Debit").'</td>';
+    print '<td align="right" width="60" nowrap="nowrap">'.$langs->trans("Credit").'</td>';
+    print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+    print '<td align="center" width="60" nowrap="nowrap">'.$langs->trans("ToConciliate").'</td>';
     print "</tr>\n";
+
 
 
     $i = 0;
@@ -196,12 +236,11 @@ if ($resql)
         $objp = $db->fetch_object($resql);
 
         $var=!$var;
-        print "<tr $bc[$var]>";
-        print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
-        print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
-        print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
+        print "<tr ".$bc[$var].">";
+//         print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
+//         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+//         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
 
         // Date op
         print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
@@ -210,12 +249,12 @@ if ($resql)
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
 			print '<td align="center" nowrap="nowrap">';
-			print dol_print_date($db->jdate($objp->dv),"day");
-			print ' &nbsp; ';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
+			print ' <span>&nbsp; ';
+			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
-			print img_edit_add() ."</a>";
+			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+			print img_edit_add() ."</a></span>";
 			print '</td>';
 		}
 		else
@@ -362,15 +401,17 @@ if ($resql)
         // Affiche zone saisie releve + bouton "Rapprocher"
         if ($db->jdate($objp->do) <= $now)
         {
+
             print '<td align="center" nowrap="nowrap">';
-            print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
-            print ' &nbsp; ';
-            print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\">";
-            if ($options)
-            {
-                print "<br><select class=\"flat\" name=\"cat\">$options";
-                print "</select>";
-            }
+            print '<input class="flat" name="rowid[]" type="checkbox" value="'.$objp->rowid.'" size="1">';
+//             print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
+//             print ' &nbsp; ';
+//             print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\">";
+//             if ($options)
+//             {
+//                 print "<br><select class=\"flat\" name=\"cat\">$options";
+//                 print "</select>";
+//             }
             print "</td>";
         }
         else
@@ -381,23 +422,26 @@ if ($resql)
         }
 
         print "</tr>\n";
-        print "</form>\n";
+
         $i++;
     }
     $db->free($resql);
 
-    if ($num != 0)
-    {
-        print "</table><br>\n";
-    }
 
+	print "</form>\n";
+
+	if ($num != 0)
+	{
+        print "</table><br>\n";
+	}
 }
 else
 {
   dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

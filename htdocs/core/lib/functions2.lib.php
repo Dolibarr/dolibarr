@@ -350,6 +350,7 @@ function array2tr($data,$troptions='',$tdoptions='')
  *
  * 	@param	array	$data			Array of data
  * 	@param	int		$tableMarkup	Table markup
+ * 	@param	string	$tableoptions	Options for table
  * 	@param	string	$troptions		Options for tr
  * 	@param	string	$tdoptions		Options for td
  * 	@return	string
@@ -665,9 +666,9 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 /**
  * Check value
  *
- * @param 	$mask		Mask to use
- * @param 	$value		Value
- * @return	int         <0 if KO, 0 if OK
+ * @param 	string	$mask		Mask to use
+ * @param 	string	$value		Value
+ * @return	int     		    <0 if KO, 0 if OK
  */
 function check_value($mask,$value)
 {

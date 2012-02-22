@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (c) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,10 +41,10 @@ $error	= 0;
 $mesg	= '';
 
 // Security check
-$fieldid = (! empty($id) ? $id : $ref);
+$fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service',$fieldid,'product','','',$fieldtype);
+$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 
 /*

@@ -88,39 +88,35 @@ if ($fourn_id)
 }
 
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type,";
-$sql .= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
-$sql .= " s.rowid as socid, s.nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-if ($catid)
-{
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-}
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
-
+$sql.= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
+$sql.= " s.rowid as socid, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
+$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
 if ($_POST["mode"] == 'search')
 {
-	$sql .= " WHERE p.ref like '%".$_POST["sall"]."%'";
-	$sql .= " OR p.label like '%".$_POST["sall"]."%'";
+	$sql .= " AND (p.ref LIKE '%".$_POST["sall"]."%'";
+	$sql .= " OR p.label LIKE '%".$_POST["sall"]."%')";
 }
 else
 {
-	$sql .= " WHERE 1=1";
 	if ($_GET["type"] || $_POST["type"])
 	{
 		$sql .= " AND p.fk_product_type = ".(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
 	}
 	if ($sref)
 	{
-		$sql .= " AND p.ref like '%".$sref."%'";
+		$sql .= " AND p.ref LIKE '%".$sref."%'";
 	}
 	if ($sRefSupplier)
 	{
-		$sql .= " AND ppf.ref_fourn like '%".$sRefSupplier."%'";
+		$sql .= " AND ppf.ref_fourn LIKE '%".$sRefSupplier."%'";
 	}
 	if ($snom)
 	{
-		$sql .= " AND p.label like '%".$snom."%'";
+		$sql .= " AND p.label LIKE '%".$snom."%'";
 	}
 	if($catid)
 	{

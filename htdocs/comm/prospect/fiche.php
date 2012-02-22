@@ -328,6 +328,8 @@ if ($socid > 0)
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
     {
+        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+
         // List of todo actions
         show_actions_todo($conf,$langs,$db,$societe);
 
@@ -336,7 +338,8 @@ if ($socid > 0)
     }
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

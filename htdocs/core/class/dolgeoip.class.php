@@ -89,8 +89,8 @@ class DolGeoIP
 	/**
 	 * Return in lower case the country code from an ip
 	 *
-	 * @param	$ip		IP to scan
-	 * @return	string	Country code (two letters)
+	 * @param	string	$ip		IP to scan
+	 * @return	string			Country code (two letters)
 	 */
 	function getCountryCodeFromIP($ip)
 	{
@@ -113,8 +113,8 @@ class DolGeoIP
 	/**
 	 * Return in lower case the country code from a host name
 	 *
-	 * @param	$name	FQN of host (example: myserver.xyz.com)
-	 * @return	string	Country code (two letters)
+	 * @param	string	$name	FQN of host (example: myserver.xyz.com)
+	 * @return	string			Country code (two letters)
 	 */
 	function getCountryCodeFromName($name)
 	{

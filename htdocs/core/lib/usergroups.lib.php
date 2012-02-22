@@ -149,7 +149,7 @@ function group_prepare_head($object)
 
 /**
  * 	Show list of themes. Show all thumbs of themes
- * 
+ *
  * 	@param	User	$fuser				User concerned or '' for global theme
  * 	@param	int		$edit				1 to add edit form
  * 	@param	boolean	$foruserprofile		Show for user profile view

@@ -29,9 +29,8 @@ include_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 /**
  * Class to manage the box to show last users
  */
- class box_comptes extends ModeleBoxes
- {
-
+class box_comptes extends ModeleBoxes
+{
 	var $boxcode="currentaccounts";
 	var $boximg="object_bill";
 	var $boxlabel;

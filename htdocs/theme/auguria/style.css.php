@@ -1291,9 +1291,17 @@ border: 0px;
 }
 */
 
-tr.pair td, tr.impair td, td.pair, td.impair
-{
-/*border-bottom: 1px solid white;*/
+/* Disable shadows */ 
+.noshadow {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
+}
+
+div.tabBar .noborder {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
 }
 
 
@@ -1662,12 +1670,17 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 	cursor: pointer;
 }
 
-.editval_textarea:hover, .editval_ckeditor:hover, .editval_string:hover, .editval_email:hover, .editval_numeric:hover, .editval_select:hover, .editval_datepicker:hover {
+.editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_datepicker.active:hover {
 	background: white;
 	cursor: pointer;
 }
 
-.editval_hover {
+.viewval_textarea.active:hover, .viewval_ckeditor.active:hover, .viewval_string.active:hover, .viewval_email.active:hover, .viewval_numeric.active:hover, .viewval_select.active:hover, .viewval_datepicker.active:hover {
+	background: white;
+	cursor: pointer;
+}
+
+.viewval_hover {
 	background: white;
 }
 

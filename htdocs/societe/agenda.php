@@ -35,7 +35,7 @@ $langs->load("companies");
 $mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
@@ -59,7 +59,7 @@ $form = new Form($db);
 /*
  * Fiche categorie de client et/ou fournisseur
  */
-if ($_GET["socid"])
+if ($socid)
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
@@ -68,8 +68,8 @@ if ($_GET["socid"])
 
 
 	$soc = new Societe($db);
-	$result = $soc->fetch($_GET["socid"]);
-	llxHeader("",$langs->trans("Agenda"),$langs->trans("Category"));
+	$result = $soc->fetch($socid);
+	llxHeader("",$langs->trans("Agenda"),'');
 
 	if ($conf->notification->enabled) $langs->load("mails");
 	$head = societe_prepare_head($soc);
@@ -144,7 +144,9 @@ if ($_GET["socid"])
 
 	print '</div>';
 
-	if ($mesg) print($mesg);
+
+	dol_htmloutput_mesg($mesg);
+
 
     /*
      * Barre d'action
@@ -161,31 +163,17 @@ if ($_GET["socid"])
 
     print '<br>';
 
-/*
-    if ($conf->global->MAIN_REPEATCONTACTONEACHTAB)
-    {
-        // List of contacts
-        show_contacts($conf,$langs,$db,$societe);
-    }
+    print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
 
-    if ($conf->global->MAIN_REPEATTASKONEACHTAB)
-    {
-*/
-        // List of todo actions
-        show_actions_todo($conf,$langs,$db,$soc);
+    // List of todo actions
+    show_actions_todo($conf,$langs,$db,$soc);
 
-        // List of done actions
-        show_actions_done($conf,$langs,$db,$soc);
-//    }
-
+    // List of done actions
+    show_actions_done($conf,$langs,$db,$soc);
 }
 
 
-
-
-
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>

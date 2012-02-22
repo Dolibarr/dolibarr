@@ -262,8 +262,8 @@ class Product extends CommonObject
 
 		$sql = "SELECT count(*) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE ref = '" .$this->ref."'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " AND ref = '" .$this->ref."'";
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1020,8 +1020,12 @@ class Product extends CommonObject
 		$sql.= " datec, tms, import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
-		else if ($ref) $sql.= " WHERE ref = '".$this->db->escape($ref)."'";
-		else if ($ref_ext) $sql.= " WHERE ref_ext = '".$this->db->escape($ref_ext)."'";
+		else
+		{
+			$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+			if ($ref) $sql.= " AND ref = '".$this->db->escape($ref)."'";
+			else if ($ref_ext) $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -1097,8 +1101,8 @@ class Product extends CommonObject
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql.= " price_base_type, tva_tx, tosell";
 						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
-						$sql.= " where price_level=".$i." and";
-						$sql.= " fk_product = '".$this->id."'";
+						$sql.= " WHERE price_level=".$i;
+						$sql.= " AND fk_product = '".$this->id."'";
 						$sql.= " ORDER BY date_price DESC";
 						$sql.= " LIMIT 1";
 						$resql = $this->db->query($sql);
@@ -1614,8 +1618,8 @@ class Product extends CommonObject
 	 */
 	function add_sousproduit($id_pere, $id_fils,$qty)
 	{
-		$sql = 'delete from '.MAIN_DB_PREFIX.'product_association';
-		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
+		$sql = 'DELETE from '.MAIN_DB_PREFIX.'product_association';
+		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" AND fk_product_fils = "'.$id_fils.'"';
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -1623,8 +1627,8 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$sql = 'select fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
-			$sql .= ' WHERE fk_product_pere  = "'.$id_fils.'" and fk_product_fils = "'.$id_pere.'"';
+			$sql = 'SELECT fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
+			$sql .= ' WHERE fk_product_pere  = "'.$id_fils.'" AND fk_product_fils = "'.$id_pere.'"';
 			if (! $this->db->query($sql))
 			{
 				dol_print_error($this->db);
@@ -1643,7 +1647,7 @@ class Product extends CommonObject
 					}
 					else
 					{
-						$sql = 'insert into '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
 						$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
 						if (! $this->db->query($sql))
 						{
@@ -2408,7 +2412,7 @@ class Product extends CommonObject
 
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/photos";
 
-		create_exdir($dir);
+		dol_mkdir($dir);
 
 		$dir_osencoded=$dir;
 		if (is_dir($dir_osencoded))
@@ -2461,7 +2465,7 @@ class Product extends CommonObject
 		if (! file_exists($dir_osencoded))
 		{
 			dol_syslog("Product Create ".$dir);
-			create_exdir($dir);
+			dol_mkdir($dir);
 		}
 
 		if (file_exists($dir_osencoded))
@@ -2791,8 +2795,8 @@ class Product extends CommonObject
 
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql.= " WHERE p.fk_product_type <> 1";
-		$sql.= ' AND p.entity IN ('.getEntity($this->element, 1).')';
+		$sql.= ' WHERE p.entity IN ('.getEntity($this->element, 1).')';
+		$sql.= " AND p.fk_product_type <> 1";
 
 		$resql=$this->db->query($sql);
 		if ($resql)

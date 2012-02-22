@@ -368,7 +368,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                 {
                     $dir= $conf->user->dir_output . '/' . get_exdir($edituser->id,2,0,1);
 
-                    create_exdir($dir);
+                    dol_mkdir($dir);
 
                     if (@is_dir($dir))
                     {
@@ -669,8 +669,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     $generated_password='';
-    if (! $ldap_sid)
+    if (! $ldap_sid)    // ldap_sid is for activedirectory
     {
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
         $generated_password=getRandomPassword('');
     }
     $password=$generated_password;

@@ -38,40 +38,99 @@ class RssParser
     protected $_lastfetchdate;    // Last successful fetch
     protected $_rssarray=array();
 
-    // Accessors
+    /**
+     * getFormat
+     *
+     * @return string
+     */
     public function getFormat()        {
         return $this->_format;
     }
+    /**
+     * getUrlRss
+     *
+     * @return string
+     */
     public function getUrlRss()        {
         return $this->_urlRSS;
     }
+    /**
+     * getLanguage
+     *
+     * @return string
+     */
     public function getLanguage()      {
         return $this->_language;
     }
+    /**
+     * getGenerator
+     *
+     * @return string
+     */
     public function getGenerator()     {
         return $this->_generator;
     }
+    /**
+     * getCopyright
+     *
+     * @return string
+     */
     public function getCopyright()     {
         return $this->_copyright;
     }
+    /**
+     * getLastBuildDate
+     *
+     * @return string
+     */
     public function getLastBuildDate() {
         return $this->_lastbuilddate;
     }
+    /**
+     * getImageUrl
+     *
+     * @return string
+     */
     public function getImageUrl()      {
         return $this->_imageurl;
     }
+    /**
+     * getLink
+     *
+     * @return string
+     */
     public function getLink()          {
         return $this->_link;
     }
+    /**
+     * getTitle
+     *
+     * @return string
+     */
     public function getTitle()         {
         return $this->_title;
     }
+    /**
+     * getDescription
+     *
+     * @return string
+     */
     public function getDescription()   {
         return $this->_description;
     }
+    /**
+     * getLastFetchDate
+     *
+     * @return string
+     */
     public function getLastFetchDate() {
         return $this->_lastfetchdate;
     }
+    /**
+     * getItems
+     *
+     * @return string
+     */
     public function getItems()         {
         return $this->_rssarray;
     }
@@ -96,11 +155,11 @@ class RssParser
     /**
      * 	Parse rss URL
      *
-     * 	@param		urlRSS		Url to parse
-     * 	@param		maxNb		Max nb of records to get (0 for no limit)
-     * 	@param		cachedelay	0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
-     * 	@param		cachedir	Directory where to save cache file
-     *	@return		int			<0 if KO, >0 if OK
+     * 	@param	string	$urlRSS		Url to parse
+     * 	@param	int		$maxNb		Max nb of records to get (0 for no limit)
+     * 	@param	int		$cachedelay	0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
+     * 	@param	strnig	$cachedir	Directory where to save cache file
+     *	@return	int					<0 if KO, >0 if OK
      */
     public function parser($urlRSS, $maxNb=0, $cachedelay=60, $cachedir='')
     {
@@ -371,7 +430,7 @@ class RssParser
     /**
      * 	Triggered when opened tag is found
      *
-     * 	@param	string		$p
+     * 	@param	string		$p			Start
      *  @param	string		$element	Tag
      *  @param	array		&$attrs		Attributes of tags
      *  @return	void
@@ -383,10 +442,12 @@ class RssParser
 
         // check for a namespace, and split if found
         $ns = false;
-        if (strpos($element, ':' )) {
+        if (strpos($element, ':'))
+        {
             list($ns, $el) = explode(':', $element, 2);
         }
-        if ( $ns and $ns != 'rdf' ) {
+        if ( $ns and $ns != 'rdf' )
+        {
             $this->current_namespace = $ns;
         }
 
@@ -458,7 +519,7 @@ class RssParser
             // if tags are inlined, then flatten
             $attrs_str = join(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
 
-            $this->append_content("<$element $attrs_str>" );
+            $this->append_content("<$element $attrs_str>");
 
             array_unshift($this->stack, $el);
         }
@@ -489,7 +550,7 @@ class RssParser
     /**
      * 	Triggered when CDATA is found
      *
-     * 	@param	string	$p
+     * 	@param	string	$p		P
      *  @param	string	$text	Tag
      *  @return	void
      */
@@ -499,7 +560,8 @@ class RssParser
         {
             $this->append_content($text);
         }
-        else {
+        else
+        {
             $current_el = join('_', array_reverse($this->stack));
             $this->append($current_el, $text);
         }
@@ -508,7 +570,7 @@ class RssParser
     /**
      * 	Triggered when closed tag is found
      *
-     * 	@param	string		$p
+     * 	@param	string		$p		P
      *  @param	string		$el		Tag
      *  @return	void
      */
@@ -516,7 +578,7 @@ class RssParser
     {
         $el = strtolower($el);
 
-        if ( $el == 'item' or $el == 'entry' )
+        if ($el == 'item' or $el == 'entry')
         {
             $this->items[] = $this->current_item;
             $this->current_item = array();

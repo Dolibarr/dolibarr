@@ -16,3 +16,4 @@ PAYPAL_ADD_PAYMENT_URL=Ajouter l'url de paiement Paypal lors de l'envoi d'un doc
 PAYPAL_IPN_MAIL_ADDRESS=Adresse e-mail pour les notifications instantanées de paiement (IPN)
 PredefinedMailContentSendOrderWithPaypalLink=Bonjour\nVeuillez trouver ci-joint la commande __ORDERREF__\n\nVous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement via Paypal\n\n%s\n\nCordialement\n\n
 PredefinedMailContentSendInvoiceWithPaypalLink=Bonjour\nVeuillez trouver ci-joint la facture __FACREF__\n\nVous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement via Paypal\n\n%s\n\nCordialement\n\n
+YouAreCurrentlyInSandboxMode=Vous êtes actuellement dans le mode "sandbox"

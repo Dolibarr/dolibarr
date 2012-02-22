@@ -248,7 +248,7 @@ class FactureFournisseur extends Facture
      *
      *    @param	int		$id         Id supplier invoice
      *    @param	string	$ref		Ref supplier invoice
-     *    @return   int        			<0 if KO, >0 if OK
+     *    @return   int        			<0 if KO, >0 if OK, 0 if not found
      */
     function fetch($id='',$ref='')
     {
@@ -348,7 +348,7 @@ class FactureFournisseur extends Facture
                 if ($result < 0)
                 {
                     $this->error=$this->db->error();
-                    dol_syslog(get_class($this).'::Fetch Error '.$this->error, LOG_ERR);
+                    dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
                     return -3;
                 }
 
@@ -356,8 +356,8 @@ class FactureFournisseur extends Facture
             else
             {
                 $this->error='Bill with id '.$id.' not found sql='.$sql;
-                dol_syslog(get_class($this).'::Fetch rowid='.$id.' numrows=0 sql='.$sql);
-                return -2;
+                dol_syslog(get_class($this).'::fetch '.$this->error);
+                return 0;
             }
 
             $this->db->free($resql);
@@ -1242,7 +1242,7 @@ class FactureFournisseur extends Facture
 
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
 
         $resql = $this->db->query($sql);
         if ($resql)

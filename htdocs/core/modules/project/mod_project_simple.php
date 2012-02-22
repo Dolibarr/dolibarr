@@ -27,8 +27,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/modules_project.php");
 
 
 /**
- * 	\class      mod_project_simple
- * 	\brief      Class to manage the numbering module Simple for project references
+ * 	Class to manage the numbering module Simple for project references
  */
 class mod_project_simple extends ModeleNumRefProjects
 {
@@ -38,8 +37,10 @@ class mod_project_simple extends ModeleNumRefProjects
 	var $nom = "Simple";
 
 
-    /**     \brief      Return description of numbering module
-     *      \return     string      Text with description
+    /** 
+     *  Return description of numbering module
+     * 
+     *  @return     string      Text with description
      */
     function info()
     {
@@ -48,8 +49,10 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 
 
-    /**     \brief      Return an example of numbering module values
-     *      \return     string      Example
+    /** 
+     *  Return an example of numbering module values
+     * 
+     * 	@return     string      Example
      */
     function getExample()
     {
@@ -57,9 +60,10 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 
 
-    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numerotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
+    /**  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *   de conflits qui empechera cette numerotation de fonctionner.
+     * 
+     *   @return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
     {
@@ -92,10 +96,11 @@ class mod_project_simple extends ModeleNumRefProjects
 
 
    /**
-	*  \brief      Return next value
-	*  \param      objsoc		Object third party
-	*  \param      project		Object project
-	*  \return     string		Value if OK, 0 if KO
+	*  Return next value
+	* 
+	*  @param   Societe	$objsoc		Object third party
+	*  @param   Project	$project	Object project
+	*  @return	string				Value if OK, 0 if KO
 	*/
     function getNextValue($objsoc=0,$project='')
     {
@@ -132,10 +137,12 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 
 
-    /**     \brief      Return next reference not yet used as a reference
-     *      \param      objsoc      Object third party
-     *      \param      project		Object project
-     *      \return     string      Next not used reference
+    /** 
+     * 	Return next reference not yet used as a reference
+     * 
+     *  @param	Societe	$objsoc     Object third party
+     *  @param  Project	$project	Object project
+     *  @return string      		Next not used reference
      */
     function project_get_num($objsoc=0,$project='')
     {

@@ -29,9 +29,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last proposals
  */
- class box_propales extends ModeleBoxes
- {
-
+class box_propales extends ModeleBoxes
+{
     var $boxcode="lastpropals";
     var $boximg="object_propal";
     var $boxlabel;

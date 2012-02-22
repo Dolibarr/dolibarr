@@ -30,9 +30,8 @@ include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 /**
  * Class to manage the box to show last products
  */
- class box_produits extends ModeleBoxes
- {
-
+class box_produits extends ModeleBoxes
+{
 	var $boxcode="lastproducts";
 	var $boximg="object_product";
 	var $boxlabel;
@@ -77,7 +76,7 @@ include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sql.= ' WHERE p.entity IN (0,'.getEntity($productstatic->element, 1).')';
+			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
 			$sql.= $db->order('p.datec', 'DESC');

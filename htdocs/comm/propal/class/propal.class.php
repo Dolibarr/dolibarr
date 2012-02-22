@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)   <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
+ * Copyright (C) 2005-2012 Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2011 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,16 +134,16 @@ class Propal extends CommonObject
 		$this->duree_validite=$conf->global->PROPALE_VALIDITY_DURATION;
 
 		$langs->load("propal");
-		$this->labelstatut[0]=($conf->global->PROPAL_STATUS_DRAFT_LABEL ? $conf->global->PROPAL_STATUS_DRAFT_LABEL : $langs->trans("PropalStatusDraft"));
-		$this->labelstatut[1]=($conf->global->PROPAL_STATUS_VALIDATED_LABEL ? $conf->global->PROPAL_STATUS_VALIDATED_LABEL : $langs->trans("PropalStatusValidated"));
-		$this->labelstatut[2]=($conf->global->PROPAL_STATUS_SIGNED_LABEL ? $conf->global->PROPAL_STATUS_SIGNED_LABEL : $langs->trans("PropalStatusSigned"));
-		$this->labelstatut[3]=($conf->global->PROPAL_STATUS_NOTSIGNED_LABEL ? $conf->global->PROPAL_STATUS_NOTSIGNED_LABEL : $langs->trans("PropalStatusNotSigned"));
-		$this->labelstatut[4]=($conf->global->PROPAL_STATUS_BILLED_LABEL ? $conf->global->PROPAL_STATUS_BILLED_LABEL : $langs->trans("PropalStatusBilled"));
-		$this->labelstatut_short[0]=($conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL ? $conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("PropalStatusDraftShort"));
-		$this->labelstatut_short[1]=($conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL ? $conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
-		$this->labelstatut_short[2]=($conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL ? $conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("PropalStatusSignedShort"));
-		$this->labelstatut_short[3]=($conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL ? $conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("PropalStatusNotSignedShort"));
-		$this->labelstatut_short[4]=($conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL ? $conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("PropalStatusBilledShort"));
+		$this->labelstatut[0]=(! empty($conf->global->PROPAL_STATUS_DRAFT_LABEL) ? $conf->global->PROPAL_STATUS_DRAFT_LABEL : $langs->trans("PropalStatusDraft"));
+		$this->labelstatut[1]=(! empty($conf->global->PROPAL_STATUS_VALIDATED_LABEL) ? $conf->global->PROPAL_STATUS_VALIDATED_LABEL : $langs->trans("PropalStatusValidated"));
+		$this->labelstatut[2]=(! empty($conf->global->PROPAL_STATUS_SIGNED_LABEL) ? $conf->global->PROPAL_STATUS_SIGNED_LABEL : $langs->trans("PropalStatusSigned"));
+		$this->labelstatut[3]=(! empty($conf->global->PROPAL_STATUS_NOTSIGNED_LABEL) ? $conf->global->PROPAL_STATUS_NOTSIGNED_LABEL : $langs->trans("PropalStatusNotSigned"));
+		$this->labelstatut[4]=(! empty($conf->global->PROPAL_STATUS_BILLED_LABEL) ? $conf->global->PROPAL_STATUS_BILLED_LABEL : $langs->trans("PropalStatusBilled"));
+		$this->labelstatut_short[0]=(! empty($conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL) ? $conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("PropalStatusDraftShort"));
+		$this->labelstatut_short[1]=(! empty($conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
+		$this->labelstatut_short[2]=(! empty($conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("PropalStatusSignedShort"));
+		$this->labelstatut_short[3]=(! empty($conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("PropalStatusNotSignedShort"));
+		$this->labelstatut_short[4]=(! empty($conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("PropalStatusBilledShort"));
 	}
 
 
@@ -984,7 +984,7 @@ class Propal extends CommonObject
 		if ($ref) $sql.= " AND p.ref='".$ref."'";
 		else $sql.= " AND p.rowid=".$rowid;
 
-		dol_syslog("Propal::fecth sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1119,7 +1119,7 @@ class Propal extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dol_syslog("Propal::Fetch Error ".$this->error, LOG_ERR);
+					dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -1132,7 +1132,7 @@ class Propal extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Propal::Fetch Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1787,81 +1787,101 @@ class Propal extends CommonObject
 		$error=0;
 
 		$this->db->begin();
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
-		if ( $this->db->query($sql) )
+		
+		if (! $error && ! $notrigger)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
-			if ( $this->db->query($sql) )
+			// Call triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('PROPAL_DELETE',$this,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++; $this->errors=$interface->errors;
+			}
+			// End call triggers
+		}
+		
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
+			if ($this->db->query($sql))
 			{
-				// Delete linked contacts
-				$res = $this->delete_linked_contact();
-				if ($res < 0)
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
+				if ($this->db->query($sql))
 				{
-					$this->error='ErrorFailToDeleteLinkedContact';
-					$this->db->rollback();
-					return 0;
-				}
-
-				// We remove directory
-				$propalref = dol_sanitizeFileName($this->ref);
-				if ($conf->propale->dir_output)
-				{
-					$dir = $conf->propale->dir_output . "/" . $propalref ;
-					$file = $conf->propale->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
-					if (file_exists($file))
+					// Delete linked object
+					$res = $this->deleteObjectLinked();
+					if ($res < 0) $error++;
+			
+					// Delete linked contacts
+					$res = $this->delete_linked_contact();
+					if ($res < 0) $error++;
+			
+					if (! $error)
 					{
-						dol_delete_preview($this);
-
-						if (!dol_delete_file($file))
+						// We remove directory
+						$propalref = dol_sanitizeFileName($this->ref);
+						if ($conf->propale->dir_output)
 						{
-							$this->error='ErrorFailToDeleteFile';
-							$this->db->rollback();
-							return 0;
+							$dir = $conf->propale->dir_output . "/" . $propalref ;
+							$file = $conf->propale->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
+							if (file_exists($file))
+							{
+								dol_delete_preview($this);
+									
+								if (!dol_delete_file($file))
+								{
+									$this->error='ErrorFailToDeleteFile';
+									$this->db->rollback();
+									return 0;
+								}
+							}
+							if (file_exists($dir))
+							{
+								$res=@dol_delete_dir($dir);
+								if (! $res)
+								{
+									$this->error='ErrorFailToDeleteDir';
+									$this->db->rollback();
+									return 0;
+								}
+							}
 						}
 					}
-					if (file_exists($dir))
+			
+					if (! $error)
 					{
-						$res=@dol_delete_dir($dir);
-						if (! $res)
-						{
-							$this->error='ErrorFailToDeleteDir';
-							$this->db->rollback();
-							return 0;
-						}
+						dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
+						$this->db->commit();
+						return 1;
 					}
-				}
-
-				if (! $notrigger)
-				{
-					// Call triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PROPAL_DELETE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// End call triggers
-				}
-
-				if (!$error)
-				{
-					dol_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);
-					$this->db->commit();
-					return 1;
+					else
+					{
+						$this->error=$this->db->lasterror();
+						dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+						$this->db->rollback();
+						return 0;
+					}
 				}
 				else
 				{
+					$this->error=$this->db->lasterror();
+					dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return 0;
+					return -3;
 				}
 			}
 			else
 			{
+				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -2203,7 +2223,7 @@ class Propal extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

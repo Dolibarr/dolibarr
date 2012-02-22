@@ -50,7 +50,9 @@ $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if ($page == -1) {
+    $page = 0;
+}
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -71,15 +73,15 @@ $modulepart='tax';
 
 if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-	if (create_exdir($upload_dir) >= 0)
-	{
-		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
-		{
-		    if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
-		    {
+    if (dol_mkdir($upload_dir) >= 0)
+    {
+        $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+        if (is_numeric($resupload) && $resupload > 0)
+        {
+            if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
+            {
                 // Create small thumbs for company (Ratio is near 16/9)
                 // Used on logon for example
                 $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
@@ -87,26 +89,26 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
                 // Create mini thumbs for company (Ratio is near 16/9)
                 // Used on menu or for setup page for example
                 $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
-		    }
-		    $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-		}
-		else
-		{
-			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-			}
-			else	// Known error
-			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
-			}
-		}
-	}
+            }
+            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+        }
+        else
+        {
+            $langs->load("errors");
+            if ($resupload < 0)	// Unknown error
+            {
+                $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+            }
+            else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+            {
+                $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+            }
+            else	// Known error
+            {
+                $mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+            }
+        }
+    }
 }
 
 
@@ -121,36 +123,84 @@ llxHeader("",$langs->trans("SocialContribution"),$help_url);
 
 if ($object->id)
 {
-	if ( $error_msg )
-	{
-		echo '<div class="error">'.$error_msg.'</div><br>';
-	}
+    if ( $error_msg )
+    {
+        echo '<div class="error">'.$error_msg.'</div><br>';
+    }
 
-	if ($action == 'delete')
-	{
-		$file = $upload_dir . '/' . GETPOST("urlfile");	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$result=dol_delete_file($file);
-		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
-	}
+    if ($action == 'delete')
+    {
+        $file = $upload_dir . '/' . GETPOST("urlfile");	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+        $result=dol_delete_file($file);
+        //if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
+    }
 
-	$head=tax_prepare_head($object, $user);
+    $head=tax_prepare_head($object, $user);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), 0, 'bill');
+    dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), 0, 'bill');
 
 
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    // Construit liste des fichiers
+    $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
 
     print '<table class="border" width="100%">';
 
-	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$object->ref.'</td></tr>';
+    // Ref
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
+	print $form->showrefnav($object,'id');
+	print "</td></tr>";
+
+    // Label
+    if ($action == 'edit')
+    {
+        print '<tr><td>'.$langs->trans("Label").'</td><td>';
+        print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
+        print '</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->lib.'</td></tr>';
+    }
+
+    // Type
+    print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td></tr>";
+
+    // Period end date
+    print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
+    print "<td>";
+    if ($action == 'edit')
+    {
+        print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+    }
+    else
+    {
+        print dol_print_date($object->periode,"day");
+    }
+    print "</td>";
+    print "</tr>";
+
+    // Due date
+    if ($action == 'edit')
+    {
+        print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
+        print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+        print "</td></tr>";
+    }
+    else {
+        print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
+    }
+
+    // Amount
+    print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount).'</td></tr>';
+
+    // Status
+    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -161,17 +211,17 @@ if ($object->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id,'',0,0,$user->rights->tax->charges->creer);
+   	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id,'',0,0,$user->rights->tax->charges->creer);
 
 
-	// List of document
-	//$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'tax',$param);
+   	// List of document
+   	//$param='&id='.$object->id;
+   	$formfile->list_of_documents($filearray,$object,'tax',$param);
 
 }
 else
 {
-	print $langs->trans("UnkownError");
+    print $langs->trans("UnkownError");
 }
 
 

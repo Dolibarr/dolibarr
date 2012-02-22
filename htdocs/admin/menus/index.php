@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,14 +30,15 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/treeview.lib.php");
 $langs->load("other");
 $langs->load("admin");
 
-if (! $user->admin)
-  accessforbidden();
+if (! $user->admin) accessforbidden();
 
-$dirtop = "/core/menus/standard";
-$dirleft = "/core/menus/standard";
-$dirsmartphone = "/core/menus/smartphone";
-
-$dirmenu = array($dirleft,$dirsmartphone);
+$dirstandard = array("/core/menus/standard");
+$dirsmartphone = array("/core/menus/smartphone");
+foreach($conf->menus_modules as $dir)
+{
+    $dirstandard[]=$dir.'/standard';
+    $dirsmartphone[]=$dir.'/standard';
+}
 
 $mesg=$_GET["mesg"];
 
@@ -207,9 +208,6 @@ llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs);
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
 
-print $langs->trans("MenusEditorDesc")."<br>\n";
-print "<br>\n";
-
 
 dol_htmloutput_mesg($mesg);
 
@@ -233,6 +231,10 @@ $h++;
 
 dol_fiche_head($head, 'editor', $langs->trans("Menus"));
 
+print $langs->trans("MenusEditorDesc")."<br>\n";
+print "<br>\n";
+
+
 // Confirmation for remove menu entry
 if ($_GET["action"] == 'delete')
 {
@@ -250,7 +252,7 @@ if ($_GET["action"] == 'delete')
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
-print $formadmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
+print $formadmin->select_menu_families($menu_handler,'menu_handler',array_merge($dirstandard,$dirsmartphone));
 print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
 print '</form>';
 

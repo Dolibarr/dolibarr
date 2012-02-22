@@ -111,21 +111,26 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 		if (! $error)
 		{
-			if (empty($projectid))
+		    if (GETPOST('backtopage'))
 			{
-				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+				Header("Location: ".GETPOST('backtopage'));
 				exit;
 			}
-			else
+			else if (empty($projectid))
 			{
-				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/task.php?id='.$taskid);
+				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
 		}
 	}
 	else
 	{
-        if (empty($id))
+		if (GETPOST('backtopage'))
+		{
+			Header("Location: ".GETPOST('backtopage'));
+			exit;
+		}
+	    else if (empty($id))
         {
             // We go back on task list
             Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
@@ -141,6 +146,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 $form=new Form($db);
 $formother=new FormOther($db);
 $taskstatic = new Task($db);
+$userstatic=new User($db);
 
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Tasks"),$help_url);
@@ -155,10 +161,57 @@ if ($id > 0 || ! empty($ref))
     $userWrite  = $object->restrictedProjectArea($user,'write');
     //$userDelete = $object->restrictedProjectArea($user,'delete');
     //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+
+
+    $tab=GETPOST('tab')?GETPOST('tab'):'tasks';
+
+    $head=project_prepare_head($object);
+    dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+
+    $param=($mode=='mine'?'&mode=mine':'');
+
+    print '<table class="border" width="100%">';
+
+    // Ref
+    print '<tr><td width="30%">';
+    print $langs->trans("Ref");
+    print '</td><td>';
+    // Define a complementary filter for search of next/prev ref.
+    if (! $user->rights->projet->all->lire)
+    {
+        $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    }
+    print $form->showrefnav($object,'ref','',1,'ref','ref','',$param);
+    print '</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+    else print '&nbsp;';
+    print '</td>';
+    print '</tr>';
+
+    // Visibility
+    print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+    if ($object->public) print $langs->trans('SharedProject');
+    else print $langs->trans('PrivateProject');
+    print '</td></tr>';
+
+    // Statut
+    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+
+    print '</table>';
+
+    dol_fiche_end();
 }
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userAccess > 0))
+
+if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userWrite > 0))
 {
+    if ($id > 0 || ! empty($ref)) print '<br>';
+
 	print_fiche_titre($langs->trans("NewTask"));
 
 	dol_htmloutput_errors($mesg);
@@ -166,6 +219,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
+	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
 	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if (! empty($mode)) print '<input type="hidden" name="mode" value="'.$mode.'">';
 
@@ -221,50 +275,6 @@ else
 	/*
 	 * Fiche projet en mode visu
 	 */
-	$userstatic=new User($db);
-
-	$tab='tasks';
-
-	$head=project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
-
-	$param=($mode=='mine'?'&mode=mine':'');
-
-	print '<table class="border" width="100%">';
-
-	// Ref
-	print '<tr><td width="30%">';
-	print $langs->trans("Ref");
-	print '</td><td>';
-	// Define a complementary filter for search of next/prev ref.
-    if (! $user->rights->projet->all->lire)
-    {
-        $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
-        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-    }
-	print $form->showrefnav($object,'ref','',1,'ref','ref','',$param);
-	print '</td></tr>';
-
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
-
-	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
-	else print '&nbsp;';
-	print '</td>';
-	print '</tr>';
-
-	// Visibility
-	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
-	else print $langs->trans('PrivateProject');
-	print '</td></tr>';
-
-	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-
-	print '</table>';
-
-	print '</div>';
 
 	/*
 	 * Actions
@@ -275,7 +285,7 @@ else
 	{
 		if ($object->public || $userWrite > 0)
 		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
 		}
 		else
 		{
@@ -322,6 +332,8 @@ else
 	// print '<td>'.$langs->trans("Project").'</td>';
 	print '<td width="80">'.$langs->trans("RefTask").'</td>';
 	print '<td>'.$langs->trans("LabelTask").'</td>';
+	print '<td align="center">'.$langs->trans("DateStart").'</td>';
+	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 	print '<td align="right">'.$langs->trans("Progress").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print "</tr>\n";
@@ -329,7 +341,7 @@ else
 	{
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j=0;
-		$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 0, $tasksrole);
+		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole);
 	}
 	else
 	{

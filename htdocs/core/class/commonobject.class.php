@@ -294,7 +294,7 @@ abstract class CommonObject
         $sql.= " WHERE element_id =".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
-        dol_syslog(get_class($this)."::delete_linked_contact sql=".$sql);
+        dol_syslog(get_class($this)."::delete_linked_contact sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
@@ -483,7 +483,8 @@ abstract class CommonObject
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE ec.element_id = ".$this->id;
         $sql.= " AND ec.fk_socpeople = c.rowid";
-        $sql.= " AND c.entity IN (0,".$conf->entity.")";
+        if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
+        if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND ec.fk_c_type_contact = tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
         $sql.= " AND tc.source = '".$source."'";
@@ -1457,12 +1458,17 @@ abstract class CommonObject
     }
 
     /**
-     * Add objects linked in llx_element_element.
+     *	Add objects linked in llx_element_element.
      *
-     * @return         int         <=0 if KO, >0 if OK
+     *	@param		string	$origin		Linked element type
+     *	@param		int		$origin_id	Linked element id
+     *	@return		int					<=0 if KO, >0 if OK
      */
-    function add_object_linked()
+    function add_object_linked($origin=null, $origin_id=null)
     {
+    	$origin = (! empty($origin) ? $origin : $this->origin);
+    	$origin_id = (! empty($origin_id) ? $origin_id : $this->origin_id);
+    	
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -1471,8 +1477,8 @@ abstract class CommonObject
         $sql.= ", fk_target";
         $sql.= ", targettype";
         $sql.= ") VALUES (";
-        $sql.= $this->origin_id;
-        $sql.= ", '".$this->origin."'";
+        $sql.= $origin_id;
+        $sql.= ", '".$origin."'";
         $sql.= ", ".$this->id;
         $sql.= ", '".$this->element."'";
         $sql.= ")";
@@ -1514,10 +1520,10 @@ abstract class CommonObject
         if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $justsource=true;
         if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $justtarget=true;
 
-        $sourceid = (! empty($sourceid) ? $sourceid : $this->id );
-        $targetid = (! empty($targetid) ? $targetid : $this->id );
-        $sourcetype = (! empty($sourcetype) ? $sourcetype : (! empty($this->origin) ? $this->origin : $this->element ) );
-        $targettype = (! empty($targettype) ? $targettype : $this->element );
+        $sourceid = (! empty($sourceid) ? $sourceid : $this->id);
+        $targetid = (! empty($targetid) ? $targetid : $this->id);
+        $sourcetype = (! empty($sourcetype) ? $sourcetype : (! empty($this->origin) ? $this->origin : $this->element));
+        $targettype = (! empty($targettype) ? $targettype : $this->element);
 
         // Links beetween objects are stored in this table
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
@@ -1561,7 +1567,7 @@ abstract class CommonObject
                 {
                     // Parse element/subelement (ex: project_task)
                     $module = $element = $subelement = $objecttype;
-                    if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+                    if ($objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
                     {
                         $module = $element = $regs[1];
                         $subelement = $regs[2];
@@ -1582,8 +1588,8 @@ abstract class CommonObject
                     else if ($objecttype == 'delivery')			{
                         $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
                     }
-                    else if ($objecttype == 'invoice_supplier')	{
-                        $classpath = 'fourn/class';
+                    else if ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier')	{
+                        $classpath = 'fourn/class'; $module = 'fournisseur';
                     }
                     else if ($objecttype == 'order_supplier')	{
                         $classpath = 'fourn/class';
@@ -1629,6 +1635,78 @@ abstract class CommonObject
             dol_print_error($this->db);
         }
     }
+
+    /**
+     *	Update object linked of a current object
+     *
+     *	@param	int		$sourceid		Object source id
+     *	@param  string	$sourcetype		Object source type
+     *	@param  int		$targetid		Object target id
+     *	@param  string	$targettype		Object target type
+     *	@return							int	>0 if OK, <0 if KO
+     */
+    function updateObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
+    {
+    	$updatesource=false;
+    	$updatetarget=false;
+
+    	if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $updatesource=true;
+    	else if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $updatetarget=true;
+
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."element_element SET ";
+    	if ($updatesource)
+    	{
+    		$sql.= "fk_source = ".$sourceid;
+    		$sql.= ", sourcetype = '".$sourcetype."'";
+    		$sql.= " WHERE fk_target = ".$this->id;
+    		$sql.= " AND targettype = '".$this->element."'";
+    	}
+    	else if ($updatetarget)
+    	{
+    		$sql.= "fk_target = ".$targetid;
+    		$sql.= ", targettype = '".$targettype."'";
+    		$sql.= " WHERE fk_source = ".$this->id;
+    		$sql.= " AND sourcetype = '".$this->element."'";
+    	}
+
+    	dol_syslog(get_class($this)."::updateObjectLinked sql=".$sql, LOG_DEBUG);
+    	if ($this->db->query($sql))
+    	{
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->lasterror();
+    		dol_syslog(get_class($this)."::updateObjectLinked error=".$this->error, LOG_ERR);
+    		return -1;
+    	}
+    }
+
+	/**
+	 *	Delete all links between an object $this
+	 *
+	 *	@return     int	>0 if OK, <0 if KO
+	 */
+	function deleteObjectLinked()
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE";
+		$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->element."')";
+		$sql.= " OR";
+		$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
+
+		dol_syslog(get_class($this)."::deleteObjectLinked sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::deleteObjectLinked error=".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
     /**
      *      Set statut of an object
@@ -1787,6 +1865,8 @@ abstract class CommonObject
     {
         global $langs;
 
+		$error=0;
+
         if (count($this->array_options) > 0)
         {
             // Check parameters
@@ -1942,7 +2022,7 @@ abstract class CommonObject
 
 
     /**
-     * List urls of elemùent
+     * List urls of element
      *
      * @param 	int		$objectid		Id of record
      * @param 	string	$objecttype		Type of object
@@ -2045,19 +2125,19 @@ abstract class CommonObject
             if ($objecttype == 'facture')          {
                 $tplpath = 'compta/'.$element;
             }
-            if ($objecttype == 'propal')           {
+            else if ($objecttype == 'propal')           {
                 $tplpath = 'comm/'.$element;
             }
-            if ($objecttype == 'shipping')         {
+            else if ($objecttype == 'shipping')         {
                 $tplpath = 'expedition';
             }
-            if ($objecttype == 'delivery')         {
+            else if ($objecttype == 'delivery')         {
                 $tplpath = 'livraison';
             }
-            if ($objecttype == 'invoice_supplier') {
+            else if ($objecttype == 'invoice_supplier') {
                 $tplpath = 'fourn/facture';
             }
-            if ($objecttype == 'order_supplier')   {
+            else if ($objecttype == 'order_supplier')   {
                 $tplpath = 'fourn/commande';
             }
 

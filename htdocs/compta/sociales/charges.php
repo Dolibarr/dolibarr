@@ -24,12 +24,13 @@
 
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formsocialcontrib.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
 
 $langs->load("compta");
 $langs->load("bills");
 
-$chid=GETPOST("id");
+$id=GETPOST("id");
 $action=GETPOST("action");
 
 // Security check
@@ -53,7 +54,7 @@ $result = restrictedArea($user, 'tax', $langs->trans("SocialContribution"), '', 
 if ($action == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
 {
 	$chargesociales = new ChargeSociales($db);
-	$chargesociales->fetch($chid);
+	$chargesociales->fetch($id);
 	$result = $chargesociales->set_paid($user);
 }
 
@@ -63,7 +64,7 @@ if ($action == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
 if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
 	$chargesociales=new ChargeSociales($db);
-	$chargesociales->fetch($chid);
+	$chargesociales->fetch($id);
 	$result=$chargesociales->delete($user);
 	if ($result > 0)
 	{
@@ -115,8 +116,8 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 		$chargesociales->periode=$dateperiod;
 		$chargesociales->amount=$_POST["amount"];
 
-		$chid=$chargesociales->create($user);
-		if ($chid > 0)
+		$id=$chargesociales->create($user);
+		if ($id > 0)
 		{
 			//$mesg='<div class="ok">'.$langs->trans("SocialContributionAdded").'</div>';
 		}
@@ -169,10 +170,12 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
  * View
  */
 
+$form = new Form($db);
+$formsocialcontrib = new FormSocialContrib($db);
+
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("",$langs->trans("SocialContribution"),$help_url);
 
-$form = new Form($db);
 
 // Mode creation
 if ($action == 'create')
@@ -216,7 +219,7 @@ if ($action == 'create')
 
 	// Type
     print '<td align="left">';
-    $form->select_type_socialcontrib(isset($_POST["actioncode"])?$_POST["actioncode"]:'','actioncode',1);
+    $formsocialcontrib->select_type_socialcontrib(isset($_POST["actioncode"])?$_POST["actioncode"]:'','actioncode',1);
     print '</td>';
 
 	// Date end period
@@ -243,16 +246,16 @@ if ($action == 'create')
 /* Mode fiche                                                                  */
 /*                                                                             */
 /* *************************************************************************** */
-if ($chid > 0)
+if ($id > 0)
 {
-	$cha = new ChargeSociales($db);
-    $result=$cha->fetch($chid);
+	$object = new ChargeSociales($db);
+    $result=$object->fetch($id);
 
 	if ($result > 0)
 	{
 		dol_htmloutput_mesg($mesg);
 
-		$head=tax_prepare_head($cha);
+		$head=tax_prepare_head($object);
 
 		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
 
@@ -260,53 +263,53 @@ if ($chid > 0)
 		if ($action == 'paid')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cha->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
 		}
 
 		if ($action == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteSocialContribution');
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$cha->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
 		}
 
 		if ($action == 'edit')
 		{
-			print "<form name=\"charge\" action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
+			print "<form name=\"charge\" action=\"charges.php?id=$object->id&amp;action=update\" method=\"post\">";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
 
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print "<tr><td>".$langs->trans("Ref").'</td><td colspan="2">';
-		print $form->showrefnav($cha,'id');
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2">';
+		print $form->showrefnav($object,'id');
 		print "</td></tr>";
 
 		// Label
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">';
-			print '<input type="text" name="label" size="40" value="'.$cha->lib.'">';
+			print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
 			print '</td></tr>';
 		}
 		else
 		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$cha->lib.'</td></tr>';
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->lib.'</td></tr>';
 		}
 
 		// Type
-		print "<tr><td>".$langs->trans("Type")."</td><td>".$cha->type_libelle."</td><td>".$langs->trans("Payments")."</td></tr>";
+		print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td><td>".$langs->trans("Payments")."</td></tr>";
 
 		// Period end date
 		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($cha->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
 		else
 		{
-			print dol_print_date($cha->periode,"day");
+			print dol_print_date($object->periode,"day");
 		}
 		print "</td>";
 
@@ -321,7 +324,7 @@ if ($chid > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
 		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
-		$sql.= " WHERE p.fk_charge = ".$chid;
+		$sql.= " WHERE p.fk_charge = ".$id;
 		$sql.= " AND p.fk_charge = cs.rowid";
 		$sql.= " AND cs.entity = ".$conf->entity;
 		$sql.= " AND p.fk_typepaiement = c.id";
@@ -353,12 +356,12 @@ if ($chid > 0)
 				$i++;
 			}
 
-			if ($cha->paye == 0)
+			if ($object->paye == 0)
 			{
 				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($cha->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
 
-				$resteapayer = $cha->amount - $totalpaye;
+				$resteapayer = $object->amount - $totalpaye;
 
 				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 				print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
@@ -378,18 +381,18 @@ if ($chid > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print $form->select_date($cha->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		}
 		else {
-			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($cha->date_ech,'day')."</td></tr>";
+			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
 		}
 
 		// Amount
-		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount).'</td></tr>';
 
 		// Status
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut(4).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 		print '<tr><td colspan="2">&nbsp;</td></tr>';
 
@@ -419,25 +422,25 @@ if ($chid > 0)
 			// Edit
 			if ($user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
 			}
 
 			// Emettre paiement
-			if ($cha->paye == 0 && ((price2num($cha->amount) < 0 && round($resteapayer) < 0) || (price2num($cha->amount) > 0 && round($resteapayer) > 0)) && $user->rights->tax->charges->creer)
+			if ($object->paye == 0 && ((price2num($object->amount) < 0 && round($resteapayer) < 0) || (price2num($object->amount) > 0 && round($resteapayer) > 0)) && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
 			// Classify 'paid'
-			if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
+			if ($object->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
 			}
 
 			// Delete
 			if ($user->rights->tax->charges->supprimer)
 			{
-				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 			}
 
 			print "</div>";
@@ -446,11 +449,12 @@ if ($chid > 0)
 	else
 	{
 		/* Charge non trouv� */
-		dol_print_error('',$cha->error);
+		dol_print_error('',$object->error);
 	}
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

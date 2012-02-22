@@ -46,7 +46,7 @@ class Interfaces
     /**
      *   Function called when a Dolibarr business event occurs
      *   This function call all qualified triggers.
-     * 
+     *
      *   @param		string		$action     Trigger event code
      *   @param     Object		$object     Objet concern
      *   @param     User		$user       Objet user
@@ -68,13 +68,14 @@ class Interfaces
         }
 
         $nbfile = $nbtotal = $nbok = $nbko = 0;
-        
+
         $files = array();
         $modules = array();
         $orders = array();
 		$i=0;
 
-        foreach($conf->triggers_modules as $reldir)
+		$dirtriggers=array_merge(array('/core/triggers'),$conf->triggers_modules);
+        foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
             //print "xx".$dir;exit;
@@ -92,7 +93,7 @@ class Interfaces
 						$part1=$reg[1];
 						$part2=$reg[2];
 						$part3=$reg[3];
-                    	
+
                         $nbfile++;
 
                         $modName = "Interface".ucfirst($reg[3]);
@@ -124,17 +125,17 @@ class Interfaces
                             dol_syslog(get_class($this)."::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled",LOG_INFO);
                             continue;
                         }
-                        
+
                         $modules[$i] = $modName;
                         $files[$i] = $file;
                         $orders[$i] = $part1.'_'.$part2.'_'.$part3;   // Set sort criteria value
-                        
+
                         $i++;
                     }
                 }
             }
         }
-                
+
         asort($orders);
 
         // Loop on each trigger
@@ -189,7 +190,7 @@ class Interfaces
     /**
      *  Return list of triggers. Function used by admin page htdoc/admin/triggers.
      *  List is sorted by trigger filename so by priority to run.
-     * 
+     *
      * 	@return	array					Array list of triggers
      */
     function getTriggersList()
@@ -203,7 +204,8 @@ class Interfaces
         $orders = array();
         $i = 0;
 
-        foreach($conf->triggers_modules as $reldir)
+        $dirtriggers=array_merge(array('/core/triggers'),$conf->triggers_modules);
+        foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
             //print "xx".$dir;exit;
@@ -221,7 +223,7 @@ class Interfaces
 						$part1=$reg[1];
 						$part2=$reg[2];
 						$part3=$reg[3];
-                    	
+
                         $modName = 'Interface'.ucfirst($reg[3]);
                         //print "file=$file"; print "modName=$modName"; exit;
                         if (in_array($modName,$modules))
@@ -237,7 +239,7 @@ class Interfaces
                         $files[$i] = $file;
                         $modules[$i] = $modName;
                         $orders[$i] = $part1.'_'.$part2.'_'.$part3;   // Set sort criteria value
-                        
+
                         $i++;
                     }
                 }

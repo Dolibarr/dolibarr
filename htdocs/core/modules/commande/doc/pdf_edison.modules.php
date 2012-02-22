@@ -30,18 +30,16 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 /**
- *	\class      pdf_edison
- *	\brief      Classe permettant de generer les commandes au modele Edison
+ *	Classe permettant de generer les commandes au modele Edison
  */
-
 class pdf_edison extends ModelePDFCommandes
 {
 	var $emetteur;	// Objet societe qui emet
 
 	/**
-	 * 		Constructeur
+	 * 	Constructor
      *
-	 *		@param		DoliDb	$db		Database access handler
+	 *	@param		DoliDb	$db		Database access handler
 	 */
 	function pdf_edison($db=0)
 	{
@@ -131,7 +129,7 @@ class pdf_edison extends ModelePDFCommandes
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
@@ -290,6 +288,15 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
+
+				// Actions on extra fields (by external module or standard code)
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+				$hookmanager=new HookManager($this->db);
+				$hookmanager->callHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 

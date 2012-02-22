@@ -26,6 +26,8 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php");
 
+$action=GETPOST('action');
+
 $langs->load("companies");
 $langs->load("banks");
 $langs->load("bills");
@@ -39,16 +41,16 @@ $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 
-if ($_GET["action"] == 'dvnext')
+if ($user->rights->banque->consolidate && $action == 'dvnext')
 {
-	$ac = new Account($db);
-	$ac->datev_next($_GET["dvid"]);
+	$al = new AccountLine($db);
+	$al->datev_next($_GET["dvid"]);
 }
 
-if ($_GET["action"] == 'dvprev')
+if ($user->rights->banque->consolidate && $action == 'dvprev')
 {
-	$ac = new Account($db);
-	$ac->datev_previous($_GET["dvid"]);
+	$al = new AccountLine($db);
+	$al->datev_previous($_GET["dvid"]);
 }
 
 

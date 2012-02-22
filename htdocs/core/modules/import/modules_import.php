@@ -42,7 +42,7 @@ class ModeleImports
 
 
 	/**
-	 *      \brief      Constructeur
+     *  Constructor
 	 */
 	function ModeleImports()
 	{

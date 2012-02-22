@@ -118,6 +118,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
 
     /**
+     * testDolHtmlCleanLastBr
+     *
+     * @return boolean
      */
     public function testDolHtmlCleanLastBr()
     {
@@ -138,6 +141,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testDolHtmlEntitiesBr
+     *
+     * @return boolean
      */
     public function testDolHtmlEntitiesBr()
     {
@@ -161,6 +167,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testDolTextIsHtml
+     *
+     * @return void
      */
     public function testDolTextIsHtml()
     {
@@ -191,6 +200,31 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testDolTextIsHtml
+     *
+     * @return void
+     */
+    public function testDolUtf8Check()
+    {
+        // True
+        $result=utf8_check('azerty');
+        $this->assertTrue($result);
+
+        $file=dirname(__FILE__).'/textutf8.txt';
+        $filecontent=file_get_contents($file);
+        $result=utf8_check($filecontent);
+        $this->assertTrue($result);
+
+        $file=dirname(__FILE__).'/textiso.txt';
+        $filecontent=file_get_contents($file);
+        $result=utf8_check($filecontent);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * testDolTrunc
+     *
+     * @return boolean
      */
     public function testDolTrunc()
     {
@@ -256,8 +290,8 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
         $result=dol_mktime(2,0,0,1,1,1970,0);                // 1970-01-01 02:00:00 in local area Europe/Paris -> 3600 GMT
         print __METHOD__." result=".$result."\n";
-        $tz=getServerTimeZoneInt('1970-01-01 02:00:00');    // +1 in Europe/Paris at this time (we are winter)
-        $this->assertEquals(7200-($tz*3600),$result);        // Should be 7200 if we are at greenwich
+        $tz=getServerTimeZoneInt('1970-01-01 02:00:00');    // +1 in Europe/Paris at this time (this time is winter)
+        $this->assertEquals(7200-($tz*3600),$result);        // Should be 7200 if we are at greenwich winter
     }
 
     /**
@@ -272,5 +306,29 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         print __METHOD__."getServerTimeZoneInt=".(getServerTimeZoneInt()*3600)."\n";
         $this->assertEquals(getServerTimeZoneInt()*3600,($nowtzserver-$now));
     }
+
+    /**
+     * testVerifCond
+     *
+     * @return	void
+     */
+    public function testVerifCond()
+    {
+        $verifcond=verifCond('1==1');
+        $this->assertTrue($verifcond);
+
+        $verifcond=verifCond('1==2');
+        $this->assertFalse($verifcond);
+
+        $verifcond=verifCond('$conf->facture->enabled');
+        $this->assertTrue($verifcond);
+
+        $verifcond=verifCond('$conf->moduledummy->enabled');
+        $this->assertFalse($verifcond);
+
+        $verifcond=verifCond('');
+        $this->assertTrue($verifcond);
+    }
+
 }
 ?>

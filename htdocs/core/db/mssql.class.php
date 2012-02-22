@@ -44,7 +44,7 @@ class DoliDBMssql
 	//! Version min database
 	static $versionmin=array(2000);
 	//! Resultset of last request
-	private $results;
+	private $_results;
 	//! 1 si connecte, 0 sinon
 	var $connected;
 	//! 1 si base selectionne, 0 sinon
@@ -53,7 +53,7 @@ class DoliDBMssql
 	var $database_name;
 	//! Nom user base
 	var $database_user;
-	//! 1 si une transaction est en cours, 0 sinon
+	//! >=1 if a transaction is opened, 0 otherwise
 	var $transaction_opened;
 	//! Derniere requete executee
 	var $lastquery;
@@ -242,7 +242,7 @@ class DoliDBMssql
     {
         if ($this->db)
         {
-          //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
+          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
           $this->connected=0;
           return mssql_close($this->db);
         }
@@ -406,7 +406,7 @@ class DoliDBMssql
                 dol_syslog(get_class($this)."::query SQL error: ".$query, LOG_WARNING);
 			}
 			$this->lastquery=$query;
-			$this->results = $ret;
+			$this->_results = $ret;
 		}
 
 		return $ret;
@@ -421,7 +421,7 @@ class DoliDBMssql
 	function fetch_object($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_fetch_object($resultset);
 	}
 
@@ -434,7 +434,7 @@ class DoliDBMssql
 	function fetch_array($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_fetch_array($resultset);
 	}
 
@@ -448,7 +448,7 @@ class DoliDBMssql
 	function fetch_row($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return @mssql_fetch_row($resultset);
 	}
 
@@ -462,7 +462,7 @@ class DoliDBMssql
 	function num_rows($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_num_rows($resultset);
 	}
 
@@ -476,7 +476,7 @@ class DoliDBMssql
 	function affected_rows($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		// mssql necessite un link de base pour cette fonction contrairement
 		// a pqsql qui prend un resultset
 		$rsRows = mssql_query("select @@rowcount as rows", $this->db);
@@ -494,7 +494,7 @@ class DoliDBMssql
 	function free($resultset=0)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		// Si resultset en est un, on libere la memoire
 		if (is_resource($resultset)) mssql_free_result($resultset);
 	}
@@ -819,8 +819,8 @@ class DoliDBMssql
 	 */
 	function DDLListTables($database,$table='')
 	{
-		$this->results = mssql_list_tables($database, $this->db);
-		return $this->results;
+		$this->_results = mssql_list_tables($database, $this->db);
+		return $this->_results;
 	}
 
 	/**
@@ -912,8 +912,8 @@ class DoliDBMssql
 		$sql="DESC ".$table." ".$field;
 
 		dol_syslog($sql);
-		$this->results = $this->query($sql);
-		return $this->results;
+		$this->_results = $this->query($sql);
+		return $this->_results;
 	}
 
 	/**

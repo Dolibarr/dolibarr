@@ -28,11 +28,11 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/doc.lib.php");
 
 
 /**
- *	\class      doc_generic_iproposal_odt
- *	\brief      Class to build documents using ODF templates generator
+ *	Class to build documents using ODF templates generator
  */
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
@@ -128,8 +128,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
         global $conf;
 
         return array(
-            'line_fulldesc'=>$line->product_ref.(($line->product_ref && $line->desc)?' - ':'').$line->desc,
+            'line_fulldesc'=>doc_getlinedesc($line),
             'line_product_ref'=>$line->product_ref,
+            'line_product_label'=>$line->product_label,
             'line_desc'=>$line->desc,
             'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
             'line_up'=>price($line->subprice, 0, $outputlangs),
@@ -270,7 +271,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return -1;
@@ -292,7 +293,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				create_exdir($conf->propale->dir_temp);
+				dol_mkdir($conf->propale->dir_temp);
 
 
                 // If BILLING contact defined on invoice, we use it

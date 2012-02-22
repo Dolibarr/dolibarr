@@ -100,6 +100,7 @@ class Project extends CommonObject
         $sql.= ", datec";
         $sql.= ", dateo";
         $sql.= ", datee";
+        $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= "'" . $this->db->escape($this->ref) . "'";
         $sql.= ", '" . $this->db->escape($this->title) . "'";
@@ -111,6 +112,7 @@ class Project extends CommonObject
         $sql.= ", " . ($this->datec != '' ? $this->db->idate($this->datec) : 'null');
         $sql.= ", " . ($this->dateo != '' ? $this->db->idate($this->dateo) : 'null');
         $sql.= ", " . ($this->datee != '' ? $this->db->idate($this->datee) : 'null');
+        $sql.= ", ".$conf->entity;
         $sql.= ")";
 
         dol_syslog("Project::create sql=" . $sql, LOG_DEBUG);

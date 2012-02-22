@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,24 @@
 
 /**
  *	    \file       htdocs/admin/system/web.php
- *		\brief      Page des infos systeme du serveur Web
+ *		\brief      Page with web server system information
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php');
 
 $langs->load("admin");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
+
+
+/*
+ * Action
+ */
+
+// None
+
 
 /*
  * View
@@ -43,8 +52,16 @@ print "<tr $bc[0]><td width=\"240\">".$langs->trans("IP")."</td><td>".$_SERVER["
 print "<tr $bc[1]><td>".$langs->trans("Port")."</td><td>" . $_SERVER["SERVER_PORT"] . "</td></tr>\n";
 print "<tr $bc[0]><td width=\"240\">".$langs->trans("DocumentRootServer")."</td><td>".$_SERVER["DOCUMENT_ROOT"]."</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
+$labeluser=dol_getwebuser('user');
+$labelgroup=dol_getwebuser('group');
+if ($labeluser && $labelgroup)
+{
+	print "<tr $bc[0]><td>".$langs->trans("WebUserGroup")."</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+}
 print '</table>';
 
 
 llxFooter();
+
+$db->close();
 ?>

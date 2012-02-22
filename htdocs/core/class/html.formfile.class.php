@@ -171,10 +171,10 @@ class FormFile
      *      @param      string				$filename           Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
      *      @param      string				$filedir            Directory to scan
      *      @param      string				$urlsource          Url of origin page (for return)
-     *      @param      int					$genallowed         Generation is allowed (1/0 or array of formats)
+     *      @param      int					$genallowed         Generation is allowed (1/0 or array list of templates)
      *      @param      int					$delallowed         Remove is allowed (1/0)
      *      @param      string				$modelselected      Model to preselect by default
-     *      @param      string				$allowgenifempty	Show warning if no model activated
+     *      @param      string				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
      *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
      *      @param      int					$iconPDF            Show only PDF icon with link (1/0)
      * 		@param		int					$maxfilenamelength	Max length for filename shown
@@ -536,18 +536,19 @@ class FormFile
      * 		@param	string	$relativepath		Relative path of docs (autodefined if not provided)
      * 		@param	int		$permtodelete		Permission to delete
      * 		@param	int		$useinecm			Change output for use in ecm module
-     * 		@param	string	$textifempty		Text to show if filearray is empty
+     * 		@param	string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
      *      @param  int		$maxlength          Maximum length of file name shown
+     *      @param	string	$title				Title before list
      * 		@return	int							<0 if KO, nb of files shown if OK
      */
-    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0)
+    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='')
     {
         global $user, $conf, $langs;
         global $bc;
         global $sortfield, $sortorder, $maxheightmini;
 
         // Show list of existing files
-        if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
+        if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
         //else { $bc[true]=''; $bc[false]=''; };
         $url=$_SERVER["PHP_SELF"];
         print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
@@ -614,7 +615,8 @@ class FormFile
             print '</td></tr>';
         }
         print "</table>";
-        // Fin de zone
+
+        return $nboffiles;
     }
 
 
@@ -704,7 +706,7 @@ class FormFile
                 $relativefile=preg_replace('/'.preg_quote($upload_dir.'/','/').'/','',$file['fullname']);
 
                 //var_dump($file);
-                $id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
+                $id=0; $ref=''; $label='';
 
                 // To show ref or specific information according to view to show (defined by $module)
                 if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1]; }
@@ -715,18 +717,27 @@ class FormFile
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1]; }
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1]; }
 
-                if (is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) $object_instance=$this->cache_objects[$modulepart.'_'.$id.'_'.$ref];
+                if (! $id && ! $ref) continue;
+
+                $found=0;
+                if (! empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))
+                {
+                    $found=1;
+                }
                 else
                 {
                     //print 'Fetch '.$idorref.'<br>';
                     $result=$object_instance->fetch($id,$ref);
-                    if ($result > 0) $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance);    // Save object into a cache
+                    if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
+                    if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; }
                 }
+
+                if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
 
                 $var=!$var;
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
-                if ($object_instance->id) print $object_instance->getNomUrl(1,'document');
+                if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));
                 print '</td>';
                 print '<td>';

@@ -45,13 +45,14 @@ class DoliDBPgsql
 	static $versionmin=array(8,4,0);	// Version min database
 
 	//! Resultset of last request
-	private $results;
+	private $_results;
 
 	var $connected;               // 1 si connecte, 0 sinon
 	var $database_selected;       // 1 si base selectionne, 0 sinon
 	var $database_name;			//! Nom base selectionnee
 	var $database_user;	   		//! Nom user base
-	var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
+	//! >=1 if a transaction is opened, 0 otherwise
+	var $transaction_opened;
 	var $lastquery;
 	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
 
@@ -295,16 +296,24 @@ class DoliDBPgsql
 				}
 			}
 
-			// Remove () in the tables in FROM if one table
+			// Remove () in the tables in FROM if 1 table
 			$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
 			//print $line."\n";
 
-			// Remove () in the tables in FROM if two table
+			// Remove () in the tables in FROM if 2 table
 			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2',$line);
 			//print $line."\n";
 
-			// Remove () in the tables in FROM if two table
+			// Remove () in the tables in FROM if 3 table
 			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2, \\3',$line);
+			//print $line."\n";
+
+			// Remove () in the tables in FROM if 4 table
+			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2, \\3, \\4',$line);
+			//print $line."\n";
+
+			// Remove () in the tables in FROM if 5 table
+			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2, \\3, \\4, \\5',$line);
 			//print $line."\n";
 
 			// Replace espacing \' by ''.
@@ -439,7 +448,7 @@ class DoliDBPgsql
     {
         if ($this->db)
         {
-          //dol_syslog(get_class($this)."::disconnect",LOG_DEBUG);
+          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
           $this->connected=0;
           return pg_close($this->db);
         }
@@ -556,10 +565,13 @@ class DoliDBPgsql
 		{
 			if (! $ret)
 			{
-				$this->lastqueryerror = $query;
-				$this->lasterror = $this->error();
-				$this->lasterrno = $this->errno();
-				dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+			    if ($this->errno() != 'DB_ERROR_25P02')
+			    {
+    				$this->lastqueryerror = $query;
+    				$this->lasterror = $this->error();
+    				$this->lasterrno = $this->errno();
+			    }
+				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint." - ".$query." - ".pg_last_error($this->db)." = ".$this->errno(), LOG_WARNING);
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
 
@@ -569,7 +581,7 @@ class DoliDBPgsql
 				}
 			}
 			$this->lastquery=$query;
-			$this->results = $ret;
+			$this->_results = $ret;
 		}
 
 		return $ret;
@@ -584,7 +596,7 @@ class DoliDBPgsql
 	function fetch_object($resultset)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return pg_fetch_object($resultset);
 	}
 
@@ -597,7 +609,7 @@ class DoliDBPgsql
 	function fetch_array($resultset)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return pg_fetch_array($resultset);
 	}
 
@@ -610,7 +622,7 @@ class DoliDBPgsql
 	function fetch_row($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return pg_fetch_row($resultset);
 	}
 
@@ -624,7 +636,7 @@ class DoliDBPgsql
 	function num_rows($resultset)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return pg_num_rows($resultset);
 	}
 
@@ -638,7 +650,7 @@ class DoliDBPgsql
 	function affected_rows($resultset)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		// pgsql necessite un resultset pour cette fonction contrairement
 		// a mysql qui prend un link de base
 		return pg_affected_rows($resultset);
@@ -654,7 +666,7 @@ class DoliDBPgsql
 	function free($resultset=0)
 	{
         // If resultset not provided, we take the last used by connexion
-		if (! is_resource($resultset)) { $resultset=$this->results; }
+		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		// Si resultset en est un, on libere la memoire
 		if (is_resource($resultset)) pg_free_result($resultset);
 	}
@@ -1132,8 +1144,8 @@ class DoliDBPgsql
 		if ($field) $sql.= " AND attname = '".$field."'";
 
 		dol_syslog($sql,LOG_DEBUG);
-		$this->results = $this->query($sql);
-		return $this->results;
+		$this->_results = $this->query($sql);
+		return $this->_results;
 	}
 
 	/**

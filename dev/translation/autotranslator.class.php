@@ -230,6 +230,7 @@ class autoTranslator
 	}
 
 	/**
+	 * getLineKey
 	 *
 	 * @param 	string 	$line	Line found into file
 	 * @return	string	Key
@@ -241,6 +242,7 @@ class autoTranslator
 	}
 
 	/**
+	 * getLineValue
 	 *
 	 * @param 	string 	$line	Line found into file
 	 * @return	string	Value
@@ -252,6 +254,7 @@ class autoTranslator
 	}
 
 	/**
+	 * getTranslationFilesArray
 	 *
 	 * @param 	string 	$lang	Language code
 	 * @return	array	Array

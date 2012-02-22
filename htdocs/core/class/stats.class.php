@@ -34,9 +34,9 @@ abstract class Stats
 	/**
 	 * Return nb of entity by month for several years
 	 *
-	 * @param 	endyear		Start year
-	 * @param 	startyear	End year
-	 * @return 	array		Array of values
+	 * @param 	int		$endyear	Start year
+	 * @param 	int		$startyear	End year
+	 * @return 	array				Array of values
 	 */
 	function getNbByMonthWithPrevYear($endyear,$startyear)
 	{
@@ -71,9 +71,9 @@ abstract class Stats
 	/**
 	 * Return amount of entity by month for several years
 	 *
-	 * @param 	endyear		Start year
-	 * @param 	startyear	End year
-	 * @return 	array		Array of values
+	 * @param	int		$endyear		Start year
+	 * @param	int		$startyear		End year
+	 * @return 	array					Array of values
 	 */
 	function getAmountByMonthWithPrevYear($endyear,$startyear)
 	{
@@ -108,8 +108,8 @@ abstract class Stats
 	/**
 	 * 	Return nb of elements by year
 	 *
-	 *	@param		sql		SQL request
-	 * 	@return		array
+	 *	@param	string	$sql		SQL request
+	 * 	@return	array
 	 */
 	function _getNbByYear($sql)
 	{
@@ -138,8 +138,8 @@ abstract class Stats
 	/**
 	 * 	Return nb of elements, total amount and avg amount each year
 	 *
-	 *	@param		sql		SQL request
-	 * 	@return		array					Array with nb, total amount, average for each year
+	 *	@param	string	$sql	SQL request
+	 * 	@return	array			Array with nb, total amount, average for each year
 	 */
 	function _getAllByYear($sql)
 	{
@@ -220,8 +220,9 @@ abstract class Stats
 	/**
 	 *     Renvoie le nombre d'element par mois pour une annee donnee
 	 *
-	 *     @param      year        Year
-	 *     @param      sql         SQL
+	 *     @param	int		$year        Year
+	 *     @param   string	$sql         SQL
+	 *     @return	array
 	 */
 	function _getAmountByMonth($year, $sql)
 	{
@@ -265,8 +266,9 @@ abstract class Stats
 	/**
 	 *	    Renvoie le montant moyen par mois pour une annee donnee
 	 *
-     *      @param      year        Year
-     *      @param      sql         SQL
+     *      @param	int		$year        Year
+     *      @param  string	$sql         SQL
+     *      @return	array
 	 */
 	function _getAverageByMonth($year, $sql)
 	{

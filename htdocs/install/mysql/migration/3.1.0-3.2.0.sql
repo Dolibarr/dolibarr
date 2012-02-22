@@ -6,16 +6,16 @@
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
+-- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 -- To restrict request to Mysql version x.y use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y use -- VPGSQLx.y
 
 
--- V4.1      DELETE FROM llx_product_fournisseur WHERE fk_product   NOT IN (SELECT rowid from llx_product);
--- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
--- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
+-- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
+-- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
-alter table llx_extrafields add column type varchar(8);
+ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
 
@@ -183,3 +183,22 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (13, 'Cotisation sur la valeur ajoutée des entreprises', 0, 1, 'TAXCVAE', '1');
 
 ALTER TABLE llx_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_product_price ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+
+-- Restore foreign key (on llx_expedition_methode before) on correct table (llx_c_shipment_mode)
+ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_expedition_methode;
+ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode 	FOREIGN KEY (fk_expedition_methode) REFERENCES llx_c_shipment_mode (rowid);
+
+-- VMYSQL4.1 UPDATE llx_chargesociales set tms = date_creation WHERE tms = '0000-00-00 00:00:00';
+
+ALTER TABLE llx_actioncomm DROP COLUMN propalrowid;
+ALTER TABLE llx_actioncomm DROP COLUMN fk_facture;
+ALTER TABLE llx_actioncomm DROP COLUMN fk_supplier_order;
+ALTER TABLE llx_actioncomm DROP COLUMN fk_supplier_invoice;
+ALTER TABLE llx_actioncomm DROP COLUMN fk_commande;
+ALTER TABLE llx_product_stock DROP COLUMN location;
+-- DROP TABLE llx_c_methode_commande_fournisseur;
+-- DROP TABLE llx_c_source;
+-- DROP TABLE llx_cond_reglement;
+-- DROP TABLE llx_expedition_methode;
+-- DROP TABLE llx_product_fournisseur;

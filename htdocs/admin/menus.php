@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
+$action=GETPOST('action');
 
 $langs->load("companies");
 $langs->load("products");
@@ -38,9 +39,13 @@ $langs->load("other");
 // Security check
 if (!$user->admin) accessforbidden();
 
-$dirtop = "/core/menus/standard";
-$dirleft = "/core/menus/standard";
-$dirsmartphone = "/core/menus/smartphone";
+$dirstandard = array("/core/menus/standard");
+$dirsmartphone = array("/core/menus/smartphone");
+foreach($conf->menus_modules as $dir)
+{
+    $dirstandard[]=$dir.'/standard';
+    $dirsmartphone[]=$dir.'/standard';
+}
 
 
 // Cette page peut etre longue. On augmente le delai autorise.
@@ -56,7 +61,7 @@ error_reporting($err);
  * Actions
  */
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["cancel"]))
+if ($action == 'update' && empty($_POST["cancel"]))
 {
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
@@ -74,6 +79,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	if (isset($_POST["MAIN_MENUFRONT_SMARTPHONE"])) $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["MAIN_MENUFRONT_SMARTPHONE"])]=1;
 
 	// Initialize menu handlers
+	$error=0; $errmsgs=array();
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		// Load sql init_menu_handler.sql file
@@ -83,13 +89,30 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 
 		if (file_exists($fullpath))
 		{
-			$result=run_sql($fullpath,1,'',1,$key);
+			$db->begin();
+
+			$result=run_sql($fullpath,1,'',1,$key,'none');
+			if ($result > 0)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$error++;
+				$errmsgs[]='Failed to initialize menu '.$key.'.';
+				$db->rollback();
+			}
 		}
 	}
 
-	// We make a header redirect because we need to change menu NOW.
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
+	if (! $error)
+	{
+		$db->close();
+
+		// We make a header redirect because we need to change menu NOW.
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
 }
 
 
@@ -98,15 +121,13 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
  */
 
 $form=new Form($db);
-$htmladmin=new FormAdmin($db);
+$formadmin=new FormAdmin($db);
 
 $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
 
-print $langs->trans("MenusDesc")."<br>\n";
-print "<br>\n";
 
 $h = 0;
 
@@ -127,6 +148,9 @@ $h++;
 
 
 dol_fiche_head($head, 'handler', $langs->trans("Menus"));
+
+print $langs->trans("MenusDesc")."<br>\n";
+print "<br>\n";
 
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
@@ -154,10 +178,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
-	print $htmladmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirtop, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled="disabled"');
+	print $formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '<td>';
-	print $htmladmin->select_menu(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirtop, empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?'':' disabled="disabled"');
+	print $formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirstandard, empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '</tr>';
 
@@ -165,10 +189,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
-	print $htmladmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array($dirtop,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
+	print $formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '<td>';
-	print $htmladmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array($dirtop,$dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
+	print $formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '</tr>';
 
@@ -238,6 +262,9 @@ else
 print '</div>';
 
 
+dol_htmloutput_errors('',$errmsgs);
+
+
 if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
 {
 	print '<div class="tabsAction">';
@@ -245,7 +272,8 @@ if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
 	print '</div>';
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

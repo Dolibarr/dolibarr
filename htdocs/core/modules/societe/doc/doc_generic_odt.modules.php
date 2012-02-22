@@ -20,18 +20,17 @@
  *	\file       htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
- *	\author	    Laurent Destailleur
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/modules/societe/modules_societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/doc.lib.php");
 
 
 /**
- *	\class      doc_generic_odt
- *	\brief      Class to build documents using ODF templates generator
+ *	Class to build documents using ODF templates generator
  */
 class doc_generic_odt extends ModeleThirdPartyDoc
 {
@@ -201,7 +200,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return -1;
@@ -221,7 +220,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				create_exdir($conf->societe->dir_temp);
+				dol_mkdir($conf->societe->dir_temp);
 
 				// Open and load template
 				require_once(ODTPHP_PATH.'odf.php');

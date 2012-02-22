@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
@@ -86,6 +86,7 @@ class Commande extends CommonObject
 
     var $origin;
     var $origin_id;
+    var $linked_objects=array();
 
     var $user_author_id;
 
@@ -706,37 +707,44 @@ class Commande extends CommonObject
                     if ($this->id)
                     {
                         $this->ref="(PROV".$this->id.")";
-
-                        // Add linked object
-                        if ($this->origin && $this->origin_id)
+                        
+                        // Add object linked
+                        if (is_array($this->linked_objects) && ! empty($this->linked_objects))
                         {
-                            $ret = $this->add_object_linked();
-                            if (! $ret)	dol_print_error($this->db);
-                        }
-
-                        // TODO mutualiser
-                        if ($this->origin == 'propal' && $this->origin_id)
-                        {
-                            // On recupere les differents contact interne et externe
-                            $prop = new Propal($this->db, $this->socid, $this->origin_id);
-
-                            // On recupere le commercial suivi propale
-                            $this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-
-                            if ($this->userid)
-                            {
-                                //On passe le commercial suivi propale en commercial suivi commande
-                                $this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-                            }
-
-                            // On recupere le contact client suivi propale
-                            $this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-
-                            if ($this->contactid)
-                            {
-                                //On passe le contact client suivi propale en contact client suivi commande
-                                $this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
-                            }
+                        	foreach($this->linked_objects as $origin => $origin_id)
+                        	{
+                        		$ret = $this->add_object_linked($origin, $origin_id);
+                        		if (! $ret)
+                        		{
+                        			dol_print_error($this->db);
+                        			$error++;
+                        		}
+                        		
+                        		// TODO mutualiser
+                        		if ($origin == 'propal' && $origin_id)
+                        		{
+                        			// On recupere les differents contact interne et externe
+                        			$prop = new Propal($this->db, $this->socid, $origin_id);
+                        		
+                        			// On recupere le commercial suivi propale
+                        			$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
+                        		
+                        			if ($this->userid)
+                        			{
+                        				//On passe le commercial suivi propale en commercial suivi commande
+                        				$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+                        			}
+                        		
+                        			// On recupere le contact client suivi propale
+                        			$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
+                        		
+                        			if ($this->contactid)
+                        			{
+                        				//On passe le contact client suivi propale en contact client suivi commande
+                        				$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+                        			}
+                        		}
+                        	}
                         }
                     }
 
@@ -1188,7 +1196,7 @@ class Commande extends CommonObject
      * 	@param		string		$ref			Ref of object
      * 	@param		string		$ref_ext		External reference of object
      * 	@param		string		$ref_int		Internal reference of other object
-     *	@return     int         				>0 if OK, <0 if KO
+     *	@return     int         				>0 if OK, <0 if KO, 0 if not found
      */
     function fetch($id, $ref='', $ref_ext='', $ref_int='')
     {
@@ -1220,7 +1228,7 @@ class Commande extends CommonObject
         if ($ref_ext) $sql.= " AND c.ref_ext='".$this->db->escape($ref_ext)."'";
         if ($ref_int) $sql.= " AND c.ref_int='".$this->db->escape($ref_int)."'";
 
-        dol_syslog("Commande::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1289,7 +1297,7 @@ class Commande extends CommonObject
                 }
 
                 /*
-                 * Lignes
+                 * Lines
                  */
                 $result=$this->fetch_lines();
                 if ($result < 0)
@@ -1300,14 +1308,14 @@ class Commande extends CommonObject
             }
             else
             {
-                dol_syslog('Commande::Fetch Error rowid='.$id.' numrows=0 sql='.$sql);
                 $this->error='Order with id '.$id.' not found sql='.$sql;
-                return -2;
+                dol_syslog(get_class($this).'::fetch '.$this->error);
+                return 0;
             }
         }
         else
         {
-            dol_syslog('Commande::Fetch Error rowid='.$id.' Erreur dans fetch de la commande');
+            dol_syslog(get_class($this).'::fetch Error rowid='.$id, LOG_ERR);
             $this->error=$this->db->error();
             return -1;
         }
@@ -1595,13 +1603,13 @@ class Commande extends CommonObject
         // Tableau des id de produit de la commande
 		$array_of_product=array();
 
-
         // Recherche total en stock pour chaque produit
+        // TODO $array_of_product est défini vide juste au dessus !!
         if (count($array_of_product))
         {
             $sql = "SELECT fk_product, sum(ps.reel) as total";
             $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-            $sql.= " WHERE ps.fk_product in (".join(',',$array_of_product).")";
+            $sql.= " WHERE ps.fk_product IN (".join(',',$array_of_product).")";
             $sql.= ' GROUP BY fk_product ';
             $result = $this->db->query($sql);
             if ($result)
@@ -2304,9 +2312,10 @@ class Commande extends CommonObject
      *	Delete the customer order
      *
      *	@param	User	$user		User object
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      * 	@return	int					<=0 if KO, >0 if OK
      */
-    function delete($user)
+    function delete($user, $notrigger=0)
     {
         global $conf, $langs;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -2314,87 +2323,86 @@ class Commande extends CommonObject
         $error = 0;
 
         $this->db->begin();
-
-        // Delete order details
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
-        dol_syslog("Commande::delete sql=".$sql);
-        if (! $this->db->query($sql) )
+        
+        if (! $error && ! $notrigger)
         {
-            dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $error++;
+        	// Appel des triggers
+        	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+        	$interface=new Interfaces($this->db);
+        	$result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
+        	if ($result < 0) {
+        		$error++; $this->errors=$interface->errors;
+        	}
+        	// Fin appel triggers
         }
-
-        // Delete order
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
-        dol_syslog("Commande::delete sql=".$sql);
-        if (! $this->db->query($sql) )
+        
+        if (! $error)
         {
-            dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $error++;
+        	// Delete order details
+        	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
+        	dol_syslog("Commande::delete sql=".$sql);
+        	if (! $this->db->query($sql) )
+        	{
+        		dol_syslog(get_class($this)."::delete error", LOG_ERR);
+        		$error++;
+        	}
+        	
+        	// Delete order
+        	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
+        	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+        	if (! $this->db->query($sql) )
+        	{
+        		dol_syslog(get_class($this)."::delete error", LOG_ERR);
+        		$error++;
+        	}
+        	
+        	// Delete linked object
+        	$res = $this->deleteObjectLinked();
+        	if ($res < 0) $error++;
+        	
+        	// Delete linked contacts
+        	$res = $this->delete_linked_contact();
+        	if ($res < 0) $error++;
+        	
+        	// On efface le repertoire de pdf provisoire
+        	$comref = dol_sanitizeFileName($this->ref);
+        	if ($conf->commande->dir_output)
+        	{
+        		$dir = $conf->commande->dir_output . "/" . $comref ;
+        		$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+        		if (file_exists($file))	// We must delete all files before deleting directory
+        		{
+        			dol_delete_preview($this);
+        	
+        			if (!dol_delete_file($file))
+        			{
+        				$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+        				$this->db->rollback();
+        				return 0;
+        			}
+        		}
+        		if (file_exists($dir))
+        		{
+        			if (!dol_delete_dir($dir))
+        			{
+        				$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+        				$this->db->rollback();
+        				return 0;
+        			}
+        		}
+        	}
         }
-
-        // Delete linked object
-        // TODO deplacer dans le common
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-        $sql.= " WHERE fk_target = ".$this->id;
-        $sql.= " AND targettype = '".$this->element."'";
-        dol_syslog("Commande::delete sql=".$sql);
-        if (! $this->db->query($sql) )
+        
+        if (! $error)
         {
-            dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $error++;
-        }
-
-        // Delete linked contacts
-        $res = $this->delete_linked_contact();
-        if ($res < 0)
-        {
-            dol_syslog("CustomerOrder::delete error", LOG_ERR);
-            $error++;
-        }
-
-        // On efface le repertoire de pdf provisoire
-        $comref = dol_sanitizeFileName($this->ref);
-        if ($conf->commande->dir_output)
-        {
-            $dir = $conf->commande->dir_output . "/" . $comref ;
-            $file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-            if (file_exists($file))	// We must delete all files before deleting directory
-            {
-                dol_delete_preview($this);
-
-                if (!dol_delete_file($file))
-                {
-                    $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-                    $this->db->rollback();
-                    return 0;
-                }
-            }
-            if (file_exists($dir))
-            {
-                if (!dol_delete_dir($dir))
-                {
-                    $this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-                    $this->db->rollback();
-                    return 0;
-                }
-            }
-        }
-
-        if ($error == 0)
-        {
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
-
-            $this->db->commit();
-            return 1;
+        	dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
+        	$this->db->commit();
+        	return 1;
         }
         else
         {
+            $this->error=$this->db->lasterror();
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -2647,7 +2655,7 @@ class Commande extends CommonObject
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
         $resql = $this->db->query($sql);
         if ($resql)
         {

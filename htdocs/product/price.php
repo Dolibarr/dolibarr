@@ -37,10 +37,10 @@ $ref	= GETPOST('ref', 'alpha');
 $action	= GETPOST('action', 'alpha');
 
 // Security check
-$fieldid	= (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
-$fieldtype	= (! empty($ref) ? 'ref' : 'rowid');
-$socid		= ($user->societe_id ? $user->societe_id : 0);
-$result=restrictedArea($user,'produit|service',$fieldid,'product','','',$fieldtype);
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
+$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 $object = new Product($db);
 

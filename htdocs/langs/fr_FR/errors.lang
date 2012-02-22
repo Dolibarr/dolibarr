@@ -62,7 +62,7 @@ ErrorLDAPSetupNotComplete=Le matching Dolibarr-LDAP est incomplet.
 ErrorLDAPMakeManualTest=Un fichier .ldif a été généré dans le répertoire %s. Essayez de charger ce fichier en manuel depuis la ligne de commande pour plus de détail sur l'erreur.
 ErrorCantSaveADoneUserWithZeroPercentage=Impossible de sauver une action à l'état non commencé avec un utilisateur défini comme ayant fait l'action.
 ErrorRefAlreadyExists=La référence utilisée pour la création existe déjà
-ErrorPleaseTypeBankTransactionReportName=Veuillez saisir le nom de relevé bancaire sur lequel l'écriture est constatée (Format AAAAMM ou AAAMMJJ)
+ErrorPleaseTypeBankTransactionReportName=Veuillez saisir le nom de relevé bancaire sur lequel l'écriture est constatée (Format AAAAMM de préférence ou AAAAMMJJ)
 ErrorRecordHasChildren=Impossible de supprimer l'enregistrement car il possède des enregistrements fils.
 ErrorModuleRequireJavascript=Le javascript ne doit pas être désactivé pour que cette fonctionnalité soit utilisable. Pour activer/désactiver l'utilisation de javascript, allez dans le menu Accueil->Configuration->Affichage.
 ErrorPasswordsMustMatch=Les 2 mots de passe saisis doivent correspondre
@@ -103,6 +103,8 @@ ErrorLoginDoesNotExists=Le compte utilisateur de login <b>%s</b> n'a pu être tr
 ErrorLoginHasNoEmail=Cet utilisateur n'a pas d'email. Impossible de continuer.
 ErrorBadValueForCode=Mauvaise valeur saisie pour le code. Réessayez avec une nouvelle valeur...
 ErrorBothFieldCantBeNegative=Les champs %s et %s ne peuvent être tous deux négatifs
+ErrorWebServerUserHasNotPermission=Le compte d'execution du serveur web <b>%s</b> n'a pas les permissions pour cela
+ErrorNoActivatedBarcode=Aucun type de code bar activé
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Attention, l'option PHP <b>safe_mode</b> est active, la commande doit dont être dans un répertoire déclaré dans le paramètre php <b>safe_mode_exec_dir</b>.

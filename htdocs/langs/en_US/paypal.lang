@@ -16,3 +16,4 @@ PAYPAL_ADD_PAYMENT_URL=Add the url of Paypal payment when you send a document by
 PAYPAL_IPN_MAIL_ADDRESS=E-mail address for the instant notification of payment (IPN)
 PredefinedMailContentSendOrderWithPaypalLink=You will find here the order __ORDERREF__\n\nYou can click on the secure link below to make your payment via PayPal\n\n%s\n\nSincerely\n\n
 PredefinedMailContentSendInvoiceWithPaypalLink=You will find here the invoice __FACREF__\n\nYou can click on the secure link below to make your payment via PayPal\n\n%s\n\nSincerely\n\n
+YouAreCurrentlyInSandboxMode=You are currently in the "sandbox" mode

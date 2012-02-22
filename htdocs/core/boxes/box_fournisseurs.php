@@ -28,9 +28,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last suppliers
  */
- class box_fournisseurs extends ModeleBoxes
- {
-
+class box_fournisseurs extends ModeleBoxes
+{
     var $boxcode="lastsuppliers";
     var $boximg="object_company";
     var $boxlabel;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -32,6 +32,12 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 $langs->load('projects');
 
+$taskid = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id');
+$ref= GETPOST('ref');
+$action=GETPOST('action');
+$withproject=GETPOST('withproject');
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -41,7 +47,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 /*
  * Actions
  */
-if ($_POST["action"] == 'addtimespent' && $user->rights->projet->creer)
+if ($action == 'addtimespent' && $user->rights->projet->creer)
 {
 	$error=0;
 
@@ -83,7 +89,7 @@ if ($_POST["action"] == 'addtimespent' && $user->rights->projet->creer)
 	}
 }
 
-if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->creer)
+if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
 	$error=0;
 
@@ -122,7 +128,7 @@ if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->pro
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->creer)
+if ($action == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->creer)
 {
 	$task = new Task($db);
 	$task->fetchTimeSpent($_GET['lineid']);
@@ -141,37 +147,80 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && 
  * View
  */
 
-$project=new Project($db);
+$form = new Form($db);
+$project = new Project($db);
+$task = new Task($db);
 
 llxHeader("",$langs->trans("Task"));
 
 $form = new Form($db);
 
-if ($_GET["id"] > 0)
+if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Fiche projet en mode visu
 	 */
-	$task = new Task($db);
-	$projectstatic = new Project($db);
-	$userstatic = new User($db);
-
-	if ($task->fetch($_GET["id"]) >= 0 )
+	if ($task->fetch($id,$ref) >= 0)
 	{
-		$result=$projectstatic->fetch($task->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		$result=$project->fetch($task->fk_project);
+		if (! empty($project->socid)) $project->societe->fetch($project->socid);
 
-		// To get role of users
-		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
-		//$arrayofuseridoftask=$task->getListContactId('internal');
+		$userWrite  = $project->restrictedProjectArea($user,'write');
+
+		if ($withproject)
+		{
+    		// Tabs for project
+    		$tab='tasks';
+    		$head=project_prepare_head($project);
+    		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
+
+    		$param=($mode=='mine'?'&mode=mine':'');
+
+    		print '<table class="border" width="100%">';
+
+    		// Ref
+    		print '<tr><td width="30%">';
+    		print $langs->trans("Ref");
+    		print '</td><td>';
+    		// Define a complementary filter for search of next/prev ref.
+    		if (! $user->rights->projet->all->lire)
+    		{
+    		    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
+    		    $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    		}
+    		print $form->showrefnav($project,'ref','',1,'ref','ref','',$param);
+    		print '</td></tr>';
+
+    		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+
+    		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    		if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
+    		else print '&nbsp;';
+    		print '</td>';
+    		print '</tr>';
+
+    		// Visibility
+    		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+    		if ($project->public) print $langs->trans('SharedProject');
+    		else print $langs->trans('PrivateProject');
+    		print '</td></tr>';
+
+    		// Statut
+    		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+
+    		print '</table>';
+
+    		dol_fiche_end();
+
+    		print '<br>';
+		}
 
 		$head=task_prepare_head($task);
-
 		dol_fiche_head($head, 'time', $langs->trans("Task"),0,'projecttask');
 
-		if ($mesg) print $mesg.'<br>';
+		dol_htmloutput_mesg($mesg);
 
-		if ($_GET["action"] == 'deleteline')
+		if ($action == 'deleteline')
 		{
 			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&lineid='.$_GET["lineid"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 			if ($ret == 'html') print '<br>';
@@ -179,32 +228,43 @@ if ($_GET["id"] > 0)
 
 		print '<table class="border" width="100%">';
 
+		$param=($withproject?'&withproject=1':'');
+		$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id.'">'.$langs->trans("BackToList").'</a>':'';
+
 		// Ref
 		print '<tr><td width="30%">';
 		print $langs->trans("Ref");
 		print '</td><td colspan="3">';
-		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-		$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
-		print $form->showrefnav($task,'id','',1,'rowid','ref','','');
+		if (! GETPOST('withproject') || empty($project->id))
+		{
+		    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+		    $task->next_prev_filter=" fk_projet in (".$projectsListId.")";
+		}
+		else $task->next_prev_filter=" fk_projet = ".$project->id;
+	    print $form->showrefnav($task,'id',$linkback,1,'rowid','ref','',$param);
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 
 		// Project
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		print $projectstatic->getNomUrl(1);
-		print '</td></tr>';
+		if (empty($withproject))
+		{
+    		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+    		print $project->getNomUrl(1);
+    		print '</td></tr>';
 
-		// Third party
-		print '<td>'.$langs->trans("Company").'</td><td>';
-		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
+    		// Third party
+    		print '<td>'.$langs->trans("Company").'</td><td>';
+    		if ($project->societe->id) print $project->societe->getNomUrl(1);
+    		else print '&nbsp;';
+    		print '</td></tr>';
+		}
 
 		print '</table>';
 
-		print '</div>';
+		dol_fiche_end();
+
 
 		/*
 		 * Add time spent
@@ -306,7 +366,7 @@ if ($_GET["id"] > 0)
 		print '<td align="right">'.$langs->trans("Duration").'</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
-		
+
 		$total = 0;
 		foreach ($tasks as $task_time)
 		{
@@ -361,7 +421,7 @@ if ($_GET["id"] > 0)
   		    }
   		    else
   		    {
-				print ConvertSecondToTime($task_time->task_duration,'all');
+				print convertSecondToTime($task_time->task_duration,'all');
   		    }
   		    print '</td>';
 
@@ -392,9 +452,9 @@ if ($_GET["id"] > 0)
 			$total += $task_time->task_duration;
 		}
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td><td>&nbsp;</td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
 		print '</tr>';
-		
+
 		print "</table>";
 		print "</form>";
 	}

@@ -110,7 +110,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
 					return 0;
@@ -196,7 +196,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$text=$object->description;
 				if ($object->duree > 0)
 				{
-				    $totaltime=ConvertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
+				    $totaltime=convertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
 				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
 				}
 				$desc=dol_htmlentitiesbr($text,1);
@@ -222,7 +222,7 @@ class pdf_soleil extends ModelePDFFicheinter
 						$curY = $nexY;
 
 						$pdf->SetXY($this->marge_gauche, $curY);
-						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($objectligne->duration),1,$outputlangs->charset_output);
+						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $txt, 0, 1, 0);
 						$nexY = $pdf->GetY();
 
@@ -356,7 +356,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$text=$object->description;
 		if ($object->duree > 0)
 		{
-			$totaltime=ConvertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
+			$totaltime=convertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
 			$text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
 		}
 		$desc=dol_htmlentitiesbr($text,1);

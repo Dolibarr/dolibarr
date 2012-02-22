@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand        <philippe.grand@atoo-net.com>
@@ -29,6 +29,7 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php");
@@ -228,6 +229,13 @@ if ($action == 'add' && $user->rights->commande->creer)
 
         $object->origin    = $_POST['origin'];
         $object->origin_id = $_POST['originid'];
+        
+        // Possibility to add external linked objects with hooks
+        $object->linked_objects[$object->origin] = $object->origin_id;
+        if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
+        {
+        	$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+        }
 
         $object_id = $object->create($user);
 
@@ -1185,6 +1193,7 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formother = new FormOther($db);
 $formorder = new FormOrder($db);
 
 
@@ -1324,9 +1333,8 @@ if ($action == 'create' && $user->rights->commande->creer)
     // Delivery address
     if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
     {
-        // Link to edit: $form->form_address($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
         print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td colspan="2">';
-        $numaddress = $form->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
+        $numaddress = $formother->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
         print ' &nbsp; <a href="../comm/address.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
         print '</td></tr>';
     }
@@ -1367,7 +1375,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     }
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="3"');
+    $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {

@@ -159,7 +159,7 @@ class UploadHandler
         $file_path = $this->_options['upload_dir'].$file_name;
         $new_file_path = $options['upload_dir'].$file_name;
 
-        if (create_exdir($options['upload_dir']) >= 0)
+        if (dol_mkdir($options['upload_dir']) >= 0)
         {
         	list($img_width, $img_height) = @getimagesize($file_path);
 	        if (!$img_width || !$img_height) {
@@ -235,7 +235,7 @@ class UploadHandler
         $file->size = intval($size);
         $file->type = $type;
         $error = $this->has_error($uploaded_file, $file, $error);
-        if (!$error && $file->name && create_exdir($this->_options['upload_dir']) >= 0) {
+        if (!$error && $file->name && dol_mkdir($this->_options['upload_dir']) >= 0) {
             if ($file->name[0] === '.') {
                 $file->name = substr($file->name, 1);
             }

@@ -219,7 +219,7 @@ class modFacture extends DolibarrModules
 
 		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/invoices';
-		create_exdir($dirodt);
+		dol_mkdir($dirodt);
 		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt'; $dest=$dirodt.'/template_invoice.odt';
 		$result=dol_copy($src,$dest,0,0);
 		if ($result < 0)

@@ -203,7 +203,7 @@ class modCommande extends DolibarrModules
 		//ODT template
 		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
-		create_exdir($dirodt);
+		dol_mkdir($dirodt);
 		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt'; $dest=$dirodt.'/template_order.odt';
 		$result=dol_copy($src,$dest,0,0);
 		if ($result < 0)

@@ -35,10 +35,10 @@ if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/core/lib/project.li
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
-$filter=GETPOST("filter");
-$filtera = GETPOST("userasked","int")?GETPOST("userasked","int"):GETPOST("filtera","int");
-$filtert = GETPOST("usertodo","int")?GETPOST("usertodo","int"):GETPOST("filtert","int");
-$filterd = GETPOST("userdone","int")?GETPOST("userdone","int"):GETPOST("filterd","int");
+$filter=GETPOST("filter",'',3);
+$filtera = GETPOST("userasked","int",3)?GETPOST("userasked","int",3):GETPOST("filtera","int",3);
+$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+$filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filterd","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
 
@@ -72,8 +72,8 @@ $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):0;
-$actioncode=GETPOST("actioncode");
-$pid=GETPOST("projectid","int")?GETPOST("projectid","int"):0;
+$actioncode=GETPOST("actioncode","alpha",3);
+$pid=GETPOST("projectid","int",3);
 $status=GETPOST("status");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 
@@ -302,16 +302,17 @@ $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-$sql.= ', '.MAIN_DB_PREFIX.'c_actioncomm as ca';
-$sql.= ', '.MAIN_DB_PREFIX.'user as u';
+$sql.= ' FROM ('.MAIN_DB_PREFIX.'c_actioncomm as ca,';
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql.= " ".MAIN_DB_PREFIX.'user as u,';
+$sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND u.entity in (0,'.$conf->entity.')';    // To limit to entity
-$sql.= ' AND a.entity = '.$conf->entity;
-if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
+$sql.= ' AND a.entity IN ('.getEntity().')';
 if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
 if ($action == 'show_day')
 {
     $sql.= " AND (";
@@ -339,6 +340,9 @@ else
     $sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
     $sql.= ')';
 }
+if ($_GET["type"]) $sql.= " AND ca.id = ".$_GET["type"];
+if ($status == 'done') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
+if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
     $sql.= " AND (";
@@ -347,8 +351,6 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
     if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
     $sql.= ")";
 }
-if ($status == 'done') { $sql.= " AND a.percent = 100"; }
-if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 // Sort on date
 $sql.= ' ORDER BY datep';
 //print $sql;
@@ -452,7 +454,7 @@ if ($showbirthday)
     $sql = 'SELECT sp.rowid, sp.name, sp.firstname, sp.birthday';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
     $sql.= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
-    $sql.= ' AND sp.entity = '.$conf->entity;
+    $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     if ($action == 'show_day')
     {
         $sql.= ' AND MONTH(birthday) = '.$month;
@@ -757,32 +759,35 @@ if (empty($action) || $action == 'show_month')      // View by month
     }
     echo " </tr>\n";
 
+    $todayarray=dol_getdate($now,'fast');
+    $todaytms=dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
+
     // In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
     //var_dump($eventarray);
     //print $tmpday;
-    for($iter_week = 0; $iter_week < 6 ; $iter_week++)
+    for ($iter_week = 0; $iter_week < 6 ; $iter_week++)
     {
         echo " <tr>\n";
-        for($iter_day = 0; $iter_day < 7; $iter_day++)
+        for ($iter_day = 0; $iter_day < 7; $iter_day++)
         {
             /* Show days before the beginning of the current month (previous month)  */
-            if($tmpday <= 0)
+            if ($tmpday <= 0)
             {
-                $style='cal_other_month';
+                $style='cal_other_month cal_past';
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
             /* Show days of the current month */
-            elseif(($tmpday <= $max_day_in_month))
+            elseif ($tmpday <= $max_day_in_month)
             {
                 $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
 
                 $style='cal_current_month';
                 $today=0;
-                $todayarray=dol_getdate($now,'fast');
                 if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
                 if ($today) $style='cal_today';
+                if ($curtime < $todaytms) $style.=' cal_past';
 
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
@@ -976,7 +981,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($event->author->id == $user->id || $event->usertodo->id == $user->id || $event->userdone->id == $user->id) { $nummytasks++; $colorindex=1; $cssclass='family_mytasks'; }
                     else if ($event->type_code == 'ICALEVENT') { $numical++; $numicals[dol_string_nospecial($event->icalname)]++; $color=$event->icalcolor; $cssclass=($event->icalname?'family_'.dol_string_nospecial($event->icalname):'family_other'); }
                     else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday'; }
-                    else { $numother++; $cssclass='family_other'; }
+                    else { $numother++; $colorindex=2; $cssclass='family_other'; }
                     if ($color == -1) $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 

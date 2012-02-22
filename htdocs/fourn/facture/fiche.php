@@ -1,30 +1,30 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
-* Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
-* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
-* Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
-* Copyright (C) 2010-2011 Juanjo Menent		 <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
+ * Copyright (C) 2005		Marc Barilley		<marc@ocebo.fr>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/fourn/facture/fiche.php
-*	\ingroup    facture, fournisseur
-*	\brief      Page for supplier invoice card (view, edit, validate)
-*/
+ *	\ingroup    facture, fournisseur
+ *	\brief      Page for supplier invoice card (view, edit, validate)
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
@@ -126,14 +126,19 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
     }
 }
 
-if ($action == 'confirm_deleteproductline' && $confirm == 'yes')
+if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 {
-    if ($user->rights->fournisseur->facture->creer)
-    {
-        $object->fetch($id);
-        $object->deleteline(GETPOST('lineid'));
-        $action = '';
-    }
+	$object->fetch($id);
+	$ret = $object->deleteline(GETPOST('lineid'));
+	if ($ret > 0)
+	{
+		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$object->error.'</div>';
+	}
 }
 
 if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
@@ -184,37 +189,6 @@ if($action == 'deletepaiement')
         $paiementfourn = new PaiementFourn($db);
         $paiementfourn->fetch($_GET['paiement_id']);
         $paiementfourn->delete();
-    }
-}
-
-if ($action == 'update' && ! $_POST['cancel'])
-{
-    $error=0;
-
-    $date = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-    $date_echeance = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
-
-    if (! $date)
-    {
-        $msg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEch"));
-        $error++;
-    }
-    if ($date_echeance && $date_echeance < $date)
-    {
-        $date_echeance = $date;
-    }
-
-    if (! $error)
-    {
-        // TODO move to DAO class
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set ';
-        $sql .= " facnumber='".$db->escape(trim($_POST['facnumber']))."'";
-        $sql .= ", libelle='".$db->escape(trim($_POST['libelle']))."'";
-        $sql .= ", note='".$db->escape($_POST['note'])."'";
-        $sql .= ", datef = '".$db->idate($date)."'";
-        $sql .= ", date_lim_reglement = '".$db->idate($date_echeance)."'";
-        $sql .= ' WHERE rowid = '.$id;
-        $result = $db->query($sql);
     }
 }
 
@@ -404,13 +378,6 @@ if ($action == 'add' && $user->rights->fournisseur->facture->creer)
     }
 }
 
-if ($action == 'del_ligne')
-{
-    $object->fetch($id);
-    $object->deleteline(GETPOST('lineid'));
-    $action = 'edit';
-}
-
 // Modification d'une ligne
 if ($action == 'update_line')
 {
@@ -434,7 +401,7 @@ if ($action == 'update_line')
             $prod = new Product($db);
             $prod->fetch($_POST['idprod']);
             $label = $prod->description;
-            if (trim($_POST['label']) != trim($label)) $label=$_POST['label'];
+            if (trim($_POST['desc']) != trim($label)) $label=$_POST['desc'];
 
             $type = $prod->type;
             $localtax1tx = $prod->localtax1_tx;
@@ -447,7 +414,7 @@ if ($action == 'update_line')
                 $societe=new Societe($db);
                 $societe->fetch($object->socid);
             }
-            $label = $_POST['label'];
+            $label = $_POST['desc'];
             $type = $_POST["type"]?$_POST["type"]:0;
             $localtax1tx= get_localtax($_POST['tauxtva'], 1, $societe);
             $localtax2tx= get_localtax($_POST['tauxtva'], 2, $societe);
@@ -512,9 +479,9 @@ if ($action == 'addline')
         $localtax1tx= get_localtax($tauxtva, 1, $societe);
         $localtax2tx= get_localtax($tauxtva, 2, $societe);
 
-        if (! $_POST['label'])
+        if (! $_POST['dp_desc'])
         {
-            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Description")).'</div>';
         }
         else
         {
@@ -525,14 +492,14 @@ if ($action == 'addline')
                 $price_base_type = 'HT';
 
                 //$desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
-                $result=$object->addline($_POST['label'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
             }
             else
             {
                 $ttc = price2num($_POST['amountttc']);
                 $ht = $ttc / (1 + ($tauxtva / 100));
                 $price_base_type = 'HT';
-                $result=$object->addline($_POST['label'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
             }
         }
     }
@@ -951,7 +918,7 @@ if ($action == 'create')
     }
     else
     {
-        $form->select_societes((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
+        print $form->select_company((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
     }
     print '</td>';
 
@@ -1170,7 +1137,7 @@ else
         // Confirmation de la suppression d'une ligne produit
         if ($action == 'confirm_delete_line')
         {
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline', '', 1, 1);
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 1, 1);
             if ($ret == 'html') print '<br>';
         }
 
@@ -1285,9 +1252,8 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="3">';
-        print $form->editfieldval("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
-        print '</td>';
+        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td>';
+        print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td>';
 
         /*
          * List of payments
@@ -1370,13 +1336,13 @@ else
         print '</tr>';
 
         // Date
-        print '<tr><td>'.$form->editfieldkey("Date",'date',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0)).'</td><td colspan="3">';
-        print $form->editfieldval("Date",'date',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'day');
+        print '<tr><td>'.$form->editfieldkey("Date",'date',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
+        print $form->editfieldval("Date",'date',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
         print '</td>';
 
         // Due date
-        print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_echeance',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0)).'</td><td colspan="3">';
-        print $form->editfieldval("DateMaxPayment",'date_echeance',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'day');
+        print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_echeance',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
+        print $form->editfieldval("DateMaxPayment",'date_echeance',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
         print '</td>';
 
         // Status
@@ -1471,7 +1437,7 @@ else
             $var=!$var;
 
             // Edit line
-            if ($object->statut == 0 && $action == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['lineid'] == $object->lines[$i]->rowid)
+            if ($object->statut == 0 && $action == 'edit_line' && $_GET['etat'] == '0' && $_GET['lineid'] == $object->lines[$i]->rowid)
             {
                 print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;etat=1&amp;lineid='.$object->lines[$i]->rowid.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1500,7 +1466,7 @@ else
                 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-                $doleditor=new DolEditor('label',$object->lines[$i]->description,'',128,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+                $doleditor=new DolEditor('desc',$object->lines[$i]->description,'',128,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
                 $doleditor->Create();
                 print '</td>';
 
@@ -1577,7 +1543,7 @@ else
                 print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';
 
                 print '<td align="center" width="16">';
-                if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=mod_ligne&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
+                if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
                 else print '&nbsp;';
                 print '</td>';
 
@@ -1595,7 +1561,7 @@ else
          * Form to add new line
         */
 
-        if ($object->statut == 0 && $action != 'mod_ligne')
+        if ($object->statut == 0 && $action != 'edit_line')
         {
             print '<tr class="liste_titre">';
             print '<td>';
@@ -1630,7 +1596,7 @@ else
             require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
             $nbrows=ROWS_2;
             if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-            $doleditor=new DolEditor('label',GETPOST("label"),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+            $doleditor=new DolEditor('dp_desc',GETPOST("dp_desc"),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
             $doleditor->Create();
 
             print '</td>';
@@ -1861,7 +1827,7 @@ else
     }
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

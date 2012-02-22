@@ -386,7 +386,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	// On cree le repertoire contenant les vignettes
 	$dirthumb = $dir.($outdir?'/'.$outdir:''); 	// Chemin du dossier contenant les vignettes
-	create_exdir($dirthumb);
+	dol_mkdir($dirthumb);
 
 	// Initialisation des variables selon l'extension de l'image
 	switch($infoImg[2])

@@ -20,6 +20,7 @@ For users:
 - New: Add hidden option FOURN_PRODUCT_AVAILABILITY.
 - New: task #11123: Add best supplier price.
 - New: Enhancement in styles.
+- New: Can conciliate several lines in one operation.
 - New: task #11289 : Modify third party accountancy code generator aquarium.
 - New: task #10606 : more comprehensive message error.
 - New: task #11278 : Option into point of sale module to add services in list.
@@ -44,10 +45,14 @@ For users:
 - New: Value of data into charts are visible on mouse hover.
 - New: Import wizard can import contacts.
 - New: Install process is now two times faster.
+- New: Can sort files into backup tool.
+- New: Default output charset are utf8 into backup tool.
 - New: Extra fields support int type.
 - New: Add brazilian states.
-- New: Automtic list of documents in ECM module is ok for customers,
+- New: Increase usability of module project.
+- New: Automatic list of documents in ECM module is ok for customers,
        suppliers invoice, orders, customers orders, proposals and social contributions.
+- New: [ task #176 ] Allow to use ODT templates for proposals and orders like it's done for invoices
 - Fix: Can use POS module with several concurrent users.
 
 For developers:
@@ -64,6 +69,7 @@ For developers:
 - New: Removed artichow deprecated libraries.
 - New: A page can force reload of css style sheet
 - New: A module can add import description for import wizard, even for tables with foreign keys.
+- New: Can add tabs on statistics views.
 - Qual: Add a lot of more PHPUnit tests.
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.
@@ -72,6 +78,7 @@ For developers:
 - Qual: Fix a lot of checkstyle warnings.
 - Qual: task #216 : Move /lib into /core/lib directory
 - Qual: task #217 : Move core files into core directory (login, menus, triggers, boxes, modules)
+WARNING: To reduce technic debt, all functions dolibarr_xxx were renamed int dol_xxx.
 
 
 ***** ChangeLog for 3.1.1 compared to 3.1.0 *****
@@ -79,12 +86,18 @@ For developers:
 - New: Add option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS. With this option added, 
        credit notes are not removed from total amount of invoice but are just 
        payments used to reducs remain to pay.
+- New: Added hidden option MAIN_FIX_FOR_BUGGED_MTA to fix bugged MTA.       
 - Fix: Removed warnings during install.
-- Fix: State into address of paypal payments were lost
+- Fix: State into address of paypal payments were lost.
+- Fix: Currency into paypal payments were always euros.
 - Fix: Removed Bare LF from emails sent with smtps method.
 - Fix: Can show report on selected period.
 - Fix: product removed from list after deleted into order.
-- Fix: pgsql can connect using socket.
+- Fix: [bug #270] PostgreSQL backend try to connect throught TCP socket for 
+- Fix: price was not without tax when using multiprice into POS module.
+- Fix: Can delete bank account.
+- Fix: [ bug #277 ] Year dropdown in table header of supplier invoices.
+- Fix: Some other very minor fixes.
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****

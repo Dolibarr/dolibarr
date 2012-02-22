@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +26,7 @@
  */
 
 require("./pre.inc.php");
-
-if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate)
-accessforbidden();
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("banks");
 $langs->load("compta");
@@ -35,29 +34,36 @@ $langs->load("bills");
 $langs->load("categories");
 if ($conf->adherent->enabled) $langs->load("members");
 
-$action=GETPOST('action');
-$rowid=GETPOST("rowid");
-$ref=GETPOST("ref");
-$orig_account=GETPOST("orig_account");
-$accountid=GETPOST('accountid');
-$confirm=GETPOST('confirm');
 
-$form = new Form($db);
+$id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
+$ref = GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$rowid=GETPOST("rowid",'int');
+$orig_account=GETPOST("orig_account");
+
+// Security check
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
+$fieldtype = (! empty($ref) ? 'ref' :'rowid');
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque',$fieldvalue,'bank_account','','',$fieldtype);
+if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) accessforbidden();
+
 
 /*
  * Actions
  */
 
-if ($user->rights->banque->consolidate && $_GET["action"] == 'dvnext')
+if ($user->rights->banque->consolidate && $action == 'dvnext')
 {
-    $ac = new Account($db);
-    $ac->datev_next($_GET["rowid"]);
+    $al = new AccountLine($db);
+    $al->datev_next($_GET["rowid"]);
 }
 
-if ($user->rights->banque->consolidate && $_GET["action"] == 'dvprev')
+if ($user->rights->banque->consolidate && $action == 'dvprev')
 {
-    $ac = new Account($db);
-    $ac->datev_previous($_GET["rowid"]);
+    $al = new AccountLine($db);
+    $al->datev_previous($_GET["rowid"]);
 }
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier)
@@ -77,7 +83,7 @@ if ($action == 'class')
         dol_print_error($db);
     }
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$_GET["rowid"].", ".$_POST["cat1"].")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".$_POST["cat1"].")";
     if (! $db->query($sql))
     {
         dol_print_error($db);
@@ -86,50 +92,64 @@ if ($action == 'class')
 
 if ($action == "update")
 {
-    // Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
-    $conciliated=0;
-    $sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=".$rowid;
-    $result = $db->query($sql);
-    if ($result)
-    {
-        $objp = $db->fetch_object($result);
-        $conciliated=$objp->rappro;
-    }
+	$error=0;
 
-    $db->begin();
+	$ac = new Account($db);
+	$ac->fetch($id);
 
-    $amount = price2num($_POST['amount']);
-    $dateop = dol_mktime(12,0,0,$_POST["dateomonth"],$_POST["dateoday"],$_POST["dateoyear"]);
-    $dateval= dol_mktime(12,0,0,$_POST["datevmonth"],$_POST["datevday"],$_POST["datevyear"]);
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-    $sql.= " SET ";
-    // Always opened
-    if (isset($_POST['value']))      $sql.=" fk_type='".$db->escape($_POST['value'])."',";
-    if (isset($_POST['num_chq']))    $sql.=" num_chq='".$db->escape($_POST["num_chq"])."',";
-    if (isset($_POST['banque']))     $sql.=" banque='".$db->escape($_POST["banque"])."',";
-    if (isset($_POST['emetteur']))   $sql.=" emetteur='".$db->escape($_POST["emetteur"])."',";
-    // Blocked when conciliated
-    if (! $conciliated)
-    {
-        if (isset($_POST['label']))      $sql.=" label='".$db->escape($_POST["label"])."',";
-        if (isset($_POST['amount']))     $sql.=" amount='".$amount."',";
-        if (isset($_POST['dateomonth'])) $sql.=" dateo = '".$db->idate($dateop)."',";
-        if (isset($_POST['datevmonth'])) $sql.=" datev = '".$db->idate($dateval)."',";
-    }
-    $sql.= " fk_account = ".$accountid;
-    $sql.= " WHERE rowid = ".$rowid;
+	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
+	{
+		$mesg = '<div class="error">'.$langs->trans("ErrorCashAccountAcceptsOnlyCashMoney").'</div>';
+		$error++;
+	}
 
-    $result = $db->query($sql);
-    if ($result)
-    {
-        $mesg=$langs->trans("RecordSaved");
-        $db->commit();
-    }
-    else
-    {
-        $db->rollback();
-        dol_print_error($db);
-    }
+	if (! $error)
+	{
+		// Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
+		$conciliated=0;
+		$sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=".$rowid;
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$objp = $db->fetch_object($result);
+			$conciliated=$objp->rappro;
+		}
+
+		$db->begin();
+
+		$amount = price2num($_POST['amount']);
+		$dateop = dol_mktime(12,0,0,$_POST["dateomonth"],$_POST["dateoday"],$_POST["dateoyear"]);
+		$dateval= dol_mktime(12,0,0,$_POST["datevmonth"],$_POST["datevday"],$_POST["datevyear"]);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+		$sql.= " SET ";
+		// Always opened
+		if (isset($_POST['value']))      $sql.=" fk_type='".$db->escape($_POST['value'])."',";
+		if (isset($_POST['num_chq']))    $sql.=" num_chq='".$db->escape($_POST["num_chq"])."',";
+		if (isset($_POST['banque']))     $sql.=" banque='".$db->escape($_POST["banque"])."',";
+		if (isset($_POST['emetteur']))   $sql.=" emetteur='".$db->escape($_POST["emetteur"])."',";
+		// Blocked when conciliated
+		if (! $conciliated)
+		{
+			if (isset($_POST['label']))      $sql.=" label='".$db->escape($_POST["label"])."',";
+			if (isset($_POST['amount']))     $sql.=" amount='".$amount."',";
+			if (isset($_POST['dateomonth'])) $sql.=" dateo = '".$db->idate($dateop)."',";
+			if (isset($_POST['datevmonth'])) $sql.=" datev = '".$db->idate($dateval)."',";
+		}
+		$sql.= " fk_account = ".$id;
+		$sql.= " WHERE rowid = ".$rowid;
+
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$mesg=$langs->trans("RecordSaved");
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+			dol_print_error($db);
+		}
+	}
 }
 
 // Reconcile
@@ -176,6 +196,8 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
  * View
  */
 
+$form = new Form($db);
+
 llxHeader();
 
 // On initialise la liste des categories
@@ -198,16 +220,16 @@ if ($result)
     $db->free($result);
 }
 
-$var=False;
+$var=false;
 $h=0;
 
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$_GET["rowid"];
+$head[$h][0] = $_SERVER['PHP_SELF'].'?rowid='.$rowid;
 $head[$h][1] = $langs->trans('Card');
 $hselected=$h;
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$_GET["rowid"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$rowid;
 $head[$h][1] = $langs->trans("Info");
 $h++;
 
@@ -244,15 +266,15 @@ if ($result)
         // Confirmations
         if ($action == 'delete_categ')
         {
-            $ret=$form->form_confirm("ligne.php?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+            $ret=$form->form_confirm($_SERVER['PHP_SELF']."?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
             if ($ret == 'html') print '<br>';
         }
 
-        print '<form name="update" method="post" action="ligne.php?rowid='.$rowid.'">';
+        print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
-        print '<input type="hidden" name="accountid" value="'.$acct->id.'">';
+        print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
         print '<table class="border" width="100%">';
 
@@ -424,9 +446,9 @@ if ($result)
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
                 print img_edit_remove() . "</a> ";
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
                 print img_edit_add() ."</a>";
             }
             print '</td>';
@@ -497,10 +519,10 @@ if ($result)
         {
             print '<br>'."\n";
             print_fiche_titre($langs->trans("Reconciliation"),'','');
-            print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+            print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setreconcile">';
-            print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
+            print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
 
             print '<table class="border" width="100%">';
 
@@ -556,12 +578,12 @@ print '</div>';
 print '<br>';
 print '<table class="noborder" width="100%">';
 
-print "<form method=\"post\" action=\"ligne.php?rowid=$rowid&amp;account=$account\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'&amp;id='.$id.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"class\">";
-print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-print "<tr class=\"liste_titre\"><td>".$langs->trans("Rubriques")."</td><td colspan=\"2\">";
-print "<select class=\"flat\" name=\"cat1\">".$options."</select>&nbsp;";
+print '<input type="hidden" name="action" value="class">';
+print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Rubriques").'</td><td colspan="2">';
+print '<select class="flat" name="cat1">'.$options.'</select>&nbsp;';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 print "</tr>";
 print "</form>";
@@ -587,7 +609,7 @@ if ($result)
         print "<td align=\"center\"><a href=\"budget.php?bid=".$objp->rowid."\">".$langs->trans("ListBankTransactions")."</a></td>";
         if ($user->rights->banque->modifier)
         {
-            print "<td align=\"right\"><a href=\"ligne.php?action=delete_categ&amp;rowid=".$rowid."&amp;fk_categ=$objp->rowid\">".img_delete($langs->trans("Remove"))."</a></td>";
+            print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete_categ&amp;rowid='.$rowid.'&amp;fk_categ='.$objp->rowid.'">'.img_delete($langs->trans("Remove")).'</a></td>';
         }
         print "</tr>";
 
@@ -597,7 +619,7 @@ if ($result)
 }
 print "</table>";
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

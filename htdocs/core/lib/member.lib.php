@@ -57,6 +57,15 @@ function member_prepare_head($object)
 		$h++;
 	}
 
+	// Show agenda tab
+	if (! empty($conf->agenda->enabled))
+	{
+	    $head[$h][0] = DOL_URL_ROOT."/adherents/agenda.php?id=".$object->id;
+	    $head[$h][1] = $langs->trans('Agenda');
+	    $head[$h][2] = 'agenda';
+	    $h++;
+	}
+
 	// Show category tab
 	if (! empty($conf->categorie->enabled) && ! empty($user->rights->categorie->lire))
 	{

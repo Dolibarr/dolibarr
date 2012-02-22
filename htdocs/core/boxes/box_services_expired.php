@@ -27,10 +27,10 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show expired services
  */
- class box_services_expired extends ModeleBoxes
- {
+class box_services_expired extends ModeleBoxes
+{
 
-    var $boxcode="expiredservices";
+    var $boxcode="expiredservices";     // id of box
     var $boximg="object_contract";
     var $boxlabel;
     var $depends = array("contrat");	// conf->propal->enabled
@@ -158,6 +158,6 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }
 
-}
+ }
 
 ?>

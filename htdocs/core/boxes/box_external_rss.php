@@ -31,9 +31,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show RSS feeds
  */
- class box_external_rss extends ModeleBoxes
- {
-
+class box_external_rss extends ModeleBoxes
+{
     var $boxcode="lastrssinfos";
     var $boximg="object_rss";
     var $boxlabel;

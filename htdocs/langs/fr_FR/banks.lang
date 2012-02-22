@@ -143,3 +143,7 @@ BackToAccount=Retour au compte
 ShowAllAccounts=Afficher pour tous les comptes
 FutureTransaction=Transaction future. Pas moyen de concilier.
 SelectChequeTransactionAndGenerate=Sélectionner/filtrer les chèques à inclure dans le bordereau de remise et cliquer sur "Créer".
+InputReceiptNumber=Saisissez le relevé bancaire concerné par le rapprochement. Utilisez une valeur numérique triable (par exemple YYYYMM)
+EventualyAddCategory=Eventuellement, saisissez une catégorie dans laquelle classer les écritures
+ToConciliate=A rapprocher ?
+ThenCheckLinesAndConciliate=Ensuite, cochez les lignes présentes sur le relevé et cliquez sur

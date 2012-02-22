@@ -71,7 +71,6 @@ llxHeader('',$langs->trans("Setup"));
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
 
-print "<br>\n";
 
 $h = 0;
 

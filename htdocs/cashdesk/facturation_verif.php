@@ -19,11 +19,8 @@
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
-
-/** add Ditto */
 require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
-/** end add Ditto */
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
@@ -38,15 +35,16 @@ switch ( $_GET['action'] )
 			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".$conf_fkentrepot;
-
+			$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+			
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )
 			{
-				$sql.= " WHERE p.rowid = ".$_POST['selProduit'];
+				$sql.= " AND p.rowid = ".$_POST['selProduit'];
 			}
 			else if ( $_POST['hdnSource'] == 'REF' )
 			{
-				$sql.= " WHERE p.ref = '".$_POST['txtRef']."'";
+				$sql.= " AND p.ref = '".$_POST['txtRef']."'";
 			}
 
 			$result = $db->query($sql);

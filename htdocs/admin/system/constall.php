@@ -74,14 +74,17 @@ $configfileparameters=array(
                             'separator',
                             '?dolibarr_lib_ADODB_PATH',
                             '?dolibarr_lib_TCPDF_PATH',
-                            '?dolibarr_lib_FPDFI_PATH',
-                            '?dolibarr_lib_NUSOAP_PATH',
+                            '?dolibarr_lib_FPDI_PATH',
+							'?dolibarr_lib_NUSOAP_PATH',
                             '?dolibarr_lib_PHPEXCEL_PATH',
                             '?dolibarr_lib_GEOIP_PATH',
 							'?dolibarr_lib_ODTPHP_PATH',
                             '?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
 						    '?dolibarr_js_CKEDITOR',
-                            '?dolibarr_font_DOL_DEFAULT_TTF',
+						    '?dolibarr_js_JQUERY',
+						    '?dolibarr_js_JQUERY_UI',
+						    '?dolibarr_js_JQUERY_FLOT',
+							'?dolibarr_font_DOL_DEFAULT_TTF',
                             '?dolibarr_font_DOL_DEFAULT_TTF_BOLD'
 						);
 $configfilelib=array(
@@ -114,14 +117,17 @@ $configfilelib=array(
 					'separator',
                     'dolibarr_lib_ADODB_PATH',
                     'dolibarr_lib_TCPDF_PATH',
-                    'dolibarr_lib_FPDFI_PATH',
-                    'dolibarr_lib_NUSOAP_PATH',
+                    'dolibarr_lib_FPDI_PATH',
+					'dolibarr_lib_NUSOAP_PATH',
                     'dolibarr_lib_PHPEXCEL_PATH',
                     'dolibarr_lib_GEOIP_PATH',
 					'dolibarr_lib_ODTPHP_PATH',
                     'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
                     'dolibarr_js_CKEDITOR',
-                    'dolibarr_font_DOL_DEFAULT_TTF',
+                    'dolibarr_js_JQUERY',
+                    'dolibarr_js_JQUERY_UI',
+                    'dolibarr_js_JQUERY_FLOT',
+					'dolibarr_font_DOL_DEFAULT_TTF',
                     'dolibarr_font_DOL_DEFAULT_TTF_BOLD'
 					);
 $var=true;

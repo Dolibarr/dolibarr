@@ -23,8 +23,7 @@
 
 
 /**
- *      \class      MenuSmart
- *	    \brief      Class to manage smartphone menu smartphone (for internal users)
+ *	Class to manage smartphone menu smartphone (for internal users)
  */
 class MenuSmart {
 
@@ -35,8 +34,9 @@ class MenuSmart {
 
 
 	/**
-	 *    Constructeur
-	 *    @param      db      Database handler
+     *  Constructor
+     *
+     *  @param      DoliDb		$db      Database handler
 	 */
 	function MenuSmart($db)
 	{
@@ -46,7 +46,9 @@ class MenuSmart {
 
 	/**
 	 *    Show menu
-	 *    @param		limitmenuto		To limit menu to a top or left menu value
+	 * 
+	 *    @param	string	$limitmenuto		To limit menu to a top or left menu value
+	 * 	  @return	void
 	 */
 	function showmenu($limitmenuto)
 	{

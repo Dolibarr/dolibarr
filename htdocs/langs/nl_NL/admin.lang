@@ -1262,7 +1262,6 @@ TestLoginToAPI=Test inloggen op API
 ContractsSetup=Contracten module setup
 ContractsNumberingModules=Contracten nummering modules
 AdherentLoginRequired=Beheren van een login voor elk lid
-NoActivatedBarcode=Geen geactiveerde barcode soort
 ListOfAvailableNotifications=Lijst van beschikbare meldingen (Deze lijst is afhankelijk van geactiveerde modules)
 SendingsNumberingModules=Verzendingen nummering modules
 FreeLegalTextOnShippings=Vrije tekst op verzendingen

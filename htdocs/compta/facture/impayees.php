@@ -105,7 +105,7 @@ if ($action == "builddoc" && $user->rights->facture->lire)
 		}
 
 		// Create output dir if not exists
-		create_exdir($diroutputpdf);
+		dol_mkdir($diroutputpdf);
 
 		// Save merged file
 		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
@@ -399,12 +399,13 @@ if ($resql)
 
 	print '<br>';
 	print '<input type="hidden" name="option" value="'.$option.'">';
-	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,0,0,48,1,$param,'',$langs->trans("PDFMerge"));
+	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,0,0,48,1,$param,$langs->trans("PDFMerge"),$langs->trans("PDFMerge"));
 	print '</form>';
 
 	$db->free($resql);
 }
 else dol_print_error($db,'');
+
 
 llxFooter();
 

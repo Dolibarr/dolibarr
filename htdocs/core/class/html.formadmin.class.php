@@ -128,24 +128,27 @@ class FormAdmin
      *
      *    @param	string		$selected        Preselected menu value
      *    @param    string		$htmlname        Name of html select
-     *    @param    string		$dirmenu         Directory to scan or array of directories to scan
+     *    @param    array		$dirmenuarray    Array of directories to scan
      *    @param    string		$moreattrib      More attributes on html select tag
      *    @return	void
      */
-    function select_menu($selected, $htmlname, $dirmenu, $moreattrib='')
+    function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib='')
     {
         global $langs,$conf;
 
+        // Clean parameters
         if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // For compatibility
+
+        // Check parameters
+        if (! is_array($dirmenuarray)) return -1;
 
 		$menuarray=array();
         foreach ($conf->file->dol_document_root as $dirroot)
         {
-            if (is_array($dirmenu)) $dirmenus=$dirmenu;
-            else $dirmenus=array($dirmenu);
-            foreach($dirmenus as $dirtoscan)
+            foreach($dirmenuarray as $dirtoscan)
             {
                 $dir=$dirroot.$dirtoscan;
+                //print $dir.'<br>';
                 if (is_dir($dir))
                 {
     	            $handle=opendir($dir);
@@ -153,7 +156,7 @@ class FormAdmin
     	            {
     	                while (($file = readdir($handle))!==false)
     	                {
-    	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index')
     	                    {
     	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
     	                    	$filelib=preg_replace('/\.php$/i','',$file);

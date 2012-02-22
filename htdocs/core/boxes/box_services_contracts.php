@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/core/boxes/box_services_vendus.php
+ *      \file       htdocs/core/boxes/box_services_contracts.php
  *		\ingroup    produits,services
  *      \brief      Module de generation de l'affichage de la box services_vendus
  */
@@ -29,9 +29,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 /**
  * Class to manage the box to show last services lines
  */
- class box_services_vendus extends ModeleBoxes
- {
-
+class box_services_contracts extends ModeleBoxes
+{
 	var $boxcode="lastproductsincontract";
 	var $boximg="object_product";
 	var $boxlabel;
@@ -46,7 +45,7 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 	/**
      *  Constructor
 	 */
-	function box_services_vendus()
+	function box_services_contracts()
 	{
 		global $langs;
 		$langs->load("boxes");
@@ -83,8 +82,8 @@ include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 			$sql.= ", ".MAIN_DB_PREFIX."product as p";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= ")";
-			$sql.= " WHERE s.rowid = c.fk_soc";
-			$sql.= " AND c.entity = ".$conf->entity;
+			$sql.= " WHERE c.entity = ".$conf->entity;
+			$sql.= " AND s.rowid = c.fk_soc";
 			$sql.= " AND c.rowid = cd.fk_contrat";
 			$sql.= " AND cd.fk_product = p.rowid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

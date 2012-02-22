@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,10 +34,10 @@ $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
 
-$action=GETPOST('action');
-$id=GETPOST('id','int');
-$ref=GETPOST('ref');
-$socid=GETPOST('socid');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+$socid=GETPOST('socid', 'int');
 $error=0; $mesg = '';
 
 // If socid provided by ajax company selector
@@ -49,8 +49,10 @@ if (! empty($_REQUEST['search_fourn_id']))
 }
 
 // Security check
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
+$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user, 'produit|service&fournisseur', ($id>0?$id:$ref), 'product', '', '', ($id>0?'rowid':'ref'));
+$result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&product','','',$fieldtype);
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -271,8 +273,7 @@ if ($id || $ref)
 				}
 				else
 				{
-					$form=new Form($db);
-					$form->select_societes($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
+					print $form->select_company($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
 				}
 				print '</td></tr>';
 

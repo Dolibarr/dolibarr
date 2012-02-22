@@ -23,11 +23,13 @@
 
 
 /**
- *    \class      DolException
- *    \brief      Class to manage exceptions
+ *	Class to manage exceptions
  */
 class DolException extends Exception
 {
+    /**
+     * Constructor
+     */
     function DolException()
     {
     }

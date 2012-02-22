@@ -116,7 +116,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 			if (! file_exists($dir))
 			{
-				if (create_exdir($dir) < 0)
+				if (dol_mkdir($dir) < 0)
 				{
 					$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
@@ -287,7 +287,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->SetFont('','',$default_font_size - 1);
 
 		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-		$pdf->MultiCell(108, 2, $outputlangs->trans("Description"), '', 'L');
+		$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Description"), '', 'L');
 
 		$pdf->line($this->posxqtyordered-1, $tab_top, $this->posxqtyordered-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxqtyordered-1, $tab_top+1);

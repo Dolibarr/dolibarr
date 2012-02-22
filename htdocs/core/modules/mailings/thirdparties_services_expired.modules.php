@@ -46,7 +46,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
         // List of services
         $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE fk_product_type = 1";
+        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
+        $sql.= " AND fk_product_type = 1";
         $sql.= " ORDER BY ref";
         $result=$this->db->query($sql);
         if ($result)
@@ -96,10 +97,11 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $now=dol_now();
 
         // La requete doit retourner: id, email, name
-        $sql = " select s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
-        $sql.= " from ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c,";
-        $sql.= " ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
-        $sql.= " where s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
+        $sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+        $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
+        $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+        $sql.= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
         $sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$product."'";
         $sql.= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
         $sql.= " ORDER BY s.email";
@@ -184,12 +186,13 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
         // Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
         // Example: return 500;
-        $sql = " select count(*) as nb";
-        $sql.= " from ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c,";
-        $sql.= " ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
-        $sql.= " where s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
+        $sql = "SELECT count(*) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+        $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
+        $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+        $sql.= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
         $sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
-        $sql.= " AND p.ref in ('".join("','",$this->arrayofproducts)."')";
+        $sql.= " AND p.ref IN ('".join("','",$this->arrayofproducts)."')";
         $sql.= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
         //print $sql;
         $a=parent::getNbOfRecipients($sql);

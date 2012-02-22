@@ -767,7 +767,8 @@ class Adherent extends CommonObject
         // If new password not provided, we generate one
         if (! $password)
         {
-	        $password=getRandomPassword('');
+            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+            $password=getRandomPassword('');
         }
 
         // Cryptage mot de passe
@@ -1427,6 +1428,7 @@ class Adherent extends CommonObject
         defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
         )
         {
+            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
             $mdpass=dol_hash($this->pass);
             $htpass=crypt($this->pass,makesalt());
             $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->firstname." ".$this->lastname."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";

@@ -21,19 +21,6 @@
  *  \brief		Library for file managing functions
  */
 
-/**
- *  Return user/group account of web server
- *
- *  @param	string	$mode       'user' or 'group'
- *  @return string				Return user or group of web server
- */
-function dol_getwebuser($mode)
-{
-    $t='?';
-    if ($mode=='user')  $t=getenv('APACHE_RUN_USER');   // $_ENV['APACHE_RUN_USER'] is empty
-    if ($mode=='group') $t=getenv('APACHE_RUN_GROUP');
-    return $t;
-}
 
 /**
  *  Scan a directory and return a list of files/directories.
@@ -136,13 +123,16 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		closedir($dir);
 
 		// Obtain a list of columns
-		$myarray=array();
-		foreach ($file_list as $key => $row)
+		if ($sortcriteria)
 		{
-			$myarray[$key]  = $row[$sortcriteria];
+    		$myarray=array();
+    		foreach ($file_list as $key => $row)
+    		{
+    			$myarray[$key]  = $row[$sortcriteria];
+    		}
+    		// Sort the data
+    		if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
 		}
-		// Sort the data
-		if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
 
 		return $file_list;
 	}
@@ -818,7 +808,7 @@ function dol_meta_create($object)
 
 		if (! is_dir($dir))
 		{
-			create_exdir($dir);
+			dol_mkdir($dir);
 		}
 
 		if (is_dir($dir))

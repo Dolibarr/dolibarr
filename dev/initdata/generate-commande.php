@@ -46,7 +46,7 @@ include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
  * Parametre
  */
 
-define (GEN_NUMBER_COMMANDE, 10);
+define(GEN_NUMBER_COMMANDE, 10);
 
 
 $ret=$user->fetch('','admin');

@@ -89,8 +89,11 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
 	 */
-    protected function setUp()
+	protected function setUp()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -100,9 +103,13 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
 
 		print __METHOD__."\n";
     }
+
 	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
 	 */
-    protected function tearDown()
+	protected function tearDown()
     {
     	print __METHOD__."\n";
     }
@@ -110,6 +117,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
 
 
     /**
+     * testFactureRoundingCreate1
      * Test according to page http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
      *
      * @return int
@@ -148,10 +156,12 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
 
 
     /**
+     * testFactureRoundingCreate2
+     * 
+     * @return int
+     * 
      * @depends	testFactureRoundingCreate1
      * Test according to page http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
-     *
-     * @return int
      */
     public function testFactureRoundingCreate2()
     {

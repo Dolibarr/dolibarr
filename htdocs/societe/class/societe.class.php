@@ -45,7 +45,9 @@ class Societe extends CommonObject
     var $id;
     var $name;
     var $nom;      // TODO obsolete
+    var $firstname;
     var $particulier;
+    var $civility_id;
     var $address;
     var $adresse;  // TODO obsolete
     var $cp;       // TODO obsolete
@@ -2017,7 +2019,7 @@ class Societe extends CommonObject
         // Verifie SIRET si pays FR
         if ($idprof == 2 && $soc->country_code == 'FR')
         {
-            $chaine=trim($this->idprof1);
+            $chaine=trim($this->idprof2);
             $chaine=preg_replace('/(\s)/','',$chaine);
 
             if (dol_strlen($chaine) != 14) return -1;
@@ -2088,9 +2090,10 @@ class Societe extends CommonObject
 
     /**
      *   Renvoi url de verification d'un identifiant professionnal
-     *   @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *   @param      soc             Objet societe
-     *   @return     string          url ou chaine vide si aucune url connue
+     *
+     *   @param		int		$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *   @param 	Societe	$soc            Objet societe
+     *   @return	string          		url ou chaine vide si aucune url connue
      *   TODO not in business class
      */
     function id_prof_url($idprof,$soc)
@@ -2110,8 +2113,9 @@ class Societe extends CommonObject
     }
 
     /**
-     *      \brief      Indique si la societe a des projets
-     *      \return     bool	   true si la societe a des projets, false sinon
+     *   Indique si la societe a des projets
+     *
+     *   @return     bool	   true si la societe a des projets, false sinon
      */
     function has_projects()
     {
@@ -2134,28 +2138,10 @@ class Societe extends CommonObject
 
 
     /**
-     * Add permissions
-     * @param   user_id
-     * @param   read
-     * @param   write
-     * @param   perms
-     */
-    function AddPerms($user_id, $read, $write, $perms)
-    {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms";
-        $sql .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
-        $sql .= " VALUES (".$this->id.",".$user_id.",".$read.",".$write.",".$perms.");";
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-
-        }
-    }
-
-    /**
-     *       Charge les informations d'ordre info dans l'objet societe
-     *       @param     id     Id de la societe a charger
+     *  Charge les informations d'ordre info dans l'objet societe
+     *
+     *  @param  int		$id     Id de la societe a charger
+     *  @return	void
      */
     function info($id)
     {
