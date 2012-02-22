@@ -86,7 +86,7 @@ class Form
             if ($perm)
             {
                 $tmp=explode(':',$typeofdata);
-                $ret.= '<div class="editkey_'.$tmp[0].'" id="'.$htmlname.'">';
+                $ret.= '<div class="editkey_'.$tmp[0].' '.$tmp[1].'" id="'.$htmlname.'">';
                 $ret.= $langs->trans($text);
                 $ret.= '</div>'."\n";
             }

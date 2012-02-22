@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -742,6 +742,13 @@ if ($action == 'add' && $user->rights->facture->creer)
 
                 $object->origin    = $_POST['origin'];
                 $object->origin_id = $_POST['originid'];
+                
+                // Possibility to add external linked objects with hooks
+                $object->linked_objects[$object->origin] = $object->origin_id;
+                if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
+                {
+                	$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+                }
 
                 $id = $object->create($user);
 
@@ -1802,7 +1809,7 @@ if ($action == 'create')
     }
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="3"');
+    $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
@@ -2737,7 +2744,7 @@ else
                 include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php');
             }
 
-            print '<table id="tablelines" class="noborder" width="100%">';
+            print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
             // Show object lines
             if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);

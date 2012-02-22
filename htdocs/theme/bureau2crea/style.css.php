@@ -1493,12 +1493,18 @@ border: 0px;
 }
 
 tr.pair td.nohover {
-background: #FFFFFF;
+	background: #FFFFFF;
 }
 
 .pair td, .impair td
 {
 	padding: 2px 3px !important;
+}
+
+.noshadow {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
 }
 
 
@@ -1507,21 +1513,21 @@ background: #FFFFFF;
  */
 
 .box {
-padding-right: 0px;
-padding-left: 0px;
-padding-bottom: 4px;
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 4px;
 }
 
 tr.box_titre {
-height: 24px;
-background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
-background-repeat: repeat-x;
-color: #FFFFFF;
-font-family: <?php print $fontlist ?>, sans-serif;
-font-weight: normal;
-border-bottom: 1px solid #FDFFFF;
-white-space: nowrap;
+	height: 24px;
+	background: #7699A9;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
+	background-repeat: repeat-x;
+	color: #FFFFFF;
+	font-family: <?php print $fontlist ?>, sans-serif;
+	font-weight: normal;
+	border-bottom: 1px solid #FDFFFF;
+	white-space: nowrap;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
 }

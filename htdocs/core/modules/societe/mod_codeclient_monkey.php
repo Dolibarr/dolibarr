@@ -117,7 +117,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         $sql = "SELECT MAX(SUBSTRING(".$field." FROM ".$posindice.")) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
-		$sql.= " AND entity = ".getEntity('societe');
+		$sql.= " AND entity IN (".getEntity('societe', 1).")";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -216,7 +216,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE code_client = '".$code."'";
-		$sql.= " AND entity = ".getEntity('societe');
+		$sql.= " AND entity IN (".getEntity('societe', 1).")";
 		if ($soc->id > 0) $sql.= " AND rowid != ".$soc->id;
 		
 		dol_syslog(get_class($this)."::verif_dispo sql=".$sql, LOG_DEBUG);

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,11 +51,11 @@ class ProductFournisseur extends Product
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
      */
-    function ProductFournisseur($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
     }
 
 
@@ -324,15 +324,14 @@ class ProductFournisseur extends Product
     function list_product_fournisseur_price($prodid)
     {
         global $conf;
-
-        // Suppliers list
+        
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.fk_availability";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-        $sql.= " ON pfp.fk_soc = s.rowid";
-        $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE pfp.entity IN (".getEntity('product', 1).")";
+        $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND pfp.fk_product = ".$prodid;
         $sql.= " ORDER BY s.nom, pfp.quantity, pfp.price";
 

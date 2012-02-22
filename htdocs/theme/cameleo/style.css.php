@@ -1372,14 +1372,11 @@ background: #c0c4c7;
 border: 0px;
 }
 
-
 .pair	{
 background: #FFFFFF;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 }
-
-
 
 .pair:hover {
 background: #c0c4c7;
@@ -1390,22 +1387,29 @@ border: 0px;
 	padding: 2px;
 }
 
+.noshadow {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
+}
+
+
 /*
  *  Boxes
  */
 
 .box {
-padding-right: 0px;
-padding-left: 0px;
-padding-bottom: 4px;
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 4px;
 }
 
 tr.box_titre {
-background-repeat: repeat-x;
-color: #842F00;
-font-weight: normal;
-font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-white-space: nowrap;
+	background-repeat: repeat-x;
+	color: #842F00;
+	font-weight: normal;
+	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+	white-space: nowrap;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
     border-top-left-radius:6px;
