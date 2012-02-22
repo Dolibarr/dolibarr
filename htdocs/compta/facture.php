@@ -2744,7 +2744,7 @@ else
                 include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php');
             }
 
-            print '<table id="tablelines" class="noborder" width="100%">';
+            print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
             // Show object lines
             if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);

@@ -1291,9 +1291,17 @@ border: 0px;
 }
 */
 
-tr.pair td, tr.impair td, td.pair, td.impair
-{
-/*border-bottom: 1px solid white;*/
+/* Disable shadows */ 
+.noshadow {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
+}
+
+div.tabBar .noborder {
+	-moz-box-shadow: 0px 0px 0px #CCC !important;
+	-webkit-box-shadow: 0px 0px 0px #CCC !important;
+	box-shadow: 0px 0px 0px #CCC !important;
 }
 
 
