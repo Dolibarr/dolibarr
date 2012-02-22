@@ -51,11 +51,12 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	$ext_element		= GETPOST('ext_element');
 	//$ext_table_element	= GETPOST('ext_table_element');
 	//$ext_fk_element		= GETPOST('ext_fk_element');
-	$field				= substr(GETPOST('field'), 4); // remove prefix val_
+	$field				= substr(GETPOST('field'), 8); // remove prefix val_
 	$value				= GETPOST('value');
 	$type				= GETPOST('type');
 	$savemethodname		= (GETPOST('savemethod') ? GETPOST('savemethod') : 'setValueFrom');
 
+	$view='';
 	$format='text';
 	$return=array();
 	$error=0;
@@ -98,6 +99,7 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 		{
 			$loadmethodname	= 'load_cache_'.GETPOST('loadmethod');
 			$loadcachename	= 'cache_'.GETPOST('loadmethod');
+			$loadviewname	= 'view_'.GETPOST('loadmethod');
 
 			$form = new Form($db);
 			if (method_exists($form, $loadmethodname))
@@ -107,6 +109,12 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 				{
 					$loadcache = $form->$loadcachename;
 					$value = $loadcache[$newvalue];
+					
+					if (! empty($form->$loadviewname))
+					{
+						$loadview = $form->$loadviewname;
+						$view = $loadview[$newvalue];
+					}
 				}
 				else
 				{
@@ -124,6 +132,12 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 				{
 					$loadcache = $object->$loadcachename;
 					$value = $loadcache[$newvalue];
+					
+					if (! empty($object->$loadviewname))
+					{
+						$loadview = $object->$loadviewname;
+						$view = $loadview[$newvalue];
+					}
 				}
 				else
 				{
@@ -151,6 +165,7 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 				else if ($type == 'textarea') $value = dol_nl2br($newvalue);
 
 				$return['value'] = $value;
+				$return['view'] = (! empty($view) ? $view : $value);
 			}
 			else
 			{

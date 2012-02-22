@@ -50,7 +50,7 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	$ext_element		= GETPOST('ext_element');
 	//$ext_table_element	= GETPOST('ext_table_element');
 	//$ext_fk_element		= GETPOST('ext_fk_element');
-	$field				= substr(GETPOST('field'), 4); // remove prefix val_
+	$field				= substr(GETPOST('field'), 8); // remove prefix val_
 	$type				= GETPOST('type');
 	$loadmethod			= (GETPOST('loadmethod') ? GETPOST('loadmethod') : 'getValueFrom');
 	
