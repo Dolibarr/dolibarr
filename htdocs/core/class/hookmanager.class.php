@@ -125,7 +125,7 @@ class HookManager
      * 		@param		Object	&$object		Object to use hooks on
      * 	    @param		string	&$action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
      * 		@return		mixed					For doActions,formObjectOptions:    Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
-     * 											For printSearchForm,printLeftBlock: Return HTML string.
+     * 											For printSearchForm,printLeftBlock,printTopRightMenu,...: Return HTML string.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
 	function executeHooks($method, $parameters=false, &$object='', &$action='')
