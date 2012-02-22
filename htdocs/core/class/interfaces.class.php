@@ -78,10 +78,11 @@ class Interfaces
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
+            $dir=dol_osencode($dir);
             //print "xx".$dir;exit;
 
             // Check if directory exists
-            if (!is_dir($dir)) continue;
+            if (! dol_is_dir($dir)) continue;
 
             $handle=opendir($dir);
             if (is_resource($handle))
@@ -197,14 +198,12 @@ class Interfaces
     {
         global $conf, $langs;
 
-        $form = new Form($this->db);
-
         $files = array();
         $modules = array();
         $orders = array();
         $i = 0;
 
-        $dirtriggers=array_merge(array('/core/triggers'),$conf->triggers_modules);
+        $dirtriggers=array_merge(array('/core/triggers/'),$conf->triggers_modules);
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
@@ -298,7 +297,7 @@ class Interfaces
                 if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
             }
 
-            $triggers[$j]['info'] = $form->textwithpicto('',$text);
+            $triggers[$j]['info'] = $text;
             $j++;
         }
         return $triggers;
