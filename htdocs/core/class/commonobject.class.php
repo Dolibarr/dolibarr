@@ -1560,7 +1560,7 @@ abstract class CommonObject
                 }
                 $i++;
             }
-
+            
             if (! empty($this->linkedObjectsIds))
             {
                 foreach($this->linkedObjectsIds as $objecttype => $objectids)
