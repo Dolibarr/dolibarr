@@ -1065,10 +1065,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     global $user, $conf, $langs, $db;
     global $dolibarr_main_authentication;
     global $hookmanager;
-    global $mc;    // TODO Remove this. This should not bee required because code called on MC must be inside the new hook toprightmenu
-
+    
     // Instantiate hooks of thirdparty module only if not already define
-    if (!$hookmanager)
+    if (! is_object($hookmanager))
     {
     	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     	$hookmanager=new HookManager($db);
@@ -1324,7 +1323,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     $bookmarks='';
 
     // Instantiate hooks of thirdparty module
-    if (!$hookmanager)
+    if (! is_object($hookmanager))
     {
     	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     	$hookmanager=new HookManager($db);
