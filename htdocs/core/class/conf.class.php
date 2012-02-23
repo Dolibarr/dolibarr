@@ -142,18 +142,17 @@ class Conf
 
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
-						// If this is constant for a css file activated by a module
-						// TODO obsolete (see generic parts)
-						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$this->css_modules[$modulename]=$value;
-						}
 						// If this is constant for a new tab page activated by a module.
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key))
+						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key))
 						{
 							$params=explode(':',$value,2);
 							$this->tabs_modules[$params[0]][]=$value;
+						}
+						// If this is constant for a sms engine
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
+						{
+							$module=strtolower($reg[1]);
+							$this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
 						}
 						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with ':'
 						// TODO obsolete (see generic parts)
@@ -166,11 +165,12 @@ class Conf
 								$this->hooks_modules[$modulename][]=$value;
 							}
 						}
-						// If this is constant for a sms engine
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
+						// If this is constant for a css file activated by a module
+						// TODO obsolete (see generic parts)
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key,$reg))
 						{
-						    $module=strtolower($reg[1]);
-						    $this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
+							$modulename = strtolower($reg[1]);
+							$this->css_modules[$modulename]=$value;
 						}
 						// If this is constant for triggers activated by a module
 						// TODO obsolete (see generic parts)
@@ -187,38 +187,9 @@ class Conf
 							$varname = $partname.'_modules';
 							$arrValue = unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else $value = ($value === 1 ? '/'.$modulename.'/core/'.$partname.'/' : '/'.$modulename.'/'.$value);
+							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : '/'.$modulename.$value);
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
-
-                        // TODO All of this part could be mutualized into one generic part
-                        /*
-						// If this is constant for login method activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$this->login_modules[$modulename] = '/'.$modulename.'/core/login/';
-						}
-						// If this is constant for a new tab page activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_MENUS$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$this->menus_modules[$modulename] = '/'.$modulename.'/core/menus/';
-						}
-						// If this is constant for triggers activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$this->triggers_modules[$modulename] = '/'.$modulename.'/core/triggers/';
-						}
-						// If this is constant for triggers activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SUBSTITUTIONS$/i',$key,$reg))
-						{
-						    $modulename = strtolower($reg[1]);
-						    $this->substitutions_modules[$modulename] = '/'.$modulename.'/core/substitutions/';
-						}
-						*/
-
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
 						{
