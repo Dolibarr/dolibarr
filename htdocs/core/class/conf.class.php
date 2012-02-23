@@ -154,24 +154,6 @@ class Conf
 							$module=strtolower($reg[1]);
 							$this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
 						}
-						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with ':'
-						// TODO obsolete (see generic parts)
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$params=explode(':',$value);
-							foreach($params as $value)
-							{
-								$this->hooks_modules[$modulename][]=$value;
-							}
-						}
-						// If this is constant for triggers activated by a module
-						// TODO obsolete (see generic parts)
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_BARCODE$/i',$key,$reg))
-						{
-						    $modulename = strtolower($reg[1]);
-						    $this->barcode_modules[$modulename] = '/'.$modulename.'/core/modules/barcode/';
-						}
 						// If this is constant for all generic part activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_([A-Z]+)$/i',$key,$reg))
 						{
