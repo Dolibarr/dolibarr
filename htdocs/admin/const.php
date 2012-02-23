@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ $langs->load("admin");
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action');
+$debug = GETPOST('debug');
 
 $typeconst=array('yesno','texte','chaine');
 
@@ -182,7 +183,7 @@ print '</tr>';
 print '</form>';
 print "\n";
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 // Show constants
@@ -195,7 +196,8 @@ $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
-if ($user->entity || empty($conf->multicompany->enabled)) $sql.= " AND visible = 1";
+if (empty($user->entity) && $debug) {} // to force for superadmin
+elseif ($user->entity || empty($conf->multicompany->enabled)) $sql.= " AND visible = 1";
 $sql.= " ORDER BY entity, name ASC";
 
 dol_syslog("Const::listConstant sql=".$sql);
@@ -249,7 +251,7 @@ if ($result)
 		}
 		else
 		{
-			print '<a href="const.php?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete">'.img_delete().'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
 		}
 
 		print "</td></tr>\n";
@@ -275,8 +277,7 @@ if ($conf->use_javascript_ajax)
 
 print "</form>\n";
 
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>

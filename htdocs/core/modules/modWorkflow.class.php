@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010		Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ class modWorkflow extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function modWorkflow($db)
+    function __construct($db)
     {
         $this->db = $db;
 
@@ -65,17 +65,14 @@ class modWorkflow extends DolibarrModules
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
         $this->picto='technic';
 
-        // Defined if the directory /mymodule/core/triggers/ contains triggers or not
-        $this->triggers = 1;
-
         // Data directories to create when module is enabled
         $this->dirs = array("/workflow/temp");
 
-        // Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
-        $this->style_sheet = '';
-
         // Config pages. Put here list of php page names stored in admmin directory used to setup module.
         $this->config_page_url = 'workflow.php';
+        
+        // Defined all module parts (triggers, login, substitutions, menus, css, etc...)
+        $this->module_parts = array('triggers' => 1);
 
         // Dependencies
         $this->depends = array();       // List of modules id that must be enabled if this module is enabled
