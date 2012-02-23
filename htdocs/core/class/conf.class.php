@@ -165,13 +165,6 @@ class Conf
 								$this->hooks_modules[$modulename][]=$value;
 							}
 						}
-						// If this is constant for a css file activated by a module
-						// TODO obsolete (see generic parts)
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$this->css_modules[$modulename]=$value;
-						}
 						// If this is constant for triggers activated by a module
 						// TODO obsolete (see generic parts)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_BARCODE$/i',$key,$reg))
@@ -187,7 +180,7 @@ class Conf
 							$varname = $partname.'_modules';
 							$arrValue = unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : '/'.$modulename.$value);
+							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)

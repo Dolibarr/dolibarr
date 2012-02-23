@@ -69,15 +69,15 @@ class modMyModule extends DolibarrModules
 		$this->picto='generic';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
-		// for default path (eg: /mymodule/core/triggers) (0=disable, 1=enable)
-		// for specific path of parts (eg: /core/modules/barcode)
-		// for specific css file (eg: /css/mymodule.css.php)
+		// for default path (eg: /mymodule/core/xxxxx) (0=disable, 1=enable)
+		// for specific path of parts (eg: /mymodule/core/modules/barcode)
+		// for specific css file (eg: /mymodule/css/mymodule.css.php)
 		//$this->module_parts = array(	'triggers' => 1,
 		//								'login' => 0,
 		//								'substitutions' => 0,
 		//								'menus' => 0,
-		//								'css' => '/css/mymodule.css.php',
-		//								'barcode' => '/path/to/your/parts',
+		//								'css' => '/mymodule/css/mymodule.css.php',
+		//								'barcode' => '/mymodule/path/to/your/parts',
 		//								'hooks' => array('hookcontext1','hookcontext2'));
 		$this->module_parts = array();
 
