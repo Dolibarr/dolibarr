@@ -156,6 +156,7 @@ class Conf
 							$this->tabs_modules[$params[0]][]=$value;
 						}
 						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with ':'
+						// TODO obsolete (see generic parts)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
@@ -184,7 +185,9 @@ class Conf
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							$varname = $partname.'_modules';
-							$value = ($value === 1 ? '/'.$modulename.'/core/'.$partname.'/' : '/'.$modulename.'/'.$value);
+							$arrValue = unserialize($value);
+							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
+							else $value = ($value === 1 ? '/'.$modulename.'/core/'.$partname.'/' : '/'.$modulename.'/'.$value);
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
 
