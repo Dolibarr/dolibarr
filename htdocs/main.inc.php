@@ -1270,12 +1270,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $parameters=array();
     $toprightmenu.=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
 
-    // TODO Replace this with a hook printToprightMenu to complete toprightmenu.
-    if (! empty($conf->multicompany->enabled))
-    {
-        $mc->showInfo($conf->entity);
-    }
-
     // Logout link
     $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
 
