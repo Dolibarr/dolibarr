@@ -3397,14 +3397,15 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *    	Make substition into a string
- *      There is two type of substitions:
- * 		- From $substitutionarray (oldval=>newval)
- * 		- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
+ *  Make substition into a string
+ *  There is two type of substitions:
+ * 	- From $substitutionarray (oldval=>newval)
+ * 	- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
  *
- *    	@param	string	$chaine      			Source string in which we must do substitution
- *    	@param  array	$substitutionarray		Array with key->val to substitute
- *    	@return string  		    			Output string after subsitutions
+ *  @param	string	$chaine      			Source string in which we must do substitution
+ *  @param  array	$substitutionarray		Array with key->val to substitute
+ * 	@return string  		    			Output string after subsitutions
+ *  @see	make_substitutions
  */
 function make_substitutions($chaine,$substitutionarray)
 {
@@ -3421,10 +3422,11 @@ function make_substitutions($chaine,$substitutionarray)
 /**
  *  Complete the $substitutionarray with more entries
  *
- *  @param  array		&$substitutionarray       Array substitution old value => new value value
- *  @param  Translate	$outputlangs             If we want substitution from special constants, we provide a language
- *  @param  Object		$object                  If we want substitution from special constants, we provide data in a source object
+ *  @param  array		&$substitutionarray		Array substitution old value => new value value
+ *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
+ *  @param  Object		$object                 If we want substitution from special constants, we provide data in a source object
  *  @return	void
+ *  @see 	make_substitutions
  */
 function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='')
 {
@@ -3433,23 +3435,26 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
     require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
     // Check if there is external substitution to do asked by plugins
-    // We look files into the core/modules/substitutions directory
-    // By default, there is no such external plugins.
-    foreach ($conf->file->dol_document_root as $dirroot)
+    $dirsubstitutions=array_merge(array(),$conf->substitutions_modules);
+
+    foreach($dirsubstitutions as $reldir)
     {
-        $substitfiles=dol_dir_list($dirroot.'/core/modules/substitutions','files',0,'functions_');
+        $dir=dol_buildpath($reldir,0);
+
+        // Check if directory exists
+        if (! dol_is_dir($dir)) continue;
+
+        $substitfiles=dol_dir_list($dir,'files',0,'functions_');
         foreach($substitfiles as $substitfile)
         {
             if (preg_match('/functions_(.*)\.lib\.php/i',$substitfile['name'],$reg))
             {
                 $module=$reg[1];
-                if (! empty($conf->$module->enabled))   // If module enabled
-                {
-                    dol_syslog("Library functions_".$module.".lib.php found into ".$dirroot);
-                    require_once($dirroot."/core/modules/substitutions/functions_".$module.".lib.php");
-                    $function_name=$module."_completesubstitutionarray";
-                    $function_name($substitutionarray,$outputlangs,$object);
-                }
+
+                dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
+                require_once($dir.$substitfile['name']);
+                $function_name=$module."_completesubstitutionarray";
+                $function_name($substitutionarray,$outputlangs,$object);
             }
         }
     }

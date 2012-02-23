@@ -106,25 +106,32 @@ $barcodelist=array();
 clearstatcache();
 
 
-foreach ($conf->file->dol_document_root as $dirroot)
-{
-	$dir = $dirroot . "/core/modules/barcode/";
+// Check if there is external substitution to do asked by plugins
+$dirbarcode=array_merge(array("/core/modules/barcode/"),$conf->barcode_modules);
 
-	$handle=@opendir($dir);
+foreach($dirbarcode as $reldir)
+{
+    $dir=dol_buildpath($reldir,0);
+    $newdir=dol_osencode($dir);
+
+    // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
+    if (! is_dir($newdir)) continue;
+
+	$handle=@opendir($newdir);
 	if (is_resource($handle))
 	{
 		while (($file = readdir($handle))!==false)
 		{
 			if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 			{
-				if (is_readable($dir.$file))
+				if (is_readable($newdir.$file))
 				{
 					if (preg_match('/(.*)\.modules\.php$/i',$file,$reg))
 					{
 						$filebis=$reg[1];
 
 						// Chargement de la classe de codage
-						require_once($dir.$file);
+						require_once($newdir.$file);
 						$classname = "mod".ucfirst($filebis);
 						$module = new $classname($db);
 
@@ -190,12 +197,16 @@ if ($resql)
 		if ($obj->coder && $obj->coder != -1)
 		{
 			$result=0;
-			// Chargement de la classe de codage
-			foreach ($conf->file->dol_document_root as $dirroot)
+
+			foreach($dirbarcode as $reldir)
 			{
-				$dir=$dirroot . "/core/modules/barcode/";
-				$result=@include_once($dir.$obj->coder.".modules.php");
-				//print $dir.$obj->coder.".modules.php - ".$result;
+			    $dir=dol_buildpath($reldir,0);
+			    $newdir=dol_osencode($dir);
+
+			    // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
+			    if (! is_dir($newdir)) continue;
+
+				$result=@include_once($newdir.$obj->coder.".modules.php");
 				if ($result) break;
 			}
 			if ($result)

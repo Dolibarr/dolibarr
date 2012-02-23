@@ -190,28 +190,29 @@ print '</td>';
 print "<td align=\"left\">".$form->textwithpicto('','Only LOG_USER supported on Windows');
 print '</td></tr>';
 
-/*
 try
 {
     set_include_path('/usr/share/php/');
-    require_once('FirePHPCore/FirePHP.class.php');
+    $res=@include_once('FirePHPCore/FirePHP.class.php');
     restore_include_path();
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FIREPHP_ON" '.$option.' value="1" ';
-    if (! class_exists('FirePHP')) print ' disabled="disabled"';
-    else print ($syslog_firephp_on?' checked="checked"':"");
-    print '> '.$langs->trans("FirePHP").'</td>';
-    print '<td width="250" nowrap="nowrap">';
-    print '</td>';
-    print "<td align=\"left\">".$form->textwithpicto('','FirePHP must be installed onto PHP and FirePHP plugin for Firefox must also be installed');
-    print '</td></tr>';
+    if ($res)
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FIREPHP_ON" '.$option.' value="1" ';
+        if (! class_exists('FirePHP')) print ' disabled="disabled"';
+        else print ($syslog_firephp_on?' checked="checked"':"");
+        print '> '.$langs->trans("FirePHP").'</td>';
+        print '<td width="250" nowrap="nowrap">';
+        print '</td>';
+        print "<td align=\"left\">".$form->textwithpicto('','FirePHP must be installed onto PHP and FirePHP plugin for Firefox must also be installed');
+        print '</td></tr>';
+    }
 }
-catch(DolException $e)
+catch(Exception $e)
 {
     // Do nothing
     print '<!-- FirePHP no available into PHP -->'."\n";
 }
-*/
 
 print "</table>\n";
 print "</form>\n";

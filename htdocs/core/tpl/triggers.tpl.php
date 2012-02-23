@@ -19,7 +19,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<table class="noborder" width="100%">
+<table class="noborder" style="width: 100%">
 <tr class="liste_titre">
 <td colspan="2"><?php echo $langs->trans("File"); ?></td>
 <td align="center"><?php echo $langs->trans("Version"); ?></td>
@@ -29,7 +29,8 @@
 
 <?php
 $var=True;
-foreach ($triggers as $trigger) {
+foreach ($triggers as $trigger)
+{
 $var=!$var;
 ?>
 
@@ -39,11 +40,13 @@ $var=!$var;
 <td valign="top"><?php echo $trigger['file']; ?></td>
 <td valign="top" align="center"><?php echo $trigger['version']; ?></td>
 <td valign="top" align="center"><?php echo $trigger['status']; ?></td>
-<td valign="top"><?php echo $trigger['info']; ?></td>
+<td valign="top"><?php echo $form->textwithpicto('', $trigger['info']); ?></td>
 
 </tr>
 
-<?php } ?>
+<?php
+}
+?>
 
 </table>
 

@@ -1305,7 +1305,7 @@ if ($rowid && $action != 'edit')
 
     // Other attributes
     $parameters=array();
-    $reshook=$hookmanager->executeHooks('showOutputField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
         foreach($extrafields->attribute_label as $key=>$label)

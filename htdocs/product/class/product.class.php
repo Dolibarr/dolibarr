@@ -23,21 +23,20 @@
 /**
  *	\file       htdocs/product/class/product.class.php
  *	\ingroup    produit
- *	\brief      Fichier de la classe des produits predefinis
+ *	\brief      File of class to manage predefined products or services
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
 /**
- * \class      Product
- * \brief      Class to manage products and services
+ * Class to manage products or services
  */
 class Product extends CommonObject
 {
 	public $element='product';
 	public $table_element='product';
 	public $fk_element='fk_product';
-	protected $childtables=array('propaldet','commandedet','facturedet','contratdet','product_fournisseur_price');
+	protected $childtables=array('propaldet','commandedet','facturedet','contratdet');    // To test if we can delete object
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -526,28 +525,24 @@ class Product extends CommonObject
 			{
 			    $this->db->begin();
 
-			    // Delete supplier prices
-                if (! $error)
-                {
-    			    $sql = 'DELETE pfp';
-    				$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
-    				$sql.= ' WHERE pfp.fk_product = '.$id;
-                    dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
-    				$result = $this->db->query($sql);
-    				if (! $result)
-    				{
-    				    $error++;
-    					$this->error = $this->db->lasterror();
-    				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
-    				}
-                }
+			    if (! $error)
+			    {
+			        // Appel des triggers
+			        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			        $interface=new Interfaces($this->db);
+			        $result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
+			        if ($result < 0) {
+			            $error++; $this->errors=$interface->errors;
+			        }
+			        // Fin appel triggers
+			    }
 
-                // Other child tables
-                if (! $error)
-                {
-                    $elements = array('product_price','product_lang','categorie_product');
-    				foreach($elements as $table)
-    				{
+                // Delete all child tables
+                $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product');
+				foreach($elements as $table)
+				{
+				    if (! $error)
+				    {
     					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
     					$sql.= " WHERE fk_product = ".$id;
         				dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
@@ -558,13 +553,10 @@ class Product extends CommonObject
         					$this->error = $this->db->lasterror();
         				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
         				}
-    				}
-                }
+				    }
+				}
 
-                // Removed extrafields
-                //$result=$this->deleteExtraFields($this);
-                //if ($result < 0) $error++;
-
+                // TODO Remove this. It can already be addressed by previous triggers
                 if (! $error)
                 {
                 	// Actions on extra fields (by external module or standard code)
@@ -593,16 +585,6 @@ class Product extends CommonObject
     					$this->error = $this->db->lasterror();
     				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
     				}
-                }
-
-                if (! $error)
-                {
-                    // Appel des triggers
-    				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-    				$interface=new Interfaces($this->db);
-    				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
-    				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-    				// Fin appel triggers
                 }
 
 				if ($error)

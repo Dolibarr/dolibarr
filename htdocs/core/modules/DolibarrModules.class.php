@@ -177,7 +177,7 @@ abstract class DolibarrModules
         // Remove activation of module's triggers (MAIN_MODULE_MYMODULE_TRIGGERS in llx_const)
         if (! $err) $err+=$this->delete_triggers();
 
-        // Remove activation of module's authentification method (MAIN_MODULE_MYMODULE_LOGIN_METHOD in llx_const)
+        // Remove activation of module's authentification method (MAIN_MODULE_MYMODULE_LOGIN in llx_const)
         if (! $err) $err+=$this->delete_login_method();
 
         // Remove constants defined by modules
@@ -1424,7 +1424,7 @@ abstract class DolibarrModules
             $sql.= ", entity";
             $sql.= ")";
             $sql.= " VALUES (";
-            $sql.= $this->db->encrypt($this->const_name."_LOGIN_METHOD",1);
+            $sql.= $this->db->encrypt($this->const_name."_LOGIN",1);
             $sql.= ", 'chaine'";
             $sql.= ", ".$this->db->encrypt($this->login_method,1);
             $sql.= ", null";
@@ -1455,7 +1455,7 @@ abstract class DolibarrModules
         $err=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_LOGIN_METHOD'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_LOGIN'";
         $sql.= " AND entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::delete_login_method sql=".$sql);
