@@ -40,6 +40,7 @@ $message = '';
 $substitutionarray=array(
 '__ID__' => 'IdRecord',
 '__EMAIL__' => 'EMail',
+'__CHECK_READ__' => 'CheckMailIsRead',
 '__LASTNAME__' => 'Lastname',
 '__FIRSTNAME__' => 'Firstname',
 '__OTHER1__' => 'Other1',
@@ -51,6 +52,7 @@ $substitutionarray=array(
 $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
 '__EMAIL__' => 'TESTEMail',
+'__CHECK_READ__' => 'TESTCheckMailIsRead',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname',
 '__OTHER1__' => 'TESTOther1',
@@ -178,6 +180,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					$substitutionarray=array(
 						'__ID__' => $obj->source_id,
 						'__EMAIL__' => $obj->email,
+						'__CHECK_READ__' => '<IMG SRC="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?mail_cbl_id='.$obj->rowid.'&mail='.$obj->email.'" style="width:0px;height:0px" border="0"/>',
 						'__LASTNAME__' => $obj->nom,
 						'__FIRSTNAME__' => $obj->prenom,
 						'__OTHER1__' => $other1,
@@ -186,7 +189,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 						'__OTHER4__' => $other4,
 						'__OTHER5__' => $other5
 					);
-
+										
 					$substitutionisok=true;
                     complete_substitutions_array($substitutionarray, $langs);
 					$newsubject=make_substitutions($subject,$substitutionarray);
@@ -1026,6 +1029,7 @@ else
 			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 			print '__ID__ = '.$langs->trans("IdRecord").'<br>';
 			print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
+			print '__CHECK_READ__ = '.$langs->trans("CheckRead").'<br>';
 			print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
 			print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
 			print '__OTHER1__ = '.$langs->trans("Other").'1<br>';
