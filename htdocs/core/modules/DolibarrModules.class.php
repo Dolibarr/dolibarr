@@ -71,17 +71,8 @@ abstract class DolibarrModules
         // Insert activation module constant
         if (! $err) $err+=$this->_active();
 
-        // Insere le nom de la feuille de style
-        if (! $err) $err+=$this->insert_style_sheet();
-
         // Insert new pages for tabs into llx_const
         if (! $err) $err+=$this->insert_tabs();
-
-        // Insert activation triggers
-        if (! $err) $err+=$this->insert_triggers();
-
-        // Insert activation login method
-        if (! $err) $err+=$this->insert_login_method();
         
         // Insert activation of module's parts
         if (! $err) $err+=$this->insert_module_parts();
@@ -171,17 +162,8 @@ abstract class DolibarrModules
         // Remove activation module line (constant MAIN_MODULE_MYMODULE in llx_const)
         if (! $err) $err+=$this->_unactive();
 
-        // Remove activation of module's style sheet (constant MAIN_MODULE_MYMODULE_CSS in llx_const)
-        if (! $err) $err+=$this->delete_style_sheet();
-
         // Remove activation of module's new tabs (MAIN_MODULE_MYMODULE_TABS_XXX in llx_const)
         if (! $err) $err+=$this->delete_tabs();
-
-        // Remove activation of module's triggers (MAIN_MODULE_MYMODULE_TRIGGERS in llx_const)
-        if (! $err) $err+=$this->delete_triggers();
-
-        // Remove activation of module's authentification method (MAIN_MODULE_MYMODULE_LOGIN in llx_const)
-        if (! $err) $err+=$this->delete_login_method();
         
         // Remove activation of module's parts (MAIN_MODULE_MYMODULE_XXX in llx_const)
         if (! $err) $err+=$this->delete_module_parts();
@@ -685,35 +667,6 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Desactive feuille de style du module par suppression ligne dans llx_const
-     *
-     *  @return     int     Nb of errors (0 if OK)
-     */
-    function delete_style_sheet()
-    {
-        global $conf;
-
-        $err=0;
-
-        if ($this->style_sheet)
-        {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-            $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."_CSS'";
-            $sql.= " AND entity = ".$conf->entity;
-
-            dol_syslog(get_class($this)."::delete_style_sheet sql=".$sql);
-            if (! $this->db->query($sql))
-            {
-                $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::delete_style_sheet ".$this->error, LOG_ERR);
-                $err++;
-            }
-        }
-
-        return $err;
-    }
-
-    /**
      *  Remove links to new module page present in llx_const
      *
      *  @return     int     Nb of errors (0 if OK)
@@ -734,49 +687,6 @@ abstract class DolibarrModules
             $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::delete_tabs ".$this->error, LOG_ERR);
             $err++;
-        }
-
-        return $err;
-    }
-
-    /**
-     *  Activate stylesheet provided by module by adding a line into llx_const
-     *
-     *  @return     int     Nb of errors (0 if OK)
-     */
-    function insert_style_sheet()
-    {
-        global $conf;
-
-        $err=0;
-
-        if ($this->style_sheet)
-        {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-            $sql.= "name";
-            $sql.= ", type";
-            $sql.= ", value";
-            $sql.= ", note";
-            $sql.= ", visible";
-            $sql.= ", entity";
-            $sql.= ")";
-            $sql.= " VALUES (";
-            $sql.= $this->db->encrypt($this->const_name."_CSS",1);
-            $sql.= ", 'chaine'";
-            $sql.= ", ".$this->db->encrypt($this->style_sheet,1);
-            $sql.= ", 'Style sheet for module ".$this->name."'";
-            $sql.= ", '0'";
-            $sql.= ", ".$conf->entity;
-            $sql.= ")";
-
-            dol_syslog(get_class($this)."::insert_style_sheet sql=".$sql);
-            $resql=$this->db->query($sql);
-            /* Allow duplicate key
-             if (! $resql)
-             {
-                $err++;
-                }
-                */
         }
 
         return $err;
@@ -1418,148 +1328,6 @@ abstract class DolibarrModules
     	}
     
     	return $err;
-    }
-    
-    /**
-     *  Insert activation triggers from modules in llx_const
-     *
-     *  @return     int     Nb of errors (0 if OK)
-     *  @deprecated
-     *  @see insert_module_parts()
-     */
-    function insert_triggers()
-    {
-        global $conf;
-
-        $err=0;
-
-        if (! empty($this->triggers))
-        {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-            $sql.= "name";
-            $sql.= ", type";
-            $sql.= ", value";
-            $sql.= ", note";
-            $sql.= ", visible";
-            $sql.= ", entity";
-            $sql.= ")";
-            $sql.= " VALUES (";
-            $sql.= $this->db->encrypt($this->const_name."_TRIGGERS",1);
-            $sql.= ", 'chaine'";
-            $sql.= ", ".$this->db->encrypt($this->triggers,1);
-            $sql.= ", null";
-            $sql.= ", '0'";
-            $sql.= ", ".$conf->entity;
-            $sql.= ")";
-
-            dol_syslog(get_class($this)."::insert_triggers sql=".$sql);
-            $resql=$this->db->query($sql);
-            if (! $resql)
-            {
-                $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::insert_triggers ".$this->error);
-            }
-        }
-        return $err;
-    }
-
-    /**
-     *  Remove activation triggers from modules in llx_const
-     *
-     *  @return     int     Nb of errors (0 if OK)
-     *  @deprecated
-     *  @see delete_module_parts()
-     */
-    function delete_triggers()
-    {
-        global $conf;
-
-        $err=0;
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_TRIGGERS'";
-        $sql.= " AND entity = ".$conf->entity;
-
-        dol_syslog(get_class($this)."::delete_triggers sql=".$sql);
-        if (! $this->db->query($sql))
-        {
-            $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete_triggers ".$this->error, LOG_ERR);
-            $err++;
-        }
-
-        return $err;
-    }
-
-    /**
-     *  Insert activation login method from modules in llx_const
-     *
-     *  @return     int             Number of errors (0 if ok)
-     *  @deprecated
-     *  @see insert_module_parts()
-     */
-    function insert_login_method()
-    {
-        global $conf;
-
-        $err=0;
-
-        if (! empty($this->login_method))
-        {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-            $sql.= "name";
-            $sql.= ", type";
-            $sql.= ", value";
-            $sql.= ", note";
-            $sql.= ", visible";
-            $sql.= ", entity";
-            $sql.= ")";
-            $sql.= " VALUES (";
-            $sql.= $this->db->encrypt($this->const_name."_LOGIN",1);
-            $sql.= ", 'chaine'";
-            $sql.= ", ".$this->db->encrypt($this->login_method,1);
-            $sql.= ", null";
-            $sql.= ", '0'";
-            $sql.= ", ".$conf->entity;
-            $sql.= ")";
-
-            dol_syslog(get_class($this)."::insert_login_method sql=".$sql);
-            $resql=$this->db->query($sql);
-            if (! $resql)
-            {
-                $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::insert_login_method ".$this->error);
-            }
-        }
-        return $err;
-    }
-
-    /**
-     *  Remove activation login method from modules in llx_const
-     *
-     *  @return     int     Nombre d'erreurs (0 si ok)
-     *  @deprecated
-     *  @see delete_module_parts()
-     */
-    function delete_login_method()
-    {
-        global $conf;
-
-        $err=0;
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_LOGIN'";
-        $sql.= " AND entity = ".$conf->entity;
-
-        dol_syslog(get_class($this)."::delete_login_method sql=".$sql);
-        if (! $this->db->query($sql))
-        {
-            $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete_login_method ".$this->error, LOG_ERR);
-            $err++;
-        }
-
-        return $err;
     }
 
 }
