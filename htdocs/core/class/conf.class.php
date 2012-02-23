@@ -51,26 +51,26 @@ class Conf
 	public $top_menu;
 	public $smart_menu;
 
-	public $modules				  = array();	// List of activated modules
+	public $modules					= array();	// List of activated modules
 
-	public $css_modules			  = array();
-	public $tabs_modules		  = array();
-	public $triggers_modules	  = array();
-	public $menus_modules	      = array();
-	public $hooks_modules		  = array();
-	public $login_method_modules  = array();
-	public $sms_engine_modules    = array();
-	public $barcode_modules       = array();
-	public $substitutions_modules = array();
+	public $css_modules				= array();
+	public $tabs_modules			= array();
+	public $triggers_modules		= array();
+	public $menus_modules			= array();
+	public $hooks_modules			= array();
+	public $login_modules			= array();
+	public $sms_engine_modules		= array();
+	public $barcode_modules			= array();
+	public $substitutions_modules	= array();
 
-	var $logbuffer = array();
+	var $logbuffer					= array();
 
 	//! To store properties of multi-company
 	public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
-	public $entity=1;
+	public $entity					= 1;
 	//! Used to store list of entities to use for each element
-	public $entities		 	 = array();
+	public $entities				= array();
 
 
 
@@ -176,14 +176,22 @@ class Conf
 						    $modulename = strtolower($reg[1]);
 						    $this->barcode_modules[$modulename] = '/'.$modulename.'/core/modules/barcode/';
 						}
+						// If this is constant for all generic part activated by a module
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_([A-Z]+)$/i',$key,$reg))
+						{
+							$modulename = strtolower($reg[1]);
+							$partname = strtolower($reg[2]);
+							$varname = $partname.'_modules';
+							$this->$varname[$modulename] = '/'.$modulename.'/core/'.$partname.'/';
+						}
 
                         // TODO All of this part could be mutualized into one generic part
-
+                        /*
 						// If this is constant for login method activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							$this->login_method_modules[$modulename] = '/'.$modulename.'/core/login/';
+							$this->login_modules[$modulename] = '/'.$modulename.'/core/login/';
 						}
 						// If this is constant for a new tab page activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_MENUS$/i',$key,$reg))
@@ -203,6 +211,7 @@ class Conf
 						    $modulename = strtolower($reg[1]);
 						    $this->substitutions_modules[$modulename] = '/'.$modulename.'/core/substitutions/';
 						}
+						*/
 
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
