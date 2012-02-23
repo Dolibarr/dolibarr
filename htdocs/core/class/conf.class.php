@@ -143,7 +143,7 @@ class Conf
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
 						// If this is constant for a css file activated by a module
-						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key))
+						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key,$reg))
 						{
 						    $modulename = strtolower($reg[1]);
 						    $this->css_modules[$modulename]=$value;
