@@ -1356,6 +1356,9 @@ abstract class DolibarrModules
     	{
     		foreach($this->module_parts as $key => $value)
     		{
+    			// Serialize array parameters
+    			if (is_array($value)) $value = serialize($value);
+    			
     			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
     			$sql.= "name";
     			$sql.= ", type";
