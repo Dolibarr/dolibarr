@@ -249,7 +249,6 @@ print "</form>\n";
 
 dol_htmloutput_mesg($mesg);
 
-
 llxFooter();
 
 $db->close();

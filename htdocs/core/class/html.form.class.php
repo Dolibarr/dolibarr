@@ -130,7 +130,7 @@ class Form
         // When option to edit inline is activated
         if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
         {
-            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $extObject, $success);
+            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $success);
         }
         else
         {
@@ -194,11 +194,12 @@ class Form
      * @param	string	$htmlname		DIV ID (field name)
      * @param	int		$condition		Condition to edit
      * @param	string	$inputType		Type of input ('numeric', 'datepicker', 'textarea', 'ckeditor:dolibarr_zzz', 'select:xxx')
+     * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @param	object	$extObject		External object
      * @param	string	$success		Success message		
      * @return	string   		      	HTML edit in place
      */
-    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $extObject=null, $success=null)
+    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $editvalue=null, $extObject=null, $success=null)
     {
         global $conf;
 
@@ -211,12 +212,13 @@ class Form
 
         if ($condition)
         {
-            $element = false;
-            $table_element = false;
-            $fk_element = false;
-            $loadmethod = false;
-            $savemethod = false;
-            $ext_element = false;
+            $element		= false;
+            $table_element	= false;
+            $fk_element		= false;
+            $loadmethod		= false;
+            $savemethod		= false;
+            $ext_element	= false;
+            $button_only	= false;
             //$ext_table_element = false;
             //$ext_fk_element = false;
 
@@ -253,6 +255,7 @@ class Form
                 $tmp=explode(':',$inputType);
                 $inputType=$tmp[0]; $loadmethod=$tmp[1];
                 if (! empty($tmp[2])) $savemethod=$tmp[2];
+                if (! empty($tmp[3])) $button_only=true;
             }
             else if (preg_match('/^ckeditor/',$inputType))
             {
@@ -281,8 +284,9 @@ class Form
             if (! empty($success)) $out.= '<input id="success_'.$htmlname.'" value="'.$success.'" type="hidden"/>'."\n";
             //$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
             //$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
-
-            $out.= '<div id="val_'.$htmlname.'" class="editval_'.$inputType.'">'.$value.'</div>'."\n";
+            
+            $out.= '<div id="viewval_'.$htmlname.'" class="viewval_'.$inputType.($button_only ? ' inactive' : ' active').'">'.$value.'</div>'."\n";
+            $out.= '<div id="editval_'.$htmlname.'" class="editval_'.$inputType.($button_only ? ' inactive' : ' active').' hideobject">'.(! empty($editvalue) ? $editvalue : $value).'</div>'."\n";
         }
         else
         {
