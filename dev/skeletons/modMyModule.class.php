@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +68,12 @@ class modMyModule extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='generic';
 
-		// Defined if the directory /mymodule/core/triggers/ contains triggers or not
-		$this->triggers = 0;
+		// Defined all module parts (triggers, login, substitutions, menus, etc...) (0=disable,1=enable)
+		$this->module_parts = array();
+		//$this->module_parts = array('triggers' => 1,
+		//							'login' => 0,
+		//							'substitutions' => 0,
+		//							'menus' => 0);
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
