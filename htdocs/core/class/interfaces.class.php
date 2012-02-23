@@ -78,17 +78,18 @@ class Interfaces
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
+            $newdir=dol_osencode($dir);
             //print "xx".$dir;exit;
 
-            // Check if directory exists
-            if (!is_dir($dir)) continue;
+            // Check if directory exists (we do not use dol_is_dir to avoir loading files.lib.php at each call)
+            if (! is_dir($newdir)) continue;
 
-            $handle=opendir($dir);
+            $handle=opendir($newdir);
             if (is_resource($handle))
             {
                 while (($file = readdir($handle))!==false)
                 {
-                    if (is_readable($dir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
+                    if (is_readable($newdir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
                     {
 						$part1=$reg[1];
 						$part2=$reg[2];
@@ -106,7 +107,7 @@ class Interfaces
                         }
                         else
                         {
-                            include_once($dir.'/'.$file);
+                            include_once($newdir.'/'.$file);
                         }
 
                         // Check if trigger file is disabled by name
@@ -197,28 +198,27 @@ class Interfaces
     {
         global $conf, $langs;
 
-        $form = new Form($this->db);
-
         $files = array();
         $modules = array();
         $orders = array();
         $i = 0;
 
-        $dirtriggers=array_merge(array('/core/triggers'),$conf->triggers_modules);
+        $dirtriggers=array_merge(array('/core/triggers/'),$conf->triggers_modules);
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
+            $newdir=dol_osencode($dir);
             //print "xx".$dir;exit;
 
-            // Check if directory exists
-            if (!is_dir($dir)) continue;
+            // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
+            if (! is_dir($newdir)) continue;
 
-            $handle=opendir($dir);
+            $handle=opendir($newdir);
             if (is_resource($handle))
             {
                 while (($file = readdir($handle))!==false)
                 {
-                    if (is_readable($dir.'/'.$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/',$file,$reg))
+                    if (is_readable($newdir.'/'.$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/',$file,$reg))
                     {
 						$part1=$reg[1];
 						$part2=$reg[2];
@@ -233,7 +233,7 @@ class Interfaces
                         }
                         else
                         {
-                            include_once($dir.'/'.$file);
+                            include_once($newdir.'/'.$file);
                         }
 
                         $files[$i] = $file;
@@ -298,7 +298,7 @@ class Interfaces
                 if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
             }
 
-            $triggers[$j]['info'] = $form->textwithpicto('',$text);
+            $triggers[$j]['info'] = $text;
             $j++;
         }
         return $triggers;

@@ -54,6 +54,7 @@ For users:
        suppliers invoice, orders, customers orders, proposals and social contributions.
 - New: [ task #176 ] Allow to use ODT templates for proposals and orders like it's done for invoices
 - Fix: Can use POS module with several concurrent users.
+- Fix: Installer don't fails with Mysql version that added a ssl_cypher field.
 
 For developers:
 - New: Can add a left menu into an existing top menu or left menu.

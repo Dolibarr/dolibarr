@@ -36,8 +36,8 @@ $dirstandard = array("/core/menus/standard");
 $dirsmartphone = array("/core/menus/smartphone");
 foreach($conf->menus_modules as $dir)
 {
-    $dirstandard[]=$dir.'/standard';
-    $dirsmartphone[]=$dir.'/standard';
+    $dirstandard[]=$dir.'standard';
+    $dirsmartphone[]=$dir.'standard';
 }
 
 $mesg=$_GET["mesg"];

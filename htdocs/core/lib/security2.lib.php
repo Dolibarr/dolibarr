@@ -63,8 +63,10 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 	// Validation of login/pass/entity with a third party login module method
 	if (! empty($conf->login_method_modules) && is_array($conf->login_method_modules))
 	{
-    	foreach($conf->login_method_modules as $dir)
+    	foreach($conf->login_method_modules as $reldir)
     	{
+    	    $dir=dol_buildpath($reldir,0);
+
     	    $newdir=dol_osencode($dir);
 
     		// Check if directory exists
