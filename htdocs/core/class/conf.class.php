@@ -143,18 +143,20 @@ class Conf
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
 						// If this is constant for a css file activated by a module
+						// TODO obsolete (see generic parts)
 						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key,$reg))
 						{
-						    $modulename = strtolower($reg[1]);
-						    $this->css_modules[$modulename]=$value;
+							$modulename = strtolower($reg[1]);
+							$this->css_modules[$modulename]=$value;
 						}
-					    // If this is constant for a new tab page activated by a module.
+						// If this is constant for a new tab page activated by a module.
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key))
 						{
 							$params=explode(':',$value,2);
 							$this->tabs_modules[$params[0]][]=$value;
 						}
 						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with ':'
+						// TODO obsolete (see generic parts)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
@@ -171,6 +173,7 @@ class Conf
 						    $this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
 						}
 						// If this is constant for triggers activated by a module
+						// TODO obsolete (see generic parts)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_BARCODE$/i',$key,$reg))
 						{
 						    $modulename = strtolower($reg[1]);
@@ -182,7 +185,10 @@ class Conf
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							$varname = $partname.'_modules';
-							$this->$varname = array_merge($this->$varname, array($modulename => '/'.$modulename.'/core/'.$partname.'/'));
+							$arrValue = unserialize($value);
+							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
+							else $value = ($value === 1 ? '/'.$modulename.'/core/'.$partname.'/' : '/'.$modulename.'/'.$value);
+							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
 
                         // TODO All of this part could be mutualized into one generic part
