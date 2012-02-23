@@ -182,7 +182,7 @@ class Conf
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							$varname = $partname.'_modules';
-							$this->$varname[$modulename] = '/'.$modulename.'/core/'.$partname.'/';
+							$this->$varname = array_merge($this->$varname, array($modulename => '/'.$modulename.'/core/'.$partname.'/'));
 						}
 
                         // TODO All of this part could be mutualized into one generic part
