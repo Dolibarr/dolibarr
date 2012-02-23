@@ -1067,9 +1067,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     global $hookmanager;
     global $mc;    // TODO Remove this. This should not bee required because code called on MC must be inside the new hook toprightmenu
 
-    // Instantiate hooks of thirdparty module
-    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-    $hookmanager=new HookManager($db);
+    // Instantiate hooks of thirdparty module only if not already define
+    if (!$hookmanager)
+    {
+    	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    	$hookmanager=new HookManager($db);
+    }
     $hookmanager->callHooks(array('toprightmenu'));
 
     $toprightmenu='';
@@ -1321,8 +1324,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     $bookmarks='';
 
     // Instantiate hooks of thirdparty module
-    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-    $hookmanager=new HookManager($db);
+    if (!$hookmanager)
+    {
+    	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    	$hookmanager=new HookManager($db);
+	}
     $hookmanager->callHooks(array('searchform','leftblock','toprightmenu'));
 
     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
