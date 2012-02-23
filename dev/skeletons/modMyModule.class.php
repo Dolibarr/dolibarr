@@ -68,12 +68,14 @@ class modMyModule extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='generic';
 
-		// Defined all module parts (triggers, login, substitutions, menus, etc...) (0=disable,1=enable)
+		// Defined all module parts (triggers, login, substitutions, menus, css, etc...) (0=disable,1=enable default path, '/mymodule/path/to/parts' for specific path)
 		$this->module_parts = array();
-		//$this->module_parts = array('triggers' => 1,
-		//							'login' => 0,
-		//							'substitutions' => 0,
-		//							'menus' => 0);
+		//$this->module_parts = array(	'triggers' => 1,
+		//								'login' => 0,
+		//								'substitutions' => '/specific/path/in/your/module',
+		//								'menus' => 0
+		//								'css' => '/css/mymodule.css.php'
+		//								'barcode => /path/to/your/parts');
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
