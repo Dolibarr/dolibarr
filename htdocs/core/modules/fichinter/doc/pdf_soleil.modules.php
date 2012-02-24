@@ -168,7 +168,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$tab_top = 100;
 				$tab_top_middlepage = 50;
 				$tab_top_newpage = 50;
-				$tab_height = 110;
+				$tab_height = 120;
 				$tab_height_newpage = 150;
 				$tab_height_middlepage = 200;
 				$tab_height_endpage = 170;
@@ -199,7 +199,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
-/*
+
 				$pdf->SetXY($this->marge_gauche, $tab_top);
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8 );
@@ -223,7 +223,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
 
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
-*/
+
 				$nblines = count($object->lines);
 
 				// Loop on each lines
@@ -236,15 +236,17 @@ class pdf_soleil extends ModelePDFFicheinter
 					{
 						$curY = $nexY;
 
+						$pdf->SetFont('','B', $default_font_size - 1);
 						$pdf->SetXY($this->marge_gauche, $curY);
 						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $txt, 0, 1, 0);
-						$nexY = $pdf->GetY();
+						$curY = $pdf->GetY();
+						$pdf->SetFont('','', $default_font_size - 1);
 
 						$pdf->SetXY($this->marge_gauche, $curY + 3);
 						$desc = dol_htmlentitiesbr($objectligne->desc,1);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY + 3, $desc, 0, 1, 0);
-						//$nexY+=dol_nboflines_bis($objectligne->desc,52,$outputlangs->charset_output)*3;
+						$nexY+=dol_nboflines_bis($objectligne->desc,52,$outputlangs->charset_output)*3;
 
 						$nexY+=2;    // Passe espace entre les lignes
 
@@ -297,26 +299,19 @@ class pdf_soleil extends ModelePDFFicheinter
 						}
 					}
 				}
-				//$pdf->line(10, $tab_top+$tab_height+3, 200, $tab_top+$tab_height+3);
+				
+				// Show square
+				if ($pagenb == 1)
+				{
+					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top + $tab_height + 1;
+				}
+				else
+				{
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
+				}
 
-				// Rectangle for title and all lines
-				/*
-				$pdf->Rect($this->marge_gauche, $tab_top, ($this->page_largeur-$this->marge_gauche-$this->marge_droite), $tab_height+3);
-				$pdf->SetXY($this->marge_gauche, $pdf->GetY() + 20);
-				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
-
-				$pdf->SetXY(20,220);
-				$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
-
-				$pdf->SetXY(20,225);
-				$pdf->MultiCell(80,30, '', 1);
-
-				$pdf->SetXY(110,220);
-				$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
-
-				$pdf->SetXY(110,225);
-				$pdf->MultiCell(80,30, '', 1);
-*/
 				$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -359,7 +354,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
+/*
 		$pdf->SetXY($this->marge_gauche, $tab_top);
 		$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 		$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
@@ -383,21 +378,21 @@ class pdf_soleil extends ModelePDFFicheinter
 		$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
 
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
-
+*/
 		$pdf->Rect($this->marge_gauche, $tab_top, ($this->page_largeur-$this->marge_gauche-$this->marge_droite), $tab_height+3);
 		$pdf->SetXY($this->marge_gauche, $pdf->GetY() + 20);
 		$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
-		$pdf->SetXY(20,220);
+		$pdf->SetXY(20,230);
 		$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
 
-		$pdf->SetXY(20,225);
+		$pdf->SetXY(20,235);
 		$pdf->MultiCell(80,30, '', 1);
 
-		$pdf->SetXY(110,220);
+		$pdf->SetXY(110,230);
 		$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
 
-		$pdf->SetXY(110,225);
+		$pdf->SetXY(110,235);
 		$pdf->MultiCell(80,30, '', 1);
 	}
 
