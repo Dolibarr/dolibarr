@@ -73,7 +73,7 @@ abstract class DolibarrModules
 
         // Insert new pages for tabs into llx_const
         if (! $err) $err+=$this->insert_tabs();
-        
+
         // Insert activation of module's parts
         if (! $err) $err+=$this->insert_module_parts();
 
@@ -164,7 +164,7 @@ abstract class DolibarrModules
 
         // Remove activation of module's new tabs (MAIN_MODULE_MYMODULE_TABS_XXX in llx_const)
         if (! $err) $err+=$this->delete_tabs();
-        
+
         // Remove activation of module's parts (MAIN_MODULE_MYMODULE_XXX in llx_const)
         if (! $err) $err+=$this->delete_module_parts();
 
@@ -1253,22 +1253,22 @@ abstract class DolibarrModules
 
     /**
      * Insert activation of generic parts from modules in llx_const
-     * 
+     *
      * @return     int     Nb of errors (0 if OK)
      */
     function insert_module_parts()
     {
     	global $conf;
-    
+
     	$err=0;
     	$entity=$conf->entity;
-    
+
     	if (is_array($this->module_parts) && ! empty($this->module_parts))
     	{
     		foreach($this->module_parts as $key => $value)
     		{
     			$newvalue = $value;
-    			
+
     			// Serialize array parameters
     			if (is_array($value))
     			{
@@ -1283,7 +1283,7 @@ abstract class DolibarrModules
     					$newvalue = serialize($value);
     				}
     			}
-    			
+
     			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
     			$sql.= "name";
     			$sql.= ", type";
@@ -1300,30 +1300,30 @@ abstract class DolibarrModules
     			$sql.= ", '0'";
     			$sql.= ", ".$entity;
     			$sql.= ")";
-    			
-    			dol_syslog(get_class($this)."::insert_".$key." sql=".$sql);
+
+    			dol_syslog(get_class($this)."::insert_const_".$key." sql=".$sql);
     			$resql=$this->db->query($sql);
     			if (! $resql)
     			{
     				$this->error=$this->db->lasterror();
-    				dol_syslog(get_class($this)."::insert_".$key." ".$this->error);
+    				dol_syslog(get_class($this)."::insert_const_".$key." ".$this->error);
     			}
     		}
     	}
     	return $err;
     }
-    
+
     /**
-     * Remove activation of generic parts from modules in llx_const
-     * 
+     * Remove activation of generic parts of modules from llx_const
+     *
      * @return     int     Nb of errors (0 if OK)
      */
     function delete_module_parts()
     {
     	global $conf;
-    
+
     	$err=0;
-    	
+
     	if (is_array($this->module_parts) && ! empty($this->module_parts))
     	{
     		foreach($this->module_parts as $key => $value)
@@ -1331,17 +1331,17 @@ abstract class DolibarrModules
     			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
     			$sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
     			$sql.= " AND entity = ".$conf->entity;
-    			
-    			dol_syslog(get_class($this)."::delete_".$key." sql=".$sql);
+
+    			dol_syslog(get_class($this)."::delete_const_".$key." sql=".$sql);
     			if (! $this->db->query($sql))
     			{
     				$this->error=$this->db->lasterror();
-    				dol_syslog(get_class($this)."::delete_".$key." ".$this->error, LOG_ERR);
+    				dol_syslog(get_class($this)."::delete_const_".$key." ".$this->error, LOG_ERR);
     				$err++;
     			}
     		}
     	}
-    
+
     	return $err;
     }
 

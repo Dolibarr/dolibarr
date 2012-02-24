@@ -33,6 +33,7 @@ $langs->load("admin");
 
 $mode=isset($_GET["mode"])?GETPOST("mode"):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
 $mesg=GETPOST("mesg");
+$action=GETPOST('action');
 
 if (!$user->admin) accessforbidden();
 
@@ -41,7 +42,7 @@ if (!$user->admin) accessforbidden();
  * Actions
  */
 
-if (isset($_GET["action"]) && $_GET["action"] == 'set' && $user->admin)
+if ($action == 'set' && $user->admin)
 {
     $result=activateModule($_GET["value"]);
     $mesg='';
@@ -50,7 +51,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'set' && $user->admin)
 	exit;
 }
 
-if (isset($_GET["action"]) && $_GET["action"] == 'reset' && $user->admin)
+if ($action == 'reset' && $user->admin)
 {
     $result=unActivateModule($_GET["value"]);
     $mesg='';
