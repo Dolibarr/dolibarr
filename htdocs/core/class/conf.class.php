@@ -160,7 +160,7 @@ class Conf
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							$varname = $partname.'_modules';
-							$this->$varname = array();
+							if (! is_array($this->$varname)) { $this->$varname = array(); }
 							$arrValue = unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
