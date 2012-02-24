@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin      	<regis@dolibarr.fr>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
@@ -51,26 +51,26 @@ class Conf
 	public $top_menu;
 	public $smart_menu;
 
-	public $modules				  = array();	// List of activated modules
+	public $modules					= array();	// List of activated modules
 
-	public $css_modules			  = array();
-	public $tabs_modules		  = array();
-	public $triggers_modules	  = array();
-	public $menus_modules	      = array();
-	public $hooks_modules		  = array();
-	public $login_method_modules  = array();
-	public $sms_engine_modules    = array();
-	public $barcode_modules       = array();
-	public $substitutions_modules = array();
+	public $css_modules				= array();
+	public $tabs_modules			= array();
+	public $triggers_modules		= array();
+	public $menus_modules			= array();
+	public $hooks_modules			= array();
+	public $login_modules			= array();
+	public $sms_engine_modules		= array();
+	public $barcode_modules			= array();
+	public $substitutions_modules	= array();
 
-	var $logbuffer = array();
+	var $logbuffer					= array();
 
 	//! To store properties of multi-company
 	public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
-	public $entity=1;
+	public $entity					= 1;
 	//! Used to store list of entities to use for each element
-	public $entities		 	 = array();
+	public $entities				= array();
 
 
 
@@ -142,68 +142,30 @@ class Conf
 
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
-						// If this is constant for a css file activated by a module
-						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key))
-						{
-						    $modulename = strtolower($reg[1]);
-						    $this->css_modules[$modulename]=$value;
-						}
-					    // If this is constant for a new tab page activated by a module.
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key))
+						// If this is constant for a new tab page activated by a module.
+						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key))
 						{
 							$params=explode(':',$value,2);
 							$this->tabs_modules[$params[0]][]=$value;
 						}
-						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with ':'
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$params=explode(':',$value);
-							foreach($params as $value)
-							{
-								$this->hooks_modules[$modulename][]=$value;
-							}
-						}
 						// If this is constant for a sms engine
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
 						{
-						    $module=strtolower($reg[1]);
-						    $this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
+							$module=strtolower($reg[1]);
+							$this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
 						}
-						// If this is constant for triggers activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_BARCODE$/i',$key,$reg))
-						{
-						    $modulename = strtolower($reg[1]);
-						    $this->barcode_modules[$modulename] = '/'.$modulename.'/core/modules/barcode/';
-						}
-
-                        // TODO All of this part could be mutualized into one generic part
-
-						// If this is constant for login method activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN$/i',$key,$reg))
+						// If this is constant for all generic part activated by a module
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_([A-Z]+)$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							$this->login_method_modules[$modulename] = '/'.$modulename.'/core/login/';
+							$partname = strtolower($reg[2]);
+							$varname = $partname.'_modules';
+							if (! is_array($this->$varname)) { $this->$varname = array(); }
+							$arrValue = unserialize($value);
+							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
+							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
+							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
-						// If this is constant for a new tab page activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_MENUS$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$this->menus_modules[$modulename] = '/'.$modulename.'/core/menus/';
-						}
-						// If this is constant for triggers activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$this->triggers_modules[$modulename] = '/'.$modulename.'/core/triggers/';
-						}
-						// If this is constant for triggers activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SUBSTITUTIONS$/i',$key,$reg))
-						{
-						    $modulename = strtolower($reg[1]);
-						    $this->substitutions_modules[$modulename] = '/'.$modulename.'/core/substitutions/';
-						}
-
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
 						{

@@ -320,7 +320,7 @@ if (! defined('NOLOGIN'))
     $authmode=explode(',',$dolibarr_main_authentication);
 
     // No authentication mode
-    if (! count($authmode) && empty($conf->login_method_modules))
+    if (! count($authmode) && empty($conf->login_modules))
     {
         $langs->load('main');
         dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
@@ -1065,11 +1065,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     global $user, $conf, $langs, $db;
     global $dolibarr_main_authentication;
     global $hookmanager;
-    global $mc;    // TODO Remove this. This should not bee required because code called on MC must be inside the new hook toprightmenu
-
-    // Instantiate hooks of thirdparty module
-    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-    $hookmanager=new HookManager($db);
+    
+    // Instantiate hooks of thirdparty module only if not already define
+    if (! is_object($hookmanager))
+    {
+    	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    	$hookmanager=new HookManager($db);
+    }
     $hookmanager->callHooks(array('toprightmenu'));
 
     $toprightmenu='';
@@ -1270,12 +1272,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $parameters=array();
     $toprightmenu.=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
 
-    // TODO Replace this with a hook printToprightMenu to complete toprightmenu.
-    if (! empty($conf->multicompany->enabled))
-    {
-        $mc->showInfo($conf->entity);
-    }
-
     // Logout link
     $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
 
@@ -1327,8 +1323,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     $bookmarks='';
 
     // Instantiate hooks of thirdparty module
-    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-    $hookmanager=new HookManager($db);
+    if (! is_object($hookmanager))
+    {
+    	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    	$hookmanager=new HookManager($db);
+	}
     $hookmanager->callHooks(array('searchform','leftblock','toprightmenu'));
 
     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";

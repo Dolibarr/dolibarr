@@ -702,9 +702,9 @@ class DoliDBSqlite
     }
 
 	/**
-	 *	Formate a SQL IF
+	 *	Format a SQL IF
 	 *
-	 *	@param	string	$test           chaine test
+	 *	@param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
 	 *	@param	string	$resok          resultat si test egal
 	 *	@param	string	$resko          resultat si test non egal
 	 *	@return	string          		SQL string
