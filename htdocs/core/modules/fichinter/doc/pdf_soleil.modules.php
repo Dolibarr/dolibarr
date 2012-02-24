@@ -37,13 +37,28 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
  */
 class pdf_soleil extends ModelePDFFicheinter
 {
+	var $db;
+	var $name;
+	var $description;
+	var $type;
+	
+	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
+	var $version = 'dolibarr';
+	
+	var $page_largeur;
+	var $page_hauteur;
+	var $format;
+	var $marge_gauche;
+	var	$marge_droite;
+	var	$marge_haute;
+	var	$marge_basse;
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_soleil($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
