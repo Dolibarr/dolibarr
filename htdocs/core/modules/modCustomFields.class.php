@@ -64,8 +64,14 @@ class modCustomFields extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='generic';
 
+                // Defined all module parts (triggers, login, substitutions, menus, etc...) (0=disable,1=enable)
+                $this->module_parts = array('triggers' => 1, 'substitutions' => 1);
+                //$this->module_parts = array('triggers' => 1,
+                //              'login' => 0,
+                //              'substitutions' => 0,
+                //              'menus' => 0);
 		// Defined if the directory /mymodule/includes/triggers/ contains triggers or not
-		$this->triggers = 1;
+		$this->triggers = 1; // TOFIX: can be removed now?
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
