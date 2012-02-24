@@ -72,13 +72,15 @@ class modMyModule extends DolibarrModules
 		// for default path (eg: /mymodule/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /mymodule/core/modules/barcode)
 		// for specific css file (eg: /mymodule/css/mymodule.css.php)
-		//$this->module_parts = array(	'triggers' => 1,
-		//								'login' => 0,
-		//								'substitutions' => 0,
-		//								'menus' => 0,
-		//								'css' => '/mymodule/css/mymodule.css.php',
-		//								'barcode' => '/mymodule/path/to/your/parts',
-		//								'hooks' => array('hookcontext1','hookcontext2'));
+		//$this->module_parts = array(
+		//                        	'triggers' => 0,                                 // Set this to 1 if module has its own trigger directory
+		//							'login' => 0,                                    // Set this to 1 if module has its own login method directory
+		//							'substitutions' => 0,                            // Set this to 1 if module has its own substitution function file
+		//							'menus' => 0,                                    // Set this to 1 if module has its own menus handler directory
+		//							'barcode' => 0,                                  // Set this to 1 if module has its own barcode directory
+		//							'css' => '/mymodule/css/mymodule.css.php',       // Set this to relative path of css if module has its own css file
+		//							'hooks' => array('hookcontext1','hookcontext2')  // Set here all hooks context managed by module
+		//                        );
 		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
