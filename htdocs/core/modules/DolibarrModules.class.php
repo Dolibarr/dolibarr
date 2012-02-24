@@ -1261,13 +1261,28 @@ abstract class DolibarrModules
     	global $conf;
     
     	$err=0;
+    	$entity=$conf->entity;
     
     	if (is_array($this->module_parts) && ! empty($this->module_parts))
     	{
     		foreach($this->module_parts as $key => $value)
     		{
+    			$newvalue = $value;
+    			
     			// Serialize array parameters
-    			if (is_array($value)) $value = serialize($value);
+    			if (is_array($value))
+    			{
+    				// Can defined other parameters
+    				if (is_array($value['data']) && ! empty($value['data']))
+    				{
+    					$newvalue = serialize($value['data']);
+    					if (isset($value['entity'])) $entity = $value['entity'];
+    				}
+    				else
+    				{
+    					$newvalue = serialize($value);
+    				}
+    			}
     			
     			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
     			$sql.= "name";
@@ -1278,12 +1293,12 @@ abstract class DolibarrModules
     			$sql.= ", entity";
     			$sql.= ")";
     			$sql.= " VALUES (";
-    			$sql.= $this->db->encrypt($this->const_name."_".strtoupper($key),1);
+    			$sql.= $this->db->encrypt($this->const_name."_".strtoupper($key), 1);
     			$sql.= ", 'chaine'";
-    			$sql.= ", ".$this->db->encrypt($value,1);
+    			$sql.= ", ".$this->db->encrypt($newvalue, 1);
     			$sql.= ", null";
     			$sql.= ", '0'";
-    			$sql.= ", ".$conf->entity;
+    			$sql.= ", ".$entity;
     			$sql.= ")";
     			
     			dol_syslog(get_class($this)."::insert_".$key." sql=".$sql);
