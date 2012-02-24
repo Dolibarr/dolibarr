@@ -1,7 +1,7 @@
 -- ========================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2011 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2009-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2011-2012	Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -36,4 +36,3 @@ create table llx_mailing_cibles
   date_envoi		datetime
   
 )ENGINE=innodb;
-
