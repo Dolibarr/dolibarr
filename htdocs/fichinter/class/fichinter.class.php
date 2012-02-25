@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,11 +60,11 @@ class Fichinter extends CommonObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param	DoliDB	$db		Database handler
 	 */
-	function Fichinter($DB)
+	function __construct($db)
 	{
-		$this->db = $DB ;
+		$this->db = $db ;
 		$this->products = array();
 		$this->fk_project = 0;
 		$this->statut = 0;
@@ -814,9 +814,9 @@ class Fichinter extends CommonObject
 	{
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql.= ' where fk_fichinter = '.$this->id;
+		$sql.= ' WHERE fk_fichinter = '.$this->id;
 
-		dol_syslog("Fichinter::fetch_lines sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -872,11 +872,11 @@ class FichinterLigne
 	/**
 	 *	Constructor
 	 *
-	 *	@param     DoliDB	$DB      Database handler
+	 *	@param	DoliDB	$db		Database handler
 	 */
-	function FichinterLigne($DB)
+	function __construct($db)
 	{
-		$this->db= $DB;
+		$this->db = $db;
 	}
 
 	/**

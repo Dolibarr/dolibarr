@@ -383,7 +383,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		echo "$name";
 		    		print "</td><td>\n";
 		    		require_once($dir.$file);
-		    		$module = new $classname();
+		    		$module = new $classname($db);
 		    		print $module->description;
 		    		print '</td>';
 
@@ -391,16 +391,9 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		if (in_array($name, $def))
 		    		{
 		    			print "<td align=\"center\">\n";
-		    			//if ($conf->global->FICHEINTER_ADDON_PDF != "$name")
-		    			//{
-		    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-		    				print img_picto($langs->trans("Enabled"),'switch_on');
-		    				print '</a>';
-		    			//}
-		    			//else
-		    			//{
-		    			//	print img_picto($langs->trans("Enabled"),'switch_on');
-		    			//}
+		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+		    			print img_picto($langs->trans("Enabled"),'switch_on');
+		    			print '</a>';
 		    			print "</td>";
 		    		}
 		    		else

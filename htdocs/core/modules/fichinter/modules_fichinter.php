@@ -38,8 +38,9 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *	Return list of active generation modules
+	 *
+	 *	@param	DoliDB	$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
