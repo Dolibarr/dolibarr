@@ -631,6 +631,49 @@ class FormOther
         return $out;
     }
 
+    /**
+     * Show form to select addresse
+     * 
+     * @param	int		$page        	Page
+     * @param  string	$selected    	Id condition pre-selectionne
+     * @param  string	$htmlname    	Nom du formulaire select
+     * @param	string	$origin        	Origine de l'appel pour pouvoir creer un retour
+     * @param  int		$originid      	Id de l'origine
+     * @return	void
+     */
+    function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
+    {
+    	global $langs,$conf;
+    	if ($htmlname != "none")
+    	{
+    		print '<form method="post" action="'.$page.'">';
+    		print '<input type="hidden" name="action" value="setaddress">';
+    		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    		print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+    		print '<tr><td>';
+    		$this->select_address($selected, $socid, $htmlname, 1);
+    		print '</td>';
+    		print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+    		$langs->load("companies");
+    		print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
+    		print '</td></tr></table></form>';
+    	}
+    	else
+    	{
+    		if ($selected)
+    		{
+    			require_once(DOL_DOCUMENT_ROOT ."/societe/class/address.class.php");
+    			$address=new Address($this->db);
+    			$result=$address->fetch_address($selected);
+    			print '<a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$address->socid.'&id='.$address->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$address->label.'</a>';
+    		}
+    		else
+    		{
+    			print "&nbsp;";
+    		}
+    	}
+    }
+
 }
 
 
@@ -644,6 +687,7 @@ class FormOther
  * @param 	int		$selectedtask			Id selected task
  * @param 	int		$selectedproject		Id selected project
  * @return	void
+ * TODO why this function is here ?
  */
 function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0)
 {
@@ -713,52 +757,6 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selecte
 			$level--;
 		}
 	}
-
-
-	/**
-	 *  Show form to select addresse
-	 *
-	 *  @param	int		$page        	Page
-	 *  @param  string	$selected    	Id condition pre-selectionne
-	 *  @param  string	$htmlname    	Nom du formulaire select
-	 *  @param	string	$origin        	Origine de l'appel pour pouvoir creer un retour
- 	 *  @param  int		$originid      	Id de l'origine
- 	 *  @return	void
-	 *  @deprecated
-	 */
-	function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
-	{
-	    global $langs,$conf;
-	    if ($htmlname != "none")
-	    {
-	        print '<form method="post" action="'.$page.'">';
-	        print '<input type="hidden" name="action" value="setaddress">';
-	        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	        print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-	        print '<tr><td>';
-	        $this->select_address($selected, $socid, $htmlname, 1);
-	        print '</td>';
-	        print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	        $langs->load("companies");
-	        print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
-	        print '</td></tr></table></form>';
-	    }
-	    else
-	    {
-	        if ($selected)
-	        {
-	            require_once(DOL_DOCUMENT_ROOT ."/societe/class/address.class.php");
-	            $address=new Address($this->db);
-	            $result=$address->fetch_address($selected);
-	            print '<a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$address->socid.'&id='.$address->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$address->label.'</a>';
-	        }
-	        else
-	        {
-	            print "&nbsp;";
-	        }
-	    }
-	}
-
 }
 
 ?>
