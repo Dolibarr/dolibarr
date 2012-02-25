@@ -221,15 +221,14 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             {
             	// Define output language
             	$outputlangs = $langs;
-            	$newlang='';
-            	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
-            	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                $newlang=GETPOST('lang_id','alpha');
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
             	if (! empty($newlang))
             	{
             		$outputlangs = new Translate("",$conf);
             		$outputlangs->setDefaultLang($newlang);
             	}
-            	
+
                 $ret=$object->fetch($id);    // Reload to get new records
                 supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
             }

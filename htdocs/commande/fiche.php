@@ -229,7 +229,7 @@ if ($action == 'add' && $user->rights->commande->creer)
 
         $object->origin    = $_POST['origin'];
         $object->origin_id = $_POST['originid'];
-        
+
         // Possibility to add external linked objects with hooks
         $object->linked_objects[$object->origin] = $object->origin_id;
         if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
@@ -641,15 +641,14 @@ if ($action == 'addline' && $user->rights->commande->creer)
                     {
                     	// Define output language
                     	$outputlangs = $langs;
-                    	$newlang='';
-                    	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
+                    	$newlang=GETPOST('lang_id','alpha');
                     	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
                     	if (! empty($newlang))
                     	{
                     		$outputlangs = new Translate("",$conf);
                     		$outputlangs->setDefaultLang($newlang);
                     	}
-                    	
+
                         $ret=$object->fetch($id);    // Reload to get new records
                         commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
                     }
