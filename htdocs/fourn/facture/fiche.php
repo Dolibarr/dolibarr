@@ -82,7 +82,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
 }
 
-if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider)
+elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -111,7 +111,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseu
     }
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
+elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
 {
     $object->fetch($id);
     $result=$object->delete($id);
@@ -126,7 +126,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
     }
 }
 
-if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
 	$ret = $object->deleteline(GETPOST('lineid'));
@@ -141,21 +141,21 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fourn
 	}
 }
 
-if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
     $result=$object->set_paid($user);
 }
 
 // Set supplier ref
-if (($action == 'setref_supplier' || $action == 'set_ref_supplier') && $user->rights->fournisseur->facture->creer)
+elseif (($action == 'setref_supplier' || $action == 'set_ref_supplier') && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
     $result=$object->set_ref_supplier($user, $_POST['ref_supplier']);
 }
 
 // Set label
-if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
     $object->label=$_POST['label'];
@@ -163,25 +163,25 @@ if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
     if ($result < 0) dol_print_error($db);
 }
 
-if ($action == 'setdate' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setdate' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
-    $object->date=dol_mktime(12,0,0,$_POST['datemonth'],$_POST['dateday'],$_POST['dateyear']);
+    $object->date=dol_mktime(12,0,0,$_POST['datefmonth'],$_POST['datefday'],$_POST['datefyear']);
     if ($object->date_echeance < $object->date) $object->date_echeance=$object->date;
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
-if ($action == 'setdate_echeance' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setdate_echeance' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
-    $object->date_echeance=dol_mktime(12,0,0,$_POST['date_echeancemonth'],$_POST['date_echeanceday'],$_POST['date_echeanceyear']);
+    $object->date_echeance=dol_mktime(12,0,0,$_POST['date_lim_reglementmonth'],$_POST['date_lim_reglementday'],$_POST['date_lim_reglementyear']);
     if ($object->date_echeance < $object->date) $object->date_echeance=$object->date;
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // Delete payment
-if($action == 'deletepaiement')
+elseif($action == 'deletepaiement')
 {
     $object->fetch($id);
     if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
@@ -193,7 +193,7 @@ if($action == 'deletepaiement')
 }
 
 // Create
-if ($action == 'add' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 {
     $error=0;
 
@@ -379,7 +379,7 @@ if ($action == 'add' && $user->rights->fournisseur->facture->creer)
 }
 
 // Modification d'une ligne
-if ($action == 'update_line')
+elseif ($action == 'update_line')
 {
     if ($_REQUEST['etat'] == '1' && ! $_REQUEST['cancel']) // si on valide la modification
     {
@@ -428,7 +428,7 @@ if ($action == 'update_line')
     }
 }
 
-if ($action == 'addline')
+elseif ($action == 'addline')
 {
     $ret=$object->fetch($id);
     if ($ret < 0)
@@ -539,7 +539,7 @@ if ($action == 'addline')
     $action = '';
 }
 
-if ($action == 'classin')
+elseif ($action == 'classin')
 {
     $object->fetch($id);
     $result=$object->setProject($_POST['projectid']);
@@ -547,7 +547,7 @@ if ($action == 'classin')
 
 
 // Set invoice to draft status
-if ($action == 'edit' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
 
@@ -573,7 +573,7 @@ if ($action == 'edit' && $user->rights->fournisseur->facture->creer)
 }
 
 // Set invoice to validated/unpaid status
-if ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
 {
     $result = $object->fetch($id);
     if ($object->statut == 2
@@ -778,7 +778,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 }
 
 // Build document
-if ($action	== 'builddoc')
+elseif ($action	== 'builddoc')
 {
     // Save modele used
     $object->fetch($id);
@@ -807,7 +807,7 @@ if ($action	== 'builddoc')
 }
 
 // Delete file in doc form
-if ($action == 'remove_file')
+elseif ($action == 'remove_file')
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -1340,13 +1340,13 @@ else
         print '</tr>';
 
         // Date
-        print '<tr><td>'.$form->editfieldkey("Date",'date',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
-        print $form->editfieldval("Date",'date',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
+        print '<tr><td>'.$form->editfieldkey("Date",'datef',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
+        print $form->editfieldval("Date",'datef',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
         print '</td>';
 
         // Due date
-        print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_echeance',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
-        print $form->editfieldval("DateMaxPayment",'date_echeance',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
+        print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
+        print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
         print '</td>';
 
         // Status
