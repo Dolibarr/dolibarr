@@ -528,7 +528,7 @@ class FormCompany
 			}
 		}
 		$sql.= " ORDER BY nom ASC";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -669,7 +669,7 @@ class FormCompany
     {
         global $conf,$langs;
 
-        $formlength=24;
+        $formlength=0;
         if ($country_code == 'FR' && empty($conf->global->MAIN_DISABLEPROFIDRULES))
         {
             if ($idprof==1) $formlength=9;
@@ -691,7 +691,10 @@ class FormCompany
         if (! $selected && $idprof==3) $selected=$this->idprof3;
         if (! $selected && $idprof==4) $selected=$this->idprof4;
 
-        $out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
+        $maxlength=$formlength;
+        if (empty($formlength)) { $formlength=24; $maxlength=128; }
+
+        $out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
     }

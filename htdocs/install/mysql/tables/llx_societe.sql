@@ -52,12 +52,13 @@ create table llx_societe
   fk_secteur               integer        DEFAULT 0,            		--
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
-  fk_forme_juridique       integer        DEFAULT 0,            		-- forme juridique INSEE
+  fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
   fk_currency			   integer		  DEFAULT 0,					-- currency
-  siren	                   varchar(32),                         		-- IDProf1: siren ou RCS pour france
-  siret                    varchar(32),                         		-- IDProf2: siret pour france
-  ape                      varchar(32),                         		-- IDProf3: code ape pour france
-  idprof4                  varchar(32),                         		-- IDProf4: nu pour france
+  siren	                   varchar(128),                         		-- IDProf1: siren or RCS for france
+  siret                    varchar(128),                         		-- IDProf2: siret for france
+  ape                      varchar(128),                         		-- IDProf3: code ape for france
+  idprof4                  varchar(128),                         		-- IDProf4: nu for france
+  idprof5                  varchar(128),                         		-- IDProf5: nu for france
   tva_intra                varchar(20),                         		-- tva
   capital                  real,                                		-- capital de la societe
   description              text,                                		--
