@@ -507,12 +507,16 @@ if ($action == 'addline')
     //print "xx".$tva_tx; exit;
     if ($result > 0)
     {
-        $outputlangs = $langs;
-        if (! empty($_REQUEST['lang_id']))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-        }
+    	// Define output language
+    	$outputlangs = $langs;
+    	$newlang='';
+    	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
+    	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+    	if (! empty($newlang))
+    	{
+    		$outputlangs = new Translate("",$conf);
+    		$outputlangs->setDefaultLang($newlang);
+    	}
         //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
 
         unset($_POST['qty']);
