@@ -639,16 +639,16 @@ if ($action == 'addline' && $user->rights->commande->creer)
 
                 if ($result > 0)
                 {
-                    // Define output language
-                    $outputlangs = $langs;
-                    $newlang='';
-                    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-                    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-                    if (! empty($newlang))
-                    {
-                        $outputlangs = new Translate("",$conf);
-                        $outputlangs->setDefaultLang($newlang);
-                    }
+                	// Define output language
+                	$outputlangs = $langs;
+                	$newlang='';
+                	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
+                	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                	if (! empty($newlang))
+                	{
+                		$outputlangs = new Translate("",$conf);
+                		$outputlangs->setDefaultLang($newlang);
+                	}
                     commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
                     unset($_POST['qty']);
