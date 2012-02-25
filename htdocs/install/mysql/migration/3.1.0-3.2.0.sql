@@ -31,7 +31,13 @@ ALTER TABLE llx_user ADD COLUMN ref_int varchar(50) AFTER ref_ext;
 
 ALTER TABLE llx_societe MODIFY code_client varchar(24);
 ALTER TABLE llx_societe MODIFY code_fournisseur varchar(24);
+ALTER TABLE llx_societe MODIFY siren varchar(128);
+ALTER TABLE llx_societe MODIFY siret varchar(128);
+ALTER TABLE llx_societe MODIFY ape varchar(128);
+ALTER TABLE llx_societe MODIFY idprof4 varchar(128);
+ALTER TABLE llx_societe ADD COLUMN idprof5 varchar(128);
 
+  
 ALTER TABLE llx_chargesociales ADD COLUMN tms                   timestamp;
 ALTER TABLE llx_chargesociales ADD COLUMN date_creation         datetime; 
 ALTER TABLE llx_chargesociales ADD COLUMN date_valid            datetime;
