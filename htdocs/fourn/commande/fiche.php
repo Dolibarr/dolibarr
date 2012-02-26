@@ -157,8 +157,8 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
                 $type = $productsupplier->type;
 
                 // Local Taxes
-                $localtax1_tx= get_localtax($tva_tx, 1, $object->thirdparty);
-                $localtax2_tx= get_localtax($tva_tx, 2, $object->thirdparty);
+                $localtax1_tx= get_localtax($tva_tx, 1, $mysoc);
+                $localtax2_tx= get_localtax($tva_tx, 2, $mysoc);
 
                 $result=$object->addline(
                     $desc,

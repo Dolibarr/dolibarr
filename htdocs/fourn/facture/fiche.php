@@ -416,8 +416,8 @@ elseif ($action == 'update_line')
             }
             $label = $_POST['desc'];
             $type = $_POST["type"]?$_POST["type"]:0;
-            $localtax1tx= get_localtax($_POST['tauxtva'], 1, $societe);
-            $localtax2tx= get_localtax($_POST['tauxtva'], 2, $societe);
+            $localtax1tx= get_localtax($_POST['tauxtva'], 1, $mysoc);
+            $localtax2tx= get_localtax($_POST['tauxtva'], 2, $mysoc);
         }
 
         $result=$object->updateline($_GET['lineid'], $label, $pu, $_POST['tauxtva'], $localtax1tx, $localtax2tx, $_POST['qty'], $_POST['idprod'], $price_base_type, 0, $type);
@@ -436,12 +436,7 @@ elseif ($action == 'addline')
         dol_print_error($db,$object->error);
         exit;
     }
-
-    if ($object->socid)
-    {
-        $societe=new Societe($db);
-        $societe->fetch($object->socid);
-    }
+    $ret=$object->fetch_thirdparty();
 
     if ($_POST['idprodfournprice'])	// > 0 or -1
     {
@@ -456,10 +451,10 @@ elseif ($action == 'addline')
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->description;
 
-            $tvatx=get_default_tva($societe,$mysoc,$product->id);
+            $tvatx=get_default_tva($object->thirdparty,$mysoc,$product->id);
 
-            $localtax1tx= get_localtax($tvatx, 1, $societe);
-            $localtax2tx= get_localtax($tvatx, 2, $societe);
+            $localtax1tx= get_localtax($tvatx, 1, $mysoc);
+            $localtax2tx= get_localtax($tvatx, 2, $mysoc);
 
             $type = $product->type;
 
@@ -476,8 +471,8 @@ elseif ($action == 'addline')
     else
     {
         $tauxtva = price2num($_POST['tauxtva']);
-        $localtax1tx= get_localtax($tauxtva, 1, $societe);
-        $localtax2tx= get_localtax($tauxtva, 2, $societe);
+        $localtax1tx= get_localtax($tauxtva, 1, $mysoc);
+        $localtax2tx= get_localtax($tauxtva, 2, $mysoc);
 
         if (! $_POST['dp_desc'])
         {
