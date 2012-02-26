@@ -440,12 +440,7 @@ if ($_GET['action'] == 'addline')
         dol_print_error($db,$facfou->error);
         exit;
     }
-
-    if ($facfou->socid)
-    {
-        $societe=new Societe($db);
-        $societe->fetch($facfou->socid);
-    }
+    $ret=$facfou->fetch_thirdparty();
 
     if ($_POST['idprodfournprice'])	// > 0 or -1
     {
@@ -509,12 +504,16 @@ if ($_GET['action'] == 'addline')
     //print "xx".$tva_tx; exit;
     if ($result > 0)
     {
-        $outputlangs = $langs;
-        if (! empty($_REQUEST['lang_id']))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-        }
+    	// Define output language
+    	$outputlangs = $langs;
+    	$newlang='';
+    	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
+    	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$facfou->client->default_lang;
+    	if (! empty($newlang))
+    	{
+    		$outputlangs = new Translate("",$conf);
+    		$outputlangs->setDefaultLang($newlang);
+    	}
         //supplier_invoice_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
 
         unset($_POST['qty']);

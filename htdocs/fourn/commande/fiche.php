@@ -133,12 +133,7 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 			dol_print_error($db,$object->error);
 			exit;
 		}
-		
-		if ($object->socid)
-		{
-			$societe=new Societe($db);
-			$societe->fetch($object->socid);
-		}
+		$ret=$object->fetch_thirdparty();
 
 		// Ecrase $pu par celui	du produit
 		// Ecrase $desc	par	celui du produit
@@ -171,7 +166,7 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
 				$remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
-				$tva_tx	= get_default_tva($societe,$mysoc,$product->id);
+				$tva_tx	= get_default_tva($object->client,$mysoc,$product->id);
 				$type = $product->type;
 
 				// Local Taxes
@@ -207,8 +202,8 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 			$tva_tx = price2num($_POST['tva_tx']);
 
 			// Local Taxes
-			$localtax1_tx= get_localtax($tva_tx, 1, $societe);
-	  		$localtax2_tx= get_localtax($tva_tx, 2, $societe);
+			$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
+	  		$localtax2_tx= get_localtax($tva_tx, 2, $object->client);
 
 	  		if (! $_POST['dp_desc'])
 			{
@@ -235,11 +230,15 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 		//print "xx".$tva_tx; exit;
 		if ($result > 0)
 		{
+			// Define output language
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			$newlang='';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				$outputlangs->setDefaultLang($newlang);
 			}
 			supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
@@ -1416,7 +1415,7 @@ if ($id > 0 || ! empty($ref))
 			$genallowed=$user->rights->fournisseur->commande->creer;
 			$delallowed=$user->rights->fournisseur->commande->supprimer;
 
-			$somethingshown=$formfile->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+			$somethingshown=$formfile->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$soc->default_lang);
 
 			$object=$object;
 
