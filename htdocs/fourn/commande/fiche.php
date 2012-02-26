@@ -166,12 +166,12 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
 				$remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
-				$tva_tx	= get_default_tva($object->client,$mysoc,$product->id);
+				$tva_tx	= get_default_tva($object->thirdparty,$mysoc,$product->id);
 				$type = $product->type;
 
 				// Local Taxes
-				$localtax1_tx= get_localtax($tva_tx, 1, $societe);
-	  			$localtax2_tx= get_localtax($tva_tx, 2, $societe);
+				$localtax1_tx= get_localtax($tva_tx, 1, $mysoc);
+	  			$localtax2_tx= get_localtax($tva_tx, 2, $mysoc);
 
 				$result=$object->addline(
 				$desc,

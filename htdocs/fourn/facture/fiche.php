@@ -454,10 +454,10 @@ if ($_GET['action'] == 'addline')
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->description;
 
-            $tvatx=get_default_tva($societe,$mysoc,$product->id);
+            $tvatx=get_default_tva($facfou->thirdparty,$mysoc,$product->id);
 
-            $localtax1tx= get_localtax($tvatx, 1, $societe);
-            $localtax2tx= get_localtax($tvatx, 2, $societe);
+            $localtax1tx= get_localtax($tvatx, 1, $mysoc);
+            $localtax2tx= get_localtax($tvatx, 2, $mysoc);
 
             $type = $product->type;
 
@@ -473,8 +473,8 @@ if ($_GET['action'] == 'addline')
     else
     {
         $tauxtva = price2num($_POST['tauxtva']);
-        $localtax1tx= get_localtax($tauxtva, 1, $societe);
-        $localtax2tx= get_localtax($tauxtva, 2, $societe);
+        $localtax1tx= get_localtax($tauxtva, 1, $facfou->thirdparty);
+        $localtax2tx= get_localtax($tauxtva, 2, $facfou->thirdparty);
 
         if (! $_POST['label'])
         {
@@ -1852,7 +1852,7 @@ else
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
 
                 print '<br>';
-                $somethingshown=$formfile->show_documents('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
+                $somethingshown=$formfile->show_documents('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf,1,0,0,0,0,'','','',$societe->default_lang);
 
                 $object=$fac;
 

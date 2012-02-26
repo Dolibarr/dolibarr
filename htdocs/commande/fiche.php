@@ -642,7 +642,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
                 	// Define output language
                 	$outputlangs = $langs;
                 	$newlang='';
-                	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
+                	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
                 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
                 	if (! empty($newlang))
                 	{
