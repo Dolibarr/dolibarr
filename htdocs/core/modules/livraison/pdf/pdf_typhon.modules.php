@@ -617,7 +617,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":", 0, 'L');
 
 			// Cadre client destinataire
-			$pdf->rect(100, $posy, 100, $hautcadre);
+			$pdf->Rect(100, $posy, 100, $hautcadre);
 
 			// If SHIPPING contact defined on invoice, we use it
 			$usecontact=false;

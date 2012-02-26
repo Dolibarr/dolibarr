@@ -42,7 +42,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function pdf_expedition_merou($db=0)
 	{
@@ -72,10 +72,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 
 	/**
-	 *		\brief      Fonction generant le document sur le disque
-	 *		\param	    object			Objet expedition a generer (ou id si ancienne methode)
-	 *		\param		outputlangs		Lang output object
-	 * 	 	\return	    int     		1=ok, 0=ko
+	 *	Fonction generant le document sur le disque
+	 *
+	 *	@param	    object			Objet expedition a generer (ou id si ancienne methode)
+	 *	@param		outputlangs		Lang output object
+	 * 	@return	    int     		1=ok, 0=ko
 	 */
 	function write_file(&$object, $outputlangs)
 	{
@@ -200,8 +201,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					// Description de la ligne produit
 
 					//Creation des cases a cocher
-					$pdf->rect(10+3, $curY+1, 3, 3);
-					$pdf->rect(20+3, $curY+1, 3, 3);
+					$pdf->Rect(10+3, $curY+1, 3, 3);
+					$pdf->Rect(20+3, $curY+1, 3, 3);
 					//Insertion de la reference du produit
 					$pdf->SetXY(30, $curY+1 );
 					$pdf->SetFont('','B', $default_font_size - 3);
@@ -400,7 +401,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 142;
-		//$pdf->rect($Xoff, $Yoff, 85, 8);
+		//$pdf->Rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetTextColor(0,0,0);
@@ -542,20 +543,20 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$blW=50;
 		$Yoff = $Ydef +1;
 
-		$pdf->Rect($blDestX, $Yoff-1, $blW, 26);
-
-		//Titre
+		// Show recipient frame
 		$pdf->SetFont('','B', $default_font_size - 3);
 		$pdf->SetXY($blDestX,$Yoff-4);
 		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Recipient"), 0, 'L');
+		$pdf->Rect($blDestX, $Yoff-1, $blW, 26);
 
-		// Show customer/recipient
+		// Show recipient name
 		$pdf->SetFont('','B', $default_font_size - 3);
 		$pdf->SetXY($blDestX,$Yoff);
 		$pdf->MultiCell($blW,3, $carac_client_name, 0, 'L');
 
+		// Show recipient information
 		$pdf->SetFont('','', $default_font_size - 3);
-		$pdf->SetXY($blDestX,$Yoff+4);
+		$pdf->SetXY($blDestX,$Yoff+(dol_nboflines_bis($carac_client_name,50)*4));
 		$pdf->MultiCell($blW,2, $carac_client, 0, 'L');
 	}
 }
