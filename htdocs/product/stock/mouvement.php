@@ -37,6 +37,7 @@ $langs->load("stocks");
 
 if (!$user->rights->produit->lire) accessforbidden();
 
+$id=GETPOST('id');
 $idproduct = isset($_GET["idproduct"])?$_GET["idproduct"]:$_PRODUCT["idproduct"];
 $year = isset($_GET["year"])?$_GET["year"]:$_POST["year"];
 $month = isset($_GET["month"])?$_GET["month"]:$_POST["month"];
@@ -80,8 +81,8 @@ $sql.= " s.label as stock, s.rowid as entrepot_id,";
 $sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."entrepot as s,";
-$sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m,";
-$sql.= " ".MAIN_DB_PREFIX."product as p)";
+$sql.= " ".MAIN_DB_PREFIX."product as p,";
+$sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = s.rowid";
@@ -249,20 +250,20 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Product"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "s.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Units"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" valign="right">';
 	print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
 	print '&nbsp;'.$langs->trans('Year').': ';
-	$max_year = date("Y");
-	$syear = $year;
+	$syear = GETPOST('year')?GETPOST('year'):-1;
 	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
 	// Label of movement
