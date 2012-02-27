@@ -257,7 +257,11 @@ function GETPOST($paramname,$check='',$method=0)
 		// Check if alpha
 		//if ($check == 'alpha' && ! preg_match('/^[ =:@#\/\\\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
 		// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-		if ($check == 'alpha' && preg_match('/"/',trim($out))) $out='';
+		if ($check == 'alpha')
+		{
+			if (preg_match('/"/',trim($out))) $out='';
+			else if (preg_match('/(\.\.\/)+/',trim($out))) $out='';
+		}
 	}
 
 	return $out;

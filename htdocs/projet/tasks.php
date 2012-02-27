@@ -36,6 +36,7 @@ $langs->load("projects");
 $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
+$backtopage=GETPOST('backtopage','alpha');
 
 $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
@@ -111,9 +112,9 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 		if (! $error)
 		{
-		    if (GETPOST('backtopage'))
+		    if (! empty($backtopage))
 			{
-				Header("Location: ".GETPOST('backtopage'));
+				Header("Location: ".$backtopage);
 				exit;
 			}
 			else if (empty($projectid))
@@ -125,9 +126,9 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	}
 	else
 	{
-		if (GETPOST('backtopage'))
+		if (! empty($backtopage))
 		{
-			Header("Location: ".GETPOST('backtopage'));
+			Header("Location: ".$backtopage);
 			exit;
 		}
 	    else if (empty($id))
@@ -219,7 +220,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
-	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if (! empty($mode)) print '<input type="hidden" name="mode" value="'.$mode.'">';
 
