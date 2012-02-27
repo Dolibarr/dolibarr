@@ -30,21 +30,23 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 
-$socid = GETPOST("id");
+$socid = GETPOST('id','int');
 // Security check
 if ($user->societe_id > 0)
 {
 	$socid = $user->societe_id;
 }
 
+$backtopage = GETPOST('backtopage','alpha');
+
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel') && GETPOST('backtopage'))
+if (GETPOST('cancel') && ! empty($backtopage))
 {
-     Header("Location: ".GETPOST("backtopage"));
+     Header("Location: ".$backtopage);
      exit;
 }
 
@@ -56,9 +58,9 @@ if (GETPOST("action") == 'setremise')
 
 	if ($result > 0)
 	{
-	    if (GETPOST('backtopage'))
+	    if (! empty($backtopage))
 	    {
-    		Header("Location: ".GETPOST('backtopage'));
+    		Header("Location: ".$backtopage);
     		exit;
 	    }
 	    else
@@ -122,7 +124,7 @@ if ($socid > 0)
 	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
-    print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print '<table class="border" width="100%">';
 
@@ -138,7 +140,7 @@ if ($socid > 0)
 
 	print '<center>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-    if (GETPOST("backtopage"))
+    if (! empty($backtopage))
     {
         print '&nbsp; &nbsp; ';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
