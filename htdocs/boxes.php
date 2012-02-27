@@ -210,11 +210,11 @@ class InfoBox
 					}
 					else
 					{
-						$boxname=preg_replace('/.php$/i','',$obj->file);
-						$sourcefile = DOL_DOCUMENT_ROOT."/core/boxes/".$boxname.".php";
+						$boxname=preg_replace('/\.php$/i','',$obj->file);
+						$sourcefile = "/core/boxes/".$boxname.".php";
 					}
 
-					dol_include_once($sourcefile);
+					dol_include_once($sourcefile);    // Do not use dol_include_once here because sourcefile is already good fullpath
 					if (class_exists($boxname))
 					{
     					$box=new $boxname($this->db,$obj->note);
@@ -271,15 +271,15 @@ class InfoBox
 					{
 						$boxname = $regs[1];
 						$module = $regs[2];
-						$sourcefile = "/".$module."/core/boxes/".$boxname.".php";
+						$relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
 					}
 					else
 					{
 						$boxname=preg_replace('/.php$/i','',$obj->file);
-						$sourcefile = "/core/boxes/".$boxname.".php";
+						$relsourcefile = "/core/boxes/".$boxname.".php";
 					}
 
-					dol_include_once($sourcefile);
+					dol_include_once($relsourcefile);
 					if (class_exists($boxname))
 					{
     					$box=new $boxname($this->db,$obj->note);

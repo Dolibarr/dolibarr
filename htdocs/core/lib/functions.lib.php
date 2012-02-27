@@ -3405,7 +3405,7 @@ function dol_textishtml($msg,$option=0)
  *  @param	string	$chaine      			Source string in which we must do substitution
  *  @param  array	$substitutionarray		Array with key->val to substitute
  * 	@return string  		    			Output string after subsitutions
- *  @see	make_substitutions
+ *  @see	complete_substitutions_array
  */
 function make_substitutions($chaine,$substitutionarray)
 {

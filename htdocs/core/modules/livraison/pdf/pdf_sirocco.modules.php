@@ -395,7 +395,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$pdf->SetFont('','B', $default_font_size);
 		$pdf->SetXY(102,47);
 		$pdf->MultiCell(96,5, $carac_client, 0, 'L');
-		$pdf->rect(100, 40, 100, 40);
+		$pdf->Rect(100, 40, 100, 40);
 
 
 		$pdf->SetTextColor(0,0,60);

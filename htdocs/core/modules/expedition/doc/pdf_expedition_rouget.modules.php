@@ -517,7 +517,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
 			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("Recipient").":", 0, 'L');
-			$pdf->rect($posx, $posy, 100, $hautcadre);
+			$pdf->Rect($posx, $posy, 100, $hautcadre);
 			$pdf->SetTextColor(0,0,0);
 
 			// Show recipient name
@@ -527,7 +527,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
 			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 

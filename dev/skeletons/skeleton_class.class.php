@@ -51,7 +51,7 @@ class Skeleton_Class // extends CommonObject
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function Skeleton_Class($db)
+    function __construct($db)
     {
         $this->db = $db;
         return 1;

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011 Laurent Destailleur    <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2012 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin          <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent		  <jmenent@2byte.es>
@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/core/modules/facture/doc/pdf_crabe.modules.php
  *	\ingroup    facture
- *	\brief      File of class to generate customers invoices from crab model
+ *	\brief      File of class to generate customers invoices from crabe model
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php");
@@ -33,10 +33,8 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
 /**
- *	\class      pdf_crabe
- *	\brief      Classe permettant de generer les factures au modele Crabe
+ *	Class to manage PDF invoice template Crabe
  */
-
 class pdf_crabe extends ModelePDFFactures
 {
     var $db;
@@ -1222,7 +1220,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx+2,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":",0,'L');
-			$pdf->rect($posx, $posy, 100, $hautcadre);
+			$pdf->Rect($posx, $posy, 100, $hautcadre);
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
@@ -1231,7 +1229,7 @@ class pdf_crabe extends ModelePDFFactures
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
 			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 	}

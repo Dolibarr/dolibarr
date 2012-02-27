@@ -23,3 +23,13 @@ update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
 update llx_cotisation set fk_bank = null where fk_bank not in (select rowid from llx_bank);
 
+update llx_propal set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_commande set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_commande_fournisseur set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_contrat set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_deplacement set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture_fourn set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture_rec set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_fichinter set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_projet_task set fk_projet = null where fk_projet not in (select rowid from llx_projet);

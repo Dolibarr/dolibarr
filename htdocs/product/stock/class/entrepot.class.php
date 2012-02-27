@@ -28,10 +28,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
 
 /**
- *  \class      Entrepot
- *  \brief      Classe permettant la gestion des entrepots
+ *  Class to manage warehouses
  */
-
 class Entrepot extends CommonObject
 {
 	public $element='label';
@@ -52,11 +50,11 @@ class Entrepot extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDB		$DB      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
-	function Entrepot($DB)
+	function __construct($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		// List of short language codes for status
 		$this->statuts[0] = 'Closed2';
@@ -78,12 +76,14 @@ class Entrepot extends CommonObject
 			return 0;
 		}
 
+		$now=dol_now();
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author, label)";
-		$sql .= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".$this->db->escape($this->libelle)."')";
+		$sql .= " VALUES (".$this->db->idate($now).",".$user->id.",'".$this->db->escape($this->libelle)."')";
 
-		dol_syslog("Entrepot::create sql=".$sql);
+		dol_syslog(get_class($this)."::create sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -99,21 +99,21 @@ class Entrepot extends CommonObject
 				}
 				else
 				{
-					dol_syslog("Entrepot::Create return -3");
+					dol_syslog(get_class($this)."::create return -3");
 					$this->db->rollback();
 					return -3;
 				}
 			}
 			else {
 				$this->error="Failed to get insert id";
-				dol_syslog("Entrepot::Create return -2");
+				dol_syslog(get_class($this)."::create return -2");
 				return -2;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Entrepot::Create Error ".$this->db->error());
+			dol_syslog(get_class($this)."::create Error ".$this->db->error());
 			$this->db->rollback();
 			return -1;
 		}
@@ -153,7 +153,7 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog("Entrepot::update sql=".$sql);
+		dol_syslog(get_class($this)."::update sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -164,7 +164,7 @@ class Entrepot extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog("Entrepot::update ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -196,7 +196,7 @@ class Entrepot extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
 
-			dol_syslog("Entrepot::delete sql=".$sql);
+			dol_syslog(get_class($this)."::delete sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -207,7 +207,7 @@ class Entrepot extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
-				dol_syslog("Entrepot::delete ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -215,7 +215,7 @@ class Entrepot extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog("Entrepot::delete ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -234,7 +234,7 @@ class Entrepot extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		$sql .= " WHERE rowid = ".$id;
 
-		dol_syslog("Entrepot::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -254,25 +254,13 @@ class Entrepot extends CommonObject
 			$this->town           = $obj->town;
 			$this->country_id     = $obj->country_id;
 
-			if ($this->country_id)
-			{
-				$sqlp = "SELECT code,libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->country_id;
-				$resql=$this->db->query($sqlp);
-				if ($resql)
-				{
-					$objp = $this->db->fetch_object($resql);
-				}
-				else
-				{
-					dol_print_error($this->db);
-				}
-				$this->pays=$objp->libelle;
-				$this->pays_code=$objp->code;
-				$this->country=$objp->libelle;
-				$this->country_code=$objp->code;
-			}
+			include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
+            $tmp=getCountry($this->country_id,'all');
+			$this->pays=$tmp['label'];
+			$this->pays_code=$tmp['code'];
+			$this->country=$tmp['label'];
+			$this->country_code=$tmp['code'];
 
-			$this->db->free($result);
 			return 1;
 		}
 		else
