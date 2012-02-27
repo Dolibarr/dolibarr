@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,9 +49,12 @@ $extrafields = new ExtraFields($db);
 
 $errmsg=''; $errmsgs=array();
 
-$action=GETPOST("action");
-$rowid=GETPOST("rowid");
-$typeid=GETPOST("typeid");
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$rowid=GETPOST('rowid','int');
+$typeid=GETPOST('typeid','int');
+$userid=GETPOST('userid','int');
+$socid=GETPOST('socid','int');
 
 if ($rowid)
 {
@@ -93,12 +96,12 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 
-if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
+if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
 {
 	$error=0;
 	if (empty($user->rights->user->user->creer))	// If can edit only itself user, we can link to itself only
 	{
-		if ($_POST["userid"] != $user->id && $_POST["userid"] != $object->user_id)
+		if ($userid != $user->id && $userid != $object->user_id)
 		{
 			$error++;
 			$mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
@@ -107,24 +110,23 @@ if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $use
 
 	if (! $error)
 	{
-		if ($_POST["userid"] != $object->user_id)	// If link differs from currently in database
+		if ($userid != $object->user_id)	// If link differs from currently in database
 		{
-			$result=$object->setUserId($_POST["userid"]);
+			$result=$object->setUserId($userid);
 			if ($result < 0) dol_print_error($object->db,$object->error);
-			$_POST['action']='';
 			$action='';
 		}
 	}
 }
-if ($_POST['action'] == 'setsocid')
+if ($action == 'setsocid')
 {
 	$error=0;
 	if (! $error)
 	{
-		if ($_POST["socid"] != $object->fk_soc)	// If link differs from currently in database
+		if ($socid != $object->fk_soc)	// If link differs from currently in database
 		{
 			$sql ="SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql.=" WHERE fk_soc = '".$_POST["socid"]."'";
+			$sql.=" WHERE fk_soc = '".$socid."'";
 			$sql.=" AND entity = ".$conf->entity;
 			$resql = $db->query($sql);
 			if ($resql)
@@ -135,7 +137,7 @@ if ($_POST['action'] == 'setsocid')
 					$othermember=new Adherent($db);
 					$othermember->fetch($obj->rowid);
 					$thirdparty=new Societe($db);
-					$thirdparty->fetch($_POST["socid"]);
+					$thirdparty->fetch($socid);
 					$error++;
 					$errmsg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name).'</div>';
 				}
@@ -143,9 +145,8 @@ if ($_POST['action'] == 'setsocid')
 
 			if (! $error)
 			{
-				$result=$object->setThirdPartyId($_POST["socid"]);
+				$result=$object->setThirdPartyId($socid);
 				if ($result < 0) dol_print_error($object->db,$object->error);
-				$_POST['action']='';
 				$action='';
 			}
 		}
@@ -153,13 +154,13 @@ if ($_POST['action'] == 'setsocid')
 }
 
 // Create user from a member
-if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
+if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer)
 {
 	if ($result > 0)
 	{
 		// Creation user
 		$nuser = new User($db);
-		$result=$nuser->create_from_member($object,$_POST["login"]);
+		$result=$nuser->create_from_member($object,GETPOST('login','alpha'));
 
 		if ($result < 0)
 		{
@@ -174,13 +175,13 @@ if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $
 }
 
 // Create third party from a member
-if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
+if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer)
 {
 	if ($result > 0)
 	{
 		// Creation user
 		$company = new Societe($db);
-		$result=$company->create_from_member($object,$_POST["companyname"]);
+		$result=$company->create_from_member($object,GETPOST('companyname','alpha'));
 
 		if ($result < 0)
 		{
@@ -195,7 +196,7 @@ if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
+if ($action == 'confirm_sendinfo' && $confirm == 'yes')
 {
 	if ($object->email)
 	{
@@ -204,7 +205,7 @@ if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
 	}
 }
 
-if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
+if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -328,8 +329,8 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
     			}
             }
 
-			$_GET["rowid"]=$object->id;
-			$_REQUEST["action"]='';
+			$rowid=$object->id;
+			$action='';
 		}
 		else
 		{
@@ -340,7 +341,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 	}
 }
 
-if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
+if ($action == 'add' && $user->rights->adherent->creer)
 {
 	$datenaiss='';
 	if (isset($_POST["naissday"]) && $_POST["naissday"]
@@ -499,7 +500,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     }
 }
 
-if ($user->rights->adherent->supprimer && $_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
+if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes')
 {
     $result=$object->delete($rowid);
     if ($result > 0)
@@ -513,7 +514,7 @@ if ($user->rights->adherent->supprimer && $_REQUEST["action"] == 'confirm_delete
     }
 }
 
-if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 'yes')
 {
     $result=$object->validate($user);
 
@@ -547,7 +548,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 	}
 }
 
-if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->supprimer && $action == 'confirm_resign' && $confirm == 'yes')
 {
     $adht = new AdherentType($db);
     $adht->fetch($object->typeid);
@@ -580,7 +581,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 	}
 }
 
-if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $confirm == 'yes')
 {
 	if (! count($object->errors))
 	{
@@ -591,7 +592,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip'
 	}
 }
 
-if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm == 'yes')
 {
 	if (! count($object->errors))
 	{
@@ -629,7 +630,7 @@ if ($action == 'create')
     $object->fk_departement = $_POST["departement_id"];
 
     // We set country_id, country_code and country for the selected country
-    $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+    $object->country_id=GETPOST('country_id','int')?GETPOST('country_id','int'):$mysoc->country_id;
     if ($object->country_id)
     {
     	$tmparray=getCountry($object->country_id,'all');
@@ -674,7 +675,7 @@ if ($action == 'create')
     $morphys["phy"] = $langs->trans("Physical");
     $morphys["mor"] = $langs->trans("Moral");
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature")."</span></td><td>\n";
-    print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy, 1);
+    print $form->selectarray("morphy", $morphys, GETPOST('morphy','alpha')?GETPOST('morphy','alpha'):$object->morphy, 1);
     print "</td>\n";
 
     // Type
@@ -682,26 +683,26 @@ if ($action == 'create')
     $listetype=$adht->liste_array();
     if (count($listetype))
     {
-        print $form->selectarray("typeid", $listetype, isset($_POST["typeid"])?$_POST["typeid"]:$typeid, 1);
+        print $form->selectarray("typeid", $listetype, GETPOST('typeid','int')?GETPOST('typeid','int'):$typeid, 1);
     } else {
         print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
     }
     print "</td>\n";
 
     // Company
-    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$object->societe).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(GETPOST('societe','alpha')?GETPOST('societe','alpha'):$object->societe).'"></td></tr>';
 
     // Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-    print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id,'civilite_id').'</td>';
+    print $formcompany->select_civility(GETPOST('civilite_id','int')?GETPOST('civilite_id','int'):$object->civilite_id,'civilite_id').'</td>';
     print '</tr>';
 
     // Lastname
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.(isset($_POST["nom"])?$_POST["nom"]:$object->lastname).'" size="40"></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.(GETPOST('nom','alpha')?GETPOST('nom','alpha'):$object->lastname).'" size="40"></td>';
     print '</tr>';
 
     // Firstname
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->firstname).'"></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(GETPOST('prenom','alpha')?GETPOST('prenom','alpha'):$object->firstname).'"></td>';
     print '</tr>';
 
     // Password
@@ -716,20 +717,20 @@ if ($action == 'create')
 
     // Address
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
-    print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
+    print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
     print '</td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-    print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','departement_id'),6);
+    print $formcompany->select_ziptown((GETPOST('zipcode','alpha')?GETPOST('zipcode','alpha'):$object->zip),'zipcode',array('town','selectcountry_id','departement_id'),6);
     print ' ';
-    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','departement_id'));
+    print $formcompany->select_ziptown((GETPOST('town','alpha')?GETPOST('town','alpha'):$object->town),'town',array('zipcode','selectcountry_id','departement_id'));
     print '</td></tr>';
 
     // Country
     $object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;
     print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
-    print $form->select_country(isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'country_id');
+    print $form->select_country(GETPOST('country_id','alpha')?GETPOST('country_id','alpha'):$object->country_id,'country_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
@@ -739,7 +740,7 @@ if ($action == 'create')
         print '<tr><td>'.$langs->trans('State').'</td><td>';
         if ($object->country_id)
         {
-            print $formcompany->select_state(isset($_POST["departement_id"])?$_POST["departement_id"]:$object->fk_departement,$object->country_code);
+            print $formcompany->select_state(GETPOST('departement_id','int')?GETPOST('departement_id','int'):$object->fk_departement,$object->country_code);
         }
         else
         {
@@ -749,16 +750,16 @@ if ($action == 'create')
     }
 
     // Tel pro
-    print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$object->phone).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(GETPOST('phone','alpha')?GETPOST('phone','alpha'):$object->phone).'"></td></tr>';
 
     // Tel perso
-    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(GETPOST('phone_perso','alpha')?GETPOST('phone_perso','alpha'):$object->phone_perso).'"></td></tr>';
 
     // Tel mobile
-    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile','alpha')?GETPOST('phone_mobile','alpha'):$object->phone_mobile).'"></td></tr>';
 
     // EMail
-    print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(isset($_POST["member_email"])?$_POST["member_email"]:$object->email).'"></td></tr>';
+    print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(GETPOST('member_email','alpha')?GETPOST('member_email','alpha'):$object->email).'"></td></tr>';
 
     // Birthday
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -777,7 +778,7 @@ if ($action == 'create')
     {
         foreach($extrafields->attribute_label as $key=>$label)
         {
-            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+            $value=(GETPOST('options_'.$key,'alpha')?GETPOST('options_'.$key,'alpha'):$object->array_options["options_".$key]);
             print '<tr><td>'.$label.'</td><td>';
             print $extrafields->showInputField($key,$value);
             print '</td></tr>'."\n";
