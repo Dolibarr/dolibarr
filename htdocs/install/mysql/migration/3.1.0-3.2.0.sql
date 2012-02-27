@@ -197,6 +197,43 @@ ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode 	F
 
 -- VMYSQL4.1 UPDATE llx_chargesociales set tms = date_creation WHERE tms = '0000-00-00 00:00:00';
 
+ALTER TABLE llx_propal ADD COLUMN fk_account integer AFTER total;
+ALTER TABLE llx_propal ADD COLUMN fk_currency varchar(2) AFTER fk_account;
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_user_author (fk_user_author);
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_user_cloture (fk_user_cloture);
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_projet (fk_projet);
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_account(fk_account);
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_currency(fk_currency);
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_author	FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_valid	FOREIGN KEY (fk_user_valid)  REFERENCES llx_user (rowid);
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_cloture	FOREIGN KEY (fk_user_cloture) REFERENCES llx_user (rowid);
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_projet		FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_account		FOREIGN KEY (fk_account) REFERENCES llx_bank_account (rowid);
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code);
+
+ALTER TABLE llx_commande ADD COLUMN fk_account integer AFTER facture;
+ALTER TABLE llx_commande ADD COLUMN fk_currency varchar(2) AFTER fk_account;
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_user_author (fk_user_author);
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_user_cloture (fk_user_cloture);
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_projet (fk_projet);
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_account(fk_account);
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_currency(fk_currency);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_user_author	FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_user_valid	FOREIGN KEY (fk_user_valid)  REFERENCES llx_user (rowid);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_user_cloture	FOREIGN KEY (fk_user_cloture) REFERENCES llx_user (rowid);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_projet		FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_account		FOREIGN KEY (fk_account) REFERENCES llx_bank_account (rowid);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code);
+
+ALTER TABLE llx_facture ADD COLUMN fk_account integer AFTER fk_projet;
+ALTER TABLE llx_facture ADD COLUMN fk_currency varchar(2) AFTER fk_account;
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_account (fk_account);
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_currency (fk_currency);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_account        FOREIGN KEY (fk_account) REFERENCES llx_bank_account (rowid);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_currency       FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code);
+
 ALTER TABLE llx_actioncomm DROP COLUMN propalrowid;
 ALTER TABLE llx_actioncomm DROP COLUMN fk_facture;
 ALTER TABLE llx_actioncomm DROP COLUMN fk_supplier_order;
