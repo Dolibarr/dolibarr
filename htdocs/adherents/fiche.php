@@ -782,7 +782,7 @@ if ($action == 'create')
     {
         foreach($extrafields->attribute_label as $key=>$label)
         {
-            $value=(GETPOST('options_'.$key,'alpha')?GETPOST('options_'.$key,'alpha'):$object->array_options["options_".$key]);
+            $value=(isset($_POST["options_".$key])?GETPOST('options_'.$key,'alpha'):$object->array_options["options_".$key]);
             print '<tr><td>'.$label.'</td><td>';
             print $extrafields->showInputField($key,$value);
             print '</td></tr>'."\n";
