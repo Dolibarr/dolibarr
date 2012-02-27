@@ -1263,7 +1263,7 @@ abstract class DolibarrModules
     	$err=0;
     	$entity=$conf->entity;
 
-    	if (is_array($this->module_parts) && ! empty($this->module_parts))
+    	if (isset($this->module_parts) && is_array($this->module_parts) && ! empty($this->module_parts))
     	{
     		foreach($this->module_parts as $key => $value)
     		{
@@ -1324,7 +1324,7 @@ abstract class DolibarrModules
 
     	$err=0;
 
-    	if (is_array($this->module_parts) && ! empty($this->module_parts))
+    	if (isset($this->module_parts) && is_array($this->module_parts) && ! empty($this->module_parts))
     	{
     		foreach($this->module_parts as $key => $value)
     		{
