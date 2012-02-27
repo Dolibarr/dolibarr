@@ -39,10 +39,11 @@ $langs->load("commercial");
 
 $mesg=''; $error=0; $errors=array();
 
-$action		= (GETPOST('action') ? GETPOST('action') : 'view');
-$confirm	= GETPOST('confirm');
-$id			= GETPOST("id");
-$socid		= GETPOST("socid");
+$action		= (GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
+$confirm	= GETPOST('confirm','alpha');
+$backtopage = GETPOST('backtopage','alpha');
+$id			= GETPOST('id','int');
+$socid		= GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
@@ -76,9 +77,9 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST("cancel") && GETPOST('backtopage'))
+    if (GETPOST("cancel") && ! empty($backtopage))
     {
-        header("Location: ".GETPOST('backtopage'));
+        header("Location: ".$backtopage);
         exit;
     }
 
@@ -86,7 +87,7 @@ if (empty($reshook))
     if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer)
     {
         // Recuperation contact actuel
-        $result = $object->fetch($_GET["id"]);
+        $result = $object->fetch($id);
 
         if ($result > 0)
         {
@@ -172,7 +173,7 @@ if (empty($reshook))
         if (! $error && $id > 0)
         {
             $db->commit();
-            if (GETPOST('backtopage')) $url=GETPOST('backtopage');
+            if (! empty($backtopage)) $url=$backtopage;
             else $url='fiche.php?id='.$id;
             Header("Location: ".$url);
             exit;
@@ -368,7 +369,7 @@ else
             print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add">';
-            print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+            print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
             print '<table class="border" width="100%">';
 
             // Name
@@ -497,7 +498,7 @@ else
 
             print '<center>';
             print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
-            if (GETPOST('backtopage'))
+            if (! empty($backtopage))
             {
                 print ' &nbsp; &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -537,11 +538,11 @@ else
                 print '</script>';
             }
 
-            print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.GETPOST("id").'" name="formsoc">';
+            print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="id" value="'.GETPOST("id").'">';
+            print '<input type="hidden" name="id" value="'.$id.'">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+            print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
             print '<input type="hidden" name="contactid" value="'.$object->id.'">';
             print '<input type="hidden" name="old_name" value="'.$object->name.'">';
             print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';

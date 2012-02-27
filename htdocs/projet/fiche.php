@@ -34,8 +34,9 @@ $langs->load("projects");
 $langs->load('companies');
 
 $id=GETPOST('id','int');
-$ref = GETPOST('ref');
-$action=GETPOST('action');
+$ref = GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
+$backtopage=GETPOST('backtopage','alpha');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && ! $_POST["cancel"])) accessforbidden();
 
@@ -55,9 +56,9 @@ $result = restrictedArea($user, 'projet', $id);
  */
 
 // Cancel
-if (GETPOST("cancel") && GETPOST('backtopage'))
+if (GETPOST("cancel") && ! empty($backtopage))
 {
-    header("Location: ".GETPOST('backtopage'));
+    header("Location: ".$backtopage);
     exit;
 }
 
@@ -276,7 +277,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
     print '<table class="border" width="100%">';
 
@@ -332,7 +333,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     print '<br><center>';
     print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
-    if (GETPOST('backtopage'))
+    if (! empty($backtopage))
     {
         print ' &nbsp; &nbsp; ';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
