@@ -56,7 +56,7 @@ $typeid=GETPOST('typeid','int');
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
 
-if ($rowid)
+if ($rowid > 0)
 {
 	// Load member
 	$result = $object->fetch($rowid);
@@ -72,6 +72,10 @@ if ($rowid)
 		$caneditpassworduser=( (($user->id == $object->user_id) && $user->rights->user->self->password)
 		|| (($user->id != $adh->user_id) && $user->rights->user->user->password) );
 	}
+}
+else
+{
+	accessforbidden();
 }
 
 // Define variables to know what current user can do on members
