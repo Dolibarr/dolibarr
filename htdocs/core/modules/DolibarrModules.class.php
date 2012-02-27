@@ -35,7 +35,7 @@ abstract class DolibarrModules
     //! Database handler
     var $db;
     //! Relative path to module style sheet
-    var $style_sheet = '';
+    var $style_sheet = ''; // deprecated
     //! Path to create when module activated
     var $dirs = array();
     //! Tableau des boites
@@ -46,6 +46,8 @@ abstract class DolibarrModules
     var $rights;
     //! Tableau des menus
     var $menu=array();
+    //! Module parts array
+    var $module_parts=array();
     //! Tableau des documents ???
     var $docs;
 
@@ -1263,7 +1265,7 @@ abstract class DolibarrModules
     	$err=0;
     	$entity=$conf->entity;
 
-    	if (isset($this->module_parts) && is_array($this->module_parts) && ! empty($this->module_parts))
+    	if (is_array($this->module_parts) && ! empty($this->module_parts))
     	{
     		foreach($this->module_parts as $key => $value)
     		{
@@ -1324,7 +1326,7 @@ abstract class DolibarrModules
 
     	$err=0;
 
-    	if (isset($this->module_parts) && is_array($this->module_parts) && ! empty($this->module_parts))
+    	if (is_array($this->module_parts) && ! empty($this->module_parts))
     	{
     		foreach($this->module_parts as $key => $value)
     		{
