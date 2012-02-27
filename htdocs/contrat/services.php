@@ -48,10 +48,10 @@ $search_nom=GETPOST("search_nom");
 $search_contract=GETPOST("search_contract");
 $search_service=GETPOST("search_service");
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
-$socid=GETPOST("socid");
+$socid=GETPOST('socid','int');
 
 // Security check
-$contratid = GETPOST("id");
+$contratid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat',$contratid,'');
 

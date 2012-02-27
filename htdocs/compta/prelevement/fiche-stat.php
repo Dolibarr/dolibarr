@@ -34,7 +34,7 @@ $langs->load("withdrawals");
 $langs->load("categories");
 
 // Get supervariables
-$prev_id = GETPOST("id");
+$prev_id = GETPOST('id','int');
 $page = GETPOST("page");
 
 /*

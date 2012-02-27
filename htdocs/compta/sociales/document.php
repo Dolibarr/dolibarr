@@ -38,7 +38,7 @@ $langs->load("companies");
 $langs->load("compta");
 $langs->load("bills");
 
-$id = GETPOST("id");
+$id = GETPOST('id','int');
 $action = GETPOST("action");
 
 // Security check

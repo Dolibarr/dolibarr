@@ -42,7 +42,7 @@ $langs->load('suppliers');
 $langs->load('companies');
 
 $mesg='';
-$id			= (GETPOST("facid") ? GETPOST("facid") : GETPOST("id"));
+$id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
 

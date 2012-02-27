@@ -390,7 +390,7 @@ else
                 }
                 else {
                     print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-                    print $form->select_company(GETPOST("socid"),'socid','',1);
+                    print $form->select_company(GETPOST('socid','int'),'socid','',1);
                     print '</td></tr>';
                 }
             }
@@ -562,7 +562,7 @@ else
             {
                 print '<tr><td>'.$langs->trans("Company").'</td>';
                 print '<td colspan="3">';
-                print $form->select_company(GETPOST("socid")?GETPOST("socid"):($object->socid?$object->socid:-1),'socid','',1);
+                print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):($object->socid?$object->socid:-1),'socid','',1);
                 print '</td>';
                 print '</tr>';
             }

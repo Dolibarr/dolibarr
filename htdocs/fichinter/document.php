@@ -38,7 +38,7 @@ $langs->load("fichinter");
 $langs->load("companies");
 $langs->load("interventions");
 
-$id = GETPOST("id");
+$id = GETPOST('id','int');
 $action = GETPOST("action");
 
 // Security check

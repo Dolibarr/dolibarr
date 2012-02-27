@@ -37,7 +37,7 @@ $mesg='';
 
 $action		= GETPOST('action');
 $confirm	= GETPOST('confirm');
-$socid		= (GETPOST('socid') ? GETPOST('socid') : GETPOST('id'));
+$socid		= (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 
 // Security check
 if ($user->societe_id > 0)

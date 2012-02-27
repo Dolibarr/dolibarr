@@ -141,10 +141,10 @@ if ($action == 'setsocid')
     $error=0;
     if (! $error)
     {
-        if (GETPOST("socid") != $adh->fk_soc)    // If link differs from currently in database
+        if (GETPOST('socid','int') != $adh->fk_soc)    // If link differs from currently in database
         {
             $sql ="SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-            $sql.=" WHERE fk_soc = '".GETPOST("socid")."'";
+            $sql.=" WHERE fk_soc = '".GETPOST('socid','int')."'";
             $resql = $db->query($sql);
             if ($resql)
             {
@@ -154,7 +154,7 @@ if ($action == 'setsocid')
                     $othermember=new Adherent($db);
                     $othermember->fetch($obj->rowid);
                     $thirdparty=new Societe($db);
-                    $thirdparty->fetch(GETPOST("socid"));
+                    $thirdparty->fetch(GETPOST('socid','int'));
                     $error++;
                     $mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name).'</div>';
                 }
@@ -162,7 +162,7 @@ if ($action == 'setsocid')
 
             if (! $error)
             {
-                $result=$adh->setThirdPartyId(GETPOST("socid"));
+                $result=$adh->setThirdPartyId(GETPOST('socid','int'));
                 if ($result < 0) dol_print_error($adh->db,$adh->error);
                 $_POST['action']='';
                 $action='';

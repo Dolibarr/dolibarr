@@ -50,7 +50,7 @@ $result = restrictedArea($user, 'ecm', 0);
 $user->getrights('ecm');
 
 // Get parameters
-$socid=GETPOST('socid');
+$socid=GETPOST('socid','int');
 $action=GETPOST("action");
 $section=GETPOST("section");
 $module=GETPOST("module");

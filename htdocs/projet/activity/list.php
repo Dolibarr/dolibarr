@@ -34,7 +34,7 @@ $langs->load('projects');
 
 $action=GETPOST('action');
 $mode=GETPOST("mode");
-$id=GETPOST('id');
+$id=GETPOST('id','int');
 
 $mine=0;
 if ($mode == 'mine') $mine=1;

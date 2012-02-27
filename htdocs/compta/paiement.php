@@ -37,7 +37,7 @@ $langs->load('banks');
 $action		= GETPOST('action');
 $confirm	= GETPOST('confirm');
 
-$facid		= GETPOST('facid');
+$facid		= GETPOST('facid','int');
 $socname	= GETPOST('socname');
 $accountid	= GETPOST('accountid');
 $paymentnum	= GETPOST('num_paiement');

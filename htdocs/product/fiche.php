@@ -49,7 +49,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action=(GETPOST('action') ? GETPOST('action') : 'view');
 $confirm=GETPOST('confirm');
-$socid=GETPOST("socid");
+$socid=GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Product($db);

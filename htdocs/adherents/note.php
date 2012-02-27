@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
 $action=GETPOST('action');
-$id=GETPOST("id");
+$id=GETPOST('id','int');
 
 $langs->load("companies");
 $langs->load("members");

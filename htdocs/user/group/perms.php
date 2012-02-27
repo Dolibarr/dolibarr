@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
 
 $langs->load("users");
 
-$id=GETPOST("id");
+$id=GETPOST('id','int');
 $action=GETPOST("action");
 $confirm=GETPOST("confirm");
 $module=GETPOST("module");

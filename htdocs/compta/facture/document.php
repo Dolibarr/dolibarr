@@ -39,7 +39,7 @@ $langs->load("bills");
 
 $action		= GETPOST('action');
 $confirm	= GETPOST('confirm');
-$id			= GETPOST('facid');
+$id			= GETPOST('facid','int');
 $ref		= GETPOST('ref');
 
 // Security check

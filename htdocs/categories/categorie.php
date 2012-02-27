@@ -32,8 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 $langs->load("categories");
 $langs->load("products");
 
-$socid	= GETPOST('socid');
-$id		= GETPOST('id');
+$socid	= GETPOST('socid','int');
+$id		= GETPOST('id','int');
 $ref	= GETPOST('ref');
 $type	= GETPOST('type');
 $mesg	= GETPOST('mesg');

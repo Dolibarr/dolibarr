@@ -38,7 +38,7 @@ else {
 }
 
 // Security check
-$socid = GETPOST('socid');
+$socid = GETPOST('socid','int');
 if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
 accessforbidden();
