@@ -468,7 +468,7 @@ $formcompany = new FormCompany($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
     // When used with CANVAS
@@ -479,7 +479,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
 	     $object->fetch($socid);                // For use with "pure canvas" (canvas that contains templates only)
  	}
    	$objcanvas->assign_values($action, $socid);	// Set value for templates
-    $objcanvas->display_canvas();				// Show template
+    $objcanvas->display_canvas($action);		// Show template
 }
 else
 {

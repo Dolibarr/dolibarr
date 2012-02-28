@@ -661,7 +661,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         $object->fetch($id, $ref);                   // For use with "pure canvas" (canvas that contains templates only)
     }
    	$objcanvas->assign_values($action, $id, $ref);	// Set value for templates
-    $objcanvas->display_canvas();				// Show template
+    $objcanvas->display_canvas($action);				// Show template
 }
 else
 {
