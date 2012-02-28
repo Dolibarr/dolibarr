@@ -37,7 +37,7 @@ $langs->load('other');
 $mesg = "";
 
 // Security check
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 if ($user->societe_id > 0)
 {
 	$id = $user->societe_id;

@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/fichinter.lib.php");
 $langs->load('companies');
 $langs->load("interventions");
 
-$fichinterid = GETPOST("id");
+$fichinterid = GETPOST('id','int');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

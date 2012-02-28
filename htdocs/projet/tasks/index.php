@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 $langs->load('projects');
 $langs->load('users');
 
-$id=GETPOST('id');
+$id=GETPOST('id','int');
 
 // Security check
 $socid=0;

@@ -185,6 +185,12 @@ class pdf_einstein extends ModelePDFCommandes
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+                // Set path to the background PDF File
+                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                {
+                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $pdf->importPage(1);
+                }
 
 				$pdf->Open();
 				$pagenb=0;
@@ -211,6 +217,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// New page
 				$pdf->AddPage();
+				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', $default_font_size - 1);
@@ -356,6 +363,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 						// New page
 						$pdf->AddPage();
+				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', $default_font_size - 1);

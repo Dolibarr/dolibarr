@@ -36,7 +36,7 @@ $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 
 // Security check
-$socid = GETPOST("id");
+$socid = GETPOST('id','int');
 if ($user->societe_id > 0)
 {
 	$socid = $user->societe_id;
@@ -189,7 +189,7 @@ if (GETPOST("action") == 'confirm_remove' && GETPOST("confirm")=='yes')
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.GETPOST('id'));	// To avoid pb whith back
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.GETPOST('id','int'));	// To avoid pb whith back
 		exit;
 	}
 	else

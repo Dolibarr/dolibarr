@@ -302,7 +302,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Customer
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    $text=$form->select_company(GETPOST("socid"),'socid','',1,1);
+    $text=$form->select_company(GETPOST('socid','int'),'socid','',1,1);
     $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
     print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
     print '</td></tr>';

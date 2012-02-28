@@ -28,7 +28,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
 
-$id=GETPOST('id');
+$id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
 $action=GETPOST('action');

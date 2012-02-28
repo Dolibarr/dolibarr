@@ -145,7 +145,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
         $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
 
-        $result=GETPOST("id");              // Must return nothing
+        $result=GETPOST('id','int');              // Must return nothing
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
 

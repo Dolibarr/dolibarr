@@ -49,7 +49,7 @@ if ($conf->notification->enabled) $langs->load("mails");
 if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) $langs->load("chronodocs");
 
 // Security check
-$id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id'));
+$id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 if ($user->societe_id > 0) $id=$user->societe_id;
 $result = restrictedArea($user,'societe',$id,'&societe');
 

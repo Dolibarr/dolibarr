@@ -47,7 +47,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="email";
 
-$id=GETPOST('rowid')?GETPOST('rowid'):GETPOST('id');
+$id=GETPOST('rowid')?GETPOST('rowid'):GETPOST('id','int');
 $action=GETPOST("action");
 $search_nom=GETPOST("search_nom");
 $search_prenom=GETPOST("search_prenom");

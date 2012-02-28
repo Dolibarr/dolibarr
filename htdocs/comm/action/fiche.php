@@ -153,10 +153,10 @@ if ($action == 'add_action')
 
 	$actioncomm->note = trim($_POST["note"]);
 	if (isset($_POST["contactid"])) $actioncomm->contact = $contact;
-	if (GETPOST("socid") > 0)
+	if (GETPOST('socid','int') > 0)
 	{
 		$societe = new Societe($db);
-		$societe->fetch(GETPOST("socid"));
+		$societe->fetch(GETPOST('socid','int'));
 		$actioncomm->societe = $societe;
 	}
 
@@ -508,12 +508,12 @@ if ($action == 'create')
 
 	// Societe, contact
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
-	if (GETPOST("socid") > 0)
+	if (GETPOST('socid','int') > 0)
 	{
 		$societe = new Societe($db);
-		$societe->fetch(GETPOST("socid"));
+		$societe->fetch(GETPOST('socid','int'));
 		print $societe->getNomUrl(1);
-		print '<input type="hidden" name="socid" value="'.GETPOST("socid").'">';
+		print '<input type="hidden" name="socid" value="'.GETPOST('socid','int').'">';
 	}
 	else
 	{
@@ -522,10 +522,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// If company is forced, we propose contacts (may be contact is also forced)
-	if (GETPOST("contactid") > 0 || GETPOST("socid") > 0)
+	if (GETPOST("contactid") > 0 || GETPOST('socid','int') > 0)
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-		$form->select_contacts(GETPOST("socid"),GETPOST('contactid'),'contactid',1);
+		$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
 		print '</td></tr>';
 	}
 

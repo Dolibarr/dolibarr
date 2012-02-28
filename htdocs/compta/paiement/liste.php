@@ -30,9 +30,9 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 $langs->load("bills");
 
 // Security check
-$facid =GETPOST("facid");
-$socid =GETPOST("socid");
-$userid=GETPOST('userid');
+$facid =GETPOST('facid','int');
+$socid =GETPOST('socid','int');
+$userid=GETPOST('userid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture',$facid,'');
 

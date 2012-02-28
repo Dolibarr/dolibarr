@@ -296,7 +296,7 @@ complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort
 // Define elementList and sourceList (used for dictionnary "type of contacts")
 $elementList = array();
 $sourceList=array();
-if (GETPOST("id") == 11)
+if (GETPOST('id','int') == 11)
 {
     $langs->load("orders");
     $langs->load("contracts");
@@ -702,7 +702,7 @@ if ($_GET["id"])
             if ($num > $listlimit)
             {
                 print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
-                print_fleche_navigation($page,$_SERVER["PHP_SELF"],'&id='.GETPOST('id'),($num > $listlimit),$langs->trans("Page").' '.($page+1));
+                print_fleche_navigation($page,$_SERVER["PHP_SELF"],'&id='.GETPOST('id','int'),($num > $listlimit),$langs->trans("Page").' '.($page+1));
                 print '</td></tr>';
             }
 
@@ -737,10 +737,10 @@ if ($_GET["id"])
                 // Affiche nom du champ
                 if ($showfield)
                 {
-                    print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],($page?'page='.$page.'&':'').'&id='.GETPOST("id"),"","",$sortfield,$sortorder);
+                    print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],($page?'page='.$page.'&':'').'&id='.GETPOST('id','int'),"","",$sortfield,$sortorder);
                 }
             }
-            print_liste_field_titre($langs->trans("Status"),"dict.php","active",($page?'page='.$page.'&':'').'&id='.GETPOST("id"),"",'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Status"),"dict.php","active",($page?'page='.$page.'&':'').'&id='.GETPOST('id','int'),"",'align="center"',$sortfield,$sortorder);
             print '<td colspan="2"  class="liste_titre">&nbsp;</td>';
             print '</tr>';
 
@@ -756,7 +756,7 @@ if ($_GET["id"])
                 {
                     print '<form action="dict.php" method="post">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="id" value="'.GETPOST("id").'">';
+                    print '<input type="hidden" name="id" value="'.GETPOST('id','int').'">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
                     

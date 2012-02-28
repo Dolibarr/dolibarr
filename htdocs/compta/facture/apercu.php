@@ -36,7 +36,7 @@ $langs->load("bills");
 
 // Security check
 $socid=0;
-$id = GETPOST("facid");
+$id = GETPOST('facid','int');
 $ref = GETPOST("ref");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id);

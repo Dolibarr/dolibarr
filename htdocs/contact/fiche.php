@@ -249,10 +249,12 @@ if (empty($reshook))
             {
                 $object->old_name='';
                 $object->old_firstname='';
+                $action = 'view';
             }
             else
             {
                 $error=$object->error; $errors=$object->errors;
+                $action = 'edit';
             }
         }
     }
@@ -277,7 +279,7 @@ if ($socid > 0)
     $objsoc->fetch($socid);
 }
 
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
     // When used with CANVAS
@@ -288,7 +290,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
 	     $object->fetch($id);                   // For use with "pure canvas" (canvas that contains templates only)
  	}
 	$objcanvas->assign_values($action, $id);	// Set value for templates
-	$objcanvas->display_canvas();				// Show template
+	$objcanvas->display_canvas($action);		// Show template
 }
 else
 {
@@ -390,7 +392,7 @@ else
                 }
                 else {
                     print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-                    print $form->select_company(GETPOST("socid"),'socid','',1);
+                    print $form->select_company(GETPOST('socid','int'),'socid','',1);
                     print '</td></tr>';
                 }
             }
@@ -562,7 +564,7 @@ else
             {
                 print '<tr><td>'.$langs->trans("Company").'</td>';
                 print '<td colspan="3">';
-                print $form->select_company(GETPOST("socid")?GETPOST("socid"):($object->socid?$object->socid:-1),'socid','',1);
+                print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):($object->socid?$object->socid:-1),'socid','',1);
                 print '</td>';
                 print '</tr>';
             }

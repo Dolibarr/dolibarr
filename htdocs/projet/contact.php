@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 $langs->load("projects");
 $langs->load("companies");
 
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $ref= GETPOST('ref');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;

@@ -51,9 +51,9 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
 
-$id      = (GETPOST("id")?GETPOST("id"):GETPOST("orderid"));
+$id      = (GETPOST('id','int')?GETPOST('id','int'):GETPOST("orderid"));
 $ref     = GETPOST('ref');
-$socid   = GETPOST('socid');
+$socid   = GETPOST('socid','int');
 $action  = GETPOST('action');
 $confirm = GETPOST('confirm');
 $lineid  = GETPOST('lineid');
@@ -191,7 +191,7 @@ if ($action == 'add' && $user->rights->commande->creer)
     $datecommande  = dol_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
     $datelivraison = dol_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 
-    $object->socid=GETPOST('socid');
+    $object->socid=GETPOST('socid','int');
     $object->fetch_thirdparty();
 
     $db->begin();
@@ -1652,7 +1652,7 @@ else
                 //'text' => $langs->trans("ConfirmClone"),
                 //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
                 //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-                array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
+                array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid','int'),'socid','(s.client=1 OR s.client=3)'))
                 );
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);

@@ -75,7 +75,7 @@ $modetax = $conf->global->TAX_MODE;
 if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
 
 // Security check
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 

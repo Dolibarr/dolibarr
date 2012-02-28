@@ -40,7 +40,7 @@ $langs->load("other");
 $langs->load("bills");
 
 if (isset($_GET["error"])) $error=$_GET["error"];
-$objectid = GETPOST("id");
+$objectid = GETPOST('id','int');
 
 // Security check
 if ($user->societe_id > 0)

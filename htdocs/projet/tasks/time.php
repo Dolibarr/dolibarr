@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 $langs->load('projects');
 
 $taskid = isset($_GET["id"])?$_GET["id"]:'';
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $ref= GETPOST('ref');
 $action=GETPOST('action');
 $withproject=GETPOST('withproject');

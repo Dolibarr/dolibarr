@@ -34,7 +34,7 @@ $langs->load("products");
 $langs->load("bills");
 $langs->load("other");
 
-$id		= GETPOST('id');
+$id		= GETPOST('id','int');
 $ref	= GETPOST('ref');
 $mode	= (GETPOST('mode') ? GETPOST('mode') : 'byunit');
 $error	= 0;

@@ -32,7 +32,7 @@ $langs->load("withdrawals");
 $langs->load("categories");
 
 // Security check
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','');
 

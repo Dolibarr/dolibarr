@@ -35,7 +35,7 @@ $langs->load('bills');
 $langs->load('other');
 $langs->load("companies");
 
-$facid = GETPOST("facid")?GETPOST("facid"):GETPOST("id");
+$facid = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
 // Security check

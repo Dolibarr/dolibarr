@@ -47,12 +47,12 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-$id 			= GETPOST("id");
+$id 			= GETPOST('id','int');
 $ref 			= GETPOST("ref");
 $action 		= GETPOST("action");
 $confirm		= GETPOST("confirm");
 $comclientid 	= GETPOST("comid");
-$socid			= GETPOST("socid");
+$socid			= GETPOST('socid','int');
 $projectid		= GETPOST("projectid");
 
 // Security check

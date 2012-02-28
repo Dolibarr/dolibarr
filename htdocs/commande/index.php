@@ -33,7 +33,7 @@ if (!$user->rights->commande->lire) accessforbidden();
 $langs->load("orders");
 
 // Security check
-$socid=GETPOST('socid');
+$socid=GETPOST('socid','int');
 if ($user->societe_id > 0)
 {
 	$action = '';

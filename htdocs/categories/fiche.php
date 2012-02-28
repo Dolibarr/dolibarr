@@ -31,7 +31,7 @@ $langs->load("categories");
 
 
 // Security check
-$socid=GETPOST('socid');
+$socid=GETPOST('socid','int');
 if (!$user->rights->categorie->lire) accessforbidden();
 
 $action		= GETPOST('action','alpha');

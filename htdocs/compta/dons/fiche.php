@@ -34,7 +34,7 @@ $langs->load("companies");
 $langs->load("donations");
 $langs->load("bills");
 
-$id=GETPOST('rowid')?GETPOST('rowid'):GETPOST('id');
+$id=GETPOST('rowid')?GETPOST('rowid'):GETPOST('id','int');
 $action=GETPOST('action');
 
 $mesg="";

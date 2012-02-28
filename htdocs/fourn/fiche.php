@@ -42,7 +42,7 @@ $langs->load('commercial');
 $action	= GETPOST('action');
 
 // Security check
-$id = (GETPOST("socid") ? GETPOST("socid") : GETPOST("id"));
+$id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe&fournisseur', $id, '');
 

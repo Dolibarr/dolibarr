@@ -155,6 +155,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+                // Set path to the background PDF File
+                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                {
+                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $pdf->importPage(1);
+                }
 
 				$pdf->Open();
 				$pagenb=0;

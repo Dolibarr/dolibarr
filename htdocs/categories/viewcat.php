@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/categories.lib.php");
 $langs->load("categories");
 
 $mesg = '';
-$id=GETPOST('id');
+$id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
 $action=GETPOST('action');
