@@ -1,7 +1,7 @@
 # Dolibarr language file - ca_ES - errors
 CHARSET=UTF-8
 MenuManager=Gestor de menú
-# Errors=undefined=
+# Errors
 Error=Error
 Errors=Errors
 ErrorBadEMail=e-mail %s incorrecte
@@ -10,6 +10,7 @@ ErrorLoginAlreadyExists=El login %s ja existeix.
 ErrorGroupAlreadyExists=El grup %s ja existeix.
 ErrorRecordNotFound=Registre no trobat
 ErrorDuplicateTrigger=Un arxiu trigger de nom '<b>%s</b>' està carregat. Treure el doble de la carpeta '<b>%s</b>'.
+ErrorFailToCopyFile=Error al copiar l'arxiu '<b>%s</b>' a '<b>%s</b>'.
 ErrorFailToRenameFile=Error al renomenar l'arxiu '<b>%s</b>' a '<b>%s</b>'.
 ErrorFailToCreateFile=Error al crear l'arxiu  '<b>%s</b>'
 ErrorFailToDeleteFile=Error al suprimir el fitxer '<b>%s</b>'.
@@ -102,6 +103,7 @@ ErrorLoginHasNoEmail=Aquest usuari no té e-mail. Impossible continuar.
 ErrorBadValueForCode=Valor no vàlid per al codi. Torneu a intentar-ho amb un nou valor ...
 ErrorBothFieldCantBeNegative=Els camps %s i %s no poden ser negatius
 ErrorNoActivatedBarcode=Cap tipus de codi de barres activat
+ErrorWebServerUserHasNotPermission=El compte d'execució del servidor web <b>%s</b> no disposa dels permisos per això
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Atenció, està activada l'opció PHP <b>safe_mode</b>, la comanda ha d'estar dins d'un directori declarat dins del paràmetre php <b>safe_mode_exec_dir</b>.
