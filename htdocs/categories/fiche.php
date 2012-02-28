@@ -34,13 +34,13 @@ $langs->load("categories");
 $socid=GETPOST('socid');
 if (!$user->rights->categorie->lire) accessforbidden();
 
-$action		= GETPOST('action');
-$cancel		= GETPOST('cancel');
-$origin		= GETPOST('origin');
-$catorigin	= GETPOST('catorigin');
-$nbcats 	= (GETPOST('choix') ? GETPOST('choix') : 1);
-$type 		= GETPOST('type');
-$urlfrom	= GETPOST("urlfrom");
+$action		= GETPOST('action','alpha');
+$cancel		= GETPOST('cancel','alpha');
+$origin		= GETPOST('origin','alpha');
+$catorigin	= GETPOST('catorigin','int');
+$nbcats 	= (GETPOST('choix') ? GETPOST('choix') : 1); // TODO not use ?
+$type 		= GETPOST('type','alpha');
+$urlfrom	= GETPOST('urlfrom','alpha');
 
 if ($origin)
 {

@@ -209,7 +209,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
 
-	if (GETPOST("urlfrom")) $_SESSION["urlfrom"]=GETPOST("urlfrom");
+	if (GETPOST('urlfrom','alpha')) $_SESSION["urlfrom"]=GETPOST('urlfrom','alpha');
 	else unset($_SESSION["urlfrom"]);
 
 	if (! GETPOST("username")) $focus_element='username';
