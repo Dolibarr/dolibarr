@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/fichinter.lib.php");
 $langs->load('companies');
 $langs->load("interventions");
 
-$fichinterid = GETPOST("id");
+$fichinterid = GETPOST('id','int');
 $action=GETPOST("action");
 
 // Security check

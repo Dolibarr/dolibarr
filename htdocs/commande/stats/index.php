@@ -34,8 +34,8 @@ $mode=GETPOST("mode")?GETPOST("mode"):'customer';
 if ($mode == 'customer' && ! $user->rights->commande->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->fournisseur->commande->lire) accessforbidden();
 
-$userid=GETPOST('userid'); if ($userid < 0) $userid=0;
-$socid=GETPOST('socid'); if ($socid < 0) $socid=0;
+$userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
+$socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
 // Security check
 if ($user->societe_id > 0)
 {

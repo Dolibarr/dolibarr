@@ -51,9 +51,9 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
 
-$id      = (GETPOST("id")?GETPOST("id"):GETPOST("orderid"));
+$id      = (GETPOST('id','int')?GETPOST('id','int'):GETPOST("orderid"));
 $ref     = GETPOST('ref');
-$socid   = GETPOST('socid');
+$socid   = GETPOST('socid','int');
 $action  = GETPOST('action');
 $confirm = GETPOST('confirm');
 $lineid  = GETPOST('lineid');
@@ -191,7 +191,7 @@ if ($action == 'add' && $user->rights->commande->creer)
     $datecommande  = dol_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
     $datelivraison = dol_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 
-    $object->socid=GETPOST('socid');
+    $object->socid=GETPOST('socid','int');
     $object->fetch_thirdparty();
 
     $db->begin();
@@ -229,7 +229,7 @@ if ($action == 'add' && $user->rights->commande->creer)
 
         $object->origin    = $_POST['origin'];
         $object->origin_id = $_POST['originid'];
-        
+
         // Possibility to add external linked objects with hooks
         $object->linked_objects[$object->origin] = $object->origin_id;
         if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
@@ -641,15 +641,14 @@ if ($action == 'addline' && $user->rights->commande->creer)
                     {
                     	// Define output language
                     	$outputlangs = $langs;
-                    	$newlang='';
-                    	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
+                    	$newlang=GETPOST('lang_id','alpha');
                     	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
                     	if (! empty($newlang))
                     	{
                     		$outputlangs = new Translate("",$conf);
                     		$outputlangs->setDefaultLang($newlang);
                     	}
-                    	
+
                         $ret=$object->fetch($id);    // Reload to get new records
                         commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
                     }
@@ -1653,7 +1652,7 @@ else
                 //'text' => $langs->trans("ConfirmClone"),
                 //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
                 //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-                array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
+                array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid','int'),'socid','(s.client=1 OR s.client=3)'))
                 );
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
@@ -1817,11 +1816,11 @@ else
 
                 if ($action == 'editdelivery_adress')
                 {
-                    $form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'fk_address','commande',$object->id);
+                    $formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'fk_address','commande',$object->id);
                 }
                 else
                 {
-                    $form->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'none','commande',$object->id);
+                    $formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'none','commande',$object->id);
                 }
                 print '</td></tr>';
             }

@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 $langs->load('bills');
 $langs->load("companies");
 
-$facid = GETPOST("facid")?GETPOST("facid"):GETPOST('id');
+$facid = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $action = GETPOST('action');
 
 // Security check

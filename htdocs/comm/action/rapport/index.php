@@ -40,7 +40,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="a.datep";
 
 // Security check
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
@@ -53,7 +53,7 @@ $langs->load("commercial");
 if ($_GET["action"] == 'builddoc')
 {
 	$cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
-	$result=$cat->write_file(GETPOST("id"));
+	$result=$cat->write_file(GETPOST('id','int'));
 	if ($result < 0)
 	{
 		$mesg=$cat->error;

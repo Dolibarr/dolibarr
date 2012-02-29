@@ -47,12 +47,12 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-$id 			= GETPOST("id");
+$id 			= GETPOST('id','int');
 $ref 			= GETPOST("ref");
 $action 		= GETPOST("action");
 $confirm		= GETPOST("confirm");
 $comclientid 	= GETPOST("comid");
-$socid			= GETPOST("socid");
+$socid			= GETPOST('socid','int');
 $projectid		= GETPOST("projectid");
 
 // Security check
@@ -157,8 +157,8 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
                 $type = $productsupplier->type;
 
                 // Local Taxes
-                $localtax1_tx= get_localtax($tva_tx, 1, $object->thirdparty);
-                $localtax2_tx= get_localtax($tva_tx, 2, $object->thirdparty);
+                $localtax1_tx= get_localtax($tva_tx, 1, $mysoc);
+                $localtax2_tx= get_localtax($tva_tx, 2, $mysoc);
 
                 $result=$object->addline(
                     $desc,
@@ -221,15 +221,14 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             {
             	// Define output language
             	$outputlangs = $langs;
-            	$newlang='';
-            	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
-            	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                $newlang=GETPOST('lang_id','alpha');
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
             	if (! empty($newlang))
             	{
             		$outputlangs = new Translate("",$conf);
             		$outputlangs->setDefaultLang($newlang);
             	}
-            	
+
                 $ret=$object->fetch($id);    // Reload to get new records
                 supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
             }

@@ -129,7 +129,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
         global $conf;
 
         return array(
-            'line_fulldesc'=>doc_getlinedesc($line),
+            'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
             'line_product_ref'=>$line->product_ref,
             'line_product_label'=>$line->product_label,
         	'line_desc'=>$line->desc,

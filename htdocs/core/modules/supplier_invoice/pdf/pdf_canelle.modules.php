@@ -177,6 +177,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+                // Set path to the background PDF File
+                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                {
+                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $pdf->importPage(1);
+                }
 
 				$pdf->Open();
 				$pagenb=0;
@@ -203,6 +209,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
                 // New page
 				$pdf->AddPage();
+				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', $default_font_size - 1);
@@ -347,6 +354,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 						// New page
 						$pdf->AddPage();
+				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', $default_font_size - 1);
@@ -893,7 +901,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx+2,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":",0,'L');
-			$pdf->rect($posx, $posy, 100, $hautcadre);
+			$pdf->Rect($posx, $posy, 100, $hautcadre);
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
@@ -902,7 +910,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
 			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 	}

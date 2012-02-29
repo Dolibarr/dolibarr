@@ -39,7 +39,7 @@ $search_compta_fournisseur = GETPOST("search_compta_fournisseur");
 $search_datec              = GETPOST("search_datec");
 
 // Security check
-$socid = GETPOST('socid');
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 

@@ -36,7 +36,7 @@ $langs->load('other');
 
 $action		= GETPOST('action');
 $confirm	= GETPOST('confirm');
-$id			= GETPOST('id');
+$id			= GETPOST('id','int');
 $ref		= GETPOST('ref');
 
 // Security check

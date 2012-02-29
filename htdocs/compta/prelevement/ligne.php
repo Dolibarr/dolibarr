@@ -39,8 +39,8 @@ $langs->load("categories");
 
 // Get supervariables
 $action = GETPOST("action");
-$id = GETPOST("id");
-$socid = GETPOST("socid");
+$id = GETPOST('id','int');
+$socid = GETPOST('socid','int');
 
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");

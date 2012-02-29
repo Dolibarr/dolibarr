@@ -34,7 +34,7 @@ if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 $langs->load("companies");
 $langs->load("bills");
 
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 
 // Security check
 if ($user->societe_id > 0)

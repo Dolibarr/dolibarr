@@ -37,7 +37,7 @@ $langs->load("members");
 
 $mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
 
-$id = GETPOST("id");
+$id = GETPOST('id','int');
 
 // Security check
 if (! $user->rights->adherent->lire) accessforbidden();

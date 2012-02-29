@@ -35,7 +35,7 @@ $langs->load("categories");
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
-$prev_id = GETPOST("id");
+$prev_id = GETPOST('id','int');
 $page = GETPOST("page");
 
 /*

@@ -33,7 +33,7 @@ $langs->load('other');
 $action=GETPOST('action');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $ref= GETPOST('ref');
 
 // Security check

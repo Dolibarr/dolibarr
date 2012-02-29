@@ -79,7 +79,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
 if ($_GET["action"] == 'swapstatut' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	if ($commande->fetch(GETPOST("id")))
+	if ($commande->fetch(GETPOST('id','int')))
 	{
 	    $result=$commande->swapContactStatus(GETPOST('ligne'));
 	}

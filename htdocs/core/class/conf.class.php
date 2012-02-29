@@ -161,7 +161,7 @@ class Conf
 							$partname = strtolower($reg[2]);
 							$varname = $partname.'_modules';
 							if (! is_array($this->$varname)) { $this->$varname = array(); }
-							$arrValue = unserialize($value);
+							$arrValue = @unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));

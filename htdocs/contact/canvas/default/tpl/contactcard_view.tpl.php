@@ -17,7 +17,6 @@
  */
 
 $contact = $GLOBALS['objcanvas']->control->object;
-
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTCARD_VIEW.TPL.PHP DEFAULT -->
@@ -98,7 +97,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 	<td><?php echo $this->control->tpl['email']; ?></td>
 	<?php if ($this->control->tpl['nb_emailing']) { ?>
 	<td nowrap><?php echo $langs->trans("NbOfEMailingsReceived"); ?></td>
-	<td><a href="<?php echo DOL_URL_ROOT.'/comm/mailing/liste.php?filteremail='.urlencode($this->control->tpl['email']); ?>"><?php echo $this->control->tpl['nb_emailing']; ?></a></td>
+	<td><?php echo $this->control->tpl['nb_emailing']; ?></td>
 	<?php } else { ?>
 	<td colspan="2">&nbsp;</td>
 	<?php } ?>

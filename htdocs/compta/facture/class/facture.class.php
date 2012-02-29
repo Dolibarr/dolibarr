@@ -838,7 +838,7 @@ class Facture extends CommonObject
         $sql.= ' l.rang, l.special_code,';
         $sql.= ' l.date_start as date_start, l.date_end as date_end,';
         $sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
-        $sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
+        $sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
         $sql.= ' WHERE l.fk_facture = '.$this->id;
@@ -856,12 +856,12 @@ class Facture extends CommonObject
                 $line = new FactureLigne($this->db);
 
                 $line->rowid	        = $objp->rowid;
-                $line->desc             = $objp->description;     // Description line
-                $line->product_type     = $objp->product_type;	// Type of line
-                $line->product_ref      = $objp->product_ref;     // Ref product
-                $line->libelle          = $objp->label;           // Label product
-                $line->product_label	= $objp->product_label;
-                $line->product_desc     = $objp->product_desc;    // Description product
+                $line->desc             = $objp->description;		// Description line
+                $line->product_type     = $objp->product_type;		// Type of line
+                $line->product_ref      = $objp->product_ref;		// Ref product
+                $line->libelle          = $objp->product_label;		// TODO deprecated
+                $line->product_label	= $objp->product_label;		// Label product
+                $line->product_desc     = $objp->product_desc;		// Description product
                 $line->fk_product_type  = $objp->fk_product_type;	// Type of product
                 $line->qty              = $objp->qty;
                 $line->subprice         = $objp->subprice;
@@ -3411,7 +3411,7 @@ class FactureLigne
         $sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_tx,';
         $sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
         $sql.= ' fd.date_start as date_start, fd.date_end as date_end,';
-        $sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.rang,';
+        $sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
         $sql.= ' fd.fk_code_ventilation, fd.fk_export_compta,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';

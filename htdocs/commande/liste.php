@@ -44,7 +44,7 @@ $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
 
 // Security check
-$id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id'));
+$id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande', $id,'');
 

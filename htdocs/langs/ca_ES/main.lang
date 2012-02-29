@@ -330,6 +330,7 @@ ActionDoneShort=Acabat
 CompanyFoundation=Empresa o institució
 ContactsForCompany=Contactes/adreces d'aquest tercer
 ActionsOnCompany=Esdeveniments respecte aquest tercer
+ActionsOnMember=Esdeveniments respecte aquest membre
 NActions=%s esdeveniments
 NActionsLate=%s en retard
 Filter=Filtre
@@ -607,6 +608,16 @@ URLPhoto=Url de la foto/logo
 SetLinkToThirdParty=Vincular a un altre tercer
 CreateDraft=Crea esborrany
 ClickToEdit=Clic per a editar
+ObjectDeleted=Objecte %s eliminat
+ByCountry=Per país
+ByTown=Per població
+ByDate=Per data
+ByMonthYear=Per mes/any
+ByYear=Per any
+ByMonth=Per mes
+ByDay=Per dia
+BySalesRepresentative=Per comercial
+
 
 # Week day
 Monday=Dilluns

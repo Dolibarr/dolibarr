@@ -50,9 +50,9 @@ class Canvas
 	*   @param     DoliDB	$DB          	Database handler
 	*   @param     string   $actiontype		Action type ('create', 'view', 'edit', 'list')
 	*/
-	function __construct($DB, $actiontype='view')
+	function __construct($db, $actiontype='view')
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		$this->actiontype = $actiontype;
         if ($this->actiontype == 'add')    $this->actiontype='create';
@@ -128,11 +128,11 @@ class Canvas
 	 *
      *	@return		int		0=Canvas template file does not exist, 1=Canvas template file exists
      */
-    function displayCanvasExists()
-    {
+    function displayCanvasExists($action)
+    {	
         if (empty($this->template_dir)) return 0;
-        //print $this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php';
-        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php')) return 1;
+
+        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->action.'.tpl.php')) return 1;
         else return 0;
     }
 
@@ -142,12 +142,12 @@ class Canvas
 	 *
 	 *	@return		void
 	 */
-	function display_canvas()
+	function display_canvas($action)
 	{
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 
-		include($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php');        // Include native PHP template
+		include($this->template_dir.($this->card?$this->card.'_':'').$this->action.'.tpl.php');        // Include native PHP template
 	}
 
 

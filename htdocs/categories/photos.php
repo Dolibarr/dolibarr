@@ -35,7 +35,7 @@ $langs->load("bills");
 
 $mesg = '';
 
-$id=GETPOST('id');
+$id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
 $action=GETPOST('action');

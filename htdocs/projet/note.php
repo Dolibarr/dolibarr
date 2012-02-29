@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 $langs->load('projects');
 
 $action=GETPOST('action');
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $ref= GETPOST('ref');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;

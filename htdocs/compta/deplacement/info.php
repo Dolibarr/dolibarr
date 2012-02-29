@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php"
 $langs->load("trips");
 
 // Security check
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
