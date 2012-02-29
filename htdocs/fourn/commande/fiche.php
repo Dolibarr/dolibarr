@@ -59,6 +59,11 @@ $projectid		= GETPOST("projectid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('fournordercard'));
+
 $mesg='';
 
 $object = new CommandeFournisseur($db);
@@ -1317,6 +1322,12 @@ if ($id > 0 || ! empty($ref))
                 $form->select_produits_fournisseurs($object->fourn_id,'','idprodfournprice','',$filtre);
 
                 if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
+
+				if (is_object($hookmanager))
+				{
+			        $parameters=array('filtre'=>$filtre);
+				    echo $hookmanager->executeHooks('formCreateProductFournOptions',$parameters,$object,$action);
+				}
 
                 // Editor wysiwyg
                 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
