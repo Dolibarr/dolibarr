@@ -38,8 +38,8 @@ $langs->load("errors");
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST("action");
-$value = GETPOST("value");
+$action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 /*
  * Actions
@@ -242,6 +242,11 @@ print "</tr>\n";
 
 clearstatcache();
 
+// Check if there is external models to do asked by plugins
+if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+}
+
 foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/core/modules/commande/";
@@ -372,6 +377,11 @@ print '<td align="center" width="38" colspan="2">'.$langs->trans("Infos").'</td>
 print "</tr>\n";
 
 clearstatcache();
+
+// Check if there is external models to do asked by plugins
+if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+}
 
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)

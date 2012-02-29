@@ -58,6 +58,7 @@ class Conf
 	public $triggers_modules		= array();
 	public $menus_modules			= array();
 	public $hooks_modules			= array();
+	public $models_modules			= array();
 	public $login_modules			= array();
 	public $sms_engine_modules		= array();
 	public $barcode_modules			= array();
@@ -163,6 +164,7 @@ class Conf
 							if (! is_array($this->$varname)) { $this->$varname = array(); }
 							$arrValue = @unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
+							else if ($partname == 'models' && $value == 1) $value = dol_buildpath('/'.$modulename);
 							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}

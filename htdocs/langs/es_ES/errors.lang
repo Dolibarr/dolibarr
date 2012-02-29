@@ -104,6 +104,7 @@ ErrorBadValueForCode=Valor incorrecto para el código. Vuelva a intentar con un 
 ErrorBothFieldCantBeNegative=Los campos %s y %s no pueden ser negativos
 ErrorNoActivatedBarcode=Ningún tipo de código de barra activado
 ErrorWebServerUserHasNotPermission=La cuenta de ejecución del servidor web <b>%s</b> no dispone de los permisos para esto
+ErrorNoActivatedBarcode=No hay activado ningún tipo de código de barras
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.

@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio         <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin               <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2012 Juanjo Menent			   <jmenent@2byte.es>
  *
@@ -35,11 +35,10 @@ require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 $langs->load("admin");
 $langs->load("errors");
 
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
-$action =GETPOST("action");
-$value = GETPOST("value");
+$action =GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 /*
  * Actions
@@ -186,7 +185,8 @@ if ($action == 'set')
     $sql.= ")";
 	$resql=$db->query($sql);
 }
-if ($action == 'del')
+
+else if ($action == 'del')
 {
 	$type='propal';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
@@ -199,7 +199,7 @@ if ($action == 'del')
 	}
 }
 
-if ($action == 'setdoc')
+else if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
@@ -235,7 +235,7 @@ if ($action == 'setdoc')
 	}
 }
 
-if ($action == 'setmod')
+else if ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -273,6 +273,11 @@ print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
+
+// Check if there is external models to do asked by plugins
+if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+}
 
 foreach ($conf->file->dol_document_root as $dirroot)
 {
@@ -404,6 +409,11 @@ print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
+
+// Check if there is external models to do asked by plugins
+if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+}
 
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)

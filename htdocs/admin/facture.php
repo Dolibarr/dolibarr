@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne					<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011	Regis Houssin				<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,8 @@ $langs->load("errors");
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST("action");
-$value = GETPOST("value");
+$action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 
 /*
@@ -308,6 +308,11 @@ print '</tr>'."\n";
 
 clearstatcache();
 
+// Check if there is external models to do asked by plugins
+if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+}
+
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
@@ -472,6 +477,11 @@ print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>
 print "</tr>\n";
 
 clearstatcache();
+
+// Check if there is external models to do asked by plugins
+if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+}
 
 $var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
