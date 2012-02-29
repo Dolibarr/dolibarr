@@ -318,21 +318,19 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-// Check if there is external models to do asked by plugins
-if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
-	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
-}
+$dirmodels=array_merge(array('/'),$conf->models_modules);
 
-$var=true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-    $dir = $dirroot . "/core/modules/facture/";
+	$dir = dol_buildpath($reldir."core/modules/commande/");
 
     if (is_dir($dir))
     {
         $handle = opendir($dir);
         if (is_resource($handle))
         {
+        	$var=true;
+        	
             while (($file = readdir($handle))!==false)
             {
                 if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
@@ -488,17 +486,14 @@ print "</tr>\n";
 
 clearstatcache();
 
-// Check if there is external models to do asked by plugins
-if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
-	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
-}
+$dirmodels=array_merge(array('/'),$conf->models_modules);
 
 $var=true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-        $dir = $dirroot . "/core/modules/facture".$valdir;
+    	$dir = dol_buildpath($reldir."core/modules/facture".$valdir);
 
         if (is_dir($dir))
         {
