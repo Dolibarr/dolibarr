@@ -39,6 +39,7 @@ MailingStatusDraft=Esborrany
 MailingStatusValidated=Validat
 MailingStatusApproved=Aprovat
 MailingStatusSent=Enviat
+MailingStatusRead=Llegit
 MailingStatusSentPartialy=Enviat parcialment
 MailingStatusSentCompletely=Enviat completament
 MailingStatusError=Error
