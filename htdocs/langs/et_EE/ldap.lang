@@ -1,0 +1,39 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+DomainPassword=Salasõna domeeni
+YouMustChangePassNextLogon=Salasõna kasutaja <b>%s</b> domeeni <b>%s</b> tuleb muuta.
+UserMustChangePassNextLogon=Kasutaja peab muutuma parooli domeeni %s
+LdapUacf_NORMAL_ACCOUNT=Kasutaja konto
+LdapUacf_DONT_EXPIRE_PASSWORD=Salasõna kunagi lõpeb
+LdapUacf_ACCOUNTDISABLE=Konto on blokeeritud domeeni %s
+LDAPInformationsForThisContact=Teavet LDAP andmebaasi selle kontakti
+LDAPInformationsForThisUser=Teavet LDAP andmebaasi selle kasutaja
+LDAPInformationsForThisGroup=Teavet LDAP andmebaasi selle grupi
+LDAPInformationsForThisMember=Teavet LDAP andmebaasi selle liikme
+LDAPAttribute=LDAP atribuut
+LDAPAttributes=LDAP atribuudid
+LDAPCard=LDAP kaart
+LDAPRecordNotFound=Salvestada ei leitud LDAP andmebaasi
+LDAPUsers=Kasutajad LDAP andmebaasi
+LDAPGroups=Grupid in LDAP andmebaas
+LDAPFieldStatus=Staatus
+LDAPFieldFirstSubscriptionDate=Esiteks tellimuse kuupäev
+LDAPFieldFirstSubscriptionAmount=Esimene liitumisleping summa
+LDAPFieldLastSubscriptionDate=Last tellimise kuupäev
+LDAPFieldLastSubscriptionAmount=Last märkimissummast
+SynchronizeDolibarr2Ldap=Sünkroonida kasutaja (Dolibarr -&gt; LDAP)
+UserSynchronized=Kasutaja sünkroniseeritud
+GroupSynchronized=Group sünkroniseeritud
+MemberSynchronized=Liikmesriigid sünkroniseeritud
+ContactSynchronized=Võta sünkroniseeritud
+ForceSynchronize=Force sünkroonimine Dolibarr -&gt; LDAP
+ErrorFailedToReadLDAP=Lugemine ebaõnnestus LDAP andmebaasi. Vaata LDAP moodul setup ja andmebaasi kättesaadavust.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:37:34).

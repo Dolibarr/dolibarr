@@ -1,0 +1,123 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+MenuManager=Menüü juht
+Error=Viga
+Errors=Vead
+ErrorBadEMail=E-post %s on vale
+ErrorBadUrl=Url %s on vale
+ErrorLoginAlreadyExists=Logi %s juba olemas.
+ErrorGroupAlreadyExists=Group %s juba olemas.
+ErrorRecordNotFound=Salvestada ei leitud.
+ErrorFailToCopyFile=Ei suutnud kopeerida faili <b>%s</b> &quot;muutmine&quot; <b>%s</b> &quot;.
+ErrorFailToRenameFile=Suutnud ümber faili <b>%s</b> &quot;muutmine&quot; <b>%s</b> &quot;.
+ErrorFailToDeleteFile=Ebaõnnestus kustutada faili <b>'%s</b> &quot;.
+ErrorFailToCreateFile=Suutnud luua faili <b>'%s</b> &quot;.
+ErrorFailToRenameDir=Suutnud ümber kataloog <b>&quot;%s&quot;</b> muutmine <b>&quot;%s&quot;.</b>
+ErrorFailToCreateDir=Loomine ebaõnnestus <b>&quot;%s&quot;.</b>
+ErrorFailToDeleteDir=Ebaõnnestus kustutada kataloogi <b>'%s</b> &quot;.
+ErrorFailedToDeleteJoinedFiles=Ei saa kustutada keskkond, sest seal on mõned liitunud faile. Eemalda liituda faile esimene.
+ErrorThisContactIsAlreadyDefinedAsThisType=See kontakt on juba määratletud kokkupuude sellist tüüpi.
+ErrorCashAccountAcceptsOnlyCashMoney=See pangakonto on raha kontol, et ta võtab maksete tüüpi ainult sularahas.
+ErrorFromToAccountsMustDiffers=Allikas ja eesmärgid pangaarved peavad olema erinevad.
+ErrorBadThirdPartyName=Bad väärtus kolmanda isiku nimi
+ErrorBadCustomerCodeSyntax=Bad süntaks kliendi kood
+ErrorCustomerCodeRequired=Kliendi koodi vaja
+ErrorCustomerCodeAlreadyUsed=Kliendi koodi juba kasutanud
+ErrorPrefixRequired=Eesliide vajalik
+ErrorUrlNotValid=Kodulehekülje aadress on vale
+ErrorBadSupplierCodeSyntax=Bad süntaks tarnija kood
+ErrorSupplierCodeRequired=Tarnija koodi vaja
+ErrorSupplierCodeAlreadyUsed=Tarnija koodi juba kasutanud
+ErrorBadParameters=Bad parameetrid
+ErrorBadValueForParameter=Vale väärtus &quot;%s&quot; jaoks parameeter vale &quot;%s&quot;
+ErrorBadImageFormat=Image faili ei vormingus
+ErrorBadDateFormat=Value &quot;%s&quot; on vale kuupäeva formaat
+ErrorFailedToWriteInDir=Ebaõnnestus kirjutada kataloog %s
+ErrorFoundBadEmailInFile=Leitud vale email süntaks %s read faili (näiteks liin %s e-posti = %s)
+ErrorUserCannotBeDelete=Kasutaja ei ole võimalik kustutada. Võib olla see on seotud kohta Dolibarr üksused.
+ErrorFieldsRequired=Mõned nõutud väljad ei ole täidetud.
+ErrorFailedToCreateDir=Suutnud luua kataloogi. Kontrollige, et veebiserveri kasutaja õigusi kirjutada Dolibarr dokumentide kataloogi. Kui parameeter <b>safe_mode</b> on lubatud see PHP, kontrollige, et Dolibarr php faile omab veebi server kasutaja (või grupi).
+ErrorNoMailDefinedForThisUser=Ei mail määratletud selle kasutaja
+ErrorFeatureNeedJavascript=See funktsioon on vaja javascripti aktiveerida tööle. Muuda seda setup - display.
+ErrorTopMenuMustHaveAParentWithId0=Menüü tüüp &quot;Top&quot; ei saa olla vanem menüü. Pane 0 emaettevõtte menüü või valida menüüst tüüp &quot;Vasak&quot;.
+ErrorLeftMenuMustHaveAParentId=Menüü tüüp &quot;Vasak&quot;, peab olema vanema id.
+ErrorFileNotFound=Faili <b>%s</b> ei leitud (Bad tee, vale õigusi või juurdepääs keelatud by PHP openbasedir või safe_mode parameeter)
+ErrorDirNotFound=Directory <b>%s</b> ei leitud (Bad tee, vale õigusi või juurdepääs keelatud by PHP openbasedir või safe_mode parameeter)
+ErrorFunctionNotAvailableInPHP=Funktsioon <b>%s</b> on vajalik see funktsioon aga ei ole selles versioonis / setup PHP.
+ErrorDirAlreadyExists=Kataloog Selle nimi on juba olemas.
+ErrorFileAlreadyExists=Selle nimega fail on juba olemas.
+ErrorPartialFile=Faili ei saanud täiesti by server.
+ErrorNoTmpDir=Ajutine kas otseselt %s ei eksisteeri.
+ErrorUploadBlockedByAddon=Lisatud blokeeritud PHP / Apache plugin.
+ErrorFileSizeTooLarge=Faili suurus on liiga suur.
+ErrorSizeTooLongForIntType=Size liiga kaua int tüüpi (%s numbrit maksimaalne)
+ErrorSizeTooLongForVarcharType=Size liiga pikk string tüüpi (%s tähemärki maksimum)
+ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> tohi sisaldab erimärke.
+ErrorNoAccountancyModuleLoaded=Ei raamatupidamise moodul aktiveeritud
+ErrorExportDuplicateProfil=See profil nimi juba olemas see ekspordi komplekti.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP sobitamine ei ole täielik.
+ErrorLDAPMakeManualTest=. LDIF fail on loodud kataloog %s. Proovige seda laadida käsitsi käsurida rohkem teavet vigu.
+ErrorCantSaveADoneUserWithZeroPercentage=Ei saa salvestada tegevust &quot;statut ei hakanud&quot;, kui väli &quot;tehtud&quot; on ka täidetud.
+ErrorRefAlreadyExists=Ref kasutada loomine on juba olemas.
+ErrorPleaseTypeBankTransactionReportName=Palun kirjuta panga saamist nimi, kus tehing on teatatud (Format YYYYMM või AAAAKKPP)
+ErrorRecordHasChildren=Ebaõnnestus kustutada andmeid, sest see on mõned Childs.
+ErrorModuleRequireJavascript=Javascript ei tohi keelata, et on see funktsioon töötab. Lubada / keelata Javascript avage Menüü Avaleht-&gt; Setup-&gt; Display.
+ErrorPasswordsMustMatch=Mõlemad tipitud paroolid peavad sobima omavahel
+ErrorContactEMail=Tehniline viga. Palun, võtke administraatoriga pärast email <b>%s</b> en annab vea kood <b>%s</b> oma sõnum, või veel parem, lisades ekraani koopia sellelt leheküljelt.
+ErrorWrongValueForField=Vale hinna valdkonnas number <b>%s</b> (väärtus <b>&quot;%s&quot;</b> ei sobi regex reegel <b>%s)</b>
+ErrorFieldValueNotIn=Vale hinna valdkonnas number <b>%s</b> (väärtus <b>&quot;%s&quot;</b> ei ole olemas väärtus väljale <b>%s</b> tabeli <b>%s)</b>
+ErrorFieldRefNotIn=Vale hinna valdkonnas number <b>%s</b> (väärtus <b>&quot;%s&quot;</b> ei <b>%s</b> olemasolevate ref)
+ErrorsOnXLines=Vigu <b>%s</b> allikas read
+ErrorFileIsInfectedWithAVirus=Viirusetõrjeprogramm ei suutnud kinnitada fail (faili võib nakatunud viirusega)
+ErrorSpecialCharNotAllowedForField=Erimärke ei ole lubatud välja &quot;%s&quot;
+ErrorDatabaseParameterWrong=Database setup parameeter <b>&quot;%s&quot;</b> on väärtus ei sobi kasutada Dolibarr (peab olema väärtus <b>&quot;%s&quot;).</b>
+ErrorNumRefModel=Viide olemas andmebaasi kantud (%s) ja ei ole kooskõlas käesoleva numeratsiooni reegel. Eemalda kirje või ümber viide aktiveerimiseks mooduli.
+ErrorQtyTooLowForThisSupplier=Kogus liiga madalad selle tarnija või hindu ei määrata selle toote selle tarnija
+ErrorModuleSetupNotComplete=Setup mooduli vist Mittetäielik. Mine Setup - Modules täita.
+ErrorBadMask=Viga mask
+ErrorBadMaskFailedToLocatePosOfSequence=Viga, mask ilma järjekorranumber
+ErrorBadMaskBadRazMonth=Viga, halb reset väärtus
+ErrorSelectAtLeastOne=Viga. Vali vähemalt üks sissekanne.
+ErrorProductWithRefNotExist=Toote viitega <i>&quot;%s&quot;</i> ei eksisteeri
+ErrorDeleteNotPossibleLineIsConsolidated=Kustuta ole võimalik, sest dokument on seotud panga transation mis conciliated
+ErrorProdIdAlreadyExist=%s on määratud teise kolmandiku
+ErrorFailedToSendPassword=Saatmine ebaõnnestus parooli
+ErrorFailedToLoadRSSFile=Ei saada RSS feed. Proovige lisada pidev MAIN_SIMPLEXMLLOAD_DEBUG kui veateateid ei anna piisavalt teavet.
+ErrorPasswordDiffers=Paroolid on erinev, siis kirjuta uuesti.
+ErrorForbidden=Juurdepääs keelatud. <br> Püüad pääseda lehele, pindala või omadus ilma olles kinnitatud istungil või mis ei ole lubatud oma kasutajanimi.
+ErrorForbidden2=Loa see login saab määratleda oma Dolibarr administraator menüüst %s-&gt; %s.
+ErrorForbidden3=Tundub, et Dolibarr ei kasutata läbi kinnitatud istungil. Heitke pilk Dolibarr setup dokumentatsiooni teada, kuidas juhtida autentsuse (htaccess, mod_auth või muud ...).
+ErrorNoImagickReadimage=Klassi Imagick ei leita seda PHP. Ei preview võib olla kättesaadav. Administraatorid saavad keelata seda vahekaarti menüüst Setup - Display.
+ErrorRecordAlreadyExists=Kirje on juba olemas
+ErrorCantReadFile=Ei õnnestunud lugeda faili %s &quot;
+ErrorCantReadDir=Ei õnnestunud lugeda kataloogi '%s &quot;
+ErrorFailedToFindEntity=Lugemine ebaõnnestus keskkond %s &quot;
+ErrorBadLoginPassword=Bad väärtust login või parool
+ErrorLoginDisabled=Sinu konto on blokeeritud
+ErrorFailedToRunExternalCommand=Suutnud käivitada käsu. Vaata see on kättesaadav ja Runnable teie PHP server. Kui PHP <b>Safe Mode</b> on lubatud, veenduge, et käsk on sees kataloog määratletud parameetri <b>safe_mode_exec_dir.</b>
+ErrorFailedToChangePassword=Suutnud muuta parooli
+ErrorLoginDoesNotExists=Kasutaja login <b>%s</b> ei leitud.
+ErrorLoginHasNoEmail=Sellel kasutajal ei ole e-posti aadress. Protsess katkestati.
+ErrorBadValueForCode=Bad väärtust turvakood. Proovi uuesti uue väärtuse ...
+ErrorBothFieldCantBeNegative=Valdkonnad %s ja %s ei saa olla nii negatiivne
+ErrorWebServerUserHasNotPermission=Kasutaja konto <b>%s</b> kasutada täita web server ei luba, et
+ErrorNoActivatedBarcode=Ei vöötkoodi tüüpi aktiveeritud
+WarningSafeModeOnCheckExecDir=Hoiatus, PHP võimalus <b>safe_mode</b> on nii käsk tuleb hoida sees kataloogis deklareeritud php parameeter <b>safe_mode_exec_dir.</b>
+WarningAllowUrlFopenMustBeOn=Parameeter <b>allow_url_fopen</b> peab seadma <b>sisse</b> filer <b>php.ini</b> eest, see moodul töötab täiesti. Sa pead muutma seda pilti käsitsi.
+WarningBuildScriptNotRunned=Script <b>%s</b> ei olnud veel jooksis ehitada graafika, või ei ole andmeid näidata.
+WarningBookmarkAlreadyExists=Järjehoidja seda pealkirja või selle eesmärgi (URL) on juba olemas.
+WarningPassIsEmpty=Hoiatus, andmebaasi parool on tühi. See on turvaauguks. Sa peaksid lisada parooli oma andmebaasi ja muuta oma conf.php fail peegeldama.
+WarningConfFileMustBeReadOnly=Hoiatus, oma config fail <b>(htdocs / conf / conf.php)</b> võib olla kirjutatakse veebiserver. See on tõsine turvaauguks. Muuda õigusi fail olla ainult lugemiseks režiim operatsioonisüsteemi kasutaja kasutavad veebiserveris. Kui te kasutate Windows ja FAT formaati kettalt, peate teadma, et see failisüsteem ei võimalda lisada õigusi faili, nii ei saa olla täiesti ohutu.
+WarningsOnXLines=Hoiatused <b>%s</b> allikas read
+WarningNoDocumentModelActivated=Ei mudel, dokumentide tootmine, on aktiveeritud. Mudelit valis vaikimisi kuni te vaadata oma moodul setup.
+WarningInstallDirExists=Hoiatus, install kataloogi <b>(htdocs / install)</b> on endiselt olemas. See on tõsine turvaauguks. Sa peaksid eemaldada nii kiiresti kui võimalik.
+WarningUntilDirRemoved=Kõik turvahoiatuste (nähtav admin kasutajate puhul) jääb aktiivseks nii kaua, kui haavatavus on olemas (või et pidev MAIN_REMOVE_INSTALL_WARNING lisatakse Setup-&gt; Other setup).
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:27:20).

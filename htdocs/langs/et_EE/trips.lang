@@ -1,0 +1,31 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+Trip=Reis
+Trips=Trips
+TripsAndExpenses=Matkad ja kulud
+TripsAndExpensesStatistics=Reiside ja kulude statistika
+TripCard=Reisi kaart
+AddTrip=Lisa trip
+ListOfTrips=List of väljasõidud
+ListOfFees=List tasude
+NewTrip=New trip
+CompanyVisited=Äriühingu / sihtasutuse külastas
+Kilometers=Kilomeetrid
+FeesKilometersOrAmout=Summa või kilomeetrites
+DeleteTrip=Kustuta trip
+ConfirmDeleteTrip=Oled sa kindel, et soovite kustutada selle reisi?
+TF_OTHER=Teine
+TF_LUNCH=Lõuna
+TF_TRIP=Reis
+ListTripsAndExpenses=List reiside ja kulude
+ExpensesArea=Matkad ja kulud ala
+SearchATripAndExpense=Otsi reisi ja kulu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:26:42).
