@@ -36,7 +36,7 @@ $langs->load("trips");
 
 
 // Security check
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id,'');
 
@@ -287,7 +287,7 @@ if ($action == 'create')
     // Company
     print "<tr>";
     print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-    print $form->select_company(GETPOST("socid"),'socid','',1);
+    print $form->select_company(GETPOST('socid','int'),'socid','',1);
     print '</td></tr>';
 
     // Public note

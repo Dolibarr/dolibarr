@@ -19,6 +19,7 @@ ConfirmLockNewSessions=¿Está seguro de querer restringir el acceso a Dolibarr 
 UnlockNewSessions=Eliminar bloqueo de conexiones
 YourSession=Su sesión
 Sessions=Sesiones de usuarios
+WebUserGroup=Servidor web usuario/grupo
 NoSessionFound=Parece que su PHP no puede listar las sesiones activas. El directorio de salvaguardado de sesiones (<b>%s</b>) puede estar protegido (por ejemplo, por los permisos del sistema operativo o por la directiva open_basedir de su PHP).
 HTMLCharset=Charset de las páginas HTML
 DBStoringCharset=Charset base de datos para almacenamiento de datos
@@ -167,6 +168,7 @@ AddDropTable=Añadir órdenes DROP TABLE
 Datas=Datos
 NameColumn=Nombre las columnas
 ExtendedInsert=Instrucciones INSERT extendidas
+NoLockBeforeInsert=Sin intrucción LOCK antes del INSERT 
 DelayedInsert=Inserciones con retraso
 EncodeBinariesInHexa=Codificar los campos binarios en hexadecimal
 IgnoreDuplicateRecords=Ignorar los errores de duplicación (INSERT IGNORE)
@@ -370,8 +372,10 @@ Module80Name=Expediciones
 Module80Desc=Gestión de expediciones y recepciones 
 Module85Name=Bancos y cajas
 Module85Desc=Gestión de las cuentas financieras de tipo cuentas bancarias, postales o efectivo
-Module100Name=ExternalSite
+Module100Name=External site
 Module100Desc=Incluye cualquier sitio web externo en los menús de Dolibarr, viéndolo en un frame
+Module105Name=Mailman y Sip
+Module105Desc=Interface con Mailman o Spip para el módulo Miembros
 Module200Name=LDAP
 Module200Desc=sincronización con un anuario LDAP
 Module210Name=PostNuke
@@ -866,8 +870,9 @@ ExtraFieldHasWrongValue=El atributo %s tiene un valor incorrecto.
 SendingMailSetup=Configuració de l'enviament per mail
 SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters=-ba</b>.
 PathToDocuments=Rutas de acceso a documentos
-PathDirectory=Catálogo
-##### Module password generation= undefined=
+PathDirectory=Directorio
+SendmailOptionMayHurtBuggedMTA=La funcionalidad de enviar correo electrónico a través del "correo directo PHP" genera una solicitud que puede ser mal interpretado por algunos servidores de correo. Esto se traduce en mensajes de correo electrónico ilegibles para las personas alojadas en  estas plataformas. Este es el caso de clientes en ciertos proveedores de servicios de Internet (Ej: Orange). Esto no es un problema ni de Dolibarr ni de PHP, pero sí del servidor de correo. Sin embargo, puede agregar la opción MAIN_FIX_FOR_BUGGED_MTA con valor 1 en configuración-varios para tratar que Dolibarr evite el error. Otra solución (recomendada) es utilizar el método de envío por SMTP que no tiene este inconveniente. 
+##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####

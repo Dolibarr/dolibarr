@@ -29,9 +29,9 @@ require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
-$taskid = GETPOST("id");
+$taskid = GETPOST('id','int');
 $taskref = GETPOST("ref");
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $ref= GETPOST('ref');
 $action=GETPOST('action');
 $withproject=GETPOST('withproject');

@@ -32,7 +32,9 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 $langs->load("bills");
 $langs->load("companies");
 
-$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+$facid = GETPOST('facid');
+$id = GETPOST('facid');
+$ref= GETPOST('ref');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -45,12 +47,11 @@ $result = restrictedArea($user, 'facture', $facid);
 
 if ($_POST["action"] == 'addcontact' && $user->rights->facture->creer)
 {
-
 	$result = 0;
 	$facture = new Facture($db);
-	$result = $facture->fetch($_GET["facid"]);
+	$result = $facture->fetch($facid);
 
-    if ($result > 0 && $_GET["facid"] > 0)
+    if ($result > 0 && $facid > 0)
     {
   		$result = $facture->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
@@ -78,7 +79,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->facture->creer)
 if ($_GET["action"] == 'swapstatut' && $user->rights->facture->creer)
 {
 	$facture = new Facture($db);
-	if ($facture->fetch(GETPOST("facid")))
+	if ($facture->fetch($facid))
 	{
 	    $result=$facture->swapContactStatus(GETPOST('ligne'));
 	}
@@ -92,7 +93,7 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->facture->creer)
 if ($_GET["action"] == 'deleteline' && $user->rights->facture->creer)
 {
 	$facture = new Facture($db);
-	$facture->fetch($_GET["facid"]);
+	$facture->fetch($facid);
 	$result = $facture->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
@@ -125,8 +126,6 @@ $userstatic=new User($db);
 /* *************************************************************************** */
 dol_htmloutput_mesg($mesg);
 
-$id = $_GET['facid'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
 	$facture = new Facture($db);

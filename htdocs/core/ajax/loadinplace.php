@@ -54,7 +54,7 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	$type				= GETPOST('type');
 	$loadmethod			= (GETPOST('loadmethod') ? GETPOST('loadmethod') : 'getValueFrom');
 	
-	if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
 	{
 		$element = $regs[1];
 		$subelement = $regs[2];
@@ -62,9 +62,17 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	
 	if ($element == 'propal') $element = 'propale';
 	else if ($element == 'fichinter') $element = 'ficheinter';
+	else if ($element == 'order_supplier') {
+		$element = 'fournisseur';
+		$subelement = 'commande';
+	}
+	else if ($element == 'invoice_supplier') {
+		$element = 'fournisseur';
+		$subelement = 'facture';
+	}
 	
 	if ($user->rights->$element->lire || $user->rights->$element->read
-	|| $user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read
+	|| (isset($subelement) && ($user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read))
 	|| ($element == 'payment' && $user->rights->facture->lire)
 	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire))
 	{

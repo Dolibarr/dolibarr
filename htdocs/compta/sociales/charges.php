@@ -30,11 +30,11 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
 $langs->load("compta");
 $langs->load("bills");
 
-$id=GETPOST("id");
+$id=GETPOST('id','int');
 $action=GETPOST("action");
 
 // Security check
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', $langs->trans("SocialContribution"), '', 'charges');
 

@@ -35,7 +35,7 @@ $langs->load('banks');
 $langs->load('companies');
 $langs->load('compta');
 
-$id =GETPOST("id");
+$id =GETPOST('id','int');
 $ref=GETPOST("ref");
 $action=GETPOST('action');
 
@@ -67,7 +67,7 @@ $filteraccountid=GETPOST('accountid');
 if ($action == 'setdate' && $user->rights->banque->cheque)
 {
     $remisecheque = new RemiseCheque($db);
-    $result = $remisecheque->fetch(GETPOST('id'));
+    $result = $remisecheque->fetch(GETPOST('id','int'));
     if ($result > 0)
     {
         //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];

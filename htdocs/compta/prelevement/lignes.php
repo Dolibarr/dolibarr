@@ -36,8 +36,8 @@ if ($user->societe_id > 0) accessforbidden();
 $langs->load("categories");
 
 // Get supervariables
-$prev_id = GETPOST("id");
-$socid = GETPOST("socid");
+$prev_id = GETPOST('id','int');
+$socid = GETPOST('socid','int');
 $page = GETPOST("page");
 $sortorder = ((GETPOST("sortorder")=="")) ? "DESC" : GETPOST("sortorder");
 $sortfield = ((GETPOST("sortfield")=="")) ? "pl.fk_soc" : GETPOST("sortfield");

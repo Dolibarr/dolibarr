@@ -41,10 +41,10 @@ class pdf_soleil extends ModelePDFFicheinter
 	var $name;
 	var $description;
 	var $type;
-	
+
 	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
 	var $version = 'dolibarr';
-	
+
 	var $page_largeur;
 	var $page_hauteur;
 	var $format;
@@ -142,6 +142,12 @@ class pdf_soleil extends ModelePDFFicheinter
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+                // Set path to the background PDF File
+                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                {
+                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $pdf->importPage(1);
+                }
 
 				$pdf->Open();
 				$pagenb=0;
@@ -159,6 +165,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				// New page
 				$pdf->AddPage();
+				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetTextColor(0,0,0);
@@ -289,6 +296,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 							// New page
 							$pdf->AddPage();
+				            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 							$pagenb++;
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 							$pdf->SetFont('','', $default_font_size - 1);
@@ -299,7 +307,7 @@ class pdf_soleil extends ModelePDFFicheinter
 						}
 					}
 				}
-				
+
 				// Show square
 				if ($pagenb == 1)
 				{
@@ -556,7 +564,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->rect($posx, $posy, 100, $hautcadre);
+			$pdf->Rect($posx, $posy, 100, $hautcadre);
 			$pdf->SetTextColor(0,0,0);
 
 			// Show recipient name
@@ -566,7 +574,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
 			$pdf->MultiCell(100,4, $carac_client, 0, 'L');
 		}
 	}

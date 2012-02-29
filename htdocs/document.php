@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -50,10 +50,10 @@ require("./main.inc.php");	// Load $user and permissions
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 $encoding = '';
-$action = GETPOST("action");
-$original_file = GETPOST("file");	// Do not use urldecode here ($_GET are already decoded by PHP).
-$modulepart = GETPOST("modulepart");
-$urlsource = GETPOST("urlsource");
+$action = GETPOST('action','alpha');
+$original_file = GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
+$modulepart = GETPOST('modulepart','alpha');
+$urlsource = GETPOST('urlsource','alpha');
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
@@ -72,7 +72,7 @@ if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
 // Define mime type
 $type = 'application/octet-stream';
-if (GETPOST('type')) $type=GETPOST('type');
+if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
 else $type=dol_mimetype($original_file);
 //print 'X'.$type.'-'.$original_file;exit;
 

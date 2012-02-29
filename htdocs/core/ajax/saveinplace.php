@@ -61,7 +61,7 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 	$return=array();
 	$error=0;
 
-	if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
 	{
 		$element = $regs[1];
 		$subelement = $regs[2];
@@ -69,9 +69,17 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 
 	if ($element == 'propal') $element = 'propale';
 	else if ($element == 'fichinter') $element = 'ficheinter';
+	else if ($element == 'order_supplier') {
+		$element = 'fournisseur';
+		$subelement = 'commande';
+	}
+	else if ($element == 'invoice_supplier') {
+		$element = 'fournisseur';
+		$subelement = 'facture';
+	}
 
 	if ($user->rights->$element->creer || $user->rights->$element->write
-	|| $user->rights->$element->$subelement->creer || $user->rights->$element->$subelement->write
+	|| (isset($subelement) && ($user->rights->$element->$subelement->creer || $user->rights->$element->$subelement->write))
 	|| ($element == 'payment' && $user->rights->facture->paiement)
 	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	{

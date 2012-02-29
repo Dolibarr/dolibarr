@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ $langs->load("other");
 $langs->load("bills");
 
 if (isset($_GET["error"])) $error=$_GET["error"];
-$objectid = GETPOST("id");
+$objectid = GETPOST('id','int');
 
 // Security check
 if ($user->societe_id > 0)

@@ -79,7 +79,7 @@ llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute
 
 $now=dol_now();
 
-$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.nom as name, d.societe, ";
+$sql = "SELECT d.rowid, d.login, d.nom as lastname, d.prenom as firstname, d.societe, ";
 $sql.= " d.datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";

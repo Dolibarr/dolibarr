@@ -41,8 +41,8 @@ $langs->load("bills");
 $langs->load("products");
 
 $action=GETPOST('action');
-$socid = GETPOST("socid");
-$contratid = GETPOST("id");
+$socid = GETPOST('socid','int');
+$contratid = GETPOST('id','int');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

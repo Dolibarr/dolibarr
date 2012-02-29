@@ -468,10 +468,10 @@ else
     /*                                                                            */
     /* ************************************************************************** */
 
-    if (GETPOST("id") && $action == 'edit' && $user->rights->banque->configurer)
+    if (GETPOST('id','int') && $action == 'edit' && $user->rights->banque->configurer)
     {
         $account = new Account($db);
-        $account->fetch(GETPOST("id"));
+        $account->fetch(GETPOST('id','int'));
 
         print_fiche_titre($langs->trans("EditFinancialAccount"));
         print "<br>";

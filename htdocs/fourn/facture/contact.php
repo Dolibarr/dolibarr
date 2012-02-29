@@ -80,7 +80,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->fournisseur->facture->cre
 if ($_GET["action"] == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 {
 	$facture = new FactureFournisseur($db);
-	if ($facture->fetch(GETPOST("facid")))
+	if ($facture->fetch(GETPOST('facid','int')))
 	{
 	    $result=$facture->swapContactStatus(GETPOST('ligne'));
 	}

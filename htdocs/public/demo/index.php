@@ -222,7 +222,7 @@ if (GETPOST("action") == 'gotodemo')
 	if ($disablestring)
 	{
 		$url=DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring;
-		if (GETPOST("urlfrom")) $url.='&urlfrom='.GETPOST("urlfrom");
+		if (GETPOST('urlfrom','alpha')) $url.='&urlfrom='.GETPOST('urlfrom','alpha');
 		header("Location: ".$url);
 		exit;
 	}

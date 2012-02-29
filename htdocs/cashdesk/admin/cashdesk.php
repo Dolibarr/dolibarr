@@ -49,11 +49,11 @@ if (GETPOST("action") == 'set')
 {
 	$db->begin();
 
-	if (GETPOST("socid") < 0) $_POST["socid"]='';
+	if (GETPOST('socid','int') < 0) $_POST["socid"]='';
 	/*if (GETPOST("CASHDESK_ID_BANKACCOUNT") < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
 	if (GETPOST("CASHDESK_ID_WAREHOUSE") < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';*/
 
-	$res = dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",GETPOST("socid"),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",GETPOST('socid','int'),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",GETPOST("CASHDESK_ID_BANKACCOUNT_CASH"),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE"),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",GETPOST("CASHDESK_ID_BANKACCOUNT_CB"),'chaine',0,'',$conf->entity);

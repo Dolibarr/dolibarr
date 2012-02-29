@@ -37,7 +37,7 @@ $langs->load('compta');
 
 // Security check
 $socid=0;
-$id = GETPOST("id");
+$id = GETPOST('id','int');
 $ref = GETPOST("ref");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'propale', $id, 'propal');
