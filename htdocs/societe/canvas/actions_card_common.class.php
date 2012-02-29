@@ -438,7 +438,12 @@ abstract class ActionsCardCommon
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$module.".php");
+                if ($res) break;
+            }
             $modCodeClient = new $module;
             $this->tpl['auto_customercode'] = $modCodeClient->code_auto;
             // We verified if the tag prefix is used
@@ -470,7 +475,12 @@ abstract class ActionsCardCommon
             	{
             		$module = substr($module, 0, dol_strlen($module)-4);
             	}
-            	require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
+                $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+                foreach ($dirsociete as $dirroot)
+                {
+                    $res=dol_include_once($dirroot.$module.".php");
+                    if ($res) break;
+                }
             	$modCodeFournisseur = new $module;
             	$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
             	// We verified if the tag prefix is used

@@ -63,6 +63,7 @@ class Conf
 	public $sms_engine_modules		= array();
 	public $barcode_modules			= array();
 	public $substitutions_modules	= array();
+	public $societe_modules	        = array();
 
 	var $logbuffer					= array();
 
@@ -164,9 +165,8 @@ class Conf
 							if (! is_array($this->$varname)) { $this->$varname = array(); }
 							$arrValue = @unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else if ($partname == 'barcode') $value = '/'.$modulename.'/core/modules/'.$partname.'/';
-							else if ($partname == 'models')  $value = $modulename.'/';
-							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
+							else if (in_array($partname,array('login','menus','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
