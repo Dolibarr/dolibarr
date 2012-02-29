@@ -222,6 +222,41 @@ function getEntity($element=false, $shared=false)
 }
 
 /**
+ * Return information about user browser
+ *
+ * @return	array		Array of information ('browsername'=>,'browseros'=>,'phone'=>,'browserfirefox'=>)
+ */
+function getBrowserInfo()
+{
+    $name='unknown'; $version=''; $os='unknown'; $phone='';
+
+    // If phone/smartphone, we set phone os name.
+    if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os=$phone='android'; }
+    elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os=$phone='blackberry'; }
+    elseif (preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='ios'; $phone='iphone'; }
+    elseif (preg_match('/ipod/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='ios'; $phone='iphone'; }
+    elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os=$phone='palm'; }
+    elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='symbian'; $phone='unknown'; }
+    elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='webos'; $phone='unknown'; }
+    elseif (preg_match('/maemo/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='maemo'; $phone='unknown'; }
+    // MS products at end
+    elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='windows'; $phone='unkown'; }
+    elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os='windows'; $phone='unkown'; }
+    // Name
+    if (preg_match('/firefox(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg))      { $name='firefox'; $version=$reg[2]; }
+    elseif (preg_match('/chrome(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg))   { $name='chrome'; $version=$reg[2]; }
+    elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"]))     { $name='iceweasel'; $version=$reg[2]; }
+    elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
+    elseif (preg_match('/opera(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg))    { $name='opera'; $version=$reg[2]; }
+    elseif (preg_match('/msie(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg))     { $name='ie'; $version=$reg[2]; }    // MS products at end
+    // Other
+    $firefox=0;
+    if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
+
+    return array('browsername'=>$name, 'browserversion'=>$version, 'browseros'=>$os, 'phone'=>$phone, 'browserfirefox'=>$firefox);
+}
+
+/**
  *  Function called at end of web php process
  *
  *  @return	void
