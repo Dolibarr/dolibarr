@@ -56,7 +56,7 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  */
 
 // If smartphone mode, we do not show main page, we show only menu
-if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
 {
     $limitmenuto=GETPOST('limitmenuto')?GETPOST('limitmenuto'):0;
     $limitmenuto=1;	// A virer

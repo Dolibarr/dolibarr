@@ -185,7 +185,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
 	// Select templates
-	if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+	if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
 	{
 		$template_dir = DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/';
 	}

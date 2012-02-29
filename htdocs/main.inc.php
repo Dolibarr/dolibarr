@@ -1503,7 +1503,7 @@ function main_area($title='')
     print "\n";
 
     print '<div class="fiche"> <!-- begin div class="fiche" -->'."\n";
-    if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+    if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
     {
         print '<div data-role="page"> <!-- begin div data-role="page" -->';
 
@@ -1628,7 +1628,7 @@ if (! function_exists("llxFooter"))
         }
 
         print "\n\n";
-        if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+        if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
         {
             print '</div> <!-- end div data-role="content" -->'."\n";
             print '</div> <!-- end div data-role="page" -->'."\n";
